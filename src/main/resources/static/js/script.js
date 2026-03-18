@@ -282,7 +282,7 @@ document.getElementById('newsletter-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const email = document.getElementById('newsletter-email').value;
   if (email) {
-    showToast('✓ Đăng ký thành công! Chào mừng bạn đến với APEX PC.');
+    showToast('✓ Đăng ký thành công! Chào mừng bạn đến với Luxury PC.');
     document.getElementById('newsletter-email').value = '';
   }
 });
@@ -339,7 +339,7 @@ window.addEventListener('scroll', () => {
 // BUILD PC BUTTON
 // =========================================
 document.getElementById('btn-build-pc').addEventListener('click', () => {
-  showToast('🔧 Tính năng tư vấn Build PC đang được phát triển. Vui lòng gọi 1800-APEX-PC!');
+  showToast('🔧 Tính năng tư vấn Build PC đang được phát triển. Vui lòng gọi 1800-Luxury-PC!');
 });
 
 // =========================================
@@ -538,7 +538,7 @@ function closeSearch() {
   document.body.style.overflow = '';
   searchInput.value = '';
   searchClearBtn.classList.remove('visible');
-  searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm APEX PC.</p>';
+  searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm Luxury Pc.</p>';
 }
 
 navSearchBtn.addEventListener('click', openSearch);
