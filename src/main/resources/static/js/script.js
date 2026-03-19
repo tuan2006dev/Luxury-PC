@@ -282,11 +282,7 @@ document.getElementById('newsletter-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const email = document.getElementById('newsletter-email').value;
   if (email) {
-<<<<<<< HEAD
-    showToast('✓ Đăng ký thành công! Chào mừng bạn đến với Luxury PC.');
-=======
     showToast('✓ Đăng ký thành công! Chào mừng bạn đến với LUXURY PC.');
->>>>>>> ngthtuan206
     document.getElementById('newsletter-email').value = '';
   }
 });
@@ -343,11 +339,7 @@ window.addEventListener('scroll', () => {
 // BUILD PC BUTTON
 // =========================================
 document.getElementById('btn-build-pc').addEventListener('click', () => {
-<<<<<<< HEAD
-  showToast('🔧 Tính năng tư vấn Build PC đang được phát triển. Vui lòng gọi 1800-Luxury-PC!');
-=======
   showToast('🔧 Tính năng tư vấn Build PC đang được phát triển. Vui lòng gọi 1800-LUXURY-PC!');
->>>>>>> ngthtuan206
 });
 
 // =========================================
@@ -546,11 +538,7 @@ function closeSearch() {
   document.body.style.overflow = '';
   searchInput.value = '';
   searchClearBtn.classList.remove('visible');
-<<<<<<< HEAD
-  searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm Luxury Pc.</p>';
-=======
   searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXURY PC.</p>';
->>>>>>> ngthtuan206
 }
 
 navSearchBtn.addEventListener('click', openSearch);
@@ -576,11 +564,7 @@ searchInput.addEventListener('input', () => {
 searchClearBtn.addEventListener('click', () => {
   searchInput.value = '';
   searchClearBtn.classList.remove('visible');
-<<<<<<< HEAD
-  searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm APEX PC.</p>';
-=======
   searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXURY PC.</p>';
->>>>>>> ngthtuan206
   searchInput.focus();
 });
 
@@ -597,11 +581,7 @@ document.querySelectorAll('.search-tag').forEach(tag => {
 
 function renderSearchResults(query) {
   if (!query) {
-<<<<<<< HEAD
-    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm APEX PC.</p>';
-=======
-    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXYRY PC.</p>';
->>>>>>> ngthtuan206
+    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXURY PC.</p>';
     return;
   }
   const matches = productCatalog.filter(p =>
@@ -722,38 +702,6 @@ document.querySelectorAll('.nav-search-btn, .search-close, .search-tag, .search-
 // LOGIN
 async function login() {
 
-<<<<<<< HEAD
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-pw").value;
-
-    const data = {
-        email: email,
-        password: password
-    };
-
-    try {
-        const response = await fetch("/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if(result != null){
-            alert("Đăng nhập thành công!");
-            window.location.href = "/";
-        }else{
-            alert("Sai email hoặc mật khẩu!");
-        }
-
-    } catch (error) {
-        console.error(error);
-        alert("Lỗi kết nối server");
-    }
-=======
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-pw").value;
 
@@ -784,50 +732,11 @@ async function login() {
     console.error(error);
     alert("Lỗi kết nối server");
   }
->>>>>>> ngthtuan206
 }
 
 // REGISTER
 async function register() {
 
-<<<<<<< HEAD
-    const firstname = document.getElementById("reg-fname").value;
-    const lastname = document.getElementById("reg-lname").value;
-    const email = document.getElementById("reg-email").value;
-    const phone = document.getElementById("reg-phone").value;
-    const password = document.getElementById("reg-pw").value;
-
-    const data = {
-        firstName: firstname,
-        lastName: lastname,
-        email: email,
-        phone: phone,
-        password: password
-    };
-
-    try {
-
-        const response = await fetch("/api/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if(result){
-            alert("Đăng ký thành công!");
-        }else{
-            alert("Đăng ký thất bại!");
-        }
-
-    } catch (error) {
-        console.error(error);
-        alert("Lỗi server");
-    }
-=======
   const firstname = document.getElementById("reg-fname").value;
   const lastname = document.getElementById("reg-lname").value;
   const email = document.getElementById("reg-email").value;
@@ -864,5 +773,4 @@ async function register() {
     console.error(error);
     alert("Lỗi server");
   }
->>>>>>> ngthtuan206
 }
