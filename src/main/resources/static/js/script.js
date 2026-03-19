@@ -282,7 +282,7 @@ document.getElementById('newsletter-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const email = document.getElementById('newsletter-email').value;
   if (email) {
-    showToast('✓ Đăng ký thành công! Chào mừng bạn đến với APEX PC.');
+    showToast('✓ Đăng ký thành công! Chào mừng bạn đến với LUXURY PC.');
     document.getElementById('newsletter-email').value = '';
   }
 });
@@ -339,7 +339,7 @@ window.addEventListener('scroll', () => {
 // BUILD PC BUTTON
 // =========================================
 document.getElementById('btn-build-pc').addEventListener('click', () => {
-  showToast('🔧 Tính năng tư vấn Build PC đang được phát triển. Vui lòng gọi 1800-APEX-PC!');
+  showToast('🔧 Tính năng tư vấn Build PC đang được phát triển. Vui lòng gọi 1800-LUXURY-PC!');
 });
 
 // =========================================
@@ -538,7 +538,7 @@ function closeSearch() {
   document.body.style.overflow = '';
   searchInput.value = '';
   searchClearBtn.classList.remove('visible');
-  searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm APEX PC.</p>';
+  searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXURY PC.</p>';
 }
 
 navSearchBtn.addEventListener('click', openSearch);
@@ -564,7 +564,7 @@ searchInput.addEventListener('input', () => {
 searchClearBtn.addEventListener('click', () => {
   searchInput.value = '';
   searchClearBtn.classList.remove('visible');
-  searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm APEX PC.</p>';
+  searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXURY PC.</p>';
   searchInput.focus();
 });
 
@@ -581,7 +581,7 @@ document.querySelectorAll('.search-tag').forEach(tag => {
 
 function renderSearchResults(query) {
   if (!query) {
-    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm APEX PC.</p>';
+    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXYRY PC.</p>';
     return;
   }
   const matches = productCatalog.filter(p =>
@@ -702,75 +702,75 @@ document.querySelectorAll('.nav-search-btn, .search-close, .search-tag, .search-
 // LOGIN
 async function login() {
 
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-pw").value;
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-pw").value;
 
-    const data = {
-        email: email,
-        password: password
-    };
+  const data = {
+    email: email,
+    password: password
+  };
 
-    try {
-        const response = await fetch("/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
+  try {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
 
-        const result = await response.json();
+    const result = await response.json();
 
-        if(result != null){
-            alert("Đăng nhập thành công!");
-            window.location.href = "/";
-        }else{
-            alert("Sai email hoặc mật khẩu!");
-        }
-
-    } catch (error) {
-        console.error(error);
-        alert("Lỗi kết nối server");
+    if (result != null) {
+      alert("Đăng nhập thành công!");
+      window.location.href = "/";
+    } else {
+      alert("Sai email hoặc mật khẩu!");
     }
+
+  } catch (error) {
+    console.error(error);
+    alert("Lỗi kết nối server");
+  }
 }
 
 // REGISTER
 async function register() {
 
-    const firstname = document.getElementById("reg-fname").value;
-    const lastname = document.getElementById("reg-lname").value;
-    const email = document.getElementById("reg-email").value;
-    const phone = document.getElementById("reg-phone").value;
-    const password = document.getElementById("reg-pw").value;
+  const firstname = document.getElementById("reg-fname").value;
+  const lastname = document.getElementById("reg-lname").value;
+  const email = document.getElementById("reg-email").value;
+  const phone = document.getElementById("reg-phone").value;
+  const password = document.getElementById("reg-pw").value;
 
-    const data = {
-        firstName: firstname,
-        lastName: lastname,
-        email: email,
-        phone: phone,
-        password: password
-    };
+  const data = {
+    firstName: firstname,
+    lastName: lastname,
+    email: email,
+    phone: phone,
+    password: password
+  };
 
-    try {
+  try {
 
-        const response = await fetch("/api/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
 
-        const result = await response.json();
+    const result = await response.json();
 
-        if(result){
-            alert("Đăng ký thành công!");
-        }else{
-            alert("Đăng ký thất bại!");
-        }
-
-    } catch (error) {
-        console.error(error);
-        alert("Lỗi server");
+    if (result) {
+      alert("Đăng ký thành công!");
+    } else {
+      alert("Đăng ký thất bại!");
     }
+
+  } catch (error) {
+    console.error(error);
+    alert("Lỗi server");
+  }
 }
