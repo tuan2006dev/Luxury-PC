@@ -31,6 +31,10 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+<<<<<<< HEAD
+=======
+  scroll-snap-type: y mandatory;
+>>>>>>> ngthtuan206
 }
 
 body {
@@ -191,6 +195,10 @@ body:hover .cursor {
   display: flex;
   align-items: center;
   gap: 2.5rem;
+<<<<<<< HEAD
+=======
+  line-height: 1;
+>>>>>>> ngthtuan206
 }
 
 .nav-link {
@@ -311,6 +319,10 @@ body:hover .cursor {
   display: flex;
   align-items: center;
   overflow: hidden;
+<<<<<<< HEAD
+=======
+  scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .hero-bg {
@@ -393,11 +405,24 @@ body:hover .cursor {
 
 .hero-cta {
   display: flex;
+<<<<<<< HEAD
   gap: 1.2rem;
+=======
+  gap: 1.5rem;
+>>>>>>> ngthtuan206
   align-items: center;
   flex-wrap: wrap;
 }
 
+<<<<<<< HEAD
+=======
+.hero-cta .btn-primary,
+.hero-cta .btn-secondary {
+  min-width: 220px;
+  text-align: center;
+}
+
+>>>>>>> ngthtuan206
 .hero-scroll {
   position: absolute;
   bottom: 3rem;
@@ -513,10 +538,22 @@ body:hover .cursor {
   background: var(--gold);
   padding: 0.75rem 0;
   overflow: hidden;
+<<<<<<< HEAD
+=======
+  position: sticky;
+  top: 70px; /* Sticky below navbar */
+  z-index: 950;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+>>>>>>> ngthtuan206
 }
 
 .marquee-content {
   display: flex;
+<<<<<<< HEAD
+=======
+  align-items: center;
+>>>>>>> ngthtuan206
   gap: 2rem;
   white-space: nowrap;
   animation: marqueeRoll 28s linear infinite;
@@ -622,6 +659,10 @@ body:hover .cursor {
 .categories {
   padding: 3rem 6rem 7rem;
   background: var(--deep);
+<<<<<<< HEAD
+=======
+  scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .cat-grid {
@@ -702,6 +743,10 @@ body:hover .cursor {
 .products {
   padding: 7rem 6rem;
   background: var(--black);
+<<<<<<< HEAD
+=======
+  scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .products-grid {
@@ -719,6 +764,12 @@ body:hover .cursor {
   transition: transform var(--transition);
   cursor: none;
   border: 1px solid rgba(201, 168, 76, 0.06);
+<<<<<<< HEAD
+=======
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+>>>>>>> ngthtuan206
 }
 
 .product-card.large {
@@ -733,7 +784,11 @@ body:hover .cursor {
   position: relative;
   overflow: hidden;
   background: var(--dark);
+<<<<<<< HEAD
   aspect-ratio: 4/3;
+=======
+  aspect-ratio: 4 / 3;
+>>>>>>> ngthtuan206
 }
 
 .product-img-wrap img {
@@ -759,6 +814,10 @@ body:hover .cursor {
   text-transform: uppercase;
   padding: 0.3rem 0.8rem;
   border: 1px solid rgba(201, 168, 76, 0.3);
+<<<<<<< HEAD
+=======
+  z-index: 5;
+>>>>>>> ngthtuan206
 }
 
 .product-badge.gold {
@@ -783,6 +842,10 @@ body:hover .cursor {
   cursor: none;
   transition: var(--transition);
   border-radius: 50%;
+<<<<<<< HEAD
+=======
+  z-index: 5;
+>>>>>>> ngthtuan206
 }
 
 .product-wishlist:hover {
@@ -793,6 +856,12 @@ body:hover .cursor {
 
 .product-info {
   padding: 1.5rem 2rem 2rem;
+<<<<<<< HEAD
+=======
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+>>>>>>> ngthtuan206
 }
 
 .product-cat {
@@ -805,11 +874,25 @@ body:hover .cursor {
 
 .product-name {
   font-family: var(--font-serif);
+<<<<<<< HEAD
   font-size: 1.5rem;
   font-weight: 400;
   color: var(--white);
   margin: 0.5rem 0;
   line-height: 1.2;
+=======
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--white);
+  margin: 0.5rem 0;
+  line-height: 1.25;
+  height: 3.3rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+>>>>>>> ngthtuan206
 }
 
 .product-spec {
@@ -817,9 +900,22 @@ body:hover .cursor {
   color: var(--text-muted);
   line-height: 1.6;
   margin-bottom: 1.2rem;
+<<<<<<< HEAD
 }
 
 .product-price-row {
+=======
+  height: 2.4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-price-row {
+  margin-top: auto;
+>>>>>>> ngthtuan206
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -829,7 +925,11 @@ body:hover .cursor {
 
 .product-price {
   font-family: var(--font-serif);
+<<<<<<< HEAD
   font-size: 1.3rem;
+=======
+  font-size: 1.25rem;
+>>>>>>> ngthtuan206
   color: var(--gold);
   font-weight: 400;
 }
@@ -862,6 +962,10 @@ body:hover .cursor {
   padding: 8rem 6rem;
   overflow: hidden;
   background: var(--dark);
+<<<<<<< HEAD
+=======
+  scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .build-bg {
@@ -987,6 +1091,10 @@ body:hover .cursor {
 .testimonials {
   padding: 7rem 6rem;
   background: var(--deep);
+<<<<<<< HEAD
+=======
+  scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .testi-slider {
@@ -1171,6 +1279,10 @@ body:hover .cursor {
 .footer {
   background: var(--deep);
   border-top: 1px solid rgba(201, 168, 76, 0.12);
+<<<<<<< HEAD
+=======
+  scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .footer-top {
@@ -1680,6 +1792,10 @@ body:hover .cursor {
   position: relative;
   overflow: hidden;
   padding: 0;
+<<<<<<< HEAD
+=======
+  scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .flash-sale::before {
@@ -1774,7 +1890,11 @@ body:hover .cursor {
   background: rgba(201, 168, 76, 0.07);
   border: 1px solid rgba(201, 168, 76, 0.2);
   padding: 0.7rem 1.1rem;
+<<<<<<< HEAD
   min-width: 72px;
+=======
+  width: 80px;
+>>>>>>> ngthtuan206
 }
 
 .countdown-num {
@@ -1831,12 +1951,20 @@ body:hover .cursor {
   display: flex;
   flex-direction: column;
   align-items: center;
+<<<<<<< HEAD
   gap: 0.8rem;
+=======
+  gap: 1.2rem;
+>>>>>>> ngthtuan206
   text-align: center;
   cursor: none;
   transition: background var(--transition), transform var(--transition);
   border: 1px solid rgba(201, 168, 76, 0.04);
   overflow: hidden;
+<<<<<<< HEAD
+=======
+  height: 100%;
+>>>>>>> ngthtuan206
 }
 
 .flash-product-card::after {
@@ -1872,16 +2000,43 @@ body:hover .cursor {
   font-weight: 700;
   letter-spacing: 0.1em;
   padding: 0.22rem 0.6rem;
+<<<<<<< HEAD
 }
 
 .flash-prod-img {
   font-size: 2.5rem;
   line-height: 1;
   filter: drop-shadow(0 2px 12px rgba(201, 168, 76, 0.2));
+=======
+  z-index: 5;
+}
+
+.flash-prod-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.flash-prod-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 15px rgba(201, 168, 76, 0.15));
+  transition: transform 0.5s ease;
+}
+
+.flash-product-card:hover .flash-prod-img img {
+  transform: scale(1.08);
+>>>>>>> ngthtuan206
 }
 
 .flash-prod-name {
   font-family: var(--font-serif);
+<<<<<<< HEAD
   font-size: 1rem;
   font-weight: 400;
   color: var(--white);
@@ -1889,6 +2044,23 @@ body:hover .cursor {
 }
 
 .flash-prod-prices {
+=======
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--white);
+  line-height: 1.4;
+  height: 2.7rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.flash-prod-prices {
+  margin-top: auto;
+>>>>>>> ngthtuan206
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -1904,9 +2076,15 @@ body:hover .cursor {
 
 .flash-new-price {
   font-family: var(--font-serif);
+<<<<<<< HEAD
   font-size: 1.1rem;
   color: #ef4444;
   font-weight: 400;
+=======
+  font-size: 1.2rem;
+  color: #ef4444;
+  font-weight: 500;
+>>>>>>> ngthtuan206
 }
 
 /* ============================================
@@ -1949,7 +2127,12 @@ body:hover .cursor {
   cursor: none;
   transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
   overflow: hidden;
+<<<<<<< HEAD
   min-height: 110px;
+=======
+  min-height: 120px;
+  height: 100%;
+>>>>>>> ngthtuan206
 }
 
 .voucher-card:hover {
@@ -1976,7 +2159,11 @@ body:hover .cursor {
 }
 
 .voucher-left {
+<<<<<<< HEAD
   flex: 0 0 90px;
+=======
+  flex: 0 0 95px;
+>>>>>>> ngthtuan206
   background: linear-gradient(135deg, rgba(201, 168, 76, 0.15) 0%, rgba(201, 168, 76, 0.05) 100%);
   display: flex;
   flex-direction: column;
@@ -2012,7 +2199,11 @@ body:hover .cursor {
 
 .voucher-pct {
   font-family: var(--font-serif);
+<<<<<<< HEAD
   font-size: 1.5rem;
+=======
+  font-size: 1.6rem;
+>>>>>>> ngthtuan206
   font-weight: 400;
   color: var(--gold);
   line-height: 1;
@@ -2028,11 +2219,19 @@ body:hover .cursor {
 
 .voucher-right {
   flex: 1;
+<<<<<<< HEAD
   padding: 1rem 1.2rem 1rem 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 4px;
+=======
+  padding: 1rem 1.4rem 1rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+>>>>>>> ngthtuan206
 }
 
 .voucher-code {
@@ -2044,9 +2243,21 @@ body:hover .cursor {
 }
 
 .voucher-desc {
+<<<<<<< HEAD
   font-size: 0.74rem;
   color: rgba(245, 240, 232, 0.75);
   line-height: 1.5;
+=======
+  font-size: 0.76rem;
+  color: rgba(245, 240, 232, 0.75);
+  line-height: 1.5;
+  height: 2.3rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+>>>>>>> ngthtuan206
 }
 
 .voucher-tag {
