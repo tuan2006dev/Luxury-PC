@@ -17,12 +17,51 @@ public class User {
     private String fullName;
     private String phone;
     private String address;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private java.util.List<UserRole> userRoles;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
+    public enum AuthProvider {
+        LOCAL, GOOGLE, FACEBOOK
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider")
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    @Column(name = "provider_id")
+    private String providerId;
+
     public User() {}
 
+<<<<<<< Updated upstream
+=======
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
+
+    // ===== GETTER & SETTER =====
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
+
+>>>>>>> Stashed changes
     public Integer getId() {
         return id;
     }
@@ -77,6 +116,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public java.util.List<UserRole> getUserRoles() {
+        return userRoles;
+    }
+    public void setUserRoles(java.util.List<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
     public Date getCreatedAt() {

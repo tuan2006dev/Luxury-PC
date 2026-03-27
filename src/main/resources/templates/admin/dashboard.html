@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --deep: #111;
+            --dark: #1a1a1a;
+            --mid: #2a2a2a;
+            --gold: #c9a84c;
+            --gold-l: #e8c97a;
+            --cream: #f5f0e8;
+            --white: #fff;
+            --muted: #888;
+            --red: #ef4444;
+            --green: #22c55e;
+            --sans: 'Montserrat', sans-serif;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background: var(--black); color: var(--cream); font-family: var(--sans); display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--deep); border-right: 1px solid rgba(201,168,76,0.1); padding: 2rem; position: fixed; height: 100vh; }
+        .logo { font-size: 1.5rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 3rem; display: block; text-decoration: none; }
+        .nav-link { display: block; color: var(--muted); padding: 1rem; text-decoration: none; transition: 0.3s; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .nav-link:hover, .nav-link.active { background: rgba(201,168,76,0.05); color: var(--gold); }
+
+        /* Content */
+        .main-content { margin-left: 280px; flex: 1; padding: 3rem; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        .title h1 { font-size: 1.8rem; font-weight: 300; }
+        .title p { color: var(--muted); font-size: 0.8rem; margin-top: 0.5rem; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+        .stat-card { background: var(--dark); padding: 1.5rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; }
+        .stat-label { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 1.4rem; color: var(--gold); font-weight: 600; }
+
+        /* Charts */
+        .chart-container { background: var(--dark); padding: 2rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; margin-bottom: 3rem; }
+
+        /* Tables */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .table-card { background: var(--dark); padding: 1.5rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; }
+        .table-h { font-size: 1.1rem; font-weight: 400; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(201,168,76,0.1); padding-bottom: 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 1rem 0; }
+        td { padding: 1rem 0; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
+        .badge-red { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="/" class="logo">LUXURY</a>
+        <nav>
+            <a href="/admin/dashboard" class="nav-link active">Dashboard</a>
+            <a href="/admin/orders" class="nav-link">Đơn Hàng</a>
+            <a href="/admin/inventory" class="nav-link">Kho Hàng</a>
+            <a href="/admin/products" class="nav-link">Sản Phẩm</a>
+            <a href="/logout" class="nav-link" style="margin-top: 5rem;">Đăng Xuất</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="title">
+                <h1>Hệ Thống Quản Trị</h1>
+                <p>Tổng quan hoạt động kinh doanh Luxury PC</p>
+            </div>
+            <div class="user-info">
+                <span th:text="${#authentication.name}">Admin</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Tổng Doanh Thu</div>
+                <div class="stat-value">540.000.000₫</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Đơn Hàng Mới</div>
+                <div class="stat-value" th:text="${pendingCount}">12</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sản Phẩm Sắp Hết</div>
+                <div class="stat-value" th:text="${lowStock.size()}">3</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Khách Hàng</div>
+                <div class="stat-value">1,240</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="table-h">Biểu Đồ Doanh Thu Theo Tháng</div>
+            <canvas id="revenueChart" height="100"></canvas>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="table-card">
+                <div class="table-h">Sản Phẩm Bán Chạy</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản Phẩm</th>
+                            <th>Số Lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${topProducts}">
+                            <td th:text="${p.name}">RTX 4090</td>
+                            <td th:text="${p.totalQty}">15</td>
+                        </tr>
+                        <tr th:if="${topProducts.empty}">
+                            <td colspan="2">Chưa có dữ liệu bán hàng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-card">
+                <div class="table-h">Cảnh Báo Kho Hàng</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản Phẩm</th>
+                            <th>Tồn Kho</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${lowStock}">
+                            <td th:text="${item.product.name}">CPU i9-14900K</td>
+                            <td th:text="${item.quantity}">2</td>
+                            <td><span class="badge badge-red">Sắp hết</span></td>
+                        </tr>
+                        <tr th:if="${lowStock.empty}">
+                            <td colspan="3">Tất cả sản phẩm đều đủ hàng.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const revenueData = /*[[${revenue}]]*/ [];
+        const labels = revenueData.map(item => item.month);
+        const values = revenueData.map(item => item.revenue);
+
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels.length > 0 ? labels : ['Tháng 1', 'Tháng 2', 'Tháng 3'],
+                datasets: [{
+                    label: 'Doanh Thu (VND)',
+                    data: values.length > 0 ? values : [120000000, 150000000, 180000000],
+                    borderColor: '#c9a84c',
+                    backgroundColor: 'rgba(201, 168, 76, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#888' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#888' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

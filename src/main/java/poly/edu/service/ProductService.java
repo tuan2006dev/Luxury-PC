@@ -29,4 +29,16 @@ public class ProductService {
         return productDAO.findByCategoryId(categoryId);
     }
 
+<<<<<<< Updated upstream
 }
+=======
+    public Product getProductById(Integer id) {
+        return productDAO.findById(id).orElse(null);
+    }
+
+    public List<Product> searchProducts(Integer cid, Double min, Double max, String kw) {
+        return productDAO.searchProducts(cid, min, max, kw);
+    }
+
+}
+>>>>>>> Stashed changes

@@ -160,20 +160,23 @@
   <nav class="navbar">
     <a href="index.html" class="nav-logo">LUXURY<span>PC</span></a>
     <div class="nav-links">
-      <a href="index.html" class="nav-link">Trang Chủ</a>
-      <a href="index.html#products" class="nav-link">Sản Phẩm</a>
-      <a href="build-pc.html" class="nav-link">Build PC</a>
+      <a th:href="@{/}" class="nav-link">Trang Chủ</a>
+      <a th:href="@{/products}" class="nav-link">Sản Phẩm</a>
+      <a href="#" class="nav-link">Build PC</a>
+      <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">Quản Trị</a>
+      <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link">Đăng Nhập</a>
+      <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link">Hồ Sơ</a>
     </div>
-    <button class="nav-cart-btn" onclick="location.href='checkout.html'">⊡ Giỏ Hàng <span id="cart-num">0</span></button>
+    <button class="nav-cart-btn" th:onclick="|location.href='@{/checkout}'|">⊡ Giỏ Hàng <span id="cart-num">0</span></button>
   </nav>
 
   <!-- BREADCRUMB -->
   <div class="breadcrumb">
-    <a href="index.html">Trang chủ</a>
+    <a th:href="@{/}">Trang chủ</a>
     <span>›</span>
-    <a href="#">VGA</a>
+    <a th:href="@{/products(cid=${product.category.id})}" th:text="${product.category.name}">VGA</a>
     <span>›</span>
-    <span class="current">RTX 4090 Titan Edition</span>
+    <span class="current" th:text="${product.name}">RTX 4090 Titan Edition</span>
   </div>
 
   <!-- PRODUCT LAYOUT -->
@@ -183,10 +186,10 @@
     <div class="img-panel">
       <div class="main-img-wrap" id="main-img">
         <div class="img-badge-wrap">
-          <span class="img-badge badge-top">Đỉnh Cao</span>
-          <span class="img-badge badge-new">Mới 2024</span>
+          <span th:if="${product.price > 30000000}" class="img-badge badge-top">Đỉnh Cao</span>
+          <span th:if="${product.stock < 10}" class="img-badge badge-new">Sắp Hết</span>
         </div>
-        🎮
+        <img th:src="@{${product.image != null ? product.image : '/images/placeholder.png'}}" th:alt="${product.name}" style="max-width: 100%; height: auto;"/>
       </div>
       <div class="thumb-row">
         <div class="thumb active" onclick="setImg('🎮',this)">🎮</div>
@@ -198,9 +201,9 @@
 
     <!-- RIGHT: Info -->
     <div class="info-panel">
-      <div class="prod-tag">VGA · NVIDIA · LUXURY Exclusive</div>
-      <h1 class="prod-title">RTX 4090<br/>Titan Edition</h1>
-      <div class="prod-sub">ASUS ROG × LUXURY PC Limited — Chỉ 50 chiếc tại Việt Nam</div>
+      <div class="prod-tag" th:text="${product.category.name} + ' · LUXURY Exclusive'">VGA · NVIDIA · LUXURY Exclusive</div>
+      <h1 class="prod-title" th:text="${product.name}">RTX 4090<br/>Titan Edition</h1>
+      <div class="prod-sub" th:text="${product.description}">ASUS ROG × LUXURY PC Limited — Chỉ 50 chiếc tại Việt Nam</div>
 
       <div class="rating-row">
         <span class="stars">★★★★★</span>
@@ -209,9 +212,9 @@
       </div>
 
       <div class="price-block">
-        <div class="price-main">42.990.000₫</div>
-        <div class="price-old">49.990.000₫</div>
-        <div class="price-save">Tiết kiệm 7.000.000₫</div>
+        <div class="price-main" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">42.990.000₫</div>
+        <div class="price-old" th:text="${#numbers.formatDecimal(product.price * 1.2, 0, 'COMMA', 0, 'POINT')} + '₫'">49.990.000₫</div>
+        <div class="price-save" th:text="'Tiết kiệm ' + ${#numbers.formatDecimal(product.price * 0.2, 0, 'COMMA', 0, 'POINT')} + '₫'">Tiết kiệm 7.000.000₫</div>
         <div class="installment">Trả góp 0%: <b>3.582.500₫/tháng</b> × 12 tháng</div>
       </div>
 
@@ -241,7 +244,7 @@
           <div class="qty-num" id="qty">1</div>
           <button class="qty-btn" onclick="changeQty(1)">+</button>
         </div>
-        <span class="stock-label">● Còn 7 sản phẩm</span>
+        <span class="stock-label" th:text="'● Còn ' + ${product.stock} + ' sản phẩm'">● Còn 7 sản phẩm</span>
       </div>
 
       <div class="action-buttons">

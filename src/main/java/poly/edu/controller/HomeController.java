@@ -12,11 +12,15 @@ public class HomeController {
     @Autowired
     ProductService productService;
 
+    @Autowired
+    poly.edu.service.ReviewService reviewService;
+
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("featuredProducts", productService.getFeaturedProducts());
         model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
         model.addAttribute("allProducts", productService.getAllProducts());
+        model.addAttribute("reviews", reviewService.getLatestReviews());
         return "index";
     }
 }

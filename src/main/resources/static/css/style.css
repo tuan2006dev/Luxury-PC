@@ -515,6 +515,7 @@ body:hover .cursor {
   text-align: center;
 }
 
+<<<<<<< Updated upstream
 /* ============================================
    MARQUEE STRIP
 ============================================ */
@@ -561,6 +562,8 @@ body:hover .cursor {
     transform: translateX(-50%);
   }
 }
+=======
+>>>>>>> Stashed changes
 
 /* ============================================
    STATEMENT
@@ -1936,10 +1939,13 @@ body:hover .cursor {
   transition: transform 0.5s ease;
 }
 
+<<<<<<< Updated upstream
 .flash-product-card:hover .flash-prod-img img {
   transform: scale(1.08);
 }
 
+=======
+>>>>>>> Stashed changes
 .flash-prod-name {
   font-family: var(--font-serif);
   font-size: 0.95rem;
