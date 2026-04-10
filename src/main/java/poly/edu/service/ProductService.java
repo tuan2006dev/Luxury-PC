@@ -29,9 +29,7 @@ public class ProductService {
         return productDAO.findByCategoryId(categoryId);
     }
 
-<<<<<<< Updated upstream
-}
-=======
+
     public Product getProductById(Integer id) {
         return productDAO.findById(id).orElse(null);
     }
@@ -40,5 +38,13 @@ public class ProductService {
         return productDAO.searchProducts(cid, min, max, kw);
     }
 
+    public Product saveProduct(Product product) {
+        return productDAO.save(product);
+    }
+
+    public void deleteProduct(Integer id) {
+        productDAO.deleteById(id);
+    }
+
 }
->>>>>>> Stashed changes
+

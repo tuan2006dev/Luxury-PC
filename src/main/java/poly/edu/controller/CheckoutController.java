@@ -1,15 +1,8 @@
 package poly.edu.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+// CheckoutController đã được hợp nhất vào CartController (Van's version)
+// GET /checkout giờ được xử lý bởi CartController.viewCheckout()
+// để tránh conflict mapping, class này được để trống
+// @Controller
+// public class CheckoutController { ... }
 
-@Controller
-public class CheckoutController {
-
-    @GetMapping("/checkout")
-    public String checkoutPage() {
-        // Trả về file HTML nằm tại
-        // src/main/resources/templates/actions/check-out/checkout.html
-        return "actions/check-out/checkout";
-    }
-}

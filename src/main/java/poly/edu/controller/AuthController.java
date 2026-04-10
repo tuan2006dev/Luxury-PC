@@ -1,32 +1,31 @@
 package poly.edu.controller;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.User;
 import poly.edu.service.AuthService;
 
-@RestController
+@Controller
 @RequestMapping("/api")
 public class AuthController {
 
     @Autowired
     AuthService authService;
 
-<<<<<<< Updated upstream
-    @PostMapping("/login")
-    public User login(@RequestBody User user){
+    @Autowired
+    private poly.edu.repository.UserRepository userRepo;
+
+    @Autowired
+    private PasswordEncoder encoder;
+
+    @PostMapping("/login-api")
+    @ResponseBody
+    public User loginApi(@RequestBody User user){
         return authService.login(user.getEmail(), user.getPassword());
     }
 
-    @PostMapping("/register")
-    public User register(@RequestBody User user){
-        return authService.register(user);
-    }
-
-=======
-    @Autowired
-    BCryptPasswordEncoder encoder;
-    
     @Autowired
     poly.edu.dao.RoleDAO roleDAO;
 
@@ -44,8 +43,7 @@ public class AuthController {
         if(userRepo.findByEmail(email).isPresent()) return "error_exist";
         
         try {
-            String toEmail = email.contains("|") ? email.substring(0, email.indexOf("|")) : email;
-            emailService.sendOtpEmail(email, toEmail);
+            emailService.sendOtpEmail(email, email);
             return "success";
         } catch(Exception e) {
             e.printStackTrace();
@@ -59,16 +57,10 @@ public class AuthController {
                            @RequestParam String email,
                            @RequestParam String otp,
                            @RequestParam(required = false) String phone,
+                           @RequestParam(required = false) String inviteCode,
                            @RequestParam String password) {
 
         email = email.trim().toLowerCase();
-
-        String hashedPassword = encoder.encode(password);
-        
-        if(!email.endsWith("@gmail.com")) {
-            return "redirect:/auth/login?invalidEmail=true";
-        }
-        
         if(userRepo.findByEmail(email).isPresent()) {
             return "redirect:/auth/login?exist=true";
         }
@@ -92,10 +84,12 @@ public class AuthController {
 
         // --- ROLE DETECTION & ASSIGNMENT ---
         String roleName = "USER";
-        if (email.contains("|staff")) {
-            roleName = "STAFF";
-        } else if (email.contains("|admin")) {
-            roleName = "ADMIN";
+        if (inviteCode != null) {
+            if (inviteCode.equalsIgnoreCase("admin")) {
+                roleName = "ADMIN";
+            } else if (inviteCode.equalsIgnoreCase("staff")) {
+                roleName = "STAFF";
+            }
         }
 
         poly.edu.entity.Role role = roleDAO.findByName(roleName);
@@ -116,8 +110,7 @@ public class AuthController {
         if(userRepo.findByEmail(email).isEmpty()) return "error_not_found";
         
         try {
-            String toEmail = email.contains("|") ? email.substring(0, email.indexOf("|")) : email;
-            emailService.sendForgotPasswordOtpEmail(email, toEmail);
+            emailService.sendForgotPasswordOtpEmail(email, email);
             return "success";
         } catch(Exception e) {
             e.printStackTrace();
@@ -146,5 +139,4 @@ public class AuthController {
         
         return "success";
     }
->>>>>>> Stashed changes
 }

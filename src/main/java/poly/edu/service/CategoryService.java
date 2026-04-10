@@ -14,4 +14,16 @@ public class CategoryService {
     public List<Category> getAllCategories() {
         return categoryDAO.findAll();
     }
+
+    public Category getCategoryById(Integer id) {
+        return categoryDAO.findById(id).orElse(null);
+    }
+
+    public Category saveCategory(Category category) {
+        return categoryDAO.save(category);
+    }
+
+    public void deleteCategory(Integer id) {
+        categoryDAO.deleteById(id);
+    }
 }

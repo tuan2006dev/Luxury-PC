@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ReviewDAO extends JpaRepository<Review, Integer> {
     List<Review> findTop10ByOrderByCreatedAtDesc();
+    List<Review> findByProductIdOrderByCreatedAtDesc(Integer productId);
 }

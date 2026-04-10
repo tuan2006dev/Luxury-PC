@@ -37,9 +37,11 @@
             <a href="#" class="nav-link" id="nav-khuyen-mai">Khuyến Mãi</a>
         </div>
         <div class="nav-logo">
-            <span class="logo-Luxury">LUXURY</span>
-            <div class="logo-divider"></div>
-            <span class="logo-pc">PC</span>
+            <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap: inherit;">
+                <span class="logo-Luxury">LUXURY</span>
+                <div class="logo-divider"></div>
+                <span class="logo-pc">PC</span>
+            </a>
         </div>
         <div class="nav-right">
             <a href="#" class="nav-link" id="nav-tin-tuc">Tin Tức</a>
@@ -50,7 +52,7 @@
             <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
             <button class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
                 <span class="cart-icon">⊡</span>
-                <span class="cart-count" id="cart-count">0</span>
+                <span class="cart-count" id="cart-count" th:text="${cartCount}">0</span>
             </button>
         </div>
     </nav>
@@ -84,10 +86,10 @@
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-        <div class="hero-bg">
+        <!-- <div class="hero-bg">
             <img th:src="@{/hero_banner.png}" alt="Luxury PC" class="hero-img" id="hero-img" />
             <div class="hero-overlay"></div>
-        </div>
+        </div> -->
         <div class="hero-content">
 
             <h1 class="hero-title">Được Tạo Ra<br /><em>Để Thống Trị</em></h1>
@@ -131,7 +133,7 @@
                 <div th:each="p : ${flashSaleProducts}" class="flash-product-card" th:id="'fp-' + ${p.id}">
                     <div th:if="${p.stock < 10}" class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
                     <div class="flash-prod-img">
-                        <img th:src="@{${p.image != null ? p.image : '/images/placeholder.png'}}" th:alt="${p.name}" />
+                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" />
                     </div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name" th:text="${p.name}">Core i7-14700K</div>
@@ -249,7 +251,7 @@
             <!-- Featured products from database -->
             <article th:each="p : ${featuredProducts}" class="product-card" th:classappend="${p.price > 20000000 ? 'large' : ''}" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
                 <div class="product-img-wrap">
-                    <img th:src="@{${p.image != null ? p.image : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" />
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" />
                     <div th:if="${p.price > 30000000}" class="product-badge gold" th:text="'Đỉnh Cao'">Đỉnh Cao</div>
                     <button class="product-wishlist" aria-label="Yêu thích">♡</button>
                 </div>
@@ -566,7 +568,7 @@
         </div>
     </div>
 
-    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/script.js(v=2)}"></script>
 </body>
 
 </html>

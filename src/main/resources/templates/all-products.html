@@ -7,7 +7,9 @@
     <title>Luxury PC | Tất Cả Sản Phẩm</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <style>
@@ -204,7 +206,8 @@
         }
 
         /* CURSOR SYSTEM */
-        .cursor, .cursor-follower {
+        .cursor,
+        .cursor-follower {
             position: fixed;
             pointer-events: none;
             z-index: 10000;
@@ -258,7 +261,8 @@
             font-weight: 600;
         }
 
-        .filter-select, .filter-input {
+        .filter-select,
+        .filter-input {
             background: var(--black);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
@@ -269,7 +273,8 @@
             transition: border-color 0.3s ease;
         }
 
-        .filter-select:focus, .filter-input:focus {
+        .filter-select:focus,
+        .filter-input:focus {
             border-color: var(--gold);
         }
 
@@ -316,16 +321,25 @@
 </head>
 
 <body>
+    <!-- LOADING SCREEN -->
+    <div class="loader" id="loader">
+        <div class="loader-inner">
+            <div class="loader-logo">LUXURY </div>
+            <div class="loader-line"></div>
+            <div class="loader-text">PC</div>
+        </div>
+    </div>
+
     <!-- CURSOR -->
     <div class="cursor" id="cursor"></div>
     <div class="cursor-follower" id="cursor-follower"></div>
 
     <!-- NAVIGATION -->
-    <nav class="navbar scrolled" id="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-left">
-            <a th:href="@{/}" class="nav-link">Trang Chủ</a>
-            <a th:href="@{/products}" class="nav-link active">Sản Phẩm</a>
-            <a href="#" class="nav-link">Build PC</a>
+            <a th:href="@{/}" class="nav-link" id="nav-linh-kien">Trang Chủ</a>
+            <a href="#" class="nav-link" id="nav-build-pc">Build PC</a>
+            <a href="#" class="nav-link" id="nav-khuyen-mai">Khuyến Mãi</a>
         </div>
         <div class="nav-logo">
             <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center;">
@@ -335,16 +349,48 @@
             </a>
         </div>
         <div class="nav-right">
-            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">Quản Trị</a>
-            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link">Đăng Nhập</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link">Hồ Sơ</a>
-            <button class="nav-search-btn" id="nav-search-btn">⌕</button>
-            <button class="nav-cart" id="nav-cart">
+            <a href="#" class="nav-link" id="nav-tin-tuc">Tin Tức</a>
+            <a href="#" class="nav-link" id="nav-lien-he">Liên Hệ</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">ADMIN</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link">ĐĂNG NHẬP</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link">HỒ SƠ</a>
+            <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
+            <a href="/cart" class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
                 <span class="cart-icon">⊡</span>
-                <span class="cart-count">0</span>
-            </button>
+                <span class="cart-count" id="cart-count" th:text="${cartCount}">0</span>
+            </a>
+
         </div>
     </nav>
+
+    <!-- SEARCH OVERLAY -->
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-overlay-inner">
+            <div class="search-close-row">
+                <span class="search-brand">LUXURY · PC</span>
+                <button class="search-close" id="search-close" aria-label="Đóng tìm kiếm">✕</button>
+            </div>
+            <div class="search-input-wrap">
+                <span class="search-icon-big">⌕</span>
+                <input type="text" id="search-input" class="search-input"
+                    placeholder="Tìm kiếm linh kiện, thương hiệu..." autocomplete="off"
+                    aria-label="Tìm kiếm sản phẩm" />
+                <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
+            </div>
+            <div class="search-tags">
+                <span class="search-tag-label">Tìm nhanh:</span>
+                <button class="search-tag" data-query="CPU Intel">CPU Intel</button>
+                <button class="search-tag" data-query="RTX 4090">RTX 4090</button>
+                <button class="search-tag" data-query="DDR5">DDR5 RAM</button>
+                <button class="search-tag" data-query="SSD NVMe">SSD NVMe</button>
+                <button class="search-tag" data-query="Màn hình OLED">Màn Hình OLED</button>
+                <button class="search-tag" data-query="Nguồn PSU">Nguồn PSU</button>
+            </div>
+            <div class="search-results" id="search-results">
+                <p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>
+            </div>
+        </div>
+    </div>
 
     <main class="container">
         <header class="page-header">
@@ -359,25 +405,26 @@
                     <label>Danh Mục</label>
                     <select name="cid" class="filter-select">
                         <option value="">Tất Cả Danh Mục</option>
-                        <option th:each="c : ${categories}" 
-                                th:value="${c.id}" 
-                                th:text="${c.name}"
-                                th:selected="${c.id == selectedCid}"></option>
+                        <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"
+                            th:selected="${c.id == selectedCid}"></option>
                     </select>
                 </div>
-                
+
                 <div class="filter-group">
                     <label>Khoảng Giá</label>
                     <div class="price-inputs">
-                        <input type="number" name="min" th:value="${minPrice}" placeholder="Từ..." class="filter-input" />
+                        <input type="number" name="min" th:value="${minPrice}" placeholder="Từ..."
+                            class="filter-input" />
                         <span class="price-sep">-</span>
-                        <input type="number" name="max" th:value="${maxPrice}" placeholder="Đến..." class="filter-input" />
+                        <input type="number" name="max" th:value="${maxPrice}" placeholder="Đến..."
+                            class="filter-input" />
                     </div>
                 </div>
 
                 <div class="filter-group kw">
                     <label>Tìm Kiếm</label>
-                    <input type="text" name="kw" th:value="${keywords}" placeholder="Tên sản phẩm, thông số..." class="filter-input" />
+                    <input type="text" name="kw" th:value="${keywords}" placeholder="Tên sản phẩm, thông số..."
+                        class="filter-input" />
                 </div>
 
                 <button type="submit" class="btn-filter"><span>Áp Dụng</span></button>
@@ -387,18 +434,29 @@
 
         <section class="products-grid">
             <!-- Thymeleaf iteration -->
-            <article th:each="p : ${allProducts}" class="product-card" th:classappend="${p.price > 20000000 ? 'large' : ''}" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
+            <article th:each="p : ${allProducts}" class="product-card"
+                th:classappend="${p.price > 20000000 ? 'large' : ''}" th:id="'prod-' + ${p.id}"
+                th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}"
+                th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
                 <div class="product-img-wrap">
-                    <img th:src="@{${p.image != null ? p.image : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" />
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}"
+                        class="product-img" />
                     <div th:if="${p.price > 30000000}" class="product-badge">Premium</div>
                 </div>
                 <div class="product-info">
                     <span class="product-cat" th:text="${p.category != null ? p.category.name : 'Linh Kiện'}">CPU</span>
                     <h3 class="product-name" th:text="${p.name}">Product Name</h3>
-                    <p class="product-spec" th:text="${p.description}">High performance component for ultimate gaming.</p>
+                    <p class="product-spec" th:text="${p.description}">High performance component for ultimate gaming.
+                    </p>
                     <div class="product-price-row">
-                        <span class="product-price" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</span>
-                        <button class="btn-add-cart" th:data-id="${p.id}" th:data-name="${p.name}" th:data-price="${p.price}"><span>Mua Ngay</span></button>
+                        <span class="product-price"
+                            th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</span>
+                        <form th:action="@{/cart/add}" method="post" style="display:inline;">
+                          <input type="hidden" name="id" th:value="${p.id}" />
+                          <input type="hidden" name="name" th:value="${p.name}" />
+                          <input type="hidden" name="price" th:value="${p.price}" />
+                          <button type="submit" class="btn-add-cart" onclick="event.stopPropagation();"><span>Mua Ngay</span></button>
+                        </form>
                     </div>
                 </div>
             </article>
@@ -413,7 +471,8 @@
 
     <!-- FOOTER -->
     <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
-        <p style="color: var(--muted); font-size: 0.8rem; letter-spacing: 2px;">© 2026 LUXURY PC · DEFINING EXCELLENCE</p>
+        <p style="color: var(--muted); font-size: 0.8rem; letter-spacing: 2px;">© 2026 LUXURY PC · DEFINING EXCELLENCE
+        </p>
     </footer>
 
     <script th:src="@{/js/script.js}"></script>

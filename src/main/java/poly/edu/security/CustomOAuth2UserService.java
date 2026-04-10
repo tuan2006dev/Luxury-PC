@@ -18,6 +18,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private poly.edu.dao.RoleDAO roleDAO;
+
+    @Autowired
+    private poly.edu.dao.UserRoleDAO userRoleDAO;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // Fetch user from Google/Facebook
@@ -87,7 +93,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setAuthProvider(User.AuthProvider.valueOf(registrationId.toUpperCase()));
             user.setProviderId(providerId);
 
-            userRepository.save(user);
+            User savedUser = userRepository.save(user);
+
+            // Assign default USER role
+            poly.edu.entity.Role defaultRole = roleDAO.findByName("USER");
+            if (defaultRole != null) {
+                poly.edu.entity.UserRole ur = new poly.edu.entity.UserRole();
+                ur.setUser(savedUser);
+                ur.setRole(defaultRole);
+                userRoleDAO.save(ur);
+            }
         }
     }
 }

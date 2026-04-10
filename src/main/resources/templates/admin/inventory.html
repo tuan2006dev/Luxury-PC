@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Kho Hàng — Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --black: #0a0a0a;
@@ -23,8 +24,9 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background: var(--black); color: var(--cream); font-family: var(--sans); display: flex; }
         .sidebar { width: 280px; background: var(--deep); border-right: 1px solid rgba(201,168,76,0.1); padding: 2rem; position: fixed; height: 100vh; }
-        .logo { font-size: 1.5rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 3rem; display: block; text-decoration: none; }
-        .nav-link { display: block; color: var(--muted); padding: 1rem; text-decoration: none; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .logo { font-size: 1.5rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 3rem; display: block; text-decoration: none; font-weight: 700; text-align: center;}
+        .nav-link { display: flex; align-items: center; color: var(--muted); padding: 1rem; text-decoration: none; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.9rem; transition: 0.3s; }
+        .nav-link i { width: 25px; font-size: 1.1rem; }
         .nav-link:hover, .nav-link.active { background: rgba(201,168,76,0.05); color: var(--gold); }
         .main-content { margin-left: 280px; flex: 1; padding: 3rem; }
         .table-card { background: var(--dark); padding: 2rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; }
@@ -41,12 +43,14 @@
 </head>
 <body>
     <div class="sidebar">
-        <a href="/" class="logo">LUXURY</a>
+        <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
         <nav>
-            <a href="/admin/dashboard" class="nav-link">Dashboard</a>
-            <a href="/admin/orders" class="nav-link">Đơn Hàng</a>
-            <a href="/admin/inventory" class="nav-link active">Kho Hàng</a>
-            <a href="/admin/products" class="nav-link">Sản Phẩm</a>
+            <a href="/admin/dashboard" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="/admin/orders" class="nav-link"><i class="fa-solid fa-box"></i> Đơn Hàng</a>
+            <a href="/admin/inventory" class="nav-link active"><i class="fa-solid fa-warehouse"></i> Kho Hàng</a>
+            <a href="/admin/categories" class="nav-link"><i class="fa-solid fa-layer-group"></i> Danh Mục</a>
+            <a href="/admin/products" class="nav-link"><i class="fa-solid fa-microchip"></i> Sản Phẩm</a>
+            <a href="/admin/account" class="nav-link"><i class="fa-solid fa-users"></i> Người Dùng</a>
         </nav>
     </div>
     <div class="main-content">

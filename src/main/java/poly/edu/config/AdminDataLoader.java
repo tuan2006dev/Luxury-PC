@@ -2,7 +2,7 @@ package poly.edu.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import poly.edu.dao.*;
 import poly.edu.entity.*;
@@ -27,7 +27,7 @@ public class AdminDataLoader implements CommandLineRunner {
     private InventoryDAO inventoryDAO;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
@@ -43,6 +43,8 @@ public class AdminDataLoader implements CommandLineRunner {
         }
 
         // 2. Seed Sample Orders if empty
+        // BỎ TÍNH NĂNG NÀY ĐỂ TRÁNH RÁC DATABASE CHO TÀI KHOẢN MỚI
+        /*
         if (orderDAO.count() == 0) {
             User user = userDAO.findAll().stream().findFirst().orElse(null);
             if (user != null && !products.isEmpty()) {
@@ -55,6 +57,7 @@ public class AdminDataLoader implements CommandLineRunner {
                 }
             }
         }
+        */
 
         // 3. Ensure Admin user has ADMIN role and BCrypt password
         User admin = userDAO.findByEmail("admin@luxurypc.com");

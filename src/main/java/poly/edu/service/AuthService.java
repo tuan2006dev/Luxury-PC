@@ -1,36 +1,30 @@
 package poly.edu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import poly.edu.dao.UserDAO;
 import poly.edu.entity.User;
-<<<<<<< Updated upstream
-=======
-import poly.edu.repository.UserRepository;
-
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
->>>>>>> Stashed changes
 
 @Service
-public class AuthService {	
+public class AuthService implements UserDetailsService {	
 
     @Autowired
     UserDAO userDAO;
 
-    public User login(String email,String password){
-        return userDAO.findByEmailAndPassword(email,password);
+    public User login(String email, String password){
+        return userDAO.findByEmailAndPassword(email, password);
     }
 
     public User register(User user){
         return userDAO.save(user);
     }
 
-<<<<<<< Updated upstream
-=======
+
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
         User user = userDAO.findByEmail(identifier);
@@ -53,5 +47,5 @@ public class AuthService {
                 .roles(roles.toArray(new String[0]))
                 .build();
     }
->>>>>>> Stashed changes
+
 }

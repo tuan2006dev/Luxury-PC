@@ -730,7 +730,7 @@
           <div class="form-group">
             <label class="form-label" for="reg-email">Email</label>
             <input type="email" id="reg-email" name="email" class="form-input" placeholder="you@email.com"
-              autocomplete="email" />
+              autocomplete="email" required />
             <span class="form-error" id="err-reg-email">Vui lòng nhập email hợp lệ.</span>
           </div>
 
@@ -768,6 +768,11 @@
             </div>
             <span class="form-error" id="err-reg-pw2">Mật khẩu không khớp.</span>
           </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="reg-invite">Mã giới thiệu (Nếu có)</label>
+            <input type="text" id="reg-invite" name="inviteCode" class="form-input" placeholder="không có vui lòng bỏ qua" />
+          </div>
 
           <div class="form-group">
             <label class="form-label" for="reg-otp">Mã xác nhận (OTP)</label>
@@ -775,7 +780,7 @@
               <input type="text" id="reg-otp" name="otp" class="form-input" placeholder="Nhập 6 số" required
                 style="letter-spacing: 0.2rem; text-align: center;" />
               <button type="button" class="btn-gold" style="width: auto; white-space: nowrap; padding: 0.85rem 1rem;"
-                id="btn-send-otp" onclick="sendOtpCode()">Gửi Mã</button>
+                id="btn-send-otp" onclick="sendOtpCode()"><span class="btn-gold-inner">Gửi Mã</span></button>
             </div>
           </div>
 
@@ -888,7 +893,7 @@
         toast('Số điện thoại này đã được sử dụng. Vui lòng dùng số điện thoại khác!');
       } else if (urlParams.has('invalidEmail')) {
         switchTab('register');
-        toast('Vui lòng sử dụng địa chỉ @gmail.com hợp lệ!');
+        toast('Vui lòng sử dụng địa chỉ email hợp lệ!');
       } else if (urlParams.has('invalidOtp')) {
         switchTab('register');
         toast('Mã OTP không chính xác hoặc đã hết hạn!');
@@ -904,6 +909,7 @@
       const phone = document.getElementById('reg-phone').value;
       const pw1 = document.getElementById('reg-pw').value;
       const pw2 = document.getElementById('reg-pw2').value;
+      const inviteCode = document.getElementById('reg-invite').value;
 
       if (pw1 !== pw2) {
         e.preventDefault();
@@ -914,15 +920,7 @@
         setErr('err-reg-pw2', false);
       }
 
-      if (email && !email.toLowerCase().endsWith('@gmail.com')) {
-        e.preventDefault();
-        setErr('err-reg-email', true);
-        document.getElementById('err-reg-email').textContent = 'Vui lòng sử dụng tài khoản @gmail.com.';
-        toast('Chỉ hỗ trợ đăng ký bằng tài khoản @gmail.com!');
-        return;
-      } else {
-        setErr('err-reg-email', false);
-      }
+      setErr('err-reg-email', false);
 
       const phoneRegex = /^(\+84|84|0)(3|5|7|8|9)[0-9]{8}$/;
       if (phone && !phoneRegex.test(phone.replace(/\s+/g, ''))) {
@@ -937,21 +935,25 @@
         toast('Vui lòng nhập đúng 6 số của mã OTP!');
         return;
       }
+      
+      // Since it's a standard form submission, we don't need to manually add inviteCode 
+      // if we ensure the input has name="inviteCode" and it's inside the form.
+      // But we should double check the form mapping.
     });
 
     /* ===== SEND OTP API ===== */
     function sendOtpCode() {
       const emailInput = document.getElementById('reg-email');
       const email = emailInput.value;
-      if (!email || !email.endsWith('@gmail.com')) {
-        toast('Vui lòng nhập Email @gmail.com hợp lệ trước khi lấy mã OTP!');
+      if (!email || !email.includes('@')) {
+        toast('Vui lòng nhập Email hợp lệ trước khi lấy mã OTP!');
         emailInput.focus();
         return;
       }
 
       const btn = document.getElementById('btn-send-otp');
       btn.disabled = true;
-      btn.textContent = 'Đang gửi...';
+      btn.innerHTML = '<span class="btn-gold-inner">Đang gửi...</span>';
 
       fetch('/api/send-otp?email=' + encodeURIComponent(email), { method: 'POST' })
         .then(res => res.text())
@@ -961,31 +963,31 @@
             let countdown = 60;
             const interval = setInterval(() => {
               countdown--;
-              btn.textContent = `Thử lại (${countdown}s)`;
+              btn.innerHTML = `<span class="btn-gold-inner">Thử lại (${countdown}s)</span>`;
               if (countdown <= 0) {
                 clearInterval(interval);
-                btn.textContent = 'Gửi Mã';
+                btn.innerHTML = '<span class="btn-gold-inner">Gửi Mã</span>';
                 btn.disabled = false;
               }
             }, 1000);
           } else if (text === 'error_exist') {
             toast('Email này đã được sử dụng!');
             btn.disabled = false;
-            btn.textContent = 'Gửi Mã';
+            btn.innerHTML = '<span class="btn-gold-inner">Gửi Mã</span>';
           } else if (text === 'error_format') {
-            toast('Vui lòng sử dụng tài khoản @gmail.com!');
+            toast('Vui lòng sử dụng tài khoản email hợp lệ!');
             btn.disabled = false;
-            btn.textContent = 'Gửi Mã';
+            btn.innerHTML = '<span class="btn-gold-inner">Gửi Mã</span>';
           } else {
             toast('Lỗi hệ thống khi gửi email, vui lòng thử lại sau!');
             btn.disabled = false;
-            btn.textContent = 'Gửi Mã';
+            btn.innerHTML = '<span class="btn-gold-inner">Gửi Mã</span>';
           }
         })
         .catch(err => {
           toast('Lỗi kết nối khi lấy mã OTP!');
           btn.disabled = false;
-          btn.textContent = 'Gửi Mã';
+          btn.innerHTML = '<span class="btn-gold-inner">Gửi Mã</span>';
         });
     }
 

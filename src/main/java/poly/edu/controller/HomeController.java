@@ -1,6 +1,8 @@
 package poly.edu.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,18 @@ public class HomeController {
         model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
         model.addAttribute("allProducts", productService.getAllProducts());
         model.addAttribute("reviews", reviewService.getLatestReviews());
+
+        Authentication auth =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        System.out.println("USERNAME: "
+                + auth.getName());
+
+        System.out.println("ROLES: "
+                + auth.getAuthorities());
         return "index";
     }
 }
+
