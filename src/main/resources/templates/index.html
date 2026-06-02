@@ -15,7 +15,6 @@
 </head>
 
 <body>
-
     <!-- LOADING SCREEN -->
     <div class="loader" id="loader">
         <div class="loader-inner">
@@ -24,7 +23,6 @@
             <div class="loader-text">PC</div>
         </div>
     </div>
-
     <!-- CURSOR -->
     <div class="cursor" id="cursor"></div>
     <div class="cursor-follower" id="cursor-follower"></div>
@@ -107,18 +105,21 @@
         <div class="flash-sale-inner">
             <div class="flash-sale-left">
                 <div class="flash-badge">🔥 HOT DEAL</div>
-                <h2 class="flash-title">Flash Sale
+                <h2 class="flash-title" th:if="${flashSale != null}">
+                    <span th:text="${flashSale.name}">Flash Sale</span>
+                </h2>
+                <h2 class="flash-title" th:if="${flashSale == null}">Flash Sale
                     <span class="flash-title-accent">Hôm Nay</span>
                 </h2>
-                <p class="flash-sub">Ưu đãi cực sốc — chỉ áp dụng trong hôm nay. Số lượng có hạn!</p>
+                <p class="flash-sub">Ưu đãi cực sốc — số lượng có hạn!</p>
                 <div class="flash-countdown" id="flash-countdown">
                     <div class="countdown-block">
-                        <span class="countdown-num" id="fs-hours">05</span>
+                        <span class="countdown-num" id="fs-hours">00</span>
                         <span class="countdown-label">Giờ</span>
                     </div>
                     <div class="countdown-sep">:</div>
                     <div class="countdown-block">
-                        <span class="countdown-num" id="fs-minutes">59</span>
+                        <span class="countdown-num" id="fs-minutes">00</span>
                         <span class="countdown-label">Phút</span>
                     </div>
                     <div class="countdown-sep">:</div>
@@ -129,8 +130,28 @@
                 </div>
             </div>
             <div class="flash-products">
-                <!-- Flash products from database -->
-                <div th:each="p : ${flashSaleProducts}" class="flash-product-card" th:id="'fp-' + ${p.id}">
+                <!-- Flash Sale items from database campaign -->
+                <div th:if="${flashSaleItems != null}" th:each="item : ${flashSaleItems}" class="flash-product-card" th:id="'fp-' + ${item.product.id}">
+                    <div class="flash-discount-badge" th:text="'-' + ${item.discountPercent} + '%'">-25%</div>
+                    <div class="flash-prod-img">
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" />
+                    </div>
+                    <div class="flash-prod-info">
+                        <div class="flash-prod-name" th:text="${item.product.name}">Core i7-14700K</div>
+                        <div class="flash-prod-prices">
+                            <span class="flash-old-price" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'" style="text-decoration:line-through;color:var(--muted);font-size:.8rem;margin-right:6px;">15.000.000₫</span>
+                            <span class="flash-new-price" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
+                        </div>
+                        <div style="margin-top:6px;">
+                            <div style="width:100%;height:4px;background:rgba(201,168,76,0.15);border-radius:2px;overflow:hidden;">
+                                <div style="height:100%;background:var(--gold);border-radius:2px;transition:.3s;" th:style="'width:' + ${item.soldPercent} + '%'"></div>
+                            </div>
+                            <div style="font-size:.65rem;color:var(--muted);margin-top:3px;" th:text="'Đã bán ' + ${item.soldCount} + '/' + ${item.saleQuantity}">Đã bán 5/50</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fallback: old flash sale products (stock < 10) -->
+                <div th:if="${flashSaleItems == null and flashSaleProducts != null}" th:each="p : ${flashSaleProducts}" class="flash-product-card" th:id="'fp-' + ${p.id}">
                     <div th:if="${p.stock < 10}" class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
                     <div class="flash-prod-img">
                         <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" />
@@ -276,83 +297,31 @@
             <p class="voucher-section-sub">Nhấn vào voucher để xem chi tiết điều kiện và cách sử dụng.</p>
         </div>
         <div class="voucher-grid">
-            <div class="voucher-card" id="vc-LUXURY10" data-voucher="LUXURY10">
+            <!-- Dynamic vouchers from database -->
+            <div th:each="v : ${activeVouchers}" class="voucher-card" th:id="'vc-' + ${v.code}" th:data-voucher="${v.code}"
+                 th:data-desc="${v.description}"
+                 th:data-apply="${v.category != null ? v.category.name : 'Tất cả sản phẩm'}"
+                 th:data-expire="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}"
+                 th:data-limit="${v.usageLimit != null ? (v.usageLimit - v.usedCount) + ' lượt còn lại' : 'Không giới hạn'}">
                 <div class="voucher-left">
-                    <div class="voucher-pct">10%</div>
-                    <div class="voucher-type">Giảm Giá</div>
+                    <div class="voucher-pct">
+                        <span th:if="${v.discountType.name() == 'PERCENTAGE'}" th:text="${v.discountValue.intValue()} + '%'">10%</span>
+                        <span th:if="${v.discountType.name() == 'FIXED_AMOUNT'}" th:text="${#numbers.formatDecimal(v.discountValue / 1000, 0, 'COMMA', 0, 'POINT')} + 'K'">500K</span>
+                    </div>
+                    <div class="voucher-type" th:text="${v.category != null ? v.category.name : 'Giảm Giá'}">Giảm Giá</div>
                 </div>
                 <div class="voucher-right">
-                    <div class="voucher-code">LUXURY10</div>
-                    <div class="voucher-desc">Giảm 10% cho tất cả đơn hàng</div>
-                    <div class="voucher-tag">Tất cả sản phẩm</div>
+                    <div class="voucher-code" th:text="${v.code}">LUXURY10</div>
+                    <div class="voucher-desc" th:text="${v.description}">Giảm 10% cho tất cả đơn hàng</div>
+                    <div class="voucher-tag" th:text="${v.minOrderAmount != null ? 'Đơn ≥ ' + #numbers.formatDecimal(v.minOrderAmount, 0, 'COMMA', 0, 'POINT') + '₫' : 'Tất cả đơn hàng'}">Tất cả sản phẩm</div>
                 </div>
                 <div class="voucher-scissor">✂</div>
                 <div class="voucher-dots"></div>
             </div>
-            <div class="voucher-card" id="vc-LUXURY15" data-voucher="LUXURY15">
-                <div class="voucher-left">
-                    <div class="voucher-pct">15%</div>
-                    <div class="voucher-type">Giảm Giá</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">LUXURY15</div>
-                    <div class="voucher-desc">Giảm 15% cho đơn từ 10 triệu</div>
-                    <div class="voucher-tag">Đơn ≥ 10.000.000₫</div>
-                </div>
-                <div class="voucher-scissor">✂</div>
-                <div class="voucher-dots"></div>
-            </div>
-            <div class="voucher-card featured" id="vc-vip20" data-voucher="vip20">
-                <div class="voucher-left">
-                    <div class="voucher-pct">20%</div>
-                    <div class="voucher-type">VIP</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">VIP20</div>
-                    <div class="voucher-desc">Giảm 20% dành cho thành viên VIP</div>
-                    <div class="voucher-tag">Thành viên VIP</div>
-                </div>
-                <div class="voucher-scissor">✂</div>
-                <div class="voucher-dots"></div>
-            </div>
-            <div class="voucher-card" id="vc-freeship" data-voucher="freeship">
-                <div class="voucher-left">
-                    <div class="voucher-pct">FREE</div>
-                    <div class="voucher-type">Ship</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">FREESHIP</div>
-                    <div class="voucher-desc">Miễn phí vận chuyển toàn quốc</div>
-                    <div class="voucher-tag">Tất cả đơn hàng</div>
-                </div>
-                <div class="voucher-scissor">✂</div>
-                <div class="voucher-dots"></div>
-            </div>
-            <div class="voucher-card" id="vc-newuser" data-voucher="newuser">
-                <div class="voucher-left">
-                    <div class="voucher-pct">12%</div>
-                    <div class="voucher-type">Mới</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">NEWUSER</div>
-                    <div class="voucher-desc">Ưu đãi chào mừng khách hàng mới</div>
-                    <div class="voucher-tag">Đăng ký lần đầu</div>
-                </div>
-                <div class="voucher-scissor">✂</div>
-                <div class="voucher-dots"></div>
-            </div>
-            <div class="voucher-card" id="vc-cpu500k" data-voucher="cpu500k">
-                <div class="voucher-left">
-                    <div class="voucher-pct">500K</div>
-                    <div class="voucher-type">CPU</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">CPU500K</div>
-                    <div class="voucher-desc">Giảm 500.000₫ khi mua CPU</div>
-                    <div class="voucher-tag">Danh mục CPU</div>
-                </div>
-                <div class="voucher-scissor">✂</div>
-                <div class="voucher-dots"></div>
+
+            <!-- Empty state if no vouchers -->
+            <div th:if="${activeVouchers == null or activeVouchers.isEmpty()}" style="grid-column: span 3; text-align:center; padding:2rem; color:var(--muted);">
+                <p>Hiện chưa có mã khuyến mãi nào. Hãy quay lại sau!</p>
             </div>
         </div>
     </section>
@@ -568,7 +537,11 @@
         </div>
     </div>
 
-    <script th:src="@{/js/script.js(v=2)}"></script>
+    <script th:inline="javascript">
+        // Flash Sale countdown - endTime from database
+        window.flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
+    </script>
+    <script th:src="@{/js/script.js(v=3)}"></script>
 </body>
 
 </html>

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.*;
 import poly.edu.dao.*;
 import poly.edu.repository.UserRepository;
+import poly.edu.service.VoucherService;
+import poly.edu.service.FlashSaleService;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +33,14 @@ public class CartController {
     @Autowired
     private ProductDAO productDAO;
 
+    @Autowired
+    private VoucherService voucherService;
+
+    @Autowired
+    private FlashSaleService flashSaleService;
+
+    @Autowired
+    private poly.edu.service.UserVoucherService userVoucherService;
 
     /**
      * 1. THÊM SẢN PHẨM: Xử lý khi nhấn "THÊM VÀO GIỎ HÀNG"
@@ -140,6 +150,7 @@ public class CartController {
         model.addAttribute("totalPrice", baseTotal);
         model.addAttribute("discountAmt", baseTotal * discountRate);
         model.addAttribute("finalPrice", baseTotal - (baseTotal * discountRate));
+        model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
 
         return "checkout";
     }
@@ -150,6 +161,7 @@ public class CartController {
             @RequestParam("phone") String phone,
             @RequestParam("address") String address,
             @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod,
+            @RequestParam(value = "voucherCode", required = false) String voucherCode,
             HttpSession session,
             @AuthenticationPrincipal Object principal) {
 
@@ -171,7 +183,22 @@ public class CartController {
 
         double baseTotal = calculateTotal(cart.values());
         double discountRate = getDiscountRate(principal);
-        double finalPrice = baseTotal - (baseTotal * discountRate);
+        double priceAfterVip = baseTotal - (baseTotal * discountRate);
+
+        // Áp dụng voucher (chỉ 1 voucher duy nhất)
+        double voucherDiscount = 0;
+        String appliedVoucherCode = null;
+        if (voucherCode != null && !voucherCode.trim().isEmpty() && currentUser != null) {
+            Map<String, Object> validation = voucherService.validateVoucher(voucherCode, priceAfterVip, currentUser);
+            if (Boolean.TRUE.equals(validation.get("valid"))) {
+                voucherDiscount = (double) validation.get("discount");
+                appliedVoucherCode = voucherCode.trim().toUpperCase();
+                // Mark voucher as used in user's wallet
+                userVoucherService.markVoucherAsUsed(currentUser, appliedVoucherCode);
+            }
+        }
+
+        double finalPrice = priceAfterVip - voucherDiscount;
 
         Order order = new Order();
         if (currentUser != null) {
@@ -182,6 +209,8 @@ public class CartController {
         order.setPhone(phone);
         order.setAddress(address);
         order.setTotalPrice(finalPrice);
+        order.setVoucherCode(appliedVoucherCode);
+        order.setDiscountAmount(voucherDiscount);
         order.setStatus("PENDING");
         orderDAO.save(order);
 
@@ -194,6 +223,8 @@ public class CartController {
                 oi.setPrice(item.getPrice());
                 oi.setQuantity(item.getQuantity());
                 orderItemDAO.save(oi);
+                // Cập nhật sold count cho flash sale
+                flashSaleService.incrementSoldCount(item.getId());
             }
         }
 

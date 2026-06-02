@@ -23,6 +23,9 @@ public class ProfileController {
     @Autowired
     private OrderDAO orderDAO;
 
+    @Autowired
+    private poly.edu.service.UserVoucherService userVoucherService;
+
     @GetMapping("/profile")
     public String profile(
             @AuthenticationPrincipal Object principal,
@@ -94,6 +97,10 @@ public class ProfileController {
             // Lịch sử đơn hàng
             java.util.List<poly.edu.entity.Order> userOrders = orderDAO.findByUserIdOrderByCreatedAtDesc(u.getId());
             model.addAttribute("orders", userOrders);
+
+            // Ví Voucher
+            java.util.List<poly.edu.entity.UserVoucher> userVouchers = userVoucherService.getMyVouchers(u);
+            model.addAttribute("vouchers", userVouchers);
 
         } else {
             // fallback
