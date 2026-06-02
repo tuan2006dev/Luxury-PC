@@ -3,133 +3,16 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Luxury PC — Build PC Configurator</title>
+  <title>Luxury PC — 3D PC Configurator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2a2a2a;--gold:#c9a84c;--gold-l:#e8c97a;--cream:#f5f0e8;--white:#fff;--muted:#888;--red:#ef4444;--green:#22c55e;--serif:'Inter',sans-serif;--sans:'Inter',sans-serif;--ease:.4s cubic-bezier(.25,.46,.45,.94);}
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{font-size:16px;scroll-behavior:smooth;}
-    body{background:var(--black);color:var(--cream);font-family:var(--sans);font-weight:400;min-height:100vh;cursor:none;overflow-x:hidden;}
-    a{color:inherit;text-decoration:none;}
-    .cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
-    .cursor-f{position:fixed;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.5;transition:width .25s,height .25s;}
+  
+  <!-- THREE.JS & ORBIT CONTROLS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-    /* NAVBAR */
-    .navbar{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4rem;background:rgba(10,10,10,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,.12);}
-    .nav-logo{font-family:var(--serif);font-size:1.6rem;letter-spacing:.25em;color:var(--gold);}
-    .nav-logo b{font-family:var(--sans);font-size:.65rem;letter-spacing:.5em;color:var(--muted);font-weight:300;margin-left:6px;}
-    .nav-links{display:flex;align-items:center;gap:2rem;}
-    .nav-link{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);transition:color var(--ease);cursor:none;}
-    .nav-link:hover{color:var(--gold);}
-
-    /* HERO */
-    .build-hero{padding:7rem 6rem 4rem;background:var(--deep);border-bottom:1px solid rgba(201,168,76,.1);position:relative;overflow:hidden;}
-    .build-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(201,168,76,.08) 0%,transparent 60%);}
-    .hero-tag{font-size:.62rem;letter-spacing:.45em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;position:relative;}
-    .hero-title{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;color:var(--white);line-height:1.1;margin-bottom:1rem;position:relative;}
-    .hero-title em{color:var(--gold);font-style:italic;}
-    .hero-sub{font-size:.85rem;color:rgba(245,240,232,.5);max-width:520px;line-height:1.8;position:relative;}
-    .hero-deco{position:absolute;right:6rem;top:50%;transform:translateY(-50%);font-family:var(--serif);font-size:12rem;color:rgba(201,168,76,.04);font-weight:300;user-select:none;line-height:1;}
-
-    /* PRESET BUILDS */
-    .preset-section{padding:3rem 6rem;}
-    .section-tag{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;}
-    .section-h{font-family:var(--serif);font-size:1.8rem;font-weight:300;color:var(--white);margin-bottom:1.5rem;}
-    .preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(201,168,76,.07);margin-bottom:3rem;}
-    .preset-card{background:var(--deep);padding:1.8rem;cursor:none;transition:background var(--ease);border:2px solid transparent;}
-    .preset-card:hover,.preset-card.active{background:var(--dark);border-color:var(--gold);}
-    .preset-icon{font-size:2.5rem;margin-bottom:1rem;}
-    .preset-name{font-family:var(--serif);font-size:1.3rem;color:var(--white);margin-bottom:.3rem;}
-    .preset-desc{font-size:.72rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;}
-    .preset-price{font-family:var(--serif);font-size:1.3rem;color:var(--gold);}
-    .preset-badge{display:inline-block;font-size:.55rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:.2rem .5rem;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);color:var(--gold);margin-bottom:.8rem;}
-
-    /* CONFIGURATOR LAYOUT */
-    .config-layout{display:grid;grid-template-columns:1fr 360px;gap:0;min-height:80vh;}
-
-    /* PARTS PANEL */
-    .parts-panel{padding:3rem 6rem;border-right:1px solid rgba(201,168,76,.1);}
-    .parts-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;}
-
-    /* Component slot */
-    .comp-slot{border:1px solid rgba(201,168,76,.1);margin-bottom:1px;transition:border-color var(--ease);}
-    .comp-slot.has-item{border-color:rgba(201,168,76,.25);}
-    .comp-slot.compat-error{border-color:var(--red);}
-    .slot-header{display:flex;align-items:center;gap:1.2rem;padding:1.1rem 1.5rem;cursor:none;background:var(--deep);transition:background var(--ease);}
-    .slot-header:hover{background:var(--dark);}
-    .slot-icon{font-size:1.4rem;width:36px;text-align:center;flex-shrink:0;}
-    .slot-info{flex:1;}
-    .slot-type{font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.15rem;}
-    .slot-name{font-size:.88rem;color:var(--white);font-weight:400;}
-    .slot-price{font-family:var(--serif);font-size:.95rem;color:var(--gold);flex-shrink:0;margin-right:1rem;}
-    .slot-toggle{color:var(--muted);font-size:.8rem;flex-shrink:0;transition:transform var(--ease);}
-    .comp-slot.open .slot-toggle{transform:rotate(180deg);}
-
-    /* Component picker dropdown */
-    .comp-picker{display:none;padding:0 1.5rem 1.2rem;background:var(--deep);}
-    .comp-slot.open .comp-picker{display:block;}
-    .picker-label{font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem;}
-    .picker-list{display:flex;flex-direction:column;gap:.5rem;}
-    .picker-item{display:flex;align-items:center;gap:1rem;padding:.85rem 1rem;background:var(--dark);border:1px solid rgba(201,168,76,.08);cursor:none;transition:border-color var(--ease);}
-    .picker-item:hover{border-color:rgba(201,168,76,.3);}
-    .picker-item.selected{border-color:var(--gold);background:rgba(201,168,76,.04);}
-    .pi-icon{font-size:1.4rem;flex-shrink:0;}
-    .pi-info{flex:1;}
-    .pi-name{font-size:.82rem;color:var(--white);margin-bottom:.12rem;}
-    .pi-spec{font-size:.65rem;color:var(--muted);}
-    .pi-price{font-family:var(--serif);font-size:.92rem;color:var(--gold);flex-shrink:0;}
-    .pi-check{width:18px;height:18px;border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.7rem;color:transparent;transition:var(--ease);}
-    .picker-item.selected .pi-check{background:var(--gold);border-color:var(--gold);color:var(--black);}
-    .compat-badge{font-size:.58rem;padding:.1rem .45rem;margin-left:auto;flex-shrink:0;}
-    .badge-ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green);}
-    .badge-warn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red);}
-
-    /* SUMMARY PANEL */
-    .summary-panel{padding:3rem 2.5rem;background:var(--deep);border-left:1px solid rgba(201,168,76,.1);position:sticky;top:74px;height:calc(100vh - 74px);overflow-y:auto;display:flex;flex-direction:column;}
-    .sum-h{font-family:var(--serif);font-size:1.4rem;font-weight:300;color:var(--white);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(201,168,76,.1);}
-    .sum-list{flex:1;}
-    .sum-item{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid rgba(201,168,76,.06);font-size:.75rem;gap:1rem;}
-    .sum-type{font-size:.57rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.1rem;}
-    .sum-name{color:var(--cream);}
-    .sum-price{color:var(--gold);font-family:var(--serif);font-size:.9rem;flex-shrink:0;}
-    .sum-empty{color:rgba(245,240,232,.25);font-style:italic;font-size:.75rem;}
-
-    /* Performance meter */
-    .perf-section{margin-top:1.5rem;padding:1.2rem;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.1);}
-    .perf-label{font-size:.57rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;}
-    .perf-metric{margin-bottom:.8rem;}
-    .perf-row{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:.35rem;}
-    .perf-bar{height:4px;background:var(--mid);border-radius:2px;overflow:hidden;}
-    .perf-fill{height:100%;background:linear-gradient(90deg,var(--gold-l),var(--gold));border-radius:2px;transition:width .6s ease;}
-
-    /* Total + actions */
-    .sum-total-section{margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(201,168,76,.15);}
-    .sum-total-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.3rem;}
-    .sum-total-lbl{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
-    .sum-total-num{font-family:var(--serif);font-size:2rem;font-weight:300;color:var(--gold);}
-    .sum-count{font-size:.68rem;color:var(--muted);}
-    .btn-full{width:100%;padding:.95rem;border:none;font-family:var(--sans);font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:none;margin-top:.8rem;transition:var(--ease);position:relative;overflow:hidden;}
-    .btn-full.gold{background:var(--gold);color:var(--black);}
-    .btn-full.gold::before{content:'';position:absolute;inset:0;background:var(--gold-l);transform:translateX(-100%);transition:transform var(--ease);}
-    .btn-full.gold:hover::before{transform:translateX(0);}
-    .btn-full.gold span{position:relative;z-index:1;}
-    .btn-full.out{background:none;color:var(--muted);border:1px solid rgba(201,168,76,.15);}
-    .btn-full.out:hover{border-color:rgba(201,168,76,.4);color:var(--cream);}
-
-    /* Compatibility alert */
-    .compat-alert{padding:.8rem 1rem;font-size:.72rem;line-height:1.5;margin-top:.8rem;display:none;}
-    .compat-alert.warn{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);}
-    .compat-alert.ok{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);color:var(--green);}
-
-    /* TOAST */
-    .toast{position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);border:1px solid rgba(201,168,76,.35);color:var(--cream);font-size:.8rem;padding:.9rem 2rem;z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-    @media(max-width:1100px){.config-layout{grid-template-columns:1fr;}.summary-panel{position:static;height:auto;}.parts-panel,.preset-section,.build-hero{padding-left:2rem;padding-right:2rem;}.preset-grid{grid-template-columns:1fr 1fr;}.hero-deco{display:none;}}
-    @media(max-width:640px){.navbar{padding:1rem 1.5rem;}.preset-grid{grid-template-columns:1fr;}}
-  </style>
+  <link rel="stylesheet" th:href="@{/css/build-pc.css}" />
 </head>
 <body>
 <div class="cursor" id="cursor"></div>
@@ -157,26 +40,26 @@
   <div class="section-tag">Cấu Hình Gợi Ý</div>
   <div class="section-h">Chọn Build Phù Hợp</div>
   <div class="preset-grid">
-    <div class="preset-card active" onclick="loadPreset('gaming',this)">
+    <div class="preset-card active" onclick="loadPreset('gaming',this)" id="preset-gaming">
       <div class="preset-badge">Phổ Biến Nhất</div>
       <div class="preset-icon">🎮</div>
       <div class="preset-name">Gaming Beast</div>
       <div class="preset-desc">Tối ưu cho gaming 4K/144Hz. RTX 4090 + i9-14900K — bộ đôi không có đối thủ.</div>
-      <div class="preset-price">từ 74.960.000₫</div>
+      <div class="preset-price">từ 89.990.000₫</div>
     </div>
-    <div class="preset-card" onclick="loadPreset('creator',this)">
+    <div class="preset-card" onclick="loadPreset('creator',this)" id="preset-creator">
       <div class="preset-badge">Cho Sáng Tạo</div>
       <div class="preset-icon">🎨</div>
       <div class="preset-name">Creator Pro</div>
       <div class="preset-desc">Render 8K, 3D animation, AI generation. Workstation đẳng cấp chuyên nghiệp.</div>
-      <div class="preset-price">từ 95.000.000₫</div>
+      <div class="preset-price">từ 92.990.000₫</div>
     </div>
-    <div class="preset-card" onclick="loadPreset('budget',this)">
+    <div class="preset-card" onclick="loadPreset('budget',this)" id="preset-budget">
       <div class="preset-badge">Tối Ưu Chi Phí</div>
       <div class="preset-icon">⚡</div>
       <div class="preset-name">Performance</div>
       <div class="preset-desc">Hiệu năng cao, giá hợp lý. Lý tưởng cho gaming 1440p và làm việc đa nhiệm.</div>
-      <div class="preset-price">từ 32.000.000₫</div>
+      <div class="preset-price">từ 55.990.000₫</div>
     </div>
   </div>
 </div>
@@ -184,405 +67,1373 @@
 <!-- CONFIGURATOR -->
 <div class="config-layout">
 
-  <!-- PARTS PICKER -->
+  <!-- PARTS PICKER (LEFT COLUMN) -->
   <div class="parts-panel">
     <div class="parts-header">
       <div>
         <div class="section-tag">Tùy Chỉnh</div>
-        <div class="section-h" style="margin-bottom:0;">Chọn Linh Kiện</div>
+        <div class="section-h" style="margin-bottom:0;font-size:1.2rem;">Linh Kiện Lắp Ráp</div>
       </div>
       <button onclick="resetBuild()" style="background:none;border:1px solid rgba(201,168,76,.15);color:var(--muted);font-size:.62rem;letter-spacing:.15em;padding:.5rem 1rem;text-transform:uppercase;cursor:none;transition:var(--ease);" onmouseenter="this.style.borderColor='rgba(201,168,76,.4)';this.style.color='var(--cream)'" onmouseleave="this.style.borderColor='rgba(201,168,76,.15)';this.style.color='var(--muted)'">↺ Reset</button>
     </div>
 
-    <!-- CPU -->
-    <div class="comp-slot has-item open" id="slot-cpu">
-      <div class="slot-header" onclick="toggleSlot('cpu')">
-        <div class="slot-icon">⚙️</div>
-        <div class="slot-info"><div class="slot-type">Bộ Xử Lý</div><div class="slot-name" id="sel-cpu-name">Intel Core i9-14900K</div></div>
-        <div class="slot-price" id="sel-cpu-price">18.990.000₫</div>
-        <div class="slot-toggle">▾</div>
-      </div>
-      <div class="comp-picker">
-        <div class="picker-label">Chọn CPU</div>
-        <div class="picker-list">
-          <div class="picker-item selected" onclick="selectComp('cpu',this,'Intel Core i9-14900K','18.990.000₫',18990000,'Chọn đây!','ok')">
-            <span class="pi-icon">⚙️</span>
-            <div class="pi-info"><div class="pi-name">Intel Core i9-14900K</div><div class="pi-spec">24 Cores · 32 Threads · 6.0 GHz · Socket LGA1700</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">18.990.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('cpu',this,'Intel Core i7-14700K','11.475.000₫',11475000,'Hiệu năng tốt, tiết kiệm hơn','ok')">
-            <span class="pi-icon">⚙️</span>
-            <div class="pi-info"><div class="pi-name">Intel Core i7-14700K</div><div class="pi-spec">20 Cores · 28 Threads · 5.6 GHz · Socket LGA1700</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">11.475.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('cpu',this,'AMD Ryzen 9 7950X','16.500.000₫',16500000,'Cần đổi Mainboard AM5!','warn')">
-            <span class="pi-icon">⚙️</span>
-            <div class="pi-info"><div class="pi-name">AMD Ryzen 9 7950X</div><div class="pi-spec">16 Cores · 32 Threads · 5.7 GHz · Socket AM5</div></div>
-            <span class="compat-badge badge-warn">⚠ Cần đổi MB</span>
-            <div class="pi-price">16.500.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-        </div>
+    <!-- Tab Switcher -->
+    <div class="builder-tabs">
+      <button class="builder-tab active" id="tab-custom" onclick="switchTab('custom')">
+        🔧 Build Tự Chọn
+      </button>
+      <button class="builder-tab" id="tab-packages" onclick="switchTab('packages')">
+        📦 Chọn Gói Sẵn
+      </button>
+    </div>
+
+    <!-- Custom slots view -->
+    <div id="custom-builder-view" style="display: block;">
+      <div id="slots-container">
+        <!-- RENDERED BY JAVASCRIPT -->
       </div>
     </div>
 
-    <!-- MAINBOARD -->
-    <div class="comp-slot has-item" id="slot-mb">
-      <div class="slot-header" onclick="toggleSlot('mb')">
-        <div class="slot-icon">🔌</div>
-        <div class="slot-info"><div class="slot-type">Bo Mạch Chủ</div><div class="slot-name" id="sel-mb-name">ASUS ROG Maximus Z790 Apex</div></div>
-        <div class="slot-price" id="sel-mb-price">12.490.000₫</div>
-        <div class="slot-toggle">▾</div>
-      </div>
-      <div class="comp-picker">
-        <div class="picker-label">Chọn Mainboard</div>
-        <div class="picker-list">
-          <div class="picker-item selected" onclick="selectComp('mb',this,'ASUS ROG Maximus Z790 Apex','12.490.000₫',12490000,'','ok')">
-            <span class="pi-icon">🔌</span>
-            <div class="pi-info"><div class="pi-name">ASUS ROG Maximus Z790 Apex</div><div class="pi-spec">LGA1700 · DDR5 · PCIe 5.0 · WiFi 6E</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">12.490.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('mb',this,'MSI MEG Z790 ACE','9.800.000₫',9800000,'','ok')">
-            <span class="pi-icon">🔌</span>
-            <div class="pi-info"><div class="pi-name">MSI MEG Z790 ACE</div><div class="pi-spec">LGA1700 · DDR5 · PCIe 5.0 · WiFi 6E</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">9.800.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('mb',this,'Gigabyte Z790 AORUS Master','8.200.000₫',8200000,'','ok')">
-            <span class="pi-icon">🔌</span>
-            <div class="pi-info"><div class="pi-name">Gigabyte Z790 AORUS Master</div><div class="pi-spec">LGA1700 · DDR5 · PCIe 4.0 · WiFi 6</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">8.200.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-        </div>
-      </div>
+    <!-- Pre-built packages view -->
+    <div id="packages-builder-view" class="packages-container">
+      <!-- RENDERED BY JAVASCRIPT -->
+    </div>
+  </div>
+
+  <!-- VIEWER PANEL (MIDDLE COLUMN) -->
+  <div class="viewer-panel">
+    <div class="viewer-title">
+      <h3 style="font-family:var(--sans);font-weight:300;font-size:1.1rem;color:var(--white);letter-spacing:1px;margin-bottom:2px;">Mô Phỏng 3D Máy Tính</h3>
+      <p style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Giữ chuột trái xoay, chuột phải di chuyển, cuộn để zoom</p>
     </div>
 
-    <!-- GPU -->
-    <div class="comp-slot has-item" id="slot-gpu">
-      <div class="slot-header" onclick="toggleSlot('gpu')">
-        <div class="slot-icon">🎮</div>
-        <div class="slot-info"><div class="slot-type">Card Đồ Họa</div><div class="slot-name" id="sel-gpu-name">RTX 4090 Titan Edition</div></div>
-        <div class="slot-price" id="sel-gpu-price">42.990.000₫</div>
-        <div class="slot-toggle">▾</div>
-      </div>
-      <div class="comp-picker">
-        <div class="picker-label">Chọn GPU</div>
-        <div class="picker-list">
-          <div class="picker-item selected" onclick="selectComp('gpu',this,'RTX 4090 Titan Edition','42.990.000₫',42990000,'','ok')">
-            <span class="pi-icon">🎮</span>
-            <div class="pi-info"><div class="pi-name">RTX 4090 Titan Edition</div><div class="pi-spec">24GB GDDR6X · 16384 CUDA · Cần 850W PSU</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">42.990.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('gpu',this,'RTX 4080 Super','24.500.000₫',24500000,'','ok')">
-            <span class="pi-icon">🎮</span>
-            <div class="pi-info"><div class="pi-name">NVIDIA RTX 4080 Super</div><div class="pi-spec">16GB GDDR6X · 10240 CUDA · Cần 750W PSU</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">24.500.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('gpu',this,'RX 7900 XTX','18.900.000₫',18900000,'','ok')">
-            <span class="pi-icon">🎮</span>
-            <div class="pi-info"><div class="pi-name">AMD Radeon RX 7900 XTX</div><div class="pi-spec">24GB GDDR6 · 6144 SP · Cần 800W PSU</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">18.900.000₫</div>
-            <div class="pi-check">✓</div>
-          </div>
-        </div>
-      </div>
+    <!-- Canvas container -->
+    <div id="three-canvas-container"></div>
+
+    <!-- Canvas controls overlay -->
+    <div class="canvas-overlay-ui">
+      <button class="control-btn active" id="btn-power" onclick="togglePower()">Khởi Động: Bật</button>
+      <button class="control-btn" id="btn-rgb" onclick="cycleRgbMode()">RGB: Rainbow</button>
+      <button class="control-btn" onclick="resetCamera()">Xoay Camera</button>
     </div>
 
-    <!-- RAM -->
-    <div class="comp-slot has-item" id="slot-ram">
-      <div class="slot-header" onclick="toggleSlot('ram')">
-        <div class="slot-icon">💾</div>
-        <div class="slot-info"><div class="slot-type">RAM</div><div class="slot-name" id="sel-ram-name">Corsair Dominator Platinum DDR5</div></div>
-        <div class="slot-price" id="sel-ram-price">6.490.000₫</div>
-        <div class="slot-toggle">▾</div>
-      </div>
-      <div class="comp-picker">
-        <div class="picker-label">Chọn RAM</div>
-        <div class="picker-list">
-          <div class="picker-item selected" onclick="selectComp('ram',this,'Corsair Dominator Platinum DDR5','6.490.000₫',6490000,'','ok')">
-            <span class="pi-icon">💾</span>
-            <div class="pi-info"><div class="pi-name">Corsair Dominator Platinum DDR5</div><div class="pi-spec">32GB (2×16) · DDR5-6000 · CL36</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">6.490.000₫</div><div class="pi-check">✓</div>
+    <!-- AI Advisor Panel -->
+    <div class="ai-advisor-container">
+      <div class="ai-advisor-window" id="ai-chat-window">
+        <div class="ai-header">
+          <div class="ai-info">
+            <div class="ai-avatar">🤖</div>
+            <div class="ai-title-wrap">
+              <span class="ai-title">Luxury AI Advisor</span>
+              <span class="ai-status">Đang trực tuyến</span>
+            </div>
           </div>
-          <div class="picker-item" onclick="selectComp('ram',this,'G.Skill Trident Z5 RGB 64GB','9.800.000₫',9800000,'','ok')">
-            <span class="pi-icon">💾</span>
-            <div class="pi-info"><div class="pi-name">G.Skill Trident Z5 RGB 64GB</div><div class="pi-spec">64GB (2×32) · DDR5-6400 · CL32</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">9.800.000₫</div><div class="pi-check">✓</div>
+          <button class="ai-close-btn" onclick="toggleChatWindow()">✕</button>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages-area">
+          <div class="chat-msg bot">
+            Xin chào! Tôi là Trợ Lý Ảo của Luxury PC. Tôi có thể tư vấn cấu hình phù hợp với nhu cầu và ngân sách của bạn. Hãy chọn một tùy chọn nhanh hoặc nhập câu hỏi bên dưới nhé!
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- SSD -->
-    <div class="comp-slot" id="slot-ssd">
-      <div class="slot-header" onclick="toggleSlot('ssd')">
-        <div class="slot-icon">💿</div>
-        <div class="slot-info"><div class="slot-type">Ổ Cứng SSD</div><div class="slot-name" id="sel-ssd-name" style="color:var(--muted);font-style:italic;">Chưa chọn</div></div>
-        <div class="slot-price" id="sel-ssd-price" style="color:var(--muted);">+</div>
-        <div class="slot-toggle">▾</div>
-      </div>
-      <div class="comp-picker">
-        <div class="picker-label">Chọn SSD</div>
-        <div class="picker-list">
-          <div class="picker-item" onclick="selectComp('ssd',this,'Samsung 990 Pro 2TB','3.360.000₫',3360000,'','ok')">
-            <span class="pi-icon">💿</span>
-            <div class="pi-info"><div class="pi-name">Samsung 990 Pro 2TB</div><div class="pi-spec">NVMe PCIe 4.0 · 7,450 MB/s read · M.2</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">3.360.000₫</div><div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('ssd',this,'WD Black SN850X 1TB','2.100.000₫',2100000,'','ok')">
-            <span class="pi-icon">💿</span>
-            <div class="pi-info"><div class="pi-name">WD Black SN850X 1TB</div><div class="pi-spec">NVMe PCIe 4.0 · 7,300 MB/s read · M.2</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">2.100.000₫</div><div class="pi-check">✓</div>
-          </div>
+        
+        <div class="chat-chips">
+          <button class="chat-chip" onclick="askAdvisorQuick('game')">🎮 PC Gaming 4K</button>
+          <button class="chat-chip" onclick="askAdvisorQuick('graphic')">🖥️ Đồ họa 3D</button>
+          <button class="chat-chip" onclick="askAdvisorQuick('ai')">🧠 AI Station</button>
+          <button class="chat-chip" onclick="askAdvisorQuick('cool')">❄️ Tản Nhiệt</button>
+        </div>
+        
+        <div class="chat-input-row">
+          <input type="text" class="chat-input" id="chat-input-field" placeholder="Nhập câu hỏi của bạn..." onkeypress="handleChatKeyPress(event)">
+          <button class="chat-send-btn" onclick="sendChatMessage()">➔</button>
         </div>
       </div>
+      
+      <button class="ai-advisor-btn" onclick="toggleChatWindow()">🤖</button>
     </div>
+  </div>
 
-    <!-- PSU -->
-    <div class="comp-slot" id="slot-psu">
-      <div class="slot-header" onclick="toggleSlot('psu')">
-        <div class="slot-icon">⚡</div>
-        <div class="slot-info"><div class="slot-type">Nguồn Điện (PSU)</div><div class="slot-name" id="sel-psu-name" style="color:var(--muted);font-style:italic;">Chưa chọn</div></div>
-        <div class="slot-price" id="sel-psu-price" style="color:var(--muted);">+</div>
-        <div class="slot-toggle">▾</div>
-      </div>
-      <div class="comp-picker">
-        <div class="picker-label">Chọn PSU</div>
-        <div class="picker-list">
-          <div class="picker-item" onclick="selectComp('psu',this,'Seasonic Focus GX-1000W','3.850.000₫',3850000,'','ok')">
-            <span class="pi-icon">⚡</span>
-            <div class="pi-info"><div class="pi-name">Seasonic Focus GX-1000W</div><div class="pi-spec">1000W · 80+ Gold · Full Modular</div></div>
-            <span class="compat-badge badge-ok">✓ Đủ cho RTX 4090</span>
-            <div class="pi-price">3.850.000₫</div><div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('psu',this,'Corsair HX1200 Platinum','5.200.000₫',5200000,'','ok')">
-            <span class="pi-icon">⚡</span>
-            <div class="pi-info"><div class="pi-name">Corsair HX1200 Platinum</div><div class="pi-spec">1200W · 80+ Platinum · Full Modular</div></div>
-            <span class="compat-badge badge-ok">✓ Đủ công suất</span>
-            <div class="pi-price">5.200.000₫</div><div class="pi-check">✓</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- COOLING -->
-    <div class="comp-slot" id="slot-cool">
-      <div class="slot-header" onclick="toggleSlot('cool')">
-        <div class="slot-icon">🌬️</div>
-        <div class="slot-info"><div class="slot-type">Tản Nhiệt CPU</div><div class="slot-name" id="sel-cool-name" style="color:var(--muted);font-style:italic;">Chưa chọn</div></div>
-        <div class="slot-price" id="sel-cool-price" style="color:var(--muted);">+</div>
-        <div class="slot-toggle">▾</div>
-      </div>
-      <div class="comp-picker">
-        <div class="picker-label">Chọn Tản Nhiệt</div>
-        <div class="picker-list">
-          <div class="picker-item" onclick="selectComp('cool',this,'Noctua NH-D15 Chromax','1.890.000₫',1890000,'','ok')">
-            <span class="pi-icon">🌬️</span>
-            <div class="pi-info"><div class="pi-name">Noctua NH-D15 Chromax Black</div><div class="pi-spec">Air Cooler · 165W TDP · Dual Fan</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">1.890.000₫</div><div class="pi-check">✓</div>
-          </div>
-          <div class="picker-item" onclick="selectComp('cool',this,'ASUS ROG Ryujin III 360','4.200.000₫',4200000,'','ok')">
-            <span class="pi-icon">🌬️</span>
-            <div class="pi-info"><div class="pi-name">ASUS ROG Ryujin III 360</div><div class="pi-spec">AIO 360mm · LCD Screen · ARGB</div></div>
-            <span class="compat-badge badge-ok">✓ Tương thích</span>
-            <div class="pi-price">4.200.000₫</div><div class="pi-check">✓</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- end parts-panel -->
-
-  <!-- SUMMARY PANEL -->
+  <!-- SUMMARY PANEL (RIGHT COLUMN) -->
   <div class="summary-panel">
     <div class="sum-h">Cấu Hình Của Bạn</div>
+    <div id="pkg-active-badge" style="display: none; font-size: 0.65rem; color: var(--gold); background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.15); padding: 6px 12px; border-radius: 4px; margin-bottom: 12px; align-items: center; gap: 6px;">
+      <span>📦 Đang áp dụng Gói:</span>
+      <strong id="pkg-active-name" style="font-weight: bold;color:var(--white);">Tên gói</strong>
+    </div>
     <div class="sum-list" id="sum-list">
-      <div class="sum-item"><div><div class="sum-type">CPU</div><div class="sum-name" id="sum-cpu">Core i9-14900K</div></div><div class="sum-price" id="sump-cpu">18.990.000₫</div></div>
-      <div class="sum-item"><div><div class="sum-type">Mainboard</div><div class="sum-name" id="sum-mb">ROG Maximus Z790</div></div><div class="sum-price" id="sump-mb">12.490.000₫</div></div>
-      <div class="sum-item"><div><div class="sum-type">GPU</div><div class="sum-name" id="sum-gpu">RTX 4090 Titan</div></div><div class="sum-price" id="sump-gpu">42.990.000₫</div></div>
-      <div class="sum-item"><div><div class="sum-type">RAM</div><div class="sum-name" id="sum-ram">Dominator DDR5 32GB</div></div><div class="sum-price" id="sump-ram">6.490.000₫</div></div>
-      <div class="sum-item"><div><div class="sum-type">SSD</div><div class="sum-name sum-empty" id="sum-ssd">Chưa chọn</div></div><div class="sum-price" id="sump-ssd" style="color:var(--muted);">—</div></div>
-      <div class="sum-item"><div><div class="sum-type">PSU</div><div class="sum-name sum-empty" id="sum-psu">Chưa chọn</div></div><div class="sum-price" id="sump-psu" style="color:var(--muted);">—</div></div>
-      <div class="sum-item"><div><div class="sum-type">Tản Nhiệt</div><div class="sum-name sum-empty" id="sum-cool">Chưa chọn</div></div><div class="sum-price" id="sump-cool" style="color:var(--muted);">—</div></div>
+      <!-- RENDERED BY JAVASCRIPT -->
     </div>
 
     <!-- Performance meters -->
     <div class="perf-section">
       <div class="perf-label">Hiệu Năng Ước Tính</div>
       <div class="perf-metric">
-        <div class="perf-row"><span>Gaming 4K</span><span id="perf-gaming-v">95%</span></div>
-        <div class="perf-bar"><div class="perf-fill" id="perf-gaming" style="width:95%"></div></div>
+        <div class="perf-row"><span>Gaming 4K</span><span id="perf-gaming-v">0%</span></div>
+        <div class="perf-bar"><div class="perf-fill" id="perf-gaming" style="width:0%"></div></div>
       </div>
       <div class="perf-metric">
-        <div class="perf-row"><span>Render / 3D</span><span id="perf-render-v">88%</span></div>
-        <div class="perf-bar"><div class="perf-fill" id="perf-render" style="width:88%"></div></div>
+        <div class="perf-row"><span>Render / 3D</span><span id="perf-render-v">0%</span></div>
+        <div class="perf-bar"><div class="perf-fill" id="perf-render" style="width:0%"></div></div>
       </div>
       <div class="perf-metric">
-        <div class="perf-row"><span>AI / ML</span><span id="perf-ai-v">92%</span></div>
-        <div class="perf-bar"><div class="perf-fill" id="perf-ai" style="width:92%"></div></div>
+        <div class="perf-row"><span>AI / ML</span><span id="perf-ai-v">0%</span></div>
+        <div class="perf-bar"><div class="perf-fill" id="perf-ai" style="width:0%"></div></div>
       </div>
       <div class="perf-metric">
-        <div class="perf-row"><span>Đa Nhiệm</span><span id="perf-multi-v">90%</span></div>
-        <div class="perf-bar"><div class="perf-fill" id="perf-multi" style="width:90%"></div></div>
+        <div class="perf-row"><span>Đa Nhiệm</span><span id="perf-multi-v">0%</span></div>
+        <div class="perf-bar"><div class="perf-fill" id="perf-multi" style="width:0%"></div></div>
       </div>
     </div>
 
-    <div class="compat-alert ok" id="compat-ok" style="display:flex;">✓ Tất cả linh kiện tương thích hoàn toàn</div>
-    <div class="compat-alert warn" id="compat-warn"></div>
+    <div class="compat-alert ok" id="compat-alert" style="display:flex;margin-top:1rem;">
+      <span>✓</span>
+      <span id="compat-msg">Hệ thống đồng bộ hoàn toàn (Compatible).</span>
+    </div>
 
     <div class="sum-total-section">
       <div class="sum-total-row">
         <div class="sum-total-lbl">Tổng Chi Phí</div>
-        <div class="sum-total-num" id="grand-total">80.960.000₫</div>
+        <div class="sum-total-num" id="grand-total">0₫</div>
       </div>
-      <div class="sum-count" id="part-count">4 linh kiện đã chọn</div>
+      <div class="sum-count" id="part-count">0 linh kiện đã chọn</div>
       <button class="btn-full gold" onclick="addBuildToCart()"><span>Thêm Vào Giỏ Hàng</span></button>
       <button class="btn-full out" onclick="saveBuild()" style="margin-top:.5rem;">💾 Lưu Cấu Hình</button>
       <button class="btn-full out" onclick="shareBuild()" style="margin-top:.5rem;">🔗 Chia Sẻ Build</button>
     </div>
   </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- THREE.JS 3D ENGINE & COMPONENT BUILDER -->
 <script>
   // CURSOR
   const cur=document.getElementById('cursor'),curF=document.getElementById('cursor-f');
   let mx=0,my=0,fx=0,fy=0;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
   (function loop(){fx+=(mx-fx)*.12;fy+=(my-fy)*.12;curF.style.left=fx+'px';curF.style.top=fy+'px';requestAnimationFrame(loop);})();
-  document.querySelectorAll('a,button,.picker-item,.slot-header,.preset-card').forEach(el=>{
-    el.addEventListener('mouseenter',()=>{cur.style.transform='translate(-50%,-50%) scale(2)';curF.style.width='60px';curF.style.height='60px';});
-    el.addEventListener('mouseleave',()=>{cur.style.transform='translate(-50%,-50%) scale(1)';curF.style.width='36px';curF.style.height='36px';});
-  });
+
+  function registerCursorEvents() {
+    document.querySelectorAll('a,button,.picker-item,.slot-header,.preset-card,.chat-chip,.builder-tab,.control-btn').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{cur.style.transform='translate(-50%,-50%) scale(2)';curF.style.width='60px';curF.style.height='60px';});
+      el.addEventListener('mouseleave',()=>{cur.style.transform='translate(-50%,-50%) scale(1)';curF.style.width='36px';curF.style.height='36px';});
+    });
+  }
 
   // TOAST
   let toastT;
   function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000);}
+  function showToast(m){toast(m);}
 
-  // BUILD STATE
-  let build={
-    cpu:{name:'Intel Core i9-14900K',price:18990000},
-    mb:{name:'ASUS ROG Maximus Z790 Apex',price:12490000},
-    gpu:{name:'RTX 4090 Titan Edition',price:42990000},
-    ram:{name:'Corsair Dominator Platinum DDR5',price:6490000},
-    ssd:null,psu:null,cool:null
+  // MOCK DATABASE
+  const MOCK_DB = {
+    cpu: {
+      title: "Bộ Xử Lý (CPU)",
+      icon: "⚙️",
+      items: [
+        { id: "cpu-i9", name: "Intel Core i9-14900K", price: 18990000, tdp: 125, socket: "LGA1700", coolerType: "liquid", desc: "24 Cores · 32 Threads · 6.0 GHz · Socket LGA1700" },
+        { id: "cpu-i7", name: "Intel Core i7-14700K", price: 11475000, tdp: 125, socket: "LGA1700", coolerType: "air", desc: "20 Cores · 28 Threads · 5.6 GHz · Socket LGA1700" },
+        { id: "cpu-r9", name: "AMD Ryzen 9 7950X", price: 16500000, tdp: 170, socket: "AM5", coolerType: "liquid", desc: "16 Cores · 32 Threads · 5.7 GHz · Socket AM5" }
+      ]
+    },
+    mb: {
+      title: "Bo Mạch Chủ (Mainboard)",
+      icon: "🔌",
+      items: [
+        { id: "mb-apex", name: "ASUS ROG Maximus Z790 Apex", price: 12490000, tdp: 50, socket: "LGA1700", color: 0x111116, desc: "LGA1700 · DDR5 · PCIe 5.0 · WiFi 6E" },
+        { id: "mb-ace", name: "MSI MEG Z790 ACE", price: 9800000, tdp: 50, socket: "LGA1700", color: 0x1c1a24, desc: "LGA1700 · DDR5 · PCIe 5.0 · WiFi 6E" },
+        { id: "mb-master", name: "Gigabyte Z790 AORUS Master", price: 8200000, tdp: 45, socket: "LGA1700", color: 0x152215, desc: "LGA1700 · DDR5 · PCIe 4.0 · WiFi 6" }
+      ]
+    },
+    gpu: {
+      title: "Card Đồ Họa (GPU)",
+      icon: "🎮",
+      items: [
+        { id: "gpu-4090", name: "RTX 4090 Titan Edition", price: 42990000, tdp: 450, length: 3.2, thickness: 1.2, desc: "24GB GDDR6X · 16384 CUDA · Cần 850W PSU" },
+        { id: "gpu-4080s", name: "NVIDIA RTX 4080 Super", price: 24500000, tdp: 320, length: 2.8, thickness: 0.9, desc: "16GB GDDR6X · 10240 CUDA · Cần 750W PSU" },
+        { id: "gpu-7900xtx", name: "AMD Radeon RX 7900 XTX", price: 18900000, tdp: 355, length: 2.9, thickness: 1.0, desc: "24GB GDDR6 · 6144 SP · Cần 800W PSU" }
+      ]
+    },
+    ram: {
+      title: "Bộ Nhớ RAM",
+      icon: "💾",
+      items: [
+        { id: "ram-corsair", name: "Corsair Dominator Platinum DDR5", price: 6490000, tdp: 15, sticks: 2, desc: "32GB (2×16) · DDR5-6000 · CL36" },
+        { id: "ram-gskill", name: "G.Skill Trident Z5 RGB 64GB", price: 9800000, tdp: 20, sticks: 4, desc: "64GB (2×32) · DDR5-6400 · CL32" }
+      ]
+    },
+    ssd: {
+      title: "Ổ Cứng SSD",
+      icon: "💿",
+      items: [
+        { id: "ssd-990", name: "Samsung 990 Pro 2TB", price: 3360000, tdp: 8, desc: "NVMe PCIe 4.0 · 7,450 MB/s read · M.2" },
+        { id: "ssd-sn850x", name: "WD Black SN850X 1TB", price: 2100000, tdp: 7, desc: "NVMe PCIe 4.0 · 7,300 MB/s read · M.2" }
+      ]
+    },
+    psu: {
+      title: "Nguồn Điện (PSU)",
+      icon: "⚡",
+      items: [
+        { id: "psu-focus", name: "Seasonic Focus GX-1000W", price: 3850000, wattage: 1000, desc: "1000W · 80+ Gold · Full Modular" },
+        { id: "psu-hx1200", name: "Corsair HX1200 Platinum", price: 5200000, wattage: 1200, desc: "1200W · 80+ Platinum · Full Modular" }
+      ]
+    },
+    cool: {
+      title: "Tản Nhiệt CPU",
+      icon: "🌬️",
+      items: [
+        { id: "cool-noctua", name: "Noctua NH-D15 Chromax Black", price: 1890000, tdp: 0, coolerType: "air", desc: "Air Cooler · 165W TDP · Dual Fan" },
+        { id: "cool-ryujin", name: "ASUS ROG Ryujin III 360", price: 4200000, tdp: 15, coolerType: "liquid", desc: "AIO 360mm · LCD Screen · ARGB" }
+      ]
+    }
   };
 
-  // TOGGLE SLOT
-  function toggleSlot(id){
-    const slot=document.getElementById('slot-'+id);
-    slot.classList.toggle('open');
-  }
-
-  // SELECT COMPONENT
-  function selectComp(type,el,name,priceStr,priceNum,msg,compat){
-    const slot=document.getElementById('slot-'+type);
-    slot.querySelectorAll('.picker-item').forEach(p=>p.classList.remove('selected'));
-    el.classList.add('selected');
-    build[type]={name,price:priceNum};
-    document.getElementById('sel-'+type+'-name').textContent=name;
-    document.getElementById('sel-'+type+'-name').style.color='var(--white)';
-    document.getElementById('sel-'+type+'-name').style.fontStyle='normal';
-    document.getElementById('sel-'+type+'-price').textContent=priceStr;
-    document.getElementById('sel-'+type+'-price').style.color='var(--gold)';
-    slot.classList.add('has-item');
-    // Summary update
-    const shortName=name.length>22?name.substring(0,22)+'…':name;
-    document.getElementById('sum-'+type).textContent=shortName;
-    document.getElementById('sum-'+type).className='sum-name';
-    document.getElementById('sump-'+type).textContent=priceStr;
-    document.getElementById('sump-'+type).style.color='var(--gold)';
-    if(compat==='warn'){
-      document.getElementById('compat-ok').style.display='none';
-      document.getElementById('compat-warn').style.display='block';
-      document.getElementById('compat-warn').textContent='⚠ '+name+': '+msg;
-      slot.classList.add('compat-error');
-    } else {
-      slot.classList.remove('compat-error');
-      checkAllCompat();
+  // MOCK PACKAGES
+  const MOCK_PACKAGES = [
+    {
+      id: "pkg-gaming-beast",
+      name: "Gaming Beast Preset",
+      price: 89990000,
+      desc: "Tối ưu cho gaming 4K/144Hz. Bộ đôi RTX 4090 + i9-14900K không đối thủ.",
+      rgbMode: "CYBERPUNK",
+      parts: {
+        cpu: "cpu-i9",
+        mb: "mb-apex",
+        gpu: "gpu-4090",
+        ram: "ram-corsair",
+        ssd: "ssd-990",
+        psu: "psu-hx1200",
+        cool: "cool-ryujin"
+      }
+    },
+    {
+      id: "pkg-creator-pro",
+      name: "Creator Pro Preset",
+      price: 92990000,
+      desc: "Chuyên dụng cho đồ họa 3D render 8K, kiến trúc AI Workstation chuyên nghiệp.",
+      rgbMode: "RAINBOW",
+      parts: {
+        cpu: "cpu-i9",
+        mb: "mb-apex",
+        gpu: "gpu-4090",
+        ram: "ram-gskill",
+        ssd: "ssd-990",
+        psu: "psu-hx1200",
+        cool: "cool-ryujin"
+      }
+    },
+    {
+      id: "pkg-performance",
+      name: "Performance Preset",
+      price: 55990000,
+      desc: "Tối ưu chi phí và hiệu năng. Chiến mượt game 2K và xử lý đa nhiệm mượt mà.",
+      rgbMode: "GOLDEN",
+      parts: {
+        cpu: "cpu-i7",
+        mb: "mb-master",
+        gpu: "gpu-4080s",
+        ram: "ram-corsair",
+        ssd: "ssd-sn850x",
+        psu: "psu-focus",
+        cool: "cool-noctua"
+      }
     }
-    updateTotal();
-    updatePerf();
-    toast('✓ Đã chọn: '+name);
+  ];
+
+  // Current State
+  let buildState = { cpu: null, mb: null, gpu: null, ram: null, ssd: null, psu: null, cool: null };
+  let powerOn = true;
+  let rgbModes = ["RAINBOW", "CYBERPUNK", "GOLDEN", "OFF"];
+  let rgbModeIndex = 0;
+  let activeTab = 'custom';
+  let currentSelectedPackageId = null;
+  let threeJsReady = false;
+
+  // THREE.JS variables
+  let scene, camera, renderer, controls;
+  let caseMesh, motherboardMesh, gpuMesh, ramMeshes = [], liquidCoolerMesh, airCoolerMesh, fanMeshes = [], rgbLights = [];
+  let rgbColorTimer = 0;
+
+  // 2. INITIATE THREE.JS 3D SCENE
+  function init3D() {
+    const container = document.getElementById('three-canvas-container');
+    if (!container) return;
+
+    if (typeof THREE === 'undefined') {
+      container.innerHTML = `
+        <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; background: #0a0a0f; border: 1px solid rgba(201, 168, 76, 0.15); border-radius: 8px; color: var(--cream); z-index: 10;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🌐</div>
+          <h4 style="font-family: var(--sans); font-size: 1.1rem; color: var(--gold); margin-bottom: 0.5rem;">Không tải được thư viện 3D</h4>
+          <p style="font-size: 0.75rem; color: var(--muted); max-width: 320px; line-height: 1.4;">Vui lòng kết nối mạng Internet hoặc kiểm tra xem trình duyệt có chặn các liên kết từ thư viện CDN (Three.js) hay không.</p>
+        </div>
+      `;
+      return;
+    }
+
+    try {
+      const width = container.clientWidth;
+      const height = container.clientHeight || 500;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x030305);
+      scene.fog = new THREE.FogExp2(0x030305, 0.05);
+
+      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      camera.position.set(4, 3, 5);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxPolarAngle = Math.PI / 2 + 0.1;
+      controls.minDistance = 2.5;
+      controls.maxDistance = 10;
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 10, 7);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 1024;
+      directionalLight.shadow.mapSize.height = 1024;
+      scene.add(directionalLight);
+
+      const caseSpotLight = new THREE.SpotLight(0xffffff, 1.5, 8, Math.PI/3, 0.5, 1);
+      caseSpotLight.position.set(0, 1.5, 0);
+      scene.add(caseSpotLight);
+
+      // Create base procedural parts
+      buildProceduralCase();
+      buildProceduralMotherboard();
+      buildProceduralRAM();
+      buildProceduralCoolers();
+      buildProceduralGPU();
+
+      window.addEventListener('resize', onWindowResize);
+
+      threeJsReady = true;
+    } catch (err) {
+      console.error("Three.js WebGL Init Error:", err);
+      container.innerHTML = `
+        <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; background: #0a0a0f; border: 1px solid rgba(201, 168, 76, 0.15); border-radius: 8px; color: var(--cream); z-index: 10;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">⚠️</div>
+          <h4 style="font-family: var(--sans); font-size: 1.1rem; color: var(--gold); margin-bottom: 0.5rem;">Trình duyệt không hỗ trợ WebGL 3D</h4>
+          <p style="font-size: 0.75rem; color: var(--muted); max-width: 320px; line-height: 1.4;">WebGL bị vô hiệu hóa hoặc không khả dụng trên thiết bị này. Vui lòng bật gia tốc phần cứng trong cài đặt trình duyệt hoặc đổi sang trình duyệt khác.</p>
+        </div>
+      `;
+    }
   }
 
-  function checkAllCompat(){
-    const hasWarn=document.querySelector('.comp-slot.compat-error');
-    document.getElementById('compat-ok').style.display=hasWarn?'none':'flex';
-    document.getElementById('compat-warn').style.display=hasWarn?'block':'none';
+  function onWindowResize() {
+    const container = document.getElementById('three-canvas-container');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
   }
 
-  // UPDATE TOTAL
-  function updateTotal(){
-    let total=0,count=0;
-    Object.values(build).forEach(v=>{if(v){total+=v.price;count++;}});
-    document.getElementById('grand-total').textContent=total.toLocaleString('vi-VN')+'₫';
-    document.getElementById('part-count').textContent=count+' linh kiện đã chọn';
+  // 3. BUILD PROCEDURAL 3D MESHES
+  function buildProceduralCase() {
+    // PSU Shroud / Case bottom base
+    const shroudGeo = new THREE.BoxGeometry(3.2, 0.5, 1.6);
+    const shroudMat = new THREE.MeshStandardMaterial({ color: 0x111116, roughness: 0.7, metalness: 0.8 });
+    const shroud = new THREE.Mesh(shroudGeo, shroudMat);
+    shroud.position.y = -0.75;
+    scene.add(shroud);
+
+    // Backplate plate
+    const backGeo = new THREE.BoxGeometry(0.1, 1.8, 1.6);
+    const backMat = new THREE.MeshStandardMaterial({ color: 0x0c0c10, roughness: 0.8, metalness: 0.8 });
+    const back = new THREE.Mesh(backGeo, backMat);
+    back.position.set(-1.55, 0.4, 0);
+    scene.add(back);
+
+    // Front fans panels (Case front)
+    const frontFrameGeo = new THREE.BoxGeometry(0.2, 1.8, 0.1);
+    const frontFrame = new THREE.Mesh(frontFrameGeo, backMat);
+    frontFrame.position.set(1.55, 0.4, 0.75);
+    scene.add(frontFrame);
+
+    // Glass side panel
+    const glassGeo = new THREE.BoxGeometry(3.1, 1.8, 0.05);
+    const glassMat = new THREE.MeshPhysicalMaterial({
+      color: 0x7dd3fc,
+      transparent: true,
+      opacity: 0.18,
+      roughness: 0.05,
+      transmission: 0.9,
+      ior: 1.5,
+      thickness: 0.2
+    });
+    const glass = new THREE.Mesh(glassGeo, glassMat);
+    glass.position.set(0, 0.4, 0.8);
+    scene.add(glass);
+
+    buildCaseFans();
   }
 
-  // UPDATE PERF (mock based on GPU/CPU)
-  function updatePerf(){
-    const gpuP=build.gpu?build.gpu.price:0;
-    const cpuP=build.cpu?build.cpu.price:0;
-    const gaming=Math.min(99,Math.round(40+gpuP/580000));
-    const render=Math.min(99,Math.round(35+gpuP/650000+cpuP/350000));
-    const ai=Math.min(99,Math.round(40+gpuP/560000));
-    const multi=Math.min(99,Math.round(45+cpuP/260000+gpuP/900000));
-    ['gaming','render','ai','multi'].forEach((k,i)=>{
-      const v=[gaming,render,ai,multi][i];
-      document.getElementById('perf-'+k).style.width=v+'%';
-      document.getElementById('perf-'+k+'-v').textContent=v+'%';
+  function buildCaseFans() {
+    const positions = [
+      new THREE.Vector3(1.5, 0.9, 0),
+      new THREE.Vector3(1.5, 0.3, 0),
+      new THREE.Vector3(1.5, -0.3, 0),
+      new THREE.Vector3(-1.4, 0.6, 0)
+    ];
+
+    positions.forEach((pos, idx) => {
+      const fanGroup = new THREE.Group();
+      fanGroup.position.copy(pos);
+      if (idx < 3) {
+        fanGroup.rotation.y = Math.PI / 2;
+      }
+
+      const frameGeo = new THREE.BoxGeometry(0.1, 0.5, 0.5);
+      const frameMat = new THREE.MeshStandardMaterial({ color: 0x111116, roughness: 0.9 });
+      const frame = new THREE.Mesh(frameGeo, frameMat);
+      fanGroup.add(frame);
+
+      const bladesGroup = new THREE.Group();
+      bladesGroup.name = "blades";
+      
+      const hubGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.06, 8);
+      const rgbMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0x00ffff,
+        emissiveIntensity: 0.8,
+        roughness: 0.1
+      });
+      const hub = new THREE.Mesh(hubGeo, rgbMat);
+      hub.rotation.z = Math.PI / 2;
+      bladesGroup.add(hub);
+      
+      const fanLight = new THREE.PointLight(0x00ffff, 0.6, 1.5);
+      fanLight.name = "rgb-light";
+      fanGroup.add(fanLight);
+      rgbLights.push(fanLight);
+
+      for (let i = 0; i < 5; i++) {
+        const bladeGeo = new THREE.BoxGeometry(0.02, 0.18, 0.08);
+        const bladeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.65 });
+        const blade = new THREE.Mesh(bladeGeo, bladeMat);
+        blade.position.y = 0.12;
+        
+        const wrapper = new THREE.Group();
+        wrapper.rotation.x = (i * Math.PI * 2) / 5;
+        wrapper.add(blade);
+        bladesGroup.add(wrapper);
+      }
+
+      fanGroup.add(bladesGroup);
+      scene.add(fanGroup);
+      fanMeshes.push(fanGroup);
     });
   }
 
-  // PRESET LOADS
-  function loadPreset(type,card){
-    document.querySelectorAll('.preset-card').forEach(c=>c.classList.remove('active'));
-    card.classList.add('active');
-    if(type==='gaming'){
-      toast('🎮 Đã tải cấu hình Gaming Beast!');
-    } else if(type==='creator'){
-      toast('🎨 Đã tải cấu hình Creator Pro!');
+  function buildProceduralMotherboard() {
+    const pcbGeo = new THREE.BoxGeometry(0.05, 1.4, 1.2);
+    const pcbMat = new THREE.MeshStandardMaterial({ color: 0x111116, roughness: 0.8, metalness: 0.2 });
+    motherboardMesh = new THREE.Mesh(pcbGeo, pcbMat);
+    motherboardMesh.position.set(-1.45, 0.4, 0);
+    scene.add(motherboardMesh);
+
+    const ioGeo = new THREE.BoxGeometry(0.12, 0.6, 0.25);
+    const ioMat = new THREE.MeshStandardMaterial({ color: 0x22222a, roughness: 0.4, metalness: 0.9 });
+    const io = new THREE.Mesh(ioGeo, ioMat);
+    io.position.set(0.05, 0.35, -0.45);
+    motherboardMesh.add(io);
+
+    const socketGeo = new THREE.BoxGeometry(0.05, 0.25, 0.25);
+    const socketMat = new THREE.MeshStandardMaterial({ color: 0x33333b, metalness: 0.9 });
+    const socket = new THREE.Mesh(socketGeo, socketMat);
+    socket.position.set(0.03, 0.25, 0);
+    motherboardMesh.add(socket);
+  }
+
+  function buildProceduralRAM() {
+    const zPositions = [-0.15, -0.19, -0.23, -0.27];
+    zPositions.forEach((zOffset, idx) => {
+      const slotGeo = new THREE.BoxGeometry(0.08, 0.3, 0.02);
+      const slotMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.9 });
+      const slot = new THREE.Mesh(slotGeo, slotMat);
+      slot.position.set(-1.38, 0.65, zOffset);
+      scene.add(slot);
+
+      const diffGeo = new THREE.BoxGeometry(0.06, 0.28, 0.01);
+      const diffMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0xff00ff,
+        emissiveIntensity: 1.0,
+        roughness: 0.2
+      });
+      const diffuser = new THREE.Mesh(diffGeo, diffMat);
+      diffuser.position.x = 0.02;
+      slot.add(diffuser);
+      ramMeshes.push(diffuser);
+    });
+  }
+
+  function buildProceduralCoolers() {
+    // 1. AIO LIQUID PUMP
+    liquidCoolerMesh = new THREE.Group();
+    liquidCoolerMesh.position.set(-1.38, 0.65, 0);
+
+    const pumpGeo = new THREE.CylinderGeometry(0.13, 0.13, 0.08, 16);
+    const pumpMat = new THREE.MeshStandardMaterial({ color: 0x1a1a24, roughness: 0.3, metalness: 0.9 });
+    const pumpBody = new THREE.Mesh(pumpGeo, pumpMat);
+    pumpBody.rotation.z = Math.PI / 2;
+    liquidCoolerMesh.add(pumpBody);
+
+    const ringGeo = new THREE.TorusGeometry(0.09, 0.015, 8, 24);
+    const ringMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0x00ffff,
+      emissiveIntensity: 1.2,
+      roughness: 0.1
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.position.x = 0.045;
+    ring.rotation.y = Math.PI / 2;
+    liquidCoolerMesh.add(ring);
+    
+    const pumpLight = new THREE.PointLight(0x00ffff, 0.8, 1.2);
+    pumpLight.name = "rgb-light";
+    pumpLight.position.x = 0.05;
+    liquidCoolerMesh.add(pumpLight);
+    rgbLights.push(pumpLight);
+
+    const tubeCurve1 = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, 0.05),
+      new THREE.Vector3(0.3, 0.3, 0.1),
+      new THREE.Vector3(0.5, 0.8, 0.1),
+      new THREE.Vector3(0.2, 1.0, 0.05)
+    ]);
+    const tubeGeo1 = new THREE.TubeGeometry(tubeCurve1, 16, 0.025, 8, false);
+    const tubeMat = new THREE.MeshStandardMaterial({ color: 0x08080a, roughness: 0.9 });
+    const tube1 = new THREE.Mesh(tubeGeo1, tubeMat);
+    liquidCoolerMesh.add(tube1);
+
+    const tubeCurve2 = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, -0.05),
+      new THREE.Vector3(0.3, 0.3, -0.1),
+      new THREE.Vector3(0.5, 0.8, -0.1),
+      new THREE.Vector3(0.2, 1.0, -0.05)
+    ]);
+    const tubeGeo2 = new THREE.TubeGeometry(tubeCurve2, 16, 0.025, 8, false);
+    const tube2 = new THREE.Mesh(tubeGeo2, tubeMat);
+    liquidCoolerMesh.add(tube2);
+
+    scene.add(liquidCoolerMesh);
+
+    // 2. AIR DUAL TOWER COOLER
+    airCoolerMesh = new THREE.Group();
+    airCoolerMesh.position.set(-1.38, 0.65, 0);
+
+    const towerGeo1 = new THREE.BoxGeometry(0.25, 0.45, 0.4);
+    const towerMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.1 });
+    const tower1 = new THREE.Mesh(towerGeo1, towerMat);
+    tower1.position.set(0.15, 0, 0.12);
+    airCoolerMesh.add(tower1);
+
+    const tower2 = new THREE.Mesh(towerGeo1, towerMat);
+    tower2.position.set(0.15, 0, -0.12);
+    airCoolerMesh.add(tower2);
+
+    const airFanGeo = new THREE.BoxGeometry(0.1, 0.4, 0.4);
+    const airFanMat = new THREE.MeshStandardMaterial({ color: 0x42281a, roughness: 0.7 });
+    const airFan = new THREE.Mesh(airFanGeo, airFanMat);
+    airFan.position.set(0.15, 0, 0);
+    airCoolerMesh.add(airFan);
+
+    scene.add(airCoolerMesh);
+
+    liquidCoolerMesh.visible = false;
+    airCoolerMesh.visible = false;
+  }
+
+  function buildProceduralGPU() {
+    gpuMesh = new THREE.Group();
+    gpuMesh.position.set(-0.9, 0.3, 0);
+
+    const cardGeo = new THREE.BoxGeometry(0.9, 0.28, 2.5);
+    const cardMat = new THREE.MeshStandardMaterial({ color: 0x121218, roughness: 0.4, metalness: 0.8 });
+    const body = new THREE.Mesh(cardGeo, cardMat);
+    gpuMesh.add(body);
+
+    const backplateGeo = new THREE.BoxGeometry(0.9, 0.02, 2.45);
+    const backplateMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.2, metalness: 0.9 });
+    const backplate = new THREE.Mesh(backplateGeo, backplateMat);
+    backplate.position.y = 0.15;
+    gpuMesh.add(backplate);
+
+    const stripGeo = new THREE.BoxGeometry(0.02, 0.1, 2.2);
+    const stripMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0x00ffff,
+      emissiveIntensity: 1.2,
+      roughness: 0.1
+    });
+    const rgbStrip = new THREE.Mesh(stripGeo, stripMat);
+    rgbStrip.position.set(0.46, 0.02, 0);
+    gpuMesh.add(rgbStrip);
+    ramMeshes.push(rgbStrip);
+
+    for (let i = -1; i <= 1; i++) {
+      const fanRimGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.02, 16);
+      const fanRimMat = new THREE.MeshStandardMaterial({ color: 0x08080a });
+      const rim = new THREE.Mesh(fanRimGeo, fanRimMat);
+      rim.position.set(0, -0.15, i * 0.7);
+      rim.rotation.x = Math.PI / 2;
+      gpuMesh.add(rim);
+    }
+
+    scene.add(gpuMesh);
+    gpuMesh.visible = false;
+  }
+
+  // 4. ANIMATION FRAME LOOP
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!threeJsReady) return;
+
+    if (powerOn) {
+      fanMeshes.forEach(fan => {
+        const blades = fan.getObjectByName("blades");
+        if (blades) {
+          blades.rotation.x += 0.22;
+        }
+      });
+    }
+
+    if (powerOn) {
+      rgbColorTimer += 0.015;
+      
+      let r = 0, g = 0, b = 0;
+      const currentMode = rgbModes[rgbModeIndex];
+
+      if (currentMode === "RAINBOW") {
+        r = Math.sin(rgbColorTimer) * 0.5 + 0.5;
+        g = Math.sin(rgbColorTimer + Math.PI*2/3) * 0.5 + 0.5;
+        b = Math.sin(rgbColorTimer + Math.PI*4/3) * 0.5 + 0.5;
+      } else if (currentMode === "CYBERPUNK") {
+        if (Math.sin(rgbColorTimer * 2) > 0) {
+          r = 1.0; g = 0.0; b = 0.6;
+        } else {
+          r = 0.0; g = 0.8; b = 1.0;
+        }
+      } else if (currentMode === "GOLDEN") {
+        r = 0.85 + Math.sin(rgbColorTimer * 3) * 0.15;
+        g = 0.65 + Math.sin(rgbColorTimer * 3) * 0.1;
+        b = 0.2;
+      }
+
+      const colorObj = new THREE.Color(r, g, b);
+
+      ramMeshes.forEach(mesh => {
+        mesh.material.emissive.copy(colorObj);
+        mesh.material.emissiveIntensity = 1.2;
+      });
+
+      rgbLights.forEach(light => {
+        light.color.copy(colorObj);
+        light.intensity = 1.2;
+      });
+
+      if (liquidCoolerMesh.visible) {
+        const ring = liquidCoolerMesh.children[1];
+        if (ring) ring.rotation.z += 0.01;
+      }
     } else {
-      toast('⚡ Đã tải cấu hình Performance!');
+      const blackColor = new THREE.Color(0, 0, 0);
+      ramMeshes.forEach(mesh => {
+        mesh.material.emissive.copy(blackColor);
+        mesh.material.emissiveIntensity = 0.0;
+      });
+      rgbLights.forEach(light => {
+        light.intensity = 0.0;
+      });
+    }
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  // 5. INTERACT & SYNC COMPONENT SELECTIONS TO 3D MODEL
+  function selectComp(slotKey, el, name, priceStr, priceNum, msg, compat) {
+    const slotData = MOCK_DB[slotKey];
+    const item = slotData.items.find(i => i.name === name);
+    if (!item) return;
+
+    buildState[slotKey] = item;
+
+    // Update UI elements
+    const slot = document.getElementById('slot-'+slotKey);
+    if (slot) {
+      slot.querySelectorAll('.picker-item').forEach(p=>p.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('sel-'+slotKey+'-name').textContent=name;
+      document.getElementById('sel-'+slotKey+'-name').style.color='var(--white)';
+      document.getElementById('sel-'+slotKey+'-name').style.fontStyle='normal';
+      document.getElementById('sel-'+slotKey+'-price').textContent=priceStr;
+      document.getElementById('sel-'+slotKey+'-price').style.color='var(--gold)';
+      slot.classList.add('has-item');
+    }
+
+    if (compat==='warn') {
+      slot.classList.add('compat-error');
+    } else {
+      slot.classList.remove('compat-error');
+    }
+
+    // 3D Model Sync
+    if (threeJsReady) {
+      if (slotKey === 'cool') {
+        if (item.coolerType === 'liquid') {
+          liquidCoolerMesh.visible = true;
+          airCoolerMesh.visible = false;
+        } else {
+          liquidCoolerMesh.visible = false;
+          airCoolerMesh.visible = true;
+        }
+      }
+      else if (slotKey === 'mb') {
+        motherboardMesh.material.color.setHex(item.color);
+      }
+      else if (slotKey === 'gpu') {
+        gpuMesh.visible = true;
+        gpuMesh.scale.set(1, item.thickness, item.length);
+      }
+      else if (slotKey === 'ram') {
+        for (let i = 0; i < ramMeshes.length; i++) {
+          ramMeshes[i].parent.visible = (i < item.sticks);
+        }
+      }
+    }
+
+    setTimeout(() => {
+      if (slot && slot.classList.contains('open')) {
+        slot.classList.remove('open');
+      }
+    }, 300);
+
+    recalculateStats();
+    toast('✓ Đã lắp linh kiện: ' + name);
+  }
+
+  // --- TAB SWITCHING & PACKAGES ---
+  function switchTab(tabId) {
+    activeTab = tabId;
+    
+    document.getElementById('tab-custom').classList.toggle('active', tabId === 'custom');
+    document.getElementById('tab-packages').classList.toggle('active', tabId === 'packages');
+
+    document.getElementById('custom-builder-view').style.display = tabId === 'custom' ? 'block' : 'none';
+    document.getElementById('packages-builder-view').style.display = tabId === 'packages' ? 'flex' : 'none';
+
+    showToast(tabId === 'custom' ? "🔧 Chuyển sang chỉnh sửa linh kiện tự chọn" : "📦 Chọn các cấu hình PC đồng bộ sẵn");
+  }
+
+  function renderPackages() {
+    const container = document.getElementById('packages-builder-view');
+    container.innerHTML = '';
+
+    MOCK_PACKAGES.forEach(pkg => {
+      const isSelected = currentSelectedPackageId === pkg.id;
+      
+      const cpuItem = MOCK_DB.cpu.items.find(i => i.id === pkg.parts.cpu);
+      const gpuItem = MOCK_DB.gpu.items.find(i => i.id === pkg.parts.gpu);
+      const ramItem = MOCK_DB.ram.items.find(i => i.id === pkg.parts.ram);
+
+      const cpuName = cpuItem ? cpuItem.name.split(' ')[0] + ' ' + cpuItem.name.split(' ').slice(-1) : '';
+      const gpuName = gpuItem ? gpuItem.name.replace('NVIDIA ', '').replace(' Edition', '') : '';
+      const ramName = ramItem ? ramItem.name.split(' ')[0] + ' ' + (ramItem.sticks * 16) + 'GB' : '';
+
+      let rawSum = 0;
+      for (let slot in pkg.parts) {
+        const itemId = pkg.parts[slot];
+        const item = MOCK_DB[slot].items.find(i => i.id === itemId);
+        if (item) rawSum += item.price;
+      }
+      const savings = rawSum - pkg.price;
+
+      const card = document.createElement('div');
+      card.className = `package-card ${isSelected ? 'selected' : ''}`;
+      card.id = `pkg-card-${pkg.id}`;
+      card.onclick = () => selectPackage(pkg.id);
+
+      card.innerHTML = `
+        <div class="pkg-title">${pkg.name}</div>
+        <div class="pkg-desc">${pkg.desc}</div>
+        
+        <div class="pkg-specs-preview">
+          <span class="pkg-spec-badge">⚙️ ${cpuName}</span>
+          <span class="pkg-spec-badge">🎮 ${gpuName}</span>
+          <span class="pkg-spec-badge">💾 ${ramName}</span>
+        </div>
+
+        <div class="pkg-price-row">
+          <div>
+            <span class="pkg-price">${pkg.price.toLocaleString('vi-VN')}₫</span>
+          </div>
+          ${savings > 0 ? `<span class="pkg-savings">Tiết kiệm ${(savings/1000000).toFixed(1)}Tr₫</span>` : ''}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+    registerCursorEvents();
+  }
+
+  function checkPackageMatch() {
+    for (let pkg of MOCK_PACKAGES) {
+      let match = true;
+      for (let slot in pkg.parts) {
+        if (!buildState[slot] || buildState[slot].id !== pkg.parts[slot]) {
+          match = false;
+          break;
+        }
+      }
+      if (match) return pkg;
+    }
+    return null;
+  }
+
+  function selectPackage(pkgId) {
+    const pkg = MOCK_PACKAGES.find(p => p.id === pkgId);
+    if (!pkg) return;
+
+    currentSelectedPackageId = pkg.id;
+
+    // Update state
+    for (let slotKey in pkg.parts) {
+      const itemId = pkg.parts[slotKey];
+      const item = MOCK_DB[slotKey].items.find(i => i.id === itemId);
+      buildState[slotKey] = item;
+    }
+
+    // Sync selected items highlights in slots picker
+    for (let slotKey in MOCK_DB) {
+      const slotEl = document.getElementById('slot-'+slotKey);
+      if (slotEl) {
+        const item = buildState[slotKey];
+        if (item) {
+          slotEl.classList.add('has-item');
+          document.getElementById('sel-'+slotKey+'-name').textContent=item.name;
+          document.getElementById('sel-'+slotKey+'-name').style.color='var(--white)';
+          document.getElementById('sel-'+slotKey+'-name').style.fontStyle='normal';
+          document.getElementById('sel-'+slotKey+'-price').textContent=item.price.toLocaleString('vi-VN')+'₫';
+          document.getElementById('sel-'+slotKey+'-price').style.color='var(--gold)';
+          
+          slotEl.querySelectorAll('.picker-item').forEach(pi => {
+            const piName = pi.querySelector('.pi-name').textContent;
+            pi.classList.toggle('selected', piName === item.name);
+          });
+        }
+      }
+    }
+
+    // Sync 3D Parts
+    if (threeJsReady) {
+      // Cooler
+      const coolItem = buildState.cool;
+      if (coolItem) {
+        if (coolItem.coolerType === 'liquid') {
+          liquidCoolerMesh.visible = true;
+          airCoolerMesh.visible = false;
+        } else {
+          liquidCoolerMesh.visible = false;
+          airCoolerMesh.visible = true;
+        }
+      }
+
+      // MB
+      if (buildState.mb) motherboardMesh.material.color.setHex(buildState.mb.color);
+
+      // GPU
+      if (buildState.gpu) {
+        gpuMesh.visible = true;
+        gpuMesh.scale.set(1, buildState.gpu.thickness, buildState.gpu.length);
+      }
+
+      // RAM
+      if (buildState.ram) {
+        for (let i = 0; i < ramMeshes.length; i++) {
+          ramMeshes[i].parent.visible = (i < buildState.ram.sticks);
+        }
+      }
+
+      // RGB mode theme
+      const modeIdx = rgbModes.indexOf(pkg.rgbMode);
+      if (modeIdx !== -1) {
+        rgbModeIndex = modeIdx;
+        const rgbBtn = document.getElementById('btn-rgb');
+        if (rgbBtn) rgbBtn.innerText = `RGB: ${pkg.rgbMode}`;
+      }
+      powerOn = true;
+      const powerBtn = document.getElementById('btn-power');
+      if (powerBtn) {
+        powerBtn.innerText = "Khởi Động: Bật";
+        powerBtn.classList.add('active');
+      }
+
+      animateCameraTransition();
+    }
+
+    // Sync Preset cards highlights
+    document.querySelectorAll('.preset-card').forEach(c=>c.classList.remove('active'));
+    if (pkgId === 'pkg-gaming-beast') document.getElementById('preset-gaming').classList.add('active');
+    else if (pkgId === 'pkg-creator-pro') document.getElementById('preset-creator').classList.add('active');
+    else if (pkgId === 'pkg-performance') document.getElementById('preset-budget').classList.add('active');
+
+    renderPackages();
+    recalculateStats();
+
+    showToast(`📦 Đã áp dụng Gói: ${pkg.name}`);
+  }
+
+  function animateCameraTransition() {
+    if (!threeJsReady) return;
+    const startRadius = 6;
+    let angle = 0;
+    const duration = 80;
+    let frame = 0;
+
+    function step() {
+      if (frame < duration) {
+        angle = (frame / duration) * Math.PI * 2 + Math.PI/4;
+        camera.position.x = Math.cos(angle) * startRadius * 0.8;
+        camera.position.z = Math.sin(angle) * startRadius * 0.8;
+        camera.position.y = 2 + Math.sin(frame / 10) * 0.5;
+        frame++;
+        controls.update();
+        requestAnimationFrame(step);
+      } else {
+        camera.position.set(4, 3, 5);
+        controls.update();
+      }
+    }
+    step();
+  }
+
+  // 6. TOGGLE POWER & CAM RESET
+  function togglePower() {
+    powerOn = !powerOn;
+    const btn = document.getElementById('btn-power');
+    if (btn) {
+      btn.innerText = powerOn ? "Khởi Động: Bật" : "Khởi Động: Tắt";
+      btn.classList.toggle('active', powerOn);
+    }
+    showToast(powerOn ? "⚡ Bật nguồn: Hệ thống 3D sáng quạt quay!" : "🔌 Tắt nguồn: Dừng toàn bộ hệ thống.");
+  }
+
+  function cycleRgbMode() {
+    if (!powerOn) return;
+    rgbModeIndex = (rgbModeIndex + 1) % rgbModes.length;
+    const currentMode = rgbModes[rgbModeIndex];
+    const btn = document.getElementById('btn-rgb');
+    if (btn) btn.innerText = `RGB: ${currentMode}`;
+    showToast(`Chế độ RGB: ${currentMode}`);
+  }
+
+  function resetCamera() {
+    if (!threeJsReady) return;
+    const targetAngle = camera.position.x > 0 ? -4 : 4;
+    let count = 0;
+    function pan() {
+      if (count < 30) {
+        camera.position.x += (targetAngle - camera.position.x) * 0.1;
+        camera.position.z += (3 - camera.position.z) * 0.1;
+        count++;
+        controls.update();
+        requestAnimationFrame(pan);
+      }
+    }
+    pan();
+  }
+
+  // 7. RENDER SLOTS LIST
+  function renderSlots() {
+    const container = document.getElementById('slots-container');
+    container.innerHTML = '';
+
+    for (let slotKey in MOCK_DB) {
+      const slotData = MOCK_DB[slotKey];
+      const selectedItem = buildState[slotKey];
+
+      const card = document.createElement('div');
+      card.id = `slot-card-${slotKey}`;
+      card.className = `comp-slot ${selectedItem ? 'has-item' : ''}`;
+
+      let itemsHtml = '';
+      slotData.items.forEach(item => {
+        const isSelected = selectedItem && selectedItem.name === item.name;
+        itemsHtml += `
+          <div class="picker-item ${isSelected ? 'selected' : ''}" onclick="selectCompWrapper('${slotKey}', this, '${item.name}', '${item.price.toLocaleString('vi-VN')}₫', ${item.price})">
+            <span class="pi-icon">${slotData.icon}</span>
+            <div class="pi-info">
+              <div class="pi-name">${item.name}</div>
+              <div class="pi-spec">${item.desc}</div>
+            </div>
+            <span class="compat-badge badge-ok">✓ Ok</span>
+            <div class="pi-price">${item.price.toLocaleString('vi-VN')}₫</div>
+            <div class="pi-check">✓</div>
+          </div>
+        `;
+      });
+
+      card.innerHTML = `
+        <div class="slot-header" onclick="toggleSlot('${slotKey}')">
+          <div class="slot-icon">${slotData.icon}</div>
+          <div class="slot-info">
+            <div class="slot-type">${slotData.title}</div>
+            <div class="slot-name ${!selectedItem ? 'sum-empty' : ''}" id="sel-${slotKey}-name" style="${!selectedItem ? 'color:var(--muted);font-style:italic;' : ''}">
+              ${selectedItem ? selectedItem.name : 'Chưa chọn'}
+            </div>
+          </div>
+          <div class="slot-price" id="sel-${slotKey}-price" style="${!selectedItem ? 'color:var(--muted);' : ''}">
+            ${selectedItem ? selectedItem.price.toLocaleString('vi-VN') + '₫' : '+'}
+          </div>
+          <div class="slot-toggle">▾</div>
+        </div>
+        <div class="comp-picker">
+          <div class="picker-label">Chọn linh kiện</div>
+          <div class="picker-list" id="parts-list-${slotKey}">
+            ${itemsHtml}
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    }
+    registerCursorEvents();
+  }
+
+  function selectCompWrapper(slotKey, el, name, priceStr, priceNum) {
+    selectComp(slotKey, el, name, priceStr, priceNum, '', 'ok');
+  }
+
+  function toggleSlot(id) {
+    const slot = document.getElementById('slot-card-'+id);
+    const isOpen = slot.classList.contains('open');
+    document.querySelectorAll('.comp-slot').forEach(s => s.classList.remove('open'));
+    if (!isOpen) {
+      slot.classList.add('open');
     }
   }
 
-  function resetBuild(){
+  // 8. ESTIMATE AND BENCHMARK CALCULATIONS
+  function recalculateStats() {
+    let totalPrice = 0;
+    let totalTdp = 0;
+    let psuWattage = 0;
+    let count = 0;
+
+    const listContainer = document.getElementById('sum-list');
+    listContainer.innerHTML = '';
+
+    for (let slotKey in MOCK_DB) {
+      const item = buildState[slotKey];
+      if (item) {
+        totalPrice += item.price;
+        if (item.tdp) totalTdp += item.tdp;
+        if (slotKey === 'psu' && item.wattage) psuWattage = item.wattage;
+        count++;
+
+        // Add to summary list
+        const shortName = item.name.length > 22 ? item.name.substring(0, 22) + '…' : item.name;
+        listContainer.innerHTML += `
+          <div class="sum-item">
+            <div>
+              <div class="sum-type">${MOCK_DB[slotKey].title}</div>
+              <div class="sum-name">${shortName}</div>
+            </div>
+            <div class="sum-price">${item.price.toLocaleString('vi-VN')}₫</div>
+          </div>
+        `;
+      } else {
+        listContainer.innerHTML += `
+          <div class="sum-item">
+            <div>
+              <div class="sum-type">${MOCK_DB[slotKey].title}</div>
+              <div class="sum-name sum-empty">Chưa chọn</div>
+            </div>
+            <div class="sum-price" style="color:var(--muted);">—</div>
+          </div>
+        `;
+      }
+    }
+
+    const matchedPkg = checkPackageMatch();
+    const pkgBadge = document.getElementById('pkg-active-badge');
+    if (matchedPkg) {
+      currentSelectedPackageId = matchedPkg.id;
+      totalPrice = matchedPkg.price;
+      if (pkgBadge) {
+        pkgBadge.style.display = 'flex';
+        document.getElementById('pkg-active-name').textContent = matchedPkg.name;
+      }
+    } else {
+      currentSelectedPackageId = null;
+      if (pkgBadge) {
+        pkgBadge.style.display = 'none';
+      }
+    }
+
+    document.getElementById('grand-total').textContent = totalPrice.toLocaleString('vi-VN') + '₫';
+    document.getElementById('part-count').textContent = `${count} linh kiện đã chọn`;
+
+    // Socket matching alert
+    const cpu = buildState.cpu;
+    const mb = buildState.mb;
+    const compatAlert = document.getElementById('compat-alert');
+    const compatMsg = document.getElementById('compat-msg');
+
+    if (cpu && mb && cpu.socket !== mb.socket) {
+      compatAlert.className = 'compat-alert warn';
+      compatAlert.style.display = 'block';
+      compatMsg.innerHTML = `Lỗi Socket: CPU ${cpu.name} (${cpu.socket}) không khớp với Mainboard ${mb.name} (${mb.socket})!`;
+      if (document.getElementById('slot-card-cpu')) document.getElementById('slot-card-cpu').classList.add('compat-error');
+      if (document.getElementById('slot-card-mb')) document.getElementById('slot-card-mb').classList.add('compat-error');
+    } else {
+      compatAlert.className = 'compat-alert ok';
+      compatAlert.style.display = 'flex';
+      compatMsg.textContent = 'Tất cả linh kiện tương thích hoàn toàn';
+      if (cpu && document.getElementById('slot-card-cpu')) document.getElementById('slot-card-cpu').classList.remove('compat-error');
+      if (mb && document.getElementById('slot-card-mb')) document.getElementById('slot-card-mb').classList.remove('compat-error');
+    }
+
+    calculateBenchmarks();
+  }
+
+  function calculateBenchmarks() {
+    const cpu = buildState.cpu;
+    const gpu = buildState.gpu;
+    const ram = buildState.ram;
+
+    let gamingScore = 0;
+    let renderScore = 0;
+    let aiScore = 0;
+    let multiScore = 0;
+
+    if (gpu) {
+      if (gpu.id === 'gpu-4090') gamingScore += 65;
+      else if (gpu.id === 'gpu-4080s') gamingScore += 48;
+      else gamingScore += 38;
+    }
+    if (cpu) {
+      if (cpu.id === 'cpu-i9') { gamingScore += 30; renderScore += 55; aiScore += 35; multiScore += 50; }
+      else if (cpu.id === 'cpu-r9') { gamingScore += 27; renderScore += 58; aiScore += 32; multiScore += 52; }
+      else { gamingScore += 22; renderScore += 40; aiScore += 24; multiScore += 38; }
+    }
+    if (gpu) {
+      if (gpu.id === 'gpu-4090') { renderScore += 38; aiScore += 60; multiScore += 38; }
+      else if (gpu.id === 'gpu-4080s') { renderScore += 28; aiScore += 42; multiScore += 28; }
+      else { renderScore += 20; aiScore += 32; multiScore += 20; }
+    }
+    if (ram) {
+      if (ram.id === 'ram-gskill') { gamingScore += 4; renderScore += 6; aiScore += 3; multiScore += 8; }
+      else { gamingScore += 2; renderScore += 3; aiScore += 1; multiScore += 4; }
+    }
+
+    gamingScore = Math.min(99, gamingScore);
+    renderScore = Math.min(99, renderScore);
+    aiScore = Math.min(99, aiScore);
+    multiScore = Math.min(99, multiScore);
+
+    document.getElementById('perf-gaming-v').textContent = `${gamingScore}%`;
+    document.getElementById('perf-gaming').style.width = `${gamingScore}%`;
+
+    document.getElementById('perf-render-v').textContent = `${renderScore}%`;
+    document.getElementById('perf-render').style.width = `${renderScore}%`;
+
+    document.getElementById('perf-ai-v').textContent = `${aiScore}%`;
+    document.getElementById('perf-ai').style.width = `${aiScore}%`;
+
+    document.getElementById('perf-multi-v').textContent = `${multiScore}%`;
+    document.getElementById('perf-multi').style.width = `${multiScore}%`;
+  }
+
+  // PRESET CARDS HOVER LOADS
+  function loadPreset(type, card) {
+    if (type === 'gaming') selectPackage('pkg-gaming-beast');
+    else if (type === 'creator') selectPackage('pkg-creator-pro');
+    else if (type === 'budget') selectPackage('pkg-performance');
+  }
+
+  function resetBuild() {
+    buildState = { cpu: null, mb: null, gpu: null, ram: null, ssd: null, psu: null, cool: null };
+    
+    // Clear picker selections visual classes
+    document.querySelectorAll('.picker-item').forEach(pi => pi.classList.remove('selected'));
+    document.querySelectorAll('.comp-slot').forEach(s => {
+      s.classList.remove('has-item');
+      s.classList.remove('compat-error');
+    });
+
+    if (threeJsReady) {
+      liquidCoolerMesh.visible = false;
+      airCoolerMesh.visible = false;
+      gpuMesh.visible = false;
+    }
+
+    renderSlots();
+    recalculateStats();
     toast('↺ Đã reset cấu hình. Bắt đầu lại từ đầu.');
   }
 
-  // CART
-  function addBuildToCart(){
-    const count=Object.values(build).filter(v=>v).length;
-    if(count<4){toast('⚠️ Vui lòng chọn ít nhất: CPU, Mainboard, GPU và RAM.');return;}
+  function addBuildToCart() {
+    const count = Object.values(buildState).filter(v=>v).length;
+    if (count < 4) {
+      toast('⚠️ Vui lòng chọn ít nhất: CPU, Mainboard, GPU và RAM.');
+      return;
+    }
     toast('✓ Đã thêm toàn bộ cấu hình vào giỏ hàng!');
-    setTimeout(()=>location.href='checkout.html',1000);
+    setTimeout(() => location.href = 'checkout.html', 1000);
   }
-  function saveBuild(){toast('💾 Đã lưu cấu hình vào tài khoản của bạn!');}
-  function shareBuild(){
+
+  function saveBuild() {
+    toast('💾 Đã lưu cấu hình PC 3D vào tài khoản của bạn!');
+  }
+
+  function shareBuild() {
     navigator.clipboard?.writeText(window.location.href).catch(()=>{});
-    toast('🔗 Đã sao chép link cấu hình!');
+    toast('🔗 Đã sao chép liên kết cấu hình!');
   }
+
+  // --- AI ADVISOR CHATBOT ENGINE ---
+  function toggleChatWindow() {
+    const windowEl = document.getElementById('ai-chat-window');
+    if (!windowEl) return;
+    const isOpen = windowEl.classList.contains('open');
+    if (isOpen) {
+      windowEl.classList.remove('open');
+      windowEl.style.display = 'none';
+    } else {
+      windowEl.style.display = 'flex';
+      setTimeout(() => windowEl.classList.add('open'), 10);
+      const area = document.getElementById('chat-messages-area');
+      if (area) area.scrollTop = area.scrollHeight;
+    }
+  }
+
+  function handleChatKeyPress(event) {
+    if (event.key === 'Enter') {
+      sendChatMessage();
+    }
+  }
+
+  function sendChatMessage() {
+    const inputEl = document.getElementById('chat-input-field');
+    if (!inputEl) return;
+    const text = inputEl.value.trim();
+    if (!text) return;
+
+    appendMessage(text, 'user');
+    inputEl.value = '';
+
+    setTimeout(() => {
+      const responseObj = generateAdvisorResponse(text);
+      appendMessage(responseObj.text, 'bot', responseObj.action);
+    }, 600);
+  }
+
+  function appendMessage(text, sender, action = null) {
+    const area = document.getElementById('chat-messages-area');
+    if (!area) return;
+    const msg = document.createElement('div');
+    msg.className = `chat-msg ${sender}`;
+    
+    let htmlContent = `<span>${text}</span>`;
+    if (action) {
+      htmlContent += `<br><button class="chat-action-btn" onclick="${action.func}">${action.label}</button>`;
+    }
+    msg.innerHTML = htmlContent;
+    
+    area.appendChild(msg);
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function askAdvisorQuick(type) {
+    let query = "";
+    if (type === 'game') query = "Tôi cần tư vấn cấu hình chiến game 4K";
+    else if (type === 'graphic') query = "Tư vấn cấu hình làm đồ họa 3D render";
+    else if (type === 'ai') query = "Tôi muốn build máy AI Workstation";
+    else if (type === 'cool') query = "Nên chọn tản nước hay tản khí?";
+
+    appendMessage(query, 'user');
+
+    setTimeout(() => {
+      const responseObj = generateAdvisorResponse(query);
+      appendMessage(responseObj.text, 'bot', responseObj.action);
+    }, 600);
+  }
+
+  function generateAdvisorResponse(input) {
+    const query = input.toLowerCase();
+
+    if (query.includes('game') || query.includes('chơi game') || query.includes('gaming')) {
+      return {
+        text: "Để chơi mượt game AAA 4K (Ray Tracing cực đỉnh), gói <strong>Gaming Beast</strong> với Core i9-14900K, RTX 4090, RAM 32GB Corsair Dominator và tản AIO ROG Ryujin III là vô địch.",
+        action: {
+          label: "🔧 Lắp Ráp Gói Gaming Beast",
+          func: "selectPackage('pkg-gaming-beast'); toggleChatWindow();"
+        }
+      };
+    }
+
+    if (query.includes('đồ họa') || query.includes('render') || query.includes('thiết kế') || query.includes('photoshop') || query.includes('3d')) {
+      return {
+        text: "Cho thiết kế và render 3D hạng nặng, gói <strong>Creator Pro</strong> trang bị cấu hình khủng nhất với i9-14900K, RTX 4090 và RAM lên tới 64GB G.Skill Trident Z5 RGB là lựa chọn đỉnh cao.",
+        action: {
+          label: "🔧 Lắp Ráp Gói Creator Pro",
+          func: "selectPackage('pkg-creator-pro'); toggleChatWindow();"
+        }
+      };
+    }
+
+    if (query.includes('ai') || query.includes('workstation') || query.includes('deep learning') || query.includes('train')) {
+      return {
+        text: "Nếu muốn chuyên làm AI/deep learning local, tôi khuyên bạn sử dụng cấu hình Ryzen 9 7950X, RTX 4090 trong gói <strong>Creator Pro</strong> hoặc tự cấu hình nâng cấp RAM 64GB để xử lý tập dữ liệu tối ưu.",
+        action: {
+          label: "🔧 Lắp Ráp Gói Creator Pro",
+          func: "selectPackage('pkg-creator-pro'); toggleChatWindow();"
+        }
+      };
+    }
+
+    if (query.includes('tản nhiệt') || query.includes('tản khí') || query.includes('tản nước') || query.includes('nhiệt') || query.includes('nóng')) {
+      return {
+        text: "• <strong>Tản khí Noctua NH-D15</strong>: Cực kỳ bền, không sợ rò rỉ nước, làm mát rất tốt.<br>• <strong>Tản AIO ASUS Ryujin III 360</strong>: Có màn hình LCD hiển thị nhiệt độ, LED ARGB rực rỡ và hiệu năng làm mát tối đa cho CPU sinh nhiệt lớn."
+      };
+    }
+
+    if (query.includes('màu') || query.includes('led') || query.includes('rgb') || query.includes('sáng')) {
+      return {
+        text: "Bạn có thể chỉnh đèn LED RGB trực tiếp bằng nút <strong>[RGB: Rainbow]</strong> dưới màn hình 3D để đổi qua các màu: Rainbow cầu vồng, Cyberpunk neon hồng/xanh và Golden quý tộc."
+      };
+    }
+
+    return {
+      text: "Xin chào! Tôi có thể tư vấn các gói cấu hình máy tính Luxury phù hợp nhất cho bạn. Bạn muốn build máy chuyên chơi game, dựng hình đồ họa render hay chạy mô hình AI?"
+    };
+  }
+
+  // 9. WINDOW ONLOAD INITIALIZER
+  window.onload = function() {
+    init3D();
+    renderPackages();
+    renderSlots();
+    selectPackage('pkg-gaming-beast');
+    animate();
+  };
 </script>
 </body>
 </html>

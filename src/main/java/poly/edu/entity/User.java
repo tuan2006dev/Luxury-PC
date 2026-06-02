@@ -38,6 +38,18 @@ public class User {
     @Column(name = "provider_id")
     private String providerId;
 
+    @Column(name = "notify_order_updates")
+    private Boolean notifyOrderUpdates = true;
+
+    @Column(name = "notify_flash_sale")
+    private Boolean notifyFlashSale = true;
+
+    @Column(name = "notify_new_products")
+    private Boolean notifyNewProducts = false;
+
+    @Column(name = "notify_weekly_newsletter")
+    private Boolean notifyWeeklyNewsletter = true;
+
     public User() {}
 
     @PrePersist
@@ -158,5 +170,37 @@ public class User {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Boolean getNotifyOrderUpdates() {
+        return notifyOrderUpdates;
+    }
+
+    public void setNotifyOrderUpdates(Boolean notifyOrderUpdates) {
+        this.notifyOrderUpdates = notifyOrderUpdates;
+    }
+
+    public Boolean getNotifyFlashSale() {
+        return notifyFlashSale;
+    }
+
+    public void setNotifyFlashSale(Boolean notifyFlashSale) {
+        this.notifyFlashSale = notifyFlashSale;
+    }
+
+    public Boolean getNotifyNewProducts() {
+        return notifyNewProducts;
+    }
+
+    public void setNotifyNewProducts(Boolean notifyNewProducts) {
+        this.notifyNewProducts = notifyNewProducts;
+    }
+
+    public Boolean getNotifyWeeklyNewsletter() {
+        return notifyWeeklyNewsletter;
+    }
+
+    public void setNotifyWeeklyNewsletter(Boolean notifyWeeklyNewsletter) {
+        this.notifyWeeklyNewsletter = notifyWeeklyNewsletter;
     }
 }

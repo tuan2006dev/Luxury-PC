@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import poly.edu.service.ProductService;
+import poly.edu.service.WishlistService;
 
 @Controller
 public class HomeController {
@@ -16,6 +17,9 @@ public class HomeController {
 
     @Autowired
     poly.edu.service.ReviewService reviewService;
+
+    @Autowired
+    WishlistService wishlistService;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -34,7 +38,10 @@ public class HomeController {
 
         System.out.println("ROLES: "
                 + auth.getAuthorities());
+
+        model.addAttribute("wishlistProductIds", wishlistService.getWishlistProductIds(auth));
         return "index";
     }
 }
+
 

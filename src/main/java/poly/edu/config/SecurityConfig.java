@@ -28,8 +28,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp", "/api/forgot-password/**",
                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/error",
-                                "/profile", "/checkout", "/cart", "/cart/**", "/products", "/products/**", "/product/**")
-                        .permitAll()
+                                "/checkout", "/cart", "/cart/**", "/products", "/products/**", "/product/**")
+                                .permitAll()
                         .anyRequest().authenticated())
 
                 .formLogin(form -> form
