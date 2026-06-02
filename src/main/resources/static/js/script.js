@@ -583,7 +583,7 @@ document.querySelectorAll('.search-tag').forEach(tag => {
 
 function renderSearchResults(query) {
   if (!query) {
-    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXYRY PC.</p>';
+    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXURY PC.</p>';
     return;
   }
   const matches = productCatalog.filter(p =>
