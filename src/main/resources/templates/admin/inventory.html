@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Kho Hàng — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --deep: #111;
+            --dark: #1a1a1a;
+            --mid: #2a2a2a;
+            --gold: #c9a84c;
+            --gold-l: #e8c97a;
+            --cream: #f5f0e8;
+            --white: #fff;
+            --muted: #888;
+            --red: #ef4444;
+            --green: #22c55e;
+            --sans: 'Montserrat', sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background: var(--black); color: var(--cream); font-family: var(--sans); display: flex; }
+        .sidebar { width: 280px; background: var(--deep); border-right: 1px solid rgba(201,168,76,0.1); padding: 2rem; position: fixed; height: 100vh; }
+        .logo { font-size: 1.5rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 3rem; display: block; text-decoration: none; font-weight: 700; text-align: center;}
+        .nav-link { display: flex; align-items: center; color: var(--muted); padding: 1rem; text-decoration: none; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.9rem; transition: 0.3s; }
+        .nav-link i { width: 25px; font-size: 1.1rem; }
+        .nav-link:hover, .nav-link.active { background: rgba(201,168,76,0.05); color: var(--gold); }
+        .main-content { margin-left: 280px; flex: 1; padding: 3rem; }
+        .table-card { background: var(--dark); padding: 2rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; }
+        .table-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 1.2rem; background: rgba(0,0,0,0.2); }
+        td { padding: 1.2rem; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .stock-input { background: var(--mid); color: var(--white); border: 1px solid rgba(201,168,76,0.2); padding: 0.4rem; border-radius: 4px; width: 80px; outline: none; }
+        .type-select { background: var(--mid); color: var(--white); border: 1px solid rgba(201,168,76,0.2); padding: 0.4rem; border-radius: 4px; margin: 0 0.5rem; }
+        button.adj-btn { background: var(--gold); color: var(--black); border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+        .badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
+        .badge-low { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
+        <nav>
+            <a href="/admin/dashboard" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="/admin/orders" class="nav-link"><i class="fa-solid fa-box"></i> Đơn Hàng</a>
+            <a href="/admin/inventory" class="nav-link active"><i class="fa-solid fa-warehouse"></i> Kho Hàng</a>
+            <a href="/admin/categories" class="nav-link"><i class="fa-solid fa-layer-group"></i> Danh Mục</a>
+            <a href="/admin/products" class="nav-link"><i class="fa-solid fa-microchip"></i> Sản Phẩm</a>
+            <a href="/admin/vouchers" class="nav-link"><i class="fa-solid fa-ticket"></i> Voucher</a>
+            <a href="/admin/flash-sales" class="nav-link"><i class="fa-solid fa-bolt"></i> Flash Sale</a>
+            <a href="/admin/account" class="nav-link"><i class="fa-solid fa-users"></i> Người Dùng</a>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div class="table-card">
+            <div class="table-h">
+                <h2>Quản Lý Kho Hàng</h2>
+                <span th:text="${inventory.size()} + ' sản phẩm'">0 sản phẩm</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sản Phẩm</th>
+                        <th>Danh Mục</th>
+                        <th>Tồn Kho</th>
+                        <th>Cập Nhật Cuối</th>
+                        <th>Điều Chỉnh Kho</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${inventory}">
+                        <td>
+                            <div th:text="${item.product.name}">Product Name</div>
+                        </td>
+                        <td th:text="${item.product.category.name}">Category</td>
+                        <td>
+                            <span th:text="${item.quantity}">0</span>
+                            <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:5px;">Sắp hết</span>
+                        </td>
+                        <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
+                        <td>
+                            <form action="/admin/inventory/adjust" method="post" style="display:flex; align-items:center;">
+                                <input type="hidden" name="productId" th:value="${item.product.id}">
+                                <input type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1">
+                                <select name="type" class="type-select">
+                                    <option value="IMPORT">Nhập Kho</option>
+                                    <option value="EXPORT">Xuất Kho</option>
+                                </select>
+                                <input type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú">
+                                <button type="submit" class="adj-btn">Xác Nhận</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

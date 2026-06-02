@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8" />
@@ -12,23 +11,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="logo.png" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
 <body>
-
-
-
-    <!-- LOADING SCREEN -->
-    <div class="loader" id="loader">
-        <div class="loader-inner">
-            <div class="loader-logo">LUXURY </div>
-            <div class="loader-line"></div>
-            <div class="loader-text">PC</div>
-        </div>
-    </div>
-
     <!-- CURSOR -->
     <div class="cursor" id="cursor"></div>
     <div class="cursor-follower" id="cursor-follower"></div>
@@ -48,6 +35,8 @@
         <div class="nav-right">
             <a href="#" class="nav-link" id="nav-tin-tuc">Tin Tức</a>
             <a href="#" class="nav-link" id="nav-lien-he">Liên Hệ</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link" id="nav-login">Đăng Nhập</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/account/profile}" class="nav-link" id="nav-profile">Hồ Sơ</a>
             <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
             <button class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
         <span class="cart-icon">⊡</span>
@@ -86,11 +75,11 @@
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
         <div class="hero-bg">
-            <img src="hero_banner.png" alt="Luxury PC Hero" class="hero-img" id="hero-img" />
+            <img src="hero_banner.png" alt="Luxury PC" class="hero-img" id="hero-img" />
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
-            <p class="hero-tagline">Nơi Công Nghệ Gặp Gỡ Sự Xa Xỉ</p>
+
             <h1 class="hero-title">Được Tạo Ra<br /><em>Để Thống Trị</em></h1>
             <p class="hero-subtitle">Linh kiện máy tính được tuyển chọn dành cho những người không chấp nhận điều tầm thường.</p>
             <div class="hero-cta">
@@ -101,39 +90,6 @@
      
     </section>
 
-    <!-- MARQUEE STRIP -->
-    <div class="marquee-strip">
-        <div class="marquee-content">
-            <span>CPU ĐỜI MỚI NHẤT</span>
-            <span class="dot">✦</span>
-            <span>VGA CAO CẤP</span>
-            <span class="dot">✦</span>
-            <span>MAINBOARD PREMIUM</span>
-            <span class="dot">✦</span>
-            <span>RAM TỐC ĐỘ CAO</span>
-            <span class="dot">✦</span>
-            <span>SSD NVME PRO</span>
-            <span class="dot">✦</span>
-            <span>TẢN NHIỆT NƯỚC</span>
-            <span class="dot">✦</span>
-            <span>NGUỒN PLATINUM</span>
-            <span class="dot">✦</span>
-            <span>CPU ĐỜI MỚI NHẤT</span>
-            <span class="dot">✦</span>
-            <span>VGA CAO CẤP</span>
-            <span class="dot">✦</span>
-            <span>MAINBOARD PREMIUM</span>
-            <span class="dot">✦</span>
-            <span>RAM TỐC ĐỘ CAO</span>
-            <span class="dot">✦</span>
-            <span>SSD NVME PRO</span>
-            <span class="dot">✦</span>
-            <span>TẢN NHIỆT NƯỚC</span>
-            <span class="dot">✦</span>
-            <span>NGUỒN PLATINUM</span>
-            <span class="dot">✦</span>
-        </div>
-    </div>
 
     <!-- FLASH SALE -->
     <section class="flash-sale" id="flash-sale">
@@ -419,13 +375,14 @@
         </div>
         <div class="voucher-grid">
 
-            <div class="voucher-card" id="vc-Apex 10" data-voucher="Apex 10">
+            <div class="voucher-card" id="vc-LUXURY10" data-voucher="LUXURY10">
                 <div class="voucher-left">
                     <div class="voucher-pct">10%</div>
                     <div class="voucher-type">Giảm Giá</div>
                 </div>
                 <div class="voucher-right">
-                    <div class="voucher-code">Apex 10</div>
+                    <div class="voucher-title">Voucher Linh Kiện</div>
+                    <div class="voucher-code">LUXURY10</div>
                     <div class="voucher-desc">Giảm 10% cho tất cả đơn hàng</div>
                     <div class="voucher-tag">Tất cả sản phẩm</div>
                 </div>
@@ -433,13 +390,14 @@
                 <div class="voucher-dots"></div>
             </div>
 
-            <div class="voucher-card" id="vc-Apex 15" data-voucher="Apex 15">
+            <div class="voucher-card" id="vc-LUXURY15" data-voucher="LUXURY15">
                 <div class="voucher-left">
                     <div class="voucher-pct">15%</div>
                     <div class="voucher-type">Giảm Giá</div>
                 </div>
                 <div class="voucher-right">
-                    <div class="voucher-code">Apex 15</div>
+                    <div class="voucher-title">Voucher Linh Kiện</div>
+                    <div class="voucher-code">LUXURY15</div>
                     <div class="voucher-desc">Giảm 15% cho đơn từ 10 triệu</div>
                     <div class="voucher-tag">Đơn ≥ 10.000.000₫</div>
                 </div>
@@ -728,7 +686,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script th:src="@{/js/script.js}"></script>
 </body>
 
 </html>

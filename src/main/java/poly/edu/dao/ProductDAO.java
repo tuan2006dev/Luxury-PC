@@ -2,19 +2,36 @@ package poly.edu.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import poly.edu.entity.Product;
 import java.util.List;
 
 public interface ProductDAO extends JpaRepository<Product, Integer> {
     
-    // Thêm điều kiện ( ) cho danh mục và AND p.image IS NOT NULL để chỉ lấy sản phẩm có link ảnh
-    @Query("SELECT p FROM Product p WHERE (p.category.name = 'CPU' OR p.category.name = 'GPU') AND p.image IS NOT NULL")
+    @Query("SELECT p FROM Product p JOIN FETCH p.category")
+    List<Product> findAll();
+
+    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.category.name = 'CPU' OR p.category.name = 'GPU'")
     List<Product> findFeaturedProducts();
 
-    // Thêm điều kiện AND p.image IS NOT NULL
-    @Query("SELECT p FROM Product p WHERE p.stock < 10 AND p.image IS NOT NULL")
+    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.stock < 10")
     List<Product> findFlashSaleProducts();
 
-    // Đổi tên hàm theo quy tắc của Spring Data JPA để tự động lọc bỏ các sản phẩm không có ảnh
+    List<Product> findByCategoryId(Integer categoryId);
+
+    // Bạn đã xóa dấu } ở đây để gộp các hàm dưới vào trong Interface
     List<Product> findByCategoryIdAndImageIsNotNull(Integer categoryId);
-}
+
+    @Query("SELECT p FROM Product p WHERE " +
+           "(:cid IS NULL OR p.category.id = :cid) AND " +
+           "(:min IS NULL OR p.price >= :min) AND " +
+           "(:max IS NULL OR p.price <= :max) AND " +
+           "(:kw IS NULL OR p.name LIKE %:kw% OR p.description LIKE %:kw%) AND " +
+           "p.image IS NOT NULL")
+    List<Product> searchProducts(
+        @Param("cid") Integer cid, 
+        @Param("min") Double min, 
+        @Param("max") Double max, 
+        @Param("kw") String kw
+    );
+} // Chỉ có duy nhất một dấu đóng ngoặc ở cuối cùng này

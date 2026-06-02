@@ -8,12 +8,21 @@
 // =========================================
 // LOADER
 // =========================================
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    searchInput.value = '';
+    // also hide clear button if present
+    const searchClearBtn = document.getElementById('search-clear');
+    if (searchClearBtn) searchClearBtn.classList.remove('visible');
+  }
+  
   setTimeout(() => {
     const loader = document.getElementById('loader');
-    loader.classList.add('hidden');
-    document.querySelector('.hero').classList.add('loaded');
-  }, 1800);
+    if (loader) loader.classList.add('hidden');
+    const hero = document.querySelector('.hero');
+    if (hero) hero.classList.add('loaded');
+  }, 500); // reduced timeout for better UX
 });
 
 // =========================================
@@ -24,49 +33,55 @@ const cursorFollower = document.getElementById('cursor-follower');
 let mouseX = 0, mouseY = 0;
 let followerX = 0, followerY = 0;
 
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  cursor.style.left = mouseX + 'px';
-  cursor.style.top = mouseY + 'px';
-});
+if (cursor && cursorFollower) {
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+  });
 
-function animateFollower() {
-  followerX += (mouseX - followerX) * 0.12;
-  followerY += (mouseY - followerY) * 0.12;
-  cursorFollower.style.left = followerX + 'px';
-  cursorFollower.style.top = followerY + 'px';
-  requestAnimationFrame(animateFollower);
+  function animateFollower() {
+    followerX += (mouseX - followerX) * 0.12;
+    followerY += (mouseY - followerY) * 0.12;
+    cursorFollower.style.left = followerX + 'px';
+    cursorFollower.style.top = followerY + 'px';
+    requestAnimationFrame(animateFollower);
+  }
+  animateFollower();
 }
-animateFollower();
 
 // Expand follower on hoverable elements
-document.querySelectorAll('a, button, .cat-card, .product-card, .btn-add-cart, .nav-cart').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-    cursorFollower.style.width = '60px';
-    cursorFollower.style.height = '60px';
-    cursorFollower.style.opacity = '0.3';
+if (cursor && cursorFollower) {
+  document.querySelectorAll('a, button, .cat-card, .product-card, .btn-add-cart, .nav-cart').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+      cursorFollower.style.width = '60px';
+      cursorFollower.style.height = '60px';
+      cursorFollower.style.opacity = '0.3';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      cursorFollower.style.width = '36px';
+      cursorFollower.style.height = '36px';
+      cursorFollower.style.opacity = '0.6';
+    });
   });
-  el.addEventListener('mouseleave', () => {
-    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-    cursorFollower.style.width = '36px';
-    cursorFollower.style.height = '36px';
-    cursorFollower.style.opacity = '0.6';
-  });
-});
+}
 
 // =========================================
 // NAVBAR SCROLL
 // =========================================
 const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 80) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
-  }
-});
+if (navbar) {
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+}
 
 // =========================================
 // CART STATE
@@ -118,19 +133,47 @@ function updateCartUI() {
 }
 
 function formatVND(num) {
-  return num.toLocaleString('vi-VN') + '₫';
+  return (num || 0).toLocaleString('vi-VN') + '₫';
 }
 
-function addToCart(id, name, price) {
-  if (cart[id]) {
-    cart[id].qty++;
-  } else {
-    cart[id] = { name, price, qty: 1 };
+async function loadCartFromServer() {
+  try {
+    const response = await fetch('/api/cart');
+    const serverCart = await response.json();
+    cart = {}; // Reset local cart
+    for (const [id, item] of Object.entries(serverCart)) {
+      cart[id] = {
+        name: item.name,
+        price: item.price,
+        qty: item.quantity
+      };
+    }
+    updateCartUI();
+  } catch (err) {
+    console.error('Lỗi khi tải giỏ hàng từ server:', err);
   }
-  updateCartUI();
-  showToast(`✓ Đã thêm "${name}" vào giỏ hàng`);
-  openCart();
 }
+
+async function addToCart(id, name, price) {
+  try {
+    // Gọi server để đồng bộ
+    await fetch(`/cart/add?id=${id}&name=${encodeURIComponent(name)}&price=${price}&quantity=1`, {
+      method: 'POST'
+    });
+    
+    // Sau đó tải lại trạng thái mới nhất từ server
+    await loadCartFromServer();
+    
+    showToast(`✓ Đã thêm "${name}" vào giỏ hàng`);
+    openCart();
+  } catch (err) {
+    console.error('Lỗi khi thêm vào giỏ hàng:', err);
+    showToast('❌ Lỗi khi thêm sản phẩm');
+  }
+}
+
+// Gọi tải giỏ hàng khi load trang
+document.addEventListener('DOMContentLoaded', loadCartFromServer);
 
 // =========================================
 // CART DRAWER
@@ -139,30 +182,28 @@ const cartDrawer = document.getElementById('cart-drawer');
 const cartOverlay = document.getElementById('cart-overlay');
 
 function openCart() {
-  cartDrawer.classList.add('open');
-  cartOverlay.classList.add('visible');
+  if (cartDrawer) cartDrawer.classList.add('open');
+  if (cartOverlay) cartOverlay.classList.add('visible');
   document.body.style.overflow = 'hidden';
 }
 function closeCart() {
-  cartDrawer.classList.remove('open');
-  cartOverlay.classList.remove('visible');
+  if (cartDrawer) cartDrawer.classList.remove('open');
+  if (cartOverlay) cartOverlay.classList.remove('visible');
   document.body.style.overflow = '';
 }
 
-document.getElementById('nav-cart').addEventListener('click', openCart);
-document.getElementById('cart-close').addEventListener('click', closeCart);
-cartOverlay.addEventListener('click', closeCart);
-document.getElementById('btn-checkout').addEventListener('click', () => {
+const navCartBtn = document.getElementById('nav-cart');
+const cartCloseBtn = document.getElementById('cart-close');
+const btnCheckout = document.getElementById('btn-checkout');
+if (navCartBtn) navCartBtn.addEventListener('click', openCart);
+if (cartCloseBtn) cartCloseBtn.addEventListener('click', closeCart);
+if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+if (btnCheckout) btnCheckout.addEventListener('click', () => {
   if (Object.keys(cart).length === 0) {
     showToast('Giỏ hàng trống. Hãy thêm sản phẩm trước!');
     return;
   }
-  showToast('🎉 Cảm ơn bạn! Đơn hàng đang được xử lý...');
-  setTimeout(() => {
-    cart = {};
-    updateCartUI();
-    closeCart();
-  }, 1500);
+  window.location.href = '/checkout';
 });
 
 // Add-to-cart buttons
@@ -233,16 +274,18 @@ function animateCounters() {
 
 // Intersection Observer for stats
 const statsSection = document.querySelector('.stats');
-let statsAnimated = false;
-const statsObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !statsAnimated) {
-      statsAnimated = true;
-      animateCounters();
-    }
-  });
-}, { threshold: 0.4 });
-if (statsSection) statsObserver.observe(statsSection);
+if (statsSection) {
+  let statsAnimated = false;
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !statsAnimated) {
+        statsAnimated = true;
+        animateCounters();
+      }
+    });
+  }, { threshold: 0.4 });
+  statsObserver.observe(statsSection);
+}
 
 // =========================================
 // TESTIMONIAL SLIDER
@@ -278,14 +321,17 @@ dotBtns.forEach((btn, i) => {
 // =========================================
 // NEWSLETTER FORM
 // =========================================
-document.getElementById('newsletter-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const email = document.getElementById('newsletter-email').value;
-  if (email) {
-    showToast('✓ Đăng ký thành công! Chào mừng bạn đến với LUXURY PC.');
-    document.getElementById('newsletter-email').value = '';
-  }
-});
+const newsletterForm = document.getElementById('newsletter-form');
+if (newsletterForm) {
+  newsletterForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('newsletter-email').value;
+    if (email) {
+      showToast('✓ Đăng ký thành công! Chào mừng bạn đến với LUXURY PC.');
+      document.getElementById('newsletter-email').value = '';
+    }
+  });
+}
 
 // =========================================
 // SCROLL REVEAL ANIMATIONS
@@ -338,15 +384,19 @@ window.addEventListener('scroll', () => {
 // =========================================
 // BUILD PC BUTTON
 // =========================================
-document.getElementById('btn-build-pc').addEventListener('click', () => {
+const btnBuildPc = document.getElementById('btn-build-pc');
+if (btnBuildPc) btnBuildPc.addEventListener('click', () => {
   showToast('🔧 Tính năng tư vấn Build PC đang được phát triển. Vui lòng gọi 1800-LUXURY-PC!');
 });
 
 // =========================================
-// FLASH SALE COUNTDOWN (6 giờ từ lúc load)
+// FLASH SALE COUNTDOWN (from database or fallback 6h)
 // =========================================
 (function initCountdown() {
-  const endTime = Date.now() + 6 * 60 * 60 * 1000; // 6 hours from now
+  // Use backend-provided endTime, fallback to 6 hours from now
+  const endTime = (window.flashSaleEndTime && window.flashSaleEndTime > 0)
+      ? window.flashSaleEndTime
+      : Date.now() + 6 * 60 * 60 * 1000;
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -377,81 +427,29 @@ document.getElementById('btn-build-pc').addEventListener('click', () => {
 })();
 
 // =========================================
-// VOUCHER MODAL
+// VOUCHER MODAL (dynamic from data attributes)
 // =========================================
-const voucherData = {
-  apex10: {
-    badge: 'Giảm Giá',
-    pct: '10%',
-    code: 'APEX10',
-    desc: 'Giảm 10% cho tất cả đơn hàng',
-    apply: 'Tất cả sản phẩm',
-    expire: '31/03/2026',
-    limit: 'Không giới hạn'
-  },
-  apex15: {
-    badge: 'Giảm Giá',
-    pct: '15%',
-    code: 'APEX15',
-    desc: 'Giảm 15% cho đơn từ 10 triệu',
-    apply: 'Tất cả sản phẩm',
-    expire: '31/03/2026',
-    limit: '1 lần / khách hàng'
-  },
-  vip20: {
-    badge: 'VIP Exclusive',
-    pct: '20%',
-    code: 'VIP20',
-    desc: 'Giảm 20% dành riêng cho thành viên VIP',
-    apply: 'Thành viên hạng VIP trở lên',
-    expire: '30/06/2026',
-    limit: '3 lần / tháng'
-  },
-  freeship: {
-    badge: 'Miễn Phí Ship',
-    pct: 'FREE',
-    code: 'FREESHIP',
-    desc: 'Miễn phí vận chuyển toàn quốc',
-    apply: 'Tất cả đơn hàng',
-    expire: '15/04/2026',
-    limit: 'Không giới hạn'
-  },
-  newuser: {
-    badge: 'Khách Mới',
-    pct: '12%',
-    code: 'NEWUSER',
-    desc: 'Ưu đãi chào mừng khách hàng đăng ký lần đầu',
-    apply: 'Đơn hàng đầu tiên',
-    expire: '31/12/2026',
-    limit: '1 lần / tài khoản'
-  },
-  cpu500k: {
-    badge: 'Danh Mục CPU',
-    pct: '500K',
-    code: 'CPU500K',
-    desc: 'Giảm trực tiếp 500.000₫ khi mua bất kỳ CPU',
-    apply: 'Danh mục CPU (đơn ≥ 5.000.000₫)',
-    expire: '30/04/2026',
-    limit: '2 lần / khách hàng'
-  }
-};
-
 const modalOverlay = document.getElementById('voucher-modal-overlay');
 const modalClose = document.getElementById('voucher-modal-close');
 const copyBtn = document.getElementById('vmodal-copy-btn');
 
-function openVoucherModal(key) {
-  const data = voucherData[key];
-  if (!data) return;
+function openVoucherModal(cardEl) {
+  const code = cardEl.dataset.voucher || '';
+  const desc = cardEl.dataset.desc || '';
+  const apply = cardEl.dataset.apply || 'Tất cả sản phẩm';
+  const expire = cardEl.dataset.expire || 'Không giới hạn';
+  const limit = cardEl.dataset.limit || 'Không giới hạn';
+  const pctEl = cardEl.querySelector('.voucher-pct');
+  const typeEl = cardEl.querySelector('.voucher-type');
 
-  document.getElementById('vmodal-badge').textContent = data.badge;
-  document.getElementById('vmodal-pct').textContent = data.pct;
-  document.getElementById('vmodal-code').textContent = data.code;
-  document.getElementById('vmodal-desc').textContent = data.desc;
-  document.getElementById('vmodal-apply').textContent = data.apply;
-  document.getElementById('vmodal-expire').textContent = data.expire;
-  document.getElementById('vmodal-limit').textContent = data.limit;
-  copyBtn.dataset.code = data.code;
+  document.getElementById('vmodal-badge').textContent = typeEl ? typeEl.textContent : 'Giảm Giá';
+  document.getElementById('vmodal-pct').textContent = pctEl ? pctEl.textContent : '';
+  document.getElementById('vmodal-code').textContent = code;
+  document.getElementById('vmodal-desc').textContent = desc;
+  document.getElementById('vmodal-apply').textContent = apply;
+  document.getElementById('vmodal-expire').textContent = expire;
+  document.getElementById('vmodal-limit').textContent = limit;
+  if (copyBtn) copyBtn.dataset.code = code;
 
   modalOverlay.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -465,41 +463,45 @@ function closeVoucherModal() {
 // Open modal on voucher card click
 document.querySelectorAll('.voucher-card').forEach(card => {
   card.addEventListener('click', () => {
-    const key = card.dataset.voucher;
-    openVoucherModal(key);
+    openVoucherModal(card);
   });
 });
 
 // Close modal
-modalClose.addEventListener('click', closeVoucherModal);
-modalOverlay.addEventListener('click', (e) => {
+if (modalClose) modalClose.addEventListener('click', closeVoucherModal);
+if (modalOverlay) modalOverlay.addEventListener('click', (e) => {
   if (e.target === modalOverlay) closeVoucherModal();
 });
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeVoucherModal();
-});
 
-// Copy code button (UI only — shows toast)
-copyBtn.addEventListener('click', () => {
-  const code = copyBtn.dataset.code || 'APEX10';
-  showToast(`✓ Đã sao chép mã: ${code}`);
+// Copy code button
+if (copyBtn) copyBtn.addEventListener('click', () => {
+  const code = copyBtn.dataset.code || '';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(code).then(() => {
+      showToast(`✓ Đã sao chép mã: ${code}`);
+    });
+  } else {
+    showToast(`✓ Mã voucher: ${code}`);
+  }
 });
 
 // Expand cursor follower on new interactive elements
-document.querySelectorAll('.flash-product-card, .voucher-card, .vmodal-copy-btn, .voucher-modal-close').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-    cursorFollower.style.width = '60px';
-    cursorFollower.style.height = '60px';
-    cursorFollower.style.opacity = '0.3';
+if (cursor && cursorFollower) {
+  document.querySelectorAll('.flash-product-card, .voucher-card, .vmodal-copy-btn, .voucher-modal-close').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+      cursorFollower.style.width = '60px';
+      cursorFollower.style.height = '60px';
+      cursorFollower.style.opacity = '0.3';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      cursorFollower.style.width = '36px';
+      cursorFollower.style.height = '36px';
+      cursorFollower.style.opacity = '0.6';
+    });
   });
-  el.addEventListener('mouseleave', () => {
-    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-    cursorFollower.style.width = '36px';
-    cursorFollower.style.height = '36px';
-    cursorFollower.style.opacity = '0.6';
-  });
-});
+}
 
 // =========================================
 // PRODUCT CATALOG DATA (for search)
@@ -684,20 +686,22 @@ if (sortSelect) {
 }
 
 // Expand cursor on new elements
-document.querySelectorAll('.nav-search-btn, .search-close, .search-tag, .search-result-item, .filter-chip, .sort-select').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-    cursorFollower.style.width = '60px';
-    cursorFollower.style.height = '60px';
-    cursorFollower.style.opacity = '0.3';
+if (cursor && cursorFollower) {
+  document.querySelectorAll('.nav-search-btn, .search-close, .search-tag, .search-result-item, .filter-chip, .sort-select').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+      cursorFollower.style.width = '60px';
+      cursorFollower.style.height = '60px';
+      cursorFollower.style.opacity = '0.3';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      cursorFollower.style.width = '36px';
+      cursorFollower.style.height = '36px';
+      cursorFollower.style.opacity = '0.6';
+    });
   });
-  el.addEventListener('mouseleave', () => {
-    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-    cursorFollower.style.width = '36px';
-    cursorFollower.style.height = '36px';
-    cursorFollower.style.opacity = '0.6';
-  });
-});
+}
 
 // LOGIN
 async function login() {

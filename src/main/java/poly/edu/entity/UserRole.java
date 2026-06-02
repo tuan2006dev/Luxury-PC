@@ -1,0 +1,57 @@
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "user_roles", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "role_id"})
+})
+public class UserRole implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    public UserRole() {
+    }
+
+    public UserRole(Integer id, User user, Role role) {
+        this.id = id;
+        this.user = user;
+        this.role = role;
+    }
+
+    // Getter & Setter
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+}

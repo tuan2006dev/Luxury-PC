@@ -52,15 +52,18 @@
     }
 
     /* SIDEBAR */
-    .sidebar{
-      background:var(--deep);
-      border-right:1px solid rgba(201,168,76,0.1);
-      padding:3rem 0;
-      position:sticky;top:74px;height:calc(100vh - 74px);
-      overflow-y:auto;
-      display:flex;flex-direction:column;
-    }
-
+  .sidebar {
+  background: var(--deep);
+  border-right: 1px solid rgba(201,168,76,0.1);
+  padding: 2rem 0; /* Giảm padding một chút để thoáng hơn */
+  position: sticky;
+  top: 74px;
+  height: calc(100vh - 74px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  width: 280px; /* Nên có chiều rộng cố định để các phần tử bên trong tính toán chuẩn */
+}
     /* Avatar section */
     .sb-avatar-wrap{
       display:flex;flex-direction:column;align-items:center;
@@ -119,14 +122,13 @@
 
     /* Sidebar logout */
     .sb-logout{
-      padding:1.5rem 2rem 0;border-top:1px solid rgba(201,168,76,.1);margin-top:1rem;
+      border-top:1px solid rgba(201,168,76,.1);margin-top:1rem;
     }
-    .logout-btn{
-      display:flex;align-items:center;gap:.8rem;
-      font-size:.72rem;letter-spacing:.1em;color:var(--muted);
-      cursor:none;background:none;border:none;transition:color var(--ease);width:100%;
+    .logout-btn-item:hover {
+      color: var(--red) !important;
+      background: rgba(239, 68, 68, 0.05) !important;
+      border-left-color: var(--red) !important;
     }
-    .logout-btn:hover{color:var(--red);}
 
     /* MAIN CONTENT */
     .profile-main{padding:3rem 4rem;min-width:0;}
@@ -291,7 +293,7 @@
       display:flex;align-items:center;justify-content:space-between;
       padding:1.2rem 1.5rem;background:var(--deep);border:1px solid rgba(201,168,76,.08);
     }
-    .notif-info {}
+
     .notif-title{font-size:.82rem;color:var(--white);margin-bottom:.2rem;}
     .notif-sub{font-size:.7rem;color:var(--muted);}
     /* Toggle switch */
@@ -378,19 +380,18 @@
         <a class="sb-item" onclick="setTab('security')" href="#">
           <span class="sb-item-icon">🔐</span> Bảo Mật
         </a>
-        <a class="sb-item" onclick="setTab('notifications')" href="#">
+        <a class="sb-item" onclick="setTab('notifications')" href="#" id="pt-notifications">
           <span class="sb-item-icon">🔔</span> Thông Báo
         </a>
-        <a class="sb-item" onclick="setTab('address')" href="#">
+        <a class="sb-item" onclick="setTab('address')" href="#" id="pt-address">
           <span class="sb-item-icon">📍</span> Địa Chỉ Giao Hàng
         </a>
+        
+        <div class="sb-section-label">Hành động</div>
+        <a class="sb-item logout-btn-item" href="/auth/login">
+          <span class="sb-item-icon">🚪</span> Đăng Xuất
+        </a>
       </nav>
-
-      <div class="sb-logout">
-        <button class="logout-btn" onclick="location.href='auth.html'">
-          <span>⎋</span> Đăng Xuất
-        </button>
-      </div>
     </aside>
 
     <!-- ===== MAIN ===== -->
@@ -515,52 +516,139 @@
             <div class="section-h">Đơn Hàng Của Tôi</div>
           </div>
         </div>
-        <table class="orders-table">
-          <thead>
-            <tr>
-              <th>Mã đơn</th>
-              <th>Sản phẩm</th>
-              <th>Ngày đặt</th>
-              <th>Tổng tiền</th>
-              <th>Trạng thái</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#LUXURY-2603</td>
-              <td>Intel Core i9-14900K × 1</td>
-              <td>12/03/2026</td>
-              <td class="order-total">18.990.000₫</td>
-              <td><span class="order-status status-processing">Đang xử lý</span></td>
-              <td><button class="order-detail-btn" onclick="toast('📦 Chi tiết đơn #LUXURY-2603')">Xem</button></td>
-            </tr>
-            <tr>
-              <td>#LUXURY-2589</td>
-              <td>RTX 4090 Titan × 1</td>
-              <td>28/02/2026</td>
-              <td class="order-total">42.990.000₫</td>
-              <td><span class="order-status status-shipping">Đang giao</span></td>
-              <td><button class="order-detail-btn" onclick="toast('📦 Chi tiết đơn #LUXURY-2589')">Xem</button></td>
-            </tr>
-            <tr>
-              <td>#LUXURY-2441</td>
-              <td>ROG Maximus Z790 × 1</td>
-              <td>15/01/2026</td>
-              <td class="order-total">12.490.000₫</td>
-              <td><span class="order-status status-delivered">Đã nhận</span></td>
-              <td><button class="order-detail-btn" onclick="toast('📦 Chi tiết đơn #LUXURY-2441')">Xem</button></td>
-            </tr>
-            <tr>
-              <td>#LUXURY-2210</td>
-              <td>LG UltraGear OLED × 1</td>
-              <td>20/11/2025</td>
-              <td class="order-total">22.990.000₫</td>
-              <td><span class="order-status status-delivered">Đã nhận</span></td>
-              <td><button class="order-detail-btn" onclick="toast('📦 Chi tiết đơn #LUXURY-2210')">Xem</button></td>
-            </tr>
-          </tbody>
-        </table>
+
+        <style>
+            /* Custom CSS for Accordion */
+            .orders-accordion-wrapper { border: 1px solid rgba(201,168,76,.1); border-radius: 8px; overflow: hidden; }
+            .order-row { background: var(--dark); border-bottom: 1px solid rgba(255,255,255,0.05); }
+            .order-row:last-child { border-bottom: none; }
+            .order-header { display: grid; grid-template-columns: 1.5fr 3fr 1.5fr 1.5fr 1.5fr 0.5fr; align-items: center; padding: 1.5rem; cursor: pointer; transition: 0.3s; }
+            .order-header:hover { background: rgba(201,168,76,.03); }
+            .order-header > div { font-size: 0.85rem; color: var(--cream); }
+            .order-h-id { font-weight: bold; color: var(--white); }
+            .order-h-date { color: var(--muted); font-size: 0.75rem; }
+            
+            .order-details-pane { display: none; background: var(--deep); padding: 1.5rem; border-top: 1px dashed rgba(201,168,76,.2); }
+            .order-details-pane.active { display: block; animation: fadeIn 0.4s ease; }
+            
+            .timeline-track { display: flex; justify-content: space-between; position: relative; margin: 20px 0 40px; }
+            .timeline-track::before { content: ''; position: absolute; top: 12px; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); z-index: 1;}
+            .tl-step { position: relative; z-index: 2; text-align: center; width: 25%; }
+            .tl-dot { width: 25px; height: 25px; border-radius: 50%; background: var(--dark); border: 2px solid rgba(255,255,255,0.2); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 10px;}
+            .tl-step.done .tl-dot { background: var(--gold); border-color: var(--gold); color: #000; }
+            .tl-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;}
+            .tl-step.done .tl-label { color: var(--gold); font-weight: bold; }
+
+            .item-mini-list { background: var(--dark); border-radius: 4px; padding: 1rem; }
+            .item-mini { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;}
+            .item-mini:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+            
+            @keyframes fadeIn { from {opacity: 0; transform: translateY(-10px);} to {opacity: 1; transform: translateY(0);} }
+        </style>
+
+        <div class="orders-accordion-wrapper">
+            <!-- Order 1 -->
+            <div class="order-row">
+                <div class="order-header" onclick="toggleOrder('order-2603')">
+                    <div>
+                        <div class="order-h-id">#LUXURY-2603</div>
+                        <div class="order-h-date">12/03/2026</div>
+                    </div>
+                    <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px;">Intel Core i9-14900K...</div>
+                    <div class="order-total">18.990.000₫</div>
+                    <div><span class="order-status status-processing">Đang xử lý</span></div>
+                    <div><button class="order-detail-btn">Chi Tiết ▼</button></div>
+                </div>
+                <div class="order-details-pane" id="order-2603">
+                    <div class="timeline-track">
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Đặt Hàng</div></div>
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Thanh Toán</div></div>
+                        <div class="tl-step done"><div class="tl-dot">⚙</div><div class="tl-label">Đang Xử Lý</div></div>
+                        <div class="tl-step"><div class="tl-dot"></div><div class="tl-label">Đang Giao Vận</div></div>
+                    </div>
+                    <div class="item-mini-list">
+                        <div style="font-size:0.75rem; color:var(--gold); margin-bottom: 15px; text-transform: uppercase;">Sản phẩm trong đơn hàng</div>
+                        <div class="item-mini">
+                            <span>1x Intel Core i9-14900K</span>
+                            <span style="color:var(--gold);">18.990.000₫</span>
+                        </div>
+                        <div class="item-mini">
+                            <span>Phí vận chuyển (Hỏa tốc)</span>
+                            <span style="color:var(--gold);">0 ₫</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order 2 -->
+            <div class="order-row">
+                <div class="order-header" onclick="toggleOrder('order-2589')">
+                    <div>
+                        <div class="order-h-id">#LUXURY-2589</div>
+                        <div class="order-h-date">28/02/2026</div>
+                    </div>
+                    <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px;">RTX 4090 Titan...</div>
+                    <div class="order-total">42.990.000₫</div>
+                    <div><span class="order-status status-shipping">Đang giao</span></div>
+                    <div><button class="order-detail-btn">Chi Tiết ▼</button></div>
+                </div>
+                <div class="order-details-pane" id="order-2589">
+                    <div class="timeline-track">
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Đặt Hàng</div></div>
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Thanh Toán</div></div>
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Gói Hàng Xong</div></div>
+                        <div class="tl-step done"><div class="tl-dot">🚚</div><div class="tl-label">Đang Giao Vận</div></div>
+                    </div>
+                    <div class="item-mini-list">
+                        <div class="item-mini">
+                            <span>1x RTX 4090 Titan 24GB</span>
+                            <span style="color:var(--gold);">42.990.000₫</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order 3 -->
+            <div class="order-row">
+                <div class="order-header" onclick="toggleOrder('order-2441')">
+                    <div>
+                        <div class="order-h-id">#LUXURY-2441</div>
+                        <div class="order-h-date">15/01/2026</div>
+                    </div>
+                    <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px;">ROG Maximus Z790...</div>
+                    <div class="order-total">12.490.000₫</div>
+                    <div><span class="order-status status-delivered">Đã nhận</span></div>
+                    <div><button class="order-detail-btn">Chi Tiết ▼</button></div>
+                </div>
+                <div class="order-details-pane" id="order-2441">
+                     <div class="timeline-track">
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Đặt Hàng</div></div>
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Thanh Toán</div></div>
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đang Giao Vận</div></div>
+                        <div class="tl-step done" style="color:var(--green);"><div class="tl-dot" style="background:var(--green);border-color:var(--green);">★</div><div class="tl-label" style="color:var(--green);">Hoàn Thành</div></div>
+                    </div>
+                    <div class="item-mini-list">
+                        <div class="item-mini">
+                            <span>1x Mainboard ROG Maximus Z790 Apex</span>
+                            <span style="color:var(--gold);">12.490.000₫</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleOrder(orderId) {
+                const pane = document.getElementById(orderId);
+                if(pane.classList.contains('active')) {
+                    pane.classList.remove('active');
+                } else {
+                    // Close others
+                    document.querySelectorAll('.order-details-pane').forEach(el => el.classList.remove('active'));
+                    pane.classList.add('active');
+                }
+            }
+        </script>
       </div>
 
       <!-- ============ WISHLIST ============ -->
@@ -632,7 +720,7 @@
               <div class="sec-sub">Cập nhật lần cuối: 12/01/2026 · Sử dụng mật khẩu mạnh với ít nhất 8 ký tự.</div>
               <div class="sec-status-ok">● Cài đặt hoàn chỉnh</div>
             </div>
-            <button class="btn-sec" onclick="location.href='forgot-password.html'">Đổi Mật Khẩu</button>
+            <button class="btn-sec" onclick="location.href='/auth/forgot-password'">Đổi Mật Khẩu</button>
           </div>
           <div class="sec-item">
             <div class="sec-icon">📱</div>
@@ -665,7 +753,7 @@
         <div class="danger-zone">
           <div class="danger-title">⚠️ Vùng nguy hiểm</div>
           <div class="danger-sub">Xóa tài khoản sẽ xóa vĩnh viễn tất cả dữ liệu của bạn bao gồm lịch sử đơn hàng, danh sách yêu thích và điểm tích lũy. Thao tác này không thể hoàn tác.</div>
-          <button class="btn-danger" onclick="toast('⚠️ Vui lòng liên hệ 1800-APEX-PC để xóa tài khoản.')">Xóa Tài Khoản</button>
+          <button class="btn-danger" onclick="toast('⚠️ Vui lòng liên hệ 1800-LUXURY để xóa tài khoản.')">Xóa Tài Khoản</button>
         </div>
       </div>
 

@@ -245,7 +245,8 @@ body:hover .cursor {
   gap: 10px;
 }
 
-.logo-apex {
+.logo-apex,
+.logo-Luxury {
   font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 400;
@@ -532,6 +533,7 @@ body:hover .cursor {
   text-align: center;
 }
 
+
 /* ============================================
    MARQUEE STRIP
 ============================================ */
@@ -581,6 +583,7 @@ body:hover .cursor {
     transform: translateX(-50%);
   }
 }
+
 
 /* ============================================
    STATEMENT
@@ -1883,13 +1886,22 @@ body:hover .cursor {
 /* Flash products */
 .flash-products {
   flex: 1;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 1px;
   gap: 1px;
   background: rgba(201, 168, 76, 0.06);
 }
 
+.flash-products::-webkit-scrollbar {
+  display: none;
+}
+
 .flash-product-card {
+  min-width: 260px;
+  scroll-snap-align: start;
   background: var(--deep);
   padding: 2rem 1.5rem;
   position: relative;
@@ -1971,6 +1983,7 @@ body:hover .cursor {
   transform: scale(1.08);
 >>>>>>> ngthtuan206
 }
+
 
 .flash-prod-name {
   font-family: var(--font-serif);
