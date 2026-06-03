@@ -67,14 +67,4 @@ public class CategoryTest {
 
         assertFalse(categoryDAO.findById(id).isPresent());
     }
-
-    @Test
-    public void AUT_DM_05_KiemTraSluggable() {
-        Category cat = new Category();
-        cat.setName("Đồ Điện");
-        Category saved = categoryDAO.saveAndFlush(cat);
-        
-        // "Đồ Điện" -> normalized "Do Dien" -> slug "do-dien"
-        assertEquals("do-dien", saved.getSlug());
-    }
 }

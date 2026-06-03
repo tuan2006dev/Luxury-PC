@@ -31,7 +31,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: y proximity;
 }
 
 body {
@@ -41,6 +41,7 @@ body {
   font-weight: 400;
   overflow-x: hidden;
   cursor: none;
+  padding-bottom: 50px; /* Offset for fixed bottom marquee */
 }
 
 a {
@@ -56,6 +57,19 @@ img {
   display: block;
   width: 100%;
   object-fit: cover;
+}
+
+/* ============================================
+   HERO
+============================================ */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  scroll-snap-align: start;
 }
 
 /* ============================================
@@ -314,7 +328,10 @@ body:hover .cursor {
   display: flex;
   align-items: center;
   overflow: hidden;
+<<<<<<< HEAD
+=======
   scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .hero-bg {
@@ -521,14 +538,17 @@ body:hover .cursor {
    MARQUEE STRIP
 ============================================ */
 .marquee-strip {
-  background: var(--gold);
-  padding: 0.75rem 0;
+  background: var(--black);
+  padding: 0.65rem 0;
   overflow: hidden;
-  position: sticky;
-  top: 70px; /* Sticky below navbar */
-  z-index: 950;
-  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  border-top: 1px solid rgba(201, 168, 76, 0.3);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
 }
 
 .marquee-content {
@@ -546,7 +566,7 @@ body:hover .cursor {
   font-weight: 600;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--black);
+  color: var(--white);
 }
 
 .marquee-content .dot {
@@ -1214,7 +1234,10 @@ body:hover .cursor {
 .footer {
   background: var(--deep);
   border-top: 1px solid rgba(201, 168, 76, 0.12);
+<<<<<<< HEAD
+=======
   scroll-snap-align: start;
+>>>>>>> ngthtuan206
 }
 
 .footer-top {
@@ -1927,6 +1950,14 @@ body:hover .cursor {
   font-weight: 700;
   letter-spacing: 0.1em;
   padding: 0.22rem 0.6rem;
+<<<<<<< HEAD
+}
+
+.flash-prod-img {
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 12px rgba(201, 168, 76, 0.2));
+=======
   z-index: 5;
 }
 
@@ -1950,6 +1981,7 @@ body:hover .cursor {
 
 .flash-product-card:hover .flash-prod-img img {
   transform: scale(1.08);
+>>>>>>> ngthtuan206
 }
 
 

@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp", "/api/forgot-password/**",
+                                "/api/voucher/**", "/api/cart", "/api/products",
                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/error",
                                 "/checkout", "/cart", "/cart/**", "/products", "/products/**", "/product/**")
                                 .permitAll()

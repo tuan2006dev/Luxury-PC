@@ -25,8 +25,9 @@ public class ProductService {
         return productDAO.findFlashSaleProducts();
     }
 
+    // Đã cập nhật lại tên hàm gọi sang DAO khớp với bước trước
     public List<Product> getProductsByCategory(Integer categoryId) {
-        return productDAO.findByCategoryId(categoryId);
+        return productDAO.findByCategoryIdAndImageIsNotNull(categoryId);
     }
 
 

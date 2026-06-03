@@ -1,5 +1,6 @@
 package poly.edu.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.session.SessionInformation;
@@ -43,6 +44,9 @@ public class ProfileController {
         this.sessionRegistry = sessionRegistry;
     }
 
+    @Autowired
+    private poly.edu.service.UserVoucherService userVoucherService;
+
     @GetMapping("/profile")
     public String profile(Authentication authentication, Model model, HttpServletRequest request, HttpSession session) {
         try {
@@ -74,6 +78,10 @@ public class ProfileController {
             model.addAttribute("addresses", profileService.getCurrentUserAddresses(authentication));
             model.addAttribute("notificationSettings", profileService.getCurrentUserNotificationSettings(authentication));
             model.addAttribute("currentSessionInfo", buildCurrentSessionInfo(request, session));
+
+            // Ví Voucher
+            java.util.List<poly.edu.entity.UserVoucher> userVouchers = userVoucherService.getMyVouchers(user);
+            model.addAttribute("vouchers", userVouchers);
         } catch (Exception ex) {
             String fallbackName = authentication != null ? authentication.getName() : "";
             model.addAttribute("name", fallbackName);
@@ -90,6 +98,7 @@ public class ProfileController {
             model.addAttribute("addresses", new java.util.ArrayList<>());
             model.addAttribute("notificationSettings", null);
             model.addAttribute("currentSessionInfo", "Không xác định");
+            model.addAttribute("vouchers", new java.util.ArrayList<>());
         }
 
         return "account/profile";

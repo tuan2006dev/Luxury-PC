@@ -390,10 +390,13 @@ if (btnBuildPc) btnBuildPc.addEventListener('click', () => {
 });
 
 // =========================================
-// FLASH SALE COUNTDOWN (6 giờ từ lúc load)
+// FLASH SALE COUNTDOWN (from database or fallback 6h)
 // =========================================
 (function initCountdown() {
-  const endTime = Date.now() + 6 * 60 * 60 * 1000; // 6 hours from now
+  // Use backend-provided endTime, fallback to 6 hours from now
+  const endTime = (window.flashSaleEndTime && window.flashSaleEndTime > 0)
+      ? window.flashSaleEndTime
+      : Date.now() + 6 * 60 * 60 * 1000;
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -424,81 +427,29 @@ if (btnBuildPc) btnBuildPc.addEventListener('click', () => {
 })();
 
 // =========================================
-// VOUCHER MODAL
+// VOUCHER MODAL (dynamic from data attributes)
 // =========================================
-const voucherData = {
-  apex10: {
-    badge: 'Giảm Giá',
-    pct: '10%',
-    code: 'APEX10',
-    desc: 'Giảm 10% cho tất cả đơn hàng',
-    apply: 'Tất cả sản phẩm',
-    expire: '31/03/2026',
-    limit: 'Không giới hạn'
-  },
-  apex15: {
-    badge: 'Giảm Giá',
-    pct: '15%',
-    code: 'APEX15',
-    desc: 'Giảm 15% cho đơn từ 10 triệu',
-    apply: 'Tất cả sản phẩm',
-    expire: '31/03/2026',
-    limit: '1 lần / khách hàng'
-  },
-  vip20: {
-    badge: 'VIP Exclusive',
-    pct: '20%',
-    code: 'VIP20',
-    desc: 'Giảm 20% dành riêng cho thành viên VIP',
-    apply: 'Thành viên hạng VIP trở lên',
-    expire: '30/06/2026',
-    limit: '3 lần / tháng'
-  },
-  freeship: {
-    badge: 'Miễn Phí Ship',
-    pct: 'FREE',
-    code: 'FREESHIP',
-    desc: 'Miễn phí vận chuyển toàn quốc',
-    apply: 'Tất cả đơn hàng',
-    expire: '15/04/2026',
-    limit: 'Không giới hạn'
-  },
-  newuser: {
-    badge: 'Khách Mới',
-    pct: '12%',
-    code: 'NEWUSER',
-    desc: 'Ưu đãi chào mừng khách hàng đăng ký lần đầu',
-    apply: 'Đơn hàng đầu tiên',
-    expire: '31/12/2026',
-    limit: '1 lần / tài khoản'
-  },
-  cpu500k: {
-    badge: 'Danh Mục CPU',
-    pct: '500K',
-    code: 'CPU500K',
-    desc: 'Giảm trực tiếp 500.000₫ khi mua bất kỳ CPU',
-    apply: 'Danh mục CPU (đơn ≥ 5.000.000₫)',
-    expire: '30/04/2026',
-    limit: '2 lần / khách hàng'
-  }
-};
-
 const modalOverlay = document.getElementById('voucher-modal-overlay');
 const modalClose = document.getElementById('voucher-modal-close');
 const copyBtn = document.getElementById('vmodal-copy-btn');
 
-function openVoucherModal(key) {
-  const data = voucherData[key];
-  if (!data) return;
+function openVoucherModal(cardEl) {
+  const code = cardEl.dataset.voucher || '';
+  const desc = cardEl.dataset.desc || '';
+  const apply = cardEl.dataset.apply || 'Tất cả sản phẩm';
+  const expire = cardEl.dataset.expire || 'Không giới hạn';
+  const limit = cardEl.dataset.limit || 'Không giới hạn';
+  const pctEl = cardEl.querySelector('.voucher-pct');
+  const typeEl = cardEl.querySelector('.voucher-type');
 
-  document.getElementById('vmodal-badge').textContent = data.badge;
-  document.getElementById('vmodal-pct').textContent = data.pct;
-  document.getElementById('vmodal-code').textContent = data.code;
-  document.getElementById('vmodal-desc').textContent = data.desc;
-  document.getElementById('vmodal-apply').textContent = data.apply;
-  document.getElementById('vmodal-expire').textContent = data.expire;
-  document.getElementById('vmodal-limit').textContent = data.limit;
-  copyBtn.dataset.code = data.code;
+  document.getElementById('vmodal-badge').textContent = typeEl ? typeEl.textContent : 'Giảm Giá';
+  document.getElementById('vmodal-pct').textContent = pctEl ? pctEl.textContent : '';
+  document.getElementById('vmodal-code').textContent = code;
+  document.getElementById('vmodal-desc').textContent = desc;
+  document.getElementById('vmodal-apply').textContent = apply;
+  document.getElementById('vmodal-expire').textContent = expire;
+  document.getElementById('vmodal-limit').textContent = limit;
+  if (copyBtn) copyBtn.dataset.code = code;
 
   modalOverlay.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -512,8 +463,7 @@ function closeVoucherModal() {
 // Open modal on voucher card click
 document.querySelectorAll('.voucher-card').forEach(card => {
   card.addEventListener('click', () => {
-    const key = card.dataset.voucher;
-    openVoucherModal(key);
+    openVoucherModal(card);
   });
 });
 
@@ -523,10 +473,16 @@ if (modalOverlay) modalOverlay.addEventListener('click', (e) => {
   if (e.target === modalOverlay) closeVoucherModal();
 });
 
-// Copy code button (UI only — shows toast)
+// Copy code button
 if (copyBtn) copyBtn.addEventListener('click', () => {
-  const code = copyBtn.dataset.code || 'LUXURY10';
-  showToast(`✓ Đã sao chép mã: ${code}`);
+  const code = copyBtn.dataset.code || '';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(code).then(() => {
+      showToast(`✓ Đã sao chép mã: ${code}`);
+    });
+  } else {
+    showToast(`✓ Mã voucher: ${code}`);
+  }
 });
 
 // Expand cursor follower on new interactive elements
@@ -627,7 +583,7 @@ document.querySelectorAll('.search-tag').forEach(tag => {
 
 function renderSearchResults(query) {
   if (!query) {
-    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXYRY PC.</p>';
+    searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm LUXURY PC.</p>';
     return;
   }
   const matches = productCatalog.filter(p =>

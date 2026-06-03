@@ -58,11 +58,22 @@ public class AuthController {
                            @RequestParam String otp,
                            @RequestParam(required = false) String phone,
                            @RequestParam(required = false) String inviteCode,
-                           @RequestParam String password) {
+                           @RequestParam String password,
+                           @RequestParam(required = false) String confirmPassword) {
 
         email = email.trim().toLowerCase();
+
+        // Simple email regex for KH_DK_04
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            return "redirect:/auth/login?invalidEmail=true";
+        }
+
         if(userRepo.findByEmail(email).isPresent()) {
             return "redirect:/auth/login?exist=true";
+        }
+        
+        if(confirmPassword != null && !password.equals(confirmPassword)) {
+            return "redirect:/auth/login?mismatch=true";
         }
         
         if(!emailService.verifyOtp(email, otp)) {
@@ -100,7 +111,25 @@ public class AuthController {
             userRoleDAO.save(ur);
         }
 
-        return "redirect:/auth/login?success=true";
+        // --- TASK 2: Tự động Đăng nhập sau khi Đăng ký ---
+        try {
+            // Tự tạo UserDetails để tránh lỗi LazyLoad
+            java.util.List<org.springframework.security.core.authority.SimpleGrantedAuthority> authorities = 
+                java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + roleName));
+            
+            org.springframework.security.core.userdetails.User userDetails = 
+                new org.springframework.security.core.userdetails.User(savedUser.getEmail(), savedUser.getPassword(), authorities);
+                
+            org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken = 
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authToken);
+            
+            // Chuyển hướng thẳng về trang chủ (Index) để hiện Loading Screen bên trang chủ
+            return "redirect:/";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/auth/login?success=true";
+        }
     }
 
     @PostMapping("/forgot-password/send-otp")

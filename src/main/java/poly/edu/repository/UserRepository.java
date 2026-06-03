@@ -15,12 +15,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByProviderId(String providerId);
 
     @Query("""
-SELECT u 
-FROM User u
-JOIN u.userRoles ur
-JOIN ur.role r
-WHERE r.name <> 'ADMIN'
-""")
+		SELECT u 
+		FROM User u
+		JOIN u.userRoles ur
+		JOIN ur.role r
+		WHERE r.name <> 'ADMIN'
+		""")
     List<User> findAllUserNotAdmin();
 
 }

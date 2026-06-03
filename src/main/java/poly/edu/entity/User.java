@@ -2,6 +2,7 @@ package poly.edu.entity;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -18,11 +19,12 @@ public class User {
     private String phone;
     private String address;
     private String avatar;
-    private Boolean gender; // True: Male, False: Female
-    private java.util.Date birthday;
-    private Boolean status = true; // Default Active
+    private Boolean gender; // true: Male, false: Female
+    private Date birthday;
+    private Boolean status = true;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private java.util.List<UserRole> userRoles;
+    private List<UserRole> userRoles;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -58,23 +60,6 @@ public class User {
     }
 
     // ===== GETTER & SETTER =====
-
-    public AuthProvider getAuthProvider() {
-        return authProvider;
-    }
-
-    public void setAuthProvider(AuthProvider authProvider) {
-        this.authProvider = authProvider;
-    }
-
-    public String getProviderId() {
-        return providerId;
-    }
-
-    public void setProviderId(String providerId) {
-        this.providerId = providerId;
-    }
-
 
     public Integer getId() {
         return id;
@@ -131,36 +116,44 @@ public class User {
     public void setAddress(String address) {
         this.address = address;
     }
-    
+
     public String getAvatar() {
         return avatar;
     }
+
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
     public Boolean getGender() {
         return gender;
     }
+
     public void setGender(Boolean gender) {
         this.gender = gender;
     }
-    public java.util.Date getBirthday() {
+
+    public Date getBirthday() {
         return birthday;
     }
-    public void setBirthday(java.util.Date birthday) {
+
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
+
     public Boolean getStatus() {
         return status;
     }
+
     public void setStatus(Boolean status) {
         this.status = status;
     }
 
-    public java.util.List<UserRole> getUserRoles() {
+    public List<UserRole> getUserRoles() {
         return userRoles;
     }
-    public void setUserRoles(java.util.List<UserRole> userRoles) {
+
+    public void setUserRoles(List<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
 
@@ -170,6 +163,22 @@ public class User {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
     }
 
     public Boolean getNotifyOrderUpdates() {

@@ -11,6 +11,9 @@
 </head>
 <body>
 
+<div class="cursor" id="cursor"></div>
+<div class="cursor-f" id="cursor-f"></div>
+
 <div class="success-ov" id="suc" th:classappend="${param.success != null} ? 'show' : ''">
   <div style="font-size:4rem; color:var(--green); margin-bottom:1rem;">✓</div>
   <h1 class="section-h" style="font-size:2.5rem;">ĐẶT HÀNG THÀNH CÔNG</h1>
@@ -44,14 +47,20 @@
       </div>
 
       <div class="voucher-box">
-        <div class="fg" style="margin-bottom:0; flex:1;">
-          <label class="flabel">Ưu đãi / Mã giảm giá</label>
-          <input type="text" class="finput" placeholder="Nhập mã VOUCHER..."/>
+        <div class="fg" style="margin-bottom:0; flex:1; position: relative;">
+          <label class="flabel">Ví Voucher</label>
+          <input type="text" class="finput" id="voucher-input" placeholder="Bấm để chọn mã từ Ví Voucher..." readonly style="cursor: pointer;"/>
+          <div id="voucher-wallet-modal" style="display:none; position:absolute; top:100%; left:0; width:100%; background:var(--dark); border:1px solid var(--gold); padding:1rem; z-index:100; max-height:250px; overflow-y:auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+              <div style="font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Voucher đang có</div>
+              <div id="voucher-list-container">Đang tải...</div>
+          </div>
         </div>
-        <button class="btn-outline">Áp dụng</button>
+        <button type="button" class="btn-outline" id="btn-apply-voucher" style="display:none;">Áp dụng</button>
       </div>
+      <input type="hidden" name="voucherCode" id="voucher-code-hidden" value=""/>
+      <div id="voucher-result" style="margin-top:.8rem; font-size:.8rem; display:none;"></div>
 
-      <button class="btn-g" style="margin-top:2rem;" onclick="goStep(3)"><span>Tiếp Theo: Thanh Toán →</span></button>
+      <button type="button" class="btn-g" style="margin-top:2rem;" onclick="goStep(3)"><span>Tiếp Theo: Thanh Toán →</span></button>
     </div>
 
     <div id="step-payment" style="display:none;">
@@ -205,8 +214,151 @@
 
   // The form handles submission implicitly since the button type is "submit".
 
+  // =========================================
+  // VOUCHER WALLET LOGIC
+  // =========================================
+  let appliedVoucherDiscount = 0;
+
+  const voucherInput = document.getElementById('voucher-input');
+  const voucherResult = document.getElementById('voucher-result');
+  const voucherHidden = document.getElementById('voucher-code-hidden');
+  const walletModal = document.getElementById('voucher-wallet-modal');
+  const walletContainer = document.getElementById('voucher-list-container');
+
+  if (voucherInput) {
+      voucherInput.addEventListener('click', function() {
+          walletModal.style.display = walletModal.style.display === 'none' ? 'block' : 'none';
+          if (walletModal.style.display === 'block') {
+              loadVouchers();
+          }
+      });
+  }
+
+  // Close modal when clicking outside
+  document.addEventListener('click', function(e) {
+      if (walletModal && voucherInput && !voucherInput.contains(e.target) && !walletModal.contains(e.target)) {
+          walletModal.style.display = 'none';
+      }
+  });
+
+  async function loadVouchers() {
+      walletContainer.innerHTML = '<div style="color:var(--muted); font-size:0.8rem;">Đang tải...</div>';
+      try {
+          const res = await fetch('/api/user-voucher/my-vouchers');
+          const vouchers = await res.json();
+          if (vouchers.length === 0) {
+              walletContainer.innerHTML = '<div style="color:var(--muted); font-size:0.8rem;">Bạn chưa lưu voucher nào chưa sử dụng. Hãy lưu trong hồ sơ cá nhân.</div>';
+              return;
+          }
+          let html = '';
+          vouchers.forEach(v => {
+              const code = v.voucher.code;
+              html += `<div style="background:var(--dark); border:1px solid rgba(201,168,76,.3); padding:10px; margin-bottom:10px; cursor:pointer;" onclick="selectVoucher('${code}')">
+                 <div style="font-weight:bold; color:var(--gold); font-size:1.1rem; letter-spacing:1px;">${code}</div>
+                 <div style="font-size:0.75rem; color:var(--cream);">${v.voucher.description}</div>
+                 <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">ĐH Tối thiểu: ${new Intl.NumberFormat('vi-VN').format(v.voucher.minOrderAmount)}₫</div>
+              </div>`;
+          });
+          walletContainer.innerHTML = html;
+      } catch (e) {
+          walletContainer.innerHTML = '<div style="color:var(--red); font-size:0.8rem;">Không thể tải ví voucher.</div>';
+      }
+  }
+
+  async function selectVoucher(code) {
+      walletModal.style.display = 'none';
+      voucherInput.value = code;
+      voucherHidden.value = code;
+      
+      voucherResult.style.display = 'block';
+      voucherResult.style.color = 'var(--muted)';
+      voucherResult.textContent = 'Đang áp dụng...';
+      
+      try {
+        const response = await fetch('/api/voucher/validate?code=' + encodeURIComponent(code), {
+          method: 'POST'
+        });
+        const data = await response.json();
+
+        if (data.valid) {
+          voucherResult.style.color = 'var(--green)';
+          voucherResult.innerHTML = '✓ ' + data.message;
+          appliedVoucherDiscount = data.discount;
+          updateOrderSummaryWithVoucher(data.discount);
+        } else {
+          voucherResult.style.color = 'var(--red)';
+          voucherResult.innerHTML = '✗ ' + data.message;
+          voucherHidden.value = '';
+          appliedVoucherDiscount = 0;
+          updateOrderSummaryWithVoucher(0);
+        }
+      } catch (err) {
+        voucherResult.style.color = 'var(--red)';
+        voucherResult.textContent = '✗ Lỗi kết nối, vui lòng thử lại';
+      }
+  }
+
+  function updateOrderSummaryWithVoucher(discount) {
+    // Add voucher discount line to order summary
+    const summaryDiv = document.querySelector('.order-sum .os-item:last-of-type');
+    let voucherLine = document.getElementById('voucher-discount-line');
+    if (!voucherLine) {
+      voucherLine = document.createElement('div');
+      voucherLine.id = 'voucher-discount-line';
+      voucherLine.className = 'os-item';
+      voucherLine.style.color = 'var(--green)';
+      const totalDiv = document.querySelector('.os-total');
+      if (totalDiv) totalDiv.parentNode.insertBefore(voucherLine, totalDiv);
+    }
+    const formatter = new Intl.NumberFormat('vi-VN');
+    voucherLine.innerHTML = '<span>Voucher giảm</span><span>-' + formatter.format(Math.round(discount)) + '₫</span>';
+
+    // Update total
+    const totalEl = document.querySelector('.os-total-num');
+    if (totalEl) {
+      const currentFinal = basePrice - (basePrice * 0) - discount; // simplified
+      // Re-read finalPrice from server-side value
+      const serverFinal = /*[[${finalPrice}]]*/ 0;
+      const newTotal = Math.max(0, serverFinal - discount);
+      totalEl.textContent = formatter.format(Math.round(newTotal)) + '₫';
+    }
+  }
 
   window.onload = updateInstallment;
+
+  /* CURSOR JS */
+  const cursor = document.getElementById('cursor');
+  const cursorF = document.getElementById('cursor-f');
+  if (cursor && cursorF) {
+    let mx = 0, my = 0, fx = 0, fy = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX;
+      my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+    (function loop() {
+      fx += (mx - fx) * 0.12;
+      fy += (my - fy) * 0.12;
+      cursorF.style.left = fx + 'px';
+      cursorF.style.top = fy + 'px';
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a, button, input, select, textarea, .pay-card, .cstep').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+        cursorF.style.width = '60px';
+        cursorF.style.height = '60px';
+        cursorF.style.backgroundColor = 'rgba(201, 168, 76, 0.1)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorF.style.width = '36px';
+        cursorF.style.height = '36px';
+        cursorF.style.backgroundColor = 'transparent';
+      });
+    });
+  }
 </script>
 </body>
 </html>
