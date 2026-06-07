@@ -29,7 +29,8 @@ public class SecurityConfig {
                         .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp", "/api/forgot-password/**",
                                 "/api/voucher/**", "/api/cart", "/api/products",
                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/error",
-                                "/profile", "/checkout", "/cart", "/cart/**", "/products", "/products/**", "/product/**")
+                                "/profile", "/checkout", "/checkout/**", "/cart", "/cart/**", "/payment/vietqr",
+                                "/products", "/products/**", "/product/**")
                         .permitAll()
                         .anyRequest().authenticated())
 
