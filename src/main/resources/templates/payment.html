@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán QR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            padding: 40px;
+        }
+
+        .payment-box {
+            width: 430px;
+            margin: auto;
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+
+        .payment-box img {
+            width: 280px;
+            height: 280px;
+            margin: 16px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .amount {
+            color: #d60000;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .info {
+            text-align: left;
+            margin-top: 16px;
+            line-height: 1.8;
+        }
+
+        .note {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 18px;
+            background: #111827;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="payment-box">
+    <h2>Thanh toán đơn hàng</h2>
+
+    <p class="amount">
+        <span th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ
+    </p>
+
+    <img th:src="${qrUrl}" alt="QR thanh toán">
+
+    <div class="info">
+        <p><b>Mã đơn:</b> <span th:text="${orderCode}"></span></p>
+        <p><b>Ngân hàng:</b> <span th:text="${bankId}"></span></p>
+        <p><b>Số tài khoản:</b> <span th:text="${accountNo}"></span></p>
+        <p><b>Chủ tài khoản:</b> <span th:text="${accountName}"></span></p>
+        <p><b>Nội dung chuyển khoản:</b> <span th:text="${transferContent}"></span></p>
+    </div>
+
+    <p class="note">
+        Quét mã QR bằng app ngân hàng và chuyển đúng nội dung để hệ thống/nhóm đối soát đơn hàng.
+    </p>
+
+    <a href="/" class="btn">Về trang chủ</a>
+</div>
+
+</body>
+</html>

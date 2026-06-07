@@ -176,10 +176,13 @@
         </div>
       </div>
 
-      <div style="background:var(--dark); padding:1.5rem; border:1px solid rgba(201,168,76,.1); opacity:0.4; margin-top: 1rem;">
-        <label style="display:flex; align-items:center; gap:10px;">
-          <input type="radio" name="pay" disabled />
-          <span>Ví điện tử Momo/ZaloPay (Bảo trì)</span>
+      <div class="pay-card" onclick="selectPay(this)">
+        <label style="display:flex; align-items:center; cursor:pointer;">
+          <input type="radio" name="paymentMethod" value="VIETQR" />
+          <div>
+            <b style="color: var(--white);">Chuyển khoản ngân hàng qua VietQR</b>
+            <div style="font-size: 0.7rem; color: var(--muted);">Quét mã QR để chuyển khoản đúng số tiền và mã đơn hàng</div>
+          </div>
         </label>
       </div>
 

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán VietQR</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 32px 16px;
+            background: #0d0d0d;
+            color: #f5f0e6;
+            font-family: Arial, sans-serif;
+        }
+        .payment-box {
+            width: min(100%, 520px);
+            margin: auto;
+            padding: 28px;
+            border: 1px solid #c9a84c;
+            background: #171717;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .45);
+        }
+        h1 { margin: 0 0 8px; color: #c9a84c; font-size: 26px; text-align: center; }
+        .subtitle { margin: 0 0 20px; color: #aaa; text-align: center; line-height: 1.5; }
+        .qr-wrap { padding: 14px; background: white; text-align: center; }
+        .qr-wrap img { display: block; width: min(100%, 360px); margin: auto; }
+        .amount { margin: 22px 0; color: #c9a84c; font-size: 28px; font-weight: bold; text-align: center; }
+        .info { border-top: 1px solid #333; }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 13px 0;
+            border-bottom: 1px solid #292929;
+        }
+        .label { color: #999; }
+        .value { text-align: right; font-weight: bold; overflow-wrap: anywhere; }
+        .actions { display: flex; gap: 12px; margin-top: 24px; }
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #c9a84c;
+            color: #c9a84c;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-primary { background: #c9a84c; color: #111; }
+        @media (max-width: 480px) {
+            .payment-box { padding: 20px; }
+            .info-row { display: block; }
+            .value { margin-top: 6px; text-align: left; }
+            .actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<main class="payment-box">
+    <h1>Thanh toán qua VietQR</h1>
+    <p class="subtitle">Quét mã bằng ứng dụng ngân hàng và giữ nguyên nội dung chuyển khoản.</p>
+
+    <div class="qr-wrap">
+        <img th:src="${qrUrl}" alt="Mã QR thanh toán VietQR">
+    </div>
+
+    <div class="amount"
+         th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">150.000 VNĐ</div>
+
+    <div class="info">
+        <div class="info-row"><span class="label">Mã đơn</span><span class="value" th:text="${orderCode}">DH123</span></div>
+        <div class="info-row"><span class="label">Ngân hàng</span><span class="value" th:text="${bankId}">MB</span></div>
+        <div class="info-row"><span class="label">Số tài khoản</span><span class="value" th:text="${accountNo}">66112126666999</span></div>
+        <div class="info-row"><span class="label">Chủ tài khoản</span><span class="value" th:text="${accountName}">NGUYEN TRUONG QUAN</span></div>
+        <div class="info-row"><span class="label">Nội dung chuyển khoản</span><span class="value" th:text="${transferContent}">THANH TOAN DH123</span></div>
+    </div>
+
+    <div class="actions">
+        <a class="btn" th:href="@{/cart}">Về giỏ hàng</a>
+        <a class="btn btn-primary" th:href="@{/}">Về trang chủ</a>
+    </div>
+</main>
+</body>
+</html>

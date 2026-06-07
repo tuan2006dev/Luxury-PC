@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import poly.edu.entity.*;
 import poly.edu.dao.*;
 import poly.edu.repository.UserRepository;
@@ -163,6 +164,7 @@ public class CartController {
             @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod,
             @RequestParam(value = "voucherCode", required = false) String voucherCode,
             HttpSession session,
+            RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal Object principal) {
 
         Map<Integer, CartItem> cart = getCartFromSession(session);
@@ -229,6 +231,12 @@ public class CartController {
         }
 
         session.removeAttribute("cart");
+        if ("VIETQR".equalsIgnoreCase(paymentMethod)) {
+            redirectAttributes.addAttribute("amount", Math.round(finalPrice));
+            redirectAttributes.addAttribute("orderCode", "DH" + order.getId());
+            return "redirect:/payment/vietqr";
+        }
+
         return "redirect:/checkout?success";
     }
 
