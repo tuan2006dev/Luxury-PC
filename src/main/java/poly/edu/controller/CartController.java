@@ -213,7 +213,12 @@ public class CartController {
         order.setTotalPrice(finalPrice);
         order.setVoucherCode(appliedVoucherCode);
         order.setDiscountAmount(voucherDiscount);
-        order.setStatus("PENDING");
+        order.setPaymentMethod(paymentMethod.toUpperCase());
+        order.setStatus("VIETQR".equalsIgnoreCase(paymentMethod)
+                ? "CHO_XAC_NHAN_THANH_TOAN"
+                : "PENDING");
+        orderDAO.save(order);
+        order.setOrderCode("DH" + order.getId());
         orderDAO.save(order);
 
         for (CartItem item : cart.values()) {
@@ -233,7 +238,7 @@ public class CartController {
         session.removeAttribute("cart");
         if ("VIETQR".equalsIgnoreCase(paymentMethod)) {
             redirectAttributes.addAttribute("amount", Math.round(finalPrice));
-            redirectAttributes.addAttribute("orderCode", "DH" + order.getId());
+            redirectAttributes.addAttribute("orderCode", order.getOrderCode());
             return "redirect:/payment/vietqr";
         }
 

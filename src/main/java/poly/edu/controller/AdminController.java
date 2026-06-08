@@ -34,6 +34,47 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
+    @PostMapping("/orders/confirm-payment")
+    public String confirmVietQrPayment(@RequestParam Integer orderId) {
+        adminService.confirmVietQrPayment(orderId);
+        return "redirect:/admin/orders";
+    }
+
+    @PostMapping("/orders/request-refund")
+    public String requestRefund(@RequestParam Integer orderId,
+                                @RequestParam(required = false) String note) {
+        adminService.requestRefund(orderId, note);
+        return "redirect:/admin/orders";
+    }
+
+    @PostMapping("/orders/approve-refund")
+    public String approveRefund(@RequestParam Integer orderId,
+                                @RequestParam(required = false) String note) {
+        adminService.approveCustomerRefund(orderId, note);
+        return "redirect:/admin/orders";
+    }
+
+    @PostMapping("/orders/reject-refund")
+    public String rejectRefund(@RequestParam Integer orderId,
+                               @RequestParam(required = false) String note) {
+        adminService.rejectCustomerRefund(orderId, note);
+        return "redirect:/admin/orders";
+    }
+
+    @PostMapping("/orders/confirm-refund")
+    public String confirmRefund(@RequestParam Integer orderId,
+                                @RequestParam(required = false) String note) {
+        adminService.confirmRefund(orderId, note);
+        return "redirect:/admin/orders";
+    }
+
+    @PostMapping("/orders/recall")
+    public String recallOrder(@RequestParam Integer orderId,
+                              @RequestParam(required = false) String note) {
+        adminService.recallOrder(orderId, note);
+        return "redirect:/admin/orders";
+    }
+
     @GetMapping("/inventory")
     public String manageInventory(Model model) {
         model.addAttribute("inventory", adminService.getFullInventory());

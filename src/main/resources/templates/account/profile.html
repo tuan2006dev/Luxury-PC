@@ -1516,6 +1516,15 @@
             .tl-step.done .tl-dot { background: var(--gold); border-color: var(--gold); color: #000; }
             .tl-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;}
             .tl-step.done .tl-label { color: var(--gold); font-weight: bold; }
+            .order-payment-info { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; margin-bottom:25px; }
+            .order-payment-row { background:var(--dark); padding:12px; border:1px solid rgba(201,168,76,.1); }
+            .order-payment-label { display:block; color:var(--muted); font-size:.65rem; text-transform:uppercase; margin-bottom:6px; }
+            .order-payment-value { color:var(--cream); font-size:.8rem; overflow-wrap:anywhere; }
+            .refund-request { margin:0 0 25px; padding:15px; border:1px solid rgba(201,168,76,.2); background:var(--dark); }
+            .refund-request summary { color:var(--gold); cursor:pointer; font-size:.8rem; font-weight:700; text-transform:uppercase; }
+            .refund-request form { display:grid; gap:10px; margin-top:12px; }
+            .refund-request textarea { min-height:80px; resize:vertical; padding:10px; color:var(--cream); background:var(--deep); border:1px solid rgba(201,168,76,.25); }
+            .refund-request button { justify-self:start; padding:9px 14px; border:0; background:var(--gold); color:#111; font-weight:700; cursor:pointer; }
 
             .item-mini-list { background: var(--dark); border-radius: 4px; padding: 1rem; }
             .item-mini { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;}
@@ -1529,7 +1538,7 @@
             <div class="order-row" th:each="order : ${orders}">
                 <div class="order-header" th:onclick="'toggleOrder(\'order-' + ${order.id} + '\')'">
                     <div>
-                        <div class="order-h-id" th:text="'#Luxury-' + ${order.id}">#LUXURY-2603</div>
+                        <div class="order-h-id" th:text="${order.orderCode != null ? order.orderCode : 'DH' + order.id}">DH2603</div>
                         <div class="order-h-date" th:text="${#calendars.format(order.createdAt, 'dd/MM/yyyy')}">12/03/2026</div>
                     </div>
                     <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px;"
@@ -1539,16 +1548,73 @@
                     <div class="order-total" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</div>
                     <div>
                         <span th:class="'order-status status-' + ${order.status.toLowerCase()}"
-                            th:text="${order.status == 'PENDING' ? 'Chờ xử lý' : (order.status == 'PAID' ? 'Đã thanh toán' : (order.status == 'COMPLETED' ? 'Hoàn thành' : (order.status == 'SHIPPING' ? 'Đang giao' : (order.status == 'CANCELED' ? 'Đã hủy' : order.status))))}">
+                            th:text="${order.statusDisplay}">
                         Đang xử lý
                         </span>
                     </div>
                     <div><button class="order-detail-btn">Chi Tiết ▼</button></div>
                 </div>
                 <div class="order-details-pane" th:id="'order-' + ${order.id}">
-                    <div class="timeline-track">
+                    <div class="order-payment-info">
+                        <div class="order-payment-row">
+                            <span class="order-payment-label">Mã đơn</span>
+                            <span class="order-payment-value" th:text="${order.orderCode != null ? order.orderCode : 'DH' + order.id}">DH2603</span>
+                        </div>
+                        <div class="order-payment-row">
+                            <span class="order-payment-label">Phương thức thanh toán</span>
+                            <span class="order-payment-value" th:text="${order.paymentMethodDisplay}">VietQR</span>
+                        </div>
+                        <div class="order-payment-row">
+                            <span class="order-payment-label">Trạng thái</span>
+                            <span class="order-payment-value" th:text="${order.statusDisplay}">Chờ xác nhận thanh toán</span>
+                        </div>
+                        <div class="order-payment-row" th:if="${order.transferContent != null}">
+                            <span class="order-payment-label">Nội dung chuyển khoản</span>
+                            <span class="order-payment-value" th:text="${order.transferContent}">THANH TOAN DH2603</span>
+                        </div>
+                        <div class="order-payment-row" th:if="${order.voucherCode != null}">
+                            <span class="order-payment-label">Voucher</span>
+                            <span class="order-payment-value" th:text="${order.voucherCode}">QA500K</span>
+                        </div>
+                        <div class="order-payment-row" th:if="${order.discountAmount != null and order.discountAmount > 0}">
+                            <span class="order-payment-label">Số tiền giảm</span>
+                            <span class="order-payment-value" th:text="'-' + ${#numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">-500.000₫</span>
+                        </div>
+                        <div class="order-payment-row" th:if="${order.adminNote != null}">
+                            <span class="order-payment-label">Ghi chú từ quản trị viên</span>
+                            <span class="order-payment-value" th:text="${order.adminNote}">Lý do hoàn tiền hoặc thu hồi</span>
+                        </div>
+                        <div class="order-payment-row" th:if="${order.refundReason != null}">
+                            <span class="order-payment-label">Lý do hoàn trả</span>
+                            <span class="order-payment-value" th:text="${order.refundReason}">Sản phẩm không phù hợp</span>
+                        </div>
+                    </div>
+                    <details class="refund-request" th:if="${order.customerRefundEligible}">
+                        <summary>Trả hàng / Hoàn tiền</summary>
+                        <form action="/profile/orders/request-refund" method="post">
+                            <input type="hidden" name="orderId" th:value="${order.id}">
+                            <textarea name="reason" required placeholder="Nhập lý do bạn muốn hoàn trả đơn hàng"></textarea>
+                            <button type="submit">Gửi Yêu Cầu Hoàn Trả</button>
+                        </form>
+                    </details>
+                    <div class="timeline-track" th:if="${order.status == 'YEU_CAU_HOAN_TIEN' or order.status == 'CHO_HOAN_TIEN' or order.status == 'DA_HOAN_TIEN'}">
                         <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Đặt Hàng</div></div>
-                        <div th:class="${order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }"><div class="tl-dot">✔</div><div class="tl-label">Đã Thanh Toán</div></div>
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Thanh Toán</div></div>
+                        <div class="tl-step done"><div class="tl-dot">↩</div><div class="tl-label" th:text="${order.status == 'YEU_CAU_HOAN_TIEN' ? 'Đã Yêu Cầu Hoàn Trả' : 'Chờ Hoàn Tiền'}">Chờ Hoàn Tiền</div></div>
+                        <div th:class="${order.status == 'DA_HOAN_TIEN' ? 'tl-step done' : 'tl-step'}"><div class="tl-dot">✔</div><div class="tl-label">Đã Hoàn Tiền</div></div>
+                    </div>
+                    <div class="timeline-track" th:if="${order.status == 'THU_HOI'}">
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Đặt Hàng</div></div>
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Thanh Toán</div></div>
+                        <div class="tl-step done"><div class="tl-dot">↩</div><div class="tl-label">Đã Thu Hồi</div></div>
+                    </div>
+                    <div class="timeline-track" th:unless="${order.status == 'YEU_CAU_HOAN_TIEN' or order.status == 'CHO_HOAN_TIEN' or order.status == 'DA_HOAN_TIEN' or order.status == 'THU_HOI'}">
+                        <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Đặt Hàng</div></div>
+                        <div th:class="${order.status == 'DA_THANH_TOAN' or order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+                            <div class="tl-dot">✔</div>
+                            <div class="tl-label"
+                                 th:text="${order.status == 'CHO_XAC_NHAN_THANH_TOAN' ? 'Chờ xác nhận thanh toán' : (order.status == 'DA_THANH_TOAN' or order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'Đã thanh toán' : 'Chờ thanh toán')}">Đã Thanh Toán</div>
+                        </div>
                         <div th:class="${order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }"><div class="tl-dot">🚚</div><div class="tl-label">Đang Giao Vận</div></div>
                         <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }" th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}"><div class="tl-dot" th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">★</div><div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn Thành</div></div>
                     </div>

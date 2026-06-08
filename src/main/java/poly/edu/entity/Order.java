@@ -27,13 +27,28 @@ public class Order {
     @Column(name = "total_price")
     private Double totalPrice;
 
-    private String status; // PENDING, PAID, SHIPPING, COMPLETED, CANCELLED
+    @Column(name = "order_code", unique = true)
+    private String orderCode;
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
+    private String status;
 
     @Column(name = "voucher_code")
     private String voucherCode;
 
     @Column(name = "discount_amount")
     private Double discountAmount;
+
+    @Column(name = "admin_note", length = 1000)
+    private String adminNote;
+
+    @Column(name = "refund_reason", length = 1000)
+    private String refundReason;
+
+    @Column(name = "refund_previous_status")
+    private String refundPreviousStatus;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -63,7 +78,9 @@ public class Order {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = new Date();
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
         if (this.status == null) {
             this.status = "PENDING";
         }
@@ -133,6 +150,22 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -157,6 +190,30 @@ public class Order {
         this.discountAmount = discountAmount;
     }
 
+    public String getAdminNote() {
+        return adminNote;
+    }
+
+    public void setAdminNote(String adminNote) {
+        this.adminNote = adminNote;
+    }
+
+    public String getRefundReason() {
+        return refundReason;
+    }
+
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
+    }
+
+    public String getRefundPreviousStatus() {
+        return refundPreviousStatus;
+    }
+
+    public void setRefundPreviousStatus(String refundPreviousStatus) {
+        this.refundPreviousStatus = refundPreviousStatus;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -171,5 +228,49 @@ public class Order {
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    @Transient
+    public String getStatusDisplay() {
+        if (status == null) return "Chưa xác định";
+        return switch (status) {
+            case "CHO_XAC_NHAN_THANH_TOAN" -> "Chờ xác nhận thanh toán";
+            case "DA_THANH_TOAN", "PAID" -> "Đã thanh toán";
+            case "YEU_CAU_HOAN_TIEN" -> "Đã yêu cầu hoàn trả";
+            case "CHO_HOAN_TIEN" -> "Chờ hoàn tiền";
+            case "DA_HOAN_TIEN" -> "Đã hoàn tiền";
+            case "THU_HOI" -> "Đã thu hồi";
+            case "PENDING" -> "Chờ xử lý";
+            case "DA_HUY", "CANCELLED", "CANCELED" -> "Đã hủy";
+            case "SHIPPING" -> "Đang giao vận";
+            case "COMPLETED", "HOAN_THANH" -> "Hoàn thành";
+            default -> status;
+        };
+    }
+
+    @Transient
+    public String getPaymentMethodDisplay() {
+        if (paymentMethod == null) return "Chưa xác định";
+        return switch (paymentMethod) {
+            case "VIETQR" -> "VietQR";
+            case "COD" -> "Thanh toán khi nhận hàng (COD)";
+            case "INSTALLMENT" -> "Trả góp";
+            default -> paymentMethod;
+        };
+    }
+
+    @Transient
+    public String getTransferContent() {
+        return "VIETQR".equals(paymentMethod) && orderCode != null
+                ? "THANH TOAN " + orderCode
+                : null;
+    }
+
+    @Transient
+    public boolean isCustomerRefundEligible() {
+        return "DA_THANH_TOAN".equals(status)
+                || "PAID".equals(status)
+                || "COMPLETED".equals(status)
+                || "HOAN_THANH".equals(status);
     }
 }
