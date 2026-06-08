@@ -384,10 +384,8 @@ window.addEventListener('scroll', () => {
 // =========================================
 // BUILD PC BUTTON
 // =========================================
-const btnBuildPc = document.getElementById('btn-build-pc');
-if (btnBuildPc) btnBuildPc.addEventListener('click', () => {
-  showToast('🔧 Tính năng tư vấn Build PC đang được phát triển. Vui lòng gọi 1800-LUXURY-PC!');
-});
+// Handled naturally via href links in the HTML
+
 
 // =========================================
 // FLASH SALE COUNTDOWN (from database or fallback 6h)

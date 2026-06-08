@@ -21,6 +21,10 @@
             <a href="/admin/vouchers" class="nav-link"><i class="fa-solid fa-ticket"></i> Voucher</a>
             <a href="/admin/flash-sales" class="nav-link"><i class="fa-solid fa-bolt"></i> Flash Sale</a>
             <a href="/admin/account" class="nav-link"><i class="fa-solid fa-users"></i> Người Dùng</a>
+            <a href="/admin/tickets" class="nav-link" style="position:relative;"><i class="fa-solid fa-headset"></i> Hỗ Trợ / Ticket
+                <span th:if="${openTickets != null and openTickets > 0}" th:text="${openTickets}"
+                      style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:#ef4444;color:#fff;border-radius:20px;font-size:0.65rem;padding:0.1rem 0.45rem;font-weight:700;"></span>
+            </a>
             <a href="/logout" class="nav-link" style="margin-top: 3rem; color: var(--red);"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất</a>
         </nav>
     </div>
