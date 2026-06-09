@@ -69,10 +69,11 @@
 
     <div class="info">
         <div class="info-row"><span class="label">Mã đơn</span><span class="value" th:text="${orderCode}">DH123</span></div>
-        <div class="info-row"><span class="label">Ngân hàng</span><span class="value" th:text="${bankId}">MB</span></div>
-        <div class="info-row"><span class="label">Số tài khoản</span><span class="value" th:text="${accountNo}">66112126666999</span></div>
-        <div class="info-row"><span class="label">Chủ tài khoản</span><span class="value" th:text="${accountName}">NGUYEN TRUONG QUAN</span></div>
+        <div class="info-row"><span class="label">Ngân hàng</span><span class="value" th:text="${bankDisplayName}">MB Bank</span></div>
+        <div class="info-row"><span class="label">Số tài khoản</span><span class="value" th:text="${accountNo}">9999999999</span></div>
+        <div class="info-row"><span class="label">Chủ tài khoản</span><span class="value" th:text="${accountName}">LUXURYPC</span></div>
         <div class="info-row"><span class="label">Nội dung chuyển khoản</span><span class="value" th:text="${transferContent}">THANH TOAN DH123</span></div>
+        <div class="info-row"><span class="label">Trạng thái</span><span class="value" style="color:#c9a84c;" th:text="${paymentStatus}">Chờ xác nhận thanh toán</span></div>
     </div>
 
     <div class="actions">

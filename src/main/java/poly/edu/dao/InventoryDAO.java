@@ -9,6 +9,9 @@ import java.util.Optional;
 public interface InventoryDAO extends JpaRepository<Inventory, Integer> {
     Optional<Inventory> findByProductId(Integer productId);
 
-    @Query("SELECT i FROM Inventory i WHERE i.quantity < 10")
+    @Query("SELECT i FROM Inventory i JOIN FETCH i.product p LEFT JOIN FETCH p.category WHERE i.quantity < 10")
     List<Inventory> findLowStockItems();
+
+    @Query("SELECT i FROM Inventory i JOIN FETCH i.product p LEFT JOIN FETCH p.category ORDER BY p.name")
+    List<Inventory> findAllWithProductAndCategory();
 }

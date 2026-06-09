@@ -6,6 +6,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import poly.edu.entity.User;
 import poly.edu.repository.UserRepository;
@@ -25,6 +27,9 @@ public class ProfileController {
 
     @Autowired
     private poly.edu.service.UserVoucherService userVoucherService;
+
+    @Autowired
+    private poly.edu.service.CustomerOrderService customerOrderService;
 
     @GetMapping("/profile")
     public String profile(
@@ -115,6 +120,26 @@ public class ProfileController {
         }
 
         return "account/profile";  // Use the new Khang template path which is under account/profile.html inside templates
+    }
+
+    @PostMapping("/profile/orders/request-refund")
+    public String requestRefund(@AuthenticationPrincipal Object principal,
+                                @RequestParam Integer orderId,
+                                @RequestParam String reason) {
+        findCurrentUser(principal).ifPresent(user -> customerOrderService.requestRefund(orderId, user, reason));
+        return "redirect:/profile";
+    }
+
+    private Optional<User> findCurrentUser(Object principal) {
+        String usernameOrEmail = "";
+        if (principal instanceof OAuth2User oauthUser) {
+            usernameOrEmail = (String) oauthUser.getAttributes().get("email");
+        } else if (principal instanceof org.springframework.security.core.userdetails.User user) {
+            usernameOrEmail = user.getUsername();
+        }
+
+        Optional<User> user = userRepository.findByEmail(usernameOrEmail);
+        return user.isPresent() ? user : userRepository.findByUsername(usernameOrEmail);
     }
 }
 
