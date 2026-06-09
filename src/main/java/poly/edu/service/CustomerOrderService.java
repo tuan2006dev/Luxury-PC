@@ -29,7 +29,6 @@ public class CustomerOrderService {
 
         order.setRefundPreviousStatus(order.getStatus());
         order.setRefundReason(reason.trim());
-        order.setAdminNote(null);
         order.setStatus("YEU_CAU_HOAN_TIEN");
         orderDAO.save(order);
         return true;

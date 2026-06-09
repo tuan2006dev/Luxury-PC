@@ -1610,13 +1610,13 @@
                     </div>
                     <div class="timeline-track" th:unless="${order.status == 'YEU_CAU_HOAN_TIEN' or order.status == 'CHO_HOAN_TIEN' or order.status == 'DA_HOAN_TIEN' or order.status == 'THU_HOI'}">
                         <div class="tl-step done"><div class="tl-dot">✔</div><div class="tl-label">Đã Đặt Hàng</div></div>
-                        <div th:class="${order.status == 'DA_THANH_TOAN' or order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+                        <div th:class="${order.status == 'DA_THANH_TOAN' or order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }">
                             <div class="tl-dot">✔</div>
                             <div class="tl-label"
-                                 th:text="${order.status == 'CHO_XAC_NHAN_THANH_TOAN' ? 'Chờ xác nhận thanh toán' : (order.status == 'DA_THANH_TOAN' or order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'Đã thanh toán' : 'Chờ thanh toán')}">Đã Thanh Toán</div>
+                                 th:text="${order.status == 'CHO_XAC_NHAN_THANH_TOAN' ? 'Chờ xác nhận thanh toán' : (order.status == 'DA_THANH_TOAN' or order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'Đã thanh toán' : 'Chờ thanh toán')}">Đã Thanh Toán</div>
                         </div>
-                        <div th:class="${order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }"><div class="tl-dot">🚚</div><div class="tl-label">Đang Giao Vận</div></div>
-                        <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }" th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}"><div class="tl-dot" th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">★</div><div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn Thành</div></div>
+                        <div th:class="${order.status == 'SHIPPING' or order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }"><div class="tl-dot">🚚</div><div class="tl-label">Đang Giao Vận</div></div>
+                        <div th:class="${order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }" th:style="${order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'color:var(--green);' : ''}"><div class="tl-dot" th:style="${order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'background:var(--green);border-color:var(--green);' : ''}">★</div><div th:style="${order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn Thành</div></div>
                     </div>
                     <div class="item-mini-list">
                         <div style="font-size:0.75rem; color:var(--gold); margin-bottom: 15px; text-transform: uppercase;">Sản phẩm trong đơn hàng</div>

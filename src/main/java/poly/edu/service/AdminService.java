@@ -34,8 +34,7 @@ public class AdminService {
     public void updateOrderStatus(Integer orderId, String status) {
         Order order = getOrderById(orderId);
         if (order != null && Arrays.asList(
-                "PENDING", "PAID", "CHO_XAC_NHAN_THANH_TOAN", "DA_THANH_TOAN",
-                "SHIPPING", "COMPLETED", "DA_HUY", "CANCELLED").contains(status)) {
+                "PENDING", "PAID", "SHIPPING", "COMPLETED", "DA_HUY", "CANCELLED").contains(status)) {
             order.setStatus(status);
             orderDAO.save(order);
         }
@@ -104,7 +103,7 @@ public class AdminService {
         if (order != null && isStatus(order, "DA_THANH_TOAN", "PAID", "SHIPPING", "COMPLETED",
                 "HOAN_THANH", "YEU_CAU_HOAN_TIEN", "CHO_HOAN_TIEN")) {
             order.setStatus("THU_HOI");
-            order.setAdminNote(normalizeNote(note));
+            order.setAdminNote(mergeNote(order.getAdminNote(), note));
             orderDAO.save(order);
         }
     }
@@ -150,7 +149,7 @@ public class AdminService {
     private ProductDAO productDAO;
 
     public List<Inventory> getFullInventory() {
-        return inventoryDAO.findAll();
+        return inventoryDAO.findAllWithProductAndCategory();
     }
 
     @Transactional

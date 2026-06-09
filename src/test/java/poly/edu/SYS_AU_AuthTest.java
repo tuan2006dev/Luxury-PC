@@ -70,7 +70,7 @@ public class SYS_AU_AuthTest {
                 .param("password", "123456")
                 .param("confirmPassword", "123456"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/auth/login?success=true"));
+                .andExpect(redirectedUrl("/"));
 
         assertTrue(userRepository.findByEmail("phamcongthanh@gmail.com").isPresent());
     }

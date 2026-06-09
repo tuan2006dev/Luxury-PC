@@ -159,13 +159,11 @@
                                         <input type="text" name="note" placeholder="Lý do thu hồi">
                                         <button type="submit" class="update-btn">Thu Hồi Đơn</button>
                                     </form>
-                                    <form th:unless="${o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN' or o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" action="/admin/orders/update-status" method="post" class="action-form">
+                                    <form th:unless="${o.status == 'CHO_XAC_NHAN_THANH_TOAN' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN' or o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" action="/admin/orders/update-status" method="post" class="action-form">
                                         <input type="hidden" name="orderId" th:value="${o.id}">
                                         <select name="status">
                                             <option value="PENDING" th:selected="${o.status == 'PENDING'}">Chờ xử lý</option>
                                             <option value="PAID" th:selected="${o.status == 'PAID'}">Đã thanh toán</option>
-                                            <option value="CHO_XAC_NHAN_THANH_TOAN" th:selected="${o.status == 'CHO_XAC_NHAN_THANH_TOAN'}">Chờ xác nhận thanh toán</option>
-                                            <option value="DA_THANH_TOAN" th:selected="${o.status == 'DA_THANH_TOAN'}">Đã thanh toán VietQR</option>
                                             <option value="SHIPPING" th:selected="${o.status == 'SHIPPING'}">Đang giao</option>
                                             <option value="COMPLETED" th:selected="${o.status == 'COMPLETED'}">Hoàn thành</option>
                                             <option value="DA_HUY" th:selected="${o.status == 'DA_HUY'}">Đã hủy</option>

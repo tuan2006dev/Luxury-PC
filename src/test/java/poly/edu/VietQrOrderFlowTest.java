@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -74,6 +75,12 @@ class VietQrOrderFlowTest {
         assertEquals("VIETQR", order.getPaymentMethod());
         assertEquals("CHO_XAC_NHAN_THANH_TOAN", order.getStatus());
         assertNotNull(order.getOrderCode());
+    }
+
+    @Test
+    void checkoutKeepsCodAndInstallmentFlowsWorking() throws Exception {
+        assertNonQrCheckout("COD");
+        assertNonQrCheckout("INSTALLMENT");
     }
 
     @Test
@@ -150,6 +157,10 @@ class VietQrOrderFlowTest {
         adminService.updateOrderStatus(order.getId(), "DA_HOAN_TIEN");
 
         assertEquals("DA_THANH_TOAN", orderDAO.findById(order.getId()).orElseThrow().getStatus());
+
+        Order codOrder = saveOrder("COD", "PENDING", 500_000D);
+        adminService.updateOrderStatus(codOrder.getId(), "DA_THANH_TOAN");
+        assertEquals("PENDING", orderDAO.findById(codOrder.getId()).orElseThrow().getStatus());
     }
 
     @Test
@@ -157,6 +168,7 @@ class VietQrOrderFlowTest {
         User owner = userDAO.findByEmail("nguyentruongq169@gmail.com");
         Order order = saveOrder("VIETQR", "DA_THANH_TOAN", 500_000D);
         order.setUser(owner);
+        order.setAdminNote("Ghi chú giao hàng");
         orderDAO.saveAndFlush(order);
 
         assertEquals(false, customerOrderService.requestRefund(order.getId(), new User(), "Không hợp lệ"));
@@ -166,6 +178,7 @@ class VietQrOrderFlowTest {
         assertEquals("YEU_CAU_HOAN_TIEN", requested.getStatus());
         assertEquals("DA_THANH_TOAN", requested.getRefundPreviousStatus());
         assertEquals("Sản phẩm không phù hợp", requested.getRefundReason());
+        assertEquals("Ghi chú giao hàng", requested.getAdminNote());
     }
 
     @Test
@@ -241,5 +254,25 @@ class VietQrOrderFlowTest {
         orderDAO.saveAndFlush(order);
         order.setOrderCode("DH" + order.getId());
         return orderDAO.saveAndFlush(order);
+    }
+
+    private void assertNonQrCheckout(String paymentMethod) throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        Map<Integer, CartItem> cart = new HashMap<>();
+        cart.put(999_999, new CartItem(999_999, "QA " + paymentMethod, 1_000_000D, 1));
+        session.setAttribute("cart", cart);
+
+        mockMvc.perform(post("/checkout/submit")
+                        .session(session)
+                        .param("fullName", "QA " + paymentMethod)
+                        .param("phone", "0900000000")
+                        .param("address", "QA Address")
+                        .param("paymentMethod", paymentMethod))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/checkout?success"));
+
+        Order order = orderDAO.findAllOrderedByDate().get(0);
+        assertEquals(paymentMethod, order.getPaymentMethod());
+        assertEquals("PENDING", order.getStatus());
     }
 }
