@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Luxury PC — Build PC Configurator</title>
+  <title>Apex  PC — Build PC Configurator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
-    :root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2a2a2a;--gold:#c9a84c;--gold-l:#e8c97a;--cream:#f5f0e8;--white:#fff;--muted:#888;--red:#ef4444;--green:#22c55e;--serif:'Inter',sans-serif;--sans:'Inter',sans-serif;--ease:.4s cubic-bezier(.25,.46,.45,.94);}
+    :root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2a2a2a;--gold:#c9a84c;--gold-l:#e8c97a;--cream:#f5f0e8;--white:#fff;--muted:#888;--red:#ef4444;--green:#22c55e;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Montserrat',sans-serif;--ease:.4s cubic-bezier(.25,.46,.45,.94);}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{font-size:16px;scroll-behavior:smooth;}
-    body{background:var(--black);color:var(--cream);font-family:var(--sans);font-weight:400;min-height:100vh;cursor:none;overflow-x:hidden;}
+    body{background:var(--black);color:var(--cream);font-family:var(--sans);font-weight:300;cursor:none;overflow-x:hidden;}
     a{color:inherit;text-decoration:none;}
     .cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
     .cursor-f{position:fixed;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.5;transition:width .25s,height .25s;}
@@ -136,7 +136,7 @@
 <div class="cursor-f" id="cursor-f"></div>
 
 <nav class="navbar">
-  <a href="index.html" class="nav-logo">LUXURY<b>PC</b></a>
+  <a href="index.html" class="nav-logo">Apex <b>PC</b></a>
   <div class="nav-links">
     <a href="index.html" class="nav-link">Trang Chủ</a>
     <a href="#" class="nav-link" style="color:var(--gold)">Build PC</a>
@@ -146,7 +146,7 @@
 
 <!-- HERO -->
 <div class="build-hero">
-  <div class="hero-tag">Luxury PC Configurator</div>
+  <div class="hero-tag">Apex  PC Configurator</div>
   <h1 class="hero-title">Thiết Kế<br/><em>Bộ PC Hoàn Hảo</em></h1>
   <p class="hero-sub">Chọn từng linh kiện theo nhu cầu của bạn. Hệ thống kiểm tra tương thích tự động, đảm bảo mọi thứ hoạt động hoàn hảo cùng nhau.</p>
   <div class="hero-deco">PC</div>
@@ -234,16 +234,16 @@
     <div class="comp-slot has-item" id="slot-mb">
       <div class="slot-header" onclick="toggleSlot('mb')">
         <div class="slot-icon">🔌</div>
-        <div class="slot-info"><div class="slot-type">Bo Mạch Chủ</div><div class="slot-name" id="sel-mb-name">ASUS ROG Maximus Z790 Apex</div></div>
+        <div class="slot-info"><div class="slot-type">Bo Mạch Chủ</div><div class="slot-name" id="sel-mb-name">ASUS ROG Maximus Z790 Apex </div></div>
         <div class="slot-price" id="sel-mb-price">12.490.000₫</div>
         <div class="slot-toggle">▾</div>
       </div>
       <div class="comp-picker">
         <div class="picker-label">Chọn Mainboard</div>
         <div class="picker-list">
-          <div class="picker-item selected" onclick="selectComp('mb',this,'ASUS ROG Maximus Z790 Apex','12.490.000₫',12490000,'','ok')">
+          <div class="picker-item selected" onclick="selectComp('mb',this,'ASUS ROG Maximus Z790 Apex ','12.490.000₫',12490000,'','ok')">
             <span class="pi-icon">🔌</span>
-            <div class="pi-info"><div class="pi-name">ASUS ROG Maximus Z790 Apex</div><div class="pi-spec">LGA1700 · DDR5 · PCIe 5.0 · WiFi 6E</div></div>
+            <div class="pi-info"><div class="pi-name">ASUS ROG Maximus Z790 Apex </div><div class="pi-spec">LGA1700 · DDR5 · PCIe 5.0 · WiFi 6E</div></div>
             <span class="compat-badge badge-ok">✓ Tương thích</span>
             <div class="pi-price">12.490.000₫</div>
             <div class="pi-check">✓</div>
@@ -481,7 +481,7 @@
   // BUILD STATE
   let build={
     cpu:{name:'Intel Core i9-14900K',price:18990000},
-    mb:{name:'ASUS ROG Maximus Z790 Apex',price:12490000},
+    mb:{name:'ASUS ROG Maximus Z790 Apex ',price:12490000},
     gpu:{name:'RTX 4090 Titan Edition',price:42990000},
     ram:{name:'Corsair Dominator Platinum DDR5',price:6490000},
     ssd:null,psu:null,cool:null
