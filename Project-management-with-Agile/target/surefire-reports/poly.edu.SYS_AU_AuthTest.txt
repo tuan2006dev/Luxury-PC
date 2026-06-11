@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: poly.edu.SYS_AU_AuthTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 21.88 s -- in poly.edu.SYS_AU_AuthTest

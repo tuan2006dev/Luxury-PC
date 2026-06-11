@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
+</head>
+<body>
+    <div class="sidebar">
+        <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
+        <nav>
+            <a href="/admin/dashboard" class="nav-link active"><i class="fa-solid fa-chart-line"></i> Tổng Quan</a>
+            <a href="/admin/orders" class="nav-link"><i class="fa-solid fa-box"></i> Đơn Hàng</a>
+            <a href="/admin/inventory" class="nav-link"><i class="fa-solid fa-warehouse"></i> Kho Hàng</a>
+            <a href="/admin/categories" class="nav-link"><i class="fa-solid fa-layer-group"></i> Danh Mục</a>
+            <a href="/admin/products" class="nav-link"><i class="fa-solid fa-microchip"></i> Sản Phẩm</a>
+            <a href="/admin/vouchers" class="nav-link"><i class="fa-solid fa-ticket"></i> Voucher</a>
+            <a href="/admin/flash-sales" class="nav-link"><i class="fa-solid fa-bolt"></i> Flash Sale</a>
+            <a href="/admin/account" class="nav-link"><i class="fa-solid fa-users"></i> Người Dùng</a>
+            <a href="/logout" class="nav-link" style="margin-top: 3rem; color: var(--red);"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="title">
+                <h1>Bảng Điều Khiển</h1>
+                <p>Tổng quan tình hình kinh doanh tháng <span id="current-month"></span></p>
+            </div>
+            <div class="user-info">
+                <i class="fa-solid fa-user-shield"></i>
+                <span th:text="${#authentication.name}">Admin</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fa-solid fa-wallet stat-icon"></i>
+                <div class="stat-label">Doanh Thu Tháng</div>
+                <div class="stat-value">452.500.000₫</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-cart-shopping stat-icon"></i>
+                <div class="stat-label">Đơn Hàng Mới</div>
+                <div class="stat-value" th:text="${pendingCount} ?: 0">12</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-triangle-exclamation stat-icon"></i>
+                <div class="stat-label">Cảnh Báo Kho</div>
+                <div class="stat-value" th:text="${lowStock} ? ${lowStock.size()} : 0">3</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-users stat-icon"></i>
+                <div class="stat-label">Tổng Khách Hàng</div>
+                <div class="stat-value">1,248</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="table-h"><i class="fa-solid fa-chart-area"></i> Biểu Đồ Doanh Thu Học Kỳ 1 - 2026</div>
+            <canvas id="revenueChart" height="80"></canvas>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="table-card">
+                <div class="table-h"><i class="fa-solid fa-fire"></i> Sản Phẩm Bán Chạy Nhất</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên Linh Kiện</th>
+                            <th style="text-align: right;">Đã Bán</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${topProducts}">
+                            <td th:text="${p.name}">RTX 4090 Global</td>
+                            <td th:text="${p.totalQty}" style="text-align: right; font-weight: bold; color: var(--gold);">15</td>
+                        </tr>
+                        <tr th:if="${topProducts == null or topProducts.empty}">
+                            <td>Intel Core i9-14900K</td><td style="text-align: right; color: var(--gold); font-weight: bold;">42</td>
+                        </tr>
+                        <tr th:if="${topProducts == null or topProducts.empty}">
+                            <td>RTX 4090 Asus ROG</td><td style="text-align: right; color: var(--gold); font-weight: bold;">28</td>
+                        </tr>
+                        <tr th:if="${topProducts == null or topProducts.empty}">
+                            <td>RAM Corsair DDR5 64GB</td><td style="text-align: right; color: var(--gold); font-weight: bold;">120</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-card">
+                <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> Cảnh Báo Kho Hàng (Sắp Hết)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản Phẩm</th>
+                            <th>Tồn Kho</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${lowStock}">
+                            <td th:text="${item.product.name}">CPU i9-14900K</td>
+                            <td th:text="${item.quantity}" style="font-weight: bold;">2</td>
+                            <td><span class="badge badge-red">Chỉ còn ít</span></td>
+                        </tr>
+                        <tr th:if="${lowStock == null or lowStock.empty}">
+                            <td colspan="3" style="text-align: center; color: var(--green); padding: 2rem 0;">
+                                <i class="fa-solid fa-check-circle" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                                Tất cả sản phẩm đều đủ hàng.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.getElementById('current-month').innerText = new Date().getMonth() + 1;
+        // Dữ liệu giả lập mượt mà để biểu đồ luôn hiện nếu backend trống
+        let rawRevenue = /*[[${revenue}]]*/ null;
+        let labels = [];
+        let values = [];
+
+        if (rawRevenue && rawRevenue.length > 0) {
+            labels = rawRevenue.map(item => item.month);
+            values = rawRevenue.map(item => item.revenue);
+        } else {
+            labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'];
+            values = [250000000, 310000000, 280000000, 452500000, 480000000, 500000000];
+        }
+
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        
+        // Tạo gradient màu vàng nổi bật cho chart
+        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(201, 168, 76, 0.6)');
+        gradient.addColorStop(1, 'rgba(201, 168, 76, 0.05)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh Thu (VNĐ)',
+                    data: values,
+                    borderColor: '#c9a84c',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#c9a84c',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' ₫';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { 
+                            color: '#888',
+                            callback: function(value) {
+                                return (value / 1000000) + ' Tr';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#888' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
