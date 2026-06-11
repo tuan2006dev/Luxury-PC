@@ -8,12 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <style>
-        body { padding-top: 80px; }
-        .products { padding: 4rem 6rem; min-height: 80vh; }
-        .nav-logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .nav-logo-link:hover { opacity: 0.9; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
 </head>
 <body>
     <div class="cursor" id="cursor"></div>
@@ -23,7 +18,7 @@
     <nav class="navbar scrolled" id="navbar">
         <div class="nav-left">
             <a th:href="@{/}" class="nav-link">Trang Chủ</a>
-            <a th:href="@{/build-pc}" class="nav-link">Build PC</a>
+            <a href="/build-pc" class="nav-link">Build PC</a>
         </div>
         <a th:href="@{/}" class="nav-logo-link">
             <div class="nav-logo">

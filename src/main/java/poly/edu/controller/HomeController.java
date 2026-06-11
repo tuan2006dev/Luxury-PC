@@ -11,6 +11,7 @@ import poly.edu.entity.FlashSaleItem;
 import poly.edu.service.FlashSaleService;
 import poly.edu.service.ProductService;
 import poly.edu.service.VoucherService;
+import poly.edu.service.WishlistService;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,9 +31,13 @@ public class HomeController {
     @Autowired
     FlashSaleService flashSaleService;
 
+    @Autowired
+    WishlistService wishlistService;
+
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("featuredProducts", productService.getFeaturedProducts());
+        model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
         model.addAttribute("allProducts", productService.getAllProducts());
         model.addAttribute("reviews", reviewService.getLatestReviews());
 
@@ -53,7 +58,13 @@ public class HomeController {
         // Voucher từ database
         model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            System.out.println("USERNAME: " + auth.getName());
+            System.out.println("ROLES: " + auth.getAuthorities());
+            model.addAttribute("wishlistProductIds", wishlistService.getWishlistProductIds(auth));
+        }
+
         return "index";
     }
 }
-

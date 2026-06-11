@@ -64,7 +64,9 @@ public class ProductPageController {
         
         List<Review> reviews = reviewDAO.findByProductIdOrderByCreatedAtDesc(id);
         double avgRating = reviews.stream()
-            .mapToInt(Review::getStars)
+            .map(Review::getStars)
+            .filter(java.util.Objects::nonNull)
+            .mapToInt(Integer::intValue)
             .average()
             .orElse(0.0);
 
@@ -110,5 +112,10 @@ public class ProductPageController {
         }
         
         return "redirect:/product/" + id;
+    }
+
+    @GetMapping("/build-pc")
+    public String showBuildPCPage() {
+        return "build-pc";
     }
 }
