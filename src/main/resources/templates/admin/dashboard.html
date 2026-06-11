@@ -33,6 +33,38 @@
         .nav-link i { width: 25px; font-size: 1.1rem; }
         .nav-link:hover, .nav-link.active { background: rgba(201,168,76,0.05); color: var(--gold); }
 
+        .menu-group {
+    margin-bottom: 10px;
+}
+
+.menu-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    color: var(--cream);
+    background: rgba(255,255,255,0.03);
+    border-radius: 4px;
+}
+
+.sub-menu{
+    display:none;
+    padding-left:15px;
+}
+
+.sub-menu a{
+    display:block;
+    padding:10px;
+    color:white;
+    text-decoration:none;
+}
+
+.menu-title{
+    cursor:pointer;
+    padding:12px;
+}
+
         /* Content */
         .main-content { margin-left: 280px; flex: 1; padding: 3rem; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1.5rem;}
@@ -68,16 +100,43 @@
     <div class="sidebar">
         <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
         <nav>
-            <a href="/admin/dashboard" class="nav-link active"><i class="fa-solid fa-chart-line"></i> Tổng Quan</a>
-            <a href="/admin/orders" class="nav-link"><i class="fa-solid fa-box"></i> Đơn Hàng</a>
-            <a href="/admin/inventory" class="nav-link"><i class="fa-solid fa-warehouse"></i> Kho Hàng</a>
-            <a href="/admin/categories" class="nav-link"><i class="fa-solid fa-layer-group"></i> Danh Mục</a>
-            <a href="/admin/products" class="nav-link"><i class="fa-solid fa-microchip"></i> Sản Phẩm</a>
-            <a href="/admin/vouchers" class="nav-link"><i class="fa-solid fa-ticket"></i> Voucher</a>
-            <a href="/admin/flash-sales" class="nav-link"><i class="fa-solid fa-bolt"></i> Flash Sale</a>
-            <a href="/admin/account" class="nav-link"><i class="fa-solid fa-users"></i> Người Dùng</a>
-            <a href="/logout" class="nav-link" style="margin-top: 3rem; color: var(--red);"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất</a>
-        </nav>
+
+            <a href="/admin/dashboard" class="nav-link active">
+                <i class="fa-solid fa-chart-line"></i>
+                Tổng Quan
+            </a>
+            
+            <div class="menu-group">
+
+                <div class="menu-title" onclick="toggleMenu('productMenu')">
+                    <i class="fa-solid fa-box"></i>
+                    Quản Lý Sản Phẩm
+                </div>
+            
+                <div class="sub-menu" id="productMenu">
+                    <a href="/admin/products">Sản phẩm</a>
+                    <a href="/admin/categories">Danh mục</a>
+                </div>
+            
+            </div>
+            
+            <div class="menu-group">
+            
+                <div class="menu-title" onclick="toggleMenu('inventoryMenu')">
+                    <i class="fa-solid fa-warehouse"></i>
+                    Quản Lý Kho
+                </div>
+            
+                <div class="sub-menu" id="inventoryMenu">
+                    <a href="/admin/inventory">Kho hàng</a>
+                </div>
+            
+            </div>
+            <a href="/logout" class="nav-link">
+                Đăng Xuất
+            </a>
+            
+            </nav>
     </div>
 
     <div class="main-content">
@@ -253,5 +312,25 @@
             }
         });
     </script>
-</body>
-</html>
+  <script>
+   function toggleMenu(menuId) {
+
+document.querySelectorAll('.sub-menu').forEach(menu => {
+    if (menu.id !== menuId) {
+        menu.style.display = "none";
+    }
+});
+
+const currentMenu = document.getElementById(menuId);
+
+if (currentMenu.style.display === "block") {
+    currentMenu.style.display = "none";
+} else {
+    currentMenu.style.display = "block";
+}
+}
+    </script>
+    
+    </body>
+
+    </html>
