@@ -16,67 +16,7 @@
 </head>
 
 <body>
-    <!-- CURSOR -->
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-follower" id="cursor-follower"></div>
-
-    <!-- NAVIGATION -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-left">
-            <a th:href="@{/}" class="nav-link" id="nav-linh-kien">Trang Chủ</a>
-            <a href="/build-pc/index.html" class="nav-link" id="nav-build-pc">Build PC</a>
-            <a href="#" class="nav-link" id="nav-khuyen-mai">Khuyến Mãi</a>
-        </div>
-        <div class="nav-logo">
-            <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center;">
-                <span class="logo-Luxury">LUXURY</span>
-                <div class="logo-divider"></div>
-                <span class="logo-pc">PC</span>
-            </a>
-        </div>
-        <div class="nav-right">
-            <a href="#" class="nav-link" id="nav-tin-tuc">Tin Tức</a>
-            <a href="#" class="nav-link" id="nav-lien-he">Liên Hệ</a>
-            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">ADMIN</a>
-            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link">ĐĂNG NHẬP</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link">HỒ SƠ</a>
-            <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
-            <a href="/cart" class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
-                <span class="cart-icon">⊡</span>
-                <span class="cart-count" id="cart-count" th:text="${cartCount}">0</span>
-            </a>
-
-        </div>
-    </nav>
-
-    <!-- SEARCH OVERLAY -->
-    <div class="search-overlay" id="search-overlay">
-        <div class="search-overlay-inner">
-            <div class="search-close-row">
-                <span class="search-brand">LUXURY · PC</span>
-                <button class="search-close" id="search-close" aria-label="Đóng tìm kiếm">✕</button>
-            </div>
-            <div class="search-input-wrap">
-                <span class="search-icon-big">⌕</span>
-                <input type="text" id="search-input" class="search-input"
-                    placeholder="Tìm kiếm linh kiện, thương hiệu..." autocomplete="off"
-                    aria-label="Tìm kiếm sản phẩm" />
-                <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
-            </div>
-            <div class="search-tags">
-                <span class="search-tag-label">Tìm nhanh:</span>
-                <button class="search-tag" data-query="CPU Intel">CPU Intel</button>
-                <button class="search-tag" data-query="RTX 4090">RTX 4090</button>
-                <button class="search-tag" data-query="DDR5">DDR5 RAM</button>
-                <button class="search-tag" data-query="SSD NVMe">SSD NVMe</button>
-                <button class="search-tag" data-query="Màn hình OLED">Màn Hình OLED</button>
-                <button class="search-tag" data-query="Nguồn PSU">Nguồn PSU</button>
-            </div>
-            <div class="search-results" id="search-results">
-                <p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>
-            </div>
-        </div>
-    </div>
+    <div th:replace="~{layout/header :: header}"></div>
 
     <main class="container">
         <header class="page-header">
@@ -155,22 +95,8 @@
         </section>
     </main>
 
-    <!-- FOOTER -->
-    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
-        <p style="color: var(--muted); font-size: 0.8rem; letter-spacing: 2px;">© 2026 LUXURY PC · DEFINING EXCELLENCE
-        </p>
-    </footer>
-
+    <div th:replace="~{layout/footer :: footer}"></div>
     <script th:src="@{/js/script.js}"></script>
-    <script>
-        // Simple cursor logic for new page
-        const cursor = document.getElementById('cursor');
-        const follower = document.getElementById('cursor-follower');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-            follower.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
-        });
-    </script>
 </body>
 
 </html>

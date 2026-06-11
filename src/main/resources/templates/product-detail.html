@@ -14,64 +14,7 @@
 
 <body>
 
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-f" id="cursor-f"></div>
-
-  <!-- NAVIGATION -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-left">
-      <a th:href="@{/}" class="nav-link" id="nav-linh-kien">Trang Chủ</a>
-      <a href="/build-pc/index.html" class="nav-link" id="nav-build-pc">Build PC</a>
-      <a href="#" class="nav-link" id="nav-khuyen-mai">Khuyến Mãi</a>
-    </div>
-    <div class="nav-logo">
-      <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center;">
-        <span class="logo-Luxury">LUXURY</span>
-        <div class="logo-divider"></div>
-        <span class="logo-pc">PC</span>
-      </a>
-    </div>
-    <div class="nav-right">
-      <a href="#" class="nav-link" id="nav-tin-tuc">Tin Tức</a>
-      <a href="#" class="nav-link" id="nav-lien-he">Liên Hệ</a>
-      <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">ADMIN</a>
-      <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link">ĐĂNG NHẬP</a>
-      <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link">HỒ SƠ</a>
-      <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
-      <a href="/cart" class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
-        <span class="cart-icon">⊡</span>
-        <span class="cart-count" id="cart-count" th:text="${cartCount}">0</span>
-      </a>
-    </div>
-  </nav>
-
-  <!-- SEARCH OVERLAY -->
-  <div class="search-overlay" id="search-overlay">
-    <div class="search-overlay-inner">
-      <div class="search-close-row">
-        <span class="search-brand">LUXURY · PC</span>
-        <button class="search-close" id="search-close" aria-label="Đóng tìm kiếm">✕</button>
-      </div>
-      <div class="search-input-wrap">
-        <span class="search-icon-big">⌕</span>
-        <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm linh kiện, thương hiệu..."
-          autocomplete="off" aria-label="Tìm kiếm sản phẩm" />
-        <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
-      </div>
-      <div class="search-tags">
-        <span class="search-tag-label">Tìm nhanh:</span>
-        <button class="search-tag" data-query="CPU Intel">CPU Intel</button>
-        <button class="search-tag" data-query="RTX 4090">RTX 4090</button>
-        <button class="search-tag" data-query="DDR5">DDR5 RAM</button>
-        <button class="search-tag" data-query="SSD NVMe">SSD NVMe</button>
-        <button class="search-tag" data-query="Màn hình OLED">Màn Hình OLED</button>
-        <button class="search-tag" data-query="Nguồn PSU">Nguồn PSU</button>
-      </div>
-      <div class="search-results" id="search-results">
-        <p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>
-      </div>
-    </div>
-  </div>
+  <div th:replace="~{layout/header :: header}"></div>
 
 
   <!-- BREADCRUMB -->
@@ -409,86 +352,8 @@
     </div>
   </section>
 
-  <div class="toast" id="toast"></div>
-
+  <div th:replace="~{layout/footer :: footer}"></div>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const loader = document.getElementById('loader');
-        if (loader) loader.classList.add('hidden');
-      }, 500);
-    });
-
-    const cur = document.getElementById('cursor'), curF = document.getElementById('cursor-f');
-    let mx = 0, my = 0, fx = 0, fy = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx + 'px'; cur.style.top = my + 'px'; });
-    (function loop() { fx += (mx - fx) * .12; fy += (my - fy) * .12; curF.style.left = fx + 'px'; curF.style.top = fy + 'px'; requestAnimationFrame(loop); })();
-    document.querySelectorAll('a,button,.thumb,.rel-card').forEach(el => {
-      el.addEventListener('mouseenter', () => { cur.style.transform = 'translate(-50%,-50%) scale(2)'; curF.style.width = '60px'; curF.style.height = '60px'; });
-      el.addEventListener('mouseleave', () => { cur.style.transform = 'translate(-50%,-50%) scale(1)'; curF.style.width = '36px'; curF.style.height = '36px'; });
-    });
-
-    let toastT;
-    function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 3000); }
-
-    const searchOverlay = document.getElementById('search-overlay');
-    const navSearchBtn = document.getElementById('nav-search-btn');
-    const searchCloseBtn = document.getElementById('search-close');
-    const searchInput = document.getElementById('search-input');
-    const searchClearBtn = document.getElementById('search-clear');
-    const searchResults = document.getElementById('search-results');
-
-    function openSearch() {
-      if (!searchOverlay) return;
-      searchOverlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => searchInput?.focus(), 300);
-    }
-
-    function closeSearch() {
-      if (!searchOverlay) return;
-      searchOverlay.classList.remove('open');
-      document.body.style.overflow = '';
-      if (searchInput) searchInput.value = '';
-      searchClearBtn?.classList.remove('visible');
-      if (searchResults) searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
-    }
-
-    navSearchBtn?.addEventListener('click', openSearch);
-    searchCloseBtn?.addEventListener('click', closeSearch);
-    searchOverlay?.addEventListener('click', e => { if (e.target === searchOverlay) closeSearch(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && searchOverlay?.classList.contains('open')) closeSearch(); });
-
-    searchInput?.addEventListener('input', () => {
-      const q = searchInput.value.trim();
-      if (q.length) searchClearBtn?.classList.add('visible');
-      else searchClearBtn?.classList.remove('visible');
-      if (searchResults) {
-        searchResults.innerHTML = q ? `<p class="search-hint">Không tìm thấy kết quả cho "${q}".</p>` : '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
-      }
-    });
-
-    searchClearBtn?.addEventListener('click', () => {
-      if (!searchInput) return;
-      searchInput.value = '';
-      searchClearBtn.classList.remove('visible');
-      if (searchResults) searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
-      searchInput.focus();
-    });
-
-    document.querySelectorAll('.search-tag').forEach(tag => {
-      tag.addEventListener('click', () => {
-        const q = tag.dataset.query || '';
-        if (!searchInput) return;
-        searchInput.value = q;
-        searchClearBtn?.classList.add('visible');
-        if (searchResults) searchResults.innerHTML = `<p class="search-hint">Không tìm thấy kết quả cho "${q}".</p>`;
-        searchInput.focus();
-      });
-    });
-
-    // LocalStorage review logic was completely removed as it's now handled by the backend database!
-
     let qty = 1;
     function changeQty(d) { 
         qty = Math.max(1, Math.min(7, qty + d)); 
@@ -504,44 +369,6 @@
       thumb.classList.add('active');
     }
 
-    function updateCartCount() {
-      // The session-based cart count is handled by Thymeleaf using 'cartCount' attribute in the Header now.
-    }
-
-    function addToCart() {
-      const productId = productReviewInfo?.dataset.productId || 'unknown';
-      const productName = productReviewInfo?.dataset.productName || 'Sản phẩm';
-      const productPriceText = document.querySelector('.price-main')?.textContent || '0₫';
-      const productPrice = parseInt(productPriceText.replace(/[₫.,]/g, '')) || 0;
-      const productImage = document.querySelector('.main-img img')?.src || '/images/placeholder.png';
-
-      // Lấy cart từ localStorage
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-      // Kiểm tra sản phẩm đã có trong cart chưa
-      const existingItem = cart.find(item => item.id === productId);
-      if (existingItem) {
-        existingItem.quantity += qty;
-      } else {
-        cart.push({
-          id: productId,
-          name: productName,
-          price: productPrice,
-          image: productImage,
-          quantity: qty
-        });
-      }
-
-      // Lưu lại cart
-      localStorage.setItem('cart', JSON.stringify(cart));
-
-      // Cập nhật số trên icon cart
-      updateCartCount();
-
-      toast(`✓ Đã thêm ${qty} ${productName} vào giỏ hàng!`);
-    }
-    function buyNow() { addToCart(); setTimeout(() => location.href = 'checkout.html', 800); }
-
     const detailTabs = ['specs', 'desc', 'reviews'];
     function setDetailTab(id) {
       detailTabs.forEach(t => {
@@ -551,12 +378,15 @@
         tab.classList.toggle('active', detailTabs[i] === id);
       });
     }
-    document.getElementById('tab-reviews').addEventListener('click', () => document.getElementById('ds-reviews').scrollIntoView({ behavior: 'smooth' }));
+    document.getElementById('tab-reviews')?.addEventListener('click', () => document.getElementById('ds-reviews')?.scrollIntoView({ behavior: 'smooth' }));
 
-    // Initialize cart count on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      updateCartCount();
-    });
+    function toast(msg) {
+      if (typeof showToast === 'function') {
+        showToast(msg);
+      } else {
+        console.log(msg);
+      }
+    }
   </script>
 </body>
 

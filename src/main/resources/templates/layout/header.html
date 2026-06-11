@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+    <div th:fragment="header">
+        <!-- CURSOR -->
+        <div class="cursor" id="cursor"></div>
+        <div class="cursor-follower cursor-f" id="cursor-follower"></div>
+
+        <!-- NAVIGATION -->
+        <nav class="navbar" id="navbar">
+            <div class="nav-left">
+                <a th:href="@{/products}" class="nav-link" id="nav-linh-kien" data-translate="nav-products">Sản Phẩm</a>
+                <a href="/build-pc/index.html" class="nav-link" id="nav-build-pc" data-translate="nav-build">Build PC</a>
+                <a href="#" class="nav-link" id="nav-khuyen-mai" data-translate="nav-promo">Khuyến Mãi</a>
+            </div>
+            <div class="nav-logo">
+                <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap: inherit;">
+                    <span class="logo-Luxury">LUXURY</span>
+                    <div class="logo-divider"></div>
+                    <span class="logo-pc">PC</span>
+                </a>
+            </div>
+            <div class="nav-right">
+                <a href="#" class="nav-link" id="nav-tin-tuc" data-translate="nav-news">Tin Tức</a>
+                <a href="#" class="nav-link" id="nav-lien-he" data-translate="nav-contact">Liên Hệ</a>
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">ADMIN</a>
+                <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link" data-translate="nav-login">ĐĂNG NHẬP</a>
+                <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link" data-translate="nav-profile">HỒ SƠ</a>
+                <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
+                <a href="/cart" class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
+                    <span class="cart-icon">⊡</span>
+                    <span class="cart-count" id="cart-count" th:text="${cartCount}">0</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- SEARCH OVERLAY -->
+        <div class="search-overlay" id="search-overlay">
+            <div class="search-overlay-inner">
+                <div class="search-close-row">
+                    <span class="search-brand">LUXURY · PC</span>
+                    <button class="search-close" id="search-close" aria-label="Đóng tìm kiếm">✕</button>
+                </div>
+                <div class="search-input-wrap">
+                    <span class="search-icon-big">⌕</span>
+                    <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm linh kiện, thương hiệu..." autocomplete="off" aria-label="Tìm kiếm sản phẩm" />
+                    <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
+                </div>
+                <div class="search-tags">
+                    <span class="search-tag-label" data-translate="search-quick">Tìm nhanh:</span>
+                    <button class="search-tag" data-query="CPU Intel">CPU Intel</button>
+                    <button class="search-tag" data-query="RTX 4090">RTX 4090</button>
+                    <button class="search-tag" data-query="DDR5">DDR5 RAM</button>
+                    <button class="search-tag" data-query="SSD NVMe">SSD NVMe</button>
+                    <button class="search-tag" data-query="Màn hình OLED">Màn Hình OLED</button>
+                    <button class="search-tag" data-query="Nguồn PSU">Nguồn PSU</button>
+                </div>
+                <div class="search-results" id="search-results">
+                    <p class="search-hint" data-translate="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
