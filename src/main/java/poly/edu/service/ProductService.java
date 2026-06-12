@@ -2,6 +2,7 @@ package poly.edu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.ProductDAO;
 import poly.edu.entity.Product;
 
@@ -39,10 +40,12 @@ public class ProductService {
         return productDAO.searchProducts(cid, min, max, kw);
     }
 
+    @Transactional
     public Product saveProduct(Product product) {
         return productDAO.save(product);
     }
 
+    @Transactional
     public void deleteProduct(Integer id) {
         productDAO.deleteById(id);
     }

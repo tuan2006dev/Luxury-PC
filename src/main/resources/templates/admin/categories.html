@@ -91,6 +91,7 @@
             <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <form th:action="@{/admin/categories/save}" method="post" th:object="${category}">
+
             <input type="hidden" th:field="*{id}">
             <div class="input-group">
                 <label>Tên Danh Mục *</label>
@@ -119,7 +120,10 @@
                 <td>
                     <div class="action-btns">
                         <a th:href="@{|/admin/categories/edit/${c.id}|}" class="icon-btn icon-btn-edit" title="Sửa"><i class="fa-solid fa-pen"></i></a>
-                        <a th:href="@{|/admin/categories/delete/${c.id}|}" class="icon-btn icon-btn-del" title="Xóa" onclick="return confirm('Xóa danh mục này có thể ảnh hưởng đến sản phẩm liên quan. Tiếp tục?')"><i class="fa-solid fa-trash"></i></a>
+                        <form th:action="@{|/admin/categories/delete/${c.id}|}" method="post" style="display:inline;">
+                
+                            <button type="submit" class="icon-btn icon-btn-del" title="Xóa" onclick="return confirm('Xóa danh mục này có thể ảnh hưởng đến sản phẩm liên quan. Tiếp tục?')" style="border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        </form>
                     </div>
                 </td>
             </tr>

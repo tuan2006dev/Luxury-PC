@@ -15,6 +15,7 @@ import poly.edu.service.WishlistService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -38,7 +39,7 @@ public class HomeController {
     public String index(Model model) {
         model.addAttribute("featuredProducts", productService.getFeaturedProducts());
         model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
-        model.addAttribute("allProducts", productService.getAllProducts());
+        model.addAttribute("allProducts", productService.getAllProducts().stream().limit(20).collect(Collectors.toList()));
         model.addAttribute("reviews", reviewService.getLatestReviews());
 
         // Flash Sale từ database

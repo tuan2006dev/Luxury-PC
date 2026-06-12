@@ -193,6 +193,7 @@
       display: flex;
       flex-direction: column;
       gap: 1.2rem;
+      overflow: hidden;
     }
 
     .main-img-wrap {
@@ -270,7 +271,6 @@
     .info-panel {
       padding: 3rem 6rem 3rem 4rem;
       border-left: 1px solid rgba(201, 168, 76, .1);
-      overflow-y: auto;
     }
 
     .prod-tag {
@@ -454,6 +454,7 @@
     }
 
     .btn-primary-lg {
+      width: 100%;
       padding: 1.1rem;
       background: var(--gold);
       color: var(--black);
@@ -463,7 +464,7 @@
       font-weight: 700;
       letter-spacing: .2em;
       text-transform: uppercase;
-      cursor: none;
+      cursor: pointer;
       transition: var(--ease);
       position: relative;
       overflow: hidden;
@@ -488,6 +489,7 @@
     }
 
     .btn-outline-lg {
+      width: 100%;
       padding: 1rem;
       background: none;
       color: var(--cream);
@@ -497,7 +499,7 @@
       font-weight: 500;
       letter-spacing: .18em;
       text-transform: uppercase;
-      cursor: none;
+      cursor: pointer;
       transition: var(--ease);
     }
 

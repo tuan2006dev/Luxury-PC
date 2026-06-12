@@ -61,6 +61,7 @@
       </nav>
 
       <form th:action="@{/logout}" method="POST">
+
         <button type="submit" class="logout-btn">
           Đăng Xuất
         </button>
@@ -289,6 +290,7 @@
                     <details class="refund-request" th:if="${order.customerRefundEligible}">
                         <summary>Trả hàng / Hoàn tiền</summary>
                         <form action="/profile/orders/request-refund" method="post">
+                    
                             <input type="hidden" name="orderId" th:value="${order.id}">
                             <textarea name="reason" required placeholder="Nhập lý do bạn muốn hoàn trả đơn hàng"></textarea>
                             <button type="submit">Gửi Yêu Cầu Hoàn Trả</button>

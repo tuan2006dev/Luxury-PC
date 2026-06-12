@@ -21,7 +21,12 @@
         color: #ffffff;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         min-height: 100vh;
+        cursor: none;
     }
+
+    /* Custom Cursor */
+    .cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:transform .12s ease;}
+    .cursor-follower{position:fixed;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);opacity:.45;transition:width .25s,height .25s,opacity .25s;}
 
     /* Header Logo Section */
     .header-logo {
@@ -241,6 +246,8 @@
   </style>
 </head>
 <body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursor-follower"></div>
 
 <header class="header-logo">
   <div class="container">
@@ -405,6 +412,33 @@
   }
 
   document.addEventListener('DOMContentLoaded', updateGrandTotal);
+
+  // Custom Cursor
+  (function() {
+    const cur = document.getElementById('cursor');
+    const fol = document.getElementById('cursor-follower');
+    if (!cur || !fol) return;
+    let mx = 0, my = 0, fx = 0, fy = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    });
+    (function loop() {
+      fx += (mx - fx) * 0.12; fy += (my - fy) * 0.12;
+      fol.style.left = fx + 'px'; fol.style.top = fy + 'px';
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a, button, .cart-item').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cur.style.transform = 'translate(-50%,-50%) scale(2)';
+        fol.style.width = '56px'; fol.style.height = '56px'; fol.style.opacity = '0.2';
+      });
+      el.addEventListener('mouseleave', () => {
+        cur.style.transform = 'translate(-50%,-50%) scale(1)';
+        fol.style.width = '36px'; fol.style.height = '36px'; fol.style.opacity = '0.45';
+      });
+    });
+  })();
 </script>
 
 </body>

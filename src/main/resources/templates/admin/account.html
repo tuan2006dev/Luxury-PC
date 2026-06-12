@@ -221,6 +221,7 @@
         <!-- FIX: action đúng là /admin/account/save -->
         <form th:action="@{/admin/account/save}" method="post">
 
+
             <input type="hidden" name="id" th:value="${user.id}">
 
             <div class="form-grid">
@@ -237,7 +238,7 @@
 
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="text" name="password" placeholder="Nhập nếu muốn đổi">
+                    <input type="password" name="password" placeholder="Nhập nếu muốn đổi">
                 </div>
 
                 <div class="input-group">
@@ -358,24 +359,21 @@
                     </a>
 
                     <!-- Lock/Unlock -->
-                    <a th:href="@{/admin/account/lock/{id}(id=${u.id})}"
-                       th:if="${u.status == true}"
-                       class="btn-action">
-                        Khoá
-                    </a>
+                    <form th:action="@{/admin/account/lock/{id}(id=${u.id})}" th:if="${u.status == true}" method="post" style="display:inline;">
+            
+                        <button type="submit" class="btn-action" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Khoá</button>
+                    </form>
 
-                    <a th:href="@{/admin/account/unlock/{id}(id=${u.id})}"
-                       th:if="${u.status == false}"
-                       class="btn-action">
-                        Mở khoá
-                    </a>
+                    <form th:action="@{/admin/account/unlock/{id}(id=${u.id})}" th:if="${u.status == false}" method="post" style="display:inline;">
+            
+                        <button type="submit" class="btn-action" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Mở khoá</button>
+                    </form>
 
                     <!-- Delete -->
-                    <a th:href="@{/admin/account/delete/{id}(id=${u.id})}"
-                       class="btn-action btn-danger"
-                       onclick="return confirm('Xác nhận xoá user này?')">
-                        Xoá
-                    </a>
+                    <form th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post" style="display:inline;">
+            
+                        <button type="submit" class="btn-action btn-danger" onclick="return confirm('Xác nhận xoá user này?')" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Xoá</button>
+                    </form>
                 </td>
 
             </tr>

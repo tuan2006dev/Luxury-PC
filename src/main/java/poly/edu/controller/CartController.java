@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -64,6 +65,26 @@ public class CartController {
 
         session.setAttribute("cart", cart);
         return "redirect:/cart";
+    }
+
+    @PostMapping("/cart/buy-now")
+    public String buyNow(@RequestParam("id") Integer id,
+                            @RequestParam("name") String name,
+                            @RequestParam("price") Double price,
+                            @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
+                            HttpSession session) {
+
+        Map<Integer, CartItem> cart = getCartFromSession(session);
+
+        if (cart.containsKey(id)) {
+            CartItem item = cart.get(id);
+            item.setQuantity(item.getQuantity() + quantity);
+        } else {
+            cart.put(id, new CartItem(id, name, price, quantity));
+        }
+
+        session.setAttribute("cart", cart);
+        return "redirect:/checkout";
     }
 
     /**
@@ -157,6 +178,7 @@ public class CartController {
     }
 
     @PostMapping("/checkout/submit")
+    @Transactional
     public String submitCheckout(
             @RequestParam("fullName") String fullName,
             @RequestParam("phone") String phone,
@@ -230,6 +252,16 @@ public class CartController {
                 oi.setPrice(item.getPrice());
                 oi.setQuantity(item.getQuantity());
                 orderItemDAO.save(oi);
+                
+                // Trừ số lượng tồn kho
+                Product p = pOpt.get();
+                if (p.getStock() != null && p.getStock() >= item.getQuantity()) {
+                    p.setStock(p.getStock() - item.getQuantity());
+                    productDAO.save(p);
+                } else {
+                    throw new RuntimeException("Sản phẩm " + p.getName() + " không đủ số lượng trong kho.");
+                }
+
                 // Cập nhật sold count cho flash sale
                 flashSaleService.incrementSoldCount(item.getId());
             }

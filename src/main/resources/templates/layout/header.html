@@ -28,7 +28,7 @@
                 <a href="#" class="nav-link" id="nav-lien-he" data-translate="nav-contact">Liên Hệ</a>
                 <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">ADMIN</a>
                 <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link" data-translate="nav-login">ĐĂNG NHẬP</a>
-                <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link" data-translate="nav-profile">HỒ SƠ</a>
+                <a sec:authorize="isAuthenticated()" th:href="@{/account/profile}" class="nav-link" data-translate="nav-profile">HỒ SƠ</a>
                 <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
                 <a href="/cart" class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
                     <span class="cart-icon">⊡</span>

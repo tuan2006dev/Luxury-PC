@@ -31,7 +31,6 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  scroll-snap-type: y proximity;
 }
 
 body {
@@ -59,18 +58,6 @@ img {
   object-fit: cover;
 }
 
-/* ============================================
-   HERO
-============================================ */
-.hero {
-  position: relative;
-  height: 100vh;
-  min-height: 700px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  scroll-snap-align: start;
-}
 
 /* ============================================
    LOADER
@@ -328,10 +315,6 @@ body:hover .cursor {
   display: flex;
   align-items: center;
   overflow: hidden;
-<<<<<<< HEAD
-=======
-  scroll-snap-align: start;
->>>>>>> ngthtuan206
 }
 
 .hero-bg {
@@ -545,7 +528,7 @@ body:hover .cursor {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 2000;
+  z-index: 100;
   border-top: 1px solid rgba(201, 168, 76, 0.3);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
@@ -660,7 +643,6 @@ body:hover .cursor {
 .categories {
   padding: 3rem 6rem 7rem;
   background: var(--deep);
-  scroll-snap-align: start;
 }
 
 .cat-grid {
@@ -741,7 +723,6 @@ body:hover .cursor {
 .products {
   padding: 7rem 6rem;
   background: var(--black);
-  scroll-snap-align: start;
 }
 
 .products-grid {
@@ -923,7 +904,6 @@ body:hover .cursor {
   padding: 8rem 6rem;
   overflow: hidden;
   background: var(--dark);
-  scroll-snap-align: start;
 }
 
 .build-bg {
@@ -1049,7 +1029,6 @@ body:hover .cursor {
 .testimonials {
   padding: 7rem 6rem;
   background: var(--deep);
-  scroll-snap-align: start;
 }
 
 .testi-slider {
@@ -1234,10 +1213,6 @@ body:hover .cursor {
 .footer {
   background: var(--deep);
   border-top: 1px solid rgba(201, 168, 76, 0.12);
-<<<<<<< HEAD
-=======
-  scroll-snap-align: start;
->>>>>>> ngthtuan206
 }
 
 .footer-top {
@@ -1747,7 +1722,6 @@ body:hover .cursor {
   position: relative;
   overflow: hidden;
   padding: 0;
-  scroll-snap-align: start;
 }
 
 .flash-sale::before {
@@ -1950,14 +1924,6 @@ body:hover .cursor {
   font-weight: 700;
   letter-spacing: 0.1em;
   padding: 0.22rem 0.6rem;
-<<<<<<< HEAD
-}
-
-.flash-prod-img {
-  font-size: 2.5rem;
-  line-height: 1;
-  filter: drop-shadow(0 2px 12px rgba(201, 168, 76, 0.2));
-=======
   z-index: 5;
 }
 
@@ -1981,7 +1947,6 @@ body:hover .cursor {
 
 .flash-product-card:hover .flash-prod-img img {
   transform: scale(1.08);
->>>>>>> ngthtuan206
 }
 
 
@@ -2214,7 +2179,7 @@ body:hover .cursor {
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index: 2000;
+  z-index: 2100;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2410,7 +2375,7 @@ body:hover .cursor {
   position: fixed;
   inset: 0;
   background: rgba(8, 8, 8, 0.97);
-  z-index: 1500;
+  z-index: 2050;
   display: flex;
   align-items: flex-start;
   justify-content: center;

@@ -105,38 +105,33 @@
                 <i class="fa-solid fa-chart-line"></i>
                 Tổng Quan
             </a>
-            
             <div class="menu-group">
-
                 <div class="menu-title" onclick="toggleMenu('productMenu')">
                     <i class="fa-solid fa-box"></i>
                     Quản Lý Sản Phẩm
                 </div>
-            
                 <div class="sub-menu" id="productMenu">
                     <a href="/admin/products">Sản phẩm</a>
                     <a href="/admin/categories">Danh mục</a>
                 </div>
-            
             </div>
             
             <div class="menu-group">
-            
                 <div class="menu-title" onclick="toggleMenu('inventoryMenu')">
                     <i class="fa-solid fa-warehouse"></i>
                     Quản Lý Kho
                 </div>
-            
                 <div class="sub-menu" id="inventoryMenu">
                     <a href="/admin/inventory">Kho hàng</a>
                 </div>
-            
             </div>
-            <a href="/logout" class="nav-link">
-                Đăng Xuất
-            </a>
             
-            </nav>
+            <form method="post" th:action="@{/logout}" style="margin-top: 3rem;">
+                <button type="submit" class="nav-link" style="color: var(--red); background: none; border: none; width: 100%; text-align: left; cursor: pointer; padding: 10px 15px;">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                </button>
+            </form>
+        </nav>
     </div>
 
     <div class="main-content">

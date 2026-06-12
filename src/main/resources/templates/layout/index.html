@@ -75,7 +75,7 @@
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
         <div class="hero-bg">
-            <img src="hero_banner.png" alt="Luxury PC" class="hero-img" id="hero-img" />
+            <img th:src="@{/hero_banner.png}" alt="Luxury PC" class="hero-img" id="hero-img" />
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
@@ -276,7 +276,7 @@
             <!-- Product 1: CPU -->
             <article class="product-card" id="prod-cpu-1" data-price="18990000" data-cat="cpu" data-popularity="4820">
                 <div class="product-img-wrap">
-                    <img src="cpu.png" alt="Intel Core i9-14900K" class="product-img" />
+                    <img th:src="@{/cpu.png}" alt="Intel Core i9-14900K" class="product-img" />
                     <div class="product-badge">Bestseller</div>
                     <button class="product-wishlist" aria-label="Yêu thích">♡</button>
                 </div>
@@ -294,7 +294,7 @@
             <!-- Product 2: GPU -->
             <article class="product-card large" id="prod-gpu-1" data-price="42990000" data-cat="vga" data-popularity="3210">
                 <div class="product-img-wrap">
-                    <img src="gpu.png" alt="RTX 4090 Titan Edition" class="product-img" />
+                    <img th:src="@{/gpu.png}" alt="RTX 4090 Titan Edition" class="product-img" />
                     <div class="product-badge gold">Đỉnh Cao</div>
                     <button class="product-wishlist" aria-label="Yêu thích">♡</button>
                 </div>
@@ -312,7 +312,7 @@
             <!-- Product 3: RAM -->
             <article class="product-card" id="prod-ram-1" data-price="6490000" data-cat="ram" data-popularity="5650">
                 <div class="product-img-wrap">
-                    <img src="ram.png" alt="Corsair Dominator Platinum RGB DDR5" class="product-img" />
+                    <img th:src="@{/ram.png}" alt="Corsair Dominator Platinum RGB DDR5" class="product-img" />
                     <div class="product-badge">Mới</div>
                     <button class="product-wishlist" aria-label="Yêu thích">♡</button>
                 </div>
@@ -330,7 +330,7 @@
             <!-- Product 4: Motherboard -->
             <article class="product-card" id="prod-mb-1" data-price="12490000" data-cat="mainboard" data-popularity="2100">
                 <div class="product-img-wrap">
-                    <img src="motherboard.png" alt="ASUS ROG Maximus Z790 Apex " class="product-img" />
+                    <img th:src="@{/motherboard.png}" alt="ASUS ROG Maximus Z790 Apex" class="product-img" />
                     <div class="product-badge">Pro</div>
                     <button class="product-wishlist" aria-label="Yêu thích">♡</button>
                 </div>
@@ -348,7 +348,7 @@
             <!-- Product 5: Monitor -->
             <article class="product-card large" id="prod-mon-1" data-price="22990000" data-cat="monitor" data-popularity="1870">
                 <div class="product-img-wrap">
-                    <img src="monitor.png" alt="LG UltraGear 4K OLED 240Hz" class="product-img" />
+                    <img th:src="@{/monitor.png}" alt="LG UltraGear 4K OLED 240Hz" class="product-img" />
                     <div class="product-badge gold">OLED</div>
                     <button class="product-wishlist" aria-label="Yêu thích">♡</button>
                 </div>

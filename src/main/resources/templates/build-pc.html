@@ -136,11 +136,11 @@
 <div class="cursor-f" id="cursor-f"></div>
 
 <nav class="navbar">
-  <a href="index.html" class="nav-logo">LUXURY<b>PC</b></a>
+  <a href="/" class="nav-logo">LUXURY<b>PC</b></a>
   <div class="nav-links">
-    <a href="index.html" class="nav-link">Trang Chủ</a>
+    <a href="/" class="nav-link">Trang Chủ</a>
     <a href="#" class="nav-link" style="color:var(--gold)">Build PC</a>
-    <a href="checkout.html" class="nav-link">Giỏ Hàng</a>
+    <a href="/checkout" class="nav-link">Giỏ Hàng</a>
   </div>
 </nav>
 
@@ -576,7 +576,7 @@
     const count=Object.values(build).filter(v=>v).length;
     if(count<4){toast('⚠️ Vui lòng chọn ít nhất: CPU, Mainboard, GPU và RAM.');return;}
     toast('✓ Đã thêm toàn bộ cấu hình vào giỏ hàng!');
-    setTimeout(()=>location.href='checkout.html',1000);
+    setTimeout(()=>location.href='/checkout',1000);
   }
   function saveBuild(){toast('💾 Đã lưu cấu hình vào tài khoản của bạn!');}
   function shareBuild(){

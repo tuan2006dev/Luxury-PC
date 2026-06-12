@@ -102,12 +102,14 @@
       </div>
 
       <div class="action-buttons">
-        <form th:action="@{/cart/add}" method="post" style="display:flex; flex-direction:column; gap:0.8rem;">
+        <form th:action="@{/cart/add}" method="post" style="display:contents;">
+
           <input type="hidden" name="id" th:value="${product.id}" />
           <input type="hidden" name="name" th:value="${product.name}" />
           <input type="hidden" name="price" th:value="${product.price}" />
           <input type="hidden" name="quantity" id="form-qty" value="1" />
-          <button type="submit" class="btn-primary-lg"><span>Thêm Vào Giỏ Hàng</span></button>
+          <button type="submit" class="btn-primary-lg" style="flex: 1;"><span>Thêm Vào Giỏ Hàng</span></button>
+          <button type="submit" formaction="/cart/buy-now" class="btn-primary-lg" style="flex: 1; background: var(--gold); color: var(--black); border-color: var(--gold);"><span>Mua Ngay</span></button>
         </form>
         <button class="btn-outline-lg" onclick="toast('♥ Đã thêm vào danh sách yêu thích!')">♡ Thêm Vào Yêu
           Thích</button>
@@ -387,6 +389,40 @@
         console.log(msg);
       }
     }
+
+    // ── CUSTOM CURSOR ──
+    (function() {
+      const cur = document.getElementById('cursor');
+      const fol = document.getElementById('cursor-follower');
+      if (!cur || !fol) return;
+      let mx = 0, my = 0, fx = 0, fy = 0;
+      document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        cur.style.left = mx + 'px';
+        cur.style.top  = my + 'px';
+      });
+      (function loop() {
+        fx += (mx - fx) * 0.12;
+        fy += (my - fy) * 0.12;
+        fol.style.left = fx + 'px';
+        fol.style.top  = fy + 'px';
+        requestAnimationFrame(loop);
+      })();
+      document.querySelectorAll('a, button, .thumb, .detail-tab, .rel-card').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          cur.style.transform = 'translate(-50%,-50%) scale(2)';
+          fol.style.width  = '60px';
+          fol.style.height = '60px';
+          fol.style.opacity = '0.3';
+        });
+        el.addEventListener('mouseleave', () => {
+          cur.style.transform = 'translate(-50%,-50%) scale(1)';
+          fol.style.width  = '40px';
+          fol.style.height = '40px';
+          fol.style.opacity = '0.5';
+        });
+      });
+    })();
   </script>
 </body>
 

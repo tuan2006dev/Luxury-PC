@@ -79,35 +79,42 @@
                                 <div class="action-panel">
                                     <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" class="admin-note">Đơn đã kết thúc xử lý.</span>
                                     <form th:if="${o.paymentMethod == 'VIETQR' and o.status == 'CHO_XAC_NHAN_THANH_TOAN'}" action="/admin/orders/confirm-payment" method="post" class="action-form">
+
                                         <input type="hidden" name="orderId" th:value="${o.id}">
                                         <button type="submit" class="update-btn">Xác Nhận Thanh Toán</button>
                                     </form>
                                     <form th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}" action="/admin/orders/approve-refund" method="post" class="action-form">
+
                                         <input type="hidden" name="orderId" th:value="${o.id}">
                                         <input type="text" name="note" placeholder="Ghi chú duyệt yêu cầu">
                                         <button type="submit" class="update-btn">Duyệt Yêu Cầu Hoàn Tiền</button>
                                     </form>
                                     <form th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}" action="/admin/orders/reject-refund" method="post" class="action-form">
+
                                         <input type="hidden" name="orderId" th:value="${o.id}">
                                         <input type="text" name="note" required placeholder="Lý do từ chối">
                                         <button type="submit" class="update-btn">Từ Chối Yêu Cầu</button>
                                     </form>
                                     <form th:if="${o.paymentMethod == 'VIETQR' and (o.status == 'DA_THANH_TOAN' or o.status == 'PAID')}" action="/admin/orders/request-refund" method="post" class="action-form">
+
                                         <input type="hidden" name="orderId" th:value="${o.id}">
                                         <input type="text" name="note" placeholder="Lý do admin tạo hoàn tiền">
                                         <button type="submit" class="update-btn">Tạo Yêu Cầu Hoàn Tiền</button>
                                     </form>
                                     <form th:if="${o.status == 'CHO_HOAN_TIEN'}" action="/admin/orders/confirm-refund" method="post" class="action-form">
+
                                         <input type="hidden" name="orderId" th:value="${o.id}">
                                         <input type="text" name="note" placeholder="Ghi chú xác nhận hoàn tiền">
                                         <button type="submit" class="update-btn">Xác Nhận Đã Hoàn Tiền</button>
                                     </form>
                                     <form th:if="${o.status == 'DA_THANH_TOAN' or o.status == 'PAID' or o.status == 'SHIPPING' or o.status == 'COMPLETED' or o.status == 'HOAN_THANH' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN'}" action="/admin/orders/recall" method="post" class="action-form">
+
                                         <input type="hidden" name="orderId" th:value="${o.id}">
                                         <input type="text" name="note" placeholder="Lý do thu hồi">
                                         <button type="submit" class="update-btn">Thu Hồi Đơn</button>
                                     </form>
                                     <form th:unless="${o.status == 'CHO_XAC_NHAN_THANH_TOAN' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN' or o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" action="/admin/orders/update-status" method="post" class="action-form">
+
                                         <input type="hidden" name="orderId" th:value="${o.id}">
                                         <select name="status">
                                             <option value="PENDING" th:selected="${o.status == 'PENDING'}">Chờ xử lý</option>
