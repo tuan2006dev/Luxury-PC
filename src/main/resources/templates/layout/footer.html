@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+    <div th:fragment="footer">
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo">LUXURY · PC</div>
+                    <p data-translate="footer-desc">Nơi công nghệ gặp gỡ sự xa xỉ. Linh kiện cao cấp, tư vấn chuyên nghiệp, dịch vụ hoàn hảo.</p>
+                </div>
+                <div class="footer-links-group">
+                    <h4 data-translate="footer-h-components">Linh Kiện</h4>
+                    <ul>
+                        <li><a href="#" data-translate="footer-cpu">CPU & Bộ Xử Lý</a></li>
+                        <li><a href="#" data-translate="footer-vga">VGA & Card Đồ Họa</a></li>
+                        <li><a href="#" data-translate="footer-main">Mainboard</a></li>
+                        <li><a href="#" data-translate="footer-ram">RAM & Bộ Nhớ</a></li>
+                        <li><a href="#" data-translate="footer-ssd">SSD & Lưu Trữ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-group">
+                    <h4 data-translate="footer-h-services">Dịch Vụ</h4>
+                    <ul>
+                        <li><a href="#" data-translate="footer-build">Build PC Theo Yêu Cầu</a></li>
+                        <li><a href="#" data-translate="footer-advice">Tư Vấn Cấu Hình</a></li>
+                        <li><a href="#" data-translate="footer-warranty">Bảo Hành & Sửa Chữa</a></li>
+                        <li><a href="#" data-translate="footer-upgrade">Nâng Cấp Hệ Thống</a></li>
+                        <li><a href="#" data-translate="footer-gaming">PC Gaming Cao Cấp</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-group">
+                    <h4 data-translate="footer-h-contact">Liên Hệ</h4>
+                    <ul>
+                        <li><a href="#">📍 123 Nguyễn Huệ, Q1, TP.HCM</a></li>
+                        <li><a href="#">📞 1800-LUXURY</a></li>
+                        <li><a href="#">✉️ hello@luxurypc.vn</a></li>
+                        <li><a href="#">🕐 T2–CN: 9:00 – 21:00</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-translate="footer-rights">© 2025 Luxury PC. Tất cả quyền được bảo lưu. Bản quyền thuộc Luxury Technology JSC.</p>
+                
+                <!-- Language Selector -->
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="vi" aria-label="Tiếng Việt">
+                        <span class="flag-icon">🇻🇳</span> VI
+                    </button>
+                    <span class="lang-divider">|</span>
+                    <button class="lang-btn" data-lang="en" aria-label="English">
+                        <span class="flag-icon">🇺🇸</span> EN
+                    </button>
+                </div>
+
+                <div class="footer-social">
+                    <a href="#" id="social-fb" aria-label="Facebook">f</a>
+                    <a href="#" id="social-yt" aria-label="YouTube">▶</a>
+                    <a href="#" id="social-tt" aria-label="TikTok">♪</a>
+                </div>
+            </div>
+        </footer>
+
+        <!-- CART DRAWER -->
+        <div class="cart-drawer" id="cart-drawer">
+            <div class="cart-header">
+                <h3 data-translate="cart-title">Giỏ Hàng</h3>
+                <button class="cart-close" id="cart-close" aria-label="Đóng giỏ hàng">✕</button>
+            </div>
+            <div class="cart-items" id="cart-items">
+                <p class="cart-empty" data-translate="cart-empty">Giỏ hàng của bạn đang trống.</p>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total-row">
+                    <span data-translate="cart-total-label">Tổng cộng</span>
+                    <span class="cart-total" id="cart-total">0₫</span>
+                </div>
+                <button class="btn-primary full" id="btn-checkout"><span data-translate="cart-checkout">Thanh Toán Ngay</span></button>
+            </div>
+        </div>
+        <div class="cart-overlay" id="cart-overlay"></div>
+
+        <!-- TOAST -->
+        <div class="toast" id="toast"></div>
+
+        <!-- VOUCHER MODAL -->
+        <div class="voucher-modal-overlay" id="voucher-modal-overlay">
+            <div class="voucher-modal" id="voucher-modal">
+                <button class="voucher-modal-close" id="voucher-modal-close" aria-label="Đóng">✕</button>
+                <div class="vmodal-badge" id="vmodal-badge">Giảm Giá</div>
+                <div class="vmodal-pct" id="vmodal-pct">10%</div>
+                <div class="vmodal-code-wrap">
+                    <span class="vmodal-code-label" data-translate="voucher-code-label">Mã Voucher</span>
+                    <div class="vmodal-code" id="vmodal-code">LUXURY10</div>
+                </div>
+                <div class="vmodal-divider"></div>
+                <div class="vmodal-info">
+                    <div class="vmodal-row">
+                        <span class="vmodal-key" data-translate="voucher-benefit">Ưu đãi</span>
+                        <span class="vmodal-val" id="vmodal-desc">Giảm 10% cho tất cả đơn hàng</span>
+                    </div>
+                    <div class="vmodal-row">
+                        <span class="vmodal-key" data-translate="voucher-apply">Áp dụng</span>
+                        <span class="vmodal-val" id="vmodal-apply">Tất cả sản phẩm</span>
+                    </div>
+                    <div class="vmodal-row">
+                        <span class="vmodal-key" data-translate="voucher-expiry">Thời hạn</span>
+                        <span class="vmodal-val" id="vmodal-expire">31/03/2026</span>
+                    </div>
+                    <div class="vmodal-row">
+                        <span class="vmodal-key" data-translate="voucher-usage">Lượt dùng</span>
+                        <span class="vmodal-val" id="vmodal-limit">Không giới hạn</span>
+                    </div>
+                </div>
+                <button class="vmodal-copy-btn" id="vmodal-copy-btn" data-translate="voucher-copy">Sao Chép Mã Voucher</button>
+                <div class="vmodal-note" data-translate="voucher-note">Nhập mã tại bước thanh toán để áp dụng ưu đãi.</div>
+            </div>
+        </div>
+
+        <!-- TRANSLATION SCRIPT -->
+        <script th:inline="javascript">
+            const translations = {
+                vi: {
+                    "nav-products": "Sản Phẩm",
+                    "nav-build": "Build PC",
+                    "nav-promo": "Khuyến Mãi",
+                    "nav-news": "Tin Tức",
+                    "nav-contact": "Liên Hệ",
+                    "nav-login": "ĐĂNG NHẬP",
+                    "nav-profile": "HỒ SƠ",
+                    "search-quick": "Tìm nhanh:",
+                    "search-hint": "Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.",
+                    "footer-desc": "Nơi công nghệ gặp gỡ sự xa xỉ. Linh kiện cao cấp, tư vấn chuyên nghiệp, dịch vụ hoàn hảo.",
+                    "footer-h-components": "Linh Kiện",
+                    "footer-h-services": "Dịch Vụ",
+                    "footer-h-contact": "Liên Hệ",
+                    "footer-cpu": "CPU & Bộ Xử Lý",
+                    "footer-vga": "VGA & Card Đồ Họa",
+                    "footer-main": "Mainboard",
+                    "footer-ram": "RAM & Bộ Nhớ",
+                    "footer-ssd": "SSD & Lưu Trữ",
+                    "footer-build": "Build PC Theo Yêu Cầu",
+                    "footer-advice": "Tư Vấn Cấu Hình",
+                    "footer-warranty": "Bảo Hành & Sửa Chữa",
+                    "footer-upgrade": "Nâng Cấp Hệ Thống",
+                    "footer-gaming": "PC Gaming Cao Cấp",
+                    "footer-rights": "© 2025 Luxury PC. Tất cả quyền được bảo lưu. Bản quyền thuộc Luxury Technology JSC.",
+                    "cart-title": "Giỏ Hàng",
+                    "cart-empty": "Giỏ hàng của bạn đang trống.",
+                    "cart-total-label": "Tổng cộng",
+                    "cart-checkout": "Thanh Toán Ngay",
+                    "voucher-code-label": "Mã Voucher",
+                    "voucher-benefit": "Ưu đãi",
+                    "voucher-apply": "Áp dụng",
+                    "voucher-expiry": "Thời hạn",
+                    "voucher-usage": "Lượt dùng",
+                    "voucher-copy": "Sao Chép Mã Voucher",
+                    "voucher-note": "Nhập mã tại bước thanh toán để áp dụng ưu đãi."
+                },
+                en: {
+                    "nav-products": "Products",
+                    "nav-build": "Build PC",
+                    "nav-promo": "Offers",
+                    "nav-news": "News",
+                    "nav-contact": "Contact",
+                    "nav-login": "LOGIN",
+                    "nav-profile": "PROFILE",
+                    "search-quick": "Quick search:",
+                    "search-hint": "Enter keywords to search products at Luxury PC.",
+                    "footer-desc": "Where technology meets luxury. Premium components, professional consulting, perfect service.",
+                    "footer-h-components": "Components",
+                    "footer-h-services": "Services",
+                    "footer-h-contact": "Contact Us",
+                    "footer-cpu": "CPUs & Processors",
+                    "footer-vga": "VGAs & Graphics Cards",
+                    "footer-main": "Motherboards",
+                    "footer-ram": "RAM & Memory",
+                    "footer-ssd": "SSD & Storage",
+                    "footer-build": "Custom PC Builder",
+                    "footer-advice": "Configuration Advice",
+                    "footer-warranty": "Warranty & Repairs",
+                    "footer-upgrade": "System Upgrades",
+                    "footer-gaming": "Premium Gaming PCs",
+                    "footer-rights": "© 2025 Luxury PC. All rights reserved. Copyright belongs to Luxury Technology JSC.",
+                    "cart-title": "Cart",
+                    "cart-empty": "Your cart is currently empty.",
+                    "cart-total-label": "Total",
+                    "cart-checkout": "Checkout Now",
+                    "voucher-code-label": "Voucher Code",
+                    "voucher-benefit": "Benefit",
+                    "voucher-apply": "Applicable for",
+                    "voucher-expiry": "Expiry Date",
+                    "voucher-usage": "Usage limit",
+                    "voucher-copy": "Copy Voucher Code",
+                    "voucher-note": "Enter the code at checkout to apply the discount."
+                }
+            };
+
+            function setLanguage(lang) {
+                localStorage.setItem('lang', lang);
+                
+                // Toggle active state in language selector
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.lang === lang);
+                });
+
+                // Translate elements
+                document.querySelectorAll('[data-translate]').forEach(el => {
+                    const key = el.getAttribute('data-translate');
+                    if (translations[lang] && translations[lang][key]) {
+                        el.textContent = translations[lang][key];
+                    }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const savedLang = localStorage.getItem('lang') || 'vi';
+                setLanguage(savedLang);
+
+                // Bind click events
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const lang = btn.dataset.lang;
+                        setLanguage(lang);
+                        
+                        const msg = lang === 'en' ? 'Language switched to English' : 'Đã đổi ngôn ngữ sang Tiếng Việt';
+                        if (typeof showToast === 'function') {
+                            showToast(msg);
+                        } else if (typeof toast === 'function') {
+                            toast(msg);
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

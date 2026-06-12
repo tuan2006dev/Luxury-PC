@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Đơn Hàng — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/orders.css}" />
+</head>
+<body>
+    <div class="sidebar">
+        <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
+        <nav>
+            <a href="/admin/dashboard" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="/admin/orders" class="nav-link active"><i class="fa-solid fa-box"></i> Đơn Hàng</a>
+            <a href="/admin/inventory" class="nav-link"><i class="fa-solid fa-warehouse"></i> Kho Hàng</a>
+            <a href="/admin/categories" class="nav-link"><i class="fa-solid fa-layer-group"></i> Danh Mục</a>
+            <a href="/admin/products" class="nav-link"><i class="fa-solid fa-microchip"></i> Sản Phẩm</a>
+            <a href="/admin/vouchers" class="nav-link"><i class="fa-solid fa-ticket"></i> Voucher</a>
+            <a href="/admin/flash-sales" class="nav-link"><i class="fa-solid fa-bolt"></i> Flash Sale</a>
+            <a href="/admin/account" class="nav-link"><i class="fa-solid fa-users"></i> Người Dùng</a>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div class="table-card">
+            <div class="table-h">
+                <h2>Quản Lý Đơn Hàng</h2>
+                <span th:text="${orders.size()} + ' đơn hàng'">0 đơn hàng</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã Đơn</th>
+                        <th>Khách Hàng</th>
+                        <th>Ngày Đặt</th>
+                        <th>Tổng Tiền</th>
+                        <th>Thanh Toán</th>
+                        <th>Voucher</th>
+                        <th>Trạng Thái</th>
+                        <th>Ghi Chú</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="o : ${orders}">
+                        <td th:text="${o.orderCode != null ? o.orderCode : 'DH' + o.id}">DH101</td>
+                        <td>
+                            <div th:text="${o.fullName}">Guest</div>
+                            <div style="font-size:0.75rem; color:var(--muted)" th:text="${o.email}">guest@mail.com</div>
+                        </td>
+                        <td th:text="${#dates.format(o.createdAt, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
+                        <td th:text="${#numbers.formatDecimal(o.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'" style="color:var(--gold)">45.000.000₫</td>
+                        <td th:text="${o.paymentMethodDisplay}">VietQR</td>
+                        <td>
+                            <div th:text="${o.voucherCode != null ? o.voucherCode : '-'}">QA500K</div>
+                            <div th:if="${o.discountAmount != null and o.discountAmount > 0}"
+                                 style="font-size:0.75rem; color:var(--gold)"
+                                 th:text="'-' + ${#numbers.formatDecimal(o.discountAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">-500.000₫</div>
+                        </td>
+                        <td>
+                            <span th:class="'badge badge-' + ${o.status.toLowerCase()}"
+                                  th:text="${o.statusDisplay}">Chờ xử lý</span>
+                        </td>
+                        <td class="admin-note">
+                            <div th:if="${o.refundReason != null}" style="margin-bottom:.6rem;">
+                                <span class="note-label">Lý do khách</span>
+                                <span th:text="${o.refundReason}">Lý do hoàn trả</span>
+                            </div>
+                            <div th:if="${o.adminNote != null}">
+                                <span class="note-label">Ghi chú admin</span>
+                                <span th:text="${o.adminNote}">Ghi chú</span>
+                            </div>
+                            <span th:if="${o.refundReason == null and o.adminNote == null}">-</span>
+                        </td>
+                        <td>
+                            <details class="action-menu">
+                                <summary>Thao tác</summary>
+                                <div class="action-panel">
+                                    <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" class="admin-note">Đơn đã kết thúc xử lý.</span>
+                                    <form th:if="${o.paymentMethod == 'VIETQR' and o.status == 'CHO_XAC_NHAN_THANH_TOAN'}" action="/admin/orders/confirm-payment" method="post" class="action-form">
+
+                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <button type="submit" class="update-btn">Xác Nhận Thanh Toán</button>
+                                    </form>
+                                    <form th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}" action="/admin/orders/approve-refund" method="post" class="action-form">
+
+                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <input type="text" name="note" placeholder="Ghi chú duyệt yêu cầu">
+                                        <button type="submit" class="update-btn">Duyệt Yêu Cầu Hoàn Tiền</button>
+                                    </form>
+                                    <form th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}" action="/admin/orders/reject-refund" method="post" class="action-form">
+
+                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <input type="text" name="note" required placeholder="Lý do từ chối">
+                                        <button type="submit" class="update-btn">Từ Chối Yêu Cầu</button>
+                                    </form>
+                                    <form th:if="${o.paymentMethod == 'VIETQR' and (o.status == 'DA_THANH_TOAN' or o.status == 'PAID')}" action="/admin/orders/request-refund" method="post" class="action-form">
+
+                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <input type="text" name="note" placeholder="Lý do admin tạo hoàn tiền">
+                                        <button type="submit" class="update-btn">Tạo Yêu Cầu Hoàn Tiền</button>
+                                    </form>
+                                    <form th:if="${o.status == 'CHO_HOAN_TIEN'}" action="/admin/orders/confirm-refund" method="post" class="action-form">
+
+                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <input type="text" name="note" placeholder="Ghi chú xác nhận hoàn tiền">
+                                        <button type="submit" class="update-btn">Xác Nhận Đã Hoàn Tiền</button>
+                                    </form>
+                                    <form th:if="${o.status == 'DA_THANH_TOAN' or o.status == 'PAID' or o.status == 'SHIPPING' or o.status == 'COMPLETED' or o.status == 'HOAN_THANH' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN'}" action="/admin/orders/recall" method="post" class="action-form">
+
+                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <input type="text" name="note" placeholder="Lý do thu hồi">
+                                        <button type="submit" class="update-btn">Thu Hồi Đơn</button>
+                                    </form>
+                                    <form th:unless="${o.status == 'CHO_XAC_NHAN_THANH_TOAN' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN' or o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" action="/admin/orders/update-status" method="post" class="action-form">
+
+                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <select name="status">
+                                            <option value="PENDING" th:selected="${o.status == 'PENDING'}">Chờ xử lý</option>
+                                            <option value="PAID" th:selected="${o.status == 'PAID'}">Đã thanh toán</option>
+                                            <option value="SHIPPING" th:selected="${o.status == 'SHIPPING'}">Đang giao</option>
+                                            <option value="COMPLETED" th:selected="${o.status == 'COMPLETED'}">Hoàn thành</option>
+                                            <option value="DA_HUY" th:selected="${o.status == 'DA_HUY'}">Đã hủy</option>
+                                        </select>
+                                        <button type="submit" class="update-btn">Cập Nhật Trạng Thái</button>
+                                    </form>
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
