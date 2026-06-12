@@ -113,9 +113,4 @@ public class ProductPageController {
         
         return "redirect:/product/" + id;
     }
-
-    @GetMapping("/build-pc")
-    public String showBuildPCPage() {
-        return "build-pc";
-    }
 }
