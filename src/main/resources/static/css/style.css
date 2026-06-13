@@ -726,11 +726,41 @@ body:hover .cursor {
 }
 
 .products-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto;
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
   gap: 2px;
   background: rgba(201, 168, 76, 0.08);
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px;
+  /* Scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 168, 76, 0.5) rgba(201, 168, 76, 0.08);
+}
+
+.products-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.products-grid::-webkit-scrollbar-track {
+  background: rgba(201, 168, 76, 0.06);
+}
+
+.products-grid::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.45);
+  border-radius: 2px;
+}
+
+.products-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+.products-grid .product-card {
+  flex: 0 0 calc(33.333% - 2px);
+  min-width: calc(33.333% - 2px);
+  scroll-snap-align: start;
 }
 
 .product-card {
@@ -1527,8 +1557,9 @@ body:hover .cursor {
     padding: 5rem 3rem;
   }
 
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .products-grid .product-card {
+    flex: 0 0 calc(50% - 1px);
+    min-width: calc(50% - 1px);
   }
 
   .build-section {
@@ -1610,8 +1641,9 @@ body:hover .cursor {
     padding: 4rem 1.5rem;
   }
 
-  .products-grid {
-    grid-template-columns: 1fr;
+  .products-grid .product-card {
+    flex: 0 0 calc(85% - 1px);
+    min-width: calc(85% - 1px);
   }
 
   .build-section {
@@ -2751,6 +2783,9 @@ body:hover .cursor {
 /* Product card hidden state for filter */
 .product-card.hidden-by-filter {
   display: none;
+  flex: 0 0 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .product-card.filter-fade-in {
