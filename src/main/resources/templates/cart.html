@@ -317,15 +317,8 @@
 
   </div>
 
-  <!-- Khi giỏ rỗng -->
-  <div th:if="${#lists.isEmpty(cartItems)}" id="empty-row" class="empty-cart mt-4">
-      <i class="fa-solid fa-cart-shopping"></i>
-      <h4>Giỏ hàng của bạn đang trống.</h4>
-      <a href="/" class="btn-outline-gold mt-2">Đến Cửa Hàng</a>
-  </div>
-  
-  <!-- Chỗ chứa khi xóa hết item bằng ajax -->
-  <div id="ajax-empty-row" class="empty-cart mt-4" style="display: none;">
+  <!-- Khi giỏ rỗng (Được hiển thị động bởi JS hoặc Thymeleaf) -->
+  <div id="ajax-empty-row" class="empty-cart mt-4" th:style="${#lists.isEmpty(cartItems)} ? 'display: block;' : 'display: none;'">
       <i class="fa-solid fa-cart-shopping"></i>
       <h4>Giỏ hàng của bạn đang trống.</h4>
       <a href="/" class="btn-outline-gold mt-2">Đến Cửa Hàng</a>

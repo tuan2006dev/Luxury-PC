@@ -2831,4 +2831,12 @@ body:hover .cursor {
 .lang-divider {
   color: rgba(201, 168, 76, 0.2);
   font-size: 0.72rem;
-}
+}
+/* FADE IN SCROLL */
+.fade-in-up-hidden { opacity: 0; transform: translateY(30px); }
+.fade-in-up-visible { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+/* LANG SELECT */
+.nav-lang { position: relative; margin-left: 10px; }
+.nav-lang-btn { background: var(--dark); border: 1px solid var(--gold); border-radius: 50%; width: 32px; height: 32px; color: var(--gold); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.nav-lang-btn:hover { background: var(--gold); color: var(--black); }
+

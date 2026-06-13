@@ -213,11 +213,11 @@
 
         <div class="products-grid" id="products-grid">
             <!-- Featured products from database -->
-            <article th:each="p : ${featuredProducts}" class="product-card" th:classappend="${p.price > 20000000 ? 'large' : ''}" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
+            <article th:each="p : ${featuredProducts}" class="product-card" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
                 <div class="product-img-wrap">
                     <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" />
                     <div th:if="${p.price > 30000000}" class="product-badge gold" th:text="'Đỉnh Cao'">Đỉnh Cao</div>
-                    <button class="product-wishlist" aria-label="Yêu thích">♡</button>
+                    <button class="product-wishlist" aria-label="Yêu thích" th:onclick="|addToWishlist(this, ${p.id})|">♡</button>
                 </div>
                 <div class="product-info">
                     <span class="product-cat" th:text="${p.category.name} + ' · LUXURY'">CPU · Intel</span>
@@ -383,7 +383,7 @@
         // Flash Sale countdown - endTime from database
         window.flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
     </script>
-    <script th:src="@{/js/script.js(v=3)}"></script>
+    <script th:src="@{/js/script.js(v=4)}"></script>
 </body>
 
 </html>
