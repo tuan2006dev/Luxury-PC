@@ -1,6 +1,8 @@
 package poly.edu.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +14,16 @@ import poly.edu.entity.Review;
 import poly.edu.entity.User;
 import poly.edu.service.CategoryService;
 import poly.edu.service.ProductService;
+import poly.edu.service.WishlistService;
 import poly.edu.dao.ReviewDAO;
 import poly.edu.repository.UserRepository;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class ProductPageController {
@@ -34,6 +39,9 @@ public class ProductPageController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    WishlistService wishlistService;
 
     @GetMapping("/products")
     public String showProductsPage(
@@ -51,7 +59,8 @@ public class ProductPageController {
         model.addAttribute("minPrice", min);
         model.addAttribute("maxPrice", max);
         model.addAttribute("keywords", kw);
-        
+        addWishlistAttributes(model);
+
         return "all-products"; 
     }
 
@@ -74,8 +83,19 @@ public class ProductPageController {
         model.addAttribute("reviews", reviews);
         model.addAttribute("avgRating", avgRating);
         model.addAttribute("reviewCount", reviews.size());
-        
+        addWishlistAttributes(model);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        model.addAttribute("productInWishlist", wishlistService.isProductInWishlist(auth, id));
+
         return "product-detail";
+    }
+
+    private void addWishlistAttributes(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Set<Integer> wishlistProductIds = auth != null
+                ? wishlistService.getWishlistProductIds(auth)
+                : Collections.emptySet();
+        model.addAttribute("wishlistProductIds", wishlistProductIds);
     }
 
     @PostMapping("/product/{id}/review")
@@ -112,10 +132,5 @@ public class ProductPageController {
         }
         
         return "redirect:/product/" + id;
-    }
-
-    @GetMapping("/build-pc")
-    public String showBuildPCPage() {
-        return "build-pc";
     }
 }

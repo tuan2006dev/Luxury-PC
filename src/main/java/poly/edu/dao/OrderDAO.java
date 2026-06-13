@@ -29,5 +29,9 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o WHERE o.user.id = :userId ORDER BY o.createdAt DESC")
     List<Order> findByUserIdOrderByCreatedAtDesc(Integer userId);
 
+    // Alias methods used by ProfileController (D project merge)
+    Long countByUser_Id(Integer userId);
+    List<Order> findByUser_IdOrderByCreatedAtDesc(Integer userId);
+
     Optional<Order> findByOrderCode(String orderCode);
 }

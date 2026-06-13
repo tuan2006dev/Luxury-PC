@@ -600,7 +600,7 @@ function renderSearchResults(query) {
   searchResults.innerHTML = `
     <div class="search-result-grid">
       ${matches.map(p => `
-        <div class="search-result-item" onclick="${p.id ? `document.getElementById('${p.id}').scrollIntoView({behavior:'smooth'}); closeSearch();` : 'closeSearch();'}">
+        <div class="search-result-item" style="cursor:pointer;" onclick="window.location.href='${p.productUrl || '/products'}'">
           <div class="sri-icon">${p.icon}</div>
           <div class="sri-info">
             <div class="sri-name">${p.name}</div>
@@ -809,27 +809,27 @@ window.addToWishlist = function(btn, id) {
   if(typeof showToast === 'function') showToast('Đã thêm sản phẩm vào danh sách yêu thích!');
 };
 
-window.toggleLanguage = function() {
-  const currentLang = localStorage.getItem('lang') || 'vi';
-  const newLang = currentLang === 'vi' ? 'en' : 'vi';
-  
-  if(typeof setLanguage === 'function') {
-    setLanguage(newLang);
-  } else {
-    localStorage.setItem('lang', newLang);
-    location.reload();
+window.toggleLanguage = function(lang) {
+  // Nếu không truyền vào (fallback), đọc từ select
+  if (!lang) {
+    const sel = document.getElementById('btn-lang-toggle');
+    lang = sel ? sel.value : 'vi';
   }
   
-  const btn = document.getElementById('btn-lang-toggle');
-  if(btn) {
-    btn.textContent = newLang === 'vi' ? 'VI' : 'EN';
+  if(typeof setLanguage === 'function') {
+    setLanguage(lang);
+  } else {
+    localStorage.setItem('lang', lang);
+    location.reload();
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
   const currentLang = localStorage.getItem('lang') || 'vi';
-  const btn = document.getElementById('btn-lang-toggle');
-  if(btn) {
-    btn.textContent = currentLang === 'vi' ? 'VI' : 'EN';
+  const sel = document.getElementById('btn-lang-toggle');
+  if(sel && sel.tagName === 'SELECT') {
+    sel.value = currentLang;
+  } else if(sel) {
+    sel.textContent = currentLang === 'vi' ? 'VI' : 'EN';
   }
 });

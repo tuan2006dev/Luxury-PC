@@ -1,4 +1,5 @@
-let activePollInterval = null;
+// WebSocket connections for admin ticket chat
+let adminWsConnections = {}; // ticketId -> WebSocket instance
 let activeTicketId = null;
 
 function toggleTicket(id) {
@@ -6,50 +7,137 @@ function toggleTicket(id) {
     const icon = document.getElementById('icon-' + id);
 
     if (detail.style.display === 'none') {
-        // Close all other open tickets first to keep UI clean and prevent multiple active pollers
+        // Close all other open tickets first
         document.querySelectorAll('.ticket-detail').forEach(d => {
             if (d.id !== 'detail-' + id) {
                 d.style.display = 'none';
                 const otherId = d.id.replace('detail-', '');
                 const otherIcon = document.getElementById('icon-' + otherId);
                 if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                // Disconnect previous WebSocket
+                disconnectTicketWs(otherId);
             }
         });
 
         detail.style.display = 'block';
         icon.style.transform = 'rotate(180deg)';
+        activeTicketId = id;
 
-        // Start polling chat messages
-        startChatPolling(id);
+        // Load chat messages via REST API
+        loadChatMessages(id, true);
+
+        // Connect WebSocket for realtime updates
+        connectTicketWs(id);
     } else {
         detail.style.display = 'none';
         icon.style.transform = 'rotate(0deg)';
+        activeTicketId = null;
 
-        // Stop polling
-        stopChatPolling();
+        // Disconnect WebSocket
+        disconnectTicketWs(id);
     }
 }
 
-function startChatPolling(id) {
-    stopChatPolling(); // clear any previous poller
-    activeTicketId = id;
+// ========== WebSocket Functions ==========
 
-    // Initial load
-    loadChatMessages(id, true);
+function connectTicketWs(ticketId) {
+    // Disconnect previous if any
+    disconnectTicketWs(ticketId);
 
-    // Poll every 2 seconds
-    activePollInterval = setInterval(() => {
-        loadChatMessages(id, false);
-    }, 2000);
-}
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.host;
+    const wsUrl = `${protocol}//${host}/chat-socket?ticketId=${ticketId}`;
 
-function stopChatPolling() {
-    if (activePollInterval) {
-        clearInterval(activePollInterval);
-        activePollInterval = null;
+    try {
+        const ws = new WebSocket(wsUrl);
+        adminWsConnections[ticketId] = ws;
+
+        ws.onopen = () => {
+            console.log(`[Admin WS] Connected to ticket #${ticketId}`);
+        };
+
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                // Only process CUSTOMER messages (admin messages are already shown on send)
+                if (data.sender === 'CUSTOMER' || (data.senderName && data.sender !== 'ADMIN')) {
+                    const content = data.content || data.message || '';
+                    const senderName = data.senderName || data.sender || 'Khách';
+                    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    appendChatBubble(ticketId, senderName, content, time, false);
+                }
+            } catch (e) {
+                console.error('[Admin WS] Parse error:', e);
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error(`[Admin WS] Error on ticket #${ticketId}:`, error);
+        };
+
+        ws.onclose = () => {
+            console.log(`[Admin WS] Disconnected from ticket #${ticketId}`);
+            delete adminWsConnections[ticketId];
+
+            // Auto-reconnect if this ticket is still active
+            if (activeTicketId == ticketId) {
+                setTimeout(() => {
+                    if (activeTicketId == ticketId) {
+                        connectTicketWs(ticketId);
+                    }
+                }, 3000);
+            }
+        };
+    } catch (e) {
+        console.error(`[Admin WS] Failed to connect to ticket #${ticketId}:`, e);
     }
-    activeTicketId = null;
 }
+
+function disconnectTicketWs(ticketId) {
+    if (adminWsConnections[ticketId]) {
+        adminWsConnections[ticketId].close();
+        delete adminWsConnections[ticketId];
+    }
+}
+
+function appendChatBubble(ticketId, senderName, content, time, isAdmin) {
+    const msgContainer = document.getElementById('chat-messages-' + ticketId);
+    if (!msgContainer) return;
+
+    const wrapperClass = isAdmin ? 'admin' : 'user';
+    const bubbleClass = isAdmin ? 'admin-bubble' : 'customer-bubble';
+
+    const html = `
+        <div class="chat-bubble-wrapper ${wrapperClass}">
+            <div class="chat-bubble-meta">${escapeHtml(senderName)} · ${time}</div>
+            <div class="message-bubble ${bubbleClass}">${escapeHtml(content)}</div>
+        </div>
+    `;
+
+    // Check for duplicate (if last message matches exactly)
+    const existingBubbles = msgContainer.querySelectorAll('.chat-bubble-wrapper');
+    if (existingBubbles.length > 0) {
+        const lastBubble = existingBubbles[existingBubbles.length - 1];
+        const lastContent = lastBubble.querySelector('.message-bubble');
+        if (lastContent && lastContent.textContent.trim() === content.trim()) {
+            const lastMeta = lastBubble.querySelector('.chat-bubble-meta');
+            if (lastMeta && lastMeta.textContent.includes(senderName)) {
+                return; // Duplicate, skip
+            }
+        }
+    }
+
+    msgContainer.insertAdjacentHTML('beforeend', html);
+
+    // Auto-scroll
+    const isNearBottom = msgContainer.scrollHeight - msgContainer.clientHeight - msgContainer.scrollTop < 60;
+    if (isNearBottom) {
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+    }
+}
+
+// ========== REST API Functions ==========
 
 function loadChatMessages(id, shouldScroll) {
     fetch(`/api/tickets/${id}/messages`)
@@ -63,9 +151,6 @@ function loadChatMessages(id, shouldScroll) {
                 return;
             }
 
-            // Save scroll position
-            const isNearBottom = msgContainer.scrollHeight - msgContainer.clientHeight - msgContainer.scrollTop < 60;
-
             let html = '';
             messages.forEach(msg => {
                 const isCustomer = msg.sender === 'CUSTOMER';
@@ -75,7 +160,7 @@ function loadChatMessages(id, shouldScroll) {
 
                 html += `
                     <div class="chat-bubble-wrapper ${wrapperClass}">
-                        <div class="chat-bubble-meta">${msg.senderName} · ${formattedTime}</div>
+                        <div class="chat-bubble-meta">${escapeHtml(msg.senderName)} · ${formattedTime}</div>
                         <div class="message-bubble ${bubbleClass}">${escapeHtml(msg.message)}</div>
                     </div>
                 `;
@@ -83,8 +168,7 @@ function loadChatMessages(id, shouldScroll) {
 
             msgContainer.innerHTML = html;
 
-            // Auto-scroll if initial load or user was near bottom
-            if (shouldScroll || isNearBottom) {
+            if (shouldScroll) {
                 msgContainer.scrollTop = msgContainer.scrollHeight;
             }
         })
@@ -114,8 +198,9 @@ function sendAdminMessage(id) {
     const message = input.value.trim();
     if (!message) return;
 
-    input.value = ''; // clear input
+    input.value = '';
 
+    // Save via REST API
     fetch(`/api/tickets/${id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -127,8 +212,21 @@ function sendAdminMessage(id) {
     })
         .then(res => res.json())
         .then(saved => {
-            // Instantly reload chat list
-            loadChatMessages(id, true);
+            // Append the admin message immediately to the UI
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            appendChatBubble(id, 'Admin', message, time, true);
+
+            // Also broadcast via WebSocket so customer client sees it instantly
+            const ws = adminWsConnections[id];
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    ticketId: parseInt(id),
+                    sender: 'ADMIN',
+                    senderName: 'Admin',
+                    content: message,
+                    type: 'CHAT'
+                }));
+            }
         })
         .catch(err => {
             console.error("Error sending admin message:", err);
@@ -145,12 +243,11 @@ function updateTicketStatus(id, status) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Update status badge of the row without reload
                 const row = document.querySelector(`[data-id="${id}"]`);
                 if (row) {
                     const badge = row.querySelector('.ticket-status-badge');
                     if (badge) {
-                        badge.className = 'ticket-status-badge'; // reset
+                        badge.className = 'ticket-status-badge';
                         let label = 'Mới';
                         if (status === 'OPEN') {
                             badge.classList.add('st-open');
@@ -181,6 +278,7 @@ function deleteTicket(id) {
         body: JSON.stringify({ id: id })
     }).then(r => r.json()).then(data => {
         if (data.success) {
+            disconnectTicketWs(id);
             const row = document.querySelector('[data-id="' + id + '"]');
             row.style.opacity = '0';
             row.style.transform = 'translateX(-20px)';
@@ -190,11 +288,69 @@ function deleteTicket(id) {
     });
 }
 
-// Auto-open first OPEN ticket
-document.addEventListener('DOMContentLoaded', () => {
-    const firstOpen = document.querySelector('.ticket-row');
-    if (firstOpen) {
-        const id = firstOpen.getAttribute('data-id');
-        // toggleTicket(id); // uncomment to auto-open first
-    }
+function assignTicket(id) {
+    return fetch('/admin/tickets/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Update assigned admin name
+            const adminLabel = document.getElementById('assigned-admin-' + id);
+            if (adminLabel) adminLabel.textContent = data.assignedAdmin;
+            
+            // Show assigned admin row, hide assign button row
+            const assignedRow = document.getElementById('assigned-row-' + id);
+            if (assignedRow) assignedRow.style.display = '';
+            
+            const assignBtnRow = document.getElementById('assign-btn-row-' + id);
+            if (assignBtnRow) assignBtnRow.style.display = 'none';
+
+            // Remove/hide "Xử lý" button from list
+            const procBtn = document.getElementById('btn-process-header-' + id);
+            if (procBtn) procBtn.remove();
+
+            // Update status select element
+            const statusSelect = document.getElementById('chat-status-' + id);
+            if (statusSelect && statusSelect.value === 'OPEN') {
+                statusSelect.value = 'IN_PROGRESS';
+            }
+
+            // Update status badge on row
+            const row = document.querySelector(`[data-id="${id}"]`);
+            if (row) {
+                const badge = row.querySelector('.ticket-status-badge');
+                if (badge) {
+                    badge.className = 'ticket-status-badge st-progress';
+                    badge.innerText = 'Đang xử lý';
+                }
+            }
+            return data;
+        }
+    })
+    .catch(err => console.error("Error assigning ticket:", err));
+}
+
+function processTicket(id) {
+    assignTicket(id).then(() => {
+        // Open details panel if not already open
+        const detail = document.getElementById('detail-' + id);
+        if (detail && detail.style.display === 'none') {
+            toggleTicket(id);
+        }
+        // Focus input area
+        setTimeout(() => {
+            const input = document.getElementById('chat-input-' + id);
+            if (input) input.focus();
+        }, 400);
+    });
+}
+
+// Cleanup WebSocket connections when leaving page
+window.addEventListener('beforeunload', () => {
+    Object.keys(adminWsConnections).forEach(id => {
+        disconnectTicketWs(id);
+    });
 });

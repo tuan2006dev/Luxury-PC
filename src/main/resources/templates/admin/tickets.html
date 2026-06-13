@@ -26,12 +26,9 @@
             <a href="/admin/flash-sales" class="nav-link"><i class="fa-solid fa-bolt"></i> Flash Sale</a>
             <a href="/admin/account" class="nav-link"><i class="fa-solid fa-users"></i> Người Dùng</a>
             <a href="/admin/tickets" class="nav-link active"><i class="fa-solid fa-headset"></i> Hỗ Trợ / Ticket</a>
-            <form method="post" th:action="@{/logout}" style="margin-top: 3rem;">
-
-                <button type="submit" class="nav-link" style="color: var(--red); background: none; border: none; width: 100%; text-align: left; cursor: pointer; padding: 10px 15px;">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
-                </button>
-            </form>
+            <a href="/logout" class="nav-link" style="margin-top: 3rem; color: var(--red);">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+            </a>
         </nav>
     </div>
 
@@ -128,6 +125,12 @@
                         </div>
                         <div class="ticket-date" th:text="${#dates.format(ticket.createdAt, 'dd/MM HH:mm')}">01/01 12:00
                         </div>
+                        <button type="button" class="reply-btn action-btn btn-process" th:if="${ticket.status == 'OPEN'}"
+                                th:id="'btn-process-header-' + ${ticket.id}"
+                                th:attr="onclick='event.stopPropagation(); processTicket(' + ${ticket.id} + ')'"
+                                style="padding: 4px 12px; font-size: 0.75rem; margin-right: 15px; background-color: var(--gold); border-radius: 4px; color: #000; border: none; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-headset"></i> Xử lý
+                        </button>
                         <div class="ticket-status-badge" th:classappend="${ticket.status == 'OPEN'} ? 'st-open' :
                                             (${ticket.status == 'IN_PROGRESS'} ? 'st-progress' :
                                             (${ticket.status == 'RESOLVED'} ? 'st-resolved' : 'st-closed'))" th:text="${ticket.status == 'OPEN'} ? 'Mới' :
@@ -159,9 +162,14 @@
                                     <span class="detail-label">SĐT:</span>
                                     <span th:text="${ticket.customerPhone ?: '—'}">—</span>
                                 </div>
-                                <div class="detail-row" th:if="${ticket.assignedAdmin != null}">
+                                <div class="detail-row" th:id="'assigned-row-' + ${ticket.id}" th:style="${ticket.assignedAdmin != null} ? '' : 'display:none;'">
                                     <span class="detail-label">Phụ trách:</span>
-                                    <span style="color:var(--gold);" th:text="${ticket.assignedAdmin}">—</span>
+                                    <span style="color:var(--gold);" th:id="'assigned-admin-' + ${ticket.id}" th:text="${ticket.assignedAdmin}">—</span>
+                                </div>
+                                <div class="detail-row" th:id="'assign-btn-row-' + ${ticket.id}" th:style="${ticket.assignedAdmin == null} ? '' : 'display:none;'">
+                                    <button type="button" class="reply-btn assign-btn" th:attr="onclick='assignTicket(' + ${ticket.id} + ')'" style="width:100%; text-align:center; margin-top:10px; padding: 6px 12px; font-size: 0.8rem; background-color: var(--gold); border-radius: 4px; color: #000; border: none; font-weight: 600; cursor: pointer;">
+                                        <i class="fa-solid fa-user-check"></i> Nhận hỗ trợ ticket này
+                                    </button>
                                 </div>
                             </div>
 

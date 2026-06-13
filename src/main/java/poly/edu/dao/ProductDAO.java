@@ -3,10 +3,17 @@ package poly.edu.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
 import poly.edu.entity.Product;
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductDAO extends JpaRepository<Product, Integer> {
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM Product p WHERE p.id = :id")
+    Optional<Product> findByIdForUpdate(@Param("id") Integer id);
     
     @Query("SELECT p FROM Product p JOIN FETCH p.category")
     List<Product> findAll();

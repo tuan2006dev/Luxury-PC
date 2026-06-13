@@ -126,4 +126,18 @@ public class FlashSaleService {
             }
         }
     }
+
+    @Transactional
+    public void incrementSoldCount(Integer productId, Integer quantity) {
+        Optional<FlashSale> current = getCurrentFlashSale();
+        if (current.isPresent()) {
+            Optional<FlashSaleItem> item = flashSaleItemDAO
+                    .findByFlashSaleIdAndProductId(current.get().getId(), productId);
+            if (item.isPresent()) {
+                FlashSaleItem fsi = item.get();
+                fsi.setSoldCount(fsi.getSoldCount() + quantity);
+                flashSaleItemDAO.save(fsi);
+            }
+        }
+    }
 }

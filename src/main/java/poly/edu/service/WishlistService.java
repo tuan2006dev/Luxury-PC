@@ -89,12 +89,50 @@ public class WishlistService {
     }
 
     @Transactional
+    public boolean toggleProduct(Authentication authentication, Integer productId) {
+        User user = profileService.getCurrentUser(authentication);
+        if (wishlistItemRepository.existsByUser_IdAndProduct_Id(user.getId(), productId)) {
+            wishlistItemRepository.deleteByUserIdAndProductId(user.getId(), productId);
+            return false;
+        }
+        addProduct(authentication, productId);
+        return true;
+    }
+
+    @Transactional
+    public void removeWishlistItem(Authentication authentication, Integer wishlistItemId) {
+        User user = profileService.getCurrentUser(authentication);
+        WishlistItem item = wishlistItemRepository.findById(wishlistItemId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy mục yêu thích"));
+        if (!item.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Không có quyền xóa mục này");
+        }
+        wishlistItemRepository.delete(item);
+    }
+
+    public boolean isProductInWishlist(Authentication authentication, Integer productId) {
+        if (!isLoggedIn(authentication) || productId == null) {
+            return false;
+        }
+        try {
+            User user = profileService.getCurrentUser(authentication);
+            return wishlistItemRepository.existsByUser_IdAndProduct_Id(user.getId(), productId);
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    @Transactional
     public void clear(Authentication authentication) {
         User user = profileService.getCurrentUser(authentication);
         wishlistItemRepository.deleteByUserId(user.getId());
     }
 
     private static boolean isLoggedIn(Authentication authentication) {
-        return authentication != null && authentication.isAuthenticated();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+        Object principal = authentication.getPrincipal();
+        return principal != null && !"anonymousUser".equals(String.valueOf(principal));
     }
 }

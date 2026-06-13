@@ -357,13 +357,16 @@
   <div th:replace="~{layout/footer :: footer}"></div>
   <script>
     let qty = 1;
-    function changeQty(d) { 
-        qty = Math.max(1, Math.min(7, qty + d)); 
-        document.getElementById('qty').textContent = qty; 
-        if(document.getElementById('form-qty')) {
-            document.getElementById('form-qty').value = qty;
-        }
-    }
+  // Lấy số lượng tồn kho thực từ server (Thymeleaf render)
+  const maxStock = /*[[${product.stock}]]*/ 99;
+
+  function changeQty(d) { 
+      qty = Math.max(1, Math.min(maxStock, qty + d)); 
+      document.getElementById('qty').textContent = qty; 
+      if(document.getElementById('form-qty')) {
+          document.getElementById('form-qty').value = qty;
+      }
+  }
 
     function setImg(emoji, thumb) {
       document.getElementById('main-img').childNodes[document.getElementById('main-img').childNodes.length - 1].textContent = emoji;

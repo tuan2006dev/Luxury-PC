@@ -105,4 +105,14 @@ public class EmailService {
         }
         return false;
     }
+
+    public void sendContactEmail(String name, String email, String message) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom("luxury.pc.noreply@gmail.com");
+        mail.setTo("luxury.pc.noreply@gmail.com");
+        mail.setReplyTo(email);
+        mail.setSubject("[Luxury PC Support] Liên hệ từ " + name);
+        mail.setText("Tên: " + name + "\nEmail: " + email + "\n\nNội dung:\n" + message);
+        mailSender.send(mail);
+    }
 }

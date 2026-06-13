@@ -23,6 +23,8 @@ public class ProductApiController {
             Map<String, Object> map = new HashMap<>();
             map.put("id", p.getId());
             map.put("name", p.getName());
+            // URL để điều hướng đến trang chi tiết sản phẩm
+            map.put("productUrl", "/product/" + p.getId());
             
             String categoryName = "Linh Kiện";
             if (p.getCategory() != null && p.getCategory().getName() != null) {

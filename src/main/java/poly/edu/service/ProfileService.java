@@ -3,6 +3,7 @@ package poly.edu.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -167,6 +168,19 @@ public class ProfileService {
         String phone = normalize(request.getPhone());
         if (phone != null) {
             user.setPhone(phone);
+        }
+
+        LocalDate birthday = request.getBirthday();
+        if (birthday != null) {
+            if (birthday.isAfter(LocalDate.now())) {
+                throw new IllegalArgumentException("Ngày sinh không được lớn hơn ngày hiện tại");
+            }
+            user.setBirthday(java.sql.Date.valueOf(birthday));
+        }
+
+        String gender = normalize(request.getGender());
+        if (gender != null) {
+            user.setGender(Boolean.parseBoolean(gender));
         }
 
         userRepository.save(java.util.Objects.requireNonNull(user, "user must not be null"));

@@ -35,7 +35,10 @@
                     <span class="cart-count" id="cart-count" th:text="${cartCount}">0</span>
                 </a>
                 <div class="nav-lang">
-                    <button class="nav-lang-btn" id="btn-lang-toggle" onclick="toggleLanguage()">VI</button>
+                    <select class="nav-lang-select" id="btn-lang-toggle" onchange="toggleLanguage(this.value)" aria-label="Chọn ngôn ngữ">
+                        <option value="vi">🇻🇳 Tiếng Việt</option>
+                        <option value="en">🇺🇸 English</option>
+                    </select>
                 </div>
             </div>
         </nav>

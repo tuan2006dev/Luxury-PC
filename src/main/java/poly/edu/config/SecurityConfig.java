@@ -38,11 +38,13 @@ public class SecurityConfig {
                         .securityContextRepository(securityContextRepository()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp", "/api/forgot-password/**",
+                         .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp", "/api/forgot-password/**",
                                 "/api/voucher/**", "/api/cart", "/api/products", "/api/build/**", "/build-pc/**", "/api/tickets/**",
+                                "/api/reviews/**", "/api/wishlist/**", "/api/address/**",
                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/error",
                                 "/profile", "/checkout", "/checkout/**", "/cart", "/cart/**", "/payment/vietqr",
-                                "/products", "/products/**", "/product/**")
+                                "/products", "/products/**", "/product/**",
+                                "/support", "/support/**", "/chat-socket", "/chat-socket/**")
                                 .permitAll()
                         .anyRequest().authenticated())
 

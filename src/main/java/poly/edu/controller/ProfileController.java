@@ -15,11 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import java.util.Optional;
-import poly.edu.repository.UserRepository;
 
 import poly.edu.dao.OrderDAO;
 import poly.edu.dto.ProfileUpdateRequest;
@@ -50,12 +47,6 @@ public class ProfileController {
     @Autowired
     private poly.edu.service.UserVoucherService userVoucherService;
 
-    @Autowired
-    private poly.edu.service.CustomerOrderService customerOrderService;
-
-    @Autowired
-    private UserRepository userRepository;
-
     @GetMapping("/profile")
     public String profile(Authentication authentication, Model model, HttpServletRequest request, HttpSession session) {
         try {
@@ -72,7 +63,7 @@ public class ProfileController {
                 totalSpent = 0.0;
             }
 
-            Long totalOrders = orderDAO.countOrdersByUser(user.getId());
+            Long totalOrders = orderDAO.countByUser_Id(user.getId());
             if (totalOrders == null) {
                 totalOrders = 0L;
             }
@@ -81,7 +72,7 @@ public class ProfileController {
             model.addAttribute("totalOrders", totalOrders);
             model.addAttribute("userRank", getRank(totalSpent));
             model.addAttribute("rankClass", getRankClass(totalSpent));
-            model.addAttribute("orders", orderDAO.findByUserIdOrderByCreatedAtDesc(user.getId()));
+            model.addAttribute("orders", orderDAO.findByUser_IdOrderByCreatedAtDesc(user.getId()));
             model.addAttribute("wishlistItems", wishlistService.getWishlistItems(authentication));
             model.addAttribute("wishlistCount", wishlistService.getWishlistCount(authentication));
             model.addAttribute("addresses", profileService.getCurrentUserAddresses(authentication));
@@ -91,6 +82,7 @@ public class ProfileController {
             // Ví Voucher
             java.util.List<poly.edu.entity.UserVoucher> userVouchers = userVoucherService.getMyVouchers(user);
             model.addAttribute("vouchers", userVouchers);
+            model.addAttribute("voucherCount", userVouchers != null ? userVouchers.size() : 0);
         } catch (Exception ex) {
             String fallbackName = authentication != null ? authentication.getName() : "";
             model.addAttribute("name", fallbackName);
@@ -108,6 +100,7 @@ public class ProfileController {
             model.addAttribute("notificationSettings", null);
             model.addAttribute("currentSessionInfo", "Không xác định");
             model.addAttribute("vouchers", new java.util.ArrayList<>());
+            model.addAttribute("voucherCount", 0);
         }
 
         return "account/profile";
@@ -231,7 +224,7 @@ public class ProfileController {
             request.setLastName(lastName);
             request.setEmail(normalizedNewEmail);
             request.setPhone(phone);
-            request.setBirthday(birthday);
+            request.setBirthday(birthday == null || birthday.isBlank() ? null : java.time.LocalDate.parse(birthday));
             request.setGender(gender);
 
             profileService.updateCurrentProfile(authentication, request);
@@ -506,25 +499,5 @@ public class ProfileController {
             return "rank-silver";
         }
         return "rank-none";
-    }
-
-    @PostMapping("/profile/orders/request-refund")
-    public String requestRefund(@AuthenticationPrincipal Object principal,
-                                @RequestParam Integer orderId,
-                                @RequestParam String reason) {
-        findCurrentUser(principal).ifPresent(user -> customerOrderService.requestRefund(orderId, user, reason));
-        return "redirect:/profile";
-    }
-
-    private Optional<User> findCurrentUser(Object principal) {
-        String usernameOrEmail = "";
-        if (principal instanceof OAuth2User oauthUser) {
-            usernameOrEmail = (String) oauthUser.getAttributes().get("email");
-        } else if (principal instanceof org.springframework.security.core.userdetails.User user) {
-            usernameOrEmail = user.getUsername();
-        }
-
-        Optional<User> user = userRepository.findByEmail(usernameOrEmail);
-        return user.isPresent() ? user : userRepository.findByUsername(usernameOrEmail);
     }
 }
