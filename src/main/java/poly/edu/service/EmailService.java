@@ -18,12 +18,33 @@ public class EmailService {
     @Autowired
     private poly.edu.repository.PasswordResetRepository passwordResetRepo;
 
-    // Bộ nhớ tạm để lưu OTP (thực tế nên dùng DB hoặc Redis có expire time)
-    private Map<String, String> otpStorage = new ConcurrentHashMap<>();
+    public static class OtpData {
+        private final String code;
+        private final long expiryTime;
+
+        public OtpData(String code, long expiryTime) {
+            this.code = code;
+            this.expiryTime = expiryTime;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public boolean isExpired() {
+            return System.currentTimeMillis() > expiryTime;
+        }
+    }
+
+    // Bộ nhớ tạm để lưu OTP dạng Map<Email, OtpData>
+    private Map<String, OtpData> otpStorage = new ConcurrentHashMap<>();
 
     public void sendOtpEmail(String storedEmail, String toEmail) {
         String otp = String.format("%06d", new Random().nextInt(999999));
-        otpStorage.put(storedEmail, otp);
+        
+        // Lưu OTP với thời hạn 5 phút (300.000 ms)
+        long expiryTime = System.currentTimeMillis() + 5 * 60 * 1000;
+        otpStorage.put(storedEmail, new OtpData(otp, expiryTime));
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("luxury.pc.noreply@gmail.com");
@@ -66,9 +87,20 @@ public class EmailService {
     }
 
     public boolean verifyOtp(String email, String otp) {
-        String storedOtp = otpStorage.get(email);
-        if (storedOtp != null && storedOtp.equals(otp)) {
-            otpStorage.remove(email); // Xoá sau khi dùng
+        OtpData otpData = otpStorage.get(email);
+        if (otpData == null) {
+            return false;
+        }
+        
+        // 1. Kiểm tra hết hạn
+        if (otpData.isExpired()) {
+            otpStorage.remove(email); // Xóa mã đã hết hạn
+            return false;
+        }
+
+        // 2. Kiểm tra trùng khớp mã
+        if (otpData.getCode().equals(otp)) {
+            otpStorage.remove(email); // Xoá sau khi xác thực thành công
             return true;
         }
         return false;

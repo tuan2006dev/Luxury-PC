@@ -20,6 +20,10 @@ public class AuthController {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    private org.springframework.security.web.context.SecurityContextRepository securityContextRepository;
+
+
     @PostMapping("/login-api")
     @ResponseBody
     public User loginApi(@RequestBody User user){
@@ -59,7 +63,9 @@ public class AuthController {
                            @RequestParam(required = false) String phone,
                            @RequestParam(required = false) String inviteCode,
                            @RequestParam String password,
-                           @RequestParam(required = false) String confirmPassword) {
+                           @RequestParam(required = false) String confirmPassword,
+                           jakarta.servlet.http.HttpServletRequest request,
+                           jakarta.servlet.http.HttpServletResponse response) {
 
         email = email.trim().toLowerCase();
 
@@ -124,7 +130,8 @@ public class AuthController {
                 new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(userDetails, null, authorities);
             org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authToken);
             
-            // Chuyển hướng thẳng về trang chủ (Index) để hiện Loading Screen bên trang chủ
+            // Lưu Context vào Session để Spring Security nhận diện sau khi redirect
+            securityContextRepository.saveContext(org.springframework.security.core.context.SecurityContextHolder.getContext(), request, response);
             return "redirect:/";
         } catch (Exception e) {
             e.printStackTrace();
