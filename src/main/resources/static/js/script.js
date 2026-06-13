@@ -195,7 +195,10 @@ function closeCart() {
 const navCartBtn = document.getElementById('nav-cart');
 const cartCloseBtn = document.getElementById('cart-close');
 const btnCheckout = document.getElementById('btn-checkout');
-if (navCartBtn) navCartBtn.addEventListener('click', openCart);
+if (navCartBtn) navCartBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  openCart();
+});
 if (cartCloseBtn) cartCloseBtn.addEventListener('click', closeCart);
 if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 if (btnCheckout) btnCheckout.addEventListener('click', () => {
@@ -663,6 +666,10 @@ function applyFilterAndSort() {
 
   // Update count
   if (resultCount) resultCount.textContent = filtered.length;
+  
+  if (filtered.length === 0) {
+    if(typeof showToast === 'function') showToast('Không tìm thấy sản phẩm phù hợp với bộ lọc!');
+  }
 }
 
 // Category chip click
@@ -776,3 +783,53 @@ async function register() {
     alert("Lỗi server");
   }
 }
+
+// =========================================
+// SCROLL FADE IN & WISHLIST
+// =========================================
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('fade-in-up-visible');
+      fadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+document.querySelectorAll('.product-card').forEach(card => {
+  card.classList.add('fade-in-up-hidden');
+  fadeObserver.observe(card);
+});
+
+window.addToWishlist = function(btn, id) {
+  event.preventDefault();
+  event.stopPropagation();
+  btn.style.color = 'var(--gold)';
+  btn.innerHTML = '♥';
+  if(typeof showToast === 'function') showToast('Đã thêm sản phẩm vào danh sách yêu thích!');
+};
+
+window.toggleLanguage = function() {
+  const currentLang = localStorage.getItem('lang') || 'vi';
+  const newLang = currentLang === 'vi' ? 'en' : 'vi';
+  
+  if(typeof setLanguage === 'function') {
+    setLanguage(newLang);
+  } else {
+    localStorage.setItem('lang', newLang);
+    location.reload();
+  }
+  
+  const btn = document.getElementById('btn-lang-toggle');
+  if(btn) {
+    btn.textContent = newLang === 'vi' ? 'VI' : 'EN';
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const currentLang = localStorage.getItem('lang') || 'vi';
+  const btn = document.getElementById('btn-lang-toggle');
+  if(btn) {
+    btn.textContent = currentLang === 'vi' ? 'VI' : 'EN';
+  }
+});
