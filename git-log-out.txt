@@ -1,1 +1,0 @@
-* 50ababa (HEAD -> DucMinh, origin/main, origin/HEAD, origin/DucMinh, nbk/DucMinh, main, a) first commit

@@ -1,9 +1,0 @@
-## DucMinh...origin/DucMinh
-?? git-err.txt
-?? git-fetch-err.txt
-?? git-fetch-out.txt
-?? git-merge-err.txt
-?? git-merge-out.txt
-?? git-out.txt
-?? git-status-err.txt
-?? git-status-out.txt

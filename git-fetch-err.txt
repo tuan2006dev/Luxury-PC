@@ -1,2 +1,0 @@
-From https://github.com/NBKwoy/Project-management-with-Agile
- * branch            master     -> FETCH_HEAD
