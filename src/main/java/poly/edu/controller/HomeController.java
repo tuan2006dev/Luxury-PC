@@ -68,4 +68,9 @@ public class HomeController {
 
         return "index";
     }
+
+    @GetMapping("/promotions")
+    public String promotions() {
+        return "promotions";
+    }
 }

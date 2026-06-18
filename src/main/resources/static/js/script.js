@@ -119,12 +119,18 @@ function updateCartUI() {
         const id = btn.dataset.id;
         const action = btn.dataset.action;
         if (action === 'inc') {
+          let maxStock = cart[id].stock !== undefined && cart[id].stock !== null ? cart[id].stock : 5;
+          if (cart[id].qty >= maxStock) {
+            showToast(`quá số lượng sản phẩm hiện có (chỉ còn ${maxStock})`);
+            return;
+          }
           cart[id].qty++;
         } else {
           cart[id].qty--;
           if (cart[id].qty <= 0) delete cart[id];
         }
         updateCartUI();
+        syncSidebarCartWithServer(id, cart[id] ? cart[id].qty : 0);
       });
     });
   }
@@ -136,6 +142,21 @@ function formatVND(num) {
   return (num || 0).toLocaleString('vi-VN') + '₫';
 }
 
+async function syncSidebarCartWithServer(id, quantity) {
+  try {
+    const formData = new FormData();
+    formData.append('id', id);
+    if (quantity > 0) {
+      formData.append('quantity', quantity);
+      await fetch('/cart/update', { method: 'POST', body: formData });
+    } else {
+      await fetch('/cart/remove', { method: 'POST', body: formData });
+    }
+  } catch (err) {
+    console.error('Lỗi đồng bộ server:', err);
+  }
+}
+
 async function loadCartFromServer() {
   try {
     const response = await fetch('/api/cart');
@@ -145,7 +166,8 @@ async function loadCartFromServer() {
       cart[id] = {
         name: item.name,
         price: item.price,
-        qty: item.quantity
+        qty: item.quantity,
+        stock: item.stock
       };
     }
     updateCartUI();
@@ -601,7 +623,9 @@ function renderSearchResults(query) {
     <div class="search-result-grid">
       ${matches.map(p => `
         <div class="search-result-item" style="cursor:pointer;" onclick="window.location.href='${p.productUrl || '/products'}'">
-          <div class="sri-icon">${p.icon}</div>
+          <div class="sri-icon" style="padding: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 4px; border: 1px solid rgba(201,168,76,0.2);">
+            <img src="${p.image}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/placeholder.png';">
+          </div>
           <div class="sri-info">
             <div class="sri-name">${p.name}</div>
             <div class="sri-cat">${p.cat}</div>
@@ -809,14 +833,32 @@ window.addToWishlist = function(btn, id) {
   if(typeof showToast === 'function') showToast('Đã thêm sản phẩm vào danh sách yêu thích!');
 };
 
-window.toggleLanguage = function(lang) {
-  // Nếu không truyền vào (fallback), đọc từ select
-  if (!lang) {
-    const sel = document.getElementById('btn-lang-toggle');
-    lang = sel ? sel.value : 'vi';
+window.toggleLangMenu = function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const menu = document.getElementById('lang-dropdown-menu');
+  if (menu) {
+    menu.classList.toggle('show');
+  }
+};
+
+window.selectLanguage = function(lang, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
   }
   
-  if(typeof setLanguage === 'function') {
+  const menu = document.getElementById('lang-dropdown-menu');
+  if (menu) {
+    menu.classList.remove('show');
+  }
+
+  const btn = document.getElementById('btn-lang-toggle');
+  if (btn) {
+    btn.innerHTML = lang.toUpperCase() + ' <span style="font-size: 0.6rem; margin-left: 4px;">▼</span>';
+  }
+
+  if (typeof setLanguage === 'function') {
     setLanguage(lang);
   } else {
     localStorage.setItem('lang', lang);
@@ -824,12 +866,21 @@ window.toggleLanguage = function(lang) {
   }
 };
 
+// Close dropdown when clicking outside
+document.addEventListener('click', (event) => {
+  const menu = document.getElementById('lang-dropdown-menu');
+  const wrapper = document.getElementById('lang-dropdown-wrapper');
+  if (menu && menu.classList.contains('show')) {
+    if (wrapper && !wrapper.contains(event.target)) {
+      menu.classList.remove('show');
+    }
+  }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   const currentLang = localStorage.getItem('lang') || 'vi';
-  const sel = document.getElementById('btn-lang-toggle');
-  if(sel && sel.tagName === 'SELECT') {
-    sel.value = currentLang;
-  } else if(sel) {
-    sel.textContent = currentLang === 'vi' ? 'VI' : 'EN';
+  const btn = document.getElementById('btn-lang-toggle');
+  if (btn) {
+    btn.innerHTML = (currentLang === 'vi' ? 'VI' : 'EN') + ' <span style="font-size: 0.6rem; margin-left: 4px;">▼</span>';
   }
 });

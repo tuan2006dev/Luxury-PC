@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Khuyến Mãi & Voucher | Luxury PC</title>
+    <meta name="description" content="Tổng hợp ưu đãi, mã giảm giá và chương trình khuyến mãi hấp dẫn tại Luxury PC." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/promotions.css}" />
+</head>
+
+<body>
+    <!-- LOADING SCREEN -->
+    <div class="loader" id="loader">
+        <div class="loader-inner">
+            <div class="loader-logo">LUXURY </div>
+            <div class="loader-line"></div>
+            <div class="loader-text">PC</div>
+        </div>
+    </div>
+
+    <div th:replace="~{layout/header :: header}"></div>
+
+    <!-- ============ PROMO HERO ============ -->
+    <section class="promo-hero" id="promo-hero">
+        <div class="promo-sparkles">
+            <div class="promo-sparkle"></div>
+            <div class="promo-sparkle"></div>
+            <div class="promo-sparkle"></div>
+            <div class="promo-sparkle"></div>
+            <div class="promo-sparkle"></div>
+            <div class="promo-sparkle"></div>
+        </div>
+        <div class="promo-hero-content">
+            <div class="promo-hero-badge">🔥 Siêu Sale Tháng 6</div>
+            <h1 class="promo-hero-title">Ưu Đãi <em>Bùng Nổ</em><br/>Giảm Đến <em>50%</em></h1>
+            <p class="promo-hero-sub">Săn voucher, chớp deal sốc — hàng trăm linh kiện cao cấp đang chờ bạn với giá không tưởng. Chỉ có tại Luxury PC!</p>
+            <a href="#voucher-center" class="btn-primary" id="promo-hero-cta"><span>Săn Voucher Ngay</span></a>
+        </div>
+    </section>
+
+    <!-- ============ COUNTDOWN STRIP ============ -->
+    <div class="promo-countdown-strip" id="promo-countdown-strip">
+        <div class="promo-cd-label">⚡ Flash Sale kết thúc trong</div>
+        <div class="promo-cd-timer" id="promo-cd-timer">
+            <div class="promo-cd-block">
+                <span class="promo-cd-num" id="promo-hours">08</span>
+                <span class="promo-cd-unit">Giờ</span>
+            </div>
+            <span class="promo-cd-sep">:</span>
+            <div class="promo-cd-block">
+                <span class="promo-cd-num" id="promo-minutes">45</span>
+                <span class="promo-cd-unit">Phút</span>
+            </div>
+            <span class="promo-cd-sep">:</span>
+            <div class="promo-cd-block">
+                <span class="promo-cd-num" id="promo-seconds">30</span>
+                <span class="promo-cd-unit">Giây</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ PROMO BANNERS ============ -->
+    <section class="promo-banners">
+        <div class="promo-banner-slider">
+            <div class="promo-banner-card">
+                <div class="promo-banner-bg promo-banner-bg-1"></div>
+                <div class="promo-banner-content">
+                    <div class="promo-banner-tag">🎮 Gaming Week</div>
+                    <div class="promo-banner-title">VGA & CPU <em>Giảm 25%</em></div>
+                    <span class="promo-banner-cta">Xem Ngay →</span>
+                </div>
+            </div>
+            <div class="promo-banner-card">
+                <div class="promo-banner-bg promo-banner-bg-2"></div>
+                <div class="promo-banner-content">
+                    <div class="promo-banner-tag">🚚 Free Ship</div>
+                    <div class="promo-banner-title">Miễn Phí Vận Chuyển <em>Toàn Quốc</em></div>
+                    <span class="promo-banner-cta">Áp Dụng →</span>
+                </div>
+            </div>
+            <div class="promo-banner-card">
+                <div class="promo-banner-bg promo-banner-bg-3"></div>
+                <div class="promo-banner-content">
+                    <div class="promo-banner-tag">👑 VIP Member</div>
+                    <div class="promo-banner-title">Ưu Đãi <em>Độc Quyền</em> Thành Viên</div>
+                    <span class="promo-banner-cta">Đăng Ký →</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ PROMO CATEGORIES ============ -->
+    <section class="promo-categories">
+        <div class="section-header">
+            <span class="section-label">Danh Mục Khuyến Mãi</span>
+            <h2 class="section-title">Ưu Đãi Theo Danh Mục</h2>
+        </div>
+        <div class="promo-cat-grid">
+            <div class="promo-cat-card" id="pcat-cpu">
+                <span class="promo-cat-icon">🖥️</span>
+                <div class="promo-cat-name">CPU</div>
+                <div class="promo-cat-deal">Giảm đến 20%</div>
+            </div>
+            <div class="promo-cat-card" id="pcat-vga">
+                <span class="promo-cat-icon">🎮</span>
+                <div class="promo-cat-name">VGA</div>
+                <div class="promo-cat-deal">Giảm đến 30%</div>
+            </div>
+            <div class="promo-cat-card" id="pcat-ram">
+                <span class="promo-cat-icon">💾</span>
+                <div class="promo-cat-name">RAM</div>
+                <div class="promo-cat-deal">Giảm đến 15%</div>
+            </div>
+            <div class="promo-cat-card" id="pcat-ssd">
+                <span class="promo-cat-icon">💿</span>
+                <div class="promo-cat-name">SSD</div>
+                <div class="promo-cat-deal">Giảm đến 25%</div>
+            </div>
+            <div class="promo-cat-card" id="pcat-monitor">
+                <span class="promo-cat-icon">🖥️</span>
+                <div class="promo-cat-name">Màn Hình</div>
+                <div class="promo-cat-deal">Giảm đến 18%</div>
+            </div>
+            <div class="promo-cat-card" id="pcat-psu">
+                <span class="promo-cat-icon">⚡</span>
+                <div class="promo-cat-name">Nguồn PSU</div>
+                <div class="promo-cat-deal">Giảm đến 22%</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ VOUCHER CENTER (Shopee-style) ============ -->
+    <section class="voucher-center" id="voucher-center">
+        <div class="voucher-center-header">
+            <div>
+                <span class="section-label">🎟️ Kho Voucher</span>
+                <h2 class="section-title">Mã Giảm Giá Hôm Nay</h2>
+            </div>
+            <div class="voucher-filter-tabs">
+                <button class="voucher-filter-tab active" data-filter="all" id="vf-all">Tất Cả</button>
+                <button class="voucher-filter-tab" data-filter="discount" id="vf-discount">Giảm Giá</button>
+                <button class="voucher-filter-tab" data-filter="freeship" id="vf-freeship">Free Ship</button>
+                <button class="voucher-filter-tab" data-filter="category" id="vf-category">Theo Danh Mục</button>
+            </div>
+        </div>
+
+        <div class="shopee-voucher-grid" id="shopee-voucher-grid">
+
+            <!-- Voucher 1: VIP 20% -->
+            <div class="shopee-voucher-card vip" id="sv-vip20" data-type="discount">
+                <div class="sv-left">
+                    <span class="sv-icon">👑</span>
+                    <div class="sv-discount">20%</div>
+                    <div class="sv-discount-label">Giảm Giá</div>
+                </div>
+                <div class="sv-right">
+                    <div class="sv-title">Voucher VIP Độc Quyền</div>
+                    <div class="sv-desc">Giảm 20% cho thành viên VIP — tối đa 5.000.000₫</div>
+                    <div class="sv-conditions">
+                        <span class="sv-condition-tag">VIP Only</span>
+                        <span class="sv-condition-tag">Đơn ≥ 20TR</span>
+                        <span class="sv-expire">HSD: 30/06/2026</span>
+                    </div>
+                    <div class="sv-actions">
+                        <div class="sv-usage-bar">
+                            <div class="sv-usage-track">
+                                <div class="sv-usage-fill" style="width: 72%;"></div>
+                            </div>
+                            <div class="sv-usage-text">Đã dùng 72%</div>
+                        </div>
+                        <button class="sv-save-btn" onclick="saveVoucher(this, 'VIP20')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 2: 15% -->
+            <div class="shopee-voucher-card" id="sv-luxury15" data-type="discount">
+                <div class="sv-left">
+                    <span class="sv-icon">🏷️</span>
+                    <div class="sv-discount">15%</div>
+                    <div class="sv-discount-label">Giảm Giá</div>
+                </div>
+                <div class="sv-right">
+                    <div class="sv-title">Voucher Linh Kiện Cao Cấp</div>
+                    <div class="sv-desc">Giảm 15% cho đơn từ 10 triệu — tối đa 3.000.000₫</div>
+                    <div class="sv-conditions">
+                        <span class="sv-condition-tag">Tất Cả SP</span>
+                        <span class="sv-condition-tag">Đơn ≥ 10TR</span>
+                        <span class="sv-expire">HSD: 31/07/2026</span>
+                    </div>
+                    <div class="sv-actions">
+                        <div class="sv-usage-bar">
+                            <div class="sv-usage-track">
+                                <div class="sv-usage-fill" style="width: 45%;"></div>
+                            </div>
+                            <div class="sv-usage-text">Đã dùng 45%</div>
+                        </div>
+                        <button class="sv-save-btn" onclick="saveVoucher(this, 'LUXURY15')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 3: Free Ship -->
+            <div class="shopee-voucher-card freeship" id="sv-freeship" data-type="freeship">
+                <div class="sv-left">
+                    <span class="sv-icon">🚚</span>
+                    <div class="sv-discount">FREE</div>
+                    <div class="sv-discount-label">Vận Chuyển</div>
+                </div>
+                <div class="sv-right">
+                    <div class="sv-title">Miễn Phí Vận Chuyển Toàn Quốc</div>
+                    <div class="sv-desc">Free ship cho tất cả đơn hàng — không giới hạn giá trị</div>
+                    <div class="sv-conditions">
+                        <span class="sv-condition-tag">Free Ship</span>
+                        <span class="sv-condition-tag">Toàn Quốc</span>
+                        <span class="sv-expire">HSD: 30/06/2026</span>
+                    </div>
+                    <div class="sv-actions">
+                        <div class="sv-usage-bar">
+                            <div class="sv-usage-track">
+                                <div class="sv-usage-fill" style="width: 88%;"></div>
+                            </div>
+                            <div class="sv-usage-text">Đã dùng 88%</div>
+                        </div>
+                        <button class="sv-save-btn" onclick="saveVoucher(this, 'FREESHIP')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 4: 10% tất cả -->
+            <div class="shopee-voucher-card" id="sv-luxury10" data-type="discount">
+                <div class="sv-left">
+                    <span class="sv-icon">🎁</span>
+                    <div class="sv-discount">10%</div>
+                    <div class="sv-discount-label">Giảm Giá</div>
+                </div>
+                <div class="sv-right">
+                    <div class="sv-title">Voucher Chào Mừng Khách Mới</div>
+                    <div class="sv-desc">Giảm 10% cho tất cả đơn hàng — không yêu cầu tối thiểu</div>
+                    <div class="sv-conditions">
+                        <span class="sv-condition-tag">Khách Mới</span>
+                        <span class="sv-condition-tag">Tất Cả Đơn</span>
+                        <span class="sv-expire">HSD: 31/08/2026</span>
+                    </div>
+                    <div class="sv-actions">
+                        <div class="sv-usage-bar">
+                            <div class="sv-usage-track">
+                                <div class="sv-usage-fill" style="width: 30%;"></div>
+                            </div>
+                            <div class="sv-usage-text">Đã dùng 30%</div>
+                        </div>
+                        <button class="sv-save-btn" onclick="saveVoucher(this, 'NEWUSER')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 5: CPU 500K -->
+            <div class="shopee-voucher-card" id="sv-cpu500k" data-type="category">
+                <div class="sv-left">
+                    <span class="sv-icon">🖥️</span>
+                    <div class="sv-discount">500K</div>
+                    <div class="sv-discount-label">Giảm Trực Tiếp</div>
+                </div>
+                <div class="sv-right">
+                    <div class="sv-title">Ưu Đãi Mua CPU</div>
+                    <div class="sv-desc">Giảm 500.000₫ khi mua CPU Intel / AMD — đơn từ 5 triệu</div>
+                    <div class="sv-conditions">
+                        <span class="sv-condition-tag">CPU Only</span>
+                        <span class="sv-condition-tag">Đơn ≥ 5TR</span>
+                        <span class="sv-expire">HSD: 15/07/2026</span>
+                    </div>
+                    <div class="sv-actions">
+                        <div class="sv-usage-bar">
+                            <div class="sv-usage-track">
+                                <div class="sv-usage-fill" style="width: 60%;"></div>
+                            </div>
+                            <div class="sv-usage-text">Đã dùng 60%</div>
+                        </div>
+                        <button class="sv-save-btn" onclick="saveVoucher(this, 'CPU500K')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 6: VGA 1TR -->
+            <div class="shopee-voucher-card" id="sv-vga1m" data-type="category">
+                <div class="sv-left">
+                    <span class="sv-icon">🎮</span>
+                    <div class="sv-discount">1TR</div>
+                    <div class="sv-discount-label">Giảm Trực Tiếp</div>
+                </div>
+                <div class="sv-right">
+                    <div class="sv-title">Deal Sốc Card Đồ Họa</div>
+                    <div class="sv-desc">Giảm 1.000.000₫ khi mua VGA RTX Series — đơn từ 15 triệu</div>
+                    <div class="sv-conditions">
+                        <span class="sv-condition-tag">VGA Only</span>
+                        <span class="sv-condition-tag">Đơn ≥ 15TR</span>
+                        <span class="sv-expire">HSD: 20/07/2026</span>
+                    </div>
+                    <div class="sv-actions">
+                        <div class="sv-usage-bar">
+                            <div class="sv-usage-track">
+                                <div class="sv-usage-fill" style="width: 55%;"></div>
+                            </div>
+                            <div class="sv-usage-text">Đã dùng 55%</div>
+                        </div>
+                        <button class="sv-save-btn" onclick="saveVoucher(this, 'VGA1M')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============ FLASH DEAL PRODUCTS ============ -->
+    <section class="promo-deals" id="promo-deals">
+        <div class="promo-deals-header">
+            <span class="section-label">⚡ Flash Sale</span>
+            <h2 class="section-title">Deal Sốc Hôm Nay</h2>
+        </div>
+        <div class="promo-deals-grid" id="promo-deals-grid">
+
+            <!-- Deal 1 -->
+            <div class="promo-deal-card" id="deal-1">
+                <div class="promo-deal-img">
+                    <img th:src="@{/cpu.png}" alt="Intel Core i9-14900K" />
+                    <div class="promo-deal-badge">-25%</div>
+                    <div class="promo-deal-timer"><span>⏰ 08:45:30</span></div>
+                </div>
+                <div class="promo-deal-info">
+                    <div class="promo-deal-name">Intel Core i9-14900K 24 Cores</div>
+                    <div class="promo-deal-prices">
+                        <span class="promo-deal-new">14.242.000₫</span>
+                        <span class="promo-deal-old">18.990.000₫</span>
+                    </div>
+                    <div class="promo-deal-sold">
+                        <div class="promo-deal-sold-bar">
+                            <div class="promo-deal-sold-fill" style="width: 78%;">
+                                <span class="promo-deal-sold-text">Đã bán 78%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deal 2 -->
+            <div class="promo-deal-card" id="deal-2">
+                <div class="promo-deal-img">
+                    <img th:src="@{/gpu.png}" alt="RTX 4090 Titan" />
+                    <div class="promo-deal-badge">-15%</div>
+                    <div class="promo-deal-timer"><span>⏰ 08:45:30</span></div>
+                </div>
+                <div class="promo-deal-info">
+                    <div class="promo-deal-name">RTX 4090 Titan Edition 24GB</div>
+                    <div class="promo-deal-prices">
+                        <span class="promo-deal-new">36.541.000₫</span>
+                        <span class="promo-deal-old">42.990.000₫</span>
+                    </div>
+                    <div class="promo-deal-sold">
+                        <div class="promo-deal-sold-bar">
+                            <div class="promo-deal-sold-fill" style="width: 62%;">
+                                <span class="promo-deal-sold-text">Đã bán 62%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deal 3 -->
+            <div class="promo-deal-card" id="deal-3">
+                <div class="promo-deal-img">
+                    <img th:src="@{/ram.png}" alt="Corsair Dominator DDR5" />
+                    <div class="promo-deal-badge">-30%</div>
+                    <div class="promo-deal-timer"><span>⏰ 08:45:30</span></div>
+                </div>
+                <div class="promo-deal-info">
+                    <div class="promo-deal-name">Corsair Dominator Platinum DDR5 64GB</div>
+                    <div class="promo-deal-prices">
+                        <span class="promo-deal-new">4.543.000₫</span>
+                        <span class="promo-deal-old">6.490.000₫</span>
+                    </div>
+                    <div class="promo-deal-sold">
+                        <div class="promo-deal-sold-bar">
+                            <div class="promo-deal-sold-fill" style="width: 91%;">
+                                <span class="promo-deal-sold-text">Sắp hết!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deal 4 -->
+            <div class="promo-deal-card" id="deal-4">
+                <div class="promo-deal-img">
+                    <img th:src="@{/monitor.png}" alt="LG UltraGear OLED" />
+                    <div class="promo-deal-badge">-20%</div>
+                    <div class="promo-deal-timer"><span>⏰ 08:45:30</span></div>
+                </div>
+                <div class="promo-deal-info">
+                    <div class="promo-deal-name">LG UltraGear 4K OLED 27" 240Hz</div>
+                    <div class="promo-deal-prices">
+                        <span class="promo-deal-new">18.392.000₫</span>
+                        <span class="promo-deal-old">22.990.000₫</span>
+                    </div>
+                    <div class="promo-deal-sold">
+                        <div class="promo-deal-sold-bar">
+                            <div class="promo-deal-sold-fill" style="width: 45%;">
+                                <span class="promo-deal-sold-text">Đã bán 45%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============ MY VOUCHERS (Ví Voucher) ============ -->
+    <section class="my-vouchers-section" id="my-vouchers">
+        <div class="section-header">
+            <span class="section-label">💰 Ví Voucher Của Tôi</span>
+            <h2 class="section-title">Voucher Đã Lưu</h2>
+        </div>
+        <div class="my-vouchers-list" id="my-vouchers-list">
+            <!-- Items will be added by JS when user clicks "Lưu" -->
+            <div class="my-vouchers-empty" id="my-vouchers-empty">
+                <p>Bạn chưa lưu voucher nào. Hãy chọn "Lưu" ở các voucher bên trên!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ HOW TO USE ============ -->
+    <section class="promo-info-section" id="promo-info">
+        <div class="section-header">
+            <span class="section-label">Hướng Dẫn</span>
+            <h2 class="section-title">Cách Sử Dụng Voucher</h2>
+        </div>
+        <div class="promo-info-grid">
+            <div class="promo-info-card" id="info-step-1">
+                <span class="promo-info-icon">🎟️</span>
+                <div class="promo-info-title">Bước 1: Lưu Mã</div>
+                <div class="promo-info-desc">Chọn voucher phù hợp và nhấn "Lưu" để thêm vào ví voucher của bạn.</div>
+            </div>
+            <div class="promo-info-card" id="info-step-2">
+                <span class="promo-info-icon">🛒</span>
+                <div class="promo-info-title">Bước 2: Mua Sắm</div>
+                <div class="promo-info-desc">Chọn sản phẩm yêu thích và thêm vào giỏ hàng. Đảm bảo đạt điều kiện đơn hàng tối thiểu.</div>
+            </div>
+            <div class="promo-info-card" id="info-step-3">
+                <span class="promo-info-icon">💳</span>
+                <div class="promo-info-title">Bước 3: Áp Dụng</div>
+                <div class="promo-info-desc">Tại bước thanh toán, chọn voucher từ ví hoặc nhập mã để áp dụng giảm giá.</div>
+            </div>
+            <div class="promo-info-card" id="info-step-4">
+                <span class="promo-info-icon">🎉</span>
+                <div class="promo-info-title">Bước 4: Nhận Hàng</div>
+                <div class="promo-info-desc">Hoàn tất thanh toán và chờ nhận hàng. Tận hưởng linh kiện cao cấp với giá ưu đãi!</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter">
+        <div class="newsletter-inner">
+            <h2 class="newsletter-title">Nhận Ưu Đãi <em>Độc Quyền</em></h2>
+            <p class="newsletter-sub">Đăng ký để nhận thông báo giảm giá, voucher mới nhất và deal sốc từ Luxury PC.</p>
+            <form class="newsletter-form" id="newsletter-form">
+                <input type="email" id="newsletter-email" placeholder="Email của bạn..." required aria-label="Email đăng ký" />
+                <button type="submit" id="newsletter-submit">Đăng Ký</button>
+            </form>
+        </div>
+    </section>
+
+    <div th:replace="~{layout/footer :: footer}"></div>
+
+    <!-- ============ PROMOTIONS PAGE JS ============ -->
+    <script>
+    (function() {
+        // ---- Countdown Timer ----
+        function startCountdown() {
+            // Set end time to 9 hours from now for demo
+            const endTime = Date.now() + 9 * 60 * 60 * 1000;
+
+            function update() {
+                const now = Date.now();
+                let diff = Math.max(0, endTime - now);
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                diff -= hours * 1000 * 60 * 60;
+                const minutes = Math.floor(diff / (1000 * 60));
+                diff -= minutes * 1000 * 60;
+                const seconds = Math.floor(diff / 1000);
+
+                const hEl = document.getElementById('promo-hours');
+                const mEl = document.getElementById('promo-minutes');
+                const sEl = document.getElementById('promo-seconds');
+                if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+                if (mEl) mEl.textContent = String(minutes).padStart(2, '0');
+                if (sEl) sEl.textContent = String(seconds).padStart(2, '0');
+
+                // Also update deal timers
+                document.querySelectorAll('.promo-deal-timer span').forEach(el => {
+                    el.textContent = `⏰ ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                });
+            }
+
+            update();
+            setInterval(update, 1000);
+        }
+
+        // ---- Voucher Filter ----
+        function initVoucherFilter() {
+            const tabs = document.querySelectorAll('.voucher-filter-tab');
+            const cards = document.querySelectorAll('.shopee-voucher-card');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const filter = tab.dataset.filter;
+                    cards.forEach(card => {
+                        if (filter === 'all' || card.dataset.type === filter) {
+                            card.style.display = 'flex';
+                            card.style.animation = 'filterFadeIn 0.4s ease forwards';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+
+        // ---- Save Voucher (Demo) ----
+        window.saveVoucher = function(btn, code) {
+            btn.classList.add('saved');
+            btn.textContent = 'Đã Lưu';
+
+            // Add to "my vouchers" section
+            const emptyMsg = document.getElementById('my-vouchers-empty');
+            if (emptyMsg) emptyMsg.style.display = 'none';
+
+            const list = document.getElementById('my-vouchers-list');
+            const card = btn.closest('.shopee-voucher-card');
+            const title = card.querySelector('.sv-title').textContent;
+            const desc = card.querySelector('.sv-desc').textContent;
+            const iconEl = card.querySelector('.sv-icon');
+            const icon = iconEl ? iconEl.textContent : '🎟️';
+
+            const item = document.createElement('div');
+            item.className = 'my-voucher-item';
+            item.style.animation = 'filterFadeIn 0.4s ease forwards';
+            item.innerHTML = `
+                <div class="my-voucher-icon"><span>${icon}</span></div>
+                <div class="my-voucher-info">
+                    <div class="my-voucher-code">${code}</div>
+                    <div class="my-voucher-desc">${desc}</div>
+                </div>
+                <button class="my-voucher-use-btn" onclick="useVoucher('${code}')">Dùng Ngay</button>
+            `;
+            list.appendChild(item);
+
+            // Show toast
+            showPromoToast(`✅ Đã lưu voucher ${code} vào ví!`);
+        };
+
+        window.useVoucher = function(code) {
+            showPromoToast(`🛒 Đã áp dụng mã ${code} — chuyển đến giỏ hàng!`);
+        };
+
+        // ---- Toast ----
+        function showPromoToast(message) {
+            // Use existing toast system
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        }
+
+        // ---- Scroll Animations ----
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.shopee-voucher-card, .promo-deal-card, .promo-cat-card, .promo-info-card, .promo-banner-card').forEach((el, i) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = `opacity 0.5s ease ${i * 0.08}s, transform 0.5s ease ${i * 0.08}s`;
+                observer.observe(el);
+            });
+        }
+
+        // ---- Init ----
+        document.addEventListener('DOMContentLoaded', () => {
+            startCountdown();
+            initVoucherFilter();
+            initScrollAnimations();
+        });
+    })();
+    </script>
+
+    <script th:src="@{/js/script.js(v=4)}"></script>
+</body>
+
+</html>

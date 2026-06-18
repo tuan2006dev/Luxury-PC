@@ -47,6 +47,20 @@ public class ProductApiController {
             else if (catLow.contains("nguồn") || catLow.contains("psu")) icon = "⚡";
             
             map.put("icon", icon);
+            
+            String imageUrl = p.getImage();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                if (!imageUrl.startsWith("http")) {
+                    if (imageUrl.startsWith("/images/products/")) {
+                        // Already has prefix
+                    } else {
+                        imageUrl = "/images/products/" + imageUrl;
+                    }
+                }
+                map.put("image", imageUrl);
+            } else {
+                map.put("image", "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=400&auto=format&fit=crop");
+            }
             return map;
         }).collect(Collectors.toList());
     }
@@ -248,4 +262,18 @@ public class ProductApiController {
         map.put("image", image != null ? image : "/images/placeholder.png");
         return map;
     }
+
+    @GetMapping("/api/products/broken-images")
+    public List<Map<String, Object>> getBrokenImages() {
+        return productService.getAllProducts().stream()
+            .filter(p -> p.getImage() == null || p.getImage().isEmpty() || p.getImage().contains("placeholder") || p.getImage().contains("null"))
+            .map(p -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", p.getId());
+                map.put("name", p.getName());
+                map.put("image", p.getImage());
+                return map;
+            }).collect(Collectors.toList());
+    }
+
 }

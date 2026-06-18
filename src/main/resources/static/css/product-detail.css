@@ -1188,3 +1188,45 @@
         justify-content: center;
       }
     }
+
+    /* Low Stock and Out of Stock Alerts */
+    .stock-warning-panel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(197, 162, 93, 0.08);
+      border: 1px solid rgba(197, 162, 93, 0.3);
+      padding: 1rem 1.2rem;
+      border-radius: 8px;
+      color: var(--gold);
+      font-size: 0.8rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(197, 162, 93, 0.05);
+      animation: pulseWarning 2s infinite ease-in-out;
+    }
+    .stock-warning-panel i {
+      font-size: 1.2rem;
+      color: var(--gold);
+    }
+    .stock-danger-panel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 1rem 1.2rem;
+      border-radius: 8px;
+      color: var(--red);
+      font-size: 0.8rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.05);
+    }
+    .stock-danger-panel i {
+      font-size: 1.2rem;
+      color: var(--red);
+    }
+    @keyframes pulseWarning {
+      0% { border-color: rgba(197, 162, 93, 0.3); }
+      50% { border-color: rgba(197, 162, 93, 0.6); }
+      100% { border-color: rgba(197, 162, 93, 0.3); }
+    }

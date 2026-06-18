@@ -250,8 +250,12 @@
 <div class="cursor-follower" id="cursor-follower"></div>
 
 <header class="header-logo">
-  <div class="container">
-    <a href="/" class="logo-text">LUXURY<span>|</span><span class="logo-pc">PC</span></a>
+  <div class="container" style="display:flex; justify-content:center;">
+    <a href="/" style="text-decoration:none; display:flex; align-items:center; gap: 10px;">
+        <span style="font-family:'Inter', sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.35em; color:var(--gold);">LUXURY</span>
+        <div style="width:1px; height:28px; background:var(--gold); opacity:0.6;"></div>
+        <span style="font-family:'Inter', sans-serif; font-size:0.7rem; font-weight:500; letter-spacing:0.5em; color:#888; text-transform:uppercase;">PC</span>
+    </a>
   </div>
 </header>
 
@@ -259,11 +263,20 @@
   <h2 class="page-title">Giỏ Hàng Của Bạn</h2>
   <a th:href="@{/}" class="btn-outline-gold"><i class="fa-solid fa-arrow-left me-2"></i> Tiếp tục mua hàng</a>
 
+  <!-- Alert panel for stock warning -->
+  <div id="stock-alert-panel" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none; background: rgba(230, 92, 0, 0.15); border: 1px solid var(--gold); border-radius: 8px; padding: 1rem; margin-top: 1.5rem; margin-bottom: 1.5rem; align-items: center; justify-content: space-between; color: var(--white); font-size: 0.9rem;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <i class="fa-solid fa-triangle-exclamation" style="color: var(--gold); font-size: 1.2rem;"></i>
+          <span id="stock-alert-msg">Thông báo giới hạn số lượng sản phẩm.</span>
+      </div>
+      <button type="button" class="btn-close" onclick="closeStockAlert()" style="background: none; border: none; color: var(--gold); cursor: pointer; font-size: 1.2rem; font-weight: bold; padding: 0; outline: none;">&times;</button>
+  </div>
+
   <div class="cart-container" th:if="${!#lists.isEmpty(cartItems)}" id="cart-content">
     
     <!-- Cột trái: Danh sách item -->
     <div class="cart-items-wrap" id="cart-item-list">
-      <div class="cart-item" th:each="item : ${cartItems}" th:id="'row-' + ${item.id}">
+      <div class="cart-item" th:each="item : ${cartItems}" th:id="'row-' + ${item.id}" th:data-stock="${item.stock}" th:data-name="${item.name}">
         <!-- Dùng hình ảnh Product nếu có, fallback là icon -->
         <div class="item-img">
             <img th:if="${item.image != null and item.image != ''}" th:src="@{${item.image.startsWith('http') ? item.image : '/images/products/' + item.image}}" alt="Hình sản phẩm" style="width:100%; height:100%; object-fit:cover; border-radius:5px;">
@@ -370,20 +383,70 @@
       if(ajaxEmpty) ajaxEmpty.style.display = 'block';
   }
 
-  function syncWithServer(id, quantity) {
+  let stockAlertTimeout;
+  function showStockAlert(msg) {
+      const alertPanel = document.getElementById('stock-alert-panel');
+      const alertMsg = document.getElementById('stock-alert-msg');
+      if (alertPanel && alertMsg) {
+          alertMsg.innerText = msg;
+          alertPanel.style.display = 'flex';
+          alertPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if(stockAlertTimeout) clearTimeout(stockAlertTimeout);
+          stockAlertTimeout = setTimeout(() => {
+              alertPanel.style.display = 'none';
+          }, 3000);
+      }
+  }
+
+  function closeStockAlert() {
+      const alertPanel = document.getElementById('stock-alert-panel');
+      if (alertPanel) {
+          alertPanel.style.display = 'none';
+      }
+  }
+
+  function syncWithServer(id, quantity, qtyInput, originalQty, row, prodName) {
       fetch(`/cart/update?id=${id}&quantity=${quantity}`, { method: 'POST' })
-      .catch(err => console.error("Lỗi đồng bộ server:", err));
+      .then(res => res.json())
+      .then(data => {
+          if (!data.success) {
+              showStockAlert(data.message);
+              if (data.maxStock !== undefined) {
+                  qtyInput.value = data.maxStock;
+                  row.setAttribute('data-stock', data.maxStock);
+                  updateGrandTotal();
+              } else {
+                  qtyInput.value = originalQty;
+                  updateGrandTotal();
+              }
+          } else {
+              closeStockAlert();
+          }
+      })
+      .catch(err => {
+          console.error("Lỗi đồng bộ server:", err);
+          qtyInput.value = originalQty;
+          updateGrandTotal();
+      });
   }
 
   function updateQty(id, delta) {
+      const row = document.getElementById('row-' + id);
+      const maxStock = parseInt(row.getAttribute('data-stock') || '999');
+      const prodName = row.getAttribute('data-name') || 'Sản phẩm';
       const qtyInput = document.getElementById('qty-' + id);
       let currentQty = parseInt(qtyInput.value);
       let newQty = currentQty + delta;
 
+      if (newQty > maxStock && delta > 0) {
+          showStockAlert(`Số lượng yêu cầu vượt quá tồn kho thực tế của "${prodName}" (chỉ còn ${maxStock} sản phẩm)!`);
+          return;
+      }
+
       if (newQty > 0) {
           qtyInput.value = newQty;
           updateGrandTotal();
-          syncWithServer(id, newQty);
+          syncWithServer(id, newQty, qtyInput, currentQty, row, prodName);
       }
   }
 
@@ -404,7 +467,14 @@
       }
   }
 
-  document.addEventListener('DOMContentLoaded', updateGrandTotal);
+  document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const errorMsg = urlParams.get('error');
+      if (errorMsg) {
+          showStockAlert(errorMsg);
+      }
+      updateGrandTotal();
+  });
 
   // Custom Cursor
   (function() {

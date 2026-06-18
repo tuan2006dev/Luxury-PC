@@ -14,7 +14,7 @@
             <div class="nav-left">
                 <a th:href="@{/products}" class="nav-link" id="nav-linh-kien" data-translate="nav-products">Sản Phẩm</a>
                 <a href="/build-pc/index.html" class="nav-link" id="nav-build-pc" data-translate="nav-build">Build PC</a>
-                <a href="#" class="nav-link" id="nav-khuyen-mai" data-translate="nav-promo">Khuyến Mãi</a>
+                <a th:href="@{/promotions}" class="nav-link" id="nav-khuyen-mai" data-translate="nav-promo">Khuyến Mãi</a>
             </div>
             <div class="nav-logo">
                 <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap: inherit;">
@@ -34,11 +34,14 @@
                     <span class="cart-icon">⊡</span>
                     <span class="cart-count" id="cart-count" th:text="${cartCount}">0</span>
                 </a>
-                <div class="nav-lang">
-                    <select class="nav-lang-select" id="btn-lang-toggle" onchange="toggleLanguage(this.value)" aria-label="Chọn ngôn ngữ">
-                        <option value="vi">🇻🇳 Tiếng Việt</option>
-                        <option value="en">🇺🇸 English</option>
-                    </select>
+                <div class="nav-lang" id="lang-dropdown-wrapper">
+                    <button class="nav-lang-btn" id="btn-lang-toggle" aria-label="Chọn ngôn ngữ" onclick="toggleLangMenu(event)">
+                        VI <span style="font-size: 0.6rem; margin-left: 4px;">▼</span>
+                    </button>
+                    <div class="lang-dropdown-menu" id="lang-dropdown-menu">
+                        <a href="#" class="lang-dropdown-item" onclick="selectLanguage('vi', event)">🇻🇳 Tiếng Việt</a>
+                        <a href="#" class="lang-dropdown-item" onclick="selectLanguage('en', event)">🇺🇸 English</a>
+                    </div>
                 </div>
             </div>
         </nav>

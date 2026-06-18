@@ -91,28 +91,50 @@
         </div>
       </div>
 
-      <div class="qty-row">
+      <div class="qty-row" th:if="${product.stock > 0}">
         <span class="qty-label">Số lượng</span>
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <div class="qty-num" id="qty">1</div>
+          <input type="number" class="qty-num" id="qty" value="1" min="1" oninput="manualQtyChange(this)" style="background:transparent;border:none;color:#fff;width:40px;text-align:center;font-weight:600;outline:none;" />
           <button class="qty-btn" onclick="changeQty(1)">+</button>
         </div>
-        <span class="stock-label" th:text="'● Còn ' + ${product.stock} + ' sản phẩm'">● Còn 7 sản phẩm</span>
+        <span class="stock-label" th:if="${product.stock > 5}" th:text="'● Còn ' + ${product.stock} + ' sản phẩm'">● Còn 7 sản phẩm</span>
+      </div>
+
+      <!-- Panel Cảnh Báo Số Lượng Kho Thấp -->
+      <div th:if="${product.stock > 0 and product.stock <= 5}" class="stock-warning-panel">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div>
+          <strong>Sắp Hết Hàng!</strong> Chỉ còn <span th:text="${product.stock}">5</span> sản phẩm cuối cùng trong kho.
+        </div>
+      </div>
+
+      <!-- Panel Thông Báo Hết Hàng -->
+      <div th:if="${product.stock <= 0}" class="stock-danger-panel">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <div>
+          <strong>Hết Hàng!</strong> Sản phẩm này hiện tại đã hết hàng. Vui lòng quay lại sau hoặc liên hệ hỗ trợ.
+        </div>
       </div>
 
       <div class="action-buttons">
         <form th:action="@{/cart/add}" method="post" style="display:contents;">
-
           <input type="hidden" name="id" th:value="${product.id}" />
           <input type="hidden" name="name" th:value="${product.name}" />
           <input type="hidden" name="price" th:value="${product.price}" />
           <input type="hidden" name="quantity" id="form-qty" value="1" />
-          <button type="submit" class="btn-primary-lg" style="flex: 1;"><span>Thêm Vào Giỏ Hàng</span></button>
-          <button type="submit" formaction="/cart/buy-now" class="btn-primary-lg" style="flex: 1; background: var(--gold); color: var(--black); border-color: var(--gold);"><span>Mua Ngay</span></button>
+          
+          <button type="submit" class="btn-primary-lg" style="flex: 1;" th:disabled="${product.stock <= 0}">
+            <span th:text="${product.stock > 0 ? 'Thêm Vào Giỏ Hàng' : 'Tạm Hết Hàng'}">Thêm Vào Giỏ Hàng</span>
+          </button>
+          
+          <button type="submit" formaction="/cart/buy-now" class="btn-primary-lg" 
+                  style="flex: 1; background: var(--gold); color: var(--black); border-color: var(--gold);" 
+                  th:disabled="${product.stock <= 0}" th:if="${product.stock > 0}">
+            <span>Mua Ngay</span>
+          </button>
         </form>
-        <button class="btn-outline-lg" onclick="toast('♥ Đã thêm vào danh sách yêu thích!')">♡ Thêm Vào Yêu
-          Thích</button>
+        <button class="btn-outline-lg" onclick="toast('♥ Đã thêm vào danh sách yêu thích!')">♡ Thêm Vào Yêu Thích</button>
       </div>
 
       <div class="perks-row">
@@ -355,14 +377,37 @@
   </section>
 
   <div th:replace="~{layout/footer :: footer}"></div>
-  <script>
+  <script th:inline="javascript">
     let qty = 1;
-  // Lấy số lượng tồn kho thực từ server (Thymeleaf render)
-  const maxStock = /*[[${product.stock}]]*/ 99;
+    // Lấy số lượng tồn kho thực từ server (Thymeleaf render)
+    const maxStock = [[${product.stock}]];
+
+  function manualQtyChange(input) {
+      let val = parseInt(input.value);
+      if (isNaN(val) || val < 1) {
+          val = 1;
+      }
+      if (val > maxStock) {
+          if(typeof showToast === 'function') showToast("quá số lượng sản phẩm hiện có");
+          val = maxStock;
+      }
+      qty = val;
+      input.value = qty;
+      if(document.getElementById('form-qty')) {
+          document.getElementById('form-qty').value = qty;
+      }
+  }
 
   function changeQty(d) { 
-      qty = Math.max(1, Math.min(maxStock, qty + d)); 
-      document.getElementById('qty').textContent = qty; 
+      let newQty = qty + d;
+      if (newQty > maxStock) {
+          if(typeof showToast === 'function') showToast("quá số lượng sản phẩm hiện có");
+          newQty = maxStock;
+      } else if (newQty < 1) {
+          newQty = 1;
+      }
+      qty = newQty; 
+      document.getElementById('qty').value = qty; 
       if(document.getElementById('form-qty')) {
           document.getElementById('form-qty').value = qty;
       }
@@ -426,7 +471,41 @@
         });
       });
     })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form[action="/cart/add"]');
+      if(form) {
+        form.addEventListener('submit', function(e) {
+          if (e.submitter && e.submitter.getAttribute('formaction') === '/cart/buy-now') {
+            return;
+          }
+          e.preventDefault();
+          const formData = new FormData(this);
+          fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            redirect: 'follow'
+          }).then(res => {
+             document.getElementById('cart-popup').style.display = 'block';
+             let currentCount = parseInt(document.getElementById('cart-count')?.textContent || '0');
+             let addedQty = parseInt(document.getElementById('form-qty').value || '1');
+             if(document.getElementById('cart-count')) {
+                 document.getElementById('cart-count').textContent = currentCount + addedQty;
+             }
+          });
+        });
+      }
+    });
   </script>
+
+  <div id="cart-popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--deep); padding:2rem; border:1px solid var(--gold); z-index:9999; color:var(--white); text-align:center; border-radius:8px; min-width:300px;">
+    <div style="font-size:3rem; color:var(--gold); margin-bottom:1rem;">✓</div>
+    <h3 style="font-family:var(--sans); font-weight: 400; margin-bottom:1rem;">Thêm vào giỏ hàng thành công!</h3>
+    <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
+      <button onclick="document.getElementById('cart-popup').style.display='none'" style="padding:0.8rem 1.5rem; background:transparent; border:1px solid var(--gold); color:var(--gold); cursor:pointer; font-weight:bold; border-radius:4px;">Tiếp tục mua sắm</button>
+      <button onclick="location.href='/cart'" style="padding:0.8rem 1.5rem; background:var(--gold); border:none; color:var(--black); cursor:pointer; font-weight:bold; border-radius:4px;">Xem giỏ hàng</button>
+    </div>
+  </div>
 </body>
 
 </html>

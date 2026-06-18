@@ -19,7 +19,11 @@
 <div class="cursor-f" id="cursor-f"></div>
 
 <nav class="navbar">
-  <a href="/" class="nav-logo">LUXURY<b>PC</b></a>
+  <a href="/" class="nav-logo" style="text-decoration:none; display:flex; align-items:center; gap: 10px;">
+      <span style="font-family:'Inter', sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.35em; color:var(--gold);">LUXURY</span>
+      <div style="width:1px; height:28px; background:var(--gold); opacity:0.6;"></div>
+      <span style="font-family:'Inter', sans-serif; font-size:0.7rem; font-weight:500; letter-spacing:0.5em; color:var(--muted); text-transform:uppercase;">PC</span>
+  </a>
   <div class="nav-links">
     <a href="/" class="nav-link">Trang Chủ</a>
     <a href="#" class="nav-link" style="color:var(--gold)">Build PC</a>
@@ -1339,10 +1343,47 @@
     appendMessage(text, 'user');
     inputEl.value = '';
 
-    setTimeout(() => {
-      const responseObj = generateAdvisorResponse(text);
-      appendMessage(responseObj.text, 'bot', responseObj.action);
-    }, 600);
+    // Hiển thị trạng thái AI đang gõ...
+    const area = document.getElementById('chat-messages-area');
+    const loadingMsg = document.createElement('div');
+    loadingMsg.className = 'chat-msg bot';
+    loadingMsg.id = 'ai-loading-indicator';
+    loadingMsg.innerHTML = '<span>AI đang suy nghĩ...</span>';
+    area.appendChild(loadingMsg);
+    area.scrollTop = area.scrollHeight;
+
+    // Gửi request lên Backend Spring Boot
+    fetch('/api/build/ai-advisor', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: text })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Xóa chỉ báo loading
+      const indicator = document.getElementById('ai-loading-indicator');
+      if (indicator) indicator.remove();
+
+      if (data.response) {
+        // Định dạng Markdown đơn giản (Xuống dòng và in đậm)
+        let formattedText = data.response
+          .replace(/\n/g, '<br>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        appendMessage(formattedText, 'bot');
+      } else {
+        appendMessage("Có lỗi xảy ra khi xử lý phản hồi từ AI.", 'bot');
+      }
+    })
+    .catch(error => {
+      const indicator = document.getElementById('ai-loading-indicator');
+      if (indicator) indicator.remove();
+      console.error('Error:', error);
+      appendMessage("Không thể kết nối đến máy chủ AI. Vui lòng thử lại sau.", 'bot');
+    });
   }
 
   function appendMessage(text, sender, action = null) {
@@ -1370,11 +1411,46 @@
 
     appendMessage(query, 'user');
 
-    setTimeout(() => {
-      const responseObj = generateAdvisorResponse(query);
-      appendMessage(responseObj.text, 'bot', responseObj.action);
-    }, 600);
+    // Hiển thị trạng thái AI đang gõ...
+    const area = document.getElementById('chat-messages-area');
+    const loadingMsg = document.createElement('div');
+    loadingMsg.className = 'chat-msg bot';
+    loadingMsg.id = 'ai-loading-indicator';
+    loadingMsg.innerHTML = '<span>AI đang phân tích cấu hình...</span>';
+    area.appendChild(loadingMsg);
+    area.scrollTop = area.scrollHeight;
+
+    fetch('/api/build/ai-advisor', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: query })
+    })
+    .then(response => response.json())
+    .then(data => {
+      const indicator = document.getElementById('ai-loading-indicator');
+      if (indicator) indicator.remove();
+
+      if (data.response) {
+        let formattedText = data.response
+          .replace(/\n/g, '<br>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        appendMessage(formattedText, 'bot');
+      } else {
+        appendMessage("Không nhận được phản hồi từ cố vấn AI.", 'bot');
+      }
+    })
+    .catch(error => {
+      const indicator = document.getElementById('ai-loading-indicator');
+      if (indicator) indicator.remove();
+      console.error('Error:', error);
+      appendMessage("Lỗi kết nối AI.", 'bot');
+    });
   }
+
 
   function generateAdvisorResponse(input) {
     const query = input.toLowerCase();
@@ -1431,9 +1507,18 @@
     init3D();
     renderPackages();
     renderSlots();
-    selectPackage('pkg-gaming-beast');
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const pkgParam = urlParams.get('package');
+    if (pkgParam && MOCK_PACKAGES.some(p => p.id === pkgParam)) {
+      selectPackage(pkgParam);
+    } else {
+      selectPackage('pkg-gaming-beast');
+    }
+    
     animate();
   };
+
 </script>
 </body>
 </html>

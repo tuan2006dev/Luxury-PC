@@ -683,6 +683,47 @@
         }, 3000);
     }
 
+    function triggerIndexChatBotReply(userMessage) {
+        setTimeout(async () => {
+            let botReply = '';
+            const msg = userMessage.toLowerCase();
+            
+            if (msg.includes('giá') || msg.includes('bao nhiêu') || msg.includes('tiền') || msg.includes('rẻ') || msg.includes('đắt')) {
+                botReply = 'Dạ chào bạn, bảng giá linh kiện đã được tối ưu tốt nhất. Bạn có nhu cầu thương lượng thêm hoặc cần chiết khấu cho đơn hàng lớn vui lòng liên hệ hotline 1900 8888 hoặc để lại SĐT nha! 💰';
+            } else if (msg.includes('ship') || msg.includes('vận chuyển') || msg.includes('giao hàng') || msg.includes('ship COD')) {
+                botReply = 'Dạ Luxury PC hỗ trợ miễn phí vận chuyển (Free Ship) toàn quốc cho mọi cấu hình PC build và linh kiện trên 1 triệu đồng ạ! ✈️';
+            } else if (msg.includes('bảo hành') || msg.includes('hỏng') || msg.includes('sửa') || msg.includes('lỗi')) {
+                botReply = 'Tất cả linh kiện tại Luxury PC đều là hàng chính hãng và được bảo hành từ 36 tháng. Lỗi 1 đổi 1 trong 30 ngày đầu tiên nếu có lỗi phần cứng từ nhà sản xuất! 🛡️';
+            } else if (msg.includes('địa chỉ') || msg.includes('ở đâu') || msg.includes('cửa hàng') || msg.includes('showroom')) {
+                botReply = 'Showroom chính thức của Luxury PC đặt tại: Số 12 Trịnh Văn Bô, Nam Từ Liêm, Hà Nội. Mở cửa từ 8h00 - 21h30 tất cả các ngày trong tuần. Rất hân hạnh được đón tiếp bạn! 📍';
+            } else if (msg.includes('còn hàng') || msg.includes('hết hàng') || msg.includes('stock')) {
+                botReply = 'Dạ hầu hết các linh kiện hiển thị trên website đều có sẵn hàng. Nhân viên sẽ check kho thực tế và liên hệ chốt đơn với bạn ngay sau khi bạn tạo yêu cầu ạ. 📦';
+            } else {
+                botReply = 'Cảm ơn bạn đã nhắn tin cho ban hỗ trợ khách hàng Luxury PC. Nhân viên tư vấn đang kiểm tra thông tin và sẽ phản hồi chi tiết tới bạn trong giây lát! Bạn vui lòng đợi 1-2 phút nhé. 💬';
+            }
+
+            // Append directly to the UI
+            appendMessage('Luxe Support Bot 🤖', botReply, false);
+
+            // Persist to DB if ticket is available
+            if (currentTicketId && ticketSystemAvailable) {
+                try {
+                    await fetch(`/api/tickets/${currentTicketId}/messages`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sender: 'ADMIN',
+                            senderName: 'Luxe Support Bot 🤖',
+                            message: botReply
+                        })
+                    });
+                } catch (e) {
+                    console.error('[socket-chat] Error saving bot response:', e);
+                }
+            }
+        }, 1200); // 1.2s delay for natural response
+    }
+
     // Send Message
     sendBtn.addEventListener('click', sendMessage);
     msgInput.addEventListener('keydown', (e) => {
@@ -724,6 +765,9 @@
                 // Silently fail - WebSocket already sent the message
             });
         }
+
+        // Trigger bot auto-reply
+        triggerIndexChatBotReply(text);
 
         msgInput.value = '';
         msgInput.focus();

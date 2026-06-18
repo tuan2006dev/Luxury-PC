@@ -22,7 +22,11 @@
 </div>
 
 <nav class="navbar">
-  <a th:href="@{/}" class="nav-logo">LUXURY<b>PC</b></a>
+  <a th:href="@{/}" class="nav-logo" style="text-decoration:none; display:flex; align-items:center; gap: 10px;">
+      <span style="font-family:'Inter', sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.35em; color:var(--gold);">LUXURY</span>
+      <div style="width:1px; height:28px; background:var(--gold); opacity:0.6;"></div>
+      <span style="font-family:'Inter', sans-serif; font-size:0.7rem; font-weight:500; letter-spacing:0.5em; color:var(--muted); text-transform:uppercase;">PC</span>
+  </a>
   <a th:href="@{/cart}" style="font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:2px;">← Trở về giỏ hàng</a>
 </nav>
 

@@ -1,0 +1,1089 @@
+/* ============================================
+   PROMOTIONS & VOUCHERS PAGE — Shopee-Inspired
+   Luxury PC Premium Design
+============================================ */
+
+/* ---- PROMO HERO BANNER ---- */
+.promo-hero {
+  position: relative;
+  min-height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1220 30%, #1a0f1e 60%, #0a0a0a 100%);
+  padding: 7rem 2rem 3rem;
+}
+
+.promo-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 600px 400px at 20% 50%, rgba(201, 168, 76, 0.08), transparent),
+    radial-gradient(ellipse 400px 300px at 80% 30%, rgba(220, 80, 60, 0.06), transparent),
+    radial-gradient(ellipse 300px 300px at 50% 80%, rgba(201, 168, 76, 0.04), transparent);
+  z-index: 0;
+}
+
+.promo-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, var(--black), transparent);
+  z-index: 1;
+}
+
+.promo-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 800px;
+  animation: heroIn 1s ease both;
+}
+
+.promo-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(220, 80, 60, 0.15);
+  border: 1px solid rgba(220, 80, 60, 0.35);
+  padding: 0.4rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #ff6b56;
+  margin-bottom: 1.5rem;
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 80, 60, 0.3); }
+  50% { box-shadow: 0 0 20px 5px rgba(220, 80, 60, 0.15); }
+}
+
+.promo-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.promo-hero-title em {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.promo-hero-sub {
+  font-size: 0.9rem;
+  color: rgba(245, 240, 232, 0.6);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 560px;
+  margin: 0 auto 2rem;
+}
+
+/* Floating sparkles */
+.promo-sparkles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.promo-sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  animation: sparkleFloat 4s ease-in-out infinite;
+}
+
+.promo-sparkle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+.promo-sparkle:nth-child(2) { left: 25%; top: 60%; animation-delay: 0.8s; }
+.promo-sparkle:nth-child(3) { left: 75%; top: 15%; animation-delay: 1.6s; }
+.promo-sparkle:nth-child(4) { left: 85%; top: 55%; animation-delay: 2.4s; }
+.promo-sparkle:nth-child(5) { left: 50%; top: 75%; animation-delay: 3.2s; }
+.promo-sparkle:nth-child(6) { left: 40%; top: 30%; animation-delay: 1s; }
+
+@keyframes sparkleFloat {
+  0% { opacity: 0; transform: translateY(20px) scale(0); }
+  30% { opacity: 0.8; transform: translateY(-10px) scale(1); }
+  70% { opacity: 0.6; transform: translateY(-30px) scale(0.8); }
+  100% { opacity: 0; transform: translateY(-50px) scale(0); }
+}
+
+
+/* ---- COUNTDOWN BANNER ---- */
+.promo-countdown-strip {
+  background: linear-gradient(90deg, #1a0f0a 0%, #201510 50%, #1a0f0a 100%);
+  border-top: 1px solid rgba(220, 80, 60, 0.2);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.promo-cd-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ff6b56;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.promo-cd-timer {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.promo-cd-block {
+  background: rgba(220, 80, 60, 0.12);
+  border: 1px solid rgba(220, 80, 60, 0.25);
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
+  text-align: center;
+  min-width: 48px;
+}
+
+.promo-cd-num {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1;
+  display: block;
+}
+
+.promo-cd-unit {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.promo-cd-sep {
+  color: #ff6b56;
+  font-size: 1.3rem;
+  font-weight: 700;
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+
+/* ---- VOUCHER CENTER (Shopee-Style) ---- */
+.voucher-center {
+  padding: 4rem 4rem 5rem;
+  background: var(--black);
+}
+
+.voucher-center-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  gap: 1rem;
+}
+
+.voucher-center-header .section-label {
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.voucher-center-header .section-title {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.voucher-filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.voucher-filter-tab {
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.2rem;
+  cursor: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.voucher-filter-tab:hover {
+  border-color: rgba(201, 168, 76, 0.4);
+  color: var(--cream);
+}
+
+.voucher-filter-tab.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+}
+
+
+/* ---- SHOPEE VOUCHER CARDS ---- */
+.shopee-voucher-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+
+.shopee-voucher-card {
+  display: flex;
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  background: var(--deep);
+  overflow: hidden;
+  position: relative;
+  cursor: none;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.shopee-voucher-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.03) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.shopee-voucher-card:hover {
+  border-color: rgba(201, 168, 76, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(201, 168, 76, 0.06);
+}
+
+.shopee-voucher-card:hover::before {
+  opacity: 1;
+}
+
+/* Left side - Discount display */
+.sv-left {
+  width: 140px;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+  position: relative;
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.06) 0%, rgba(201, 168, 76, 0.02) 100%);
+  flex-shrink: 0;
+}
+
+/* Dotted separator between left and right */
+.sv-left::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  right: 0;
+  width: 1px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(201, 168, 76, 0.25) 0,
+    rgba(201, 168, 76, 0.25) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+/* Scallop effect */
+.sv-left::before {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: -1px;
+  bottom: -1px;
+  width: 12px;
+  background: repeating-radial-gradient(
+    circle at right,
+    transparent 0,
+    transparent 5px,
+    var(--deep) 5px,
+    var(--deep) 12px
+  );
+  z-index: 2;
+}
+
+.sv-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.sv-discount {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.sv-discount-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  font-weight: 600;
+}
+
+/* Right side - Info */
+.sv-right {
+  flex: 1;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.sv-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.3;
+}
+
+.sv-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.sv-conditions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.sv-condition-tag {
+  font-size: 0.58rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sv-expire {
+  font-size: 0.6rem;
+  color: rgba(136, 136, 136, 0.7);
+}
+
+/* Bottom action row */
+.sv-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+}
+
+.sv-usage-bar {
+  flex: 1;
+  max-width: 120px;
+}
+
+.sv-usage-track {
+  height: 3px;
+  background: rgba(201, 168, 76, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sv-usage-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+.sv-usage-text {
+  font-size: 0.55rem;
+  color: rgba(136, 136, 136, 0.7);
+  margin-top: 2px;
+}
+
+.sv-save-btn {
+  padding: 0.45rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  cursor: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sv-save-btn:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+
+.sv-save-btn.saved {
+  background: rgba(201, 168, 76, 0.1);
+  border-color: rgba(201, 168, 76, 0.3);
+  color: var(--gold);
+  pointer-events: none;
+}
+
+.sv-save-btn.saved::before {
+  content: '✓ ';
+}
+
+/* FEATURED/VIP voucher */
+.shopee-voucher-card.vip {
+  border-color: rgba(201, 168, 76, 0.25);
+  background: linear-gradient(135deg, rgba(26, 26, 26, 1) 0%, rgba(30, 25, 15, 1) 100%);
+}
+
+.shopee-voucher-card.vip .sv-left {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.12) 0%, rgba(201, 168, 76, 0.04) 100%);
+}
+
+.shopee-voucher-card.vip .sv-discount {
+  color: var(--gold-light);
+  text-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
+}
+
+.shopee-voucher-card.vip::after {
+  content: 'VIP';
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--black);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  padding: 0.2rem 0.8rem 0.2rem 0.6rem;
+  clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Freeship voucher */
+.shopee-voucher-card.freeship .sv-left {
+  background: linear-gradient(135deg, rgba(76, 175, 130, 0.08) 0%, transparent 100%);
+}
+
+.shopee-voucher-card.freeship .sv-discount {
+  color: #5fcc98;
+}
+
+.shopee-voucher-card.freeship .sv-condition-tag {
+  background: rgba(76, 175, 130, 0.08);
+  border-color: rgba(76, 175, 130, 0.2);
+  color: #5fcc98;
+}
+
+
+/* ---- PROMO DEALS SECTION ---- */
+.promo-deals {
+  padding: 5rem 4rem;
+  background: var(--deep);
+}
+
+.promo-deals-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.promo-deals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+
+.promo-deal-card {
+  background: var(--black);
+  border: 1px solid rgba(201, 168, 76, 0.06);
+  overflow: hidden;
+  cursor: none;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+
+.promo-deal-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201, 168, 76, 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.promo-deal-img {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--dark);
+  overflow: hidden;
+}
+
+.promo-deal-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.promo-deal-card:hover .promo-deal-img img {
+  transform: scale(1.08);
+}
+
+.promo-deal-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(135deg, #e53935, #c62828);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.35rem 0.7rem;
+  letter-spacing: 0.05em;
+  z-index: 2;
+}
+
+.promo-deal-timer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  padding: 0.35rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  z-index: 2;
+}
+
+.promo-deal-timer span {
+  font-size: 0.6rem;
+  color: #ff6b56;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.promo-deal-info {
+  padding: 1rem;
+}
+
+.promo-deal-name {
+  font-size: 0.78rem;
+  color: var(--cream);
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.promo-deal-prices {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.promo-deal-new {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: #ff6b56;
+  font-weight: 600;
+}
+
+.promo-deal-old {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.promo-deal-sold {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.promo-deal-sold-bar {
+  flex: 1;
+  height: 14px;
+  background: rgba(220, 80, 60, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.promo-deal-sold-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b56, #e53935);
+  border-radius: 10px;
+  position: relative;
+  transition: width 1.5s ease;
+}
+
+.promo-deal-sold-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15));
+  border-radius: 10px;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.promo-deal-sold-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ---- PROMO BANNER CAROUSEL ---- */
+.promo-banners {
+  padding: 4rem 4rem;
+  background: var(--black);
+}
+
+.promo-banner-slider {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+}
+
+.promo-banner-card {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  border: 1px solid rgba(201, 168, 76, 0.08);
+  aspect-ratio: 2.2;
+  cursor: none;
+  transition: all 0.4s ease;
+}
+
+.promo-banner-card:hover {
+  border-color: rgba(201, 168, 76, 0.2);
+  transform: translateY(-2px);
+}
+
+.promo-banner-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.promo-banner-bg-1 {
+  background: linear-gradient(135deg, #1a0f1e 0%, #251520 40%, #1a0f0a 100%);
+}
+
+.promo-banner-bg-2 {
+  background: linear-gradient(135deg, #0a1a1a 0%, #0a201a 40%, #0a1510 100%);
+}
+
+.promo-banner-bg-3 {
+  background: linear-gradient(135deg, #151520 0%, #1a1530 40%, #0a0a1a 100%);
+}
+
+.promo-banner-content {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem 1.8rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.promo-banner-tag {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.promo-banner-title {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--white);
+  line-height: 1.3;
+  margin-bottom: 0.6rem;
+}
+
+.promo-banner-title em {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.promo-banner-cta {
+  margin-top: auto;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: gap 0.3s ease;
+}
+
+.promo-banner-card:hover .promo-banner-cta {
+  gap: 0.6rem;
+}
+
+
+/* ---- DAILY DEALS / CATEGORIES ---- */
+.promo-categories {
+  padding: 4rem 4rem 5rem;
+  background: var(--black);
+}
+
+.promo-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+}
+
+.promo-cat-card {
+  background: var(--deep);
+  border: 1px solid rgba(201, 168, 76, 0.06);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: none;
+  transition: all 0.3s ease;
+}
+
+.promo-cat-card:hover {
+  border-color: rgba(201, 168, 76, 0.2);
+  background: var(--dark);
+  transform: translateY(-3px);
+}
+
+.promo-cat-icon {
+  font-size: 2rem;
+  margin-bottom: 0.6rem;
+  display: block;
+}
+
+.promo-cat-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.05em;
+}
+
+.promo-cat-deal {
+  font-size: 0.6rem;
+  color: #ff6b56;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+
+
+/* ---- MY VOUCHERS / WALLET ---- */
+.my-vouchers-section {
+  padding: 4rem 4rem 5rem;
+  background: var(--deep);
+  border-top: 1px solid rgba(201, 168, 76, 0.06);
+}
+
+.my-vouchers-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.my-voucher-item {
+  display: flex;
+  align-items: center;
+  background: var(--black);
+  border: 1px solid rgba(201, 168, 76, 0.08);
+  padding: 1rem 1.2rem;
+  gap: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.my-voucher-item:hover {
+  border-color: rgba(201, 168, 76, 0.2);
+}
+
+.my-voucher-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(201, 168, 76, 0.06);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.my-voucher-icon span {
+  font-size: 1.2rem;
+}
+
+.my-voucher-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-voucher-code {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+.my-voucher-desc {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.my-voucher-use-btn {
+  padding: 0.45rem 1rem;
+  background: var(--gold);
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  cursor: none;
+  transition: background 0.3s ease;
+  white-space: nowrap;
+}
+
+.my-voucher-use-btn:hover {
+  background: var(--gold-light);
+}
+
+.my-vouchers-empty {
+  grid-column: span 2;
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+
+/* ---- PROMO TIPS / INFO SECTION ---- */
+.promo-info-section {
+  padding: 4rem 4rem 5rem;
+  background: var(--black);
+  border-top: 1px solid rgba(201, 168, 76, 0.06);
+}
+
+.promo-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.promo-info-card {
+  background: var(--deep);
+  border: 1px solid rgba(201, 168, 76, 0.06);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.promo-info-card:hover {
+  border-color: rgba(201, 168, 76, 0.15);
+  transform: translateY(-2px);
+}
+
+.promo-info-icon {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.promo-info-title {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+
+.promo-info-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+
+/* ============================================
+   RESPONSIVE
+============================================ */
+@media (max-width: 1200px) {
+  .shopee-voucher-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .promo-deals-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .voucher-center,
+  .promo-deals,
+  .promo-banners,
+  .promo-categories,
+  .my-vouchers-section,
+  .promo-info-section {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .promo-deals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .promo-banner-slider {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .promo-banner-slider .promo-banner-card:nth-child(3) {
+    grid-column: span 2;
+  }
+  
+  .promo-cat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .promo-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .promo-hero {
+    min-height: 300px;
+    padding: 6rem 1.5rem 2rem;
+  }
+  
+  .promo-countdown-strip {
+    padding: 0.8rem 1rem;
+    gap: 1rem;
+  }
+  
+  .voucher-center,
+  .promo-deals,
+  .promo-banners,
+  .promo-categories,
+  .my-vouchers-section,
+  .promo-info-section {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .voucher-center-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .sv-left {
+    width: 110px;
+    min-height: 100px;
+  }
+  
+  .sv-discount {
+    font-size: 1.5rem;
+  }
+  
+  .promo-deals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .promo-banner-slider {
+    grid-template-columns: 1fr;
+  }
+  
+  .promo-banner-slider .promo-banner-card:nth-child(3) {
+    grid-column: span 1;
+  }
+  
+  .promo-cat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .my-vouchers-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .my-vouchers-empty {
+    grid-column: span 1;
+  }
+  
+  .promo-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .promo-deals-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .promo-cat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

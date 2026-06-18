@@ -26,46 +26,7 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background: var(--black); color: var(--cream); font-family: var(--sans); display: flex; min-height: 100vh; }
 
-        /* Sidebar */
-        .sidebar { width: 280px; background: var(--deep); border-right: 1px solid rgba(201,168,76,0.1); padding: 2rem; position: fixed; height: 100vh; z-index: 100;}
-        .logo { font-size: 1.5rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 3rem; display: block; text-decoration: none; font-weight: 700; text-align: center;}
-        .nav-link { display: flex; align-items: center; color: var(--muted); padding: 1rem; text-decoration: none; transition: 0.3s; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .nav-link i { width: 25px; font-size: 1.1rem; }
-        .nav-link:hover, .nav-link.active { background: rgba(201,168,76,0.05); color: var(--gold); }
 
-        .menu-group {
-    margin-bottom: 10px;
-}
-
-.menu-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    cursor: pointer;
-    color: var(--cream);
-    background: rgba(255,255,255,0.03);
-    border-radius: 4px;
-}
-
-.sub-menu a{
-    display:block;
-    padding:10px 15px;
-    color:var(--muted);
-    text-decoration:none;
-    border-radius:4px;
-    margin:4px 0;
-    transition:0.3s;
-}
-
-.sub-menu a:hover{
-    background:rgba(201,168,76,0.05);
-    color:var(--gold);
-}
-.menu-title{
-    cursor:pointer;
-    padding:12px;
-}
 
         /* Content */
         .main-content { margin-left: 280px; flex: 1; padding: 3rem; }
@@ -99,64 +60,12 @@
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
-        <nav>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
-            <a href="/admin/dashboard" class="nav-link active">
-                <i class="fa-solid fa-chart-line"></i>
-                Dashboard
-            </a>
-        
-            <div class="menu-group">
-                <div class="menu-title" onclick="toggleMenu('productMenu')">
-                    <i class="fa-solid fa-box"></i>
-                    Quản Lý Sản Phẩm
-                </div>
-                <div class="sub-menu" id="productMenu">
-                    <a href="/admin/products">Sản phẩm</a>
-                    <a href="/admin/categories">Danh mục</a>
-                </div>
-            </div>
-        
-            <div class="menu-group">
-                <div class="menu-title" onclick="toggleMenu('inventoryMenu')">
-                    <i class="fa-solid fa-warehouse"></i>
-                    Quản Lý Kho
-                </div>
-                <div class="sub-menu" id="inventoryMenu">
-                    <a href="/admin/inventory">Kho hàng</a>
-                    <a href="/admin/orders">Đơn hàng</a>
-                </div>
-            </div>
-        
-            <div class="menu-group">
-                <div class="menu-title" onclick="toggleMenu('userMenu')">
-                    <i class="fa-solid fa-users"></i>
-                    Quản Lý Người Dùng
-                </div>
-                <div class="sub-menu" id="userMenu">
-                    <a href="/admin/account">Người dùng</a>
-                    <a href="/admin/vouchers">Voucher</a>
-                </div>
-            </div>
-        
-            <form method="post" th:action="@{/logout}" style="margin-top:3rem;">
-                <button type="submit"
-                        class="nav-link"
-                        style="color:#ef4444;background:none;border:none;width:100%;text-align:left;cursor:pointer;">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    Đăng Xuất
-                </button>
-            </form>
-        
-        </nav>
-    </div>
-
-    <div class="main-content">
-        <div class="header">
+<div class="main-content">
+        <div class="header fade-in-up">
             <div class="title">
-                <h1>Bảng Điều Khiển</h1>
+                <h1 class="text-gradient">Bảng Điều Khiển</h1>
                 <p>Tổng quan tình hình kinh doanh tháng <span id="current-month"></span></p>
             </div>
             <div class="user-info">
@@ -166,34 +75,34 @@
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card fade-in-up delay-1">
                 <i class="fa-solid fa-wallet stat-icon"></i>
                 <div class="stat-label">Doanh Thu Tháng</div>
                 <div class="stat-value">452.500.000₫</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card fade-in-up delay-2">
                 <i class="fa-solid fa-cart-shopping stat-icon"></i>
                 <div class="stat-label">Đơn Hàng Mới</div>
                 <div class="stat-value" th:text="${pendingCount} ?: 0">12</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card fade-in-up delay-3">
                 <i class="fa-solid fa-triangle-exclamation stat-icon"></i>
                 <div class="stat-label">Cảnh Báo Kho</div>
                 <div class="stat-value" th:text="${lowStock} ? ${lowStock.size()} : 0">3</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card fade-in-up delay-4">
                 <i class="fa-solid fa-users stat-icon"></i>
                 <div class="stat-label">Tổng Khách Hàng</div>
                 <div class="stat-value">1,248</div>
             </div>
         </div>
 
-        <div class="chart-container">
+        <div class="chart-container fade-in-up delay-2">
             <div class="table-h"><i class="fa-solid fa-chart-area"></i> Biểu Đồ Doanh Thu Học Kỳ 1 - 2026</div>
             <canvas id="revenueChart" height="80"></canvas>
         </div>
 
-        <div class="dashboard-grid">
+        <div class="dashboard-grid fade-in-up delay-3">
             <div class="table-card">
                 <div class="table-h"><i class="fa-solid fa-fire"></i> Sản Phẩm Bán Chạy Nhất</div>
                 <table>
@@ -326,24 +235,7 @@
             }
         });
     </script>
-  <script>
-   function toggleMenu(menuId) {
-
-document.querySelectorAll('.sub-menu').forEach(menu => {
-    if (menu.id !== menuId) {
-        menu.style.display = "none";
-    }
-});
-
-const currentMenu = document.getElementById(menuId);
-
-if (currentMenu.style.display === "block") {
-    currentMenu.style.display = "none";
-} else {
-    currentMenu.style.display = "block";
-}
-}
-    </script>
+  
     
     </body>
 

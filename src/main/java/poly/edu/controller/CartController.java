@@ -52,9 +52,26 @@ public class CartController {
                             @RequestParam("name") String name,
                             @RequestParam("price") Double price,
                             @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
-                            HttpSession session) {
+                            HttpSession session,
+                            RedirectAttributes redirectAttributes) {
 
         Map<Integer, CartItem> cart = getCartFromSession(session);
+        int currentInCart = cart.containsKey(id) ? cart.get(id).getQuantity() : 0;
+
+        int productStock = 5;
+        Optional<Product> pOpt = productDAO.findById(id);
+        if (pOpt.isPresent()) {
+            productStock = pOpt.get().getStock();
+        }
+        
+        if (currentInCart + quantity > productStock) {
+            int allowedQuantity = Math.max(0, productStock - currentInCart);
+            if (allowedQuantity <= 0) {
+                redirectAttributes.addAttribute("error", "Sản phẩm \"" + name + "\" đã đạt giới hạn tồn kho tối đa trong giỏ hàng (" + productStock + " sản phẩm)!");
+                return "redirect:/cart";
+            }
+            quantity = allowedQuantity;
+        }
 
         if (cart.containsKey(id)) {
             CartItem item = cart.get(id);
@@ -72,9 +89,26 @@ public class CartController {
                             @RequestParam("name") String name,
                             @RequestParam("price") Double price,
                             @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
-                            HttpSession session) {
+                            HttpSession session,
+                            RedirectAttributes redirectAttributes) {
 
         Map<Integer, CartItem> cart = getCartFromSession(session);
+        int currentInCart = cart.containsKey(id) ? cart.get(id).getQuantity() : 0;
+
+        int productStock = 5;
+        Optional<Product> pOpt = productDAO.findById(id);
+        if (pOpt.isPresent()) {
+            productStock = pOpt.get().getStock();
+        }
+        
+        if (currentInCart + quantity > productStock) {
+            int allowedQuantity = Math.max(0, productStock - currentInCart);
+            if (allowedQuantity <= 0) {
+                redirectAttributes.addAttribute("error", "Sản phẩm \"" + name + "\" đã đạt giới hạn tồn kho tối đa trong giỏ hàng (" + productStock + " sản phẩm)!");
+                return "redirect:/cart";
+            }
+            quantity = allowedQuantity;
+        }
 
         if (cart.containsKey(id)) {
             CartItem item = cart.get(id);
@@ -92,11 +126,25 @@ public class CartController {
      */
     @PostMapping("/cart/update")
     @ResponseBody
-    public void updateCart(@RequestParam("id") Integer id,
+    public Map<String, Object> updateCart(@RequestParam("id") Integer id,
                            @RequestParam("quantity") Integer quantity,
                            HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
         Map<Integer, CartItem> cart = getCartFromSession(session);
         if (cart.containsKey(id)) {
+            int productStock = 5;
+            String prodName = cart.get(id).getName();
+            Optional<Product> pOpt = productDAO.findById(id);
+            if (pOpt.isPresent()) {
+                productStock = pOpt.get().getStock();
+                prodName = pOpt.get().getName();
+            }
+            if (quantity > productStock) {
+                response.put("success", false);
+                response.put("message", "Số lượng yêu cầu vượt quá tồn kho thực tế của \"" + prodName + "\" (chỉ còn " + productStock + " sản phẩm)!");
+                response.put("maxStock", productStock);
+                return response;
+            }
             if (quantity > 0) {
                 cart.get(id).setQuantity(quantity);
             } else {
@@ -104,6 +152,8 @@ public class CartController {
             }
             session.setAttribute("cart", cart);
         }
+        response.put("success", true);
+        return response;
     }
 
     /**
@@ -128,15 +178,24 @@ public class CartController {
     public String viewCart(Model model, HttpSession session, @AuthenticationPrincipal Object principal) {
         Map<Integer, CartItem> cart = getCartFromSession(session);
 
-        double baseTotal = calculateTotal(cart.values());
-        double discountRate = getDiscountRate(principal);
-
         for (CartItem item : cart.values()) {
             Optional<Product> pOpt = productDAO.findById(item.getId());
             if (pOpt.isPresent()) {
-                item.setImage(pOpt.get().getImage());
+                Product product = pOpt.get();
+                item.setImage(product.getImage());
+                item.setStock(product.getStock());
+            } else {
+                item.setStock(5);
+            }
+            
+            if (item.getQuantity() > item.getStock()) {
+                item.setQuantity(Math.max(1, item.getStock()));
+                session.setAttribute("cart", cart);
             }
         }
+        
+        double baseTotal = calculateTotal(cart.values());
+        double discountRate = getDiscountRate(principal);
 
         model.addAttribute("cartItems", cart.values());
         model.addAttribute("totalPrice", baseTotal);
@@ -158,15 +217,24 @@ public class CartController {
             return "redirect:/cart";
         }
 
-        double baseTotal = calculateTotal(cart.values());
-        double discountRate = getDiscountRate(principal);
-
         for (CartItem item : cart.values()) {
             Optional<Product> pOpt = productDAO.findById(item.getId());
             if (pOpt.isPresent()) {
-                item.setImage(pOpt.get().getImage());
+                Product product = pOpt.get();
+                item.setImage(product.getImage());
+                item.setStock(product.getStock());
+            } else {
+                item.setStock(5);
+            }
+            
+            if (item.getQuantity() > item.getStock()) {
+                item.setQuantity(Math.max(1, item.getStock()));
+                session.setAttribute("cart", cart);
             }
         }
+        
+        double baseTotal = calculateTotal(cart.values());
+        double discountRate = getDiscountRate(principal);
 
         model.addAttribute("cartItems", cart.values());
         model.addAttribute("totalPrice", baseTotal);
@@ -328,6 +396,21 @@ public class CartController {
     @GetMapping("/api/cart")
     @ResponseBody
     public Map<Integer, CartItem> getCartApi(HttpSession session) {
-        return getCartFromSession(session);
+        Map<Integer, CartItem> cart = getCartFromSession(session);
+        for (CartItem item : cart.values()) {
+            Optional<Product> pOpt = productDAO.findById(item.getId());
+            if (pOpt.isPresent()) {
+                item.setStock(pOpt.get().getStock());
+            } else {
+                item.setStock(5);
+            }
+            
+            // Auto-correct quantity if it exceeds stock
+            if (item.getQuantity() > item.getStock()) {
+                item.setQuantity(Math.max(1, item.getStock()));
+                session.setAttribute("cart", cart);
+            }
+        }
+        return cart;
     }
 }
