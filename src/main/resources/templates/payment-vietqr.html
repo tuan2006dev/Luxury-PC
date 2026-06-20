@@ -57,8 +57,8 @@
 </head>
 <body>
 <main class="payment-box">
-    <h1>Thanh toán qua VietQR</h1>
-    <p class="subtitle">Quét mã bằng ứng dụng ngân hàng và giữ nguyên nội dung chuyển khoản.</p>
+    <h1 data-translate="pay-vietqr-header">Thanh toán qua VietQR</h1>
+    <p class="subtitle" data-translate="pay-subtitle">Quét mã bằng ứng dụng ngân hàng và giữ nguyên nội dung chuyển khoản.</p>
 
     <div class="qr-wrap">
         <img th:src="${qrUrl}" alt="Mã QR thanh toán VietQR">
@@ -68,18 +68,64 @@
          th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">150.000 VNĐ</div>
 
     <div class="info">
-        <div class="info-row"><span class="label">Mã đơn</span><span class="value" th:text="${orderCode}">DH123</span></div>
-        <div class="info-row"><span class="label">Ngân hàng</span><span class="value" th:text="${bankDisplayName}">MB Bank</span></div>
-        <div class="info-row"><span class="label">Số tài khoản</span><span class="value" th:text="${accountNo}">9999999999</span></div>
-        <div class="info-row"><span class="label">Chủ tài khoản</span><span class="value" th:text="${accountName}">LUXURYPC</span></div>
-        <div class="info-row"><span class="label">Nội dung chuyển khoản</span><span class="value" th:text="${transferContent}">THANH TOAN DH123</span></div>
-        <div class="info-row"><span class="label">Trạng thái</span><span class="value" style="color:#c9a84c;" th:text="${paymentStatus}">Chờ xác nhận thanh toán</span></div>
+        <div class="info-row"><span class="label" data-translate="pay-label-order-code">Mã đơn</span><span class="value" th:text="${orderCode}">DH123</span></div>
+        <div class="info-row"><span class="label" data-translate="pay-label-bank">Ngân hàng</span><span class="value" th:text="${bankDisplayName}">MB Bank</span></div>
+        <div class="info-row"><span class="label" data-translate="pay-label-account-no">Số tài khoản</span><span class="value" th:text="${accountNo}">9999999999</span></div>
+        <div class="info-row"><span class="label" data-translate="pay-label-account-name">Chủ tài khoản</span><span class="value" th:text="${accountName}">LUXURYPC</span></div>
+        <div class="info-row"><span class="label" data-translate="pay-label-transfer-content">Nội dung chuyển khoản</span><span class="value" th:text="${transferContent}">THANH TOAN DH123</span></div>
+        <div class="info-row"><span class="label" data-translate="pay-label-status">Trạng thái</span><span class="value" style="color:#c9a84c;" th:text="${paymentStatus}" th:data-translate="${paymentStatus}">Chờ xác nhận thanh toán</span></div>
     </div>
 
     <div class="actions">
-        <a class="btn" th:href="@{/cart}">Về giỏ hàng</a>
-        <a class="btn btn-primary" th:href="@{/}">Về trang chủ</a>
+        <a class="btn" th:href="@{/cart}" data-translate="pay-btn-cart">Về giỏ hàng</a>
+        <a class="btn btn-primary" th:href="@{/}" data-translate="pay-btn-home">Về trang chủ</a>
     </div>
 </main>
+
+<script>
+    let translations = {};
+    
+    function setLanguage(lang) {
+        localStorage.setItem('lang', lang);
+        document.querySelectorAll('[data-translate]').forEach(el => {
+            const key = el.getAttribute('data-translate');
+            if (translations[lang] && translations[lang][key]) {
+                const val = translations[lang][key];
+                if (el.children.length === 0) {
+                    el.textContent = val;
+                } else {
+                    let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                    if (textNode) {
+                        textNode.nodeValue = val;
+                    }
+                }
+            }
+        });
+    }
+
+    async function loadTranslations() {
+        const savedLang = localStorage.getItem('lang') || 'vi';
+        const cachedData = localStorage.getItem('translations_cache');
+        if (cachedData) {
+            try {
+                translations = JSON.parse(cachedData);
+                setLanguage(savedLang);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        try {
+            const response = await fetch('/api/translations');
+            translations = await response.json();
+            localStorage.setItem('translations_cache', JSON.stringify(translations));
+            setLanguage(savedLang);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadTranslations);
+</script>
 </body>
 </html>

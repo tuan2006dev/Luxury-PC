@@ -40,7 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp", "/api/forgot-password/**",
                                 "/api/voucher/**", "/api/cart", "/api/products", "/api/products/**", "/api/build/**", "/build-pc/**", "/api/tickets/**",
-                                "/api/reviews/**", "/api/wishlist/**", "/api/address/**",
+                                "/api/reviews/**", "/api/wishlist/**", "/api/address/**", "/api/translations/**",
                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/error",
                                 "/profile", "/checkout", "/checkout/**", "/cart", "/cart/**", "/payment/vietqr",
                                 "/products", "/products/**", "/product/**",

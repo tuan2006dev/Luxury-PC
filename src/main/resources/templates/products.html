@@ -17,8 +17,8 @@
     <!-- NAVIGATION -->
     <nav class="navbar scrolled" id="navbar">
         <div class="nav-left">
-            <a th:href="@{/}" class="nav-link">Trang Chủ</a>
-            <a href="/build-pc/index.html" class="nav-link">Build PC</a>
+            <a th:href="@{/}" class="nav-link" data-translate="product-breadcrumb-home">Trang Chủ</a>
+            <a href="/build-pc/index.html" class="nav-link" data-translate="nav-build">Build PC</a>
         </div>
         <div class="nav-logo">
             <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap: 10px;">
@@ -28,7 +28,7 @@
             </a>
         </div>
         <div class="nav-right">
-            <a th:href="@{/auth/login}" class="nav-link">Đăng Nhập</a>
+            <a th:href="@{/auth/login}" class="nav-link" data-translate="nav-login">Đăng Nhập</a>
             <button class="nav-search-btn" id="nav-search-btn">⌕</button>
             <button class="nav-cart" id="nav-cart">
                 <span class="cart-icon">⊡</span>
@@ -38,7 +38,6 @@
     </nav>
 
     <!-- SEARCH OVERLAY -->
-    <!-- (Simplified layout for search toggle if script.js requires it) -->
     <div class="search-overlay" id="search-overlay">
         <div class="search-overlay-inner">
             <div class="search-close-row">
@@ -47,11 +46,11 @@
             </div>
             <div class="search-input-wrap">
                 <span class="search-icon-big">⌕</span>
-                <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm linh kiện..." autocomplete="off" />
+                <input type="text" id="search-input" class="search-input" data-translate-placeholder="products-filter-search-placeholder" placeholder="Tìm kiếm linh kiện..." autocomplete="off" />
                 <button class="search-clear" id="search-clear">✕</button>
             </div>
             <div class="search-results" id="search-results">
-                <p class="search-hint">Nhập từ khóa để tìm kiếm.</p>
+                <p class="search-hint" data-translate="search-hint">Nhập từ khóa để tìm kiếm.</p>
             </div>
         </div>
     </div>
@@ -59,8 +58,8 @@
     <!-- PRODUCTS -->
     <section class="products" id="products">
         <div class="section-header">
-            <span class="section-label">Danh Mục</span>
-            <h2 class="section-title">Tất Cả Linh Kiện</h2>
+            <span class="section-label" data-translate="cat-section-label">Danh Mục</span>
+            <h2 class="section-title" data-translate="products-header-title">Tất Cả Linh Kiện</h2>
         </div>
 
         <div class="products-grid" id="products-grid">
@@ -74,7 +73,7 @@
                     <p class="product-spec" th:text="${product.description != null ? product.description : 'Sản phẩm cao cấp'}">Description</p>
                     <div class="product-price-row">
                         <span class="product-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</span>
-                        <button class="btn-add-cart"><span>Thêm Báo Giá</span></button>
+                        <button class="btn-add-cart"><span data-translate="btn-add-cart-text">Thêm Vào Giỏ</span></button>
                     </div>
                 </div>
             </article>
@@ -82,10 +81,7 @@
     </section>
 
     <!-- FOOTER -->
-    <footer style="text-align:center; padding:2rem; border-top:1px solid rgba(201,168,76,0.3); color:var(--muted); font-size:0.8rem;">
-        <p>© 2026 Luxury PC. Tất cả quyền được bảo lưu.</p>
-    </footer>
-
+    <div th:replace="~{layout/footer :: footer}"></div>
     <script th:src="@{/js/script.js}"></script>
 </body>
 </html>

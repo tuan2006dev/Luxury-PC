@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Danh Mục — Luxury PC</title>
+    <title data-translate="admin-categories-page-title">Quản Lý Danh Mục — Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -61,7 +61,7 @@
 <div class="main-content">
     <div class="header">
         <div class="title">
-            <h1>Quản Lý Danh Mục (<span th:text="${categories != null ? categories.size() : 0}">0</span>)</h1>
+            <h1><span data-translate="admin-categories-title">Quản Lý Danh Mục</span> (<span th:text="${categories != null ? categories.size() : 0}">0</span>)</h1>
         </div>
         <div class="user-info">
             <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
@@ -70,24 +70,24 @@
     </div>
 
     <div style="margin-bottom: 1.5rem;">
-        <button class="btn btn-gold" onclick="toggleForm()"><i class="fa-solid fa-plus"></i> Thêm Danh Mục Mới</button>
+        <button class="btn btn-gold" onclick="toggleForm()"><i class="fa-solid fa-plus"></i> <span data-translate="admin-categories-btn-add">Thêm Danh Mục Mới</span></button>
     </div>
 
     <div class="card add-form-container" id="categoryForm" th:classappend="${category.id != null ? 'active' : ''}">
         <div class="card-header">
-            <h2 th:text="${category.id == null ? 'Thêm Danh Mục' : 'Sửa Danh Mục'}">Thông Tin Danh Mục</h2>
+            <h2 th:data-translate="${category.id == null ? 'admin-categories-form-add' : 'admin-categories-form-edit'}" th:text="${category.id == null ? 'Thêm Danh Mục' : 'Sửa Danh Mục'}">Thông Tin Danh Mục</h2>
             <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <form th:action="@{/admin/categories/save}" method="post" th:object="${category}">
 
             <input type="hidden" th:field="*{id}">
             <div class="input-group">
-                <label>Tên Danh Mục *</label>
-                <input type="text" th:field="*{name}" required placeholder="VD: Card Màn Hình">
+                <label data-translate="admin-categories-label-name">Tên Danh Mục *</label>
+                <input type="text" th:field="*{name}" required data-translate-placeholder="admin-categories-placeholder-name" placeholder="VD: Card Màn Hình">
             </div>
             <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn btn-gold">Lưu Danh Mục</button>
-                <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'">Hủy / Làm mới</button>
+                <button type="submit" class="btn btn-gold" data-translate="admin-categories-btn-save">Lưu Danh Mục</button>
+                <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'" data-translate="admin-categories-btn-cancel">Hủy / Làm mới</button>
             </div>
         </form>
     </div>
@@ -96,9 +96,9 @@
         <table>
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Tên Danh Mục</th>
-                <th style="width: 100px;">Thao Tác</th>
+                <th data-translate="admin-categories-th-id">ID</th>
+                <th data-translate="admin-categories-th-name">Tên Danh Mục</th>
+                <th style="width: 100px;" data-translate="admin-categories-th-actions">Thao Tác</th>
             </tr>
             </thead>
             <tbody>
@@ -110,7 +110,7 @@
                         <a th:href="@{|/admin/categories/edit/${c.id}|}" class="icon-btn icon-btn-edit" title="Sửa"><i class="fa-solid fa-pen"></i></a>
                         <form th:action="@{|/admin/categories/delete/${c.id}|}" method="post" style="display:inline;">
                 
-                            <button type="submit" class="icon-btn icon-btn-del" title="Xóa" onclick="return confirm('Xóa danh mục này có thể ảnh hưởng đến sản phẩm liên quan. Tiếp tục?')" style="border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                            <button type="submit" class="icon-btn icon-btn-del" title="Xóa" onclick="return confirm(window.t('admin-categories-confirm-delete', 'Xóa danh mục này có thể ảnh hưởng đến sản phẩm liên quan. Tiếp tục?'))" style="border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
                         </form>
                     </div>
                 </td>

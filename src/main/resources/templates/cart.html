@@ -275,8 +275,8 @@
 </header>
 
 <div class="container mb-5">
-  <h2 class="page-title">Giỏ Hàng Của Bạn</h2>
-  <a th:href="@{/}" class="btn-outline-gold"><i class="fa-solid fa-arrow-left me-2"></i> Tiếp tục mua hàng</a>
+  <h2 class="page-title" data-translate="cart-page-title">Giỏ Hàng Của Bạn</h2>
+  <a th:href="@{/}" class="btn-outline-gold"><i class="fa-solid fa-arrow-left me-2"></i> <span data-translate="cart-btn-continue">Tiếp tục mua hàng</span></a>
 
   <!-- Alert panel for stock warning -->
   <div id="stock-alert-panel" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none; position: fixed; top: 80px; right: 20px; z-index: 9999; background: rgba(20, 20, 25, 0.95); border: 1px solid var(--gold); border-left: 4px solid var(--gold); border-radius: 8px; padding: 1rem 1.5rem; align-items: center; justify-content: space-between; color: var(--white); font-size: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-width: 300px; max-width: 400px; animation: slideInRight 0.3s ease;">
@@ -300,9 +300,8 @@
         
         <div class="item-details">
           <div class="item-name" th:text="${item.name}">Tên sản phẩm</div>
-          <div class="item-price" 
-               th:data-price="${item.price}" 
-               th:text="'Đơn giá: ' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+          <div class="item-price" th:data-price="${item.price}">
+               <span data-translate="cart-item-price-label">Đơn giá</span>: <span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
           </div>
           <div class="qty-controls">
             <button type="button" class="btn-qty" th:onclick="'updateQty(' + ${item.id} + ', -1)'"><i class="fa-solid fa-minus"></i></button>
@@ -324,21 +323,21 @@
     <!-- Cột phải: Tổng thanh toán -->
     <div class="cart-summary-wrap" id="cart-footer">
       <div class="summary-card">
-          <div class="summary-title">Tóm Tắt Đơn Hàng</div>
+          <div class="summary-title" data-translate="cart-summary-title">Tóm Tắt Đơn Hàng</div>
           <div class="summary-row">
-              <span>Tạm tính (<span id="total-qty">0</span> món)</span>
+              <span><span data-translate="cart-subtotal-label">Tạm tính</span> (<span id="total-qty">0</span> <span data-translate="cart-item-unit">món</span>)</span>
               <span id="sub-total">0 ₫</span>
           </div>
           <div class="summary-row">
-              <span>Phí vận chuyển</span>
-              <span>Miễn phí</span>
+              <span data-translate="cart-shipping-label">Phí vận chuyển</span>
+              <span data-translate="cart-shipping-value">Miễn phí</span>
           </div>
           <div class="summary-total">
-              <span>Tổng Cộng</span>
+              <span data-translate="cart-grandtotal-label">Tổng Cộng</span>
               <span class="gold-text" id="grand-total">0 ₫</span>
           </div>
           <a th:href="@{/checkout}" style="text-decoration: none;">
-            <button type="button" class="btn btn-gold">Thanh Toán Ngay <i class="fa-solid fa-arrow-right ms-2"></i></button>
+            <button type="button" class="btn btn-gold"><span data-translate="cart-btn-checkout">Thanh Toán Ngay</span> <i class="fa-solid fa-arrow-right ms-2"></i></button>
           </a>
       </div>
     </div>
@@ -348,8 +347,8 @@
   <!-- Khi giỏ rỗng (Được hiển thị động bởi JS hoặc Thymeleaf) -->
   <div id="ajax-empty-row" class="empty-cart mt-4" th:style="${#lists.isEmpty(cartItems)} ? 'display: block;' : 'display: none;'">
       <i class="fa-solid fa-cart-shopping"></i>
-      <h4>Giỏ hàng của bạn đang trống.</h4>
-      <a href="/" class="btn-outline-gold mt-2">Đến Cửa Hàng</a>
+      <h4 data-translate="cart-empty-message">Giỏ hàng của bạn đang trống.</h4>
+      <a href="/" class="btn-outline-gold mt-2" data-translate="cart-btn-goto-shop">Đến Cửa Hàng</a>
   </div>
 
 </div>
@@ -487,8 +486,53 @@
       }
   }
 
+  let translations = {};
+  
+  function setLanguage(lang) {
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('[data-translate]').forEach(el => {
+          const key = el.getAttribute('data-translate');
+          if (translations[lang] && translations[lang][key]) {
+              const val = translations[lang][key];
+              if (el.children.length === 0) {
+                  el.textContent = val;
+              } else {
+                  let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                  if (textNode) {
+                      textNode.nodeValue = val;
+                  }
+              }
+          }
+      });
+  }
+
+  async function loadTranslations() {
+      const savedLang = localStorage.getItem('lang') || 'vi';
+      const cachedData = localStorage.getItem('translations_cache');
+      if (cachedData) {
+          try {
+              translations = JSON.parse(cachedData);
+              setLanguage(savedLang);
+          } catch (e) {
+              console.error(e);
+          }
+      }
+
+      try {
+          const response = await fetch('/api/translations');
+          translations = await response.json();
+          localStorage.setItem('translations_cache', JSON.stringify(translations));
+          setLanguage(savedLang);
+      } catch (error) {
+          console.error(error);
+      }
+  }
+
   function removeItem(id) {
-      showConfirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?", function() {
+      const lang = localStorage.getItem('lang') || 'vi';
+      const msg = (translations[lang] && translations[lang]['cart-confirm-delete']) || "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?";
+      const title = (translations[lang] && translations[lang]['confirm-modal-title']) || "Xác nhận";
+      showConfirm(msg, function() {
           fetch(`/cart/remove?id=${id}`, { method: 'POST' })
           .then(response => {
               if (response.ok) {
@@ -498,14 +542,17 @@
                   setTimeout(() => {
                       row.remove();
                       updateGrandTotal();
-                      showAlert("Đã xóa sản phẩm khỏi giỏ hàng thành công!", "Xóa Thành Công");
+                      const successMsg = (translations[lang] && translations[lang]['cart-delete-success']) || "Đã xóa sản phẩm khỏi giỏ hàng thành công!";
+                      const successTitle = (translations[lang] && translations[lang]['confirm-modal-ok']) || "Xóa Thành Công";
+                      showAlert(successMsg, successTitle);
                   }, 300);
               }
           });
-      });
+      }, title);
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+      loadTranslations();
       const urlParams = new URLSearchParams(window.location.search);
       const errorMsg = urlParams.get('error');
       if (errorMsg) {
@@ -546,11 +593,11 @@
 <div class="confirm-modal-overlay" id="global-confirm-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9000; justify-content:center; align-items:center; opacity:0; transition:opacity 0.3s;">
     <div class="confirm-modal" style="background:var(--deep); border:1px solid var(--gold); border-radius:8px; padding:2rem; width:90%; max-width:400px; text-align:center; transform:translateY(-20px); transition:transform 0.3s; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
         <div style="font-size:3rem; color:var(--gold); margin-bottom:1rem;"><i class="fa-solid fa-circle-exclamation" id="confirm-icon"></i></div>
-        <h3 style="font-family:var(--sans); font-weight:400; color:#fff; margin-bottom:0.5rem;" id="confirm-title">Xác nhận</h3>
+        <h3 style="font-family:var(--sans); font-weight:400; color:#fff; margin-bottom:0.5rem;" id="confirm-title" data-translate="confirm-modal-title">Xác nhận</h3>
         <p style="color:#ccc; font-size:0.9rem; margin-bottom:2rem;" id="confirm-msg">Bạn có chắc chắn muốn thực hiện hành động này?</p>
         <div style="display:flex; gap:1rem; justify-content:center;">
-            <button id="confirm-cancel-btn" style="flex:1; padding:0.8rem; background:transparent; border:1px solid rgba(255,255,255,0.2); color:#ccc; cursor:pointer; font-weight:bold; border-radius:4px; transition:all 0.2s;">Hủy</button>
-            <button id="confirm-ok-btn" style="flex:1; padding:0.8rem; background:var(--gold); border:none; color:var(--black); cursor:pointer; font-weight:bold; border-radius:4px; transition:all 0.2s;">Đồng ý</button>
+            <button id="confirm-cancel-btn" style="flex:1; padding:0.8rem; background:transparent; border:1px solid rgba(255,255,255,0.2); color:#ccc; cursor:pointer; font-weight:bold; border-radius:4px; transition:all 0.2s;" data-translate="confirm-modal-cancel">Hủy</button>
+            <button id="confirm-ok-btn" style="flex:1; padding:0.8rem; background:var(--gold); border:none; color:var(--black); cursor:pointer; font-weight:bold; border-radius:4px; transition:all 0.2s;" data-translate="confirm-modal-ok">Đồng ý</button>
         </div>
     </div>
 </div>

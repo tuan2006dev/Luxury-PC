@@ -59,8 +59,8 @@
 <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1><i class="fa-solid fa-bolt" style="color:var(--gold);margin-right:10px;"></i>Quản Lý Flash Sale</h1>
-                <p>Tạo chương trình Flash Sale với giá sốc, thời gian giới hạn</p>
+                <h1><i class="fa-solid fa-bolt" style="color:var(--gold);margin-right:10px;"></i><span data-translate="admin-flashsales-title">Quản Lý Flash Sale</span></h1>
+                <p data-translate="admin-flashsales-subtitle">Tạo chương trình Flash Sale với giá sốc, thời gian giới hạn</p>
             </div>
         </div>
 
@@ -73,19 +73,19 @@
 
         <div class="table-card">
             <div class="table-h">
-                <span><i class="fa-solid fa-list"></i> Danh Sách Chương Trình</span>
-                <button class="btn btn-gold" onclick="openModal()"><i class="fa-solid fa-plus"></i> Tạo Flash Sale</button>
+                <span><i class="fa-solid fa-list"></i> <span data-translate="admin-flashsales-list-title">Danh Sách Chương Trình</span></span>
+                <button class="btn btn-gold" onclick="openModal()"><i class="fa-solid fa-plus"></i> <span data-translate="admin-flashsales-btn-create">Tạo Flash Sale</span></button>
             </div>
 
             <table th:if="${flashSales != null and !flashSales.isEmpty()}">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Tên Chương Trình</th>
-                        <th>Bắt Đầu</th>
-                        <th>Kết Thúc</th>
-                        <th>Trạng Thái</th>
-                        <th>Hành Động</th>
+                        <th data-translate="admin-flashsales-th-id">ID</th>
+                        <th data-translate="admin-flashsales-th-name">Tên Chương Trình</th>
+                        <th data-translate="admin-flashsales-th-start">Bắt Đầu</th>
+                        <th data-translate="admin-flashsales-th-end">Kết Thúc</th>
+                        <th data-translate="admin-flashsales-th-status">Trạng Thái</th>
+                        <th data-translate="admin-flashsales-th-actions">Hành Động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,15 +95,15 @@
                         <td style="font-size:.75rem;" th:text="${#dates.format(fs.startTime, 'dd/MM/yyyy HH:mm')}">01/04/2026</td>
                         <td style="font-size:.75rem;" th:text="${#dates.format(fs.endTime, 'dd/MM/yyyy HH:mm')}">30/04/2026</td>
                         <td>
-                            <span class="badge badge-green" th:if="${fs.status == 'RUNNING'}">🔥 Đang diễn ra</span>
-                            <span class="badge badge-blue" th:if="${fs.status == 'UPCOMING'}">⏳ Sắp diễn ra</span>
-                            <span class="badge badge-red" th:if="${fs.status == 'ENDED'}">Đã kết thúc</span>
-                            <span class="badge badge-red" th:if="${fs.status == 'DISABLED'}">Đã tắt</span>
+                            <span class="badge badge-green" th:if="${fs.status == 'RUNNING'}">🔥 <span data-translate="admin-flashsales-status-running">Đang diễn ra</span></span>
+                            <span class="badge badge-blue" th:if="${fs.status == 'UPCOMING'}">⏳ <span data-translate="admin-flashsales-status-upcoming">Sắp diễn ra</span></span>
+                            <span class="badge badge-red" th:if="${fs.status == 'ENDED'}" data-translate="admin-flashsales-status-ended">Đã kết thúc</span>
+                            <span class="badge badge-red" th:if="${fs.status == 'DISABLED'}" data-translate="admin-flashsales-status-disabled">Đã tắt</span>
                         </td>
                         <td>
                             <div class="actions-cell">
-                                <a th:href="@{/admin/flash-sales/{id}/items(id=${fs.id})}" class="btn btn-sm btn-blue"><i class="fa-solid fa-cubes"></i> Sản Phẩm</a>
-                                <form th:action="@{/admin/flash-sales/delete/{id}(id=${fs.id})}" method="POST" style="display:inline;" onsubmit="return confirm('Xóa chương trình Flash Sale này?')">
+                                <a th:href="@{/admin/flash-sales/{id}/items(id=${fs.id})}" class="btn btn-sm btn-blue"><i class="fa-solid fa-cubes"></i> <span data-translate="admin-flashsales-btn-products">Sản Phẩm</span></a>
+                                <form th:action="@{/admin/flash-sales/delete/{id}(id=${fs.id})}" method="POST" style="display:inline;" th:onsubmit="return confirm(window.t('admin-flashsales-confirm-delete', 'Xóa chương trình Flash Sale này?'))">
                                     <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i></button>
                                 </form>
                             </div>
@@ -114,7 +114,7 @@
 
             <div th:if="${flashSales == null or flashSales.isEmpty()}" class="empty-state">
                 <i class="fa-solid fa-bolt"></i>
-                <p>Chưa có chương trình Flash Sale nào.</p>
+                <p data-translate="admin-flashsales-empty">Chưa có chương trình Flash Sale nào.</p>
             </div>
         </div>
     </div>
@@ -122,25 +122,25 @@
     <!-- Create Flash Sale Modal -->
     <div class="modal-overlay" id="flashSaleModal">
         <div class="modal">
-            <div class="modal-title"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i>Tạo Flash Sale Mới</div>
+            <div class="modal-title"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i><span data-translate="admin-flashsales-modal-title">Tạo Flash Sale Mới</span></div>
             <form th:action="@{/admin/flash-sales/save}" method="POST">
                 <div class="form-group">
-                    <label>Tên Chương Trình</label>
-                    <input type="text" name="name" required placeholder="VD: Flash Sale Tháng 4">
+                    <label data-translate="admin-flashsales-label-name">Tên Chương Trình</label>
+                    <input type="text" name="name" required placeholder="VD: Flash Sale Tháng 4" data-translate-placeholder="admin-flashsales-placeholder-name">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Bắt Đầu</label>
+                        <label data-translate="admin-flashsales-label-start">Bắt Đầu</label>
                         <input type="datetime-local" name="startTime" required>
                     </div>
                     <div class="form-group">
-                        <label>Kết Thúc</label>
+                        <label data-translate="admin-flashsales-label-end">Kết Thúc</label>
                         <input type="datetime-local" name="endTime" required>
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn" style="background:var(--mid);color:var(--muted);" onclick="closeModal()">Hủy</button>
-                    <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> Tạo Chương Trình</button>
+                    <button type="button" class="btn" style="background:var(--mid);color:var(--muted);" onclick="closeModal()" data-translate="admin-flashsales-btn-cancel">Hủy</button>
+                    <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span data-translate="admin-flashsales-btn-submit">Tạo Chương Trình</span></button>
                 </div>
             </form>
         </div>

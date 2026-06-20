@@ -204,7 +204,7 @@
 
     <div class="card">
 
-        <h2>Thêm / Cập nhật User</h2>
+        <h2 data-translate="admin-account-form-title">Thêm / Cập nhật User</h2>
 
         <!-- FIX: action đúng là /admin/account/save -->
         <form th:action="@{/admin/account/save}" method="post">
@@ -215,47 +215,47 @@
             <div class="form-grid">
 
                 <div class="input-group">
-                    <label>Username</label>
+                    <label data-translate="admin-account-label-username">Username</label>
                     <input type="text" name="username" th:value="${user.username}" required>
                 </div>
 
                 <div class="input-group">
-                    <label>Email</label>
+                    <label data-translate="admin-account-label-email">Email</label>
                     <input type="email" name="email" th:value="${user.email}" required>
                 </div>
 
                 <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" name="password" placeholder="Nhập nếu muốn đổi">
+                    <label data-translate="admin-account-label-password">Password</label>
+                    <input type="password" name="password" placeholder="Nhập nếu muốn đổi" data-translate-placeholder="admin-account-password-placeholder">
                 </div>
 
                 <div class="input-group">
-                    <label>Họ tên</label>
+                    <label data-translate="admin-account-label-fullname">Họ tên</label>
                     <input type="text" name="fullName" th:value="${user.fullName}">
                 </div>
 
                 <div class="input-group">
-                    <label>Số điện thoại</label>
+                    <label data-translate="admin-account-label-phone">Số điện thoại</label>
                     <input type="text" name="phone" th:value="${user.phone}">
                 </div>
 
                 <div class="input-group">
-                    <label>Địa chỉ</label>
+                    <label data-translate="admin-account-label-address">Địa chỉ</label>
                     <input type="text" name="address" th:value="${user.address}">
                 </div>
 
                 <div class="input-group">
-                    <label>Giới tính</label>
+                    <label data-translate="admin-account-label-gender">Giới tính</label>
 
                     <select name="gender">
 
                         <option value="true"
-                                th:selected="${user.gender == true}">
+                                th:selected="${user.gender == true}" data-translate="admin-account-gender-male">
                             Nam
                         </option>
 
                         <option value="false"
-                                th:selected="${user.gender == false}">
+                                th:selected="${user.gender == false}" data-translate="admin-account-gender-female">
                             Nữ
                         </option>
 
@@ -264,17 +264,17 @@
                 </div>
 
                 <div class="input-group">
-                    <label>Trạng thái</label>
+                    <label data-translate="admin-account-label-status">Trạng thái</label>
 
                     <select name="status">
 
                         <option value="true"
-                                th:selected="${user.status}">
+                                th:selected="${user.status}" data-translate="admin-account-status-active">
                             Hoạt động
                         </option>
 
                         <option value="false"
-                                th:selected="${!user.status}">
+                                th:selected="${!user.status}" data-translate="admin-account-status-locked">
                             Khóa
                         </option>
 
@@ -284,7 +284,7 @@
 
             </div>
 
-            <button type="submit">
+            <button type="submit" data-translate="admin-account-btn-save">
                 Lưu User
             </button>
 
@@ -294,7 +294,7 @@
 
     <div class="card">
 
-        <h2>Danh sách User (không phải ADMIN)</h2>
+        <h2 data-translate="admin-account-list-title">Danh sách User (không phải ADMIN)</h2>
 
         <table>
 
@@ -302,19 +302,19 @@
 
             <tr>
 
-                <th>ID</th>
+                <th data-translate="admin-account-th-id">ID</th>
 
-                <th>Username</th>
+                <th data-translate="admin-account-th-username">Username</th>
 
-                <th>Email</th>
+                <th data-translate="admin-account-th-email">Email</th>
 
-                <th>Họ tên</th>
+                <th data-translate="admin-account-th-fullname">Họ tên</th>
 
-                <th>SĐT</th>
+                <th data-translate="admin-account-th-phone">SĐT</th>
 
-                <th>Trạng thái</th>
+                <th data-translate="admin-account-th-status">Trạng thái</th>
 
-                <th>Hành động</th>
+                <th data-translate="admin-account-th-actions">Hành động</th>
 
             </tr>
 
@@ -335,32 +335,32 @@
                 <td th:text="${u.phone}"></td>
 
                 <td>
-                    <span th:if="${u.status}" class="badge active-badge">Hoạt động</span>
-                    <span th:if="${!u.status}" class="badge inactive-badge">Đã khoá</span>
+                    <span th:if="${u.status}" class="badge active-badge" data-translate="admin-account-status-active">Hoạt động</span>
+                    <span th:if="${!u.status}" class="badge inactive-badge" data-translate="admin-account-status-locked-badge">Đã khoá</span>
                 </td>
 
                 <td>
                     <!-- Edit -->
                     <a th:href="@{/admin/account/edit/{id}(id=${u.id})}"
-                       class="btn-action">
+                       class="btn-action" data-translate="admin-account-btn-edit">
                         Sửa
                     </a>
 
                     <!-- Lock/Unlock -->
                     <form th:action="@{/admin/account/lock/{id}(id=${u.id})}" th:if="${u.status == true}" method="post" style="display:inline;">
             
-                        <button type="submit" class="btn-action" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Khoá</button>
+                        <button type="submit" class="btn-action" data-translate="admin-account-btn-lock" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Khoá</button>
                     </form>
 
                     <form th:action="@{/admin/account/unlock/{id}(id=${u.id})}" th:if="${u.status == false}" method="post" style="display:inline;">
             
-                        <button type="submit" class="btn-action" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Mở khoá</button>
+                        <button type="submit" class="btn-action" data-translate="admin-account-btn-unlock" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Mở khoá</button>
                     </form>
 
                     <!-- Delete -->
                     <form th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post" style="display:inline;">
             
-                        <button type="submit" class="btn-action btn-danger" onclick="return confirm('Xác nhận xoá user này?')" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Xoá</button>
+                        <button type="submit" class="btn-action btn-danger" onclick="return confirm(window.t('admin-account-confirm-delete', 'Xác nhận xoá user này?'))" data-translate="admin-account-btn-delete" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Xoá</button>
                     </form>
                 </td>
 

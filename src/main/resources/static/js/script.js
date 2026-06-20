@@ -832,34 +832,135 @@ window.addToWishlist = function(btn, id) {
   if(typeof showToast === 'function') showToast('Đã thêm sản phẩm vào danh sách yêu thích!');
 };
 
+// =========================================
+// LANGUAGE TOGGLE & DYNAMIC TRANSLATIONS
+// =========================================
+let translations = {};
+const reportedKeys = new Set();
+
+window.t = function(key, defaultValue) {
+    const lang = localStorage.getItem('lang') || 'vi';
+    return (translations[lang] && translations[lang][key]) || defaultValue;
+};
+
 window.toggleLangMenu = function(event) {
-  event.preventDefault();
-  event.stopPropagation();
-  const menu = document.getElementById('lang-dropdown-menu');
-  if (menu) {
-    menu.classList.toggle('show');
-  }
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    const menu = document.getElementById('lang-dropdown-menu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
 };
 
 window.selectLanguage = function(lang, event) {
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-  
-  const menu = document.getElementById('lang-dropdown-menu');
-  if (menu) {
-    menu.classList.remove('show');
-  }
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    const menu = document.getElementById('lang-dropdown-menu');
+    if (menu) {
+        menu.classList.remove('show');
+    }
+    window.setLanguage(lang);
+};
 
-  // Globe icon maintained
-
-  if (typeof setLanguage === 'function') {
-    setLanguage(lang);
-  } else {
+window.setLanguage = function(lang) {
     localStorage.setItem('lang', lang);
-    location.reload();
-  }
+    
+    // Toggle active state in language selector (if exists)
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    const langText = document.getElementById('current-lang-text');
+    if (langText) {
+        langText.textContent = lang.toUpperCase();
+    }
+
+    document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (translations[lang] && translations[lang][key]) {
+            const val = translations[lang][key];
+            if (el.children.length === 0) {
+                el.textContent = val;
+            } else {
+                let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                if (textNode) {
+                    textNode.nodeValue = val;
+                }
+            }
+        } else {
+            window.reportMissingKey(key, el.textContent.trim());
+        }
+    });
+
+    document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-translate-placeholder');
+        if (translations[lang] && translations[lang][key]) {
+            el.setAttribute('placeholder', translations[lang][key]);
+        }
+    });
+
+    // Invoke page-specific hooks (e.g. rebuild pc slots or checkout calculation)
+    if (typeof window.onLanguageChange === 'function') {
+        window.onLanguageChange(lang);
+    }
+};
+
+window.reportMissingKey = function(key, defaultValue) {
+    if (!key || !defaultValue || reportedKeys.has(key)) return;
+    reportedKeys.add(key);
+
+    fetch('/api/translations/missing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: key, defaultValue: defaultValue })
+    }).catch(err => console.warn("Lỗi gửi báo cáo dịch tự động:", err));
+};
+
+window.loadTranslations = async function() {
+    const savedLang = localStorage.getItem('lang') || 'vi';
+    const cachedData = localStorage.getItem('translations_cache');
+    if (cachedData) {
+        try {
+            translations = JSON.parse(cachedData);
+            window.setLanguage(savedLang);
+        } catch (e) {
+            console.error("Lỗi đọc cache dịch:", e);
+        }
+    }
+
+    try {
+        const response = await fetch('/api/translations');
+        const newData = await response.json();
+        localStorage.setItem('translations_cache', JSON.stringify(newData));
+        translations = newData;
+        window.setLanguage(savedLang);
+    } catch (error) {
+        console.error("Lỗi khi tải bộ từ điển dịch thuật từ server:", error);
+    }
+};
+
+window.startTranslationObserver = function() {
+    const observer = new MutationObserver((mutations) => {
+        let hasNewTranslateElement = false;
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.hasAttribute('data-translate') || node.querySelector('[data-translate]')) {
+                        hasNewTranslateElement = true;
+                    }
+                }
+            });
+        });
+        if (hasNewTranslateElement) {
+            const savedLang = localStorage.getItem('lang') || 'vi';
+            window.setLanguage(savedLang);
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
 };
 
 // Close dropdown when clicking outside
@@ -873,9 +974,10 @@ document.addEventListener('click', (event) => {
   }
 });
 
-// Globe icon is now handled purely in HTML, no DOMContentLoaded overwrite needed.
-
 document.addEventListener("DOMContentLoaded", function() {
+    window.loadTranslations();
+    window.startTranslationObserver();
+
     // Auto-suggest search
     const searchInput = document.getElementById("search-input");
     if (searchInput) {
