@@ -25,8 +25,8 @@
     }
 
     /* Custom Cursor */
-    .cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:transform .12s ease;}
-    .cursor-follower{position:fixed;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);opacity:.45;transition:width .25s,height .25s,opacity .25s;}
+    .cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:999999;transform:translate(-50%,-50%);transition:transform .12s ease;}
+    .cursor-follower{position:fixed;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:999998;transform:translate(-50%,-50%);opacity:.45;transition:width .25s,height .25s,opacity .25s;}
 
     /* Header Logo Section */
     .header-logo {
@@ -151,6 +151,21 @@
         font-weight: 600;
         outline: none;
     }
+    
+    /* Hide spinners */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
 
     /* Remove Action */
     .btn-remove {
@@ -264,12 +279,12 @@
   <a th:href="@{/}" class="btn-outline-gold"><i class="fa-solid fa-arrow-left me-2"></i> Tiếp tục mua hàng</a>
 
   <!-- Alert panel for stock warning -->
-  <div id="stock-alert-panel" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none; background: rgba(230, 92, 0, 0.15); border: 1px solid var(--gold); border-radius: 8px; padding: 1rem; margin-top: 1.5rem; margin-bottom: 1.5rem; align-items: center; justify-content: space-between; color: var(--white); font-size: 0.9rem;">
-      <div style="display: flex; align-items: center; gap: 0.75rem;">
-          <i class="fa-solid fa-triangle-exclamation" style="color: var(--gold); font-size: 1.2rem;"></i>
-          <span id="stock-alert-msg">Thông báo giới hạn số lượng sản phẩm.</span>
+  <div id="stock-alert-panel" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none; position: fixed; top: 80px; right: 20px; z-index: 9999; background: rgba(20, 20, 25, 0.95); border: 1px solid var(--gold); border-left: 4px solid var(--gold); border-radius: 8px; padding: 1rem 1.5rem; align-items: center; justify-content: space-between; color: var(--white); font-size: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-width: 300px; max-width: 400px; animation: slideInRight 0.3s ease;">
+      <div style="display: flex; align-items: flex-start; gap: 1rem;">
+          <i class="fa-solid fa-triangle-exclamation" style="color: var(--gold); font-size: 1.5rem; margin-top: 2px;"></i>
+          <span id="stock-alert-msg" style="line-height: 1.4;">Thông báo giới hạn số lượng sản phẩm.</span>
       </div>
-      <button type="button" class="btn-close" onclick="closeStockAlert()" style="background: none; border: none; color: var(--gold); cursor: pointer; font-size: 1.2rem; font-weight: bold; padding: 0; outline: none;">&times;</button>
+      <button type="button" class="btn-close" onclick="closeStockAlert()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 1.5rem; padding: 0; margin-left: 1rem; outline: none; opacity: 0.7;">&times;</button>
   </div>
 
   <div class="cart-container" th:if="${!#lists.isEmpty(cartItems)}" id="cart-content">
@@ -291,7 +306,7 @@
           </div>
           <div class="qty-controls">
             <button type="button" class="btn-qty" th:onclick="'updateQty(' + ${item.id} + ', -1)'"><i class="fa-solid fa-minus"></i></button>
-            <input type="text" class="qty-input" th:id="'qty-' + ${item.id}" th:value="${item.quantity}" readonly>
+            <input type="number" class="qty-input" th:id="'qty-' + ${item.id}" th:value="${item.quantity}" min="1" th:onchange="'manualQtyChange(' + ${item.id} + ', this, ' + ${item.quantity} + ')'">
             <button type="button" class="btn-qty" th:onclick="'updateQty(' + ${item.id} + ', 1)'"><i class="fa-solid fa-plus"></i></button>
           </div>
         </div>
@@ -390,11 +405,10 @@
       if (alertPanel && alertMsg) {
           alertMsg.innerText = msg;
           alertPanel.style.display = 'flex';
-          alertPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
           if(stockAlertTimeout) clearTimeout(stockAlertTimeout);
           stockAlertTimeout = setTimeout(() => {
               alertPanel.style.display = 'none';
-          }, 3000);
+          }, 5000);
       }
   }
 
@@ -430,6 +444,29 @@
       });
   }
 
+  function manualQtyChange(id, input, originalQty) {
+      const row = document.getElementById('row-' + id);
+      const maxStock = parseInt(row.getAttribute('data-stock') || '999');
+      const prodName = row.getAttribute('data-name') || 'Sản phẩm';
+      
+      let newQty = parseInt(input.value);
+      
+      // Block negative or zero
+      if (isNaN(newQty) || newQty < 1) {
+          newQty = 1;
+      }
+      
+      // Block exceeding stock
+      if (newQty > maxStock) {
+          showStockAlert(`Số lượng yêu cầu vượt quá tồn kho thực tế của "${prodName}" (chỉ còn ${maxStock} sản phẩm)!`);
+          newQty = maxStock;
+      }
+      
+      input.value = newQty;
+      updateGrandTotal();
+      syncWithServer(id, newQty, input, originalQty, row, prodName);
+  }
+
   function updateQty(id, delta) {
       const row = document.getElementById('row-' + id);
       const maxStock = parseInt(row.getAttribute('data-stock') || '999');
@@ -451,7 +488,7 @@
   }
 
   function removeItem(id) {
-      if (confirm("Bạn muốn xóa sản phẩm này khỏi giỏ hàng?")) {
+      showConfirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?", function() {
           fetch(`/cart/remove?id=${id}`, { method: 'POST' })
           .then(response => {
               if (response.ok) {
@@ -461,10 +498,11 @@
                   setTimeout(() => {
                       row.remove();
                       updateGrandTotal();
+                      showAlert("Đã xóa sản phẩm khỏi giỏ hàng thành công!", "Xóa Thành Công");
                   }, 300);
               }
           });
-      }
+      });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -502,6 +540,78 @@
       });
     });
   })();
+</script>
+
+<!-- GLOBAL CONFIRM MODAL FOR CART -->
+<div class="confirm-modal-overlay" id="global-confirm-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9000; justify-content:center; align-items:center; opacity:0; transition:opacity 0.3s;">
+    <div class="confirm-modal" style="background:var(--deep); border:1px solid var(--gold); border-radius:8px; padding:2rem; width:90%; max-width:400px; text-align:center; transform:translateY(-20px); transition:transform 0.3s; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+        <div style="font-size:3rem; color:var(--gold); margin-bottom:1rem;"><i class="fa-solid fa-circle-exclamation" id="confirm-icon"></i></div>
+        <h3 style="font-family:var(--sans); font-weight:400; color:#fff; margin-bottom:0.5rem;" id="confirm-title">Xác nhận</h3>
+        <p style="color:#ccc; font-size:0.9rem; margin-bottom:2rem;" id="confirm-msg">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+        <div style="display:flex; gap:1rem; justify-content:center;">
+            <button id="confirm-cancel-btn" style="flex:1; padding:0.8rem; background:transparent; border:1px solid rgba(255,255,255,0.2); color:#ccc; cursor:pointer; font-weight:bold; border-radius:4px; transition:all 0.2s;">Hủy</button>
+            <button id="confirm-ok-btn" style="flex:1; padding:0.8rem; background:var(--gold); border:none; color:var(--black); cursor:pointer; font-weight:bold; border-radius:4px; transition:all 0.2s;">Đồng ý</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let confirmCallback = null;
+    function showConfirm(msg, callback, title="Xác nhận") {
+        const overlay = document.getElementById('global-confirm-overlay');
+        const modal = overlay.querySelector('.confirm-modal');
+        document.getElementById('confirm-msg').innerText = msg;
+        document.getElementById('confirm-title').innerText = title;
+        confirmCallback = callback;
+        
+        overlay.style.display = 'flex';
+        void overlay.offsetWidth;
+        overlay.style.opacity = '1';
+        modal.style.transform = 'translateY(0)';
+    }
+
+    function closeConfirm() {
+        const overlay = document.getElementById('global-confirm-overlay');
+        const modal = overlay.querySelector('.confirm-modal');
+        overlay.style.opacity = '0';
+        modal.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 300);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+        const okBtn = document.getElementById('confirm-ok-btn');
+        if(cancelBtn) cancelBtn.addEventListener('click', closeConfirm);
+        if(okBtn) okBtn.addEventListener('click', () => {
+            closeConfirm();
+            if(confirmCallback) confirmCallback();
+        });
+    });
+
+    function showAlert(msg, title="Thông báo") {
+        const overlay = document.getElementById('global-confirm-overlay');
+        const modal = overlay.querySelector('.confirm-modal');
+        document.getElementById('confirm-msg').innerText = msg;
+        document.getElementById('confirm-title').innerText = title;
+        document.getElementById('confirm-cancel-btn').style.display = 'none';
+        document.getElementById('confirm-icon').className = 'fa-solid fa-check-circle';
+        confirmCallback = null;
+        
+        overlay.style.display = 'flex';
+        void overlay.offsetWidth;
+        overlay.style.opacity = '1';
+        modal.style.transform = 'translateY(0)';
+
+        document.getElementById('confirm-ok-btn').onclick = () => {
+            closeConfirm();
+            setTimeout(() => {
+                document.getElementById('confirm-cancel-btn').style.display = 'block';
+                document.getElementById('confirm-icon').className = 'fa-solid fa-circle-exclamation';
+            }, 300);
+        };
+    }
 </script>
 
 </body>

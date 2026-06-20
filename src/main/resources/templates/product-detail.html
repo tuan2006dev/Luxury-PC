@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Luxury PC — RTX 4090 Titan Edition</title>
+  <title th:text="'Luxury PC — ' + ${product.name}">Luxury PC — Sản Phẩm</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" th:href="@{/logo.png}" />
   <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
 </head>
@@ -16,14 +17,13 @@
 
   <div th:replace="~{layout/header :: header}"></div>
 
-
   <!-- BREADCRUMB -->
   <div class="breadcrumb">
     <a th:href="@{/}">Trang chủ</a>
     <span>›</span>
     <a th:href="@{/products(cid=${product.category.id})}" th:text="${product.category.name}">VGA</a>
     <span>›</span>
-    <span class="current" th:text="${product.name}">RTX 4090 Titan Edition</span>
+    <span class="current" th:text="${product.name}">Sản Phẩm</span>
   </div>
 
   <!-- PRODUCT LAYOUT -->
@@ -34,16 +34,25 @@
       <div class="main-img-wrap" id="main-img">
         <div class="img-badge-wrap">
           <span th:if="${product.price > 30000000}" class="img-badge badge-top">Đỉnh Cao</span>
-          <span th:if="${product.stock < 10}" class="img-badge badge-new">Sắp Hết</span>
+          <span th:if="${product.stock > 0 and product.stock < 10}" class="img-badge badge-new">Sắp Hết</span>
+          <span th:if="${product.stock <= 0}" class="img-badge badge-new" style="background:var(--red);border-color:var(--red);color:var(--white);">Hết Hàng</span>
         </div>
         <img th:src="@{${product.image != null ? product.image : '/images/placeholder.png'}}" th:alt="${product.name}"
           style="max-width: 100%; height: auto;" />
       </div>
       <div class="thumb-row">
-        <div class="thumb active" onclick="setImg('view1',this)"></div>
-        <div class="thumb" onclick="setImg('view2',this)"></div>
-        <div class="thumb" onclick="setImg('view3',this)"></div>
-        <div class="thumb" onclick="setImg('view4',this)"></div>
+        <div class="thumb active" onclick="setImg(this.querySelector('img').src, this)">
+          <img th:src="@{${product.image != null ? product.image : '/images/placeholder.png'}}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" />
+        </div>
+        <div class="thumb" onclick="setImg('https://images.unsplash.com/photo-1587202372634-32705e3bf49c?q=80&w=400&auto=format&fit=crop', this)">
+          <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?q=80&w=400&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" />
+        </div>
+        <div class="thumb" onclick="setImg('https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&w=400&auto=format&fit=crop', this)">
+          <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&w=400&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" />
+        </div>
+        <div class="thumb" onclick="setImg('https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=400&auto=format&fit=crop', this)">
+          <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=400&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" />
+        </div>
       </div>
     </div>
 
@@ -58,7 +67,7 @@
       <div class="rating-row">
         <span class="stars">☆☆☆☆☆</span>
         <span class="rating-count">0.0/5</span>
-        <a href="#reviews" class="rating-link" onclick="setDetailTab('reviews')">Chưa có đánh giá</a>
+        <a href="#" class="rating-link" onclick="setDetailTab('reviews'); return false;">Chưa có đánh giá</a>
       </div>
 
       <div class="price-block">
@@ -95,7 +104,7 @@
         <span class="qty-label">Số lượng</span>
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <input type="number" class="qty-num" id="qty" value="1" min="1" oninput="manualQtyChange(this)" style="background:transparent;border:none;color:#fff;width:40px;text-align:center;font-weight:600;outline:none;" />
+          <input type="number" class="qty-num" id="qty" value="1" min="1" onchange="manualQtyChange(this)" style="background:transparent;border:none;color:#fff;width:40px;text-align:center;font-weight:600;outline:none;" />
           <button class="qty-btn" onclick="changeQty(1)">+</button>
         </div>
         <span class="stock-label" th:if="${product.stock > 5}" th:text="'● Còn ' + ${product.stock} + ' sản phẩm'">● Còn 7 sản phẩm</span>
@@ -121,7 +130,7 @@
         <form th:action="@{/cart/add}" method="post" style="display:contents;">
           <input type="hidden" name="id" th:value="${product.id}" />
           <input type="hidden" name="name" th:value="${product.name}" />
-          <input type="hidden" name="price" th:value="${product.price}" />
+          <input type="hidden" name="price" th:value="${product.price != null ? product.price.longValue() : 0}" />
           <input type="hidden" name="quantity" id="form-qty" value="1" />
           
           <button type="submit" class="btn-primary-lg" style="flex: 1;" th:disabled="${product.stock <= 0}">
@@ -134,7 +143,16 @@
             <span>Mua Ngay</span>
           </button>
         </form>
-        <button class="btn-outline-lg" onclick="toast('♥ Đã thêm vào danh sách yêu thích!')">♡ Thêm Vào Yêu Thích</button>
+
+        <!-- Wishlist Button - AJAX Toggle -->
+        <button class="btn-outline-lg wishlist-btn" id="wishlist-btn"
+                th:data-product-id="${product.id}"
+                th:data-wished="${productInWishlist}"
+                th:classappend="${productInWishlist} ? ' wished' : ''"
+                onclick="toggleWishlist(this)">
+          <span id="wishlist-icon" th:text="${productInWishlist} ? '♥' : '♡'">♡</span>
+          <span id="wishlist-label" th:text="${productInWishlist} ? 'Đã Yêu Thích' : 'Thêm Vào Yêu Thích'">Thêm Vào Yêu Thích</span>
+        </button>
       </div>
 
       <div class="perks-row">
@@ -211,18 +229,13 @@
 
       <!-- DESCRIPTION -->
       <div class="detail-section" id="ds-desc">
-        <p style="font-size:.85rem;color:rgba(245,240,232,.75);line-height:2;margin-bottom:1rem;">RTX 4090 Titan Edition
-          là đỉnh cao của kiến trúc Ada Lovelace — được thiết kế lại đặc biệt bởi LUXURY PC với hệ thống tản nhiệt 3
-          quạt ROG Strix, backplate nhôm CNC anodized và đèn RGB AURA Sync tinh tế.</p>
-        <p style="font-size:.85rem;color:rgba(245,240,232,.75);line-height:2;margin-bottom:1rem;">Với 16,384 CUDA cores
-          và 24GB GDDR6X, card đồ họa này xử lý mọi tác vụ từ render 8K thời gian thực, AI generation đến gaming ở 4K
-          240fps không giới hạn. DLSS 3 với AI Frame Generation giúp tăng gấp đôi hiệu năng so với thế hệ trước.</p>
+        <p style="font-size:.85rem;color:rgba(245,240,232,.75);line-height:2;margin-bottom:1rem;" th:text="${product.description}">Mô tả sản phẩm.</p>
         <div style="background:rgba(201,168,76,.05);border-left:3px solid var(--gold);padding:1rem;margin-top:1rem;">
           <div
             style="font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;">
             LUXURY EXCLUSIVE</div>
-          <div style="font-size:.8rem;color:var(--cream);">Mỗi card được kiểm tra stress test 24h, kèm certificate hiệu
-            năng và số serial riêng. Chỉ 50 chiếc được phân phối tại Việt Nam.</div>
+          <div style="font-size:.8rem;color:var(--cream);">Mỗi sản phẩm được kiểm tra chất lượng nghiêm ngặt, kèm certificate hiệu
+            năng và số serial riêng.</div>
         </div>
       </div>
 
@@ -240,31 +253,18 @@
           .rs-bar-wrap { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
           .rs-bar-fill { height: 100%; background: var(--gold); width: 0%; }
           .rs-bar-count { min-width: 15px; text-align: right; font-family: monospace; font-size: 0.9rem;}
-          
           .btn-write-review-circle {
-            position: absolute;
-            bottom: 20px;
-            right: 30px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 1px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 1.2rem;
-            opacity: 0.7;
+            position: absolute; bottom: 20px; right: 30px;
+            width: 40px; height: 40px; border-radius: 50%;
+            border: 1px solid var(--gold); background: transparent;
+            color: var(--gold); display: flex; align-items: center;
+            justify-content: center; cursor: pointer; transition: 0.3s;
+            font-size: 1.2rem; opacity: 0.7;
           }
-          .btn-write-review-circle:hover {
-            opacity: 1;
-            background: var(--gold);
-            color: var(--black);
-            transform: scale(1.1);
-          }
+          .btn-write-review-circle:hover { opacity: 1; background: var(--gold); color: var(--black); transform: scale(1.1); }
+          /* Wishlist active state */
+          .wishlist-btn.wished { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold); }
+          .wishlist-btn.wished #wishlist-icon { color: var(--gold); }
         </style>
 
         <div class="review-stats-box">
@@ -276,7 +276,6 @@
             <div class="rs-count" th:text="${reviewCount > 0 ? reviewCount + ' đánh giá' : 'Chưa có đánh giá'}">Chưa có đánh giá</div>
           </div>
           <div class="rs-right">
-            <!-- Simulated bars -->
             <div class="rs-bar-row"><span>5★</span><div class="rs-bar-wrap"><div class="rs-bar-fill" th:style="'width:' + (${reviewCount > 0 && avgRating >= 4.5 ? '80%' : '0%'})"></div></div><span class="rs-bar-count" th:text="${reviewCount > 0 && avgRating >= 4.5 ? reviewCount : 0}">0</span></div>
             <div class="rs-bar-row"><span>4★</span><div class="rs-bar-wrap"><div class="rs-bar-fill" th:style="'width:' + (${reviewCount > 0 && avgRating >= 3.5 && avgRating < 4.5 ? '100%' : '0%'})"></div></div><span class="rs-bar-count" th:text="${reviewCount > 0 && avgRating >= 3.5 && avgRating < 4.5 ? reviewCount : 0}">0</span></div>
             <div class="rs-bar-row"><span>3★</span><div class="rs-bar-wrap"><div class="rs-bar-fill" th:style="'width:' + (${reviewCount > 0 && avgRating >= 2.5 && avgRating < 3.5 ? '100%' : '0%'})"></div></div><span class="rs-bar-count" th:text="${reviewCount > 0 && avgRating >= 2.5 && avgRating < 3.5 ? reviewCount : 0}">0</span></div>
@@ -307,20 +306,6 @@
               <button type="submit" style="background:var(--gold); color:#000; border:none; padding:8px 20px; font-weight:bold; cursor:pointer; border-radius:4px;">Gửi Đánh Giá</button>
             </form>
           </div>
-          
-          <script>
-             function toggleReviewForm() {
-                 const form = document.getElementById('review-form-container');
-                 form.style.display = form.style.display === 'none' ? 'block' : 'none';
-             }
-             function setFormStars(val) {
-                 document.getElementById('form-stars').value = val;
-                 const btns = document.querySelectorAll('.form-star-btn');
-                 btns.forEach((b, i) => {
-                     b.style.color = (i < val) ? 'var(--gold)' : 'var(--muted)';
-                 });
-             }
-          </script>
           
           <div class="customer-review-list">
              <div th:each="rv : ${reviews}" class="customer-review-card" style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.05); background:transparent;">
@@ -377,48 +362,48 @@
   </section>
 
   <div th:replace="~{layout/footer :: footer}"></div>
+
   <script th:inline="javascript">
     let qty = 1;
-    // Lấy số lượng tồn kho thực từ server (Thymeleaf render)
-    const maxStock = [[${product.stock}]];
+    const maxStock = /*[[${product.stock}]]*/ 99;
 
-  function manualQtyChange(input) {
+    // ── SỐ LƯỢNG ──
+    function manualQtyChange(input) {
       let val = parseInt(input.value);
-      if (isNaN(val) || val < 1) {
-          val = 1;
-      }
+      if (isNaN(val) || val < 1) val = 1;
       if (val > maxStock) {
-          if(typeof showToast === 'function') showToast("quá số lượng sản phẩm hiện có");
-          val = maxStock;
+        toast('Quá số lượng sản phẩm hiện có!');
+        val = maxStock;
       }
       qty = val;
       input.value = qty;
-      if(document.getElementById('form-qty')) {
-          document.getElementById('form-qty').value = qty;
-      }
-  }
+      const fq = document.getElementById('form-qty');
+      if (fq) fq.value = qty;
+    }
 
-  function changeQty(d) { 
+    function changeQty(d) {
       let newQty = qty + d;
       if (newQty > maxStock) {
-          if(typeof showToast === 'function') showToast("quá số lượng sản phẩm hiện có");
-          newQty = maxStock;
+        toast('Quá số lượng sản phẩm hiện có!');
+        newQty = maxStock;
       } else if (newQty < 1) {
-          newQty = 1;
+        newQty = 1;
       }
-      qty = newQty; 
-      document.getElementById('qty').value = qty; 
-      if(document.getElementById('form-qty')) {
-          document.getElementById('form-qty').value = qty;
-      }
-  }
+      qty = newQty;
+      document.getElementById('qty').value = qty;
+      const fq = document.getElementById('form-qty');
+      if (fq) fq.value = qty;
+    }
 
-    function setImg(emoji, thumb) {
-      document.getElementById('main-img').childNodes[document.getElementById('main-img').childNodes.length - 1].textContent = emoji;
+    // ── ẢNH ──
+    function setImg(imgSrc, thumb) {
+      const mainImg = document.querySelector('#main-img img');
+      if (mainImg) mainImg.src = imgSrc;
       document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
       thumb.classList.add('active');
     }
 
+    // ── TABS (KHÔNG TỰ SCROLL) ──
     const detailTabs = ['specs', 'desc', 'reviews'];
     function setDetailTab(id) {
       detailTabs.forEach(t => {
@@ -428,13 +413,65 @@
         tab.classList.toggle('active', detailTabs[i] === id);
       });
     }
-    document.getElementById('tab-reviews')?.addEventListener('click', () => document.getElementById('ds-reviews')?.scrollIntoView({ behavior: 'smooth' }));
 
+    // ── TOAST ──
     function toast(msg) {
       if (typeof showToast === 'function') {
         showToast(msg);
       } else {
-        console.log(msg);
+        const t = document.getElementById('toast');
+        if (t) {
+          t.textContent = msg;
+          t.classList.add('show');
+          setTimeout(() => t.classList.remove('show'), 3000);
+        }
+      }
+    }
+
+    // ── REVIEW FORM ──
+    function toggleReviewForm() {
+      const form = document.getElementById('review-form-container');
+      if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function setFormStars(val) {
+      document.getElementById('form-stars').value = val;
+      document.querySelectorAll('.form-star-btn').forEach((b, i) => {
+        b.style.color = (i < val) ? 'var(--gold)' : 'var(--muted)';
+      });
+    }
+
+    // ── WISHLIST AJAX TOGGLE ──
+    async function toggleWishlist(btn) {
+      const productId = btn.dataset.productId;
+      const icon  = document.getElementById('wishlist-icon');
+      const label = document.getElementById('wishlist-label');
+
+      try {
+        const res  = await fetch(`/api/wishlist/toggle/${productId}`, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await res.json();
+
+        if (res.status === 401 || data.loginRequired) {
+          toast('Vui lòng đăng nhập để lưu sản phẩm yêu thích!');
+          setTimeout(() => window.location.href = '/auth/login', 1500);
+          return;
+        }
+
+        if (data.success) {
+          const wished = data.wished;
+          btn.dataset.wished = wished;
+          icon.textContent  = wished ? '♥' : '♡';
+          label.textContent = wished ? 'Đã Yêu Thích' : 'Thêm Vào Yêu Thích';
+          btn.classList.toggle('wished', wished);
+          toast(data.message);
+        } else {
+          toast('Không thể cập nhật danh sách yêu thích.');
+        }
+      } catch (e) {
+        toast('Lỗi kết nối. Vui lòng thử lại.');
       }
     }
 
@@ -471,41 +508,7 @@
         });
       });
     })();
-
-    document.addEventListener('DOMContentLoaded', function() {
-      const form = document.querySelector('form[action="/cart/add"]');
-      if(form) {
-        form.addEventListener('submit', function(e) {
-          if (e.submitter && e.submitter.getAttribute('formaction') === '/cart/buy-now') {
-            return;
-          }
-          e.preventDefault();
-          const formData = new FormData(this);
-          fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            redirect: 'follow'
-          }).then(res => {
-             document.getElementById('cart-popup').style.display = 'block';
-             let currentCount = parseInt(document.getElementById('cart-count')?.textContent || '0');
-             let addedQty = parseInt(document.getElementById('form-qty').value || '1');
-             if(document.getElementById('cart-count')) {
-                 document.getElementById('cart-count').textContent = currentCount + addedQty;
-             }
-          });
-        });
-      }
-    });
   </script>
-
-  <div id="cart-popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--deep); padding:2rem; border:1px solid var(--gold); z-index:9999; color:var(--white); text-align:center; border-radius:8px; min-width:300px;">
-    <div style="font-size:3rem; color:var(--gold); margin-bottom:1rem;">✓</div>
-    <h3 style="font-family:var(--sans); font-weight: 400; margin-bottom:1rem;">Thêm vào giỏ hàng thành công!</h3>
-    <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
-      <button onclick="document.getElementById('cart-popup').style.display='none'" style="padding:0.8rem 1.5rem; background:transparent; border:1px solid var(--gold); color:var(--gold); cursor:pointer; font-weight:bold; border-radius:4px;">Tiếp tục mua sắm</button>
-      <button onclick="location.href='/cart'" style="padding:0.8rem 1.5rem; background:var(--gold); border:none; color:var(--black); cursor:pointer; font-weight:bold; border-radius:4px;">Xem giỏ hàng</button>
-    </div>
-  </div>
 </body>
 
 </html>

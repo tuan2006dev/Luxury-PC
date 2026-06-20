@@ -12,19 +12,14 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
     rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/account/auth.css}" />
 </head>
 
 <body>
 
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-f" id="cursor-f"></div>
-
   <!-- NAVBAR -->
-  <nav class="navbar">
-    <a th:href="@{/}" class="nav-logo">Luxury <span>PC</span></a>
-    <a th:href="@{/}" class="nav-back">← Quay về trang chủ</a>
-  </nav>
+  <div th:replace="~{layout/header :: header}"></div>
 
   <!-- MAIN -->
   <div class="auth-page">
@@ -223,17 +218,6 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    /* ===== CURSOR ===== */
-    const cur = document.getElementById('cursor');
-    const curF = document.getElementById('cursor-f');
-    let mx = 0, my = 0, fx = 0, fy = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx + 'px'; cur.style.top = my + 'px'; });
-    (function loop() { fx += (mx - fx) * .12; fy += (my - fy) * .12; curF.style.left = fx + 'px'; curF.style.top = fy + 'px'; requestAnimationFrame(loop); })();
-    document.querySelectorAll('a,button,input,select').forEach(el => {
-      el.addEventListener('mouseenter', () => { cur.style.transform = 'translate(-50%,-50%) scale(2)'; curF.style.width = '60px'; curF.style.height = '60px'; });
-      el.addEventListener('mouseleave', () => { cur.style.transform = 'translate(-50%,-50%) scale(1)'; curF.style.width = '36px'; curF.style.height = '36px'; });
-    });
-
     /* ===== TABS ===== */
     function switchTab(tab) {
       document.getElementById('tab-login').classList.toggle('active', tab === 'login');
@@ -414,6 +398,7 @@
     }
 
   </script>
+  <script th:src="@{/js/script.js}"></script>
 </body>
 
 </html>

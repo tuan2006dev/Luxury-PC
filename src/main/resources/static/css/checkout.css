@@ -62,3 +62,8 @@
 
     .success-ov{position:fixed;inset:0;background:rgba(10,10,10,.98);z-index:1000;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;}
     .success-ov.show{display:flex;}
+/* Ensure cursor is absolutely always on top */
+.cursor, .cursor-f, .cursor-follower {
+    z-index: 9999999 !important;
+}
+

@@ -45,16 +45,6 @@
             <div class="footer-bottom">
                 <p data-translate="footer-rights">© 2025 Luxury PC. Tất cả quyền được bảo lưu. Bản quyền thuộc Luxury Technology JSC.</p>
                 
-                <!-- Language Selector -->
-                <div class="language-selector">
-                    <button class="lang-btn active" data-lang="vi" aria-label="Tiếng Việt">
-                        <span class="flag-icon">🇻🇳</span> VI
-                    </button>
-                    <span class="lang-divider">|</span>
-                    <button class="lang-btn" data-lang="en" aria-label="English">
-                        <span class="flag-icon">🇺🇸</span> EN
-                    </button>
-                </div>
 
                 <div class="footer-social">
                     <a href="#" id="social-fb" aria-label="Facebook">f</a>
@@ -85,6 +75,80 @@
 
         <!-- TOAST -->
         <div class="toast" id="toast"></div>
+
+        <!-- GLOBAL CONFIRM MODAL -->
+        <div class="confirm-modal-overlay" id="global-confirm-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9000; justify-content:center; align-items:center; opacity:0; transition:opacity 0.3s;">
+            <div class="confirm-modal" style="background:var(--deep); border:1px solid var(--gold); border-radius:8px; padding:2rem; width:90%; max-width:400px; text-align:center; transform:translateY(-20px); transition:transform 0.3s; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                <div style="font-size:3rem; color:var(--gold); margin-bottom:1rem;"><i class="fa-solid fa-circle-exclamation" id="confirm-icon"></i></div>
+                <h3 style="font-family:var(--sans); font-weight:400; color:var(--white); margin-bottom:0.5rem;" id="confirm-title">Xác nhận</h3>
+                <p style="color:var(--cream); font-size:0.9rem; margin-bottom:2rem;" id="confirm-msg">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+                <div style="display:flex; gap:1rem; justify-content:center;">
+                    <button id="confirm-cancel-btn" style="flex:1; padding:0.8rem; background:transparent; border:1px solid rgba(255,255,255,0.2); color:var(--cream); cursor:pointer; font-weight:bold; border-radius:4px; transition:all 0.2s;">Hủy</button>
+                    <button id="confirm-ok-btn" style="flex:1; padding:0.8rem; background:var(--gold); border:none; color:var(--black); cursor:pointer; font-weight:bold; border-radius:4px; transition:all 0.2s;">Đồng ý</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let confirmCallback = null;
+            function showConfirm(msg, callback, title="Xác nhận") {
+                const overlay = document.getElementById('global-confirm-overlay');
+                const modal = overlay.querySelector('.confirm-modal');
+                document.getElementById('confirm-msg').innerText = msg;
+                document.getElementById('confirm-title').innerText = title;
+                confirmCallback = callback;
+                
+                overlay.style.display = 'flex';
+                // Trigger reflow
+                void overlay.offsetWidth;
+                overlay.style.opacity = '1';
+                modal.style.transform = 'translateY(0)';
+            }
+
+            function closeConfirm() {
+                const overlay = document.getElementById('global-confirm-overlay');
+                const modal = overlay.querySelector('.confirm-modal');
+                overlay.style.opacity = '0';
+                modal.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 300);
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const cancelBtn = document.getElementById('confirm-cancel-btn');
+                const okBtn = document.getElementById('confirm-ok-btn');
+                if(cancelBtn) cancelBtn.addEventListener('click', closeConfirm);
+                if(okBtn) okBtn.addEventListener('click', () => {
+                    closeConfirm();
+                    if(confirmCallback) confirmCallback();
+                });
+            });
+
+            function showAlert(msg, title="Thông báo") {
+                const overlay = document.getElementById('global-confirm-overlay');
+                const modal = overlay.querySelector('.confirm-modal');
+                document.getElementById('confirm-msg').innerText = msg;
+                document.getElementById('confirm-title').innerText = title;
+                document.getElementById('confirm-cancel-btn').style.display = 'none';
+                document.getElementById('confirm-icon').className = 'fa-solid fa-check-circle';
+                confirmCallback = null;
+                
+                overlay.style.display = 'flex';
+                void overlay.offsetWidth;
+                overlay.style.opacity = '1';
+                modal.style.transform = 'translateY(0)';
+
+                const oldOkClick = document.getElementById('confirm-ok-btn').onclick;
+                document.getElementById('confirm-ok-btn').onclick = () => {
+                    closeConfirm();
+                    setTimeout(() => {
+                        document.getElementById('confirm-cancel-btn').style.display = 'block';
+                        document.getElementById('confirm-icon').className = 'fa-solid fa-circle-exclamation';
+                    }, 300);
+                };
+            }
+        </script>
 
         <!-- VOUCHER MODAL -->
         <div class="voucher-modal-overlay" id="voucher-modal-overlay">
@@ -207,6 +271,12 @@
                     btn.classList.toggle('active', btn.dataset.lang === lang);
                 });
 
+                // Cập nhật text ngôn ngữ cạnh quả địa cầu
+                const langText = document.getElementById('current-lang-text');
+                if (langText) {
+                    langText.textContent = lang.toUpperCase();
+                }
+
                 // Translate elements
                 document.querySelectorAll('[data-translate]').forEach(el => {
                     const key = el.getAttribute('data-translate');
@@ -237,6 +307,380 @@
                 });
             });
         </script>
+        <!-- AI Advisor Floating Panel (Matching React Chatbot Style) -->
+    <div class="chatbot-fab" id="chatbot-fab-trigger" onclick="handleFabClick()">
+      🤖 <span class="chatbot-fab-label">Hỗ trợ</span>
+      <div class="socket-chat-badge" id="ai-chat-fab-badge" style="display: none;"></div>
     </div>
+
+    <div class="chatbot-window" id="ai-chat-window" style="display: none;">
+      <!-- Header -->
+      <div class="chatbot-header">
+        <div class="chatbot-avatar">🤖</div>
+        <div>
+          <div class="chatbot-title">Luxe AI Assistant</div>
+          <div class="chatbot-subtitle">Tư vấn build PC thông minh</div>
+        </div>
+        <button class="chatbot-close" onclick="toggleChatWindow()">✕</button>
+      </div>
+
+      <!-- Mode indicator bar -->
+      <div class="chatbot-mode-bar">
+        <div class="mode-step active" id="ai-tab-ai" onclick="changeMode('ai')">🤖 AI Chat</div>
+        <div class="mode-arrow">›</div>
+        <div class="mode-step" id="ai-tab-live" onclick="changeMode('live')">💬 Live Chat</div>
+      </div>
+
+      <!-- Messages -->
+      <div class="chatbot-messages" id="chat-messages-area">
+        <div class="chat-bubble bot">
+          <div class="chat-bubble-icon">🤖</div>
+          <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <div class="chat-bubble-text">
+              Xin chào! Tôi là <strong>Luxe AI</strong> 🤖<br><br>Tôi có thể giúp bạn tư vấn build PC, hoặc kết nối bạn với <strong>nhân viên thật</strong> khi cần!<br><br>Gõ "help" để xem danh sách, hoặc hỏi thẳng nhé 😊
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick buttons -->
+      <div class="chatbot-quick-btns" id="chatbot-quick-btns">
+        <button class="quick-btn" onclick="askAdvisorQuick('gaming')">gaming</button>
+        <button class="quick-btn" onclick="askAdvisorQuick('ngân sách 25 triệu')">ngân sách 25 triệu</button>
+        <button class="quick-btn" onclick="askAdvisorQuick('case đẹp')">case đẹp</button>
+        <button class="quick-btn" onclick="askAdvisorQuick('help')">help</button>
+        <button class="quick-btn quick-btn-consultant" onclick="triggerConsultantRedirect()">👨‍💻 Gặp nhân viên</button>
+      </div>
+
+      <!-- Input row -->
+      <div class="chatbot-input-row">
+        <textarea class="chatbot-input" id="chat-input-field" placeholder="Hỏi về linh kiện, budget, tương thích..." rows="1" onkeypress="handleChatKeyPress(event)"></textarea>
+        <button class="chatbot-send" id="chat-send-btn" onclick="sendChatMessage()">➤</button>
+      </div>
+    </div>
+
+    <!-- AI Advisor JavaScript -->
+    <script>
+      function toggleChatWindow() {
+        const windowEl = document.getElementById('ai-chat-window');
+        if (!windowEl) return;
+        const isOpen = windowEl.style.display === 'flex' || windowEl.classList.contains('open');
+        if (isOpen) {
+          windowEl.classList.remove('open');
+          windowEl.style.display = 'none';
+        } else {
+          windowEl.style.display = 'flex';
+          setTimeout(() => windowEl.classList.add('open'), 10);
+          const area = document.getElementById('chat-messages-area');
+          if (area) area.scrollTop = area.scrollHeight;
+        }
+      }
+
+      // Integrated Chat mode switcher
+      function changeMode(mode) {
+        const aiWin = document.getElementById('ai-chat-window');
+        const socketWin = document.getElementById('socketChatWindow');
+        const socketBtn = document.getElementById('socketChatBtn');
+        
+        if (mode === 'ai') {
+          if (socketWin && socketWin.classList.contains('open')) {
+            socketWin.classList.remove('open');
+          }
+          if (aiWin) {
+            aiWin.style.display = 'flex';
+            setTimeout(() => aiWin.classList.add('open'), 10);
+          }
+          localStorage.setItem('preferred_chat_mode', 'ai');
+        } else if (mode === 'live') {
+          if (aiWin) {
+            aiWin.classList.remove('open');
+            aiWin.style.display = 'none';
+          }
+          if (socketWin) {
+            if (!socketWin.classList.contains('open')) {
+              if (socketBtn) socketBtn.click();
+            }
+          }
+          localStorage.setItem('preferred_chat_mode', 'live');
+        }
+      }
+
+      function handleFabClick() {
+        const preferredMode = localStorage.getItem('preferred_chat_mode') || 'ai';
+        const aiWin = document.getElementById('ai-chat-window');
+        const socketWin = document.getElementById('socketChatWindow');
+        
+        const isAiOpen = aiWin && (aiWin.style.display === 'flex' || aiWin.classList.contains('open'));
+        const isSocketOpen = socketWin && socketWin.classList.contains('open');
+        
+        if (isAiOpen || isSocketOpen) {
+          if (aiWin) {
+            aiWin.classList.remove('open');
+            aiWin.style.display = 'none';
+          }
+          if (socketWin) {
+            socketWin.classList.remove('open');
+          }
+        } else {
+          changeMode(preferredMode);
+        }
+      }
+
+      function setupAiCursorHover(element) {
+        if (!element) return;
+        element.addEventListener('mouseenter', () => {
+          const cursor = document.getElementById('cursor');
+          const cursorFollower = document.getElementById('cursor-follower');
+          if (cursor && cursorFollower) {
+            cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+            cursorFollower.style.width = '60px';
+            cursorFollower.style.height = '60px';
+            cursorFollower.style.opacity = '0.3';
+          }
+        });
+        element.addEventListener('mouseleave', () => {
+          const cursor = document.getElementById('cursor');
+          const cursorFollower = document.getElementById('cursor-follower');
+          if (cursor && cursorFollower) {
+            cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+            cursorFollower.style.width = '36px';
+            cursorFollower.style.height = '36px';
+            cursorFollower.style.opacity = '0.6';
+          }
+        });
+      }
+
+      function handleChatKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          sendChatMessage();
+        }
+      }
+
+      function sendChatMessage() {
+        const inputEl = document.getElementById('chat-input-field');
+        if (!inputEl) return;
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        appendMessage(text, 'user');
+        inputEl.value = '';
+
+        // Hiển thị trạng thái AI đang gõ...
+        const area = document.getElementById('chat-messages-area');
+        const loadingMsg = document.createElement('div');
+        loadingMsg.className = 'chat-bubble bot';
+        loadingMsg.id = 'ai-loading-indicator';
+        loadingMsg.innerHTML = '<div class="chat-bubble-icon">🤖</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
+        area.appendChild(loadingMsg);
+        area.scrollTop = area.scrollHeight;
+
+        // Gửi request lên Backend Spring Boot
+        fetch('/api/build/ai-advisor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: text })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Xóa chỉ báo loading
+          const indicator = document.getElementById('ai-loading-indicator');
+          if (indicator) indicator.remove();
+
+          if (data.response) {
+            let formattedText = data.response
+              .replace(/\n/g, '<br>')
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            appendMessage(formattedText, 'bot');
+          } else {
+            appendMessage("Có lỗi xảy ra khi xử lý phản hồi từ AI.", 'bot');
+          }
+        })
+        .catch(error => {
+          const indicator = document.getElementById('ai-loading-indicator');
+          if (indicator) indicator.remove();
+          console.error('Error:', error);
+          appendMessage("Không thể kết nối đến máy chủ AI. Vui lòng thử lại sau.", 'bot');
+        });
+      }
+
+      function appendMessage(text, sender, action = null) {
+        const area = document.getElementById('chat-messages-area');
+        if (!area) return;
+        const msg = document.createElement('div');
+        msg.className = `chat-bubble ${sender}`;
+        
+        let icon = sender === 'bot' ? '🤖' : '👤';
+        let htmlContent = `<div class="chat-bubble-icon">${icon}</div>`;
+        htmlContent += `<div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 100%;">`;
+        htmlContent += `<div class="chat-bubble-text">${text}</div>`;
+        if (action) {
+          htmlContent += `<button class="chat-action-btn" onclick="${action.func}">${action.label}</button>`;
+        }
+        htmlContent += `</div>`;
+        msg.innerHTML = htmlContent;
+        
+        area.appendChild(msg);
+        area.scrollTop = area.scrollHeight;
+      }
+
+      function selectPackage(pkgId) {
+        // Redirect to build-pc page and pass the selected package in query parameter
+        window.location.href = `/build-pc/index.html?package=${pkgId}`;
+      }
+
+      // Action from quick chatbot button to switch directly to live chat
+      function triggerConsultantRedirect() {
+        appendMessage("Đang kết nối bạn với nhân viên hỗ trợ trực tuyến...", 'bot');
+        setTimeout(() => {
+          changeMode('live');
+        }, 1000);
+      }
+
+      function askAdvisorQuick(query) {
+        let actualQuery = query;
+        if (query === 'gaming') actualQuery = "Tôi cần tư vấn cấu hình chiến game 4K";
+        else if (query === 'graphic') actualQuery = "Tư vấn cấu hình làm đồ họa 3D render";
+        else if (query === 'ai') actualQuery = "Tôi muốn build máy AI Workstation";
+        else if (query === 'cool') actualQuery = "Nên chọn tản nước hay tản khí?";
+
+        appendMessage(actualQuery, 'user');
+
+        // Hiển thị trạng thái AI đang gõ...
+        const area = document.getElementById('chat-messages-area');
+        const loadingMsg = document.createElement('div');
+        loadingMsg.className = 'chat-bubble bot';
+        loadingMsg.id = 'ai-loading-indicator';
+        loadingMsg.innerHTML = '<div class="chat-bubble-icon">🤖</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
+        area.appendChild(loadingMsg);
+        area.scrollTop = area.scrollHeight;
+
+        fetch('/api/build/ai-advisor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: actualQuery })
+        })
+        .then(response => response.json())
+        .then(data => {
+          const indicator = document.getElementById('ai-loading-indicator');
+          if (indicator) indicator.remove();
+
+          if (data.response) {
+            let formattedText = data.response
+              .replace(/\n/g, '<br>')
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            appendMessage(formattedText, 'bot');
+          } else {
+            appendMessage("Không nhận được phản hồi từ cố vấn AI.", 'bot');
+          }
+        })
+        .catch(error => {
+          const indicator = document.getElementById('ai-loading-indicator');
+          if (indicator) indicator.remove();
+          console.error('Error:', error);
+          appendMessage("Lỗi kết nối AI.", 'bot');
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // Hide default socket button
+        const socketBtn = document.getElementById('socketChatBtn');
+        if (socketBtn) {
+          socketBtn.style.display = 'none';
+        }
+
+        // Setup MutationObserver to mirror notification badge
+        const targetBadge = document.getElementById('socketChatBadge');
+        const ourBadge = document.getElementById('ai-chat-fab-badge');
+        if (targetBadge && ourBadge) {
+          const observer = new MutationObserver(() => {
+            ourBadge.style.display = targetBadge.style.display;
+            ourBadge.textContent = targetBadge.textContent;
+          });
+          observer.observe(targetBadge, { attributes: true, childList: true, characterData: true });
+        }
+
+        // Dynamically inject mode selector tab bar into socket chat window
+        const socketWin = document.getElementById('socketChatWindow');
+        if (socketWin) {
+          const header = socketWin.querySelector('.socket-chat-header');
+          if (header) {
+            const modeBar = document.createElement('div');
+            modeBar.className = 'chatbot-mode-bar';
+            modeBar.innerHTML = `
+              <div class="mode-step" id="socket-tab-ai" style="cursor: none !important;" onclick="changeMode('ai')">🤖 AI Chat</div>
+              <div class="mode-arrow">›</div>
+              <div class="mode-step active" id="socket-tab-live" style="cursor: none !important;" onclick="changeMode('live')">💬 Live Chat</div>
+            `;
+            header.parentNode.insertBefore(modeBar, header.nextSibling);
+            
+            // Set up cursor hover for the newly added tabs in socket-chat
+            setTimeout(() => {
+              setupAiCursorHover(document.getElementById('socket-tab-ai'));
+              setupAiCursorHover(document.getElementById('socket-tab-live'));
+            }, 100);
+          }
+        }
+
+        // Set up cursor hovers for index chatbot controls
+        setupAiCursorHover(document.getElementById('chatbot-fab-trigger'));
+        setupAiCursorHover(document.getElementById('ai-tab-ai'));
+        setupAiCursorHover(document.getElementById('ai-tab-live'));
+        setupAiCursorHover(document.getElementById('chat-send-btn'));
+        const closeBtn = document.querySelector('#ai-chat-window .chatbot-close');
+        if (closeBtn) setupAiCursorHover(closeBtn);
+        document.querySelectorAll('#ai-chat-window .quick-btn').forEach(btn => setupAiCursorHover(btn));
+      });
+    </script>
+    
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const forms = document.querySelectorAll('form[action="/cart/add"]');
+      if(forms.length > 0) {
+        forms.forEach(form => {
+          form.addEventListener('submit', function(e) {
+            if (e.submitter && e.submitter.getAttribute('formaction') === '/cart/buy-now') {
+              return;
+            }
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(this.action, {
+              method: 'POST',
+              body: formData,
+              redirect: 'follow'
+            }).then(res => {
+               document.getElementById('cart-popup').style.display = 'block';
+               let currentCount = parseInt(document.getElementById('cart-count')?.textContent || '0');
+               let addedQty = parseInt(this.querySelector('input[name="qty"]')?.value || '1');
+               if(document.getElementById('cart-count')) {
+                   document.getElementById('cart-count').textContent = currentCount + addedQty;
+               }
+            });
+          });
+        });
+      }
+    });
+  </script>
+
+  <div id="cart-popup" style="cursor: auto !important; display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--deep); padding:2rem; border:1px solid var(--gold); z-index:9000; color:var(--white); text-align:center; border-radius:8px; min-width:300px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    <div style="font-size:3rem; color:var(--gold); margin-bottom:1rem;">✓</div>
+    <h3 style="font-family:var(--sans); font-weight: 400; margin-bottom:1rem; color:var(--white);">Thêm vào giỏ hàng thành công!</h3>
+    <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
+      <button onclick="document.getElementById('cart-popup').style.display='none'" style="padding:0.8rem 1.5rem; background:transparent; border:1px solid var(--gold); color:var(--gold); cursor:pointer; font-weight:bold; border-radius:4px;">Tiếp tục mua sắm</button>
+      <button onclick="location.href='/cart'" style="padding:0.8rem 1.5rem; background:var(--gold); border:none; color:var(--black); cursor:pointer; font-weight:bold; border-radius:4px;">Xem giỏ hàng</button>
+    </div>
+  </div>
+
+  <script th:src="@{/js/socket-chat.js}"></script>
+</div>
 </body>
 </html>
+

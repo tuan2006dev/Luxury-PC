@@ -19,7 +19,7 @@ public class GlobalControllerAdvice {
         
         int cartCount = 0;
         if (cart != null) {
-            cartCount = cart.values().stream().mapToInt(CartItem::getQuantity).sum();
+            cartCount = cart.size();
         }
         
         model.addAttribute("cartCount", cartCount);

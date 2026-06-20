@@ -3,6 +3,7 @@ package poly.edu.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import poly.edu.entity.Product;
 import poly.edu.service.ProductService;
@@ -61,6 +62,33 @@ public class ProductApiController {
             } else {
                 map.put("image", "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=400&auto=format&fit=crop");
             }
+            return map;
+        }).collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/products/search")
+    public List<Map<String, Object>> searchProductsAjax(@RequestParam("q") String q) {
+        if (q == null || q.trim().isEmpty()) return new ArrayList<>();
+        List<Product> matches = productService.searchProducts(null, null, null, q);
+        return matches.stream().limit(5).map(p -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", p.getId());
+            map.put("name", p.getName());
+            map.put("productUrl", "/product/" + p.getId());
+            map.put("price", String.format("%,.0f₫", p.getPrice() != null ? p.getPrice() : 0.0).replace(',', '.'));
+            
+            String imageUrl = p.getImage();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                if (!imageUrl.startsWith("http")) {
+                    if (!imageUrl.startsWith("/images/products/")) {
+                        imageUrl = "/images/products/" + imageUrl;
+                    }
+                }
+            } else {
+                imageUrl = "/images/placeholder.png";
+            }
+            map.put("image", imageUrl);
+            map.put("cat", p.getCategory() != null ? p.getCategory().getName() : "Linh Kiện");
             return map;
         }).collect(Collectors.toList());
     }

@@ -40,7 +40,7 @@ body {
   font-weight: 400;
   overflow-x: hidden;
   cursor: none;
-  padding-bottom: 50px; /* Offset for fixed bottom marquee */
+  
 }
 
 a {
@@ -69,7 +69,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 9999999;
   transition: opacity 0.8s ease, visibility 0.8s ease;
 }
 
@@ -141,7 +141,7 @@ img {
   background: var(--gold);
   border-radius: 50%;
   pointer-events: none;
-  z-index: 9998;
+  z-index: 999999;
   transform: translate(-50%, -50%);
   transition: transform 0.1s ease, background 0.2s;
 }
@@ -153,7 +153,7 @@ img {
   border: 1px solid var(--gold);
   border-radius: 50%;
   pointer-events: none;
-  z-index: 9997;
+  z-index: 999998;
   transform: translate(-50%, -50%);
   transition: transform 0.25s ease, width 0.25s, height 0.25s, opacity 0.25s;
   opacity: 0.6;
@@ -730,14 +730,14 @@ body:hover .cursor {
   flex-direction: row;
   overflow-x: auto;
   overflow-y: hidden;
-  gap: 2px;
-  background: rgba(201, 168, 76, 0.08);
+  gap: 1.5rem;
+  background: transparent;
+  padding: 1rem 0;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 6px;
   /* Scrollbar styling */
   scrollbar-width: thin;
-  scrollbar-color: rgba(201, 168, 76, 0.5) rgba(201, 168, 76, 0.08);
+  scrollbar-color: rgba(201, 168, 76, 0.5) transparent;
 }
 
 .products-grid.vertical-slider {
@@ -746,11 +746,12 @@ body:hover .cursor {
   align-content: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 850px;
-  height: 75vh;
+  height: 35rem; /* Fits approx 1 row */
   scroll-snap-type: y mandatory;
-  padding-bottom: 20px;
+  padding-bottom: 0;
 }
+
+
 .products-grid.vertical-slider .product-card {
   scroll-snap-align: start;
   scroll-margin-top: 2px;
@@ -774,8 +775,8 @@ body:hover .cursor {
 }
 
 .products-grid .product-card {
-  flex: 0 0 calc(33.333% - 2px);
-  min-width: calc(33.333% - 2px);
+  flex: 0 0 calc(33.333% - 1rem);
+  min-width: calc(33.333% - 1rem);
   scroll-snap-align: start;
 }
 
@@ -934,6 +935,24 @@ body:hover .cursor {
   padding: 0.55rem 1.2rem;
   cursor: none;
   transition: var(--transition);
+}
+
+.btn-add-cart-icon {
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  color: var(--gold);
+  padding: 0.55rem 0.8rem;
+  cursor: none;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-cart-icon:hover {
+  background: var(--gold);
+  color: var(--black);
+  border-color: var(--gold);
 }
 
 .btn-add-cart:hover {
@@ -2616,6 +2635,8 @@ body:hover .cursor {
 .sri-icon {
   font-size: 2rem;
   flex-shrink: 0;
+  width: 60px;
+  height: 60px;
 }
 
 .sri-info {
@@ -2941,7 +2962,7 @@ body:hover .cursor {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  z-index: 10000;
+  z-index: 1990;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -2979,7 +3000,7 @@ body:hover .cursor {
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  z-index: 10000;
+  z-index: 1990;
   box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(201, 168, 76, 0.06);
   backdrop-filter: blur(20px);
   overflow: hidden;
@@ -3248,6 +3269,93 @@ body:hover .cursor {
   100% { opacity: 0.4; }
 }
 
+
+
+
+
+/* Autosuggest Search */
+.search-results-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    margin-top: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+.search-results-box.show {
+    display: block;
+}
+.search-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #222;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.2s;
+}
+.search-item:hover {
+    background: #222;
+    color: #fff;
+}
+.search-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 4px;
+    background: #fff;
+}
+.search-item-info {
+    flex: 1;
+}
+.search-item-title {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+}
+.search-item-price {
+    color: #c9a84c;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+
+/* Hide number input spinners globally */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+
+
+/* Safely shift chatbot components left by animating right property */
+
+/* Ensure chatbot components transition right smoothly */
+.chatbot-fab, .chatbot-window, .socket-chat-btn, .socket-chat-window {
+    transition: transform 0.3s, opacity 0.3s !important;
+}
+
+
+/* Ensure cursor is absolutely always on top */
+.cursor, .cursor-f, .cursor-follower {
+    z-index: 9999999 !important;
+}
 
 
 

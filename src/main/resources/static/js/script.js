@@ -33,8 +33,7 @@ const cursorFollower = document.getElementById('cursor-follower');
 let mouseX = 0, mouseY = 0;
 let followerX = 0, followerY = 0;
 
-if (cursor && cursorFollower) {
-  document.addEventListener('mousemove', (e) => {
+if (cursor && cursorFollower) { document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
     cursor.style.left = mouseX + 'px';
@@ -93,7 +92,7 @@ function updateCartUI() {
   const cartItemsEl = document.getElementById('cart-items');
   const cartTotalEl = document.getElementById('cart-total');
 
-  const totalItems = Object.values(cart).reduce((s, i) => s + i.qty, 0);
+  const totalItems = Object.keys(cart).length;
   const totalPrice = Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
 
   cartCount.textContent = totalItems;
@@ -362,7 +361,7 @@ if (newsletterForm) {
 // SCROLL REVEAL ANIMATIONS
 // =========================================
 const revealTargets = document.querySelectorAll(
-  '.product-card, .cat-card, .build-feat, .stat-item, .testi-card'
+  '.product-card, .cat-card, .build-feat, .stat-item, .testi-slider'
 );
 
 const revealObserver = new IntersectionObserver((entries) => {
@@ -853,10 +852,7 @@ window.selectLanguage = function(lang, event) {
     menu.classList.remove('show');
   }
 
-  const btn = document.getElementById('btn-lang-toggle');
-  if (btn) {
-    btn.innerHTML = lang.toUpperCase() + ' <span style="font-size: 0.6rem; margin-left: 4px;">▼</span>';
-  }
+  // Globe icon maintained
 
   if (typeof setLanguage === 'function') {
     setLanguage(lang);
@@ -877,10 +873,71 @@ document.addEventListener('click', (event) => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-  const currentLang = localStorage.getItem('lang') || 'vi';
-  const btn = document.getElementById('btn-lang-toggle');
-  if (btn) {
-    btn.innerHTML = (currentLang === 'vi' ? 'VI' : 'EN') + ' <span style="font-size: 0.6rem; margin-left: 4px;">▼</span>';
-  }
+// Globe icon is now handled purely in HTML, no DOMContentLoaded overwrite needed.
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Auto-suggest search
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        const searchForm = searchInput.closest("form");
+        if (searchForm) {
+            searchForm.style.position = "relative";
+            const resultsBox = document.createElement("div");
+            resultsBox.className = "search-results-box";
+            searchForm.appendChild(resultsBox);
+            let searchTimeout;
+            searchInput.addEventListener("input", function() {
+                const q = this.value.trim();
+                clearTimeout(searchTimeout);
+                if (q.length < 2) {
+                    resultsBox.classList.remove("show");
+                    return;
+                }
+                searchTimeout = setTimeout(() => {
+                    fetch("/api/products/search?q=" + encodeURIComponent(q))
+                        .then(res => res.json())
+                        .then(data => {
+                            resultsBox.innerHTML = "";
+                            if (data.length > 0) {
+                                data.forEach(item => {
+                                    const a = document.createElement("a");
+                                    a.href = item.productUrl;
+                                    a.className = "search-item";
+                                    a.innerHTML = `
+                                        <img src="${item.image}" alt="">
+                                        <div class="search-item-info">
+                                            <div class="search-item-title">${item.name}</div>
+                                            <div class="search-item-price">${item.price}</div>
+                                        </div>
+                                    `;
+                                    resultsBox.appendChild(a);
+                                });
+                                resultsBox.classList.add("show");
+                            } else {
+                                resultsBox.innerHTML = `<div style="padding: 10px; color: #888; text-align: center;">Kh�ng t�m th?y s?n ph?m</div>`;
+                                resultsBox.classList.add("show");
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }, 300);
+            });
+            document.addEventListener("click", function(e) {
+                if (!searchForm.contains(e.target)) {
+                    resultsBox.classList.remove("show");
+                }
+            });
+            searchInput.addEventListener("focus", function() {
+                if (this.value.trim().length >= 2) {
+                    resultsBox.classList.add("show");
+                }
+            });
+        }
+    }
 });
+
+
+
+
+
+
+
