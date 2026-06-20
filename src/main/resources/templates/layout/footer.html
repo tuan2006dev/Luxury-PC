@@ -181,132 +181,8 @@
                 </div>
                 <button class="vmodal-copy-btn" id="vmodal-copy-btn" data-translate="voucher-copy">Sao Chép Mã Voucher</button>
                 <div class="vmodal-note" data-translate="voucher-note">Nhập mã tại bước thanh toán để áp dụng ưu đãi.</div>
-            </div>
         </div>
-
-        <!-- TRANSLATION SCRIPT -->
-        <script th:inline="javascript">
-            const translations = {
-                vi: {
-                    "nav-products": "Sản Phẩm",
-                    "nav-build": "Build PC",
-                    "nav-promo": "Khuyến Mãi",
-                    "nav-news": "Tin Tức",
-                    "nav-contact": "Liên Hệ",
-                    "nav-login": "ĐĂNG NHẬP",
-                    "nav-profile": "HỒ SƠ",
-                    "search-quick": "Tìm nhanh:",
-                    "search-hint": "Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.",
-                    "footer-desc": "Nơi công nghệ gặp gỡ sự xa xỉ. Linh kiện cao cấp, tư vấn chuyên nghiệp, dịch vụ hoàn hảo.",
-                    "footer-h-components": "Linh Kiện",
-                    "footer-h-services": "Dịch Vụ",
-                    "footer-h-contact": "Liên Hệ",
-                    "footer-cpu": "CPU & Bộ Xử Lý",
-                    "footer-vga": "VGA & Card Đồ Họa",
-                    "footer-main": "Mainboard",
-                    "footer-ram": "RAM & Bộ Nhớ",
-                    "footer-ssd": "SSD & Lưu Trữ",
-                    "footer-build": "Build PC Theo Yêu Cầu",
-                    "footer-advice": "Tư Vấn Cấu Hình",
-                    "footer-warranty": "Bảo Hành & Sửa Chữa",
-                    "footer-upgrade": "Nâng Cấp Hệ Thống",
-                    "footer-gaming": "PC Gaming Cao Cấp",
-                    "footer-rights": "© 2025 Luxury PC. Tất cả quyền được bảo lưu. Bản quyền thuộc Luxury Technology JSC.",
-                    "cart-title": "Giỏ Hàng",
-                    "cart-empty": "Giỏ hàng của bạn đang trống.",
-                    "cart-total-label": "Tổng cộng",
-                    "cart-checkout": "Thanh Toán Ngay",
-                    "voucher-code-label": "Mã Voucher",
-                    "voucher-benefit": "Ưu đãi",
-                    "voucher-apply": "Áp dụng",
-                    "voucher-expiry": "Thời hạn",
-                    "voucher-usage": "Lượt dùng",
-                    "voucher-copy": "Sao Chép Mã Voucher",
-                    "voucher-note": "Nhập mã tại bước thanh toán để áp dụng ưu đãi."
-                },
-                en: {
-                    "nav-products": "Products",
-                    "nav-build": "Build PC",
-                    "nav-promo": "Offers",
-                    "nav-news": "News",
-                    "nav-contact": "Contact",
-                    "nav-login": "LOGIN",
-                    "nav-profile": "PROFILE",
-                    "search-quick": "Quick search:",
-                    "search-hint": "Enter keywords to search products at Luxury PC.",
-                    "footer-desc": "Where technology meets luxury. Premium components, professional consulting, perfect service.",
-                    "footer-h-components": "Components",
-                    "footer-h-services": "Services",
-                    "footer-h-contact": "Contact Us",
-                    "footer-cpu": "CPUs & Processors",
-                    "footer-vga": "VGAs & Graphics Cards",
-                    "footer-main": "Motherboards",
-                    "footer-ram": "RAM & Memory",
-                    "footer-ssd": "SSD & Storage",
-                    "footer-build": "Custom PC Builder",
-                    "footer-advice": "Configuration Advice",
-                    "footer-warranty": "Warranty & Repairs",
-                    "footer-upgrade": "System Upgrades",
-                    "footer-gaming": "Premium Gaming PCs",
-                    "footer-rights": "© 2025 Luxury PC. All rights reserved. Copyright belongs to Luxury Technology JSC.",
-                    "cart-title": "Cart",
-                    "cart-empty": "Your cart is currently empty.",
-                    "cart-total-label": "Total",
-                    "cart-checkout": "Checkout Now",
-                    "voucher-code-label": "Voucher Code",
-                    "voucher-benefit": "Benefit",
-                    "voucher-apply": "Applicable for",
-                    "voucher-expiry": "Expiry Date",
-                    "voucher-usage": "Usage limit",
-                    "voucher-copy": "Copy Voucher Code",
-                    "voucher-note": "Enter the code at checkout to apply the discount."
-                }
-            };
-
-            function setLanguage(lang) {
-                localStorage.setItem('lang', lang);
-                
-                // Toggle active state in language selector
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.lang === lang);
-                });
-
-                // Cập nhật text ngôn ngữ cạnh quả địa cầu
-                const langText = document.getElementById('current-lang-text');
-                if (langText) {
-                    langText.textContent = lang.toUpperCase();
-                }
-
-                // Translate elements
-                document.querySelectorAll('[data-translate]').forEach(el => {
-                    const key = el.getAttribute('data-translate');
-                    if (translations[lang] && translations[lang][key]) {
-                        el.textContent = translations[lang][key];
-                    }
-                });
-            }
-
-            document.addEventListener('DOMContentLoaded', () => {
-                const savedLang = localStorage.getItem('lang') || 'vi';
-                setLanguage(savedLang);
-
-                // Bind click events
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const lang = btn.dataset.lang;
-                        setLanguage(lang);
-                        
-                        const msg = lang === 'en' ? 'Language switched to English' : 'Đã đổi ngôn ngữ sang Tiếng Việt';
-                        if (typeof showToast === 'function') {
-                            showToast(msg);
-                        } else if (typeof toast === 'function') {
-                            toast(msg);
-                        }
-                    });
-                });
-            });
-        </script>
+    </div>
         <!-- AI Advisor Floating Panel (Matching React Chatbot Style) -->
     <div class="chatbot-fab" id="chatbot-fab-trigger" onclick="handleFabClick()">
       🤖 <span class="chatbot-fab-label">Hỗ trợ</span>
@@ -354,7 +230,7 @@
 
       <!-- Input row -->
       <div class="chatbot-input-row">
-        <textarea class="chatbot-input" id="chat-input-field" placeholder="Hỏi về linh kiện, budget, tương thích..." rows="1" onkeypress="handleChatKeyPress(event)"></textarea>
+        <textarea class="chatbot-input" id="chat-input-field" data-translate-placeholder="footer-chatbot-placeholder" placeholder="Hỏi về linh kiện, budget, tương thích..." rows="1" onkeypress="handleChatKeyPress(event)"></textarea>
         <button class="chatbot-send" id="chat-send-btn" onclick="sendChatMessage()">➤</button>
       </div>
     </div>

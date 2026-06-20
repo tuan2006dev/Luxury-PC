@@ -29,53 +29,53 @@
     <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
     <nav>
         <a href="/admin/dashboard" class="nav-link" id="nav-dashboard">
-            <i class="fa-solid fa-chart-line"></i> Dashboard
+            <i class="fa-solid fa-chart-line"></i> <span data-translate="admin-sidebar-dashboard">Dashboard</span>
         </a>
     
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('productMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-box main-icon"></i> Quản Lý Sản Phẩm
+                    <i class="fa-solid fa-box main-icon"></i> <span data-translate="admin-sidebar-manage-products">Quản Lý Sản Phẩm</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="productMenu">
-                <a href="/admin/products" id="nav-products">Sản phẩm</a>
-                <a href="/admin/categories" id="nav-categories">Danh mục</a>
-                <a href="/admin/flash-sales" id="nav-flash-sales">Flash Sale</a>
+                <a href="/admin/products" id="nav-products" data-translate="admin-sidebar-products">Sản phẩm</a>
+                <a href="/admin/categories" id="nav-categories" data-translate="admin-sidebar-categories">Danh mục</a>
+                <a href="/admin/flash-sales" id="nav-flash-sales" data-translate="admin-sidebar-flashsales">Flash Sale</a>
             </div>
         </div>
     
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('inventoryMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-warehouse main-icon"></i> Quản Lý Kho
+                    <i class="fa-solid fa-warehouse main-icon"></i> <span data-translate="admin-sidebar-manage-inventory">Quản Lý Kho</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="inventoryMenu">
-                <a href="/admin/inventory" id="nav-inventory">Kho hàng</a>
-                <a href="/admin/orders" id="nav-orders">Đơn hàng</a>
+                <a href="/admin/inventory" id="nav-inventory" data-translate="admin-sidebar-inventory">Kho hàng</a>
+                <a href="/admin/orders" id="nav-orders" data-translate="admin-sidebar-orders">Đơn hàng</a>
             </div>
         </div>
     
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('userMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-users main-icon"></i> Người Dùng & Hỗ Trợ
+                    <i class="fa-solid fa-users main-icon"></i> <span data-translate="admin-sidebar-manage-users">Người Dùng & Hỗ Trợ</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="userMenu">
-                <a href="/admin/account" id="nav-account">Người dùng</a>
-                <a href="/admin/vouchers" id="nav-vouchers">Voucher</a>
-                <a href="/admin/tickets" id="nav-tickets">Hỗ Trợ (Tickets)</a>
+                <a href="/admin/account" id="nav-account" data-translate="admin-sidebar-users">Người dùng</a>
+                <a href="/admin/vouchers" id="nav-vouchers" data-translate="admin-sidebar-vouchers">Voucher</a>
+                <a href="/admin/tickets" id="nav-tickets" data-translate="admin-sidebar-tickets">Hỗ Trợ (Tickets)</a>
             </div>
         </div>
     
         <form method="post" th:action="@{/logout}" style="margin-top:2rem;">
             <button type="submit" class="nav-link" style="color:var(--red, #ef4444); background:none; border:none; width:100%; text-align:left; cursor:pointer;">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span data-translate="admin-sidebar-logout">Đăng Xuất</span>
             </button>
         </form>
     </nav>
@@ -129,6 +129,106 @@
                     }
                 }
             }
+        });
+    </script>
+
+    <!-- ADMIN GLOBAL TRANSLATION SCRIPT -->
+    <script>
+        let translations = {};
+        const reportedKeys = new Set();
+
+        window.t = function(key, defaultValue) {
+            const lang = localStorage.getItem('lang') || 'vi';
+            return (translations[lang] && translations[lang][key]) || defaultValue;
+        };
+
+        function setLanguage(lang) {
+            localStorage.setItem('lang', lang);
+            
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    const val = translations[lang][key];
+                    if (el.children.length === 0) {
+                        el.textContent = val;
+                    } else {
+                        let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                        if (textNode) {
+                            textNode.nodeValue = val;
+                        }
+                    }
+                } else {
+                    reportMissingKey(key, el.textContent.trim());
+                }
+            });
+
+            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-translate-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    el.setAttribute('placeholder', translations[lang][key]);
+                }
+            });
+        }
+
+        function reportMissingKey(key, defaultValue) {
+            if (!key || !defaultValue || reportedKeys.has(key)) return;
+            reportedKeys.add(key);
+
+            fetch('/api/translations/missing', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: key, defaultValue: defaultValue })
+            }).catch(err => console.warn("Lỗi gửi báo cáo dịch tự động (admin):", err));
+        }
+
+        async function loadTranslations() {
+            const savedLang = localStorage.getItem('lang') || 'vi';
+
+            const cachedData = localStorage.getItem('translations_cache');
+            if (cachedData) {
+                try {
+                    translations = JSON.parse(cachedData);
+                    setLanguage(savedLang);
+                } catch (e) {
+                    console.error("Lỗi đọc cache dịch admin:", e);
+                }
+            }
+
+            try {
+                const response = await fetch('/api/translations');
+                const newData = await response.json();
+                
+                localStorage.setItem('translations_cache', JSON.stringify(newData));
+                translations = newData;
+                setLanguage(savedLang);
+            } catch (error) {
+                console.error("Lỗi khi tải bộ từ điển dịch thuật admin:", error);
+            }
+        }
+
+        function startTranslationObserver() {
+            const observer = new MutationObserver((mutations) => {
+                let hasNewTranslateElement = false;
+                mutations.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            if (node.hasAttribute('data-translate') || node.querySelector('[data-translate]')) {
+                                hasNewTranslateElement = true;
+                            }
+                        }
+                    });
+                });
+                if (hasNewTranslateElement) {
+                    const savedLang = localStorage.getItem('lang') || 'vi';
+                    setLanguage(savedLang);
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTranslations();
+            startTranslationObserver();
         });
     </script>
 </div>

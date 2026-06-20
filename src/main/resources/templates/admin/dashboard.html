@@ -63,10 +63,10 @@
     <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
 <div class="main-content">
-        <div class="header fade-in-up">
+        <div class="header frame-in-up">
             <div class="title">
-                <h1 class="text-gradient">Bảng Điều Khiển</h1>
-                <p>Tổng quan tình hình kinh doanh tháng <span id="current-month"></span></p>
+                <h1 class="text-gradient" data-translate="admin-dashboard-title">Bảng Điều Khiển</h1>
+                <p><span data-translate="admin-dashboard-subtitle">Tổng quan tình hình kinh doanh tháng </span><span id="current-month"></span></p>
             </div>
             <div class="user-info">
                 <i class="fa-solid fa-user-shield"></i>
@@ -77,39 +77,39 @@
         <div class="stats-grid">
             <div class="stat-card fade-in-up delay-1">
                 <i class="fa-solid fa-wallet stat-icon"></i>
-                <div class="stat-label">Doanh Thu Tháng</div>
+                <div class="stat-label" data-translate="admin-dashboard-revenue-label">Doanh Thu Tháng</div>
                 <div class="stat-value">452.500.000₫</div>
             </div>
             <div class="stat-card fade-in-up delay-2">
                 <i class="fa-solid fa-cart-shopping stat-icon"></i>
-                <div class="stat-label">Đơn Hàng Mới</div>
+                <div class="stat-label" data-translate="admin-dashboard-new-orders-label">Đơn Hàng Mới</div>
                 <div class="stat-value" th:text="${pendingCount} ?: 0">12</div>
             </div>
             <div class="stat-card fade-in-up delay-3">
                 <i class="fa-solid fa-triangle-exclamation stat-icon"></i>
-                <div class="stat-label">Cảnh Báo Kho</div>
+                <div class="stat-label" data-translate="admin-dashboard-low-stock-label">Cảnh Báo Kho</div>
                 <div class="stat-value" th:text="${lowStock} ? ${lowStock.size()} : 0">3</div>
             </div>
             <div class="stat-card fade-in-up delay-4">
                 <i class="fa-solid fa-users stat-icon"></i>
-                <div class="stat-label">Tổng Khách Hàng</div>
+                <div class="stat-label" data-translate="admin-dashboard-customers-label">Tổng Khách Hàng</div>
                 <div class="stat-value">1,248</div>
             </div>
         </div>
 
         <div class="chart-container fade-in-up delay-2">
-            <div class="table-h"><i class="fa-solid fa-chart-area"></i> Biểu Đồ Doanh Thu Học Kỳ 1 - 2026</div>
+            <div class="table-h"><i class="fa-solid fa-chart-area"></i> <span data-translate="admin-dashboard-chart-title">Biểu Đồ Doanh Thu Học Kỳ 1 - 2026</span></div>
             <canvas id="revenueChart" height="80"></canvas>
         </div>
 
         <div class="dashboard-grid fade-in-up delay-3">
             <div class="table-card">
-                <div class="table-h"><i class="fa-solid fa-fire"></i> Sản Phẩm Bán Chạy Nhất</div>
+                <div class="table-h"><i class="fa-solid fa-fire"></i> <span data-translate="admin-dashboard-best-sellers-title">Sản Phẩm Bán Chạy Nhất</span></div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Tên Linh Kiện</th>
-                            <th style="text-align: right;">Đã Bán</th>
+                            <th data-translate="admin-dashboard-col-product">Tên Linh Kiện</th>
+                            <th style="text-align: right;" data-translate="admin-dashboard-col-sold">Đã Bán</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -131,25 +131,25 @@
             </div>
 
             <div class="table-card">
-                <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> Cảnh Báo Kho Hàng (Sắp Hết)</div>
+                <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> <span data-translate="admin-dashboard-stock-alerts-title">Cảnh Báo Kho Hàng (Sắp Hết)</span></div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Sản Phẩm</th>
-                            <th>Tồn Kho</th>
-                            <th>Trạng Thái</th>
+                            <th data-translate="admin-dashboard-col-alert-product">Sản Phẩm</th>
+                            <th data-translate="admin-dashboard-col-stock">Tồn Kho</th>
+                            <th data-translate="admin-dashboard-col-status">Trạng Thái</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="item : ${lowStock}">
                             <td th:text="${item.product.name}">CPU i9-14900K</td>
                             <td th:text="${item.quantity}" style="font-weight: bold;">2</td>
-                            <td><span class="badge badge-red">Chỉ còn ít</span></td>
+                            <td><span class="badge badge-red" data-translate="admin-dashboard-badge-low">Chỉ còn ít</span></td>
                         </tr>
                         <tr th:if="${lowStock == null or lowStock.empty}">
                             <td colspan="3" style="text-align: center; color: var(--green); padding: 2rem 0;">
                                 <i class="fa-solid fa-check-circle" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
-                                Tất cả sản phẩm đều đủ hàng.
+                                <span data-translate="admin-dashboard-stock-ok">Tất cả sản phẩm đều đủ hàng.</span>
                             </td>
                         </tr>
                     </tbody>

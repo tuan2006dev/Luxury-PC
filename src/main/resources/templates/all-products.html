@@ -20,31 +20,31 @@
 
     <main class="container">
         <header class="page-header">
-            <span class="section-label">Luxury Collection</span>
-            <h1 class="page-title">Tất Cả <em>Linh Kiện</em></h1>
+            <span class="section-label" data-translate="products-header-label">Luxury Collection</span>
+            <h1 class="page-title" data-translate="products-header-title">Tất Cả Linh Kiện</h1>
         </header>
 
         <!-- SEARCH & FILTER BAR -->
         <section class="filters-section">
             <form th:action="@{/products}" method="GET" class="filter-form">
                 <div class="filter-group">
-                    <label>Danh Mục</label>
+                    <label data-translate="products-filter-category">Danh Mục</label>
                     <select name="cid" class="filter-select">
-                        <option value="">Tất Cả Danh Mục</option>
+                        <option value="" data-translate="products-filter-all-cats">Tất Cả Danh Mục</option>
                         <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"
                             th:selected="${c.id == selectedCid}"></option>
                     </select>
                 </div>
 
                 <div class="filter-group">
-                    <label>Khoảng Giá</label>
+                    <label data-translate="products-filter-price">Khoảng Giá</label>
                     <div class="price-inputs">
                         <input type="hidden" name="min" id="minPriceHidden" th:value="${minPrice != null ? (minPrice < 0 ? 0 : minPrice.longValue()) : null}" />
-                        <input type="text" id="minPriceDisplay" th:value="${minPrice != null ? (minPrice < 0 ? 0 : #numbers.formatDecimal(minPrice, 0, 'POINT', 0, 'COMMA')) : null}" placeholder="Từ..."
+                        <input type="text" id="minPriceDisplay" th:value="${minPrice != null ? (minPrice < 0 ? 0 : #numbers.formatDecimal(minPrice, 0, 'POINT', 0, 'COMMA')) : null}" placeholder="Từ..." data-translate-placeholder="products-filter-price-from"
                             class="filter-input" oninput="formatPriceInput(this, 'minPriceHidden')" />
                         <span class="price-sep">-</span>
                         <input type="hidden" name="max" id="maxPriceHidden" th:value="${maxPrice != null ? (maxPrice < 0 ? 0 : maxPrice.longValue()) : null}" />
-                        <input type="text" id="maxPriceDisplay" th:value="${maxPrice != null ? (maxPrice < 0 ? 0 : #numbers.formatDecimal(maxPrice, 0, 'POINT', 0, 'COMMA')) : null}" placeholder="Đến..."
+                        <input type="text" id="maxPriceDisplay" th:value="${maxPrice != null ? (maxPrice < 0 ? 0 : #numbers.formatDecimal(maxPrice, 0, 'POINT', 0, 'COMMA')) : null}" placeholder="Đến..." data-translate-placeholder="products-filter-price-to"
                             class="filter-input" oninput="formatPriceInput(this, 'maxPriceHidden')" />
                     </div>
                     <script>
@@ -61,13 +61,13 @@
                 </div>
 
                 <div class="filter-group kw">
-                    <label>Tìm Kiếm</label>
-                    <input type="text" name="kw" th:value="${keywords}" placeholder="Tên sản phẩm, thông số..."
+                    <label data-translate="products-filter-search">Tìm Kiếm</label>
+                    <input type="text" name="kw" th:value="${keywords}" placeholder="Tên sản phẩm, thông số..." data-translate-placeholder="products-filter-search-placeholder"
                         class="filter-input" />
                 </div>
 
-                <button type="submit" class="btn-filter"><span>Áp Dụng</span></button>
-                <a th:href="@{/products}" class="btn-reset">Xóa Lọc</a>
+                <button type="submit" class="btn-filter"><span data-translate="products-btn-filter">Áp Dụng</span></button>
+                <a th:href="@{/products}" class="btn-reset" data-translate="products-btn-reset">Xóa Lọc</a>
             </form>
         </section>
 
@@ -80,7 +80,7 @@
                 <div class="product-img-wrap">
                     <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}"
                         class="product-img" />
-                    <div th:if="${p.price > 30000000}" class="product-badge">Premium</div>
+                    <div th:if="${p.price > 30000000}" class="product-badge" data-translate="product-badge-premium">Premium</div>
                 </div>
                 <div class="product-info">
                     <span class="product-cat" th:text="${p.category != null ? p.category.name : 'Linh Kiện'}">CPU</span>
@@ -97,7 +97,7 @@
                             <button type="submit" class="btn-add-cart-icon" onclick="event.stopPropagation();" title="Thêm vào giỏ">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                             </button>
-                            <button type="submit" formaction="/cart/buy-now" class="btn-add-cart" onclick="event.stopPropagation();"><span>Mua Ngay</span></button>
+                            <button type="submit" formaction="/cart/buy-now" class="btn-add-cart" onclick="event.stopPropagation();"><span data-translate="product-btn-buy-now">Mua Ngay</span></button>
                           </form>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
             <!-- Case where no products are found -->
             <div th:if="${#lists.isEmpty(allProducts)}" class="cart-empty-state" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <div class="empty-icon">♢</div>
-                <p>Hiện chưa có sản phẩm nào trong bộ sưu tập này.</p>
+                <p data-translate="products-empty-state">Hiện chưa có sản phẩm nào trong bộ sưu tập này.</p>
             </div>
         </section>
     </main>

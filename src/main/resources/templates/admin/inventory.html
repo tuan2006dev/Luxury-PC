@@ -14,17 +14,17 @@
 <div class="main-content">
         <div class="table-card">
             <div class="table-h">
-                <h2>Quản Lý Kho Hàng</h2>
-                <span th:text="${inventory.size()} + ' sản phẩm'">0 sản phẩm</span>
+                <h2 data-translate="admin-inventory-title">Quản Lý Kho Hàng</h2>
+                <span><span th:text="${inventory.size()}">0</span> <span data-translate="admin-inventory-text-products">sản phẩm</span></span>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <th>Sản Phẩm</th>
-                        <th>Danh Mục</th>
-                        <th>Tồn Kho</th>
-                        <th>Cập Nhật Cuối</th>
-                        <th>Điều Chỉnh Kho</th>
+                        <th data-translate="admin-inventory-th-product">Sản Phẩm</th>
+                        <th data-translate="admin-inventory-th-category">Danh Mục</th>
+                        <th data-translate="admin-inventory-th-stock">Tồn Kho</th>
+                        <th data-translate="admin-inventory-th-last-update">Cập Nhật Cuối</th>
+                        <th data-translate="admin-inventory-th-adjust">Điều Chỉnh Kho</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,19 +35,19 @@
                         <td th:text="${item.product.category.name}">Category</td>
                         <td>
                             <span th:text="${item.quantity}">0</span>
-                            <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:5px;">Sắp hết</span>
+                            <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:5px;" data-translate="admin-inventory-badge-low">Sắp hết</span>
                         </td>
                         <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
                         <td>
                             <form action="/admin/inventory/adjust" method="post" style="display:flex; align-items:center;">
                                 <input type="hidden" name="productId" th:value="${item.product.id}">
-                                <input type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1">
+                                <input type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
                                 <select name="type" class="type-select">
-                                    <option value="IMPORT">Nhập Kho</option>
-                                    <option value="EXPORT">Xuất Kho</option>
+                                    <option value="IMPORT" data-translate="admin-inventory-option-import">Nhập Kho</option>
+                                    <option value="EXPORT" data-translate="admin-inventory-option-export">Xuất Kho</option>
                                 </select>
-                                <input type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú">
-                                <button type="submit" class="adj-btn">Xác Nhận</button>
+                                <input type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú" data-translate-placeholder="admin-inventory-placeholder-note">
+                                <button type="submit" class="adj-btn" data-translate="admin-inventory-btn-submit">Xác Nhận</button>
                             </form>
                         </td>
                     </tr>
