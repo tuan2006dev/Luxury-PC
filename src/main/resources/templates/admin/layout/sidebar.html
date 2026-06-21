@@ -1,4 +1,4 @@
-<div class="sidebar" id="admin-sidebar" data-turbo-permanent th:fragment="sidebar">
+<div class="sidebar" th:fragment="sidebar">
     <link rel="stylesheet" th:href="@{/css/admin/admin-luxury.css}">
     <style>
         .sidebar { width: 280px; background: rgba(17, 17, 17, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-right: 1px solid rgba(201,168,76,0.15); padding: 2rem; position: fixed; height: 100vh; z-index: 100; overflow-y: auto; box-shadow: 4px 0 24px rgba(0,0,0,0.4); }
@@ -80,9 +80,6 @@
         </form>
     </nav>
 
-    <!-- SPA Router (Turbo) -->
-    <script type="module" src="https://cdn.skypack.dev/@hotwired/turbo"></script>
-
     <script>
         function toggleSidebarMenu(menuId, titleEl) {
             const menu = document.getElementById(menuId);
@@ -91,79 +88,112 @@
             if (isShowing) {
                 menu.classList.remove('show');
                 titleEl.classList.remove('active');
-                localStorage.setItem('sidebar_state_' + menuId, 'closed');
             } else {
                 menu.classList.add('show');
                 titleEl.classList.add('active');
-                localStorage.setItem('sidebar_state_' + menuId, 'opened');
             }
         }
 
-        function initSidebarActiveStatus() {
-            const path = window.location.pathname;
-            const linkMap = {
-                '/admin/dashboard': 'nav-dashboard',
-                '/admin/products': 'nav-products',
-                '/admin/categories': 'nav-categories',
-                '/admin/flash-sales': 'nav-flash-sales',
-                '/admin/flash-sale-items': 'nav-flash-sales',
-                '/admin/inventory': 'nav-inventory',
-                '/admin/orders': 'nav-orders',
-                '/admin/account': 'nav-account',
-                '/admin/vouchers': 'nav-vouchers',
-                '/admin/tickets': 'nav-tickets'
-            };
+        document.addEventListener('DOMContentLoaded', () => {
+            if(window.__spaInitialized) return;
+            window.__spaInitialized = true;
 
-            // Remove active classes from links
-            document.querySelectorAll('.sub-menu a, .nav-link').forEach(el => {
-                el.classList.remove('active');
-            });
+            function updateSidebarActiveStatus(path) {
+                document.querySelectorAll('.sub-menu a, .nav-link, .menu-title').forEach(el => el.classList.remove('active'));
+                
+                const linkMap = {
+                    '/admin/dashboard': 'nav-dashboard',
+                    '/admin/products': 'nav-products',
+                    '/admin/categories': 'nav-categories',
+                    '/admin/flash-sales': 'nav-flash-sales',
+                    '/admin/flash-sale-items': 'nav-flash-sales',
+                    '/admin/inventory': 'nav-inventory',
+                    '/admin/orders': 'nav-orders',
+                    '/admin/account': 'nav-account',
+                    '/admin/vouchers': 'nav-vouchers',
+                    '/admin/tickets': 'nav-tickets'
+                };
+                
+                let activeId = null;
+                for (let key in linkMap) {
+                    if (path.startsWith(key)) activeId = linkMap[key];
+                }
 
-            let activeId = null;
-            for (let key in linkMap) {
-                if (path.startsWith(key)) {
-                    activeId = linkMap[key];
+                if (activeId) {
+                    const activeEl = document.getElementById(activeId);
+                    if (activeEl) {
+                        activeEl.classList.add('active');
+                        const parentMenu = activeEl.closest('.sub-menu');
+                        if (parentMenu) {
+                            parentMenu.classList.add('show');
+                            const titleEl = parentMenu.previousElementSibling;
+                            if (titleEl && titleEl.classList.contains('menu-title')) {
+                                titleEl.classList.add('active');
+                            }
+                        }
+                    }
                 }
             }
 
-            if (activeId) {
-                const activeEl = document.getElementById(activeId);
-                if (activeEl) {
-                    activeEl.classList.add('active');
-                }
-            }
+            // Init on load
+            updateSidebarActiveStatus(window.location.pathname);
 
-            // Restore menu open/close states
-            const menus = ['productMenu', 'inventoryMenu', 'userMenu'];
-            menus.forEach(menuId => {
-                const menu = document.getElementById(menuId);
-                if (!menu) return;
-                
-                const titleEl = menu.previousElementSibling;
-                const savedState = localStorage.getItem('sidebar_state_' + menuId);
-                const hasActiveLink = activeId && menu.querySelector('#' + activeId);
-                
-                let shouldShow = false;
-                if (savedState === 'opened') {
-                    shouldShow = true;
-                } else if (savedState === 'closed') {
-                    shouldShow = false;
-                } else {
-                    shouldShow = !!hasActiveLink;
-                }
+            // Custom SPA Router (PJAX)
+            document.querySelectorAll('.sub-menu a, #nav-dashboard').forEach(link => {
+                link.addEventListener('click', async (e) => {
+                    const url = link.getAttribute('href');
+                    if (!url || url === '#' || url.startsWith('javascript')) return;
+                    
+                    if (window.location.pathname === url) {
+                        e.preventDefault();
+                        return;
+                    }
+                    if (e.ctrlKey || e.metaKey || link.target === '_blank') return;
+                    
+                    e.preventDefault();
 
-                if (shouldShow) {
-                    menu.classList.add('show');
-                    if (titleEl && titleEl.classList.contains('menu-title')) titleEl.classList.add('active');
-                } else {
-                    menu.classList.remove('show');
-                    if (titleEl && titleEl.classList.contains('menu-title')) titleEl.classList.remove('active');
-                }
+                    const mainContent = document.querySelector('.main-content');
+                    if(mainContent) mainContent.style.opacity = '0.5';
+
+                    window.history.pushState({}, '', url);
+                    updateSidebarActiveStatus(url);
+
+                    try {
+                        const res = await fetch(url);
+                        const html = await res.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        const newContent = doc.querySelector('.main-content');
+                        if (newContent) {
+                            if (mainContent) mainContent.replaceWith(newContent);
+                            
+                            // Execute new scripts
+                            const scripts = newContent.querySelectorAll('script');
+                            scripts.forEach(oldScript => {
+                                const newScript = document.createElement('script');
+                                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                                oldScript.parentNode.replaceChild(newScript, oldScript);
+                            });
+
+                            // Re-apply language translations if present
+                            const savedLang = localStorage.getItem('lang') || 'vi';
+                            if (typeof setLanguage === 'function') setLanguage(savedLang);
+
+                            // Trigger event for other components
+                            document.dispatchEvent(new Event('spa:load'));
+                        } else {
+                            window.location.href = url; // Fallback
+                        }
+                    } catch(err) {
+                        window.location.href = url; // Fallback
+                    }
+                });
             });
-        }
 
-        document.addEventListener('DOMContentLoaded', initSidebarActiveStatus);
-        document.addEventListener('turbo:load', initSidebarActiveStatus);
+            window.addEventListener('popstate', () => window.location.reload());
+        });
     </script>
 
     <!-- ADMIN GLOBAL TRANSLATION SCRIPT -->
@@ -267,7 +297,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', initTranslations);
-        document.addEventListener('turbo:load', initTranslations);
     </script>
     <script>
         // Global Delete Confirmation using SweetAlert2

@@ -27,4 +27,4 @@ function initProductFormState() {
 }
 
 document.addEventListener('DOMContentLoaded', initProductFormState);
-document.addEventListener('turbo:load', initProductFormState);
+document.addEventListener('spa:load', initProductFormState);
