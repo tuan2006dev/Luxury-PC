@@ -124,7 +124,9 @@ public class VoucherService {
         return voucherDAO.save(voucher);
     }
 
+    @Transactional
     public void deleteVoucher(Integer id) {
+        userVoucherDAO.deleteByVoucherId(id);
         voucherDAO.deleteById(id);
     }
 
