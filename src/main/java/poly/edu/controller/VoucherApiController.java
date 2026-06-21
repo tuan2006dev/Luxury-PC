@@ -2,8 +2,11 @@ package poly.edu.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.CartItem;
+import poly.edu.entity.User;
+import poly.edu.service.ProfileService;
 import poly.edu.service.VoucherService;
 
 import java.util.Collection;
@@ -16,14 +19,19 @@ public class VoucherApiController {
     @Autowired
     private VoucherService voucherService;
 
+    @Autowired
+    private ProfileService profileService;
+
     /**
      * AJAX endpoint: validate mã voucher
      * POST /api/voucher/validate?code=XXX
+     * Lấy user từ Spring Security Authentication thay vì session attribute
      */
     @PostMapping("/validate")
     public Map<String, Object> validateVoucher(
             @RequestParam String code,
-            HttpSession session) {
+            HttpSession session,
+            Authentication authentication) {
 
         @SuppressWarnings("unchecked")
         Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
@@ -35,7 +43,13 @@ public class VoucherApiController {
                     .sum();
         }
 
-        poly.edu.entity.User user = (poly.edu.entity.User) session.getAttribute("user");
+        // Ưu tiên lấy user từ Spring Security session
+        User user = null;
+        if (authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(String.valueOf(authentication.getPrincipal()))) {
+            user = profileService.getCurrentUser(authentication);
+        }
+
         return voucherService.validateVoucher(code, cartTotal, user);
     }
 }

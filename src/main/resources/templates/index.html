@@ -271,8 +271,8 @@
                  th:data-limit="${v.usageLimit != null ? (v.usageLimit - v.usedCount) + ' lượt còn lại' : 'Không giới hạn'}">
                 <div class="voucher-left">
                     <div class="voucher-pct">
-                        <span th:if="${v.discountType.name() == 'PERCENTAGE'}" th:text="${v.discountValue.intValue()} + '%'">10%</span>
-                        <span th:if="${v.discountType.name() == 'FIXED_AMOUNT'}" th:text="${#numbers.formatDecimal(v.discountValue / 1000, 0, 'COMMA', 0, 'POINT')} + 'K'">500K</span>
+                        <span th:if="${v.discountType != null and v.discountType.name() == 'PERCENTAGE'}" th:text="${v.discountValue != null ? v.discountValue.intValue() + '%' : '0%'}">10%</span>
+                        <span th:if="${v.discountType != null and v.discountType.name() == 'FIXED_AMOUNT'}" th:text="${v.discountValue != null ? #numbers.formatDecimal(v.discountValue / 1000, 0, 'COMMA', 0, 'POINT') + 'K' : '0K'}">500K</span>
                     </div>
                     <div class="voucher-type" th:text="${v.category != null ? v.category.name : 'Giảm Giá'}" th:data-translate="${v.category != null ? v.category.name : 'Giảm Giá'}">Giảm Giá</div>
                 </div>
