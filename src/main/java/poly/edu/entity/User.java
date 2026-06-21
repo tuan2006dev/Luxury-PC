@@ -52,6 +52,9 @@ public class User {
     @Column(name = "notify_weekly_newsletter")
     private Boolean notifyWeeklyNewsletter = true;
 
+    @Column(name = "two_factor_enabled")
+    private Boolean twoFactorEnabled = false;
+
     public User() {}
 
     @PrePersist
@@ -211,5 +214,13 @@ public class User {
 
     public void setNotifyWeeklyNewsletter(Boolean notifyWeeklyNewsletter) {
         this.notifyWeeklyNewsletter = notifyWeeklyNewsletter;
+    }
+
+    public Boolean getTwoFactorEnabled() {
+        return twoFactorEnabled != null && twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(Boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
     }
 }

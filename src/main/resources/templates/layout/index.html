@@ -34,7 +34,7 @@
             <a href="#" class="nav-link" id="nav-tin-tuc">Tin Tức</a>
             <a href="#" class="nav-link" id="nav-lien-he">Liên Hệ</a>
             <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link" id="nav-login">Đăng Nhập</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/account/profile}" class="nav-link" id="nav-profile">Hồ Sơ</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link" id="nav-profile">Hồ Sơ</a>
             <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
             <button class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
         <span class="cart-icon">⊡</span>

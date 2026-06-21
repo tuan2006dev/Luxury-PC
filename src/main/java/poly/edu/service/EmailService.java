@@ -115,4 +115,24 @@ public class EmailService {
         mail.setText("Tên: " + name + "\nEmail: " + email + "\n\nNội dung:\n" + message);
         mailSender.send(mail);
     }
+
+    public void sendOrderCancellationEmailToAdmin(poly.edu.entity.Order order) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("luxury.pc.noreply@gmail.com");
+            message.setTo("leecookcu@gmail.com"); // Email nhận của Admin
+            message.setSubject("[Luxury PC] Thông báo hủy đơn hàng #" + order.getId());
+            message.setText("Chào Admin,\n\n"
+                    + "Đơn hàng #Luxury-" + order.getId() + " đã bị hủy bởi khách hàng.\n\n"
+                    + "Thông tin chi tiết:\n"
+                    + "- Tên khách hàng: " + order.getFullName() + "\n"
+                    + "- Số điện thoại: " + order.getPhone() + "\n"
+                    + "- Tổng giá trị: " + String.format("%,.0f", order.getTotalPrice()) + " ₫\n"
+                    + "- Trạng thái: Đã Hủy (CANCELED)\n\n"
+                    + "Trân trọng,\nHệ thống Luxury PC");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Gửi email thông báo hủy đơn cho admin thất bại: " + e.getMessage());
+        }
+    }
 }

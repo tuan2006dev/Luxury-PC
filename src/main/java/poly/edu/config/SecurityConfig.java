@@ -21,6 +21,9 @@ public class SecurityConfig {
     @Autowired
     private poly.edu.security.CustomOAuth2UserService oauth2UserService;
 
+    @Autowired
+    private poly.edu.security.CustomAuthenticationSuccessHandler successHandler;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -54,7 +57,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler(successHandler)
                         .failureUrl("/auth/login?error=true")
                         .permitAll())
 

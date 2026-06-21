@@ -18,10 +18,14 @@ public interface UserVoucherDAO extends JpaRepository<UserVoucher, Integer> {
     
     // Find a specific saved voucher
     Optional<UserVoucher> findByUserAndVoucher(User user, Voucher voucher);
-
+ 
     // Find a specific valid user voucher by code for a user
     Optional<UserVoucher> findByUserAndVoucherCodeAndIsUsedFalse(User user, String code);
-
+ 
     // Count how many times a voucher was saved globally (optional logic)
     int countByVoucher(Voucher voucher);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM UserVoucher uv WHERE uv.user.id = :userId")
+    void deleteByUserId(@org.springframework.data.repository.query.Param("userId") Integer userId);
 }

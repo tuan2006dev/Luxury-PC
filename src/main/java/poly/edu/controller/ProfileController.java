@@ -382,7 +382,14 @@ public class ProfileController {
                 return response;
             }
 
-            emailService.sendOtpEmail(normalizedNewEmail, normalizedNewEmail);
+            final String targetEmail = normalizedNewEmail;
+            java.util.concurrent.CompletableFuture.runAsync(() -> {
+                try {
+                    emailService.sendOtpEmail(targetEmail, targetEmail);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
             response.put("status", "success");
             response.put("message", "Đã gửi OTP tới email mới.");
             return response;
