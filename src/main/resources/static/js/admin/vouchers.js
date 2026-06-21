@@ -22,6 +22,10 @@ function toggleMaxDiscount() {
     var discountValueInput = document.getElementById('discountValue');
     if (type === 'PERCENTAGE') {
         discountValueInput.max = "100";
+        var val = parseFloat(discountValueInput.value);
+        if (val > 100) {
+            discountValueInput.value = 100;
+        }
     } else {
         discountValueInput.removeAttribute('max');
     }
@@ -29,4 +33,15 @@ function toggleMaxDiscount() {
 // Close modal on overlay click
 document.getElementById('voucherModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
+});
+
+// Real-time validation for discount value
+document.getElementById('discountValue').addEventListener('input', function() {
+    var type = document.getElementById('discountType').value;
+    if (type === 'PERCENTAGE') {
+        var val = parseFloat(this.value);
+        if (val > 100) {
+            this.value = 100;
+        }
+    }
 });
