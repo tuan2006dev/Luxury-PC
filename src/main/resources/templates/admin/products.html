@@ -62,6 +62,14 @@
         .add-form-container { display: none; }
         .add-form-container.active { display: block; animation: slideDown 0.3s ease;}
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px);} to { opacity: 1; transform: translateY(0);}}
+
+        /* Custom File Upload */
+        .file-upload-wrapper { position: relative; width: 100%; margin-top: 5px; }
+        .file-upload-label { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 1.2rem; background: var(--mid); border: 2px dashed rgba(201,168,76,0.3); border-radius: 6px; cursor: pointer; color: var(--muted); transition: 0.3s; font-family: var(--sans); }
+        .file-upload-label:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); }
+        .file-upload-label i { font-size: 1.5rem; }
+        .file-input-hidden { display: none; }
+        .file-upload-label.has-file { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); }
     </style>
 </head>
 <body>
@@ -115,7 +123,20 @@
                 </div>
                 <div class="input-group">
                     <label data-translate="admin-products-label-image">Tải Ảnh Lên</label>
-                    <input autocomplete="off" type="file" name="imageFile" accept="image/*">
+                    <div class="file-upload-wrapper">
+                        <label class="file-upload-label">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span class="file-name" data-translate="admin-products-file-choose">Chọn ảnh tải lên...</span>
+                            <input autocomplete="off" type="file" name="imageFile" accept="image/*" class="file-input-hidden" onchange="
+                                const fileName = this.files.length > 0 ? this.files[0].name : 'Chọn ảnh tải lên...';
+                                const label = this.closest('.file-upload-label');
+                                const textSpan = label.querySelector('.file-name');
+                                if (textSpan) textSpan.innerText = fileName;
+                                if (this.files.length > 0) label.classList.add('has-file');
+                                else label.classList.remove('has-file');
+                            ">
+                        </label>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label data-translate="admin-products-label-stock">Số lượng kho</label>
