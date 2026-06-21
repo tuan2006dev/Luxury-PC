@@ -70,7 +70,21 @@ public class HomeController {
     }
 
     @GetMapping("/promotions")
-    public String promotions() {
+    public String promotions(Model model) {
+        // Flash Sale thật từ DB
+        Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
+        if (currentSale.isPresent()) {
+            FlashSale sale = currentSale.get();
+            List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId());
+            model.addAttribute("flashSale", sale);
+            model.addAttribute("flashSaleItems", saleItems);
+            model.addAttribute("flashSaleEndTime", sale.getEndTime().getTime());
+        } else {
+            model.addAttribute("flashSaleEndTime", 0L);
+        }
+
+        // Voucher thật từ DB
+        model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
         return "promotions";
     }
 }
