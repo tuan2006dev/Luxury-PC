@@ -39,7 +39,7 @@
                         </td>
                         <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
                         <td>
-                            <form novalidate autocomplete="off" action="/admin/inventory/adjust" method="post" style="display:flex; align-items:center;">
+                            <form novalidate autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post" style="display:flex; align-items:center;">
                                 <input autocomplete="off" type="hidden" name="productId" th:value="${item.product.id}">
                                 <input autocomplete="off" type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
                                 <select name="type" class="type-select">

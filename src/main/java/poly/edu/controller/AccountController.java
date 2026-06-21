@@ -113,7 +113,7 @@ public class AccountController {
     // ===============================
     // khóa user
     // ===============================
-    @GetMapping("/lock/{id}")
+    @PostMapping("/lock/{id}")
     public String lockUser(
             @PathVariable Integer id
     ){
@@ -139,7 +139,7 @@ public class AccountController {
     // ===============================
     // mở khóa user
     // ===============================
-    @GetMapping("/unlock/{id}")
+    @PostMapping("/unlock/{id}")
     public String unlockUser(
             @PathVariable Integer id
     ){

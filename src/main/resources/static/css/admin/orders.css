@@ -26,7 +26,7 @@
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 1.2rem; background: rgba(0,0,0,0.2); }
         td { padding: 1.2rem; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .badge { padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+        .badge { padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
         .badge-pending { background: rgba(201,168,76,0.1); color: var(--gold); }
         .badge-completed { background: rgba(34,197,94,0.1); color: var(--green); }
         .badge-shipping { background: rgba(59,130,246,0.1); color: var(--blue); }
@@ -44,9 +44,12 @@
         .badge-da_hoan_tien { background: rgba(59,130,246,0.1); color: var(--blue); }
         .badge-thu_hoi, .badge-da_huy { background: rgba(239,68,68,0.1); color: var(--red); }
         .badge-yeu_cau_hoan_tien { background: rgba(201,168,76,0.15); color: var(--gold-l); }
-        .action-menu { min-width:230px; }
-        .action-menu summary { cursor:pointer; color:var(--gold); font-weight:700; }
-        .action-panel { display:grid; gap:.65rem; margin-top:.7rem; padding:.8rem; background:var(--deep); border:1px solid rgba(201,168,76,.15); }
+        .action-menu { position: relative; }
+        .action-menu summary { cursor:pointer; color:var(--gold); font-weight:700; white-space: nowrap; list-style: none; outline: none; }
+        .action-menu summary::-webkit-details-marker { display: none; }
+        .action-menu summary::before { content: '►'; margin-right: 5px; font-size: 0.8em; display: inline-block; transition: 0.2s; }
+        .action-menu[open] summary::before { transform: rotate(90deg); }
+        .action-panel { display:grid; gap:.65rem; margin-top:.7rem; padding:.8rem; background:var(--deep); border:1px solid rgba(201,168,76,.15); position: absolute; right: 0; z-index: 50; min-width: 260px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-radius: 6px; }
         .action-form { display:grid; gap:.4rem; padding-bottom:.65rem; border-bottom:1px solid rgba(255,255,255,.06); }
         .action-form:last-child { border-bottom:0; padding-bottom:0; }
         .action-form input, .action-form select { width:100%; min-width:0; background:var(--mid); color:var(--white); border:1px solid rgba(201,168,76,.2); padding:.45rem; border-radius:4px; }

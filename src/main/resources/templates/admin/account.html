@@ -349,18 +349,18 @@
                     <!-- Lock/Unlock -->
                     <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}" th:if="${u.status == true}" method="post" style="display:inline;">
             
-                        <button type="submit" class="btn-action" data-translate="admin-account-btn-lock" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Khoá</button>
+                        <button type="submit" class="btn-action" data-translate="admin-account-btn-lock">Khoá</button>
                     </form>
 
                     <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}" th:if="${u.status == false}" method="post" style="display:inline;">
             
-                        <button type="submit" class="btn-action" data-translate="admin-account-btn-unlock" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Mở khoá</button>
+                        <button type="submit" class="btn-action" data-translate="admin-account-btn-unlock">Mở khoá</button>
                     </form>
 
                     <!-- Delete -->
                     <form novalidate th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post" style="display:inline;">
             
-                        <button type="button" class="btn-action btn-danger" onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá user này?'))" data-translate="admin-account-btn-delete" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Xoá</button>
+                        <button type="button" class="btn-action btn-danger" onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá user này?'))" data-translate="admin-account-btn-delete">Xoá</button>
                     </form>
                 </td>
 
