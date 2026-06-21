@@ -50,10 +50,17 @@
         /* Tables */
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
         .table-card { background: var(--dark); padding: 1.5rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; }
-        .table-h { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(201,168,76,0.1); padding-bottom: 1rem; color: var(--gold);}
+        .table-h { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid rgba(201,168,76,0.1); padding-bottom: 1rem; color: var(--gold);}
+        
+        .table-responsive { max-height: 300px; overflow-y: auto; padding-right: 5px; }
+        .table-responsive::-webkit-scrollbar { width: 4px; }
+        .table-responsive::-webkit-scrollbar-track { background: var(--black); }
+        .table-responsive::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 4px; }
+        .table-responsive::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+        
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 1rem 0; }
-        td { padding: 1rem 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 0.6rem 0; position: sticky; top: 0; background: var(--dark); z-index: 10; }
+        td { padding: 0.8rem 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .badge { padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: bold;}
         .badge-red { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.3);}
         .badge-green { background: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.3);}
@@ -105,55 +112,59 @@
         <div class="dashboard-grid fade-in-up delay-3">
             <div class="table-card">
                 <div class="table-h"><i class="fa-solid fa-fire"></i> <span data-translate="admin-dashboard-best-sellers-title">Sản Phẩm Bán Chạy Nhất</span></div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-translate="admin-dashboard-col-product">Tên Linh Kiện</th>
-                            <th style="text-align: right;" data-translate="admin-dashboard-col-sold">Đã Bán</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="p : ${topProducts}">
-                            <td th:text="${p.name}">RTX 4090 Global</td>
-                            <td th:text="${p.totalQty}" style="text-align: right; font-weight: bold; color: var(--gold);">15</td>
-                        </tr>
-                        <tr th:if="${topProducts == null or topProducts.empty}">
-                            <td>Intel Core i9-14900K</td><td style="text-align: right; color: var(--gold); font-weight: bold;">42</td>
-                        </tr>
-                        <tr th:if="${topProducts == null or topProducts.empty}">
-                            <td>RTX 4090 Asus ROG</td><td style="text-align: right; color: var(--gold); font-weight: bold;">28</td>
-                        </tr>
-                        <tr th:if="${topProducts == null or topProducts.empty}">
-                            <td>RAM Corsair DDR5 64GB</td><td style="text-align: right; color: var(--gold); font-weight: bold;">120</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-translate="admin-dashboard-col-product">Tên Linh Kiện</th>
+                                <th style="text-align: right;" data-translate="admin-dashboard-col-sold">Đã Bán</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p : ${topProducts}">
+                                <td th:text="${p.name}">RTX 4090 Global</td>
+                                <td th:text="${p.totalQty}" style="text-align: right; font-weight: bold; color: var(--gold);">15</td>
+                            </tr>
+                            <tr th:if="${topProducts == null or topProducts.empty}">
+                                <td>Intel Core i9-14900K</td><td style="text-align: right; color: var(--gold); font-weight: bold;">42</td>
+                            </tr>
+                            <tr th:if="${topProducts == null or topProducts.empty}">
+                                <td>RTX 4090 Asus ROG</td><td style="text-align: right; color: var(--gold); font-weight: bold;">28</td>
+                            </tr>
+                            <tr th:if="${topProducts == null or topProducts.empty}">
+                                <td>RAM Corsair DDR5 64GB</td><td style="text-align: right; color: var(--gold); font-weight: bold;">120</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="table-card">
                 <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> <span data-translate="admin-dashboard-stock-alerts-title">Cảnh Báo Kho Hàng (Sắp Hết)</span></div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-translate="admin-dashboard-col-alert-product">Sản Phẩm</th>
-                            <th data-translate="admin-dashboard-col-stock">Tồn Kho</th>
-                            <th data-translate="admin-dashboard-col-status">Trạng Thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="item : ${lowStock}">
-                            <td th:text="${item.product.name}">CPU i9-14900K</td>
-                            <td th:text="${item.quantity}" style="font-weight: bold;">2</td>
-                            <td><span class="badge badge-red" data-translate="admin-dashboard-badge-low">Chỉ còn ít</span></td>
-                        </tr>
-                        <tr th:if="${lowStock == null or lowStock.empty}">
-                            <td colspan="3" style="text-align: center; color: var(--green); padding: 2rem 0;">
-                                <i class="fa-solid fa-check-circle" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
-                                <span data-translate="admin-dashboard-stock-ok">Tất cả sản phẩm đều đủ hàng.</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-translate="admin-dashboard-col-alert-product">Sản Phẩm</th>
+                                <th data-translate="admin-dashboard-col-stock">Tồn Kho</th>
+                                <th data-translate="admin-dashboard-col-status">Trạng Thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${lowStock}">
+                                <td th:text="${item.product.name}">CPU i9-14900K</td>
+                                <td th:text="${item.quantity}" style="font-weight: bold;">2</td>
+                                <td><span class="badge badge-red" data-translate="admin-dashboard-badge-low">Chỉ còn ít</span></td>
+                            </tr>
+                            <tr th:if="${lowStock == null or lowStock.empty}">
+                                <td colspan="3" style="text-align: center; color: var(--green); padding: 2rem 0;">
+                                    <i class="fa-solid fa-check-circle" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                                    <span data-translate="admin-dashboard-stock-ok">Tất cả sản phẩm đều đủ hàng.</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     <script th:inline="javascript">
