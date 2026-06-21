@@ -19,6 +19,13 @@ function closeModal() {
 function toggleMaxDiscount() {
     var type = document.getElementById('discountType').value;
     document.getElementById('maxDiscountGroup').style.display = type === 'PERCENTAGE' ? 'flex' : 'none';
+    
+    var discountValueInput = document.getElementById('discountValue');
+    if (type === 'PERCENTAGE') {
+        discountValueInput.max = "100";
+    } else {
+        discountValueInput.removeAttribute('max');
+    }
 }
 // Close modal on overlay click
 document.getElementById('voucherModal').addEventListener('click', function(e) {
