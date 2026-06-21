@@ -78,7 +78,7 @@
             <div class="stat-card fade-in-up delay-1">
                 <i class="fa-solid fa-wallet stat-icon"></i>
                 <div class="stat-label" data-translate="admin-dashboard-revenue-label">Doanh Thu Tháng</div>
-                <div class="stat-value">452.500.000₫</div>
+                <div class="stat-value" th:text="${#numbers.formatDecimal(currentMonthRevenue, 0, 'COMMA', 0, 'POINT')} + '₫'">452.500.000₫</div>
             </div>
             <div class="stat-card fade-in-up delay-2">
                 <i class="fa-solid fa-cart-shopping stat-icon"></i>
@@ -93,7 +93,7 @@
             <div class="stat-card fade-in-up delay-4">
                 <i class="fa-solid fa-users stat-icon"></i>
                 <div class="stat-label" data-translate="admin-dashboard-customers-label">Tổng Khách Hàng</div>
-                <div class="stat-value">1,248</div>
+                <div class="stat-value" th:text="${#numbers.formatDecimal(totalCustomers, 0, 'COMMA', 0, 'POINT')}">1,248</div>
             </div>
         </div>
 
@@ -171,67 +171,80 @@
             values = [250000000, 310000000, 280000000, 452500000, 480000000, 500000000];
         }
 
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-        
-        // Tạo gradient màu vàng nổi bật cho chart
-        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(201, 168, 76, 0.6)');
-        gradient.addColorStop(1, 'rgba(201, 168, 76, 0.05)');
+        function initChart() {
+            const ctx = document.getElementById('revenueChart');
+            if (!ctx) return;
+            const context2d = ctx.getContext('2d');
+            
+            // Tạo gradient màu vàng nổi bật cho chart
+            let gradient = context2d.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(201, 168, 76, 0.6)');
+            gradient.addColorStop(1, 'rgba(201, 168, 76, 0.05)');
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Doanh Thu (VNĐ)',
-                    data: values,
-                    borderColor: '#c9a84c',
-                    backgroundColor: gradient,
-                    borderWidth: 3,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#c9a84c',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) { label += ': '; }
-                                if (context.parsed.y !== null) {
-                                    label += new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' ₫';
-                                }
-                                return label;
-                            }
-                        }
-                    }
+            new Chart(context2d, {
+                type: 'line',
+                data: {
+                    labels: labels.reverse(),
+                    datasets: [{
+                        label: 'Doanh Thu (VNĐ)',
+                        data: values.reverse(),
+                        borderColor: '#c9a84c',
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#c9a84c',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { 
-                            color: '#888',
-                            callback: function(value) {
-                                return (value / 1000000) + ' Tr';
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' ₫';
+                                    }
+                                    return label;
+                                }
                             }
                         }
                     },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#888' }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#888',
+                                callback: function(value) {
+                                    return (value / 1000000) + ' Tr';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#888' }
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+
+        if (typeof Chart === 'undefined') {
+            let script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+            script.onload = initChart;
+            document.head.appendChild(script);
+        } else {
+            initChart();
+        }
     </script>
 </div>
   

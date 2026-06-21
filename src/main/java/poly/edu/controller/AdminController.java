@@ -6,6 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import poly.edu.service.AdminService;
 import poly.edu.repository.SupportTicketRepository;
+import poly.edu.repository.UserRepository;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -17,13 +20,28 @@ public class AdminController {
     @Autowired
     private SupportTicketRepository ticketRepo;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping({"", "/dashboard"})
     public String dashboard(Model model) {
-        model.addAttribute("revenue", adminService.getMonthlyRevenue());
+        List<Map<String, Object>> rawRevenue = adminService.getMonthlyRevenue();
+        model.addAttribute("revenue", rawRevenue);
+        
+        Double currentMonthRevenue = 0.0;
+        if (rawRevenue != null && !rawRevenue.isEmpty()) {
+            Object revObj = rawRevenue.get(0).get("revenue");
+            if (revObj != null) {
+                currentMonthRevenue = Double.valueOf(revObj.toString());
+            }
+        }
+        model.addAttribute("currentMonthRevenue", currentMonthRevenue);
+        
         model.addAttribute("topProducts", adminService.getTopSellingProducts());
         model.addAttribute("pendingCount", adminService.getPendingOrdersCount());
         model.addAttribute("lowStock", adminService.getLowStockItems());
         model.addAttribute("openTickets", ticketRepo.countOpenTickets());
+        model.addAttribute("totalCustomers", userRepository.count());
         return "admin/dashboard";
     }
 
