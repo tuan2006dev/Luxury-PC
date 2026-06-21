@@ -1,379 +1,429 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Quản Lý Người Dùng — Luxury PC</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-
-        :root{
-        --black:#0a0a0a;
-        --deep:#111;
-        --dark:#1a1a1a;
-        --mid:#2a2a2a;
-        --gold:#c9a84c;
-        --gold-l:#e8c97a;
-        --cream:#f5f0e8;
-        --white:#fff;
-        --muted:#888;
-        --red:#ef4444;
-        --green:#22c55e;
-        --sans:'Montserrat',sans-serif;
+        :root {
+            --black: #0a0a0a;
+            --deep: #111;
+            --dark: #1a1a1a;
+            --mid: #2a2a2a;
+            --gold: #c9a84c;
+            --gold-l: #e8c97a;
+            --cream: #f5f0e8;
+            --white: #fff;
+            --muted: #888;
+            --red: #ef4444;
+            --green: #22c55e;
+            --sans: 'Montserrat', sans-serif;
         }
 
-        *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        body{
-        background:var(--black);
-        color:var(--cream);
-        font-family:var(--sans);
-        display:flex;
+        body {
+            background: var(--black);
+            color: var(--cream);
+            font-family: var(--sans);
+            display: flex;
         }
 
-        .sidebar{
-        width:280px;
-        background:var(--deep);
-        border-right:1px solid rgba(201,168,76,0.1);
-        padding:2rem;
-        position:fixed;
-        height:100vh;
-        z-index: 100;
+        .sidebar {
+            width: 280px;
+            background: var(--deep);
+            border-right: 1px solid rgba(201, 168, 76, 0.1);
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
         }
 
-        .logo{
-        font-size:1.5rem;
-        color:var(--gold);
-        letter-spacing:0.2em;
-        margin-bottom:3rem;
-        display:block;
-        text-decoration:none;
-        font-weight: 700;
-        text-align: center;
+        .logo {
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: 0.2em;
+            margin-bottom: 3rem;
+            display: block;
+            text-decoration: none;
+            font-weight: 700;
+            text-align: center;
         }
 
-        .nav-link{
-        display:flex;
-        align-items:center;
-        color:var(--muted);
-        padding:1rem;
-        text-decoration:none;
-        border-radius:4px;
-        margin-bottom:0.5rem;
-        font-size:0.9rem;
-        transition: 0.3s;
+        .nav-link {
+            display: flex;
+            align-items: center;
+            color: var(--muted);
+            padding: 1rem;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: 0.3s;
         }
 
-        .nav-link i { width: 25px; font-size: 1.1rem; }
+        .nav-link i {
+            width: 25px;
+            font-size: 1.1rem;
+        }
 
         .nav-link:hover,
-        .nav-link.active{
-        background:rgba(201,168,76,0.05);
-        color:var(--gold);
+        .nav-link.active {
+            background: rgba(201, 168, 76, 0.05);
+            color: var(--gold);
         }
 
-        .main-content{
-        margin-left:280px;
-        flex:1;
-        padding:3rem;
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 3rem;
         }
 
-        .card{
-        background:var(--dark);
-        padding:2rem;
-        border:1px solid rgba(201,168,76,0.1);
-        border-radius:8px;
-        margin-bottom:2rem;
+        .card {
+            background: var(--dark);
+            padding: 2rem;
+            border: 1px solid rgba(201, 168, 76, 0.1);
+            border-radius: 8px;
+            margin-bottom: 2rem;
         }
 
-        h2{
-        margin-bottom:1.5rem;
+        h2 {
+            margin-bottom: 1.5rem;
         }
 
-        .form-grid{
-        display:grid;
-        grid-template-columns:repeat(2,1fr);
-        gap:1rem;
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
         }
 
-        .input-group{
-        display:flex;
-        flex-direction:column;
-        font-size:0.85rem;
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.85rem;
         }
 
-        .input-group label{
-        margin-bottom:0.3rem;
-        color:var(--muted);
+        .input-group label {
+            margin-bottom: 0.3rem;
+            color: var(--muted);
         }
 
         .input-group input,
-        .input-group select{
-        background:var(--mid);
-        border:1px solid rgba(201,168,76,0.2);
-        color:var(--white);
-        padding:0.6rem;
-        border-radius:4px;
-        outline:none;
+        .input-group select {
+            background: var(--mid);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            color: var(--white);
+            padding: 0.6rem;
+            border-radius: 4px;
+            outline: none;
         }
 
-        .input-group input:focus{
-        border-color:var(--gold);
+        .input-group input:focus {
+            border-color: var(--gold);
         }
 
-        button{
-        margin-top:1rem;
-        background:var(--gold);
-        color:var(--black);
-        border:none;
-        padding:0.6rem 1.2rem;
-        border-radius:4px;
-        font-weight:600;
-        cursor:pointer;
+        button {
+            margin-top: 1rem;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
-        button:hover{
-        background:var(--gold-l);
+        button:hover {
+            background: var(--gold-l);
         }
 
-        table{
-        width:100%;
-        border-collapse:collapse;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        th{
-        text-align:left;
-        font-size:0.75rem;
-        color:var(--muted);
-        padding:1rem;
-        background:rgba(0,0,0,0.2);
+        th {
+            text-align: left;
+            font-size: 0.75rem;
+            color: var(--muted);
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        td{
-        padding:1rem;
-        border-bottom:1px solid rgba(255,255,255,0.05);
-        font-size:0.85rem;
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
         }
 
-        .badge{
-        padding:0.2rem 0.5rem;
-        border-radius:4px;
-        font-size:0.7rem;
+        .badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
         }
 
-        .active-badge{
-        background:rgba(34,197,94,0.1);
-        color:var(--green);
+        .active-badge {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--green);
         }
 
-        .inactive-badge{
-        background:rgba(239,68,68,0.1);
-        color:var(--red);
+        .inactive-badge {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--red);
         }
 
         .btn-action {
-        display:inline-block;
-        padding:0.3rem 0.8rem;
-        border-radius:4px;
-        font-size:0.75rem;
-        text-decoration:none;
-        color:var(--black);
-        background:var(--gold);
-        margin-right:4px;
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            color: var(--black);
+            background: var(--gold);
+            margin-right: 4px;
         }
-        .btn-action:hover { background:var(--gold-l); }
-        .btn-danger { background:#ef4444; color:white; }
-        .btn-danger:hover { background:#cc0000; }
 
+        .btn-action:hover {
+            background: var(--gold-l);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #cc0000;
+        }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .card-header h2 { margin-bottom: 0; }
+        
+        .add-form-container { display: none; }
+        .add-form-container.active { display: block; animation: slideDown 0.3s ease;}
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px);} to { opacity: 1; transform: translateY(0);}}
+        
+        .icon-btn { width: 30px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid; cursor: pointer; background: transparent;}
+        .icon-btn-del { color: var(--red); border-color: var(--red); }
+        .icon-btn-del:hover { background: var(--red); color: #fff;}
     </style>
 
 </head>
 
 <body>
 
-<div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
-<div class="main-content">
+    <div class="main-content">
 
-    <div class="card">
+        <div style="margin-bottom: 1.5rem;">
+            <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()" type="button"><i class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-account-btn-add">Thêm User Mới</span></button>
+        </div>
 
-        <h2 data-translate="admin-account-form-title">Thêm / Cập nhật User</h2>
+        <div class="card add-form-container" id="userForm" th:classappend="${user.id != null ? 'active' : ''}">
 
-        <!-- FIX: action đúng là /admin/account/save -->
-        <form novalidate th:action="@{/admin/account/save}" method="post">
-
-
-            <input type="hidden" name="id" th:value="${user.id}">
-
-            <div class="form-grid">
-
-                <div class="input-group">
-                    <label data-translate="admin-account-label-username">Username</label>
-                    <input type="text" name="username" th:value="${user.username}" required>
-                </div>
-
-                <div class="input-group">
-                    <label data-translate="admin-account-label-email">Email</label>
-                    <input type="email" name="email" th:value="${user.email}" required>
-                </div>
-
-                <div class="input-group">
-                    <label data-translate="admin-account-label-password">Password</label>
-                    <input type="password" name="password" placeholder="Nhập nếu muốn đổi" data-translate-placeholder="admin-account-password-placeholder">
-                </div>
-
-                <div class="input-group">
-                    <label data-translate="admin-account-label-fullname">Họ tên</label>
-                    <input type="text" name="fullName" th:value="${user.fullName}">
-                </div>
-
-                <div class="input-group">
-                    <label data-translate="admin-account-label-phone">Số điện thoại</label>
-                    <input type="text" name="phone" th:value="${user.phone}">
-                </div>
-
-                <div class="input-group">
-                    <label data-translate="admin-account-label-address">Địa chỉ</label>
-                    <input type="text" name="address" th:value="${user.address}">
-                </div>
-
-                <div class="input-group">
-                    <label data-translate="admin-account-label-gender">Giới tính</label>
-
-                    <select name="gender">
-
-                        <option value="true"
-                                th:selected="${user.gender == true}" data-translate="admin-account-gender-male">
-                            Nam
-                        </option>
-
-                        <option value="false"
-                                th:selected="${user.gender == false}" data-translate="admin-account-gender-female">
-                            Nữ
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="input-group">
-                    <label data-translate="admin-account-label-status">Trạng thái</label>
-
-                    <select name="status">
-
-                        <option value="true"
-                                th:selected="${user.status}" data-translate="admin-account-status-active">
-                            Hoạt động
-                        </option>
-
-                        <option value="false"
-                                th:selected="${!user.status}" data-translate="admin-account-status-locked">
-                            Khóa
-                        </option>
-
-                    </select>
-
-                </div>
-
+            <div class="card-header">
+                <h2 data-translate="admin-account-form-title">Thêm / Cập nhật Staff</h2>
+                <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát" type="button"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <button type="submit" data-translate="admin-account-btn-save">
-                Lưu User
-            </button>
+            <!-- FIX: action đúng là /admin/account/save -->
+            <form novalidate th:action="@{/admin/account/save}" method="post">
 
-        </form>
 
+                <input type="hidden" name="id" th:value="${user.id}">
+
+                <div class="form-grid">
+
+                    <div class="input-group">
+                        <label data-translate="admin-account-label-username">Username</label>
+                        <input type="text" name="username" th:value="${user.username}" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label data-translate="admin-account-label-email">Email</label>
+                        <input type="email" name="email" th:value="${user.email}" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label data-translate="admin-account-label-password">Password</label>
+                        <input type="password" name="password" placeholder="Nhập nếu muốn đổi"
+                            data-translate-placeholder="admin-account-password-placeholder">
+                    </div>
+
+                    <div class="input-group">
+                        <label data-translate="admin-account-label-fullname">Họ tên</label>
+                        <input type="text" name="fullName" th:value="${user.fullName}">
+                    </div>
+
+                    <div class="input-group">
+                        <label data-translate="admin-account-label-phone">Số điện thoại</label>
+                        <input type="text" name="phone" th:value="${user.phone}">
+                    </div>
+
+                    <div class="input-group">
+                        <label data-translate="admin-account-label-address">Địa chỉ</label>
+                        <input type="text" name="address" th:value="${user.address}">
+                    </div>
+
+                    <div class="input-group">
+                        <label data-translate="admin-account-label-gender">Giới tính</label>
+
+                        <select name="gender">
+
+                            <option value="true" th:selected="${user.gender == true}"
+                                data-translate="admin-account-gender-male">
+                                Nam
+                            </option>
+
+                            <option value="false" th:selected="${user.gender == false}"
+                                data-translate="admin-account-gender-female">
+                                Nữ
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="input-group">
+                        <label data-translate="admin-account-label-status">Trạng thái</label>
+
+                        <select name="status">
+
+                            <option value="true" th:selected="${user.status}"
+                                data-translate="admin-account-status-active">
+                                Hoạt động
+                            </option>
+
+                            <option value="false" th:selected="${!user.status}"
+                                data-translate="admin-account-status-locked">
+                                Khóa
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <button type="submit" data-translate="admin-account-btn-save">
+                    Lưu User
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="card">
+
+            <h2 data-translate="admin-account-list-title">Danh sách User (không phải ADMIN)</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th data-translate="admin-account-th-id">ID</th>
+
+                        <th data-translate="admin-account-th-username">Username</th>
+
+                        <th data-translate="admin-account-th-email">Email</th>
+
+                        <th data-translate="admin-account-th-fullname">Họ tên</th>
+
+                        <th data-translate="admin-account-th-phone">SĐT</th>
+
+                        <th data-translate="admin-account-th-status">Trạng thái</th>
+
+                        <th data-translate="admin-account-th-actions">Hành động</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr th:each="u : ${users}">
+
+                        <td th:text="${u.id}"></td>
+
+                        <td th:text="${u.username}"></td>
+
+                        <td th:text="${u.email}"></td>
+
+                        <td th:text="${u.fullName}"></td>
+
+                        <td th:text="${u.phone}"></td>
+
+                        <td>
+                            <span th:if="${u.status}" class="badge active-badge"
+                                data-translate="admin-account-status-active">Hoạt động</span>
+                            <span th:if="${!u.status}" class="badge inactive-badge"
+                                data-translate="admin-account-status-locked-badge">Đã khoá</span>
+                        </td>
+
+                        <td>
+                            <!-- Edit -->
+                            <button type="button" class="btn-action"
+                                th:data-id="${u.id}"
+                                th:data-username="${u.username}"
+                                th:data-email="${u.email}"
+                                th:data-fullname="${u.fullName != null ? u.fullName : ''}"
+                                th:data-phone="${u.phone != null ? u.phone : ''}"
+                                th:data-address="${u.address != null ? u.address : ''}"
+                                th:data-gender="${u.gender}"
+                                th:data-status="${u.status}"
+                                onclick="editUser(this)"
+                                data-translate="admin-account-btn-edit">
+                                Sửa
+                            </button>
+
+                            <!-- Lock/Unlock -->
+                            <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}"
+                                th:if="${u.status == true}" method="post" style="display:inline;">
+
+                                <button type="submit" class="btn-action"
+                                    data-translate="admin-account-btn-lock">Khoá</button>
+                            </form>
+
+                            <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}"
+                                th:if="${u.status == false}" method="post" style="display:inline;">
+
+                                <button type="submit" class="btn-action" data-translate="admin-account-btn-unlock">Mở
+                                    khoá</button>
+                            </form>
+
+                            <!-- Delete -->
+                            <form novalidate th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post"
+                                style="display:inline;">
+
+                                <button type="button" class="btn-action btn-danger"
+                                    onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá user này?'))"
+                                    data-translate="admin-account-btn-delete">Xoá</button>
+                            </form>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    <script th:src="@{/js/admin/account.js}"></script>
     </div>
-
-    <div class="card">
-
-        <h2 data-translate="admin-account-list-title">Danh sách User (không phải ADMIN)</h2>
-
-        <table>
-
-            <thead>
-
-            <tr>
-
-                <th data-translate="admin-account-th-id">ID</th>
-
-                <th data-translate="admin-account-th-username">Username</th>
-
-                <th data-translate="admin-account-th-email">Email</th>
-
-                <th data-translate="admin-account-th-fullname">Họ tên</th>
-
-                <th data-translate="admin-account-th-phone">SĐT</th>
-
-                <th data-translate="admin-account-th-status">Trạng thái</th>
-
-                <th data-translate="admin-account-th-actions">Hành động</th>
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-
-            <tr th:each="u : ${users}">
-
-                <td th:text="${u.id}"></td>
-
-                <td th:text="${u.username}"></td>
-
-                <td th:text="${u.email}"></td>
-
-                <td th:text="${u.fullName}"></td>
-
-                <td th:text="${u.phone}"></td>
-
-                <td>
-                    <span th:if="${u.status}" class="badge active-badge" data-translate="admin-account-status-active">Hoạt động</span>
-                    <span th:if="${!u.status}" class="badge inactive-badge" data-translate="admin-account-status-locked-badge">Đã khoá</span>
-                </td>
-
-                <td>
-                    <!-- Edit -->
-                    <a th:href="@{/admin/account/edit/{id}(id=${u.id})}"
-                       class="btn-action" data-translate="admin-account-btn-edit">
-                        Sửa
-                    </a>
-
-                    <!-- Lock/Unlock -->
-                    <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}" th:if="${u.status == true}" method="post" style="display:inline;">
-            
-                        <button type="submit" class="btn-action" data-translate="admin-account-btn-lock">Khoá</button>
-                    </form>
-
-                    <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}" th:if="${u.status == false}" method="post" style="display:inline;">
-            
-                        <button type="submit" class="btn-action" data-translate="admin-account-btn-unlock">Mở khoá</button>
-                    </form>
-
-                    <!-- Delete -->
-                    <form novalidate th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post" style="display:inline;">
-            
-                        <button type="button" class="btn-action btn-danger" onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá user này?'))" data-translate="admin-account-btn-delete">Xoá</button>
-                    </form>
-                </td>
-
-            </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
 </body>
 
 </html>

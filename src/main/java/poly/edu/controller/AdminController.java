@@ -106,10 +106,12 @@ public class AdminController {
 
     @PostMapping("/inventory/adjust")
     public String adjustStock(@RequestParam Integer productId, 
-                             @RequestParam Integer quantity, 
+                             @RequestParam(required = false) Integer quantity, 
                              @RequestParam String type,
                              @RequestParam(required = false) String note) {
-        adminService.adjustStock(productId, quantity, type, note);
+        if (quantity != null && quantity > 0) {
+            adminService.adjustStock(productId, quantity, type, note);
+        }
         return "redirect:/admin/inventory";
     }
 }

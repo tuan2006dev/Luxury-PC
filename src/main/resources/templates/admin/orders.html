@@ -33,14 +33,14 @@
                 </thead>
                 <tbody>
                     <tr th:each="o : ${orders}">
-                        <td th:text="${o.orderCode != null ? o.orderCode : 'DH' + o.id}">DH101</td>
+                        <td style="white-space: nowrap;" th:text="${o.orderCode != null ? o.orderCode : 'DH' + o.id}">DH101</td>
                         <td>
-                            <div th:text="${o.fullName}">Guest</div>
-                            <div style="font-size:0.75rem; color:var(--muted)" th:text="${o.email}">guest@mail.com</div>
+                            <div th:text="${o.fullName}" style="white-space: nowrap;">Guest</div>
+                            <div style="font-size:0.75rem; color:var(--muted); white-space: nowrap;" th:text="${o.email}">guest@mail.com</div>
                         </td>
-                        <td th:text="${#dates.format(o.createdAt, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
-                        <td th:text="${#numbers.formatDecimal(o.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'" style="color:var(--gold)">45.000.000₫</td>
-                        <td th:text="${o.paymentMethodDisplay}">VietQR</td>
+                        <td style="white-space: nowrap;" th:text="${#dates.format(o.createdAt, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
+                        <td th:text="${#numbers.formatDecimal(o.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'" style="color:var(--gold); white-space: nowrap;">45.000.000₫</td>
+                        <td style="white-space: nowrap;" th:text="${o.paymentMethodDisplay}">VietQR</td>
                         <td>
                             <div th:text="${o.voucherCode != null ? o.voucherCode : '-'}">QA500K</div>
                             <div th:if="${o.discountAmount != null and o.discountAmount > 0}"

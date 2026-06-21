@@ -8,7 +8,6 @@ function openModal() {
     document.getElementById('maxDiscountAmount').value = '';
     document.getElementById('minOrderAmount').value = '';
     document.getElementById('usageLimit').value = '';
-    document.getElementById('startDate').value = '';
     document.getElementById('endDate').value = '';
     document.getElementById('categoryId').value = '';
     toggleMaxDiscount();

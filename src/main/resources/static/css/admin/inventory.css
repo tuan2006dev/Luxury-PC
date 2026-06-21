@@ -28,5 +28,5 @@
         .stock-input { background: var(--mid); color: var(--white); border: 1px solid rgba(201,168,76,0.2); padding: 0.4rem; border-radius: 4px; width: 80px; outline: none; }
         .type-select { background: var(--mid); color: var(--white); border: 1px solid rgba(201,168,76,0.2); padding: 0.4rem; border-radius: 4px; margin: 0 0.5rem; }
         button.adj-btn { background: var(--gold); color: var(--black); border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
-        .badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
-        .badge-low { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+        .badge { padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.7rem; display: inline-block; white-space: nowrap; font-weight: 600; }
+        .badge-low { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); }

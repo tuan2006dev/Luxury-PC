@@ -58,9 +58,9 @@
         .table-responsive::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 4px; }
         .table-responsive::-webkit-scrollbar-thumb:hover { background: var(--gold); }
         
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 0.8rem 0; border-bottom: 1px solid rgba(201,168,76,0.1); }
-        td { padding: 0.8rem 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 0.8rem 0.5rem; position: -webkit-sticky; position: sticky; top: 0; background-color: #1a1a1a; opacity: 1; z-index: 10; box-shadow: 0 1px 0 rgba(201,168,76,0.1); }
+        td { padding: 0.8rem 0.5rem; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 1; background-color: #1a1a1a; }
         .badge { padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: bold;}
         .badge-red { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.3);}
         .badge-green { background: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.3);}
@@ -116,8 +116,8 @@
                     <table>
                         <thead>
                             <tr>
-                                <th data-translate="admin-dashboard-col-product">Tên Linh Kiện</th>
-                                <th style="text-align: right;" data-translate="admin-dashboard-col-sold">Đã Bán</th>
+                                <th data-translate="admin-dashboard-col-product" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tên Linh Kiện</th>
+                                <th style="text-align: right; position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;" data-translate="admin-dashboard-col-sold">Đã Bán</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -145,9 +145,9 @@
                     <table>
                         <thead>
                             <tr>
-                                <th data-translate="admin-dashboard-col-alert-product">Sản Phẩm</th>
-                                <th data-translate="admin-dashboard-col-stock">Tồn Kho</th>
-                                <th data-translate="admin-dashboard-col-status">Trạng Thái</th>
+                                <th data-translate="admin-dashboard-col-alert-product" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tên Sản Phẩm</th>
+                                <th data-translate="admin-dashboard-col-stock" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tồn Kho</th>
+                                <th data-translate="admin-dashboard-col-status" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Trạng Thái</th>
                             </tr>
                         </thead>
                         <tbody>

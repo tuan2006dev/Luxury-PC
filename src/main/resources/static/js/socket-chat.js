@@ -730,9 +730,39 @@
         if (e.key === 'Enter') sendMessage();
     });
 
+    let lastLiveChatTime = parseInt(localStorage.getItem('lastLiveChatTime') || '0');
+
+    function updateLiveChatCooldown() {
+        const now = Date.now();
+        const elapsed = now - lastLiveChatTime;
+        if (elapsed < 30000) {
+            const remaining = Math.ceil((30000 - elapsed) / 1000);
+            if (msgInput) {
+                msgInput.disabled = true;
+                msgInput.placeholder = `Vui lòng đợi ${remaining}s...`;
+            }
+            if (sendBtn) sendBtn.disabled = true;
+            setTimeout(updateLiveChatCooldown, 1000);
+        } else {
+            if (msgInput) {
+                msgInput.disabled = false;
+                msgInput.placeholder = "Nhập tin nhắn...";
+            }
+            if (sendBtn) sendBtn.disabled = false;
+        }
+    }
+    
+    // Khởi chạy khi load
+    updateLiveChatCooldown();
+
     function sendMessage() {
         const text = msgInput.value.trim();
         if (!text) return;
+
+        const now = Date.now();
+            return;
+        }
+        lastLiveChatTime = now;
         
         if (!ws || ws.readyState !== WebSocket.OPEN) {
             appendSystemMessage('Đang kết nối lại...');

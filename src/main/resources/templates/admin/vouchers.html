@@ -291,6 +291,7 @@
         .form-group input,
         .form-group select,
         .form-group textarea {
+            width: 100%;
             background: var(--black);
             border: 1px solid rgba(201, 168, 76, 0.15);
             color: var(--cream);
@@ -482,7 +483,6 @@
                 <p data-translate="admin-voucher-empty-state">Chưa có voucher nào. Nhấn "Tạo Voucher" để bắt đầu.</p>
             </div>
         </div>
-    </div>
 
     <!-- Create/Edit Voucher Modal -->
     <div class="modal-overlay" id="voucherModal">
@@ -569,6 +569,7 @@
     </div>
 
     <script th:src="@{/js/admin/vouchers.js}"></script>
+</div>
 </body>
 
 </html>

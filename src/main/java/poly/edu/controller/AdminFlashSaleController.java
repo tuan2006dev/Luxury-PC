@@ -81,10 +81,15 @@ public class AdminFlashSaleController {
     @PostMapping("/{id}/items/add")
     public String addItem(
             @PathVariable Integer id,
-            @RequestParam Integer productId,
-            @RequestParam Double salePrice,
-            @RequestParam Integer saleQuantity,
+            @RequestParam(required = false) Integer productId,
+            @RequestParam(required = false) Double salePrice,
+            @RequestParam(required = false) Integer saleQuantity,
             RedirectAttributes ra) {
+
+        if (productId == null || salePrice == null || saleQuantity == null) {
+            ra.addFlashAttribute("error", "Vui lòng nhập đầy đủ thông tin sản phẩm, giá sale và số lượng!");
+            return "redirect:/admin/flash-sales/" + id + "/items";
+        }
 
         FlashSaleItem item = flashSaleService.addItemToSale(id, productId, salePrice, saleQuantity);
         if (item != null) {

@@ -333,11 +333,56 @@
         }
       }
 
+      let lastAiChatTime = parseInt(localStorage.getItem('lastAiChatTime') || '0');
+
+      function updateAiChatCooldown() {
+          const now = Date.now();
+          const elapsed = now - lastAiChatTime;
+          const inputEl = document.getElementById('chat-input-field');
+          const sendBtn = document.getElementById('chat-send-btn');
+          const quickBtns = document.querySelectorAll('#ai-chat-window .quick-btn');
+          
+          if (elapsed < 30000) {
+              const remaining = Math.ceil((30000 - elapsed) / 1000);
+              if (inputEl) {
+                  inputEl.disabled = true;
+                  inputEl.placeholder = `Vui lòng đợi ${remaining}s...`;
+              }
+              if (sendBtn) sendBtn.disabled = true;
+              quickBtns.forEach(btn => btn.disabled = true);
+              
+              setTimeout(updateAiChatCooldown, 1000);
+          } else {
+              if (inputEl) {
+                  inputEl.disabled = false;
+                  inputEl.placeholder = inputEl.getAttribute('data-translate-placeholder-original') || "Hỏi về linh kiện, budget, tương thích...";
+              }
+              if (sendBtn) sendBtn.disabled = false;
+              quickBtns.forEach(btn => btn.disabled = false);
+          }
+      }
+
+      // Preserve original placeholder
+      document.addEventListener('DOMContentLoaded', () => {
+          const aiInputEl = document.getElementById('chat-input-field');
+          if (aiInputEl) {
+              aiInputEl.setAttribute('data-translate-placeholder-original', aiInputEl.placeholder);
+          }
+          updateAiChatCooldown();
+      });
+
       function sendChatMessage() {
         const inputEl = document.getElementById('chat-input-field');
         if (!inputEl) return;
         const text = inputEl.value.trim();
         if (!text) return;
+
+        const now = Date.now();
+        if (now - lastAiChatTime < 30000) return;
+
+        lastAiChatTime = now;
+        localStorage.setItem('lastAiChatTime', now);
+        updateAiChatCooldown();
 
         appendMessage(text, 'user');
         inputEl.value = '';
@@ -418,6 +463,13 @@
       }
 
       function askAdvisorQuick(query) {
+        const now = Date.now();
+        if (now - lastAiChatTime < 30000) return;
+        
+        lastAiChatTime = now;
+        localStorage.setItem('lastAiChatTime', now);
+        updateAiChatCooldown();
+
         let actualQuery = query;
         if (query === 'gaming') actualQuery = "Tôi cần tư vấn cấu hình chiến game 4K";
         else if (query === 'graphic') actualQuery = "Tư vấn cấu hình làm đồ họa 3D render";

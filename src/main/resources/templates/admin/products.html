@@ -98,7 +98,7 @@
             <h2 th:data-translate="${product.id == null ? 'admin-products-title-add' : 'admin-products-title-edit'}" th:text="${product.id == null ? 'Thêm Sản Phẩm Mới' : 'Cập Nhật Sản Phẩm'}">Thông Tin Sản Phẩm</h2>
             <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form novalidate autocomplete="off" th:action="@{/admin/products/save}" method="post" th:object="${product}" enctype="multipart/form-data">
+        <form novalidate id="productFormElement" autocomplete="off" th:action="@{/admin/products/save}" method="post" th:object="${product}" enctype="multipart/form-data">
 
             <input autocomplete="off" type="hidden" th:field="*{id}">
             <div class="form-grid">
@@ -186,7 +186,16 @@
                 <td th:text="${p.stock}">0</td>
                 <td>
                     <div class="action-btns">
-                        <a th:href="@{|/admin/products/edit/${p.id}|}" class="icon-btn icon-btn-edit" title="Sửa"><i class="fa-solid fa-pen"></i></a>
+                        <button type="button" class="icon-btn icon-btn-edit" title="Sửa"
+                                th:data-id="${p.id}"
+                                th:data-name="${p.name}"
+                                th:data-price="${p.price != null ? #numbers.formatDecimal(p.price, 0, 'NONE', 0, 'POINT') : 0}"
+                                th:data-cat="${p.category != null ? p.category.id : ''}"
+                                th:data-desc="${p.description}"
+                                th:data-stock="${p.stock}"
+                                onclick="editProduct(this)">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
                         <form novalidate autocomplete="off" th:action="@{|/admin/products/delete/${p.id}|}" method="post" style="display:inline;">
                 
                             <button type="button" class="icon-btn icon-btn-del" title="Xóa" onclick="window.confirmDelete(this.form, window.t('admin-products-confirm-delete', 'Xóa sản phẩm này?'))" style="border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>

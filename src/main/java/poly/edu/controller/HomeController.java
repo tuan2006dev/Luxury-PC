@@ -68,7 +68,8 @@ public class HomeController {
     }
 
     @GetMapping("/promotions")
-    public String promotions() {
+    public String promotions(Model model) {
+        model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
         return "promotions";
     }
 }

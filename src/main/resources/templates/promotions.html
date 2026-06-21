@@ -143,166 +143,44 @@
 
         <div class="shopee-voucher-grid" id="shopee-voucher-grid">
 
-            <!-- Voucher 1: VIP 20% -->
-            <div class="shopee-voucher-card vip" id="sv-vip20" data-type="discount">
+            <div th:each="v : ${activeVouchers}" 
+                 class="shopee-voucher-card" 
+                 th:classappend="${v.category != null ? 'category' : (v.discountType.name() == 'PERCENTAGE' ? 'discount' : 'freeship')}" 
+                 th:data-type="${v.category != null ? 'category' : (v.discountType.name() == 'PERCENTAGE' ? 'discount' : 'discount')}">
                 <div class="sv-left">
-                    <span class="sv-icon">👑</span>
-                    <div class="sv-discount">20%</div>
-                    <div class="sv-discount-label" data-translate="promo-filter-discount">Giảm Giá</div>
+                    <span class="sv-icon" th:text="${v.category != null ? '🛍️' : (v.discountType.name() == 'PERCENTAGE' ? '🏷️' : '💵')}">🏷️</span>
+                    <div class="sv-discount">
+                        <span th:if="${v.discountType.name() == 'PERCENTAGE'}" th:text="${#numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT')} + '%'"></span>
+                        <span th:if="${v.discountType.name() == 'FIXED_AMOUNT'}" th:text="${#numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+                    </div>
+                    <div class="sv-discount-label" th:text="${v.discountType.name() == 'PERCENTAGE' ? 'Giảm Giá' : 'Giảm Trực Tiếp'}" data-translate="promo-filter-discount">Giảm Giá</div>
                 </div>
                 <div class="sv-right">
-                    <div class="sv-title" data-translate="promo-voucher-vip-title">Voucher VIP Độc Quyền</div>
-                    <div class="sv-desc" data-translate="promo-voucher-vip-desc">Giảm 20% cho thành viên VIP — tối đa 5.000.000₫</div>
+                    <div class="sv-title" th:text="${v.code}">Voucher VIP</div>
+                    <div class="sv-desc" th:text="${v.description}">Mô tả voucher</div>
                     <div class="sv-conditions">
-                        <span class="sv-condition-tag" data-translate="promo-tag-vip-only">VIP Only</span>
-                        <span class="sv-condition-tag" data-translate="promo-tag-min-20m">Đơn ≥ 20TR</span>
-                        <span class="sv-expire"><span data-translate="profile-vouchers-expiry">HSD: </span>30/06/2026</span>
+                        <span class="sv-condition-tag" th:if="${v.category != null}" th:text="${v.category.name}">Danh mục</span>
+                        <span class="sv-condition-tag" th:if="${v.minOrderAmount != null}" th:text="'Đơn ≥ ' + ${#numbers.formatDecimal(v.minOrderAmount/1000000.0, 0, 'COMMA', 0, 'POINT')} + 'TR'"></span>
+                        <span class="sv-condition-tag" th:if="${v.minOrderAmount == null}">Mọi đơn</span>
+                        <span class="sv-expire"><span data-translate="profile-vouchers-expiry">HSD: </span><span th:text="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}"></span></span>
                     </div>
                     <div class="sv-actions">
-                        <div class="sv-usage-bar">
+                        <div class="sv-usage-bar" th:if="${v.usageLimit != null}">
                             <div class="sv-usage-track">
-                                <div class="sv-usage-fill" style="width: 72%;"></div>
+                                <div class="sv-usage-fill" th:style="'width: ' + ${v.usedCount * 100.0 / v.usageLimit} + '%;'"></div>
                             </div>
-                            <div class="sv-usage-text"><span data-translate="promo-usage-text">Đã dùng </span>72%</div>
+                            <div class="sv-usage-text"><span data-translate="promo-usage-text">Đã dùng </span><span th:text="${#numbers.formatDecimal(v.usedCount * 100.0 / v.usageLimit, 0, 0)}"></span>%</div>
                         </div>
-                        <button class="sv-save-btn" onclick="saveVoucher(this, 'VIP20')" data-translate="promo-save-btn">Lưu</button>
+                        <div class="sv-usage-bar" th:if="${v.usageLimit == null}">
+                            <div class="sv-usage-text">Số lượng: Không giới hạn</div>
+                        </div>
+                        <button class="sv-save-btn" th:attr="onclick='saveVoucher(this, \'' + ${v.code} + '\')'" data-translate="promo-save-btn">Lưu</button>
                     </div>
                 </div>
             </div>
-
-            <!-- Voucher 2: 15% -->
-            <div class="shopee-voucher-card" id="sv-luxury15" data-type="discount">
-                <div class="sv-left">
-                    <span class="sv-icon">🏷️</span>
-                    <div class="sv-discount">15%</div>
-                    <div class="sv-discount-label" data-translate="promo-filter-discount">Giảm Giá</div>
-                </div>
-                <div class="sv-right">
-                    <div class="sv-title" data-translate="promo-voucher-premium-title">Voucher Linh Kiện Cao Cấp</div>
-                    <div class="sv-desc" data-translate="promo-voucher-premium-desc">Giảm 15% cho đơn từ 10 triệu — tối đa 3.000.000₫</div>
-                    <div class="sv-conditions">
-                        <span class="sv-condition-tag" data-translate="promo-tag-all-products">Tất Cả SP</span>
-                        <span class="sv-condition-tag" data-translate="promo-tag-min-10m">Đơn ≥ 10TR</span>
-                        <span class="sv-expire"><span data-translate="profile-vouchers-expiry">HSD: </span>31/07/2026</span>
-                    </div>
-                    <div class="sv-actions">
-                        <div class="sv-usage-bar">
-                            <div class="sv-usage-track">
-                                <div class="sv-usage-fill" style="width: 45%;"></div>
-                            </div>
-                            <div class="sv-usage-text"><span data-translate="promo-usage-text">Đã dùng </span>45%</div>
-                        </div>
-                        <button class="sv-save-btn" onclick="saveVoucher(this, 'LUXURY15')" data-translate="promo-save-btn">Lưu</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Voucher 3: Free Ship -->
-            <div class="shopee-voucher-card freeship" id="sv-freeship" data-type="freeship">
-                <div class="sv-left">
-                    <span class="sv-icon">🚚</span>
-                    <div class="sv-discount">FREE</div>
-                    <div class="sv-discount-label" data-translate="promo-filter-freeship">Vận Chuyển</div>
-                </div>
-                <div class="sv-right">
-                    <div class="sv-title" data-translate="promo-voucher-freeship-title">Miễn Phí Vận Chuyển Toàn Quốc</div>
-                    <div class="sv-desc" data-translate="promo-voucher-freeship-desc">Free ship cho tất cả đơn hàng — không giới hạn giá trị</div>
-                    <div class="sv-conditions">
-                        <span class="sv-condition-tag" data-translate="promo-tag-freeship-badge">Free Ship</span>
-                        <span class="sv-condition-tag" data-translate="promo-tag-nationwide">Toàn Quốc</span>
-                        <span class="sv-expire"><span data-translate="profile-vouchers-expiry">HSD: </span>30/06/2026</span>
-                    </div>
-                    <div class="sv-actions">
-                        <div class="sv-usage-bar">
-                            <div class="sv-usage-track">
-                                <div class="sv-usage-fill" style="width: 88%;"></div>
-                            </div>
-                            <div class="sv-usage-text"><span data-translate="promo-usage-text">Đã dùng </span>88%</div>
-                        </div>
-                        <button class="sv-save-btn" onclick="saveVoucher(this, 'FREESHIP')" data-translate="promo-save-btn">Lưu</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Voucher 4: 10% tất cả -->
-            <div class="shopee-voucher-card" id="sv-luxury10" data-type="discount">
-                <div class="sv-left">
-                    <span class="sv-icon">🎁</span>
-                    <div class="sv-discount">10%</div>
-                    <div class="sv-discount-label" data-translate="promo-filter-discount">Giảm Giá</div>
-                </div>
-                <div class="sv-right">
-                    <div class="sv-title" data-translate="promo-voucher-welcome-title">Voucher Chào Mừng Khách Mới</div>
-                    <div class="sv-desc" data-translate="promo-voucher-welcome-desc">Giảm 10% cho tất cả đơn hàng — không yêu cầu tối thiểu</div>
-                    <div class="sv-conditions">
-                        <span class="sv-condition-tag" data-translate="promo-tag-new-customer">Khách Mới</span>
-                        <span class="sv-condition-tag" data-translate="promo-tag-all-orders">Tất Cả Đơn</span>
-                        <span class="sv-expire"><span data-translate="profile-vouchers-expiry">HSD: </span>31/08/2026</span>
-                    </div>
-                    <div class="sv-actions">
-                        <div class="sv-usage-bar">
-                            <div class="sv-usage-track">
-                                <div class="sv-usage-fill" style="width: 30%;"></div>
-                            </div>
-                            <div class="sv-usage-text"><span data-translate="promo-usage-text">Đã dùng </span>30%</div>
-                        </div>
-                        <button class="sv-save-btn" onclick="saveVoucher(this, 'NEWUSER')" data-translate="promo-save-btn">Lưu</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Voucher 5: CPU 500K -->
-            <div class="shopee-voucher-card" id="sv-cpu500k" data-type="category">
-                <div class="sv-left">
-                    <span class="sv-icon">🖥️</span>
-                    <div class="sv-discount">500K</div>
-                    <div class="sv-discount-label" data-translate="promo-voucher-direct-label">Giảm Trực Tiếp</div>
-                </div>
-                <div class="sv-right">
-                    <div class="sv-title" data-translate="promo-voucher-cpu-title">Ưu Đãi Mua CPU</div>
-                    <div class="sv-desc" data-translate="promo-voucher-cpu-desc">Giảm 500.000₫ khi mua CPU Intel / AMD — đơn từ 5 triệu</div>
-                    <div class="sv-conditions">
-                        <span class="sv-condition-tag" data-translate="promo-tag-cpu-only">CPU Only</span>
-                        <span class="sv-condition-tag" data-translate="promo-tag-min-5m">Đơn ≥ 5TR</span>
-                        <span class="sv-expire"><span data-translate="profile-vouchers-expiry">HSD: </span>15/07/2026</span>
-                    </div>
-                    <div class="sv-actions">
-                        <div class="sv-usage-bar">
-                            <div class="sv-usage-track">
-                                <div class="sv-usage-fill" style="width: 60%;"></div>
-                            </div>
-                            <div class="sv-usage-text"><span data-translate="promo-usage-text">Đã dùng </span>60%</div>
-                        </div>
-                        <button class="sv-save-btn" onclick="saveVoucher(this, 'CPU500K')" data-translate="promo-save-btn">Lưu</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Voucher 6: VGA 1TR -->
-            <div class="shopee-voucher-card" id="sv-vga1m" data-type="category">
-                <div class="sv-left">
-                    <span class="sv-icon">🎮</span>
-                    <div class="sv-discount">1TR</div>
-                    <div class="sv-discount-label" data-translate="promo-voucher-direct-label">Giảm Trực Tiếp</div>
-                </div>
-                <div class="sv-right">
-                    <div class="sv-title" data-translate="promo-voucher-vga-title">Deal Sốc Card Đồ Họa</div>
-                    <div class="sv-desc" data-translate="promo-voucher-vga-desc">Giảm 1.000.000₫ khi mua VGA RTX Series — đơn từ 15 triệu</div>
-                    <div class="sv-conditions">
-                        <span class="sv-condition-tag" data-translate="promo-tag-vga-only">VGA Only</span>
-                        <span class="sv-condition-tag" data-translate="promo-tag-min-15m">Đơn ≥ 15TR</span>
-                        <span class="sv-expire"><span data-translate="profile-vouchers-expiry">HSD: </span>20/07/2026</span>
-                    </div>
-                    <div class="sv-actions">
-                        <div class="sv-usage-bar">
-                            <div class="sv-usage-track">
-                                <div class="sv-usage-fill" style="width: 55%;"></div>
-                            </div>
-                            <div class="sv-usage-text"><span data-translate="promo-usage-text">Đã dùng </span>55%</div>
-                        </div>
-                        <button class="sv-save-btn" onclick="saveVoucher(this, 'VGA1M')" data-translate="promo-save-btn">Lưu</button>
-                    </div>
-                </div>
+            
+            <div th:if="${activeVouchers == null or activeVouchers.isEmpty()}" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--muted);">
+                Hiện tại không có mã giảm giá nào. Vui lòng quay lại sau!
             </div>
 
         </div>

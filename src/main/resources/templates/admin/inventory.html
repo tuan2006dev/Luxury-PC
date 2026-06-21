@@ -34,12 +34,14 @@
                         </td>
                         <td th:text="${item.product.category.name}">Category</td>
                         <td>
-                            <span th:text="${item.quantity}">0</span>
-                            <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:5px;" data-translate="admin-inventory-badge-low">Sắp hết</span>
+                            <div style="display: flex; align-items: center; white-space: nowrap;">
+                                <span th:text="${item.quantity}" style="min-width: 20px;">0</span>
+                                <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:8px;" data-translate="admin-inventory-badge-low">Sắp hết</span>
+                            </div>
                         </td>
                         <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
                         <td>
-                            <form novalidate autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post" style="display:flex; align-items:center;">
+                            <form autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post" style="display:flex; align-items:center;">
                                 <input autocomplete="off" type="hidden" name="productId" th:value="${item.product.id}">
                                 <input autocomplete="off" type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
                                 <select name="type" class="type-select">

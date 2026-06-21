@@ -102,9 +102,17 @@
                         </td>
                         <td>
                             <div class="actions-cell">
+                                <button type="button" class="btn btn-sm" style="border:1px solid var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);"
+                                        th:data-id="${fs.id}"
+                                        th:data-name="${fs.name}"
+                                        th:data-start="${#dates.format(fs.startTime, 'yyyy-MM-dd''T''HH:mm')}"
+                                        th:data-end="${#dates.format(fs.endTime, 'yyyy-MM-dd''T''HH:mm')}"
+                                        onclick="editFlashSale(this)" title="Sửa">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
                                 <a th:href="@{/admin/flash-sales/{id}/items(id=${fs.id})}" class="btn btn-sm btn-blue"><i class="fa-solid fa-cubes"></i> <span data-translate="admin-flashsales-btn-products">Sản Phẩm</span></a>
                                 <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/delete/{id}(id=${fs.id})}" method="POST" style="display:inline;" th:onsubmit="event.preventDefault(); window.confirmDelete(this, window.t('admin-flashsales-confirm-delete', 'Xóa chương trình Flash Sale này?'));">
-                                    <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i></button>
+                                    <button type="submit" class="btn btn-sm btn-red" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                                 </form>
                             </div>
                         </td>
@@ -121,20 +129,21 @@
     <!-- Create Flash Sale Modal -->
     <div class="modal-overlay" id="flashSaleModal">
         <div class="modal">
-            <div class="modal-title"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i><span data-translate="admin-flashsales-modal-title">Tạo Flash Sale Mới</span></div>
-            <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/save}" method="POST">
+            <div class="modal-title"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i><span id="modalTitle" data-translate="admin-flashsales-modal-title">Tạo Flash Sale Mới</span></div>
+            <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/save}" method="POST" id="flashSaleForm">
+                <input type="hidden" name="id" id="fsId">
                 <div class="form-group">
                     <label data-translate="admin-flashsales-label-name">Tên Chương Trình</label>
-                    <input autocomplete="off" type="text" name="name" required placeholder="VD: Flash Sale Tháng 4" data-translate-placeholder="admin-flashsales-placeholder-name">
+                    <input autocomplete="off" type="text" name="name" id="fsName" required placeholder="VD: Flash Sale Tháng 4" data-translate-placeholder="admin-flashsales-placeholder-name">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label data-translate="admin-flashsales-label-start">Bắt Đầu</label>
-                        <input autocomplete="off" type="datetime-local" name="startTime" required>
+                        <input autocomplete="off" type="datetime-local" name="startTime" id="fsStart" required>
                     </div>
                     <div class="form-group">
                         <label data-translate="admin-flashsales-label-end">Kết Thúc</label>
-                        <input autocomplete="off" type="datetime-local" name="endTime" required>
+                        <input autocomplete="off" type="datetime-local" name="endTime" id="fsEnd" required>
                     </div>
                 </div>
                 <div class="form-actions">

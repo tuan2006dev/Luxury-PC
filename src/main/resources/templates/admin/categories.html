@@ -70,7 +70,7 @@
     </div>
 
     <div style="margin-bottom: 1.5rem;">
-        <button class="btn btn-gold" onclick="toggleForm()"><i class="fa-solid fa-plus"></i> <span data-translate="admin-categories-btn-add">Thêm Danh Mục Mới</span></button>
+        <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()"><i class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-categories-btn-add">Thêm Danh Mục Mới</span></button>
     </div>
 
     <div class="card add-form-container" id="categoryForm" th:classappend="${category.id != null ? 'active' : ''}">
@@ -107,7 +107,12 @@
                 <td th:text="${c.name}" style="font-weight: 600; color: #fff;">CPU</td>
                 <td>
                     <div class="action-btns">
-                        <a th:href="@{|/admin/categories/edit/${c.id}|}" class="icon-btn icon-btn-edit" title="Sửa"><i class="fa-solid fa-pen"></i></a>
+                        <button type="button" class="icon-btn icon-btn-edit" title="Sửa"
+                                th:data-id="${c.id}"
+                                th:data-name="${c.name}"
+                                onclick="editCategory(this)">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
                         <form novalidate autocomplete="off" th:action="@{|/admin/categories/delete/${c.id}|}" method="post" style="display:inline;">
                 
                             <button type="button" class="icon-btn icon-btn-del" title="Xóa" onclick="window.confirmDelete(this.form, window.t('admin-categories-confirm-delete', 'Xóa danh mục này có thể ảnh hưởng đến sản phẩm liên quan. Tiếp tục?'))" style="border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>

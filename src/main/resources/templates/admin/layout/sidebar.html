@@ -408,4 +408,41 @@
             return false;
         };
     </script>
+    <script>
+        // Global validation to prevent negative numbers in all number inputs
+        function initNumberValidation() {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                // Remove existing to avoid duplicates if called multiple times
+                input.removeEventListener('keydown', preventNegativeInput);
+                input.removeEventListener('paste', preventNegativePaste);
+                input.removeEventListener('input', enforcePositiveValue);
+                
+                input.addEventListener('keydown', preventNegativeInput);
+                input.addEventListener('paste', preventNegativePaste);
+                input.addEventListener('input', enforcePositiveValue);
+            });
+        }
+
+        function preventNegativeInput(e) {
+            if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                e.preventDefault();
+            }
+        }
+
+        function preventNegativePaste(e) {
+            const pastedData = e.clipboardData.getData('text');
+            if (pastedData.includes('-') || pastedData.includes('+') || pastedData.includes('e') || pastedData.includes('E')) {
+                e.preventDefault();
+            }
+        }
+
+        function enforcePositiveValue(e) {
+            if (this.value < 0) {
+                this.value = Math.abs(this.value);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initNumberValidation);
+        document.addEventListener('spa:load', initNumberValidation);
+    </script>
 </div>

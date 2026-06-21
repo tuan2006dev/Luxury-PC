@@ -76,7 +76,7 @@
         <!-- Add product form -->
         <div class="form-card">
             <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span data-translate="admin-flashitems-form-title">Thêm Sản Phẩm Vào Flash Sale</span></div>
-            <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST">
+            <form autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST">
                 <div class="form-row">
                     <div class="form-group">
                         <label data-translate="admin-flashitems-label-product">Sản Phẩm</label>
