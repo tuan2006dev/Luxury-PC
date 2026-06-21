@@ -157,18 +157,19 @@
             </div>
         </div>
     <script th:inline="javascript">
+    (function() {
         document.getElementById('current-month').innerText = new Date().getMonth() + 1;
         // Dữ liệu giả lập mượt mà để biểu đồ luôn hiện nếu backend trống
         let rawRevenue = /*[[${revenue}]]*/ null;
-        let labels = [];
-        let values = [];
+        let chartLabels = [];
+        let chartValues = [];
 
         if (rawRevenue && rawRevenue.length > 0) {
-            labels = rawRevenue.map(item => item.month);
-            values = rawRevenue.map(item => item.revenue);
+            chartLabels = rawRevenue.map(item => item.month);
+            chartValues = rawRevenue.map(item => item.revenue);
         } else {
-            labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'];
-            values = [250000000, 310000000, 280000000, 452500000, 480000000, 500000000];
+            chartLabels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'];
+            chartValues = [250000000, 310000000, 280000000, 452500000, 480000000, 500000000];
         }
 
         function initChart() {
@@ -184,10 +185,10 @@
             new Chart(context2d, {
                 type: 'line',
                 data: {
-                    labels: labels.reverse(),
+                    labels: chartLabels.reverse(),
                     datasets: [{
                         label: 'Doanh Thu (VNĐ)',
-                        data: values.reverse(),
+                        data: chartValues.reverse(),
                         borderColor: '#c9a84c',
                         backgroundColor: gradient,
                         borderWidth: 3,
@@ -245,6 +246,7 @@
         } else {
             initChart();
         }
+    })();
     </script>
 </div>
   
