@@ -103,7 +103,7 @@
                         <td>
                             <div class="actions-cell">
                                 <a th:href="@{/admin/flash-sales/{id}/items(id=${fs.id})}" class="btn btn-sm btn-blue"><i class="fa-solid fa-cubes"></i> <span data-translate="admin-flashsales-btn-products">Sản Phẩm</span></a>
-                                <form th:action="@{/admin/flash-sales/delete/{id}(id=${fs.id})}" method="POST" style="display:inline;" th:onsubmit="return confirm(window.t('admin-flashsales-confirm-delete', 'Xóa chương trình Flash Sale này?'))">
+                                <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/delete/{id}(id=${fs.id})}" method="POST" style="display:inline;" th:onsubmit="event.preventDefault(); window.confirmDelete(this, window.t('admin-flashsales-confirm-delete', 'Xóa chương trình Flash Sale này?'));">
                                     <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i></button>
                                 </form>
                             </div>
@@ -123,19 +123,19 @@
     <div class="modal-overlay" id="flashSaleModal">
         <div class="modal">
             <div class="modal-title"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i><span data-translate="admin-flashsales-modal-title">Tạo Flash Sale Mới</span></div>
-            <form th:action="@{/admin/flash-sales/save}" method="POST">
+            <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/save}" method="POST">
                 <div class="form-group">
                     <label data-translate="admin-flashsales-label-name">Tên Chương Trình</label>
-                    <input type="text" name="name" required placeholder="VD: Flash Sale Tháng 4" data-translate-placeholder="admin-flashsales-placeholder-name">
+                    <input autocomplete="off" type="text" name="name" required placeholder="VD: Flash Sale Tháng 4" data-translate-placeholder="admin-flashsales-placeholder-name">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label data-translate="admin-flashsales-label-start">Bắt Đầu</label>
-                        <input type="datetime-local" name="startTime" required>
+                        <input autocomplete="off" type="datetime-local" name="startTime" required>
                     </div>
                     <div class="form-group">
                         <label data-translate="admin-flashsales-label-end">Kết Thúc</label>
-                        <input type="datetime-local" name="endTime" required>
+                        <input autocomplete="off" type="datetime-local" name="endTime" required>
                     </div>
                 </div>
                 <div class="form-actions">

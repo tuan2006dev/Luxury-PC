@@ -12,8 +12,8 @@
       --muted:      #888888;
       --red:        #ef4444;
       --green:      #22c55e;
-      --serif:      'Cormorant Garamond', Georgia, serif;
-      --sans:       'Montserrat', sans-serif;
+      --serif:      var(--font-serif);
+      --sans:       var(--font-sans);
       --ease:       0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

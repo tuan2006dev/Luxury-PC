@@ -39,14 +39,14 @@
                         </td>
                         <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
                         <td>
-                            <form action="/admin/inventory/adjust" method="post" style="display:flex; align-items:center;">
-                                <input type="hidden" name="productId" th:value="${item.product.id}">
-                                <input type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
+                            <form novalidate autocomplete="off" action="/admin/inventory/adjust" method="post" style="display:flex; align-items:center;">
+                                <input autocomplete="off" type="hidden" name="productId" th:value="${item.product.id}">
+                                <input autocomplete="off" type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
                                 <select name="type" class="type-select">
                                     <option value="IMPORT" data-translate="admin-inventory-option-import">Nhập Kho</option>
                                     <option value="EXPORT" data-translate="admin-inventory-option-export">Xuất Kho</option>
                                 </select>
-                                <input type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú" data-translate-placeholder="admin-inventory-placeholder-note">
+                                <input autocomplete="off" type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú" data-translate-placeholder="admin-inventory-placeholder-note">
                                 <button type="submit" class="adj-btn" data-translate="admin-inventory-btn-submit">Xác Nhận</button>
                             </form>
                         </td>

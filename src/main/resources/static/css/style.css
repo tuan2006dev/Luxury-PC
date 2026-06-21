@@ -3,6 +3,7 @@
    Design: Rolls-Royce luxury × NguyenCongPC
    Color Palette: Black #0a0a0a, Gold #c9a84c, Cream #f5f0e8
 ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 :root {
   --black: #0a0a0a;
@@ -15,8 +16,9 @@
   --cream: #f5f0e8;
   --white: #ffffff;
   --text-muted: #888888;
-  --font-serif: 'Inter', sans-serif;
-  --font-sans: 'Inter', sans-serif;
+  --font-serif: var(--font-serif);
+  --font-sans: 'Playfair Display', serif;
+  --font-old: 'Inter', sans-serif;
   --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -3352,10 +3354,237 @@ input[type=number] {
 }
 
 
+  padding: 0.25rem 0.6rem;
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  color: #aaa;
+  border-radius: 20px;
+  cursor: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.quick-btn:hover {
+  background: rgba(201, 168, 76, 0.12);
+  color: var(--gold);
+  border-color: rgba(201, 168, 76, 0.4);
+}
+
+.chatbot-input-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  align-items: flex-end;
+}
+
+.chatbot-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--cream);
+  font-size: 0.72rem;
+  padding: 0.55rem 0.8rem;
+  resize: none;
+  font-family: var(--font-sans);
+  line-height: 1.4;
+  max-height: 80px;
+  transition: border-color 0.2s;
+}
+.chatbot-input:focus { outline: none; border-color: rgba(201, 168, 76, 0.4); }
+.chatbot-input::placeholder { color: #555; }
+
+.chatbot-send {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  border: none;
+  border-radius: 8px;
+  color: var(--black);
+  font-size: 0.85rem;
+  cursor: none;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.chatbot-send:hover { background: var(--gold-light); transform: scale(1.05); }
+.chatbot-send:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+/* Mode Bar */
+.chatbot-mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.mode-step {
+  color: #444;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: color 0.3s ease;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.mode-step.done { color: #666; }
+.mode-step.active {
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+}
+.mode-arrow { color: #333; font-size: 0.9rem; }
+
+.quick-btn-consultant {
+  background: rgba(201, 168, 76, 0.08) !important;
+  border-color: rgba(201, 168, 76, 0.35) !important;
+  color: var(--gold) !important;
+  font-weight: 700;
+}
+.quick-btn-consultant:hover {
+  background: rgba(201, 168, 76, 0.18) !important;
+}
+
+/* AI Loading Indicator */
+#ai-loading-indicator span {
+  display: inline-block;
+  font-style: italic;
+  color: var(--text-muted);
+  animation: ai-pulse 1.5s infinite;
+}
+
+@keyframes ai-pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+
+
+
+
+/* Autosuggest Search */
+.search-results-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    margin-top: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+.search-results-box.show {
+    display: block;
+}
+.search-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #222;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.2s;
+}
+.search-item:hover {
+    background: #222;
+    color: #fff;
+}
+.search-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 4px;
+    background: #fff;
+}
+.search-item-info {
+    flex: 1;
+}
+.search-item-title {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+}
+.search-item-price {
+    color: #c9a84c;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+
+/* Hide number input spinners globally */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+
+
+/* Safely shift chatbot components left by animating right property */
+
+/* Ensure chatbot components transition right smoothly */
+.chatbot-fab, .chatbot-window, .socket-chat-btn, .socket-chat-window {
+    transition: transform 0.3s, opacity 0.3s !important;
+}
+
+
 /* Ensure cursor is absolutely always on top */
 .cursor, .cursor-f, .cursor-follower {
     z-index: 9999999 !important;
 }
 
+/* OVERRIDE CHO NHỮNG CHỖ CẦN GIỮ FONT CŨ (GIÁ, TÊN SẢN PHẨM, CON SỐ) */
+.product-name, .prod-title, .flash-prod-name, .ci-name, .item-name,
+.product-price, .product-old-price, .flash-new-price, .flash-old-price,
+.price-main, .price-old, .price-save, .installment, .ci-price, .os-total-num, .item-price, .summary-total, .summary-row,
+.product-spec, .prod-sub, .specs-quick, .stock-label,
+input[type=number], .qty-num, .result-num,
+.bp-item-name, .bp-item-price, .bp-total-num, .total-price, .stat-num, .order-total, .order-h-id, .order-h-date, .wl-name, .wl-price, .item-mini, .cart-item-name, .cart-item-price, .subtotal, .total, .tstat-val, .tstat-label, .ticket-id, .ticket-date, .ticket-status-badge,
+.promo-cd-num, .sv-discount, .promo-deal-name, .promo-deal-new, .promo-deal-old {
+    font-family: var(--font-old) !important;
+}
 
-
+.btn-buy-now {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+.btn-buy-now:hover {
+  background: var(--gold);
+  color: var(--black);
+}

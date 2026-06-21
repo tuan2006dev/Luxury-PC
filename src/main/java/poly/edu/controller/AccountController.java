@@ -165,7 +165,7 @@ public class AccountController {
     // ===============================
     // xóa user
     // ===============================
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteUser(
             @PathVariable Integer id
     ){

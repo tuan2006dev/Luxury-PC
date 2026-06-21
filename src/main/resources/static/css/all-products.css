@@ -6,8 +6,8 @@
             --gray-mid: #2A2A2A;
             --text-color: #E0E0E0;
             --muted: #888;
-            --font-main: 'Inter', sans-serif;
-            --font-serif: 'Outfit', sans-serif;
+            --font-main: var(--font-sans);
+            --font-serif: var(--font-serif);
         }
 
         body {

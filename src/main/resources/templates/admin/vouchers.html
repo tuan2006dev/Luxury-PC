@@ -137,10 +137,10 @@
                         </td>
                         <td>
                             <div class="actions-cell">
-                                <form th:action="@{/admin/vouchers/toggle/{id}(id=${v.id})}" method="POST" style="display:inline;">
+                                <form novalidate autocomplete="off" th:action="@{/admin/vouchers/toggle/{id}(id=${v.id})}" method="POST" style="display:inline;">
                                     <button type="submit" class="btn btn-sm" th:style="${v.active} ? 'background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);' : 'background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2);'" th:text="${v.active} ? 'Tắt' : 'Bật'" th:data-translate="${v.active} ? 'admin-voucher-btn-toggle-off' : 'admin-voucher-btn-toggle-on'">Tắt</button>
                                 </form>
-                                <form th:action="@{/admin/vouchers/delete/{id}(id=${v.id})}" method="POST" style="display:inline;" th:onsubmit="|return confirm(translations[localStorage.getItem('lang') || 'vi']['admin-voucher-confirm-delete'] || 'Xóa voucher này?')|">
+                                <form novalidate autocomplete="off" th:action="@{/admin/vouchers/delete/{id}(id=${v.id})}" method="POST" style="display:inline;" th:onsubmit="|event.preventDefault(); window.confirmDelete(this, translations[localStorage.getItem('lang') || 'vi']['admin-voucher-confirm-delete'] || 'Xóa voucher này?');|">
                                     <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i></button>
                                 </form>
                             </div>
@@ -160,14 +160,14 @@
     <div class="modal-overlay" id="voucherModal">
         <div class="modal">
             <div class="modal-title" data-translate="admin-voucher-modal-create"><i class="fa-solid fa-ticket" style="margin-right:8px;"></i>Tạo Voucher Mới</div>
-            <form th:action="@{/admin/vouchers/save}" method="POST">
-                <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <input type="hidden" name="id" id="voucherId">
+            <form novalidate autocomplete="off" th:action="@{/admin/vouchers/save}" method="POST">
+                <input autocomplete="off" th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input autocomplete="off" type="hidden" name="id" id="voucherId">
 
                 <div class="form-row">
                     <div class="form-group">
                         <label data-translate="admin-voucher-label-code">Mã Voucher</label>
-                        <input type="text" name="code" id="voucherCode" required data-translate-placeholder="admin-voucher-placeholder-code" placeholder="VD: LUXURY10" style="text-transform:uppercase;">
+                        <input autocomplete="off" type="text" name="code" id="voucherCode" required data-translate-placeholder="admin-voucher-placeholder-code" placeholder="VD: LUXURY10" style="text-transform:uppercase;">
                     </div>
                     <div class="form-group">
                         <label data-translate="admin-voucher-label-type">Loại Giảm Giá</label>
@@ -180,39 +180,39 @@
 
                 <div class="form-group">
                     <label data-translate="admin-common-description">Mô Tả</label>
-                    <input type="text" name="description" id="voucherDesc" data-translate-placeholder="admin-voucher-placeholder-desc" placeholder="VD: Giảm 10% cho tất cả đơn hàng">
+                    <input autocomplete="off" type="text" name="description" id="voucherDesc" data-translate-placeholder="admin-voucher-placeholder-desc" placeholder="VD: Giảm 10% cho tất cả đơn hàng">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label data-translate="admin-voucher-label-value">Giá Trị Giảm</label>
-                        <input type="number" name="discountValue" id="discountValue" required step="0.01" placeholder="10">
+                        <input autocomplete="off" type="number" name="discountValue" id="discountValue" required step="0.01" placeholder="10">
                     </div>
                     <div class="form-group" id="maxDiscountGroup">
                         <label data-translate="admin-voucher-label-max">Giảm Tối Đa (₫)</label>
-                        <input type="number" name="maxDiscountAmount" id="maxDiscountAmount" data-translate-placeholder="admin-voucher-expiry-infinite" placeholder="Không giới hạn">
+                        <input autocomplete="off" type="number" name="maxDiscountAmount" id="maxDiscountAmount" data-translate-placeholder="admin-voucher-expiry-infinite" placeholder="Không giới hạn">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label data-translate="admin-voucher-label-minorder">Đơn Tối Thiểu (₫)</label>
-                        <input type="number" name="minOrderAmount" id="minOrderAmount" placeholder="0">
+                        <input autocomplete="off" type="number" name="minOrderAmount" id="minOrderAmount" placeholder="0">
                     </div>
                     <div class="form-group">
                         <label data-translate="admin-voucher-label-limit">Giới Hạn Lượt Dùng</label>
-                        <input type="number" name="usageLimit" id="usageLimit" data-translate-placeholder="admin-voucher-expiry-infinite" placeholder="Không giới hạn">
+                        <input autocomplete="off" type="number" name="usageLimit" id="usageLimit" data-translate-placeholder="admin-voucher-expiry-infinite" placeholder="Không giới hạn">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label data-translate="admin-voucher-label-start">Bắt Đầu</label>
-                        <input type="datetime-local" name="startDate" id="startDate">
+                        <input autocomplete="off" type="datetime-local" name="startDate" id="startDate">
                     </div>
                     <div class="form-group">
                         <label data-translate="admin-voucher-label-end">Kết Thúc</label>
-                        <input type="datetime-local" name="endDate" id="endDate">
+                        <input autocomplete="off" type="datetime-local" name="endDate" id="endDate">
                     </div>
                 </div>
 

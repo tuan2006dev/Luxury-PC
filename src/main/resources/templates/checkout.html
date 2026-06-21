@@ -8,13 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/checkout.css}" />
 </head>
 
 <body>
 
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-f" id="cursor-f"></div>
 
   <div class="success-ov" id="suc" th:classappend="${param.success != null} ? 'show' : ''">
     <div style="font-size:4rem; color:var(--green); margin-bottom:1rem;">✓</div>
@@ -45,6 +44,7 @@
   </div>
 
   <form th:action="@{/checkout/submit}" method="POST" class="checkout-layout">
+    <input type="hidden" name="checkoutType" th:value="${checkoutType}" />
     <div class="checkout-left">
 
       <div id="step-info">
@@ -246,6 +246,16 @@
         document.getElementById('sd2').innerText = '2';
         document.getElementById('sd3').className = 'cstep-dot';
       } else if (n === 3) {
+        // Validate required fields before proceeding
+        const fullName = document.querySelector('input[name="fullName"]');
+        const phone = document.querySelector('input[name="phone"]');
+        const address = document.querySelector('input[name="address"]');
+        if (!fullName.value.trim() || !phone.value.trim() || !address.value.trim()) {
+          if (!fullName.value.trim()) fullName.focus();
+          else if (!phone.value.trim()) phone.focus();
+          else if (!address.value.trim()) address.focus();
+          return;
+        }
         document.getElementById('step-info').style.display = 'none';
         document.getElementById('step-payment').style.display = 'block';
         document.getElementById('sd2').className = 'cstep-dot done';
@@ -367,39 +377,7 @@
       }
     }
 
-    /* CURSOR JS */
-    const cursor = document.getElementById('cursor');
-    const cursorF = document.getElementById('cursor-f');
-    if (cursor && cursorF) {
-      let mx = 0, my = 0, fx = 0, fy = 0;
-      document.addEventListener('mousemove', e => {
-        mx = e.clientX;
-        my = e.clientY;
-        cursor.style.left = mx + 'px';
-        cursor.style.top = my + 'px';
-      });
-      (function loop() {
-        fx += (mx - fx) * 0.12;
-        fy += (my - fy) * 0.12;
-        cursorF.style.left = fx + 'px';
-        cursorF.style.top = fy + 'px';
-        requestAnimationFrame(loop);
-      })();
-      document.querySelectorAll('a, button, input, select, textarea, .pay-card, .cstep').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          cursor.style.transform = 'translate(-50%, -50%) scale(2)';
-          cursorF.style.width = '60px';
-          cursorF.style.height = '60px';
-          cursorF.style.opacity = '0.2';
-        });
-        el.addEventListener('mouseleave', () => {
-          cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-          cursorF.style.width = '36px';
-          cursorF.style.height = '36px';
-          cursorF.style.opacity = '0.4';
-        });
-      });
-    }
+
   </script>
   <script th:src="@{/js/script.js}"></script>
 </body>

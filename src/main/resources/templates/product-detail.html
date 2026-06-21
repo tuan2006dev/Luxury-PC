@@ -147,9 +147,10 @@
             <span th:if="${product.stock <= 0}" data-translate="product-badge-outofstock">Hết Hàng</span>
           </button>
           
-          <button type="submit" formaction="/cart/buy-now" class="btn-primary-lg" 
+          <button type="submit" th:formaction="@{/cart/buy-now}" class="btn-primary-lg" 
                   style="flex: 1; background: var(--gold); color: var(--black); border-color: var(--gold);" 
-                  th:disabled="${product.stock <= 0}" th:if="${product.stock > 0}">
+                  th:disabled="${product.stock <= 0}" th:if="${product.stock > 0}"
+                  onclick="this.form.classList.add('is-buy-now'); this.form.action='/cart/buy-now';">
             <span data-translate="product-btn-buy-now">Mua Ngay</span>
           </button>
         </form>

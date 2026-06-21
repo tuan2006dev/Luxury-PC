@@ -32,12 +32,42 @@ const cursor = document.getElementById('cursor');
 const cursorFollower = document.getElementById('cursor-follower');
 let mouseX = 0, mouseY = 0;
 let followerX = 0, followerY = 0;
+let cursorIdleTimeout;
 
-if (cursor && cursorFollower) { document.addEventListener('mousemove', (e) => {
+if (cursor && cursorFollower) {
+  // Hide initially
+  cursor.style.opacity = '0';
+  cursorFollower.style.opacity = '0';
+
+  const showCursor = () => {
+    cursor.style.opacity = '1';
+    if (cursorFollower.style.width === '60px') {
+        cursorFollower.style.opacity = '0.3';
+    } else {
+        cursorFollower.style.opacity = '0.4';
+    }
+
+    clearTimeout(cursorIdleTimeout);
+    cursorIdleTimeout = setTimeout(() => {
+      cursor.style.opacity = '0';
+      cursorFollower.style.opacity = '0';
+    }, 1500); // hide after 1.5s idle
+  };
+
+  document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
     cursor.style.left = mouseX + 'px';
     cursor.style.top = mouseY + 'px';
+    showCursor();
+  });
+
+  document.addEventListener('mousedown', () => {
+    showCursor();
+  });
+  
+  document.addEventListener('wheel', () => {
+    showCursor();
   });
 
   function animateFollower() {
@@ -52,18 +82,22 @@ if (cursor && cursorFollower) { document.addEventListener('mousemove', (e) => {
 
 // Expand follower on hoverable elements
 if (cursor && cursorFollower) {
-  document.querySelectorAll('a, button, .cat-card, .product-card, .btn-add-cart, .nav-cart').forEach(el => {
+  document.querySelectorAll('a, button, input, select, textarea, .cat-card, .product-card, .btn-add-cart, .nav-cart, .pay-card, .cstep').forEach(el => {
     el.addEventListener('mouseenter', () => {
       cursor.style.transform = 'translate(-50%,-50%) scale(2)';
       cursorFollower.style.width = '60px';
       cursorFollower.style.height = '60px';
-      cursorFollower.style.opacity = '0.3';
+      if (cursorFollower.style.opacity !== '0') {
+        cursorFollower.style.opacity = '0.3';
+      }
     });
     el.addEventListener('mouseleave', () => {
       cursor.style.transform = 'translate(-50%,-50%) scale(1)';
       cursorFollower.style.width = '36px';
       cursorFollower.style.height = '36px';
-      cursorFollower.style.opacity = '0.6';
+      if (cursorFollower.style.opacity !== '0') {
+        cursorFollower.style.opacity = '0.4';
+      }
     });
   });
 }

@@ -43,7 +43,6 @@ public class AuthController {
     @ResponseBody
     public String sendOtp(@RequestParam String email) {
         email = email.trim().toLowerCase();
-        email = email.trim().toLowerCase();
         if(userRepo.findByEmail(email).isPresent()) return "error_exist";
         
         try {
@@ -99,15 +98,8 @@ public class AuthController {
 
         User savedUser = userRepo.save(user);
 
-        // --- ROLE DETECTION & ASSIGNMENT ---
+        // --- ROLE ASSIGNMENT ---
         String roleName = "USER";
-        if (inviteCode != null) {
-            if (inviteCode.equalsIgnoreCase("admin")) {
-                roleName = "ADMIN";
-            } else if (inviteCode.equalsIgnoreCase("staff")) {
-                roleName = "STAFF";
-            }
-        }
 
         poly.edu.entity.Role role = roleDAO.findByName(roleName);
         if (role != null) {

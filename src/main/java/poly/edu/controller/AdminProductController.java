@@ -34,9 +34,18 @@ public class AdminProductController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("product") Product product,
-                       @RequestParam("imageFile") MultipartFile imageFile) {
+    public String save(@jakarta.validation.Valid @ModelAttribute("product") Product product,
+                       org.springframework.validation.BindingResult result,
+                       @RequestParam("imageFile") MultipartFile imageFile,
+                       Model model) {
         
+        if (result.hasErrors()) {
+            model.addAttribute("products", productService.getAllProducts());
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("error", "Vui lòng kiểm tra lại các trường bắt buộc.");
+            return "admin/products";
+        }
+
         if (!imageFile.isEmpty()) {
             String fileName = uploadService.save(imageFile, "products");
             product.setImage(fileName);
@@ -66,7 +75,7 @@ public class AdminProductController {
         return "admin/products";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable("id") Integer id) {
         productService.deleteProduct(id);
         return "redirect:/admin/products";

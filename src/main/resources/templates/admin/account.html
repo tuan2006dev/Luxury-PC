@@ -207,7 +207,7 @@
         <h2 data-translate="admin-account-form-title">Thêm / Cập nhật User</h2>
 
         <!-- FIX: action đúng là /admin/account/save -->
-        <form th:action="@{/admin/account/save}" method="post">
+        <form novalidate th:action="@{/admin/account/save}" method="post">
 
 
             <input type="hidden" name="id" th:value="${user.id}">
@@ -347,20 +347,20 @@
                     </a>
 
                     <!-- Lock/Unlock -->
-                    <form th:action="@{/admin/account/lock/{id}(id=${u.id})}" th:if="${u.status == true}" method="post" style="display:inline;">
+                    <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}" th:if="${u.status == true}" method="post" style="display:inline;">
             
                         <button type="submit" class="btn-action" data-translate="admin-account-btn-lock" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Khoá</button>
                     </form>
 
-                    <form th:action="@{/admin/account/unlock/{id}(id=${u.id})}" th:if="${u.status == false}" method="post" style="display:inline;">
+                    <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}" th:if="${u.status == false}" method="post" style="display:inline;">
             
                         <button type="submit" class="btn-action" data-translate="admin-account-btn-unlock" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Mở khoá</button>
                     </form>
 
                     <!-- Delete -->
-                    <form th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post" style="display:inline;">
+                    <form novalidate th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post" style="display:inline;">
             
-                        <button type="submit" class="btn-action btn-danger" onclick="return confirm(window.t('admin-account-confirm-delete', 'Xác nhận xoá user này?'))" data-translate="admin-account-btn-delete" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Xoá</button>
+                        <button type="button" class="btn-action btn-danger" onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá user này?'))" data-translate="admin-account-btn-delete" style="border:none;background:none;cursor:pointer;font-size:inherit;font-family:inherit;">Xoá</button>
                     </form>
                 </td>
 

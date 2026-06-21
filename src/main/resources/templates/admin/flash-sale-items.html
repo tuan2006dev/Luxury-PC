@@ -76,7 +76,7 @@
         <!-- Add product form -->
         <div class="form-card">
             <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span data-translate="admin-flashitems-form-title">Thêm Sản Phẩm Vào Flash Sale</span></div>
-            <form th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST">
+            <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST">
                 <div class="form-row">
                     <div class="form-group">
                         <label data-translate="admin-flashitems-label-product">Sản Phẩm</label>
@@ -90,11 +90,11 @@
                     </div>
                     <div class="form-group">
                         <label data-translate="admin-flashitems-label-price">Giá Sale (₫)</label>
-                        <input type="number" name="salePrice" required placeholder="VD: 15000000" data-translate-placeholder="admin-flashitems-placeholder-price">
+                        <input autocomplete="off" type="number" name="salePrice" required placeholder="VD: 15000000" data-translate-placeholder="admin-flashitems-placeholder-price">
                     </div>
                     <div class="form-group">
                         <label data-translate="admin-flashitems-label-qty">Số Lượng Sale</label>
-                        <input type="number" name="saleQuantity" required placeholder="VD: 50" value="50" data-translate-placeholder="admin-flashitems-placeholder-qty">
+                        <input autocomplete="off" type="number" name="saleQuantity" required placeholder="VD: 50" value="50" data-translate-placeholder="admin-flashitems-placeholder-qty">
                     </div>
                     <button type="submit" class="btn btn-gold" style="height:fit-content;"><i class="fa-solid fa-plus"></i> <span data-translate="admin-flashitems-btn-add">Thêm</span></button>
                 </div>
@@ -135,8 +135,8 @@
                             <div style="font-size:.65rem;color:var(--muted);margin-top:3px;"><span th:text="${item.soldPercent}">10</span>% <span data-translate="admin-flashitems-text-sold">đã bán</span></div>
                         </td>
                         <td>
-                            <form th:action="@{/admin/flash-sales/{saleId}/items/remove/{itemId}(saleId=${flashSale.id},itemId=${item.id})}" method="POST"
-                                  th:onsubmit="return confirm(window.t('admin-flashitems-confirm-delete', 'Xóa sản phẩm này khỏi Flash Sale?'))">
+                            <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/{saleId}/items/remove/{itemId}(saleId=${flashSale.id},itemId=${item.id})}" method="POST"
+                                  th:onsubmit="event.preventDefault(); window.confirmDelete(this, window.t('admin-flashitems-confirm-delete', 'Xóa sản phẩm này khỏi Flash Sale?'));">
                                 <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i> <span data-translate="admin-flashitems-btn-delete">Xóa</span></button>
                             </form>
                         </td>

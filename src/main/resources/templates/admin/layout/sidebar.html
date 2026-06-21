@@ -79,6 +79,10 @@
             </button>
         </form>
     </nav>
+
+    <!-- SPA Router (Turbo) -->
+    <script type="module" src="https://cdn.skypack.dev/@hotwired/turbo"></script>
+
     <script>
         function toggleSidebarMenu(menuId, titleEl) {
             const menu = document.getElementById(menuId);
@@ -93,7 +97,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function initSidebarActiveStatus() {
             const path = window.location.pathname;
             const linkMap = {
                 '/admin/dashboard': 'nav-dashboard',
@@ -129,7 +133,10 @@
                     }
                 }
             }
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', initSidebarActiveStatus);
+        document.addEventListener('turbo:load', initSidebarActiveStatus);
     </script>
 
     <!-- ADMIN GLOBAL TRANSLATION SCRIPT -->
@@ -189,6 +196,7 @@
                 try {
                     translations = JSON.parse(cachedData);
                     setLanguage(savedLang);
+                    return; // Ngăn chặn tải lại để tránh flickering
                 } catch (e) {
                     console.error("Lỗi đọc cache dịch admin:", e);
                 }
@@ -226,9 +234,39 @@
             observer.observe(document.body, { childList: true, subtree: true });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function initTranslations() {
             loadTranslations();
             startTranslationObserver();
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', initTranslations);
+        document.addEventListener('turbo:load', initTranslations);
+    </script>
+    <script>
+        // Global Delete Confirmation using SweetAlert2
+        window.confirmDelete = function(formElement, message) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: message || 'Bạn có chắc chắn muốn xóa?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel',
+                    background: '#1a1a1a',
+                    color: '#f5f0e8',
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#c9a84c'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        formElement.submit();
+                    }
+                });
+            } else {
+                if (confirm(message || 'Bạn có chắc chắn muốn xóa?')) {
+                    formElement.submit();
+                }
+            }
+            return false;
+        };
     </script>
 </div>

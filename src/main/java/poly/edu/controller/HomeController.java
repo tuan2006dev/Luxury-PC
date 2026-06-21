@@ -61,8 +61,6 @@ public class HomeController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
-            System.out.println("USERNAME: " + auth.getName());
-            System.out.println("ROLES: " + auth.getAuthorities());
             model.addAttribute("wishlistProductIds", wishlistService.getWishlistProductIds(auth));
         }
 

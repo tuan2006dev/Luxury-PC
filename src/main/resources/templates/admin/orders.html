@@ -68,44 +68,44 @@
                                 <summary data-translate="admin-orders-summary-actions">Thao tác</summary>
                                 <div class="action-panel">
                                     <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" class="admin-note" data-translate="admin-orders-closed">Đơn đã kết thúc xử lý.</span>
-                                    <form th:if="${o.paymentMethod == 'VIETQR' and o.status == 'CHO_XAC_NHAN_THANH_TOAN'}" action="/admin/orders/confirm-payment" method="post" class="action-form">
+                                    <form novalidate autocomplete="off" th:if="${o.paymentMethod == 'VIETQR' and o.status == 'CHO_XAC_NHAN_THANH_TOAN'}" action="/admin/orders/confirm-payment" method="post" class="action-form">
 
-                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                         <button type="submit" class="update-btn" data-translate="admin-orders-btn-confirm-payment">Xác Nhận Thanh Toán</button>
                                     </form>
-                                    <form th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}" action="/admin/orders/approve-refund" method="post" class="action-form">
+                                    <form novalidate autocomplete="off" th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}" action="/admin/orders/approve-refund" method="post" class="action-form">
 
-                                        <input type="hidden" name="orderId" th:value="${o.id}">
-                                        <input type="text" name="note" placeholder="Ghi chú duyệt yêu cầu" data-translate-placeholder="admin-orders-placeholder-approve-refund-note">
+                                        <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                        <input autocomplete="off" type="text" name="note" placeholder="Ghi chú duyệt yêu cầu" data-translate-placeholder="admin-orders-placeholder-approve-refund-note">
                                         <button type="submit" class="update-btn" data-translate="admin-orders-btn-approve-refund">Duyệt Yêu Cầu Hoàn Tiền</button>
                                     </form>
-                                    <form th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}" action="/admin/orders/reject-refund" method="post" class="action-form">
+                                    <form novalidate autocomplete="off" th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}" action="/admin/orders/reject-refund" method="post" class="action-form">
 
-                                        <input type="hidden" name="orderId" th:value="${o.id}">
-                                        <input type="text" name="note" required placeholder="Lý do từ chối" data-translate-placeholder="admin-orders-placeholder-reject-refund-reason">
+                                        <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                        <input autocomplete="off" type="text" name="note" required placeholder="Lý do từ chối" data-translate-placeholder="admin-orders-placeholder-reject-refund-reason">
                                         <button type="submit" class="update-btn" data-translate="admin-orders-btn-reject-refund">Từ Chối Yêu Cầu</button>
                                     </form>
-                                    <form th:if="${o.paymentMethod == 'VIETQR' and (o.status == 'DA_THANH_TOAN' or o.status == 'PAID')}" action="/admin/orders/request-refund" method="post" class="action-form">
+                                    <form novalidate autocomplete="off" th:if="${o.paymentMethod == 'VIETQR' and (o.status == 'DA_THANH_TOAN' or o.status == 'PAID')}" action="/admin/orders/request-refund" method="post" class="action-form">
 
-                                        <input type="hidden" name="orderId" th:value="${o.id}">
-                                        <input type="text" name="note" placeholder="Lý do admin tạo hoàn tiền" data-translate-placeholder="admin-orders-placeholder-create-refund-reason">
+                                        <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                        <input autocomplete="off" type="text" name="note" placeholder="Lý do admin tạo hoàn tiền" data-translate-placeholder="admin-orders-placeholder-create-refund-reason">
                                         <button type="submit" class="update-btn" data-translate="admin-orders-btn-create-refund">Tạo Yêu Cầu Hoàn Tiền</button>
                                     </form>
-                                    <form th:if="${o.status == 'CHO_HOAN_TIEN'}" action="/admin/orders/confirm-refund" method="post" class="action-form">
+                                    <form novalidate autocomplete="off" th:if="${o.status == 'CHO_HOAN_TIEN'}" action="/admin/orders/confirm-refund" method="post" class="action-form">
 
-                                        <input type="hidden" name="orderId" th:value="${o.id}">
-                                        <input type="text" name="note" placeholder="Ghi chú xác nhận hoàn tiền" data-translate-placeholder="admin-orders-placeholder-confirm-refund-note">
+                                        <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                        <input autocomplete="off" type="text" name="note" placeholder="Ghi chú xác nhận hoàn tiền" data-translate-placeholder="admin-orders-placeholder-confirm-refund-note">
                                         <button type="submit" class="update-btn" data-translate="admin-orders-btn-confirm-refunded">Xác Nhận Đã Hoàn Tiền</button>
                                     </form>
-                                    <form th:if="${o.status == 'DA_THANH_TOAN' or o.status == 'PAID' or o.status == 'SHIPPING' or o.status == 'COMPLETED' or o.status == 'HOAN_THANH' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN'}" action="/admin/orders/recall" method="post" class="action-form">
+                                    <form novalidate autocomplete="off" th:if="${o.status == 'DA_THANH_TOAN' or o.status == 'PAID' or o.status == 'SHIPPING' or o.status == 'COMPLETED' or o.status == 'HOAN_THANH' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN'}" action="/admin/orders/recall" method="post" class="action-form">
 
-                                        <input type="hidden" name="orderId" th:value="${o.id}">
-                                        <input type="text" name="note" placeholder="Lý do thu hồi" data-translate-placeholder="admin-orders-placeholder-recall-reason">
+                                        <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                        <input autocomplete="off" type="text" name="note" placeholder="Lý do thu hồi" data-translate-placeholder="admin-orders-placeholder-recall-reason">
                                         <button type="submit" class="update-btn" data-translate="admin-orders-btn-recall">Thu Hồi Đơn</button>
                                     </form>
-                                    <form th:unless="${o.status == 'CHO_XAC_NHAN_THANH_TOAN' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN' or o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" action="/admin/orders/update-status" method="post" class="action-form">
+                                    <form novalidate autocomplete="off" th:unless="${o.status == 'CHO_XAC_NHAN_THANH_TOAN' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN' or o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}" action="/admin/orders/update-status" method="post" class="action-form">
 
-                                        <input type="hidden" name="orderId" th:value="${o.id}">
+                                        <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                         <select name="status">
                                             <option value="PENDING" th:selected="${o.status == 'PENDING'}" data-translate="admin-orders-status-pending">Chờ xử lý</option>
                                             <option value="PAID" th:selected="${o.status == 'PAID'}" data-translate="admin-orders-status-paid">Đã thanh toán</option>
