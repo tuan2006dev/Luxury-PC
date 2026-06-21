@@ -15,15 +15,40 @@ import poly.edu.entity.ShippingAddress;
 import poly.edu.entity.User;
 import poly.edu.repository.ShippingAddressRepository;
 import poly.edu.repository.UserRepository;
+import poly.edu.repository.WishlistItemRepository;
+import poly.edu.dao.UserRoleDAO;
+import poly.edu.dao.UserSessionDAO;
+import poly.edu.dao.UserVoucherDAO;
+import poly.edu.dao.ReviewDAO;
+import poly.edu.dao.OrderDAO;
 
 @Service
 public class ProfileService {
     private final UserRepository userRepository;
     private final ShippingAddressRepository shippingAddressRepository;
+    private final UserRoleDAO userRoleDAO;
+    private final UserSessionDAO userSessionDAO;
+    private final UserVoucherDAO userVoucherDAO;
+    private final WishlistItemRepository wishlistItemRepository;
+    private final ReviewDAO reviewDAO;
+    private final OrderDAO orderDAO;
 
-    public ProfileService(UserRepository userRepository, ShippingAddressRepository shippingAddressRepository) {
+    public ProfileService(UserRepository userRepository,
+                          ShippingAddressRepository shippingAddressRepository,
+                          UserRoleDAO userRoleDAO,
+                          UserSessionDAO userSessionDAO,
+                          UserVoucherDAO userVoucherDAO,
+                          WishlistItemRepository wishlistItemRepository,
+                          ReviewDAO reviewDAO,
+                          OrderDAO orderDAO) {
         this.userRepository = userRepository;
         this.shippingAddressRepository = shippingAddressRepository;
+        this.userRoleDAO = userRoleDAO;
+        this.userSessionDAO = userSessionDAO;
+        this.userVoucherDAO = userVoucherDAO;
+        this.wishlistItemRepository = wishlistItemRepository;
+        this.reviewDAO = reviewDAO;
+        this.orderDAO = orderDAO;
     }
 
     public User getCurrentUser(Authentication authentication) {
@@ -199,6 +224,25 @@ public class ProfileService {
 
     public void saveUser(User user) {
         userRepository.save(java.util.Objects.requireNonNull(user, "user must not be null"));
+    }
+
+    @Transactional
+    public void deleteUserFully(User user) {
+        Integer userId = user.getId();
+
+        // 1. Delete dependent records
+        userRoleDAO.deleteByUserId(userId);
+        userSessionDAO.deleteByUserId(userId);
+        userVoucherDAO.deleteByUserId(userId);
+        wishlistItemRepository.deleteByUserId(userId);
+        shippingAddressRepository.deleteByUserId(userId);
+
+        // 2. Nullify references (keep reviews and orders)
+        reviewDAO.nullifyUserReferences(userId);
+        orderDAO.nullifyUserReferences(userId);
+
+        // 3. Delete the user
+        userRepository.delete(user);
     }
 
     private String resolveIdentifier(Authentication authentication) {

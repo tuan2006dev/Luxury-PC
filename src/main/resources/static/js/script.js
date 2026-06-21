@@ -95,46 +95,52 @@ function updateCartUI() {
   const totalItems = Object.keys(cart).length;
   const totalPrice = Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
 
-  cartCount.textContent = totalItems;
-
-  if (totalItems === 0) {
-    cartItemsEl.innerHTML = '<p class="cart-empty">Giỏ hàng của bạn đang trống.</p>';
-  } else {
-    cartItemsEl.innerHTML = Object.entries(cart).map(([id, item]) => `
-      <div class="cart-item">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-qty">
-          <button data-action="dec" data-id="${id}" aria-label="Giảm">−</button>
-          <span class="cart-item-count">${item.qty}</span>
-          <button data-action="inc" data-id="${id}" aria-label="Tăng">+</button>
-        </div>
-        <div class="cart-item-price">${formatVND(item.price * item.qty)}</div>
-      </div>
-    `).join('');
-
-    // Bind qty buttons
-    cartItemsEl.querySelectorAll('button[data-action]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        const action = btn.dataset.action;
-        if (action === 'inc') {
-          let maxStock = cart[id].stock !== undefined && cart[id].stock !== null ? cart[id].stock : 5;
-          if (cart[id].qty >= maxStock) {
-            showToast(`quá số lượng sản phẩm hiện có (chỉ còn ${maxStock})`);
-            return;
-          }
-          cart[id].qty++;
-        } else {
-          cart[id].qty--;
-          if (cart[id].qty <= 0) delete cart[id];
-        }
-        updateCartUI();
-        syncSidebarCartWithServer(id, cart[id] ? cart[id].qty : 0);
-      });
-    });
+  if (cartCount) {
+    cartCount.textContent = totalItems;
   }
 
-  cartTotalEl.textContent = formatVND(totalPrice);
+  if (cartItemsEl) {
+    if (totalItems === 0) {
+      cartItemsEl.innerHTML = '<p class="cart-empty">Giỏ hàng của bạn đang trống.</p>';
+    } else {
+      cartItemsEl.innerHTML = Object.entries(cart).map(([id, item]) => `
+        <div class="cart-item">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-qty">
+            <button data-action="dec" data-id="${id}" aria-label="Giảm">−</button>
+            <span class="cart-item-count">${item.qty}</span>
+            <button data-action="inc" data-id="${id}" aria-label="Tăng">+</button>
+          </div>
+          <div class="cart-item-price">${formatVND(item.price * item.qty)}</div>
+        </div>
+      `).join('');
+
+      // Bind qty buttons
+      cartItemsEl.querySelectorAll('button[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const action = btn.dataset.action;
+          if (action === 'inc') {
+            let maxStock = cart[id].stock !== undefined && cart[id].stock !== null ? cart[id].stock : 5;
+            if (cart[id].qty >= maxStock) {
+              showToast(`quá số lượng sản phẩm hiện có (chỉ còn ${maxStock})`);
+              return;
+            }
+            cart[id].qty++;
+          } else {
+            cart[id].qty--;
+            if (cart[id].qty <= 0) delete cart[id];
+          }
+          updateCartUI();
+          syncSidebarCartWithServer(id, cart[id] ? cart[id].qty : 0);
+        });
+      });
+    }
+  }
+
+  if (cartTotalEl) {
+    cartTotalEl.textContent = formatVND(totalPrice);
+  }
 }
 
 function formatVND(num) {
@@ -246,12 +252,14 @@ document.querySelectorAll('.btn-add-cart').forEach(btn => {
 let toastTimeout;
 function showToast(msg) {
   const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
+  if (toast) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
 }
 
 // =========================================
@@ -320,6 +328,7 @@ let currentTesti = 0;
 let testiInterval;
 
 function goToTesti(idx) {
+  if (testiCards.length === 0) return;
   testiCards[currentTesti].classList.remove('active');
   dotBtns[currentTesti].classList.remove('active');
   currentTesti = idx;
@@ -328,6 +337,7 @@ function goToTesti(idx) {
 }
 
 function startTestiAuto() {
+  if (testiCards.length === 0) return;
   testiInterval = setInterval(() => {
     goToTesti((currentTesti + 1) % testiCards.length);
   }, 5000);
