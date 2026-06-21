@@ -166,6 +166,27 @@
                         
                         const newContent = doc.querySelector('.main-content');
                         if (newContent) {
+                            // Sync title
+                            if (doc.title) document.title = doc.title;
+
+                            // Sync styles and links from head
+                            const newStyles = Array.from(doc.head.querySelectorAll('link[rel="stylesheet"], style'));
+                            const oldStyles = Array.from(document.head.querySelectorAll('link[rel="stylesheet"], style'));
+
+                            newStyles.forEach(newStyle => {
+                                let exists = false;
+                                if (newStyle.tagName === 'LINK') {
+                                    exists = oldStyles.some(old => old.tagName === 'LINK' && old.href === newStyle.href);
+                                } else if (newStyle.tagName === 'STYLE') {
+                                    exists = oldStyles.some(old => old.tagName === 'STYLE' && old.innerHTML.trim() === newStyle.innerHTML.trim());
+                                }
+                                if (!exists) {
+                                    const clone = newStyle.cloneNode(true);
+                                    document.head.appendChild(clone);
+                                    oldStyles.push(clone);
+                                }
+                            });
+
                             if (mainContent) mainContent.replaceWith(newContent);
                             
                             // Execute new scripts
