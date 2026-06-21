@@ -336,7 +336,7 @@
             font-weight: bold;
         }
         .datetime-wrapper { position: relative; display: block; width: 100%; }
-        .datetime-wrapper i.fa-calendar-days { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gold); pointer-events: none; z-index: 5; font-size: 1rem; opacity: 0.8;}
+        .datetime-wrapper i.fa-calendar-days { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gold); z-index: 5; font-size: 1rem; opacity: 0.8; cursor: pointer; }
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -354,7 +354,8 @@
                         });
 
                         let altInput = fpInstance.altInput;
-                        if (!altInput.closest('.datetime-wrapper')) {
+                        let existingWrapper = altInput.closest('.datetime-wrapper');
+                        if (!existingWrapper) {
                             let wrapper = document.createElement('div');
                             wrapper.className = 'datetime-wrapper';
                             altInput.parentNode.insertBefore(wrapper, altInput);
@@ -362,7 +363,15 @@
                             
                             let icon = document.createElement('i');
                             icon.className = 'fa-solid fa-calendar-days';
+                            icon.onclick = function() { fpInstance.open(); };
                             wrapper.appendChild(icon);
+                        } else {
+                            // If the user already wrapped the input, find the icon and make it clickable
+                            let icon = existingWrapper.querySelector('.fa-calendar-days');
+                            if (icon) {
+                                icon.style.cursor = 'pointer';
+                                icon.onclick = function() { fpInstance.open(); };
+                            }
                         }
                     });
                 }
