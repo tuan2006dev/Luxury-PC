@@ -1,0 +1,124 @@
+/* Styling for Custom Luxury Confirm Popup */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 99999; /* Higher than bootstrap modal and navigation */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.confirm-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.confirm-box {
+    background: #111111;
+    border: 1px solid rgba(201, 168, 76, 0.25);
+    border-radius: 8px;
+    padding: 30px;
+    width: 450px;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(201, 168, 76, 0.08);
+    transform: scale(0.9);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: 'Outfit', 'Montserrat', 'Inter', 'Segoe UI', sans-serif;
+}
+
+.confirm-overlay.show .confirm-box {
+    transform: scale(1);
+}
+
+.confirm-icon {
+    font-size: 3rem;
+    color: #c9a84c;
+    margin-bottom: 15px;
+    display: inline-block;
+    animation: confirmPulse 2s infinite ease-in-out;
+}
+
+.confirm-msg {
+    color: #f5f0e8;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    white-space: pre-line; /* Support \n in alerts */
+    font-weight: 400;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.confirm-btn {
+    padding: 10px 24px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.confirm-btn-yes {
+    background: #c9a84c;
+    color: #0a0a0a;
+    border: none;
+}
+
+.confirm-btn-yes:hover {
+    background: #e8c97a;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(201, 168, 76, 0.3);
+}
+
+.confirm-btn-yes:active {
+    transform: translateY(0);
+}
+
+.confirm-btn-no {
+    background: transparent;
+    color: #888888;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.confirm-btn-no:hover {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.confirm-btn-no:active {
+    transform: translateY(0);
+}
+
+@keyframes confirmPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 5px rgba(201,168,76,0.3)); }
+    100% { transform: scale(1); }
+}
+
+/* Ensure custom cursor is rendered above the confirm popup overlay */
+.cursor {
+    z-index: 2147483647 !important;
+}
+.cursor-follower, .cursor-f {
+    z-index: 2147483646 !important;
+}

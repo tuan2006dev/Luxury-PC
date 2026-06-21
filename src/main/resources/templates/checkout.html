@@ -309,11 +309,13 @@
         }
         let html = '';
         vouchers.forEach(v => {
-          const code = v.voucher.code;
-          html += `<div style="background:var(--dark); border:1px solid rgba(201,168,76,.3); padding:10px; margin-bottom:10px; cursor:pointer;" onclick="selectVoucher('${code}')">
+          const code = v.code;
+          const expDate = v.endDate ? new Date(v.endDate).toLocaleDateString('vi-VN') : t('checkout-voucher-no-expiry', 'Không giới hạn');
+          html += `<div style="background:var(--dark); border:1px solid rgba(201,168,76,.3); padding:10px; margin-bottom:10px; cursor:pointer; border-radius:4px; transition:.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='rgba(201,168,76,.3)'" onclick="selectVoucher('${code}')">
                  <div style="font-weight:bold; color:var(--gold); font-size:1.1rem; letter-spacing:1px;">${code}</div>
-                 <div style="font-size:0.75rem; color:var(--cream);">${v.voucher.description}</div>
-                 <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">${t('checkout-voucher-min-order', 'ĐH Tối thiểu')}: ${new Intl.NumberFormat('vi-VN').format(v.voucher.minOrderAmount)}₫</div>
+                 <div style="font-size:0.75rem; color:var(--cream);">${v.description || ''}</div>
+                 <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">${t('checkout-voucher-min-order', 'ĐH Tối thiểu')}: ${v.minOrderAmount ? new Intl.NumberFormat('vi-VN').format(v.minOrderAmount) + '₫' : t('checkout-voucher-no-min', 'Không yêu cầu')}</div>
+                 <div style="font-size:0.65rem; color:var(--muted);">${t('profile-vouchers-expiry', 'HSD')}: ${expDate}</div>
               </div>`;
         });
         walletContainer.innerHTML = html;

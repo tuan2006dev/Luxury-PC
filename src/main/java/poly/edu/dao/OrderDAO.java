@@ -34,4 +34,8 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     List<Order> findByUser_IdOrderByCreatedAtDesc(Integer userId);
 
     Optional<Order> findByOrderCode(String orderCode);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE Order o SET o.user = null WHERE o.user.id = :userId")
+    void nullifyUserReferences(@org.springframework.data.repository.query.Param("userId") Integer userId);
 }

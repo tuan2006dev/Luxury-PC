@@ -347,8 +347,9 @@ public class CartController {
             if (Boolean.TRUE.equals(validation.get("valid"))) {
                 voucherDiscount = (double) validation.get("discount");
                 appliedVoucherCode = voucherCode.trim().toUpperCase();
-                // Mark voucher as used in user's wallet
+                // Mark voucher as used in user's wallet + increment global usage count
                 userVoucherService.markVoucherAsUsed(currentUser, appliedVoucherCode);
+                voucherService.incrementUsage(appliedVoucherCode);
             }
         }
 
