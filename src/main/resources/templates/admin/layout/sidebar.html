@@ -1,4 +1,4 @@
-<div class="sidebar" th:fragment="sidebar">
+<div class="sidebar" id="admin-sidebar" data-turbo-permanent th:fragment="sidebar">
     <link rel="stylesheet" th:href="@{/css/admin/admin-luxury.css}">
     <style>
         .sidebar { width: 280px; background: rgba(17, 17, 17, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-right: 1px solid rgba(201,168,76,0.15); padding: 2rem; position: fixed; height: 100vh; z-index: 100; overflow-y: auto; box-shadow: 4px 0 24px rgba(0,0,0,0.4); }
@@ -91,9 +91,11 @@
             if (isShowing) {
                 menu.classList.remove('show');
                 titleEl.classList.remove('active');
+                localStorage.setItem('sidebar_state_' + menuId, 'closed');
             } else {
                 menu.classList.add('show');
                 titleEl.classList.add('active');
+                localStorage.setItem('sidebar_state_' + menuId, 'opened');
             }
         }
 
@@ -112,6 +114,11 @@
                 '/admin/tickets': 'nav-tickets'
             };
 
+            // Remove active classes from links
+            document.querySelectorAll('.sub-menu a, .nav-link').forEach(el => {
+                el.classList.remove('active');
+            });
+
             let activeId = null;
             for (let key in linkMap) {
                 if (path.startsWith(key)) {
@@ -123,16 +130,36 @@
                 const activeEl = document.getElementById(activeId);
                 if (activeEl) {
                     activeEl.classList.add('active');
-                    const parentMenu = activeEl.closest('.sub-menu');
-                    if (parentMenu) {
-                        parentMenu.classList.add('show');
-                        const titleEl = parentMenu.previousElementSibling;
-                        if (titleEl && titleEl.classList.contains('menu-title')) {
-                            titleEl.classList.add('active');
-                        }
-                    }
                 }
             }
+
+            // Restore menu open/close states
+            const menus = ['productMenu', 'inventoryMenu', 'userMenu'];
+            menus.forEach(menuId => {
+                const menu = document.getElementById(menuId);
+                if (!menu) return;
+                
+                const titleEl = menu.previousElementSibling;
+                const savedState = localStorage.getItem('sidebar_state_' + menuId);
+                const hasActiveLink = activeId && menu.querySelector('#' + activeId);
+                
+                let shouldShow = false;
+                if (savedState === 'opened') {
+                    shouldShow = true;
+                } else if (savedState === 'closed') {
+                    shouldShow = false;
+                } else {
+                    shouldShow = !!hasActiveLink;
+                }
+
+                if (shouldShow) {
+                    menu.classList.add('show');
+                    if (titleEl && titleEl.classList.contains('menu-title')) titleEl.classList.add('active');
+                } else {
+                    menu.classList.remove('show');
+                    if (titleEl && titleEl.classList.contains('menu-title')) titleEl.classList.remove('active');
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', initSidebarActiveStatus);
