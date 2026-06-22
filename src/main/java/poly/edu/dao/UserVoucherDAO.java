@@ -27,4 +27,7 @@ public interface UserVoucherDAO extends JpaRepository<UserVoucher, Integer> {
 
     @org.springframework.transaction.annotation.Transactional
     void deleteByVoucherId(Integer voucherId);
+
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByUserId(Integer userId);
 }
