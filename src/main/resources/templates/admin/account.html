@@ -207,16 +207,59 @@
             background: #cc0000;
         }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .card-header h2 { margin-bottom: 0; }
-        
-        .add-form-container { display: none; }
-        .add-form-container.active { display: block; animation: slideDown 0.3s ease;}
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px);} to { opacity: 1; transform: translateY(0);}}
-        
-        .icon-btn { width: 30px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid; cursor: pointer; background: transparent;}
-        .icon-btn-del { color: var(--red); border-color: var(--red); }
-        .icon-btn-del:hover { background: var(--red); color: #fff;}
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header h2 {
+            margin-bottom: 0;
+        }
+
+        .add-form-container {
+            display: none;
+        }
+
+        .add-form-container.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .icon-btn-del {
+            color: var(--red);
+            border-color: var(--red);
+        }
+
+        .icon-btn-del:hover {
+            background: var(--red);
+            color: #fff;
+        }
     </style>
 
 </head>
@@ -228,14 +271,17 @@
     <div class="main-content">
 
         <div style="margin-bottom: 1.5rem;">
-            <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()" type="button"><i class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-account-btn-add">Thêm User Mới</span></button>
+            <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()" type="button"><i
+                    class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-account-btn-add">Thêm
+                    Staff Mới</span></button>
         </div>
 
         <div class="card add-form-container" id="userForm" th:classappend="${user.id != null ? 'active' : ''}">
 
             <div class="card-header">
                 <h2 data-translate="admin-account-form-title">Thêm / Cập nhật Staff</h2>
-                <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát" type="button"><i class="fa-solid fa-xmark"></i></button>
+                <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát" type="button"><i
+                        class="fa-solid fa-xmark"></i></button>
             </div>
 
             <!-- FIX: action đúng là /admin/account/save -->
@@ -318,7 +364,7 @@
                 </div>
 
                 <button type="submit" data-translate="admin-account-btn-save">
-                    Lưu User
+                    Lưu Staff
                 </button>
 
             </form>
@@ -327,7 +373,7 @@
 
         <div class="card">
 
-            <h2 data-translate="admin-account-list-title">Danh sách User (không phải ADMIN)</h2>
+            <h2 data-translate="admin-account-list-title">Danh sách Staff</h2>
 
             <table>
 
@@ -376,16 +422,12 @@
 
                         <td>
                             <!-- Edit -->
-                            <button type="button" class="btn-action"
-                                th:data-id="${u.id}"
-                                th:data-username="${u.username}"
-                                th:data-email="${u.email}"
+                            <button type="button" class="btn-action" th:data-id="${u.id}"
+                                th:data-username="${u.username}" th:data-email="${u.email}"
                                 th:data-fullname="${u.fullName != null ? u.fullName : ''}"
                                 th:data-phone="${u.phone != null ? u.phone : ''}"
-                                th:data-address="${u.address != null ? u.address : ''}"
-                                th:data-gender="${u.gender}"
-                                th:data-status="${u.status}"
-                                onclick="editUser(this)"
+                                th:data-address="${u.address != null ? u.address : ''}" th:data-gender="${u.gender}"
+                                th:data-status="${u.status}" onclick="editUser(this)"
                                 data-translate="admin-account-btn-edit">
                                 Sửa
                             </button>
@@ -410,7 +452,7 @@
                                 style="display:inline;">
 
                                 <button type="button" class="btn-action btn-danger"
-                                    onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá user này?'))"
+                                    onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá Staff này?'))"
                                     data-translate="admin-account-btn-delete">Xoá</button>
                             </form>
                         </td>
@@ -423,7 +465,7 @@
 
         </div>
 
-    <script th:src="@{/js/admin/account.js}"></script>
+        <script th:src="@{/js/admin/account.js}"></script>
     </div>
 </body>
 
