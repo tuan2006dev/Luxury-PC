@@ -9,7 +9,7 @@
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{font-size:16px;scroll-behavior:smooth;}
-    body{background:var(--black);color:var(--cream);font-family:var(--sans);font-weight:300;min-height:100vh;cursor:auto;overflow-x:hidden;}
+    body{background:var(--black);color:var(--cream);font-family:var(--sans);font-weight:300;min-height:100vh;overflow-x:hidden;}
     body.custom-cursor-enabled, body.custom-cursor-enabled *{cursor:none !important;}
     a{color:inherit;text-decoration:none;}
     img{display:block;}
@@ -33,7 +33,6 @@ body {
   font-family: var(--sans);
   font-weight: 300;
   min-height: 100vh;
-  cursor: auto;
   overflow-x: hidden;
   padding-bottom: 0;
 }
@@ -122,7 +121,6 @@ img {
   text-transform: uppercase;
   color: var(--muted);
   transition: color var(--ease);
-  cursor: auto;
 }
 
 .nav-link:hover {
@@ -142,7 +140,6 @@ img {
   letter-spacing: .2em;
   text-transform: uppercase;
   padding: .45rem 1rem;
-  cursor: auto;
   transition: color var(--ease), border-color var(--ease);
 }
 
@@ -205,7 +202,6 @@ img {
   background: linear-gradient(135deg, var(--gold-dark), var(--gold));
   margin-bottom: 1rem;
   position: relative;
-  cursor: auto;
 }
 
 .avatar-inner {
@@ -235,7 +231,6 @@ img {
   justify-content: center;
   font-size: .65rem;
   color: var(--black);
-  cursor: auto;
   transition: var(--ease);
 }
 
@@ -297,7 +292,6 @@ img {
   font-size: .75rem;
   letter-spacing: .05em;
   color: rgba(245, 240, 232, .6);
-  cursor: auto;
   transition: var(--ease);
   position: relative;
   border-left: 2px solid transparent;
@@ -345,7 +339,6 @@ img {
   font-size: .72rem;
   letter-spacing: .1em;
   color: var(--muted);
-  cursor: auto;
   background: none;
   border: none;
   transition: color var(--ease);
@@ -396,7 +389,6 @@ img {
   letter-spacing: .15em;
   text-transform: uppercase;
   padding: .5rem 1.2rem;
-  cursor: auto;
   transition: var(--ease);
 }
 
@@ -422,7 +414,6 @@ img {
   color: var(--muted);
   background: none;
   border: none;
-  cursor: auto;
   transition: var(--ease);
   position: relative;
 }
@@ -563,7 +554,6 @@ img {
   outline: none;
   transition: border-color var(--ease);
   appearance: none;
-  cursor: auto;
 }
 
 .form-select:focus {
@@ -580,7 +570,6 @@ img {
   letter-spacing: .2em;
   text-transform: uppercase;
   padding: .9rem 2.5rem;
-  cursor: auto;
   transition: var(--ease);
   position: relative;
   overflow: hidden;
@@ -694,7 +683,6 @@ img {
   font-size: .6rem;
   letter-spacing: .1em;
   padding: .3rem .7rem;
-  cursor: auto;
   transition: var(--ease);
 }
 
@@ -715,7 +703,6 @@ img {
   border: 1px solid rgba(201, 168, 76, .1);
   position: relative;
   transition: border-color var(--ease), transform var(--ease);
-  cursor: auto;
 }
 
 .wl-card:hover {
@@ -747,7 +734,6 @@ img {
   align-items: center;
   justify-content: center;
   font-size: .7rem;
-  cursor: auto;
   transition: var(--ease);
 }
 
@@ -851,7 +837,6 @@ img {
   letter-spacing: .1em;
   text-transform: uppercase;
   padding: .5rem 1rem;
-  cursor: auto;
   transition: var(--ease);
 }
 
@@ -891,7 +876,6 @@ img {
   letter-spacing: .15em;
   text-transform: uppercase;
   padding: .6rem 1.5rem;
-  cursor: auto;
   transition: var(--ease);
 }
 
@@ -982,7 +966,6 @@ img {
   inset: 0;
   background: var(--mid);
   border: 1px solid rgba(201, 168, 76, .15);
-  cursor: auto;
   transition: .3s;
 }
 
@@ -1084,7 +1067,6 @@ img {
   border: 1px solid rgba(201, 168, 76, 0.2);
   color: var(--muted);
   font-size: 0.8rem;
-  cursor: auto;
   transition: var(--ease);
 }
 
@@ -1227,7 +1209,6 @@ img {
   border: none;
   font-size: 1.4rem;
   color: var(--mid);
-  cursor: auto;
   padding: 0;
   line-height: 1;
   transition: color var(--ease);
@@ -1264,7 +1245,6 @@ img {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   padding: 0.65rem 1.25rem;
-  cursor: auto;
 }
 
 /* Responsive */
