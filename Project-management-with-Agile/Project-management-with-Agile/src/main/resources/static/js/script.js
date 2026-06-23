@@ -25,49 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 500); // reduced timeout for better UX
 });
 
-// =========================================
-// CUSTOM CURSOR
-// =========================================
-const cursor = document.getElementById('cursor');
-const cursorFollower = document.getElementById('cursor-follower');
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
-
-if (cursor && cursorFollower) {
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
-  });
-
-  function animateFollower() {
-    followerX += (mouseX - followerX) * 0.12;
-    followerY += (mouseY - followerY) * 0.12;
-    cursorFollower.style.left = followerX + 'px';
-    cursorFollower.style.top = followerY + 'px';
-    requestAnimationFrame(animateFollower);
-  }
-  animateFollower();
-}
-
-// Expand follower on hoverable elements
-if (cursor && cursorFollower) {
-  document.querySelectorAll('a, button, .cat-card, .product-card, .btn-add-cart, .nav-cart').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-      cursorFollower.style.width = '60px';
-      cursorFollower.style.height = '60px';
-      cursorFollower.style.opacity = '0.3';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-      cursorFollower.style.width = '36px';
-      cursorFollower.style.height = '36px';
-      cursorFollower.style.opacity = '0.6';
-    });
-  });
-}
 
 // =========================================
 // NAVBAR SCROLL
@@ -467,24 +424,6 @@ if (copyBtn) copyBtn.addEventListener('click', () => {
   }
 });
 
-// Expand cursor follower on new interactive elements
-if (cursor && cursorFollower) {
-  document.querySelectorAll('.flash-product-card, .voucher-card, .vmodal-copy-btn, .voucher-modal-close').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-      cursorFollower.style.width = '60px';
-      cursorFollower.style.height = '60px';
-      cursorFollower.style.opacity = '0.3';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-      cursorFollower.style.width = '36px';
-      cursorFollower.style.height = '36px';
-      cursorFollower.style.opacity = '0.6';
-    });
-  });
-}
-
 // =========================================
 // PRODUCT CATALOG DATA (for search)
 // =========================================
@@ -664,24 +603,6 @@ if (sortSelect) {
   sortSelect.addEventListener('change', () => {
     activeSort = sortSelect.value;
     applyFilterAndSort();
-  });
-}
-
-// Expand cursor on new elements
-if (cursor && cursorFollower) {
-  document.querySelectorAll('.nav-search-btn, .search-close, .search-tag, .search-result-item, .filter-chip, .sort-select').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-      cursorFollower.style.width = '60px';
-      cursorFollower.style.height = '60px';
-      cursorFollower.style.opacity = '0.3';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-      cursorFollower.style.width = '36px';
-      cursorFollower.style.height = '36px';
-      cursorFollower.style.opacity = '0.6';
-    });
   });
 }
 

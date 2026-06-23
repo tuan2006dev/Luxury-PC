@@ -1,0 +1,75 @@
+/* ==========================================================================
+   OPTIMIZED CUSTOM CURSOR STYLES
+   ========================================================================== */
+
+/* 1. Hide default cursor on desktop when custom cursor is active */
+body.custom-cursor-enabled,
+body.custom-cursor-enabled * {
+  cursor: none !important;
+}
+
+/* 2. Style the outer cursor dot and follower circle */
+.cursor, 
+.cursor-f,
+.cursor-follower {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  pointer-events: none !important;
+  z-index: 999999 !important; /* Ensure it is on top of everything */
+  border-radius: 50% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  
+  /* Critical: Disable transition on transform/left/top to prevent dragging lag! */
+  transition: width 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+              height 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+              opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+              background-color 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+              border-color 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  
+  will-change: transform, width, height, opacity;
+}
+
+/* 3. The inner dot style */
+.cursor {
+  width: 8px;
+  height: 8px;
+  background-color: var(--gold, #c9a84c);
+  opacity: 1;
+}
+
+/* When hovering over interactive elements, scale up the inner dot */
+.cursor.hover {
+  transform: scale(2);
+  background-color: var(--gold, #c9a84c);
+}
+
+/* 4. The outer follower circle style */
+.cursor-f,
+.cursor-follower {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--gold, #c9a84c);
+  background-color: transparent;
+  opacity: 0.6;
+}
+
+/* When hovering over interactive elements, expand the follower circle and make it semi-transparent */
+.cursor-f.hover,
+.cursor-follower.hover {
+  width: 60px;
+  height: 60px;
+  opacity: 0.3;
+  background-color: rgba(201, 168, 76, 0.12); /* Semi-transparent gold background */
+  border-color: var(--gold, #c9a84c);
+}
+
+/* 5. Hide state when leaving the window or on initialization */
+.cursor.hidden,
+.cursor-f.hidden,
+.cursor-follower.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}

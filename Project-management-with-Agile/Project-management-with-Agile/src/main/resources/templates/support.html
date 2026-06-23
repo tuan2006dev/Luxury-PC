@@ -491,17 +491,8 @@
                 item.classList.add('active');
             }
         }
-
-        // Mouse Cursor Follower Logic
-        const cursor = document.getElementById('cursor');
-        const follower = document.getElementById('cursor-follower');
-        if (cursor && follower) {
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                follower.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
-            });
-        }
     </script>
+    <script th:src="@{/js/cursor.js}"></script>
     <script th:src="@{/js/socket-chat.js}"></script>
 </body>
 

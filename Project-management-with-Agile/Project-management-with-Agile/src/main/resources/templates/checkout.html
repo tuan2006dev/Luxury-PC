@@ -333,39 +333,7 @@
 
   window.onload = updateInstallment;
 
-  /* CURSOR JS */
-  const cursor = document.getElementById('cursor');
-  const cursorF = document.getElementById('cursor-f');
-  if (cursor && cursorF) {
-    let mx = 0, my = 0, fx = 0, fy = 0;
-    document.addEventListener('mousemove', e => {
-      mx = e.clientX;
-      my = e.clientY;
-      cursor.style.left = mx + 'px';
-      cursor.style.top = my + 'px';
-    });
-    (function loop() {
-      fx += (mx - fx) * 0.12;
-      fy += (my - fy) * 0.12;
-      cursorF.style.left = fx + 'px';
-      cursorF.style.top = fy + 'px';
-      requestAnimationFrame(loop);
-    })();
-    document.querySelectorAll('a, button, input, select, textarea, .pay-card, .cstep').forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        cursor.style.transform = 'translate(-50%, -50%) scale(2)';
-        cursorF.style.width = '60px';
-        cursorF.style.height = '60px';
-        cursorF.style.backgroundColor = 'rgba(201, 168, 76, 0.1)';
-      });
-      el.addEventListener('mouseleave', () => {
-        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-        cursorF.style.width = '36px';
-        cursorF.style.height = '36px';
-        cursorF.style.backgroundColor = 'transparent';
-      });
-    });
-  }
 </script>
+<script th:src="@{/js/cursor.js}"></script>
 </body>
 </html>

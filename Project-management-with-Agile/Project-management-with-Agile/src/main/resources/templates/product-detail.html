@@ -424,15 +424,9 @@
       }, 500);
     });
 
-    const cur = document.getElementById('cursor'), curF = document.getElementById('cursor-f');
-    let mx = 0, my = 0, fx = 0, fy = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx + 'px'; cur.style.top = my + 'px'; });
-    (function loop() { fx += (mx - fx) * .12; fy += (my - fy) * .12; curF.style.left = fx + 'px'; curF.style.top = fy + 'px'; requestAnimationFrame(loop); })();
-    document.querySelectorAll('a,button,.thumb,.rel-card').forEach(el => {
-      el.addEventListener('mouseenter', () => { cur.style.transform = 'translate(-50%,-50%) scale(2)'; curF.style.width = '60px'; curF.style.height = '60px'; });
-      el.addEventListener('mouseleave', () => { cur.style.transform = 'translate(-50%,-50%) scale(1)'; curF.style.width = '36px'; curF.style.height = '36px'; });
-    });
-
+  </script>
+  <script th:src="@{/js/cursor.js}"></script>
+  <script>
     let toastT;
     window.showToast = function (msg) {
       const el = document.getElementById('toast');
