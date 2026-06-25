@@ -47,17 +47,7 @@
                         <input type="text" id="maxPriceDisplay" th:value="${maxPrice != null ? (maxPrice < 0 ? 0 : #numbers.formatDecimal(maxPrice, 0, 'POINT', 0, 'COMMA')) : null}" placeholder="Đến..." data-translate-placeholder="products-filter-price-to"
                             class="filter-input" oninput="formatPriceInput(this, 'maxPriceHidden')" />
                     </div>
-                    <script>
-                        function formatPriceInput(displayEl, hiddenId) {
-                            let rawValue = displayEl.value.replace(/\D/g, '');
-                            document.getElementById(hiddenId).value = rawValue;
-                            if (rawValue !== '') {
-                                displayEl.value = Number(rawValue).toLocaleString('vi-VN').replace(/,/g, '.');
-                            } else {
-                                displayEl.value = '';
-                            }
-                        }
-                    </script>
+                    <script th:src="@{/js/all-products.js}"></script>
                 </div>
 
                 <div class="filter-group kw">
@@ -112,6 +102,7 @@
     </main>
 
     <div th:replace="~{layout/footer :: footer}"></div>
+    <script th:src="@{/js/cursor.js}"></script>
     <script th:src="@{/js/script.js}"></script>
 </body>
 

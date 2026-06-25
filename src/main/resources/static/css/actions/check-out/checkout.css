@@ -1,3 +1,5 @@
+@import url('../../cursor.css');
+
 :root {
       --black: #0a0a0a;
       --deep: #111;
@@ -42,29 +44,7 @@
       text-decoration: none;
     }
 
-    .cursor {
-      position: fixed;
-      width: 8px;
-      height: 8px;
-      background: var(--gold);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-    }
 
-    .cursor-f {
-      position: fixed;
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--gold);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9998;
-      transform: translate(-50%, -50%);
-      opacity: .5;
-      transition: width .25s, height .25s;
-    }
 
     .navbar {
       position: fixed;

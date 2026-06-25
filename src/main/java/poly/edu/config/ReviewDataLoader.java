@@ -10,6 +10,7 @@ import poly.edu.entity.User;
 import java.util.Arrays;
 
 @Configuration
+@SuppressWarnings("null")
 public class ReviewDataLoader implements CommandLineRunner {
 
     @Autowired

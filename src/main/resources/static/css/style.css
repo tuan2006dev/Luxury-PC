@@ -4,6 +4,37 @@
    Color Palette: Black #0a0a0a, Gold #c9a84c, Cream #f5f0e8
 ============================================ */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('./cursor.css');
+@import url('./theme.css');
+
+@font-face {
+  font-family: 'NumInter';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7W0Q5nw.woff2') format('woff2');
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002D, U+20AB, U+003A;
+}
+@font-face {
+  font-family: 'NumInter';
+  font-style: normal;
+  font-weight: 500;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa2pL7W0Q5nw.woff2') format('woff2');
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002D, U+20AB, U+003A;
+}
+@font-face {
+  font-family: 'NumInter';
+  font-style: normal;
+  font-weight: 600;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1pL7W0Q5nw.woff2') format('woff2');
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002D, U+20AB, U+003A;
+}
+@font-face {
+  font-family: 'NumInter';
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa0ZL7W0Q5nw.woff2') format('woff2');
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002D, U+20AB, U+003A;
+}
 
 :root {
   --black: #0a0a0a;
@@ -16,9 +47,9 @@
   --cream: #f5f0e8;
   --white: #ffffff;
   --text-muted: #888888;
-  --font-serif: var(--font-serif);
-  --font-sans: 'Playfair Display', serif;
-  --font-old: 'Inter', sans-serif;
+  --font-serif: 'NumInter', 'Outfit', sans-serif;
+  --font-sans: 'NumInter', 'Playfair Display', serif;
+  --font-old: 'NumInter', 'Inter', sans-serif;
   --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -133,37 +164,7 @@ img {
   }
 }
 
-/* ============================================
-   CUSTOM CURSOR
-============================================ */
-.cursor {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  background: var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 999999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease, background 0.2s;
-}
 
-.cursor-follower {
-  position: fixed;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 999998;
-  transform: translate(-50%, -50%);
-  transition: transform 0.25s ease, width 0.25s, height 0.25s, opacity 0.25s;
-  opacity: 0.6;
-}
-
-body:hover .cursor {
-  opacity: 1;
-}
 
 /* ============================================
    NAVBAR
@@ -322,6 +323,20 @@ body:hover .cursor {
 .hero-bg {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.hero-video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-height: 100vh;
+  min-width: 177.77vh;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .hero-img {
@@ -3354,6 +3369,7 @@ input[type=number] {
 }
 
 
+.quick-btn {
   padding: 0.25rem 0.6rem;
   background: rgba(201, 168, 76, 0.05);
   border: 1px solid rgba(201, 168, 76, 0.2);
@@ -3554,14 +3570,12 @@ input[type=number] {
     z-index: 9999999 !important;
 }
 
-/* OVERRIDE CHO NHỮNG CHỖ CẦN GIỮ FONT CŨ (GIÁ, TÊN SẢN PHẨM, CON SỐ) */
-.product-name, .prod-title, .flash-prod-name, .ci-name, .item-name,
+/* OVERRIDE CHO NHỮNG CHỖ CẦN GIỮ FONT CŨ (GIÁ, CON SỐ) */
 .product-price, .product-old-price, .flash-new-price, .flash-old-price,
 .price-main, .price-old, .price-save, .installment, .ci-price, .os-total-num, .item-price, .summary-total, .summary-row,
-.product-spec, .prod-sub, .specs-quick, .stock-label,
-input[type=number], .qty-num, .result-num,
-.bp-item-name, .bp-item-price, .bp-total-num, .total-price, .stat-num, .order-total, .order-h-id, .order-h-date, .wl-name, .wl-price, .item-mini, .cart-item-name, .cart-item-price, .subtotal, .total, .tstat-val, .tstat-label, .ticket-id, .ticket-date, .ticket-status-badge,
-.promo-cd-num, .sv-discount, .promo-deal-name, .promo-deal-new, .promo-deal-old {
+.stock-label, input[type=number], .qty-num, .result-num,
+.bp-item-price, .bp-total-num, .total-price, .stat-num, .order-total, .order-h-id, .order-h-date, .wl-price, .cart-item-price, .subtotal, .total, .tstat-val, .tstat-label, .ticket-id, .ticket-date,
+.promo-cd-num, .sv-discount, .promo-deal-new, .promo-deal-old {
     font-family: var(--font-old) !important;
 }
 

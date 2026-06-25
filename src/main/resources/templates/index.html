@@ -12,32 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <style>
-      /* Style override to integrate AI Chat and Live Chat panels */
-      #socketChatBtn {
-        display: none !important; /* Hide default live chat button on index */
-      }
-      
-      #socketChatWindow {
-        bottom: 6rem !important;
-        right: 2rem !important;
-        width: 360px !important;
-        height: 520px !important;
-        z-index: 10000 !important;
-      }
-      
-      #ai-chat-window {
-        height: 520px !important; /* Lock height to match socket chat window */
-      }
-      
-      #chatbot-fab-trigger, #ai-chat-window, #ai-chat-window * {
-        cursor: none !important; /* Enable custom cursor support */
-      }
-      
-      .chatbot-mode-bar .mode-step {
-        cursor: none !important;
-      }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/index.css}" />
 </head>
 
 <body>
@@ -51,10 +26,14 @@
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-        <!-- <div class="hero-bg">
-            <img th:src="@{/hero_banner.png}" alt="Luxury PC" class="hero-img" id="hero-img" />
+        <div class="hero-bg">
+            <iframe class="hero-video-bg"
+                src="https://www.youtube.com/embed/5chNpFSG9Zk?autoplay=1&mute=1&loop=1&playlist=5chNpFSG9Zk&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen></iframe>
             <div class="hero-overlay"></div>
-        </div> -->
+        </div>
         <div class="hero-content">
             <h1 class="hero-title"><span data-translate="hero-title-1">Được Tạo Ra</span><br /><em data-translate="hero-title-2">Để Thống Trị</em></h1>
             <p class="hero-subtitle" data-translate="hero-subtitle">Linh kiện máy tính được tuyển chọn dành cho những người không chấp nhận điều tầm thường.</p>
@@ -409,6 +388,7 @@
         // Flash Sale countdown - endTime from database
         window.flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
     </script>
+    <script th:src="@{/js/cursor.js}"></script>
     <script th:src="@{/js/script.js(v=4)}"></script>
 
 </body>

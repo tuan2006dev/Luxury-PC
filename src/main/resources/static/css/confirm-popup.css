@@ -1,3 +1,5 @@
+@import url('./cursor.css');
+
 /* Styling for Custom Luxury Confirm Popup */
 .confirm-overlay {
     position: fixed;
@@ -115,10 +117,4 @@
     100% { transform: scale(1); }
 }
 
-/* Ensure custom cursor is rendered above the confirm popup overlay */
-.cursor {
-    z-index: 2147483647 !important;
-}
-.cursor-follower, .cursor-f {
-    z-index: 2147483646 !important;
-}
+

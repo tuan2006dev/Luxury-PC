@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Component
+@SuppressWarnings("null")
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());

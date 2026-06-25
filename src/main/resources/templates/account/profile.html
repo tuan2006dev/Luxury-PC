@@ -236,153 +236,7 @@
             <div class="section-h">Đơn Hàng Của Tôi</div>
           </div>
         </div>
-        <style>
-          /* Custom CSS for Accordion */
-          .orders-accordion-wrapper {
-            border: 1px solid rgba(201, 168, 76, .1);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 20px;
-          }
-
-          .order-row {
-            background: var(--dark);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-          }
-
-          .order-row:last-child {
-            border-bottom: none;
-          }
-
-          .order-header {
-            display: grid;
-            grid-template-columns: 1.5fr 3fr 1.5fr 1.5fr 1.5fr 0.5fr;
-            align-items: center;
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: 0.3s;
-          }
-
-          .order-header:hover {
-            background: rgba(201, 168, 76, .03);
-          }
-
-          .order-header>div {
-            font-size: 0.85rem;
-            color: var(--cream);
-          }
-
-          .order-h-id {
-            font-weight: bold;
-            color: var(--white);
-          }
-
-          .order-h-date {
-            color: var(--muted);
-            font-size: 0.75rem;
-          }
-
-          .order-details-pane {
-            display: none;
-            background: var(--deep);
-            padding: 1.5rem;
-            border-top: 1px dashed rgba(201, 168, 76, .2);
-          }
-
-          .order-details-pane.active {
-            display: block;
-            animation: fadeIn 0.4s ease;
-          }
-
-          .timeline-track {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            margin: 20px 0 40px;
-          }
-
-          .timeline-track::before {
-            content: '';
-            position: absolute;
-            top: 12px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            z-index: 1;
-          }
-
-          .tl-step {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            width: 25%;
-          }
-
-          .tl-dot {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: var(--dark);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-          }
-
-          .tl-step.done .tl-dot {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: #000;
-          }
-
-          .tl-label {
-            font-size: 0.7rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-          }
-
-          .tl-step.done .tl-label {
-            color: var(--gold);
-            font-weight: bold;
-          }
-
-          .item-mini-list {
-            background: var(--dark);
-            border-radius: 4px;
-            padding: 1rem;
-          }
-
-          .item-mini {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 10px;
-          }
-
-          .item-mini:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-          }
-
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(-10px);
-            }
-
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        </style>
+        <link rel="stylesheet" th:href="@{/css/account/profile.css}" />
 
         <div class="orders-accordion-wrapper">
           <!-- Iterate over orders using Thymeleaf -->
@@ -527,18 +381,7 @@
           </div>
         </div>
 
-        <script>
-          function toggleOrder(orderId) {
-            const pane = document.getElementById(orderId);
-            if (pane.classList.contains('active')) {
-              pane.classList.remove('active');
-            } else {
-              // Close others
-              document.querySelectorAll('.order-details-pane').forEach(el => el.classList.remove('active'));
-              pane.classList.add('active');
-            }
-          }
-        </script>
+        <script th:src="@{/js/account/profile.js}"></script>
       </div>
 
       <!-- ============ VOUCHERS ============ -->
@@ -848,26 +691,7 @@
   </div><!-- end profile-page -->
 
   <div class="order-modal-backdrop" id="order-modal-backdrop" onclick="closeOrderModal()">
-    <style>
-      .star-btn {
-        font-size: 2.2rem;
-        color: rgba(255, 255, 255, 0.15);
-        background: none;
-        border: none;
-        cursor: pointer;
-        transition: color 0.2s, transform 0.2s;
-        padding: 0 5px;
-      }
-
-      .star-btn:hover {
-        transform: scale(1.2);
-      }
-
-      .star-btn.active {
-        color: var(--gold) !important;
-        text-shadow: 0 0 12px rgba(201, 168, 76, 0.8);
-      }
-    </style>
+    
     <div class="order-modal" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeOrderModal()">✕</button>
       <div class="modal-head">
@@ -1808,28 +1632,8 @@
       });
     }
 
-    /* CURSOR JS */
-    {
-      const localCursor = document.getElementById('cursor');
-      const localCursorFollower = document.getElementById('cursor-follower');
-      if (localCursor && localCursorFollower) {
-        document.querySelectorAll('.profile-tab, input, select, textarea, .sb-item, .wl-card').forEach(el => {
-          el.addEventListener('mouseenter', () => {
-            localCursor.style.transform = 'translate(-50%, -50%) scale(2)';
-            localCursorFollower.style.width = '60px';
-            localCursorFollower.style.height = '60px';
-            localCursorFollower.style.backgroundColor = 'rgba(201, 168, 76, 0.1)';
-          });
-          el.addEventListener('mouseleave', () => {
-            localCursor.style.transform = 'translate(-50%, -50%) scale(1)';
-            localCursorFollower.style.width = '36px';
-            localCursorFollower.style.height = '36px';
-            localCursorFollower.style.backgroundColor = 'transparent';
-          });
-        });
-      }
-    }
   </script>
+  <script th:src="@{/js/cursor.js}"></script>
   <script th:src="@{/js/script.js}"></script>
   <script th:src="@{/js/confirm-popup.js}"></script>
 </body>

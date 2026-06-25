@@ -1,3 +1,5 @@
+@import url('./cursor.css');
+
 :root {
             --gold: #C9A84C;
             --gold-light: #DFCA8D;
@@ -262,28 +264,7 @@
             margin-bottom: 2rem;
         }
 
-        /* CURSOR SYSTEM */
-        .cursor,
-        .cursor-follower {
-            position: fixed;
-            pointer-events: none;
-            z-index: 10000;
-            border-radius: 50%;
-            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
-        }
 
-        .cursor {
-            width: 8px;
-            height: 8px;
-            background: var(--gold);
-        }
-
-        .cursor-follower {
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--gold);
-            opacity: 0.3;
-        }
 
         /* FILTERS SECTION */
         .filters-section {

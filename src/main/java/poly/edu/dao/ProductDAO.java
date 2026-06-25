@@ -16,6 +16,7 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
     Optional<Product> findByIdForUpdate(@Param("id") Integer id);
     
     @Query("SELECT p FROM Product p JOIN FETCH p.category")
+    @org.springframework.lang.NonNull
     List<Product> findAll();
 
     @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.category.name = 'CPU' OR p.category.name = 'GPU'")

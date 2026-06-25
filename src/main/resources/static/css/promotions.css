@@ -1094,7 +1094,7 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  cursor: pointer;
+  cursor: none;
   transition: all 0.3s ease;
 }
 
@@ -1107,6 +1107,6 @@
 .promo-deal-buy-btn:disabled {
   background: rgba(100, 100, 100, 0.2);
   color: var(--text-muted);
-  cursor: not-allowed;
+  cursor: none;
 }
 
