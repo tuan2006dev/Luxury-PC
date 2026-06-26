@@ -1,24 +1,10 @@
-:root {
-        --gold: #C5A25D;
-        --gold-light: #d8ba7b;
-        --black: #0b0b0b;
-        --deep: #111111;
-        --dark-grey: #1a1a1a;
-        --border-color: rgba(201,168,76,0.15);
-        --text-muted: #888;
-    }
 
-    body {
-        background-color: var(--black);
-        color: #ffffff;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        min-height: 100vh;
-        cursor: none;
-    }
+
+
 
     /* Custom Cursor */
-    .cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:999999;transform:translate(-50%,-50%);transition:transform .12s ease;}
-    .cursor-follower{position:fixed;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:999998;transform:translate(-50%,-50%);opacity:.45;transition:width .25s,height .25s,opacity .25s;}
+
+
 
     /* Header Logo Section */
     .header-logo {
@@ -63,7 +49,7 @@
     .cart-item {
         display: flex;
         align-items: center;
-        background: var(--dark-grey);
+        background: var(--dark);
         border: 1px solid var(--border-color);
         padding: 20px;
         margin-bottom: 15px;

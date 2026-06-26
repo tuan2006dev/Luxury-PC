@@ -1,12 +1,6 @@
 /* Admin Luxury Global CSS */
 
-:root {
-    --gold-gradient: linear-gradient(135deg, var(--gold), var(--gold-l));
-    --glass-bg: rgba(26, 26, 26, 0.7);
-    --glass-border: rgba(201, 168, 76, 0.15);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
+
 
 /* Animations */
 @keyframes fadeInUp {

@@ -1,13 +1,13 @@
-:root{--black:#0a0a0a;--deep:#111;--dark:#1a1a1a;--mid:#2a2a2a;--gold:#c9a84c;--gold-l:#e8c97a;--cream:#f5f0e8;--white:#fff;--muted:#888;--red:#ef4444;--green:#22c55e;--serif:var(--font-serif);--sans:var(--font-sans);--ease:.4s cubic-bezier(.25,.46,.45,.94);}
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{background:var(--black);color:var(--cream);font-family:var(--sans);min-height:100vh;overflow-x:hidden;cursor:none;}
+
+
+
 
     /* Custom Cursor */
-    .cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:transform .15s ease;}
+
     .cursor-f{position:fixed;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);opacity:.4;transition:width .25s,height .25s,opacity .25s,background-color .25s;}
 
     /* Navbar & Steps */
-    .navbar{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4rem;background:rgba(10,10,10,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,.12);}
+
     .nav-logo{font-family:var(--serif);font-size:1.6rem;letter-spacing:.25em;color:var(--gold); text-decoration: none;}
     .checkout-steps{display:flex;align-items:center;justify-content:center;padding:5.5rem 4rem 0;gap:.5rem;}
     .cstep{display:flex;align-items:center;gap:.5rem;}

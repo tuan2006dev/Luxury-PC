@@ -760,6 +760,7 @@
         if (!text) return;
 
         const now = Date.now();
+        if (now - lastLiveChatTime < 2000) {
             return;
         }
         lastLiveChatTime = now;

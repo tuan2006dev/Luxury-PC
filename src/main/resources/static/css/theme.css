@@ -2,7 +2,7 @@
    THEME VARIABLES
 ============================================ */
 /* Base light theme colors */
-:root[data-theme="light"] {
+body.light-mode {
   --black: #ffffff;      /* Main background becomes white */
   --deep: #f8f9fa;       /* Deep sections become light gray */
   --dark: #e9ecef;       /* Dark surfaces become medium-light gray */
@@ -46,12 +46,38 @@
 }
 
 /* Icon rotation animation on toggle */
-:root[data-theme="light"] .theme-toggle-btn svg.sun-icon {
+body.light-mode .theme-toggle-btn svg.sun-icon {
   display: none;
 }
-:root[data-theme="dark"] .theme-toggle-btn svg.moon-icon {
+body:not(.light-mode) .theme-toggle-btn svg.moon-icon {
   display: none;
 }
-:root:not([data-theme="light"]) .theme-toggle-btn svg.moon-icon {
-  display: none;
+
+.floating-theme-btn {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  z-index: 9999;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  width: 48px;
+  height: 48px;
+  margin-left: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0.2;
+  transition: all 0.3s ease;
+}
+
+body.light-mode .floating-theme-btn {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.floating-theme-btn:hover {
+  opacity: 1;
+  background: rgba(201, 168, 76, 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.3);
 }

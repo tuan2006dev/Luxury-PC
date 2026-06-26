@@ -1,26 +1,8 @@
 @import url('./cursor.css');
 
-:root {
-            --gold: #C9A84C;
-            --gold-light: #DFCA8D;
-            --black: #0A0A0A;
-            --gray-dark: #1A1A1A;
-            --gray-mid: #2A2A2A;
-            --text-color: #E0E0E0;
-            --muted: #888;
-            --font-main: var(--font-sans);
-            --font-serif: var(--font-serif);
-        }
 
-        body {
-            background-color: var(--black);
-            color: var(--text-color);
-            font-family: var(--font-main);
-            margin: 0;
-            padding-top: 100px;
-            overflow-x: hidden;
-            cursor: none;
-        }
+
+
 
         .container {
             max-width: 1400px;

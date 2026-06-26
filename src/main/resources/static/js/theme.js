@@ -3,16 +3,16 @@
  */
 document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('theme-toggle');
-    const rootElement = document.documentElement;
+    const bodyElement = document.body;
     
     // Check local storage for theme, default to dark
     const currentTheme = localStorage.getItem('theme') || 'dark';
     
     // Apply current theme
     if (currentTheme === 'light') {
-        rootElement.setAttribute('data-theme', 'light');
+        bodyElement.classList.add('light-mode');
     } else {
-        rootElement.setAttribute('data-theme', 'dark');
+        bodyElement.classList.remove('light-mode');
     }
 
     // Toggle button click handler
@@ -22,11 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             e.stopPropagation();
             
-            const isLight = rootElement.getAttribute('data-theme') === 'light';
-            const newTheme = isLight ? 'dark' : 'light';
+            bodyElement.classList.toggle('light-mode');
+            const isLight = bodyElement.classList.contains('light-mode');
+            const newTheme = isLight ? 'light' : 'dark';
             
-            // Set new theme
-            rootElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             
             console.log(`Theme switched to: ${newTheme}`);
@@ -38,7 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
 (function() {
     try {
         const theme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
+        if (theme === 'light') {
+            document.body.classList.add('light-mode');
+        }
     } catch (e) {
         console.warn("localStorage not available for theme check");
     }

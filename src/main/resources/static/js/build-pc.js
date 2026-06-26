@@ -1276,8 +1276,32 @@ function registerCursorEvents() {}
     };
   }
 
+  // Theme toggle function
+  function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const isLightMode = document.body.classList.contains('light-mode');
+    const themeBtn = document.getElementById('btn-theme');
+    if (themeBtn) {
+      themeBtn.textContent = isLightMode ? '🌙 Tối' : '☀️ Sáng';
+    }
+    localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+  }
+
+  // Load saved theme on page load
+  function loadTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-mode');
+      const themeBtn = document.getElementById('btn-theme');
+      if (themeBtn) {
+        themeBtn.textContent = '🌙 Tối';
+      }
+    }
+  }
+
   // 9. WINDOW ONLOAD INITIALIZER
   window.onload = function() {
+    loadTheme();
     init3D();
     renderPackages();
     renderSlots();

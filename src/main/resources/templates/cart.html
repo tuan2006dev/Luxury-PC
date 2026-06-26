@@ -15,9 +15,7 @@
 <header class="header-logo">
   <div class="container" style="display:flex; justify-content:center;">
     <a href="/" style="text-decoration:none; display:flex; align-items:center; gap: 10px;">
-        <span style="font-family:'Inter', sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.35em; color:var(--gold);">LUXURY</span>
-        <div style="width:1px; height:28px; background:var(--gold); opacity:0.6;"></div>
-        <span style="font-family:'Inter', sans-serif; font-size:0.7rem; font-weight:500; letter-spacing:0.5em; color:#888; text-transform:uppercase;">PC</span>
+        <span class="logo-Luxury">LUXURY</span> <span class="logo-pc">PC</span>
     </a>
   </div>
 </header>
@@ -117,6 +115,13 @@
 </div>
 
 
+
+
+<!-- THEME TOGGLE -->
+<button class="theme-toggle-btn floating-theme-btn" id="theme-toggle" aria-label="Chuyển đổi giao diện Sáng/Tối">
+    <i class="fa-regular fa-moon"></i>
+</button>
+<script th:src="@{/js/theme.js}"></script>
 
 </body>
 </html>

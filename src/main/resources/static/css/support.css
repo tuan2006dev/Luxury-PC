@@ -1,24 +1,6 @@
-:root {
-            --black: #0a0a0a;
-            --deep: #111;
-            --dark: #1a1a1a;
-            --mid: #2a2a2a;
-            --gold: #c9a84c;
-            --gold-l: #e8c97a;
-            --cream: #f5f0e8;
-            --white: #fff;
-            --muted: #888;
-            --red: #ef4444;
-            --green: #22c55e;
-            --ease: .4s cubic-bezier(.25,.46,.45,.94);
-        }
 
-        body {
-            background: var(--black);
-            color: var(--cream);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-        }
+
+
 
         /* Container & Layout */
         .support-layout {
