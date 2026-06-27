@@ -114,6 +114,35 @@ public class CartController {
         return "redirect:/checkout";
     }
 
+    @PostMapping("/api/cart/add-build")
+    @ResponseBody
+    public java.util.Map<String, Object> addBuildToCart(@RequestBody java.util.List<Integer> productIds, HttpSession session) {
+        Map<Integer, CartItem> cart = getCartFromSession(session);
+        java.util.Map<String, Object> response = new HashMap<>();
+
+        try {
+            for (Integer id : productIds) {
+                if (id == null) continue;
+                Optional<Product> pOpt = productDAO.findById(id);
+                if (pOpt.isPresent()) {
+                    Product p = pOpt.get();
+                    if (cart.containsKey(id)) {
+                        CartItem item = cart.get(id);
+                        item.setQuantity(item.getQuantity() + 1);
+                    } else {
+                        cart.put(id, new CartItem(id, p.getName(), p.getPrice(), 1));
+                    }
+                }
+            }
+            session.setAttribute("cart", cart);
+            response.put("success", true);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+
     /**
      * 2. CẬP NHẬT SỐ LƯỢNG (Dùng AJAX từ cart.html)
      */

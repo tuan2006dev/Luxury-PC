@@ -1,6 +1,47 @@
 /* Admin Luxury Global CSS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
+html {
+  font-size: 13px;
+  scroll-behavior: smooth;
+}
+
+:root {
+  --black: #0a0a0a;
+  --deep: #111111;
+  --dark: #1a1a1a;
+  --mid: #2a2a2a;
+  --cream: #f5f0e8;
+  --white: #ffffff;
+  --muted: #888888;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dark: #8a7030;
+  --gold-gradient: linear-gradient(135deg, #c9a84c, #e8c97a);
+  --blue: #3b82f6;
+  --red: #ef4444;
+  --sans: 'Inter', sans-serif;
+  --transition: 0.3s ease;
+  --glass-bg: rgba(26, 26, 26, 0.7);
+  --glass-border: rgba(201, 168, 76, 0.15);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+body {
+  background-color: var(--black) !important;
+  color: var(--white) !important;
+  font-family: var(--sans);
+  margin: 0;
+  padding: 0;
+}
 
 /* Animations */
 @keyframes fadeInUp {

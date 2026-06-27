@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Combo — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/products.css}" />
+    <style>
+        .select-group select {
+            width: 100%;
+            padding: 10px;
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .select-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+
+<div class="main-content">
+    <div class="header">
+        <div class="title">
+            <h1 th:text="${combo.id == null ? 'Thêm Combo Mới' : 'Cập Nhật Combo'}">Thêm Combo</h1>
+        </div>
+        <div class="user-info">
+            <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
+            <span th:text="${#authentication.name}">Admin</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <form th:action="@{/admin/combos/save}" method="post" th:object="${combo}" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+            
+            <div class="form-grid">
+                <div class="input-group full">
+                    <label>Tên Combo *</label>
+                    <input type="text" th:field="*{name}" required placeholder="VD: Combo 1: LXR Core Ultra 7 / RTX 5070Ti">
+                </div>
+                
+                <div class="input-group">
+                    <label>Tải Ảnh Lên *</label>
+                    <div class="file-upload-wrapper">
+                        <label class="file-upload-label">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span class="file-name">Chọn ảnh tải lên...</span>
+                            <input autocomplete="off" type="file" name="imageFile" accept="image/*" class="file-input-hidden" onchange="
+                                const fileName = this.files.length > 0 ? this.files[0].name : 'Chọn ảnh tải lên...';
+                                const label = this.closest('.file-upload-label');
+                                const textSpan = label.querySelector('.file-name');
+                                textSpan.textContent = fileName;
+                                label.classList.add('has-file');
+                                if(this.files.length === 0) label.classList.remove('has-file');
+                            ">
+                        </label>
+                        <div class="current-image" th:if="${combo.image != null and !combo.image.isEmpty()}">
+                            <img th:src="@{${combo.image.startsWith('/') ? combo.image : '/uploads/products/' + combo.image}}" style="max-height: 80px; border-radius: 4px; border: 1px solid rgba(201,168,76,0.2);">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Giá Combo (VNĐ) *</label>
+                    <input type="number" name="price" th:value="${combo.price != null ? #numbers.formatInteger(combo.price, 1, 'NONE') : ''}" required min="0">
+                </div>
+
+                <div class="input-group">
+                    <label>Nhãn dán (Badge)</label>
+                    <input type="text" th:field="*{badge}" placeholder="VD: HOT, SALE, ULTIMATE">
+                </div>
+
+                <div class="input-group">
+                    <label>Màu nền Nhãn dán (Mã Hex)</label>
+                    <input type="text" th:field="*{badgeColor}" placeholder="VD: #ef4444 hoặc var(--gold)">
+                </div>
+            </div>
+
+            <hr style="border-color: #333; margin: 2rem 0;">
+            <h3 style="color: var(--gold); margin-bottom: 1.5rem;">Cấu hình linh kiện</h3>
+            
+            <div class="form-grid">
+                <div class="input-group select-group">
+                    <label>Vi xử lý (CPU)</label>
+                    <select name="cpuId">
+                        <option value="">-- Bỏ qua --</option>
+                        <option th:each="p : ${products}" th:if="${p.category != null and p.category.name == 'CPU'}" 
+                                th:value="${p.id}" th:text="${p.name}" 
+                                th:selected="${combo.details != null and combo.details.?[slotType == 'cpu'].size() > 0 and combo.details.?[slotType == 'cpu'][0].product.id == p.id}"></option>
+                    </select>
+                </div>
+                
+                <div class="input-group select-group">
+                    <label>Bo mạch chủ (Mainboard)</label>
+                    <select name="mainboardId">
+                        <option value="">-- Bỏ qua --</option>
+                        <option th:each="p : ${products}" th:if="${p.category != null and p.category.name == 'Mainboard'}" 
+                                th:value="${p.id}" th:text="${p.name}"
+                                th:selected="${combo.details != null and combo.details.?[slotType == 'mainboard'].size() > 0 and combo.details.?[slotType == 'mainboard'][0].product.id == p.id}"></option>
+                    </select>
+                </div>
+
+                <div class="input-group select-group">
+                    <label>Bộ nhớ trong (RAM)</label>
+                    <select name="ramId">
+                        <option value="">-- Bỏ qua --</option>
+                        <option th:each="p : ${products}" th:if="${p.category != null and p.category.name == 'RAM'}" 
+                                th:value="${p.id}" th:text="${p.name}"
+                                th:selected="${combo.details != null and combo.details.?[slotType == 'ram'].size() > 0 and combo.details.?[slotType == 'ram'][0].product.id == p.id}"></option>
+                    </select>
+                </div>
+
+                <div class="input-group select-group">
+                    <label>Card Đồ Họa (VGA)</label>
+                    <select name="vgaId">
+                        <option value="">-- Bỏ qua --</option>
+                        <option th:each="p : ${products}" th:if="${p.category != null and p.category.name == 'VGA'}" 
+                                th:value="${p.id}" th:text="${p.name}"
+                                th:selected="${combo.details != null and combo.details.?[slotType == 'vga'].size() > 0 and combo.details.?[slotType == 'vga'][0].product.id == p.id}"></option>
+                    </select>
+                </div>
+
+                <div class="input-group select-group">
+                    <label>Ổ Cứng (Storage)</label>
+                    <select name="storageId">
+                        <option value="">-- Bỏ qua --</option>
+                        <option th:each="p : ${products}" th:if="${p.category != null and p.category.name == 'Storage'}" 
+                                th:value="${p.id}" th:text="${p.name}"
+                                th:selected="${combo.details != null and combo.details.?[slotType == 'storage'].size() > 0 and combo.details.?[slotType == 'storage'][0].product.id == p.id}"></option>
+                    </select>
+                </div>
+
+                <div class="input-group select-group">
+                    <label>Nguồn (PSU)</label>
+                    <select name="psuId">
+                        <option value="">-- Bỏ qua --</option>
+                        <option th:each="p : ${products}" th:if="${p.category != null and p.category.name == 'PSU'}" 
+                                th:value="${p.id}" th:text="${p.name}"
+                                th:selected="${combo.details != null and combo.details.?[slotType == 'psu'].size() > 0 and combo.details.?[slotType == 'psu'][0].product.id == p.id}"></option>
+                    </select>
+                </div>
+
+                <div class="input-group select-group">
+                    <label>Vỏ Máy (Case)</label>
+                    <select name="caseId">
+                        <option value="">-- Bỏ qua --</option>
+                        <option th:each="p : ${products}" th:if="${p.category != null and p.category.name == 'Case'}" 
+                                th:value="${p.id}" th:text="${p.name}"
+                                th:selected="${combo.details != null and combo.details.?[slotType == 'case'].size() > 0 and combo.details.?[slotType == 'case'][0].product.id == p.id}"></option>
+                    </select>
+                </div>
+
+                <div class="input-group select-group">
+                    <label>Tản Nhiệt (Cooling)</label>
+                    <select name="coolingId">
+                        <option value="">-- Bỏ qua --</option>
+                        <option th:each="p : ${products}" th:if="${p.category != null and p.category.name == 'Cooling'}" 
+                                th:value="${p.id}" th:text="${p.name}"
+                                th:selected="${combo.details != null and combo.details.?[slotType == 'cooling'].size() > 0 and combo.details.?[slotType == 'cooling'][0].product.id == p.id}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-gold" style="width: 200px;">Lưu Combo</button>
+                <a th:href="@{/admin/combos}" class="btn" style="background: transparent; border: 1px solid #555; color: #fff;">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="cursor-glow"></div>
+<script th:src="@{/js/cursor.js}"></script>
+
+</body>
+</html>
