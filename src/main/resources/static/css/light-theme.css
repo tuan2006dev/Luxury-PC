@@ -280,3 +280,99 @@ body.light-mode h1 em {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* ============================================
+   CHATBOT WINDOW
+   ============================================ */
+body.light-mode .chatbot-window {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1), 0 0 40px rgba(201,168,76,0.1) !important;
+}
+
+body.light-mode .chatbot-header {
+  background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.02)) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-mode .chatbot-title {
+  color: var(--gold-dark) !important;
+}
+
+body.light-mode .chatbot-subtitle {
+  color: #666 !important;
+}
+
+body.light-mode .chatbot-close {
+  color: #666 !important;
+}
+
+body.light-mode .chatbot-mode-bar {
+  background: rgba(0,0,0,0.03) !important;
+  border-bottom-color: rgba(0,0,0,0.05) !important;
+}
+
+body.light-mode .chat-bubble.bot .chat-bubble-text {
+  background: #F8F6F0 !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  color: #333 !important;
+}
+
+body.light-mode .chat-bubble.user .chat-bubble-text {
+  background: rgba(201,168,76,0.1) !important;
+  border-color: rgba(201,168,76,0.2) !important;
+  color: #222 !important;
+}
+
+body.light-mode .chatbot-input-row {
+  border-top-color: rgba(0,0,0,0.08) !important;
+}
+
+body.light-mode .chatbot-input {
+  background: #FFFFFF !important;
+  border-color: rgba(0,0,0,0.15) !important;
+  color: #222 !important;
+}
+
+body.light-mode .chatbot-input:focus {
+  border-color: var(--gold) !important;
+}
+
+body.light-mode .chatbot-input::placeholder {
+  color: #888 !important;
+}
+
+body.light-mode .quick-btn {
+  background: rgba(201,168,76,0.05) !important;
+  border-color: rgba(201,168,76,0.3) !important;
+  color: #555 !important;
+}
+
+body.light-mode .quick-btn:hover {
+  background: rgba(201,168,76,0.15) !important;
+  color: var(--gold-dark) !important;
+}
+
+/* ============================================
+   PRODUCT WISHLIST BUTTON
+   ============================================ */
+body.light-mode .product-wishlist {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #666 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+body.light-mode .product-wishlist:hover {
+  background: var(--gold) !important;
+  border-color: var(--gold) !important;
+  color: #FFFFFF !important;
+  transform: scale(1.1);
+}
+
+/* ============================================
+   PRODUCT IMAGE WRAPPER
+   ============================================ */
+body.light-mode .product-img-wrap {
+  background: transparent !important;
+}

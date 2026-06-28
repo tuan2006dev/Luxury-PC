@@ -55,7 +55,8 @@ body.custom-cursor-enabled textarea {
 
 /* When hovering over interactive elements, scale up the inner dot */
 .cursor.hover {
-  transform: scale(2);
+  width: 16px;
+  height: 16px;
   background-color: var(--gold, #c9a84c);
 }
 

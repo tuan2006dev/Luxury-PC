@@ -70,8 +70,9 @@
                 th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
                 <div class="product-img-wrap">
                     <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}"
-                        class="product-img" />
+                        class="product-img" onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; let p=this.closest('.product-card'); if(p) p.parentElement.appendChild(p);" />
                     <div th:if="${p.price > 30000000}" class="product-badge" data-translate="product-badge-premium">Premium</div>
+                    <button class="product-wishlist" aria-label="Yêu thích" th:onclick="|addToWishlist(this, ${p.id})|">♡</button>
                 </div>
                 <div class="product-info">
                     <span class="product-cat" th:text="${p.category != null ? p.category.name : 'Linh Kiện'}">CPU</span>

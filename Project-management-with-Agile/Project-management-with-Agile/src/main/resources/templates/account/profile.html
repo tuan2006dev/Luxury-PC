@@ -19,69 +19,7 @@
 
 <body>
 
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-f" id="cursor-f"></div>
-  <script th:src="@{/js/cursor.js}"></script>
-
-  <!-- NAVBAR -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-left">
-      <a th:href="@{/products}" class="nav-link" id="nav-linh-kien">Sản Phẩm</a>
-      <a href="#" class="nav-link" id="nav-build-pc">Build PC</a>
-      <a href="#" class="nav-link" id="nav-khuyen-mai">Khuyến Mãi</a>
-    </div>
-    <div class="nav-logo">
-      <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center;">
-        <span class="logo-Luxury">LUXURY</span>
-        <div class="logo-divider"></div>
-        <span class="logo-pc">PC</span>
-      </a>
-    </div>
-    <div class="nav-right">
-      <a href="#" class="nav-link" id="nav-tin-tuc">Tin Tức</a>
-      <a href="#" class="nav-link" id="nav-lien-he">Liên Hệ</a>
-      <a th:href="@{/support}" class="nav-link" id="nav-ho-tro">Hỗ Trợ</a>
-      <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">ADMIN</a>
-      <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link">ĐĂNG NHẬP</a>
-      <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link active">HỒ SƠ</a>
-      <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
-      <a href="/cart" th:href="@{/cart}" class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
-        <span class="cart-icon">⊡</span>
-        <span class="cart-count" th:text="${cartCount}">0</span>
-      </a>
-      <form th:action="@{/logout}" method="POST" style="display:inline; margin-left:0.5rem;">
-        <button type="submit" class="nav-logout-btn">ĐĂNG XUẤT</button>
-      </form>
-    </div>
-  </nav>
-
-  <!-- SEARCH OVERLAY -->
-  <div class="search-overlay" id="search-overlay">
-    <div class="search-overlay-inner">
-      <div class="search-close-row">
-        <span class="search-brand">LUXURY · PC</span>
-        <button class="search-close" id="search-close" aria-label="Đóng tìm kiếm">✕</button>
-      </div>
-      <div class="search-input-wrap">
-        <span class="search-icon-big">⌕</span>
-        <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm linh kiện, thương hiệu..."
-          autocomplete="off" aria-label="Tìm kiếm sản phẩm" />
-        <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
-      </div>
-      <div class="search-tags">
-        <span class="search-tag-label">Tìm nhanh:</span>
-        <button class="search-tag" data-query="CPU Intel">CPU Intel</button>
-        <button class="search-tag" data-query="RTX 4090">RTX 4090</button>
-        <button class="search-tag" data-query="DDR5">DDR5 RAM</button>
-        <button class="search-tag" data-query="SSD NVMe">SSD NVMe</button>
-        <button class="search-tag" data-query="Màn hình OLED">Màn Hình OLED</button>
-        <button class="search-tag" data-query="Nguồn PSU">Nguồn PSU</button>
-      </div>
-      <div class="search-results" id="search-results">
-        <p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>
-      </div>
-    </div>
-  </div>
+  <div th:replace="~{layout/header :: header}"></div>
 
   <div class="profile-page">
 
@@ -89,8 +27,15 @@
     <aside class="sidebar">
       <div class="sb-avatar-wrap">
         <div class="avatar-ring">
-          <div class="avatar-inner" th:text="${avatarInitial}">TM</div>
-          <button class="avatar-edit" title="Đổi ảnh">✎</button>
+          <div class="avatar-inner">
+            <img th:if="${user != null && user.avatar != null && !user.avatar.isEmpty()}" th:src="@{${user.avatar}}"
+              referrerpolicy="no-referrer" alt="Avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" id="avatar-img-view" />
+            <span th:if="${user == null || user.avatar == null || user.avatar.isEmpty()}" th:text="${avatarInitial}"
+              id="avatar-initial-view">TM</span>
+          </div>
+          <button class="avatar-edit" title="Đổi ảnh"
+            onclick="document.getElementById('avatar-file-input').click()">✎</button>
+          <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" />
         </div>
         <div class="sb-name" th:text="${name}">Thanh Minh</div>
         <div class="sb-email" th:text="${email}">thanh.minh@email.com</div>
@@ -126,6 +71,15 @@
         <a class="sb-item" onclick="setTab('address')" href="#">
           Địa Chỉ Giao Hàng
         </a>
+
+        <form th:action="@{/logout}" method="POST" style="display:block; width:100%; margin-top: auto;">
+          <button type="submit" class="sb-item" style="width: 100%; text-align: left; background: none; border: none; outline: none; text-transform: uppercase; font-family: inherit; font-weight: 600; color: rgba(239, 68, 68, 0.85); transition: all var(--ease); display: flex; align-items: center; gap: 0.9rem;"
+            onmouseover="this.style.color='var(--red)'; this.style.background='rgba(239, 68, 68, 0.06)'; this.style.borderLeftColor='var(--red)';"
+            onmouseout="this.style.color='rgba(239, 68, 68, 0.85)'; this.style.background='none'; this.style.borderLeftColor='transparent';">
+            🚪 Đăng Xuất
+          </button>
+        </form>
+
       </nav>
     </aside>
 
@@ -189,8 +143,10 @@
           </div>
           <div class="info-card">
             <label>Số điện thoại</label>
-            <div class="form-val" th:text="${user != null && user.phone != null ? user.phone : 'Chưa cập nhật'}">Chưa cập nhật</div>
-            <div class="ic-sub">✓ Đã xác minh</div>
+            <div class="form-val" th:text="${user != null && user.phone != null ? user.phone : 'Chưa cập nhật'}">Chưa
+              cập nhật</div>
+            <div class="ic-sub" th:if="${user != null && user.phone != null && !user.phone.isEmpty()}">✓ Đã liên kết</div>
+            <div class="ic-sub" th:if="${user == null || user.phone == null || user.phone.isEmpty()}" style="color: var(--muted);">✗ Chưa liên kết</div>
           </div>
           <div class="info-card">
             <label>Ngày sinh</label>
@@ -201,7 +157,8 @@
           <div class="info-card">
             <div class="ic-label">Thành viên từ</div>
             <div class="ic-value"
-              th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'MM/yyyy') : 'Chưa cập nhật'}">Chưa cập nhật</div>
+              th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'MM/yyyy') : 'Chưa cập nhật'}">
+              Chưa cập nhật</div>
             <div class="ic-sub">Dữ liệu từ hồ sơ tài khoản</div>
           </div>
           <div class="info-card">
@@ -222,25 +179,30 @@
             style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">
             Cập Nhật Thông Tin</div>
           <div class="form-2col">
-            <div class="form-group">
-              <label class="form-label">Họ</label>
-              <input type="text" name="firstName" class="form-input" required maxlength="50"
-                th:value="${user != null && user.fullName != null ? user.fullName : ''}" placeholder="Họ và tên" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Tên</label>
-              <input type="text" name="lastName" class="form-input" maxlength="50" placeholder="Tên gọi thêm nếu cần" />
+            <div class="form-group full">
+              <label class="form-label">Họ và Tên</label>
+              <input type="text" name="firstName" class="form-input" required maxlength="100"
+                th:value="${user != null && user.fullName != null ? user.fullName : ''}"
+                placeholder="Nhập đầy đủ họ và tên của bạn" />
             </div>
             <div class="form-group">
               <label class="form-label">Email</label>
-              <input type="email" name="email" class="form-input" required maxlength="100"
-                th:value="${email}" />
+              <input type="email" name="email" id="profile-email" class="form-input" required maxlength="100"
+                th:value="${email}" th:data-original-email="${email}" />
+            </div>
+            <div class="form-group" id="email-otp-group" style="display:none;">
+              <label class="form-label" style="color:var(--gold);">Mã OTP Xác Minh Email</label>
+              <div style="display:flex; gap:10px;">
+                <input type="text" name="emailOtp" id="profile-email-otp" class="form-input" placeholder="Nhập mã OTP"
+                  maxlength="6" />
+                <button type="button" class="btn-save" id="btn-send-email-otp"
+                  style="white-space:nowrap; padding: 0.5rem 1rem;">Gửi OTP</button>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Số điện thoại</label>
               <input type="tel" name="phone" class="form-input" pattern="^(0|\+84)(3|5|7|8|9)[0-9]{8}$"
-                th:value="${user != null ? user.phone : ''}"
-                placeholder="0901 234 567" />
+                th:value="${user != null ? user.phone : ''}" placeholder="0901 234 567" />
             </div>
             <div class="form-group">
               <label class="form-label">Ngày sinh</label>
@@ -445,7 +407,34 @@
               <div><button class="order-detail-btn">Chi Tiết ▼</button></div>
             </div>
             <div class="order-details-pane" th:id="'order-' + ${order.id}">
-              <div class="timeline-track">
+              <!-- COD Timeline (Đã đặt -> Đang giao -> Đã thanh toán -> Hoàn thành) -->
+              <div th:if="${order.paymentMethod == 'COD' or order.paymentMethod == null}" class="timeline-track">
+                <div class="tl-step done">
+                  <div class="tl-dot">✔</div>
+                  <div class="tl-label">Đã Đặt Hàng</div>
+                </div>
+                <div
+                  th:class="${order.status == 'SHIPPING' or order.status == 'PAID' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+                  <div class="tl-dot">🚚</div>
+                  <div class="tl-label">Đang Giao Vận</div>
+                </div>
+                <div
+                  th:class="${order.status == 'PAID' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+                  <div class="tl-dot">✔</div>
+                  <div class="tl-label">Đã Thanh Toán</div>
+                </div>
+                <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }"
+                  th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}">
+                  <div class="tl-dot"
+                    th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">
+                    ★</div>
+                  <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn
+                    Thành</div>
+                </div>
+              </div>
+
+              <!-- Online / Installment Timeline (Đã đặt -> Đã thanh toán -> Đang giao -> Hoàn thành) -->
+              <div th:if="${order.paymentMethod != 'COD' and order.paymentMethod != null}" class="timeline-track">
                 <div class="tl-step done">
                   <div class="tl-dot">✔</div>
                   <div class="tl-label">Đã Đặt Hàng</div>
@@ -476,12 +465,15 @@
                   <div style="flex: 1;">
                     <div th:text="${oi.quantity} + 'x ' + ${oi.product.name}" style="margin-bottom: 5px;">1x Intel Core
                       i9-14900K</div>
-                    <a th:if="${order.status == 'COMPLETED'}" th:href="@{'/product/' + ${oi.product.id}}"
-                      style="display:inline-block; font-size:0.65rem; color:var(--gold); text-decoration:none; border:1px solid rgba(201,168,76,0.5); padding:3px 8px; border-radius:3px; transition: 0.3s; cursor:pointer;"
+                    <button type="button" th:if="${order.status == 'COMPLETED'}"
+                      th:data-product-id="${oi.product.id}"
+                      th:data-product-name="${oi.product.name}"
+                      onclick="openReviewModal(this.getAttribute('data-product-id'), this.getAttribute('data-product-name'))"
+                      style="display:inline-block; font-size:0.65rem; color:var(--gold); background:transparent; border:1px solid rgba(201,168,76,0.5); padding:3px 8px; border-radius:3px; transition: 0.3s; cursor:pointer;"
                       onmouseover="this.style.background='var(--gold)'; this.style.color='var(--black)';"
                       onmouseout="this.style.background='transparent'; this.style.color='var(--gold)';">
                       ⭐ Viết Đánh Giá
-                    </a>
+                    </button>
                   </div>
                   <span style="color:var(--gold);"
                     th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
@@ -490,6 +482,42 @@
                   <span>Phí vận chuyển (Hỏa tốc)</span>
                   <span style="color:var(--gold);">0 ₫</span>
                 </div>
+              </div>
+              <!-- Delivery & Payment Information -->
+              <div style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(201, 168, 76, 0.15); border-radius: 6px; font-size: 0.8rem; line-height: 1.7;">
+                <div style="font-size: 0.75rem; color: var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; border-bottom: 1px solid rgba(201, 168, 76, 0.15); padding-bottom: 0.5rem;">
+                  Thông tin nhận hàng & Thanh toán
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div>
+                    <div style="color: var(--muted); margin-bottom: 0.2rem;">Người nhận hàng</div>
+                    <div style="color: var(--white); font-weight: 500;" th:text="${order.fullName}">Nguyễn Văn A</div>
+                  </div>
+                  <div>
+                    <div style="color: var(--muted); margin-bottom: 0.2rem;">Số điện thoại</div>
+                    <div style="color: var(--white); font-weight: 500;" th:text="${order.phone}">0901234567</div>
+                  </div>
+                  <div style="grid-column: span 2;">
+                    <div style="color: var(--muted); margin-bottom: 0.2rem;">Địa chỉ giao hàng</div>
+                    <div style="color: var(--white); font-weight: 500;" th:text="${order.address}">123 Đường ABC, Quận 1, TP. Hồ Chí Minh</div>
+                  </div>
+                  <div style="grid-column: span 2;">
+                    <div style="color: var(--muted); margin-bottom: 0.2rem;">Phương thức thanh toán</div>
+                    <div style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+                      <span th:if="${order.paymentMethod == 'COD'}" style="color: var(--gold);">💵 Thanh toán khi nhận hàng (COD)</span>
+                      <span th:if="${order.paymentMethod == 'INSTALLMENT'}" style="color: #60a5fa;">💳 Trả góp (Installment)</span>
+                      <span th:if="${order.paymentMethod != 'COD' and order.paymentMethod != 'INSTALLMENT'}" th:text="${order.paymentMethod != null ? order.paymentMethod : 'COD (Mặc định)'}" style="color: var(--gold);">COD</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div th:if="${order.status == 'PENDING' or (order.status == 'PAID' and order.paymentMethod != 'COD')}" style="margin-top: 15px; text-align: right;">
+                <button type="button" th:data-order-id="${order.id}" onclick="cancelOrder(this)"
+                  style="display:inline-block; font-size:0.75rem; color:var(--red); background:transparent; border:1px solid rgba(239,68,68,0.5); padding:6px 15px; border-radius:3px; transition: 0.3s; cursor:pointer;"
+                  onmouseover="this.style.background='var(--red)'; this.style.color='var(--white)';"
+                  onmouseout="this.style.background='transparent'; this.style.color='var(--red)';">
+                  ⚠️ Hủy Đơn Hàng
+                </button>
               </div>
             </div>
           </div>
@@ -549,7 +577,14 @@
               </div>
             </div>
             <div style="padding:1rem; border-top:1px dashed rgba(201,168,76,.2); text-align:center;">
-              <span class="order-status status-shipping">Sẵn sàng sử dụng</span>
+              <!-- Đã sử dụng -->
+              <span th:if="${uv.isUsed}" class="order-status" style="background: rgba(255, 255, 255, 0.05); color: var(--muted); border: 1px solid rgba(255, 255, 255, 0.1);">Đã sử dụng</span>
+              
+              <!-- Đã hết hạn hoặc ngừng hoạt động -->
+              <span th:if="${!uv.isUsed and ((uv.voucher.endDate != null and uv.voucher.endDate.before(#dates.createNow())) or !uv.voucher.active)}" class="order-status status-canceled">Đã hết hạn</span>
+              
+              <!-- Sẵn sàng sử dụng -->
+              <span th:if="${!uv.isUsed and (uv.voucher.endDate == null or !uv.voucher.endDate.before(#dates.createNow())) and uv.voucher.active}" class="order-status status-delivered">Sẵn sàng sử dụng</span>
             </div>
           </div>
           <div th:if="${vouchers == null or vouchers.size() == 0}"
@@ -596,8 +631,7 @@
             <div class="wl-img">
               <span
                 th:text="${wishitem.product.category != null ? (wishitem.product.category.name == 'CPU' ? '🖥️' : (wishitem.product.category.name == 'GPU' || wishitem.product.category.name == 'VGA' ? '🎮' : (wishitem.product.category.name == 'RAM' ? '💾' : (wishitem.product.category.name == 'Mainboard' ? '🔌' : (wishitem.product.category.name == 'Cooler' ? '🌬️' : '⚙️'))))) : '⚙️'}"></span>
-              <button type="button" class="wl-remove" title="Xóa"
-                th:attr="data-wishlist-item-id=${wishitem.id}"
+              <button type="button" class="wl-remove" title="Xóa" th:attr="data-wishlist-item-id=${wishitem.id}"
                 onclick="removeFromWishlist(this)">✕</button>
             </div>
             <div class="wl-info">
@@ -631,54 +665,92 @@
               <div class="sec-sub">Cập nhật lần cuối: 12/01/2026 · Sử dụng mật khẩu mạnh với ít nhất 8 ký tự.</div>
               <div class="sec-status-ok">● Cài đặt hoàn chỉnh</div>
             </div>
-            <button class="btn-sec" onclick="location.href='/auth/forgot-password'">Đổi Mật Khẩu</button>
+            <button class="btn-sec" id="btn-toggle-password-form" onclick="togglePasswordForm()">Đổi Mật Khẩu</button>
           </div>
+
+          <!-- Password change form -->
+          <form id="password-change-panel" class="edit-profile-panel" th:action="@{/profile/password}" method="post"
+            style="background:var(--deep);border:1px solid rgba(201,168,76,.1);padding:2rem;margin-bottom:1rem;margin-top:-0.5rem;">
+            <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+            <div
+              style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">
+              Đổi Mật Khẩu</div>
+            <div class="form-group">
+              <label class="form-label">Mật khẩu hiện tại</label>
+              <input type="password" name="currentPassword" class="form-input" placeholder="Nhập mật khẩu hiện tại"
+                required />
+            </div>
+            <div class="form-2col">
+              <div class="form-group">
+                <label class="form-label">Mật khẩu mới</label>
+                <input type="password" name="newPassword" class="form-input" placeholder="Tối thiểu 8 ký tự"
+                  minlength="8" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Xác nhận mật khẩu mới</label>
+                <input type="password" name="confirmPassword" class="form-input" placeholder="Xác nhận lại mật khẩu mới"
+                  minlength="8" required />
+              </div>
+            </div>
+            <div style="margin-top:1rem;">
+              <button type="submit" class="btn-save">
+                <span class="btn-save-inner">Cập Nhật Mật Khẩu</span>
+              </button>
+              <button type="button" class="btn-edit" style="margin-left:.75rem;"
+                onclick="togglePasswordForm(false)">Hủy</button>
+            </div>
+          </form>
+
           <div class="sec-item">
             <div class="sec-icon">📱</div>
             <div class="sec-info">
               <div class="sec-title">Xác thực 2 yếu tố (2FA)</div>
-              <div class="sec-sub">Bảo vệ tài khoản bằng mã OTP qua SMS hoặc ứng dụng xác thực.</div>
-              <div class="sec-status-warn">● Chưa bật</div>
+              <div class="sec-sub">Bảo vệ tài khoản bằng mã xác thực OTP gửi qua hòm thư Email khi đăng nhập.</div>
+              <div th:class="${user != null && user.twoFactorEnabled == true ? 'sec-status-ok' : 'sec-status-warn'}"
+                   th:text="${user != null && user.twoFactorEnabled == true ? '● Đã bật' : '● Chưa bật'}">● Chưa bật</div>
             </div>
-            <button class="btn-sec" onclick="toast('📱 Tính năng 2FA đang được phát triển!')">Bật 2FA</button>
+            <button th:if="${user == null || user.twoFactorEnabled != true}" class="btn-sec" onclick="open2FAModal()">Bật 2FA</button>
+            <button th:if="${user != null && user.twoFactorEnabled == true}" class="btn-sec" style="border-color:var(--red); color:var(--red);" onclick="disable2FA()">Tắt 2FA</button>
           </div>
           <div class="sec-item">
             <div class="sec-icon">📧</div>
             <div class="sec-info">
               <div class="sec-title">Email xác minh</div>
-              <div class="sec-sub">thanh.minh@email.com đã được xác minh và liên kết với tài khoản.</div>
+              <div class="sec-sub"><span th:text="${email}">thanh.minh@email.com</span> đã được xác minh và liên kết với
+                tài khoản.</div>
               <div class="sec-status-ok">● Đã xác minh</div>
             </div>
-            <button class="btn-sec" onclick="toast('✓ Email đã được xác minh.')">Xem Chi Tiết</button>
+            <button class="btn-sec" onclick="openEmailDetailsModal()">Xem Chi Tiết</button>
           </div>
           <div class="sec-item">
             <div class="sec-icon">🖥️</div>
             <div class="sec-info">
               <div class="sec-title">Phiên đăng nhập</div>
-              <div class="sec-sub">Hiện tại: Chrome · Windows 11 · TP.HCM — Đăng nhập 12/03/2026 16:45</div>
+              <div class="sec-sub" th:text="${currentSessionInfo}">Hiện tại: Chrome · Windows 11 · TP.HCM — Đăng nhập
+                12/03/2026 16:45</div>
               <div class="sec-status-ok">● Thiết bị hiện tại</div>
             </div>
-            <button class="btn-sec" onclick="toast('🚪 Đã đăng xuất khỏi tất cả thiết bị khác.')">Đăng Xuất
-              Khác</button>
+            <button class="btn-sec" onclick="openSessionsModal()">Quản Lý</button>
           </div>
         </div>
         <div class="danger-zone">
           <div class="danger-title">⚠️ Vùng nguy hiểm</div>
           <div class="danger-sub">Xóa tài khoản sẽ xóa vĩnh viễn tất cả dữ liệu của bạn bao gồm lịch sử đơn hàng, danh
             sách yêu thích và điểm tích lũy. Thao tác này không thể hoàn tác.</div>
-          <button class="btn-danger" onclick="toast('⚠️ Vui lòng liên hệ 1800-Luxury-PC để xóa tài khoản.')">Xóa Tài
+          <button class="btn-danger" onclick="deleteAccount()">Xóa Tài
             Khoản</button>
         </div>
       </div>
 
       <!-- ============ NOTIFICATIONS ============ -->
-      <div class="profile-section" id="sec-notifications">
+      <form class="profile-section" id="sec-notifications" th:action="@{/profile/notifications}" method="post">
+        <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
         <div class="section-head">
           <div>
             <div class="section-tag">Cài đặt</div>
             <div class="section-h">Thông Báo</div>
           </div>
-          <button class="btn-save" onclick="toast('✓ Đã lưu cài đặt thông báo!')">
+          <button type="submit" class="btn-save">
             <span class="btn-save-inner">Lưu</span>
           </button>
         </div>
@@ -722,7 +794,7 @@
                 class="toggle-slider"></span></label>
           </div>
         </div>
-      </div>
+      </form>
 
       <!-- ============ ADDRESS ============ -->
       <div class="profile-section" id="sec-address">
@@ -735,39 +807,48 @@
         </div>
 
         <!-- Saved address cards -->
-        <div id="address-list-container" style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:2rem;">
+        <div id="address-list-container"
+          style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:2rem;">
         </div>
 
         <!-- Add/Edit address form -->
-        <div id="address-form-container" style="background:var(--deep);border:1px solid rgba(201,168,76,.1);padding:2rem; display:none;">
-          <div style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">
+        <div id="address-form-container"
+          style="background:var(--deep);border:1px solid rgba(201,168,76,.1);padding:2rem; display:none;">
+          <div
+            style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">
             Thêm / Chỉnh Sửa Địa Chỉ</div>
           <input type="hidden" id="address-id-edit" />
           <div class="form-2col">
             <div class="form-group">
               <label class="form-label">Họ và tên</label>
               <input type="text" id="address-name" class="form-input" placeholder="Người nhận" required />
-              <div class="form-error" id="address-name-error" style="display:none;color:#ff6b6b;font-size:0.75rem;"></div>
+              <div class="form-error" id="address-name-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Số điện thoại</label>
-              <input type="tel" id="address-phone" class="form-input" placeholder="0901 234 567" pattern="^(0|\+84)(3|5|7|8|9)[0-9]{8}$" required />
-              <div class="form-error" id="address-phone-error" style="display:none;color:#ff6b6b;font-size:0.75rem;"></div>
+              <input type="tel" id="address-phone" class="form-input" placeholder="Ví dụ: 0901234567"
+                pattern="^0(3|5|7|8|9)[0-9]{8}$" required />
+              <div class="form-error" id="address-phone-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+              </div>
             </div>
             <div class="form-group full">
               <label>Địa chỉ chi tiết</label>
               <input type="text" id="address-detail" class="form-input" placeholder="Số nhà, đường phố..." required />
-              <div class="form-error" id="address-detail-error" style="display:none;color:#ff6b6b;font-size:0.75rem;"></div>
+              <div class="form-error" id="address-detail-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Tỉnh / Thành phố</label>
               <input type="text" id="address-city" class="form-input" placeholder="TP. Hồ Chí Minh" required />
-              <div class="form-error" id="address-city-error" style="display:none;color:#ff6b6b;font-size:0.75rem;"></div>
+              <div class="form-error" id="address-city-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Quận / Huyện</label>
               <input type="text" id="address-district" class="form-input" placeholder="Quận 1" required />
-              <div class="form-error" id="address-district-error" style="display:none;color:#ff6b6b;font-size:0.75rem;"></div>
+              <div class="form-error" id="address-district-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Mã bưu điện</label>
@@ -787,79 +868,173 @@
   </div><!-- end profile-page -->
 
   <div class="order-modal-backdrop" id="order-modal-backdrop" onclick="closeOrderModal()">
+    <style>
+      .star-btn {
+        font-size: 2.2rem;
+        color: rgba(255, 255, 255, 0.15);
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: color 0.2s, transform 0.2s;
+        padding: 0 5px;
+      }
+
+      .star-btn:hover {
+        transform: scale(1.2);
+      }
+
+      .star-btn.active {
+        color: var(--gold) !important;
+        text-shadow: 0 0 12px rgba(201, 168, 76, 0.8);
+      }
+    </style>
     <div class="order-modal" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeOrderModal()">✕</button>
       <div class="modal-head">
         <div>
-          <div class="section-tag">Chi tiết đơn hàng</div>
-          <h3>Đơn hàng của bạn</h3>
+          <div class="section-tag">Đánh giá sản phẩm</div>
+          <h3 id="modal-review-product-title" style="color:var(--white); margin-top:5px; font-size:1.1rem;">Đánh giá sản
+            phẩm</h3>
         </div>
       </div>
-      <div class="modal-content" id="order-modal-content"></div>
+      <div class="modal-content" id="order-modal-content" style="padding-top: 15px;">
+        <input type="hidden" id="review-product-id" />
+        <input type="hidden" id="review-product-name" />
+
+        <div style="margin-bottom: 1.5rem; text-align: center;">
+          <div class="review-stars" style="display: flex; gap: 8px; justify-content: center;">
+            <button type="button" class="star-btn" onclick="rate(1)">★</button>
+            <button type="button" class="star-btn" onclick="rate(2)">★</button>
+            <button type="button" class="star-btn" onclick="rate(3)">★</button>
+            <button type="button" class="star-btn" onclick="rate(4)">★</button>
+            <button type="button" class="star-btn" onclick="rate(5)">★</button>
+          </div>
+          <div
+            style="font-size: 0.75rem; color: var(--gold); margin-top: 8px; letter-spacing: 1px; text-transform: uppercase;"
+            id="star-desc">Chọn số sao đánh giá</div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: var(--cream);">Bình luận / Nhận
+            xét</label>
+          <textarea id="review-comment" class="form-input" rows="4"
+            placeholder="Nhập chia sẻ của bạn về sản phẩm này..."
+            style="width: 100%; box-sizing: border-box; background: var(--dark); color: var(--white); border: 1px solid rgba(201,168,76,.2); padding: 12px; border-radius: 4px; resize: none; font-family: inherit; font-size: 0.85rem; line-height: 1.5;"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn-save" onclick="submitReview()" style="padding: 0.6rem 1.5rem;">
+            <span class="btn-save-inner">Gửi Đánh Giá</span>
+          </button>
+          <button type="button" class="btn-edit" onclick="closeOrderModal()"
+            style="padding: 0.6rem 1.5rem;">Hủy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2FA Modal -->
+  <div class="order-modal-backdrop" id="2fa-modal-backdrop" onclick="close2FAModal()">
+    <div class="order-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="close2FAModal()">✕</button>
+      <div class="modal-head">
+        <div>
+          <div class="section-tag">Bảo mật tài khoản</div>
+          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;">Kích hoạt xác thực 2 lớp (2FA)</h3>
+        </div>
+      </div>
+      <div class="modal-content" style="padding-top: 15px;">
+        <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem;">
+          Chúng tôi đã gửi một mã xác thực OTP gồm 6 chữ số đến email của bạn. Vui lòng nhập mã này dưới đây để xác nhận kích hoạt tính năng đăng nhập 2 lớp.
+        </p>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: var(--cream);">Mã OTP Xác Thực</label>
+          <input type="text" id="2fa-otp-input" class="form-input" placeholder="Nhập mã OTP 6 số" maxlength="6" style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; background: var(--dark);" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn-save" onclick="verifyAndEnable2FA()" style="padding: 0.6rem 1.5rem;">
+            <span class="btn-save-inner">Kích Hoạt</span>
+          </button>
+          <button type="button" class="btn-edit" onclick="close2FAModal()" style="padding: 0.6rem 1.5rem;">Hủy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Details Modal -->
+  <div class="order-modal-backdrop" id="email-details-modal-backdrop" onclick="closeEmailDetailsModal()">
+    <div class="order-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeEmailDetailsModal()">✕</button>
+      <div class="modal-head">
+        <div>
+          <div class="section-tag">Bảo mật tài khoản</div>
+          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;">Chi Tiết Email Xác Minh</h3>
+        </div>
+      </div>
+      <div class="modal-content" style="padding-top: 15px;">
+        <div style="display: flex; flex-direction: column; gap: 1rem; color: var(--cream);">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(201,168,76,.1); padding-bottom: 0.8rem;">
+            <span style="color: var(--muted); font-size: 0.8rem;">Địa chỉ Email:</span>
+            <strong th:text="${email}">you@email.com</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(201,168,76,.1); padding-bottom: 0.8rem;">
+            <span style="color: var(--muted); font-size: 0.8rem;">Trạng thái xác minh:</span>
+            <span class="sec-status-ok" style="font-size: 0.8rem;">● Đã xác minh</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-bottom: 0.8rem;">
+            <span style="color: var(--muted); font-size: 0.8rem;">Ngày tạo tài khoản:</span>
+            <strong th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'dd/MM/yyyy HH:mm') : 'Chưa xác định'}">01/01/2026</strong>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+          <button type="button" class="btn-save" onclick="closeEmailDetailsModal()" style="padding: 0.6rem 2rem;">
+            <span class="btn-save-inner">Đóng</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sessions Modal -->
+  <div class="order-modal-backdrop" id="sessions-modal-backdrop" onclick="closeSessionsModal()">
+    <div class="order-modal" onclick="event.stopPropagation()" style="max-width: 600px;">
+      <button class="modal-close" onclick="closeSessionsModal()">✕</button>
+      <div class="modal-head">
+        <div>
+          <div class="section-tag">Bảo mật tài khoản</div>
+          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;">Quản Lý Phiên Đăng Nhập</h3>
+        </div>
+      </div>
+      <div class="modal-content" style="padding-top: 15px;">
+        <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem;">
+          Dưới đây là danh sách các thiết bị hiện đang đăng nhập vào tài khoản của bạn. Bạn có thể đăng xuất khỏi các thiết bị từ xa.
+        </p>
+        <div id="active-sessions-list" style="display: flex; flex-direction: column; gap: 1rem;">
+          <!-- Dynamic loaded via JS -->
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+          <button type="button" class="btn-save" onclick="closeSessionsModal()" style="padding: 0.6rem 2rem;">
+            <span class="btn-save-inner">Đóng</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
-  <script>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    const profileMessage = /*[[${profileMessage}]]*/ null;
+    const addressMessage = /*[[${addressMessage}]]*/ null;
+    const securityMessage = /*[[${securityMessage}]]*/ null;
+    const notificationMessage = /*[[${notificationMessage}]]*/ null;
+    /*]]>*/
+
     const csrfToken = document.querySelector('meta[name="_csrf"]')?.content || '';
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
 
-    const searchOverlay = document.getElementById('search-overlay');
-    const navSearchBtn = document.getElementById('nav-search-btn');
-    const searchCloseBtn = document.getElementById('search-close');
-    const searchInput = document.getElementById('search-input');
-    const searchClearBtn = document.getElementById('search-clear');
-    const searchResults = document.getElementById('search-results');
-
-    function openSearch() {
-      if (!searchOverlay) return;
-      searchOverlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => searchInput?.focus(), 320);
-    }
-
-    function closeSearch() {
-      if (!searchOverlay) return;
-      searchOverlay.classList.remove('open');
-      document.body.style.overflow = '';
-      if (searchInput) searchInput.value = '';
-      searchClearBtn?.classList.remove('visible');
-      if (searchResults) searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
-    }
-
-    navSearchBtn?.addEventListener('click', openSearch);
-    searchCloseBtn?.addEventListener('click', closeSearch);
-    searchOverlay?.addEventListener('click', e => { if (e.target === searchOverlay) closeSearch(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && searchOverlay?.classList.contains('open')) closeSearch(); });
-
-    searchInput?.addEventListener('input', () => {
-      const q = searchInput.value.trim();
-      if (q.length) searchClearBtn?.classList.add('visible');
-      else searchClearBtn?.classList.remove('visible');
-      if (searchResults) {
-        searchResults.innerHTML = q ? `<p class="search-hint">Không tìm thấy kết quả cho "${q}".</p>` : '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
-      }
-    });
-
-    searchClearBtn?.addEventListener('click', () => {
-      if (!searchInput) return;
-      searchInput.value = '';
-      searchClearBtn.classList.remove('visible');
-      if (searchResults) searchResults.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
-      searchInput.focus();
-    });
-
-    document.querySelectorAll('.search-tag').forEach(tag => {
-      tag.addEventListener('click', () => {
-        const q = tag.dataset.query || '';
-        if (!searchInput) return;
-        searchInput.value = q;
-        searchClearBtn?.classList.add('visible');
-        if (searchResults) searchResults.innerHTML = `<p class="search-hint">Không tìm thấy kết quả cho "${q}".</p>`;
-        searchInput.focus();
-      });
-    });
+    document.body.classList.add('custom-cursor-enabled');
 
     /* TOAST */
     let toastT;
@@ -878,11 +1053,184 @@
       }
     }
 
+    function togglePasswordForm(force) {
+      const panel = document.getElementById('password-change-panel');
+      const button = document.getElementById('btn-toggle-password-form');
+      if (!panel || !button) return;
+      const shouldShow = typeof force === 'boolean' ? force : !panel.classList.contains('show');
+      panel.classList.toggle('show', shouldShow);
+      button.setAttribute('aria-expanded', String(shouldShow));
+      button.textContent = shouldShow ? 'Ẩn Form' : 'Đổi Mật Khẩu';
+      if (shouldShow) {
+        panel.querySelector('input')?.focus();
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      // Hiển thị các thông điệp chuyển hướng (flash messages)
+      if (profileMessage) toast(profileMessage);
+      if (addressMessage) toast(addressMessage);
+      if (securityMessage) toast(securityMessage);
+      if (notificationMessage) toast(notificationMessage);
+
       loadAddresses();
       const params = new URLSearchParams(window.location.search);
+
+      const tabParam = params.get('tab');
+      if (tabParam) {
+        setTab(tabParam);
+      }
+
       if (params.get('openEdit') === '1') {
         toggleProfileEditForm(true);
+      }
+
+      if (params.get('openPasswordForm') === '1') {
+        togglePasswordForm(true);
+      }
+
+      // Xử lý xác thực OTP khi thay đổi Email
+      const emailInput = document.getElementById('profile-email');
+      const otpGroup = document.getElementById('email-otp-group');
+      const otpInput = document.getElementById('profile-email-otp');
+      const btnSendOtp = document.getElementById('btn-send-email-otp');
+
+      if (emailInput && otpGroup && btnSendOtp) {
+        const originalEmail = emailInput.getAttribute('data-original-email');
+
+        emailInput.addEventListener('input', () => {
+          const currentEmail = emailInput.value.trim();
+          if (currentEmail !== originalEmail && currentEmail !== '') {
+            otpGroup.style.display = 'block';
+            otpInput.setAttribute('required', 'required');
+          } else {
+            otpGroup.style.display = 'none';
+            otpInput.removeAttribute('required');
+            otpInput.value = '';
+          }
+        });
+
+        let cooldown = 0;
+        let cooldownInterval;
+
+        btnSendOtp.addEventListener('click', () => {
+          if (cooldown > 0) return;
+          const email = emailInput.value.trim();
+          if (!email) {
+            toast('Vui lòng nhập email mới trước!');
+            return;
+          }
+
+          toast('✓ Đang gửi mã OTP đến ' + email + '...');
+          
+          cooldown = 60;
+          btnSendOtp.disabled = true;
+          btnSendOtp.textContent = 'Gửi lại (' + cooldown + 's)';
+          cooldownInterval = setInterval(() => {
+            cooldown--;
+            if (cooldown <= 0) {
+              clearInterval(cooldownInterval);
+              btnSendOtp.disabled = false;
+              btnSendOtp.textContent = 'Gửi OTP';
+            } else {
+              btnSendOtp.textContent = 'Gửi lại (' + cooldown + 's)';
+            }
+          }, 1000);
+
+          fetch('/profile/email-otp/send?email=' + encodeURIComponent(email), {
+            method: 'POST',
+            headers: { [csrfHeader]: csrfToken }
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.status === 'success') {
+                toast('✓ Mã OTP đã được gửi đến email mới!');
+              } else {
+                toast('⚠️ ' + data.message);
+                clearInterval(cooldownInterval);
+                cooldown = 0;
+                btnSendOtp.disabled = false;
+                btnSendOtp.textContent = 'Gửi OTP';
+              }
+            })
+            .catch(err => {
+              console.error('Send OTP error:', err);
+              toast('⚠️ Lỗi kết nối khi gửi OTP.');
+              clearInterval(cooldownInterval);
+              cooldown = 0;
+              btnSendOtp.disabled = false;
+              btnSendOtp.textContent = 'Gửi OTP';
+            });
+        });
+      }
+
+      // Ràng buộc input số điện thoại địa chỉ giao hàng chỉ nhập số, giới hạn 10 số
+      const addressPhoneInput = document.getElementById('address-phone');
+      if (addressPhoneInput) {
+        addressPhoneInput.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9]/g, '');
+          if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10);
+          }
+        });
+      }
+
+      // Xử lý upload avatar
+      const avatarFileInput = document.getElementById('avatar-file-input');
+      if (avatarFileInput) {
+        avatarFileInput.addEventListener('change', () => {
+          const file = avatarFileInput.files[0];
+          if (!file) return;
+
+          // Kiểm tra dung lượng (max 2MB) và định dạng
+          if (file.size > 2 * 1024 * 1024) {
+            toast('⚠️ Kích thước file tối đa là 2MB!');
+            return;
+          }
+          if (!file.type.startsWith('image/')) {
+            toast('⚠️ Chỉ chấp nhận file ảnh!');
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append('file', file);
+
+          fetch('/api/profile/avatar', {
+            method: 'POST',
+            headers: { [csrfHeader]: csrfToken },
+            body: formData
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                toast('✓ Đã cập nhật ảnh đại diện.');
+                // Hiển thị ảnh mới ngay lập tức
+                const imgView = document.getElementById('avatar-img-view');
+                const initialView = document.getElementById('avatar-initial-view');
+                const innerWrap = document.querySelector('.avatar-inner');
+
+                if (initialView) initialView.style.display = 'none';
+
+                if (imgView) {
+                  imgView.src = data.avatarPath;
+                  imgView.style.display = 'block';
+                } else {
+                  const newImg = document.createElement('img');
+                  newImg.id = 'avatar-img-view';
+                  newImg.src = data.avatarPath;
+                  newImg.alt = 'Avatar';
+                  newImg.style.cssText = 'width:100%; height:100%; border-radius:50%; object-fit:cover;';
+                  innerWrap.appendChild(newImg);
+                }
+              } else {
+                toast('⚠️ ' + (data.message || 'Lỗi khi tải ảnh lên.'));
+              }
+            })
+            .catch(err => {
+              console.error('Avatar upload error:', err);
+              toast('⚠️ Lỗi kết nối khi tải ảnh.');
+            });
+        });
       }
     });
 
@@ -906,10 +1254,80 @@
         el.classList.remove('active');
         if (el.getAttribute('onclick')?.includes("'" + id + "'")) el.classList.add('active');
       });
+      // Cập nhật query parameter 'tab' trên URL để khi reload vẫn giữ nguyên tab hiện tại
+      try {
+        const url = new URL(window.location);
+        url.searchParams.set('tab', id);
+        window.history.replaceState({}, '', url);
+      } catch (e) {
+        console.error('Error updating tab url:', e);
+      }
       return false;
     }
 
+    function cancelOrder(btn) {
+      const orderId = btn?.dataset?.orderId;
+      if (!orderId) return;
+      showConfirm('Bạn chắc chắn muốn hủy đơn hàng này? Thao tác này không thể hoàn tác.').then(confirmed => {
+        if (!confirmed) return;
+
+        btn.disabled = true;
+        btn.textContent = 'Đang xử lý...';
+
+        fetch('/api/profile/orders/' + orderId + '/cancel', {
+          method: 'POST',
+          headers: { [csrfHeader]: csrfToken }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            toast('✓ Đã hủy đơn hàng thành công.');
+            setTimeout(() => location.reload(), 800);
+          } else {
+            toast('⚠️ ' + (data.message || 'Không thể hủy đơn hàng.'));
+            btn.disabled = false;
+            btn.textContent = '⚠️ Hủy Đơn Hàng';
+          }
+        })
+        .catch(err => {
+          console.error('Cancel order error:', err);
+          toast('⚠️ Lỗi kết nối khi hủy đơn hàng.');
+          btn.disabled = false;
+          btn.textContent = '⚠️ Hủy Đơn Hàng';
+        });
+      });
+    }
+
     let orderModalState = { currentOrder: null, stars: 0 };
+
+    const starDescs = [
+      'Chọn số sao đánh giá',
+      '⭐ Rất Tệ',
+      '⭐⭐ Tệ',
+      '⭐⭐⭐ Bình Thường',
+      '⭐⭐⭐⭐ Tốt',
+      '⭐⭐⭐⭐⭐ Rất Tốt'
+    ];
+
+    function openReviewModal(productId, productName) {
+      orderModalState.stars = 0;
+
+      // Reset active stars
+      document.querySelectorAll('.order-modal .review-stars button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById('star-desc').textContent = 'Chọn số sao đánh giá';
+
+      // Set input values
+      document.getElementById('review-product-id').value = productId;
+      document.getElementById('review-product-name').value = productName;
+      document.getElementById('review-comment').value = '';
+
+      document.getElementById('modal-review-product-title').textContent = 'Đánh giá sản phẩm: ' + productName;
+
+      // Show backdrop
+      document.getElementById('order-modal-backdrop').classList.add('open');
+    }
 
     function closeOrderModal() {
       document.getElementById('order-modal-backdrop').classList.remove('open');
@@ -920,6 +1338,7 @@
       document.querySelectorAll('.order-modal .review-stars button').forEach((btn, index) => {
         btn.classList.toggle('active', index < star);
       });
+      document.getElementById('star-desc').textContent = starDescs[star] || 'Chọn số sao đánh giá';
     }
 
     function submitReview() {
@@ -960,6 +1379,192 @@
         });
     }
 
+    function open2FAModal() {
+      toast('✓ Đang gửi mã OTP đến email của bạn...');
+      document.getElementById('2fa-otp-input').value = '';
+      document.getElementById('2fa-modal-backdrop').classList.add('open');
+      setTimeout(() => document.getElementById('2fa-otp-input')?.focus(), 200);
+
+      fetch('/api/profile/2fa/send-otp', {
+        method: 'POST',
+        headers: { [csrfHeader]: csrfToken }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          toast('✓ Mã OTP đã được gửi thành công!');
+        } else {
+          toast('⚠️ ' + (data.message || 'Lỗi khi gửi OTP.'));
+        }
+      })
+      .catch(err => {
+        console.error('2FA Send OTP error:', err);
+        toast('⚠️ Lỗi kết nối khi gửi OTP.');
+      });
+    }
+
+    function close2FAModal() {
+      document.getElementById('2fa-modal-backdrop').classList.remove('open');
+    }
+
+    // Kích hoạt 2FA sau khi nhập OTP đúng
+    function verifyAndEnable2FA() {
+      const otp = document.getElementById('2fa-otp-input').value.trim();
+      if (!otp || otp.length < 6) {
+        toast('❗ Vui lòng nhập đủ mã OTP 6 số.');
+        return;
+      }
+
+      fetch('/api/profile/2fa/enable?otp=' + encodeURIComponent(otp), {
+        method: 'POST',
+        headers: { [csrfHeader]: csrfToken }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          toast('✓ Kích hoạt 2FA thành công.');
+          close2FAModal();
+          setTimeout(() => location.reload(), 800);
+        } else {
+          toast('⚠️ ' + (data.message || 'Xác thực OTP thất bại.'));
+        }
+      })
+      .catch(err => {
+        console.error('2FA Enable error:', err);
+        toast('⚠️ Lỗi kết nối khi kích hoạt 2FA.');
+      });
+    }
+
+    // Tắt 2FA
+    function disable2FA() {
+      showConfirm('Bạn chắc chắn muốn tắt tính năng xác thực 2 lớp (2FA)? Bảo mật tài khoản của bạn sẽ bị giảm xuống.').then(confirmed => {
+        if (!confirmed) return;
+
+        fetch('/api/profile/2fa/disable', {
+          method: 'POST',
+          headers: { [csrfHeader]: csrfToken }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            toast('✓ Đã tắt xác thực 2 lớp (2FA).');
+            setTimeout(() => location.reload(), 800);
+          } else {
+            toast('⚠️ ' + (data.message || 'Không thể tắt 2FA lúc này.'));
+          }
+        })
+        .catch(err => {
+          console.error('2FA Disable error:', err);
+          toast('⚠️ Lỗi kết nối khi tắt 2FA.');
+        });
+      });
+    }
+
+    function openEmailDetailsModal() {
+      document.getElementById('email-details-modal-backdrop').classList.add('open');
+    }
+
+    function closeEmailDetailsModal() {
+      document.getElementById('email-details-modal-backdrop').classList.remove('open');
+    }
+
+    function logoutOthers() {
+      // Legacy logout others replaced by sessions modal
+    }
+
+    function openSessionsModal() {
+      document.getElementById('sessions-modal-backdrop').classList.add('open');
+      loadSessions();
+    }
+
+    function closeSessionsModal() {
+      document.getElementById('sessions-modal-backdrop').classList.remove('open');
+    }
+
+    function loadSessions() {
+      const listContainer = document.getElementById('active-sessions-list');
+      if (!listContainer) return;
+      listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: var(--muted); font-size: 0.85rem;">Đang tải danh sách thiết bị...</div>';
+
+      fetch('/api/sessions/active')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data) {
+            if (data.data.length === 0) {
+              listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: var(--muted); font-size: 0.85rem;">Không có phiên đăng nhập nào.</div>';
+              return;
+            }
+
+            listContainer.innerHTML = data.data.map(us => {
+              const uaLower = us.deviceInfo.toLowerCase();
+              const deviceIcon = uaLower.includes("phone") || uaLower.includes("android") || uaLower.includes("ios") || uaLower.includes("iphone") || uaLower.includes("ipad") ? "📱" : "🖥️";
+              const currentBadge = us.isCurrent 
+                ? '<span style="font-size: 0.7rem; color: var(--gold); border: 1px solid var(--gold); padding: 2px 6px; border-radius: 3px; font-weight: 500;">Thiết bị hiện tại</span>' 
+                : '<span style="font-size: 0.7rem; color: var(--green); border: 1px solid var(--green); padding: 2px 6px; border-radius: 3px; font-weight: 500;">Đang hoạt động</span>';
+              
+              const actionBtn = us.isCurrent
+                ? ''
+                : `<button class="btn-sec" style="border-color:var(--red); color:var(--red); font-size:0.75rem; padding:4px 10px; white-space:nowrap;" onclick="revokeSession('${us.sessionId}')">Đăng xuất</button>`;
+
+              // Format date
+              const loginDate = new Date(us.loginTime);
+              const loginStr = loginDate.getDate().toString().padStart(2, '0') + '/' + 
+                               (loginDate.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                               loginDate.getFullYear() + ' ' + 
+                               loginDate.getHours().toString().padStart(2, '0') + ':' + 
+                               loginDate.getMinutes().toString().padStart(2, '0');
+
+              return `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(201,168,76,0.15); border-radius: 6px; gap: 10px;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.5rem;">${deviceIcon}</span>
+                    <div style="text-align: left;">
+                      <div style="font-weight: 600; font-size: 0.85rem; color: var(--white);">${us.deviceInfo}</div>
+                      <div style="font-size: 0.75rem; color: var(--muted); margin-top: 2px;">IP: ${us.ipAddress} · ${us.location}</div>
+                      <div style="font-size: 0.72rem; color: var(--muted); margin-top: 2px;">Đăng nhập lúc: ${loginStr}</div>
+                      <div style="margin-top: 6px; display: inline-block;">${currentBadge}</div>
+                    </div>
+                  </div>
+                  <div>
+                    ${actionBtn}
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: var(--red); font-size: 0.85rem;">Không thể tải danh sách phiên.</div>';
+          }
+        })
+        .catch(err => {
+          console.error('Load sessions error:', err);
+          listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: var(--red); font-size: 0.85rem;">Lỗi kết nối máy chủ.</div>';
+        });
+    }
+
+    function revokeSession(sessionId) {
+      showConfirm('Bạn có chắc chắn muốn đăng xuất tài khoản khỏi thiết bị này từ xa?').then(confirmed => {
+        if (!confirmed) return;
+
+        fetch('/api/sessions/revoke?sessionId=' + encodeURIComponent(sessionId), {
+          method: 'POST',
+          headers: { [csrfHeader]: csrfToken }
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              toast('✓ Đăng xuất thiết bị thành công.');
+              loadSessions();
+            } else {
+              toast('⚠️ ' + (data.message || 'Lỗi khi đăng xuất thiết bị.'));
+            }
+          })
+          .catch(err => {
+            console.error('Revoke session error:', err);
+            toast('⚠️ Lỗi kết nối đến máy chủ.');
+          });
+      });
+    }
+
     function getCsrfToken() {
       return csrfToken;
     }
@@ -990,6 +1595,7 @@
             <div style="display:flex;gap:.5rem;margin-top:1rem;">
               <button class="btn-sec" onclick="editAddress(${addr.id})">Sửa</button>
               <button class="btn-sec" onclick="deleteAddress(${addr.id})">Xóa</button>
+              ${!addr.isDefault ? `<button class="btn-sec" style="border-color:var(--gold);color:var(--gold);" onclick="setDefaultAddress(${addr.id})">Đặt mặc định</button>` : ''}
             </div>
           </div>
         `).join('');
@@ -997,6 +1603,26 @@
         console.error('Load addresses error:', err);
         toast('Không thể tải danh sách địa chỉ.');
       }
+    }
+
+    function setDefaultAddress(id) {
+      fetch('/api/address/' + id + '/default', {
+        method: 'PUT',
+        headers: { [csrfHeader]: csrfToken }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            toast('✓ Đã thay đổi địa chỉ mặc định.');
+            loadAddresses();
+          } else {
+            toast('⚠️ ' + (data.message || 'Lỗi khi thiết lập địa chỉ mặc định.'));
+          }
+        })
+        .catch(err => {
+          console.error('Set default address error:', err);
+          toast('⚠️ Không thể kết nối đến máy chủ.');
+        });
     }
 
     function openAddressForm() {
@@ -1047,7 +1673,13 @@
 
       if (!name) { toast('Vui lòng nhập tên người nhận.'); return; }
       if (!phone) { toast('Vui lòng nhập số điện thoại.'); return; }
+      const phoneRegex = /^0(3|5|7|8|9)[0-9]{8}$/;
+      if (!phoneRegex.test(phone)) {
+        toast('Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số (đầu số 03, 05, 07, 08, 09).');
+        return;
+      }
       if (!detail) { toast('Vui lòng nhập địa chỉ chi tiết.'); return; }
+      if (!district) { toast('Vui lòng nhập quận/huyện.'); return; }
       if (!city) { toast('Vui lòng nhập tỉnh/thành phố.'); return; }
 
       const payload = { recipientName: name, phone, detailedAddress: detail, city, district, postalCode: postal };
@@ -1076,24 +1708,26 @@
     }
 
     function deleteAddress(id) {
-      if (!confirm('Bạn chắc chắn muốn xóa địa chỉ này?')) return;
-      fetch('/api/address/' + id, {
-        method: 'DELETE',
-        headers: { [csrfHeader]: csrfToken }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            toast('✓ Đã xóa địa chỉ.');
-            loadAddresses();
-          } else {
-            toast('⚠️ ' + (data.message || 'Lỗi khi xóa địa chỉ.'));
-          }
+      showConfirm('Bạn chắc chắn muốn xóa địa chỉ này?').then(confirmed => {
+        if (!confirmed) return;
+        fetch('/api/address/' + id, {
+          method: 'DELETE',
+          headers: { [csrfHeader]: csrfToken }
         })
-        .catch(err => {
-          console.error('Delete address error:', err);
-          toast('Không thể xóa địa chỉ.');
-        });
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              toast('✓ Đã xóa địa chỉ.');
+              loadAddresses();
+            } else {
+              toast('⚠️ ' + (data.message || 'Lỗi khi xóa địa chỉ.'));
+            }
+          })
+          .catch(err => {
+            console.error('Delete address error:', err);
+            toast('Không thể xóa địa chỉ.');
+          });
+      });
     }
 
     function saveVoucherCode() {
@@ -1136,25 +1770,88 @@
     }
 
     function removeAllWishlist() {
-      if (!confirm('Bạn chắc chắn muốn xóa tất cả sản phẩm yêu thích?')) return;
-      fetch('/api/wishlist/remove-all', {
-        method: 'DELETE',
-        headers: { [csrfHeader]: csrfToken }
-      })
-        .then(res => res.json())
-        .then(data => {
-          toast(data.message || '✓ Đã xóa tất cả khỏi danh sách yêu thích.');
-          if (data.success) setTimeout(() => location.reload(), 500);
+      showConfirm('Bạn chắc chắn muốn xóa tất cả sản phẩm yêu thích?').then(confirmed => {
+        if (!confirmed) return;
+        fetch('/api/wishlist/remove-all', {
+          method: 'DELETE',
+          headers: { [csrfHeader]: csrfToken }
         })
-        .catch(err => {
-          console.error('Remove all wishlist error:', err);
-          toast('Không thể xóa danh sách yêu thích.');
-        });
+          .then(res => res.json())
+          .then(data => {
+            toast(data.message || '✓ Đã xóa tất cả khỏi danh sách yêu thích.');
+            if (data.success) setTimeout(() => location.reload(), 500);
+          })
+          .catch(err => {
+            console.error('Remove all wishlist error:', err);
+            toast('Không thể xóa danh sách yêu thích.');
+          });
+      });
     }
 
+    function deleteAccount() {
+      showConfirm('⚠️ CẢNH BÁO: Bạn chắc chắn muốn xóa tài khoản này?\nThao tác này sẽ khóa tài khoản của bạn và đăng xuất khỏi hệ thống!').then(confirmed => {
+        if (!confirmed) return;
 
+        const btn = document.querySelector('.btn-danger');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Đang xử lý...';
+        }
+
+        fetch('/api/profile/delete-account', {
+          method: 'POST',
+          headers: { [csrfHeader]: csrfToken }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            toast('✓ ' + data.message);
+            setTimeout(() => {
+              window.location.href = '/auth/login?deleted=true';
+            }, 1000);
+          } else {
+            toast('⚠️ ' + (data.message || 'Không thể xóa tài khoản lúc này.'));
+            if (btn) {
+              btn.disabled = false;
+              btn.textContent = 'Xóa Tài Khoản';
+            }
+          }
+        })
+        .catch(err => {
+          console.error('Delete account error:', err);
+          toast('⚠️ Lỗi kết nối khi thực hiện xóa tài khoản.');
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Xóa Tài Khoản';
+          }
+        });
+      });
+    }
+
+    /* CURSOR JS */
+    {
+      const localCursor = document.getElementById('cursor');
+      const localCursorFollower = document.getElementById('cursor-follower');
+      if (localCursor && localCursorFollower) {
+        document.querySelectorAll('.profile-tab, input, select, textarea, .sb-item, .wl-card').forEach(el => {
+          el.addEventListener('mouseenter', () => {
+            localCursor.style.transform = 'translate(-50%, -50%) scale(2)';
+            localCursorFollower.style.width = '60px';
+            localCursorFollower.style.height = '60px';
+            localCursorFollower.style.backgroundColor = 'rgba(201, 168, 76, 0.1)';
+          });
+          el.addEventListener('mouseleave', () => {
+            localCursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            localCursorFollower.style.width = '36px';
+            localCursorFollower.style.height = '36px';
+            localCursorFollower.style.backgroundColor = 'transparent';
+          });
+        });
+      }
+    }
   </script>
-  <script th:src="@{/js/socket-chat.js}"></script>
+  <script th:src="@{/js/script.js}"></script>
+  <script th:src="@{/js/confirm-popup.js}"></script>
 </body>
 
 </html>

@@ -826,8 +826,8 @@ img {
 }
 
 .products-grid .product-card {
-  flex: 0 0 calc(33.333% - 1rem);
-  min-width: calc(33.333% - 1rem);
+  flex: 0 0 calc(25% - 1.125rem);
+  min-width: calc(25% - 1.125rem);
   scroll-snap-align: start;
 }
 
@@ -932,7 +932,7 @@ img {
 
 .product-name {
   font-family: var(--font-serif);
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 400;
   color: var(--white);
   margin: 0.5rem 0;
@@ -969,7 +969,7 @@ img {
 
 .product-price {
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   color: var(--gold);
   font-weight: 400;
 }

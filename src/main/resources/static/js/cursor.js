@@ -5,18 +5,20 @@
 
   // 2. Dynamically load CSS stylesheet relative to the script path
   const scriptUrl = document.currentScript ? document.currentScript.src : '';
-  if (scriptUrl) {
-    const baseUrl = scriptUrl.substring(0, scriptUrl.lastIndexOf('/js/'));
-    const cssUrl = baseUrl + '/css/cursor.css';
-    
-    // Check if stylesheet is already loaded
-    if (!document.querySelector(`link[href="${cssUrl}"]`)) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = cssUrl;
-      document.head.appendChild(link);
-    }
+  // Build base URL: from script src if available, otherwise use window.location.origin as fallback
+  const baseUrl = scriptUrl
+    ? scriptUrl.substring(0, scriptUrl.lastIndexOf('/js/'))
+    : window.location.origin;
+  const cssUrl = baseUrl + '/css/cursor.css';
+  
+  // Check if stylesheet is already loaded
+  if (!document.querySelector(`link[href^="${cssUrl}"]`) && !document.querySelector('link[href*="cursor.css"]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = cssUrl + '?v=3'; // Cache buster
+    document.head.appendChild(link);
   }
+
 
   function initCursor() {
     let cursor = document.getElementById('cursor');
@@ -47,19 +49,17 @@
     let mouseX = 0, mouseY = 0;
     let followerX = 0, followerY = 0;
     let targetX = 0, targetY = 0;
-    let isHidden = true; // start hidden to avoid jumpy init
 
     // 3. Easing & Rendering loop using requestAnimationFrame + translate3d
     function loop() {
-      if (!isHidden) {
-        // Follower easing interpolation
-        followerX += (targetX - followerX) * 0.12;
-        followerY += (targetY - followerY) * 0.12;
+      // Follower easing interpolation
+      followerX += (targetX - followerX) * 0.12;
+      followerY += (targetY - followerY) * 0.12;
 
-        // Apply hardware accelerated translation
-        cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-        follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
-      }
+      // Apply hardware accelerated translation
+      cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+      
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
@@ -70,28 +70,17 @@
       mouseY = e.clientY;
       targetX = mouseX;
       targetY = mouseY;
+    });
 
-      if (isHidden) {
-        isHidden = false;
-        cursor.classList.remove('hidden');
-        follower.classList.remove('hidden');
-        // Instantly snap follower to mouse position on first move to prevent slow catch up from (0,0)
+    document.addEventListener('mouseenter', (e) => {
+      if (e.clientX !== undefined) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        targetX = mouseX;
+        targetY = mouseY;
         followerX = mouseX;
         followerY = mouseY;
       }
-    });
-
-    // Handle mouse leaving and entering viewport boundaries
-    document.addEventListener('mouseleave', () => {
-      isHidden = true;
-      cursor.classList.add('hidden');
-      follower.classList.add('hidden');
-    });
-
-    document.addEventListener('mouseenter', () => {
-      isHidden = false;
-      cursor.classList.remove('hidden');
-      follower.classList.remove('hidden');
     });
 
     // Handle hovering states using mouseover event delegation

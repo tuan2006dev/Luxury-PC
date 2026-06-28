@@ -371,40 +371,7 @@
     let currentTicketId = parseInt(localStorage.getItem('socket_chat_ticket_id')) || null;
     let ticketSystemAvailable = null; // null = unknown, true/false after first call
 
-    // Set up custom cursor hovers to fix hover scaling issues
-    function setupCursorHover(element) {
-        if (!element) return;
-        element.addEventListener('mouseenter', () => {
-            const cursor = document.getElementById('cursor');
-            const cursorFollower = document.getElementById('cursor-follower');
-            if (cursor && cursorFollower) {
-                cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-                cursorFollower.style.width = '60px';
-                cursorFollower.style.height = '60px';
-                cursorFollower.style.opacity = '0.3';
-            }
-        });
-        element.addEventListener('mouseleave', () => {
-            const cursor = document.getElementById('cursor');
-            const cursorFollower = document.getElementById('cursor-follower');
-            if (cursor && cursorFollower) {
-                cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-                cursorFollower.style.width = '36px';
-                cursorFollower.style.height = '36px';
-                cursorFollower.style.opacity = '0.6';
-            }
-        });
-    }
-
-    setupCursorHover(btn);
-    setupCursorHover(closeBtn);
-    setupCursorHover(newChatBtn);
-    setupCursorHover(closeTicketBtn);
-    setupCursorHover(startBtn);
-    setupCursorHover(sendBtn);
-    setupCursorHover(nameInput);
-    setupCursorHover(emailInput);
-    setupCursorHover(msgInput);
+    // Custom cursor hovering for chat buttons is now handled globally by cursor.js
 
     // If already has username and ticketId, bypass setup screen
     if (username && currentTicketId) {

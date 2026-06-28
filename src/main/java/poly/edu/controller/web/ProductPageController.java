@@ -40,6 +40,9 @@ public class ProductPageController {
     UserRepository userRepository;
 
     @Autowired
+    poly.edu.dao.OrderItemDAO orderItemDAO;
+
+    @Autowired
     WishlistService wishlistService;
 
     @GetMapping("/products")
@@ -127,6 +130,15 @@ public class ProductPageController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("isAdmin", isAdmin);
 
+        boolean canReview = false;
+        if (currentUser != null) {
+            long count = orderItemDAO.countCompletedPurchasesByUserAndProduct(currentUser.getId(), id);
+            if (count > 0) {
+                canReview = true;
+            }
+        }
+        model.addAttribute("canReview", canReview);
+
         return "product-detail";
     }
 
@@ -145,6 +157,7 @@ public class ProductPageController {
             @RequestParam("stars") Integer stars,
             @RequestParam("content") String content,
             @RequestParam(value = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
+            @RequestParam(value = "videoFile", required = false) org.springframework.web.multipart.MultipartFile videoFile,
             @org.springframework.security.core.annotation.AuthenticationPrincipal Object principal) {
         
         java.util.Map<String, Object> response = new java.util.HashMap<>();
@@ -186,6 +199,14 @@ public class ProductPageController {
             response.put("success", false);
             response.put("message", "Sản phẩm không tồn tại.");
             return org.springframework.http.ResponseEntity.status(404).body(response);
+        }
+
+        // Kiem tra quyen danh gia
+        long countPurchase = orderItemDAO.countCompletedPurchasesByUserAndProduct(uOpt.get().getId(), id);
+        if (countPurchase == 0) {
+            response.put("success", false);
+            response.put("message", "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
+            return org.springframework.http.ResponseEntity.status(403).body(response);
         }
 
         Review r = new Review();
@@ -236,6 +257,52 @@ public class ProductPageController {
                 e.printStackTrace();
                 response.put("success", false);
                 response.put("message", "Lỗi khi lưu trữ hình ảnh: " + e.getMessage());
+                return org.springframework.http.ResponseEntity.status(500).body(response);
+            }
+        }
+
+        // Xy ly upload video
+        if (videoFile != null && !videoFile.isEmpty()) {
+            String contentType = videoFile.getContentType();
+            if (contentType == null || !contentType.startsWith("video/")) {
+                response.put("success", false);
+                response.put("message", "Chỉ chấp nhận file video.");
+                return org.springframework.http.ResponseEntity.status(400).body(response);
+            }
+            try {
+                String originalFilename = videoFile.getOriginalFilename();
+                String extension = "";
+                if (originalFilename != null && originalFilename.contains(".")) {
+                    extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+                String filename = "review_vid_" + p.getId() + "_" + uOpt.get().getId() + "_" + System.currentTimeMillis() + extension;
+
+                // Lưu vào src/main/resources
+                String srcUploadDir = "src/main/resources/static/uploads/reviews/";
+                java.io.File srcFolder = new java.io.File(srcUploadDir);
+                if (!srcFolder.exists()) {
+                    srcFolder.mkdirs();
+                }
+                java.nio.file.Path srcPath = java.nio.file.Paths.get(srcUploadDir + filename);
+                java.nio.file.Files.copy(videoFile.getInputStream(), srcPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+                // Copy sang target cho phép hiển thị ngay lập tức
+                String targetUploadDir = "target/classes/static/uploads/reviews/";
+                java.io.File targetFolder = new java.io.File(targetUploadDir);
+                if (targetFolder.exists() || targetFolder.mkdirs()) {
+                    java.nio.file.Path targetPath = java.nio.file.Paths.get(targetUploadDir + filename);
+                    try {
+                        java.nio.file.Files.copy(srcPath, targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    } catch (Exception e) {
+                        // Bỏ qua lỗi copy sang target
+                    }
+                }
+
+                r.setVideo("/uploads/reviews/" + filename);
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.put("success", false);
+                response.put("message", "Lỗi khi lưu trữ video: " + e.getMessage());
                 return org.springframework.http.ResponseEntity.status(500).body(response);
             }
         }
@@ -333,9 +400,9 @@ public class ProductPageController {
                 .anyMatch(ur -> ur.getRole() != null && "ADMIN".equalsIgnoreCase(ur.getRole().getName()));
         }
 
-        if (!r.getUser().getId().equals(currentUser.getId()) && !isAdmin) {
+        if (!isAdmin) {
             response.put("success", false);
-            response.put("message", "Bạn không có quyền xóa đánh giá này.");
+            response.put("message", "Chỉ quản trị viên mới có quyền xóa đánh giá.");
             return org.springframework.http.ResponseEntity.status(403).body(response);
         }
 
@@ -350,6 +417,23 @@ public class ProductPageController {
                     fileInSrc.delete();
                 }
                 java.io.File fileInTarget = new java.io.File("target/classes/static" + imagePath);
+                if (fileInTarget.exists()) {
+                    fileInTarget.delete();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Xóa video thực tế nếu có
+        if (r.getVideo() != null && !r.getVideo().isEmpty()) {
+            try {
+                String videoPath = r.getVideo();
+                java.io.File fileInSrc = new java.io.File("src/main/resources/static" + videoPath);
+                if (fileInSrc.exists()) {
+                    fileInSrc.delete();
+                }
+                java.io.File fileInTarget = new java.io.File("target/classes/static" + videoPath);
                 if (fileInTarget.exists()) {
                     fileInTarget.delete();
                 }
@@ -396,6 +480,8 @@ public class ProductPageController {
             @RequestParam("content") String content,
             @RequestParam(value = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
             @RequestParam(value = "removeImage", required = false) Boolean removeImage,
+            @RequestParam(value = "videoFile", required = false) org.springframework.web.multipart.MultipartFile videoFile,
+            @RequestParam(value = "removeVideo", required = false) Boolean removeVideo,
             @org.springframework.security.core.annotation.AuthenticationPrincipal Object principal) {
         
         java.util.Map<String, Object> response = new java.util.HashMap<>();
@@ -527,6 +613,81 @@ public class ProductPageController {
             }
         }
 
+        // Xử lý xóa video nếu được yêu cầu
+        if (removeVideo != null && removeVideo) {
+            if (r.getVideo() != null && !r.getVideo().isEmpty()) {
+                try {
+                    String videoPath = r.getVideo();
+                    java.io.File fileInSrc = new java.io.File("src/main/resources/static" + videoPath);
+                    if (fileInSrc.exists()) fileInSrc.delete();
+                    java.io.File fileInTarget = new java.io.File("target/classes/static" + videoPath);
+                    if (fileInTarget.exists()) fileInTarget.delete();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                r.setVideo(null);
+            }
+        }
+
+        // Xử lý upload video mới
+        if (videoFile != null && !videoFile.isEmpty()) {
+            String contentType = videoFile.getContentType();
+            if (contentType == null || !contentType.startsWith("video/")) {
+                response.put("success", false);
+                response.put("message", "Chỉ chấp nhận file video.");
+                return org.springframework.http.ResponseEntity.status(400).body(response);
+            }
+            try {
+                // Xóa video cũ trước
+                if (r.getVideo() != null && !r.getVideo().isEmpty()) {
+                    try {
+                        String oldPath = r.getVideo();
+                        java.io.File fileInSrc = new java.io.File("src/main/resources/static" + oldPath);
+                        if (fileInSrc.exists()) fileInSrc.delete();
+                        java.io.File fileInTarget = new java.io.File("target/classes/static" + oldPath);
+                        if (fileInTarget.exists()) fileInTarget.delete();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                String originalFilename = videoFile.getOriginalFilename();
+                String extension = "";
+                if (originalFilename != null && originalFilename.contains(".")) {
+                    extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+                String filename = "review_vid_" + r.getProduct().getId() + "_" + currentUser.getId() + "_" + System.currentTimeMillis() + extension;
+
+                // Lưu vào src/main/resources
+                String srcUploadDir = "src/main/resources/static/uploads/reviews/";
+                java.io.File srcFolder = new java.io.File(srcUploadDir);
+                if (!srcFolder.exists()) {
+                    srcFolder.mkdirs();
+                }
+                java.nio.file.Path srcPath = java.nio.file.Paths.get(srcUploadDir + filename);
+                java.nio.file.Files.copy(videoFile.getInputStream(), srcPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+                // Copy sang target cho phép hiển thị ngay lập tức
+                String targetUploadDir = "target/classes/static/uploads/reviews/";
+                java.io.File targetFolder = new java.io.File(targetUploadDir);
+                if (targetFolder.exists() || targetFolder.mkdirs()) {
+                    java.nio.file.Path targetPath = java.nio.file.Paths.get(targetUploadDir + filename);
+                    try {
+                        java.nio.file.Files.copy(srcPath, targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    } catch (Exception e) {
+                        // Bỏ qua
+                    }
+                }
+
+                r.setVideo("/uploads/reviews/" + filename);
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.put("success", false);
+                response.put("message", "Lỗi khi lưu trữ video: " + e.getMessage());
+                return org.springframework.http.ResponseEntity.status(500).body(response);
+            }
+        }
+
         reviewDAO.save(r);
 
         // Tính toán lại các chỉ số thống kê
@@ -550,6 +711,7 @@ public class ProductPageController {
         reviewData.put("content", r.getContent());
         reviewData.put("stars", r.getStars());
         reviewData.put("image", r.getImage());
+        reviewData.put("video", r.getVideo());
         reviewData.put("userName", currentUser.getFullName() != null && !currentUser.getFullName().isEmpty() 
             ? currentUser.getFullName() : currentUser.getUsername());
         reviewData.put("createdAt", r.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));

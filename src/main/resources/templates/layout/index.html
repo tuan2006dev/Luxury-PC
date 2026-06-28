@@ -1,4 +1,4 @@
-﻿<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8" />
@@ -6,9 +6,9 @@
 
 
 
-    <title>Luxury PC | Công Nghệ Cao Cấp & Xa Xỉ</title>
+    <title>Luxury PC | C�ng Ngh? Cao C?p & Xa X?</title>
     <meta name="description"
-        content="Luxury PC — Nơi công nghệ gặp gỡ sự xa xỉ. Linh kiện máy tính cao cấp nhất, được chọn lọc kỹ lưỡng dành cho người dùng tinh tế." />
+        content="Luxury PC � Noi c�ng ngh? g?p g? s? xa x?. Linh ki?n m�y t�nh cao c?p nh?t, du?c ch?n l?c k? lu?ng d�nh cho ngu?i d�ng tinh t?." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,26 +21,26 @@
 
 <body>
     <!-- CURSOR -->
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-follower" id="cursor-follower"></div>
+
+
 
     <!-- NAVIGATION -->
     <nav class="navbar" id="navbar">
         <div class="nav-left">
-            <a href="#" class="nav-link" id="nav-linh-kien">Linh Kiện</a>
+            <a href="#" class="nav-link" id="nav-linh-kien">Linh Ki?n</a>
             <a href="/build-pc/index.html" class="nav-link" id="nav-build-pc">Build PC</a>
-            <a href="#" class="nav-link" id="nav-khuyen-mai">Khuyến Mãi</a>
+            <a href="#" class="nav-link" id="nav-khuyen-mai">Khuy?n M�i</a>
         </div>
         <div class="nav-logo">
             <span class="logo-Luxury">LUXURY</span> <span class="logo-pc">PC</span>
         </div>
         <div class="nav-right">
-            <a href="#" class="nav-link" id="nav-tin-tuc">Tin Tức</a>
-            <a href="#" class="nav-link" id="nav-lien-he">Liên Hệ</a>
-            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link" id="nav-login">Đăng Nhập</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link" id="nav-profile">Hồ Sơ</a>
-            <button class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm">⌕</button>
-            <button class="nav-cart" id="nav-cart" aria-label="Giỏ hàng">
+            <a href="#" class="nav-link" id="nav-tin-tuc">Tin T?c</a>
+            <a href="#" class="nav-link" id="nav-lien-he">Li�n H?</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link" id="nav-login">�ang Nh?p</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link" id="nav-profile">H? So</a>
+            <button class="nav-search-btn" id="nav-search-btn" aria-label="T�m ki?m">?</button>
+            <button class="nav-cart" id="nav-cart" aria-label="Gi? h�ng">
                 <span class="cart-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                         viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -57,28 +57,28 @@
     <div class="search-overlay" id="search-overlay">
         <div class="search-overlay-inner">
             <div class="search-close-row">
-                <span class="search-brand">LUXURY · PC</span>
-                <button class="search-close" id="search-close" aria-label="Đóng tìm kiếm">✕</button>
+                <span class="search-brand">LUXURY � PC</span>
+                <button class="search-close" id="search-close" aria-label="��ng t�m ki?m">?</button>
             </div>
             <div class="search-input-wrap">
-                <span class="search-icon-big">⌕</span>
+                <span class="search-icon-big">?</span>
                 <input type="text" id="search-input" class="search-input"
                     data-translate-placeholder="header-search-placeholder"
-                    placeholder="Tìm kiếm linh kiện, thương hiệu..." autocomplete="off"
-                    aria-label="Tìm kiếm sản phẩm" />
-                <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
+                    placeholder="T�m ki?m linh ki?n, thuong hi?u..." autocomplete="off"
+                    aria-label="T�m ki?m s?n ph?m" />
+                <button class="search-clear" id="search-clear" aria-label="X�a">?</button>
             </div>
             <div class="search-tags">
-                <span class="search-tag-label">Tìm nhanh:</span>
+                <span class="search-tag-label">T�m nhanh:</span>
                 <button class="search-tag" data-query="CPU Intel">CPU Intel</button>
                 <button class="search-tag" data-query="RTX 4090">RTX 4090</button>
                 <button class="search-tag" data-query="DDR5">DDR5 RAM</button>
                 <button class="search-tag" data-query="SSD NVMe">SSD NVMe</button>
-                <button class="search-tag" data-query="Màn hình OLED">Màn Hình OLED</button>
-                <button class="search-tag" data-query="Nguồn PSU">Nguồn PSU</button>
+                <button class="search-tag" data-query="M�n h�nh OLED">M�n H�nh OLED</button>
+                <button class="search-tag" data-query="Ngu?n PSU">Ngu?n PSU</button>
             </div>
             <div class="search-results" id="search-results">
-                <p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>
+                <p class="search-hint">Nh?p t? kh�a d? t�m ki?m s?n ph?m t?i Luxury PC.</p>
             </div>
         </div>
     </div>
@@ -91,12 +91,12 @@
         </div>
         <div class="hero-content">
 
-            <h1 class="hero-title">Được Tạo Ra<br /><em>Để Thống Trị</em></h1>
-            <p class="hero-subtitle">Linh kiện máy tính được tuyển chọn dành cho những người không chấp nhận điều tầm
-                thường.</p>
+            <h1 class="hero-title">�u?c T?o Ra<br /><em>�? Th?ng Tr?</em></h1>
+            <p class="hero-subtitle">Linh ki?n m�y t�nh du?c tuy?n ch?n d�nh cho nh?ng ngu?i kh�ng ch?p nh?n di?u t?m
+                thu?ng.</p>
             <div class="hero-cta">
-                <a href="#products" class="btn-primary" id="hero-explore"><span>Khám Phá Ngay</span></a>
-                <a href="/build-pc/index.html" class="btn-secondary" id="hero-build"><span>Build PC Của Bạn</span></a>
+                <a href="#products" class="btn-primary" id="hero-explore"><span>Kh�m Ph� Ngay</span></a>
+                <a href="/build-pc/index.html" class="btn-secondary" id="hero-build"><span>Build PC C?a B?n</span></a>
             </div>
         </div>
 
@@ -107,25 +107,25 @@
     <section class="flash-sale" id="flash-sale">
         <div class="flash-sale-inner">
             <div class="flash-sale-left">
-                <div class="flash-badge">🔥 HOT DEAL</div>
+                <div class="flash-badge">?? HOT DEAL</div>
                 <h2 class="flash-title">Flash Sale
-                    <span class="flash-title-accent">Hôm Nay</span>
+                    <span class="flash-title-accent">H�m Nay</span>
                 </h2>
-                <p class="flash-sub">Ưu đãi cực sốc — chỉ áp dụng trong hôm nay. Số lượng có hạn!</p>
+                <p class="flash-sub">Uu d�i c?c s?c � ch? �p d?ng trong h�m nay. S? lu?ng c� h?n!</p>
                 <div class="flash-countdown" id="flash-countdown">
                     <div class="countdown-block">
                         <span class="countdown-num" id="fs-hours">05</span>
-                        <span class="countdown-label">Giờ</span>
+                        <span class="countdown-label">Gi?</span>
                     </div>
                     <div class="countdown-sep">:</div>
                     <div class="countdown-block">
                         <span class="countdown-num" id="fs-minutes">59</span>
-                        <span class="countdown-label">Phút</span>
+                        <span class="countdown-label">Ph�t</span>
                     </div>
                     <div class="countdown-sep">:</div>
                     <div class="countdown-block">
                         <span class="countdown-num" id="fs-seconds">00</span>
-                        <span class="countdown-label">Giây</span>
+                        <span class="countdown-label">Gi�y</span>
                     </div>
                 </div>
             </div>
@@ -133,48 +133,48 @@
                 <!-- Flash product 1 -->
                 <div class="flash-product-card" id="fp-1">
                     <div class="flash-discount-badge">-15%</div>
-                    <div class="flash-prod-img">🖥️</div>
+                    <div class="flash-prod-img">???</div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name">Core i7-14700K</div>
                         <div class="flash-prod-prices">
-                            <span class="flash-old-price">13.500.000₫</span>
-                            <span class="flash-new-price">11.475.000₫</span>
+                            <span class="flash-old-price">13.500.000?</span>
+                            <span class="flash-new-price">11.475.000?</span>
                         </div>
                     </div>
                 </div>
                 <!-- Flash product 2 -->
                 <div class="flash-product-card" id="fp-2">
                     <div class="flash-discount-badge">-20%</div>
-                    <div class="flash-prod-img">💾</div>
+                    <div class="flash-prod-img">??</div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name">Samsung 990 Pro 2TB</div>
                         <div class="flash-prod-prices">
-                            <span class="flash-old-price">4.200.000₫</span>
-                            <span class="flash-new-price">3.360.000₫</span>
+                            <span class="flash-old-price">4.200.000?</span>
+                            <span class="flash-new-price">3.360.000?</span>
                         </div>
                     </div>
                 </div>
                 <!-- Flash product 3 -->
                 <div class="flash-product-card" id="fp-3">
                     <div class="flash-discount-badge">-10%</div>
-                    <div class="flash-prod-img">🌬️</div>
+                    <div class="flash-prod-img">???</div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name">Noctua NH-D15 Chromax</div>
                         <div class="flash-prod-prices">
-                            <span class="flash-old-price">2.100.000₫</span>
-                            <span class="flash-new-price">1.890.000₫</span>
+                            <span class="flash-old-price">2.100.000?</span>
+                            <span class="flash-new-price">1.890.000?</span>
                         </div>
                     </div>
                 </div>
                 <!-- Flash product 4 -->
                 <div class="flash-product-card" id="fp-4">
                     <div class="flash-discount-badge">-18%</div>
-                    <div class="flash-prod-img">⚡</div>
+                    <div class="flash-prod-img">?</div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name">Seasonic Focus GX-850</div>
                         <div class="flash-prod-prices">
-                            <span class="flash-old-price">3.500.000₫</span>
-                            <span class="flash-new-price">2.870.000₫</span>
+                            <span class="flash-old-price">3.500.000?</span>
+                            <span class="flash-new-price">2.870.000?</span>
                         </div>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
         <div class="statement-inner">
             <div class="statement-line"></div>
             <p class="statement-text">
-                "Chúng tôi không bán linh kiện. Chúng tôi bán trải nghiệm hiệu năng <em>vượt mọi giới hạn</em>."
+                "Ch�ng t�i kh�ng b�n linh ki?n. Ch�ng t�i b�n tr?i nghi?m hi?u nang <em>vu?t m?i gi?i h?n</em>."
             </p>
             <div class="statement-line"></div>
         </div>
@@ -196,45 +196,45 @@
     <!-- CATEGORIES -->
     <section class="categories" id="categories">
         <div class="section-header">
-            <span class="section-label">Danh Mục</span>
-            <h2 class="section-title">Chọn Dòng Linh Kiện</h2>
+            <span class="section-label">Danh M?c</span>
+            <h2 class="section-title">Ch?n D�ng Linh Ki?n</h2>
         </div>
         <div class="cat-grid">
             <div class="cat-card" id="cat-cpu" data-cat="cpu">
                 <div class="cat-num">01</div>
                 <div class="cat-name">CPU</div>
-                <div class="cat-desc">Bộ vi xử lý</div>
-                <div class="cat-arrow">→</div>
+                <div class="cat-desc">B? vi x? l�</div>
+                <div class="cat-arrow">?</div>
             </div>
             <div class="cat-card" id="cat-vga" data-cat="vga">
                 <div class="cat-num">02</div>
                 <div class="cat-name">VGA</div>
-                <div class="cat-desc">Card màn hình</div>
-                <div class="cat-arrow">→</div>
+                <div class="cat-desc">Card m�n h�nh</div>
+                <div class="cat-arrow">?</div>
             </div>
             <div class="cat-card" id="cat-mainboard" data-cat="mainboard">
                 <div class="cat-num">03</div>
                 <div class="cat-name">Mainboard</div>
-                <div class="cat-desc">Bo mạch chủ</div>
-                <div class="cat-arrow">→</div>
+                <div class="cat-desc">Bo m?ch ch?</div>
+                <div class="cat-arrow">?</div>
             </div>
             <div class="cat-card" id="cat-ram" data-cat="ram">
                 <div class="cat-num">04</div>
                 <div class="cat-name">RAM</div>
-                <div class="cat-desc">Bộ nhớ trong</div>
-                <div class="cat-arrow">→</div>
+                <div class="cat-desc">B? nh? trong</div>
+                <div class="cat-arrow">?</div>
             </div>
             <div class="cat-card" id="cat-ssd" data-cat="ssd">
                 <div class="cat-num">05</div>
                 <div class="cat-name">SSD / HDD</div>
-                <div class="cat-desc">Lưu trữ cao tốc</div>
-                <div class="cat-arrow">→</div>
+                <div class="cat-desc">Luu tr? cao t?c</div>
+                <div class="cat-arrow">?</div>
             </div>
             <div class="cat-card" id="cat-monitor" data-cat="monitor">
                 <div class="cat-num">06</div>
-                <div class="cat-name">Màn Hình</div>
+                <div class="cat-name">M�n H�nh</div>
                 <div class="cat-desc">Display premium</div>
-                <div class="cat-arrow">→</div>
+                <div class="cat-arrow">?</div>
             </div>
         </div>
     </section>
@@ -242,44 +242,44 @@
     <!-- FEATURED PRODUCTS -->
     <section class="products" id="products">
         <div class="section-header">
-            <span class="section-label">Tuyển Chọn</span>
-            <h2 class="section-title">Linh Kiện Nổi Bật</h2>
+            <span class="section-label">Tuy?n Ch?n</span>
+            <h2 class="section-title">Linh Ki?n N?i B?t</h2>
         </div>
 
         <!-- FILTER & SORT BAR -->
         <div class="filter-bar" id="filter-bar">
             <!-- Category Filter -->
             <div class="filter-group" id="filter-cats">
-                <span class="filter-group-label">Danh Mục</span>
+                <span class="filter-group-label">Danh M?c</span>
                 <div class="filter-chips">
-                    <button class="filter-chip active" data-cat="all" id="fcat-all">Tất Cả</button>
+                    <button class="filter-chip active" data-cat="all" id="fcat-all">T?t C?</button>
                     <button class="filter-chip" data-cat="cpu" id="fcat-cpu">CPU</button>
                     <button class="filter-chip" data-cat="vga" id="fcat-vga">VGA</button>
                     <button class="filter-chip" data-cat="ram" id="fcat-ram">RAM</button>
                     <button class="filter-chip" data-cat="mainboard" id="fcat-mainboard">Mainboard</button>
-                    <button class="filter-chip" data-cat="monitor" id="fcat-monitor">Màn Hình</button>
+                    <button class="filter-chip" data-cat="monitor" id="fcat-monitor">M�n H�nh</button>
                 </div>
             </div>
 
             <!-- Sort Options -->
             <div class="filter-sort" id="filter-sort">
-                <span class="filter-group-label">Sắp Xếp</span>
+                <span class="filter-group-label">S?p X?p</span>
                 <div class="sort-select-wrap">
-                    <select class="sort-select" id="sort-select" aria-label="Sắp xếp sản phẩm">
-                        <option value="default">Mặc Định</option>
-                        <option value="price-asc">Giá: Thấp → Cao</option>
-                        <option value="price-desc">Giá: Cao → Thấp</option>
-                        <option value="popular">Mua Nhiều Nhất</option>
-                        <option value="newest">Mới Nhất</option>
+                    <select class="sort-select" id="sort-select" aria-label="S?p x?p s?n ph?m">
+                        <option value="default">M?c �?nh</option>
+                        <option value="price-asc">Gi�: Th?p ? Cao</option>
+                        <option value="price-desc">Gi�: Cao ? Th?p</option>
+                        <option value="popular">Mua Nhi?u Nh?t</option>
+                        <option value="newest">M?i Nh?t</option>
                     </select>
-                    <span class="sort-arrow">▾</span>
+                    <span class="sort-arrow">?</span>
                 </div>
             </div>
 
             <!-- Result count -->
             <div class="filter-result-count">
                 <span class="result-num" id="result-count">5</span>
-                <span class="result-label">sản phẩm</span>
+                <span class="result-label">s?n ph?m</span>
             </div>
         </div>
 
@@ -290,16 +290,16 @@
                 <div class="product-img-wrap">
                     <img th:src="@{/cpu.png}" alt="Intel Core i9-14900K" class="product-img" />
                     <div class="product-badge">Bestseller</div>
-                    <button class="product-wishlist" aria-label="Yêu thích">♡</button>
+                    <button class="product-wishlist" aria-label="Y�u th�ch">?</button>
                 </div>
                 <div class="product-info">
-                    <span class="product-cat">CPU · Intel</span>
+                    <span class="product-cat">CPU � Intel</span>
                     <h3 class="product-name">Core i9-14900K</h3>
-                    <p class="product-spec">24 Cores · 32 Threads · 6.0 GHz Boost</p>
+                    <p class="product-spec">24 Cores � 32 Threads � 6.0 GHz Boost</p>
                     <div class="product-price-row">
-                        <span class="product-price">18.990.000₫</span>
+                        <span class="product-price">18.990.000?</span>
                         <button class="btn-add-cart" data-id="cpu1" data-name="Intel Core i9-14900K"
-                            data-price="18990000"><span>Thêm Vào Giỏ</span></button>
+                            data-price="18990000"><span>Th�m V�o Gi?</span></button>
                     </div>
                 </div>
             </article>
@@ -309,17 +309,17 @@
                 data-popularity="3210">
                 <div class="product-img-wrap">
                     <img th:src="@{/gpu.png}" alt="RTX 4090 Titan Edition" class="product-img" />
-                    <div class="product-badge gold">Đỉnh Cao</div>
-                    <button class="product-wishlist" aria-label="Yêu thích">♡</button>
+                    <div class="product-badge gold">�?nh Cao</div>
+                    <button class="product-wishlist" aria-label="Y�u th�ch">?</button>
                 </div>
                 <div class="product-info">
-                    <span class="product-cat">VGA · NVIDIA</span>
+                    <span class="product-cat">VGA � NVIDIA</span>
                     <h3 class="product-name">RTX 4090 Titan Edition</h3>
-                    <p class="product-spec">24GB GDDR6X · 16384 CUDA Cores · 450W TDP</p>
+                    <p class="product-spec">24GB GDDR6X � 16384 CUDA Cores � 450W TDP</p>
                     <div class="product-price-row">
-                        <span class="product-price">42.990.000₫</span>
+                        <span class="product-price">42.990.000?</span>
                         <button class="btn-add-cart" data-id="gpu1" data-name="RTX 4090 Titan Edition"
-                            data-price="42990000"><span>Thêm Vào Giỏ</span></button>
+                            data-price="42990000"><span>Th�m V�o Gi?</span></button>
                     </div>
                 </div>
             </article>
@@ -328,17 +328,17 @@
             <article class="product-card" id="prod-ram-1" data-price="6490000" data-cat="ram" data-popularity="5650">
                 <div class="product-img-wrap">
                     <img th:src="@{/ram.png}" alt="Corsair Dominator Platinum RGB DDR5" class="product-img" />
-                    <div class="product-badge">Mới</div>
-                    <button class="product-wishlist" aria-label="Yêu thích">♡</button>
+                    <div class="product-badge">M?i</div>
+                    <button class="product-wishlist" aria-label="Y�u th�ch">?</button>
                 </div>
                 <div class="product-info">
-                    <span class="product-cat">RAM · Corsair</span>
+                    <span class="product-cat">RAM � Corsair</span>
                     <h3 class="product-name">Dominator Platinum DDR5</h3>
-                    <p class="product-spec">64GB (2×32GB) · 6400MHz · CL32</p>
+                    <p class="product-spec">64GB (2�32GB) � 6400MHz � CL32</p>
                     <div class="product-price-row">
-                        <span class="product-price">6.490.000₫</span>
+                        <span class="product-price">6.490.000?</span>
                         <button class="btn-add-cart" data-id="ram1" data-name="Corsair Dominator Platinum DDR5"
-                            data-price="6490000"><span>Thêm Vào Giỏ</span></button>
+                            data-price="6490000"><span>Th�m V�o Gi?</span></button>
                     </div>
                 </div>
             </article>
@@ -349,16 +349,16 @@
                 <div class="product-img-wrap">
                     <img th:src="@{/motherboard.png}" alt="ASUS ROG Maximus Z790 Apex" class="product-img" />
                     <div class="product-badge">Pro</div>
-                    <button class="product-wishlist" aria-label="Yêu thích">♡</button>
+                    <button class="product-wishlist" aria-label="Y�u th�ch">?</button>
                 </div>
                 <div class="product-info">
-                    <span class="product-cat">Mainboard · ASUS ROG</span>
+                    <span class="product-cat">Mainboard � ASUS ROG</span>
                     <h3 class="product-name">ROG Maximus Z790 Apex </h3>
-                    <p class="product-spec">LGA1700 · DDR5 · PCIe 5.0 · WiFi 6E</p>
+                    <p class="product-spec">LGA1700 � DDR5 � PCIe 5.0 � WiFi 6E</p>
                     <div class="product-price-row">
-                        <span class="product-price">12.490.000₫</span>
+                        <span class="product-price">12.490.000?</span>
                         <button class="btn-add-cart" data-id="mb1" data-name="ASUS ROG Maximus Z790 Apex "
-                            data-price="12490000"><span>Thêm Vào Giỏ</span></button>
+                            data-price="12490000"><span>Th�m V�o Gi?</span></button>
                     </div>
                 </div>
             </article>
@@ -369,16 +369,16 @@
                 <div class="product-img-wrap">
                     <img th:src="@{/monitor.png}" alt="LG UltraGear 4K OLED 240Hz" class="product-img" />
                     <div class="product-badge gold">OLED</div>
-                    <button class="product-wishlist" aria-label="Yêu thích">♡</button>
+                    <button class="product-wishlist" aria-label="Y�u th�ch">?</button>
                 </div>
                 <div class="product-info">
-                    <span class="product-cat">Màn Hình · LG</span>
+                    <span class="product-cat">M�n H�nh � LG</span>
                     <h3 class="product-name">UltraGear 4K OLED 240Hz</h3>
-                    <p class="product-spec">27" · 3840×2160 · 240Hz · 0.03ms GtG</p>
+                    <p class="product-spec">27" � 3840�2160 � 240Hz � 0.03ms GtG</p>
                     <div class="product-price-row">
-                        <span class="product-price">22.990.000₫</span>
+                        <span class="product-price">22.990.000?</span>
                         <button class="btn-add-cart" data-id="mon1" data-name="LG UltraGear 4K OLED 240Hz"
-                            data-price="22990000"><span>Thêm Vào Giỏ</span></button>
+                            data-price="22990000"><span>Th�m V�o Gi?</span></button>
                     </div>
                 </div>
             </article>
@@ -389,39 +389,39 @@
     <!-- VOUCHERS -->
     <section class="vouchers-section" id="vouchers">
         <div class="section-header">
-            <span class="section-label">Ưu Đãi</span>
-            <h2 class="section-title">Mã Khuyến Mãi</h2>
-            <p class="voucher-section-sub">Nhấn vào voucher để xem chi tiết điều kiện và cách sử dụng.</p>
+            <span class="section-label">Uu ��i</span>
+            <h2 class="section-title">M� Khuy?n M�i</h2>
+            <p class="voucher-section-sub">Nh?n v�o voucher d? xem chi ti?t di?u ki?n v� c�ch s? d?ng.</p>
         </div>
         <div class="voucher-grid">
 
             <div class="voucher-card" id="vc-LUXURY10" data-voucher="LUXURY10">
                 <div class="voucher-left">
                     <div class="voucher-pct">10%</div>
-                    <div class="voucher-type">Giảm Giá</div>
+                    <div class="voucher-type">Gi?m Gi�</div>
                 </div>
                 <div class="voucher-right">
-                    <div class="voucher-title">Voucher Linh Kiện</div>
+                    <div class="voucher-title">Voucher Linh Ki?n</div>
                     <div class="voucher-code">LUXURY10</div>
-                    <div class="voucher-desc">Giảm 10% cho tất cả đơn hàng</div>
-                    <div class="voucher-tag">Tất cả sản phẩm</div>
+                    <div class="voucher-desc">Gi?m 10% cho t?t c? don h�ng</div>
+                    <div class="voucher-tag">T?t c? s?n ph?m</div>
                 </div>
-                <div class="voucher-scissor">✂</div>
+                <div class="voucher-scissor">?</div>
                 <div class="voucher-dots"></div>
             </div>
 
             <div class="voucher-card" id="vc-LUXURY15" data-voucher="LUXURY15">
                 <div class="voucher-left">
                     <div class="voucher-pct">15%</div>
-                    <div class="voucher-type">Giảm Giá</div>
+                    <div class="voucher-type">Gi?m Gi�</div>
                 </div>
                 <div class="voucher-right">
-                    <div class="voucher-title">Voucher Linh Kiện</div>
+                    <div class="voucher-title">Voucher Linh Ki?n</div>
                     <div class="voucher-code">LUXURY15</div>
-                    <div class="voucher-desc">Giảm 15% cho đơn từ 10 triệu</div>
-                    <div class="voucher-tag">Đơn ≥ 10.000.000₫</div>
+                    <div class="voucher-desc">Gi?m 15% cho don t? 10 tri?u</div>
+                    <div class="voucher-tag">�on = 10.000.000?</div>
                 </div>
-                <div class="voucher-scissor">✂</div>
+                <div class="voucher-scissor">?</div>
                 <div class="voucher-dots"></div>
             </div>
 
@@ -432,10 +432,10 @@
                 </div>
                 <div class="voucher-right">
                     <div class="voucher-code">VIP20</div>
-                    <div class="voucher-desc">Giảm 20% dành cho thành viên VIP</div>
-                    <div class="voucher-tag">Thành viên VIP</div>
+                    <div class="voucher-desc">Gi?m 20% d�nh cho th�nh vi�n VIP</div>
+                    <div class="voucher-tag">Th�nh vi�n VIP</div>
                 </div>
-                <div class="voucher-scissor">✂</div>
+                <div class="voucher-scissor">?</div>
                 <div class="voucher-dots"></div>
             </div>
 
@@ -446,24 +446,24 @@
                 </div>
                 <div class="voucher-right">
                     <div class="voucher-code">FREESHIP</div>
-                    <div class="voucher-desc">Miễn phí vận chuyển toàn quốc</div>
-                    <div class="voucher-tag">Tất cả đơn hàng</div>
+                    <div class="voucher-desc">Mi?n ph� v?n chuy?n to�n qu?c</div>
+                    <div class="voucher-tag">T?t c? don h�ng</div>
                 </div>
-                <div class="voucher-scissor">✂</div>
+                <div class="voucher-scissor">?</div>
                 <div class="voucher-dots"></div>
             </div>
 
             <div class="voucher-card" id="vc-newuser" data-voucher="newuser">
                 <div class="voucher-left">
                     <div class="voucher-pct">12%</div>
-                    <div class="voucher-type">Mới</div>
+                    <div class="voucher-type">M?i</div>
                 </div>
                 <div class="voucher-right">
                     <div class="voucher-code">NEWUSER</div>
-                    <div class="voucher-desc">Ưu đãi chào mừng khách hàng mới</div>
-                    <div class="voucher-tag">Đăng ký lần đầu</div>
+                    <div class="voucher-desc">Uu d�i ch�o m?ng kh�ch h�ng m?i</div>
+                    <div class="voucher-tag">�ang k� l?n d?u</div>
                 </div>
-                <div class="voucher-scissor">✂</div>
+                <div class="voucher-scissor">?</div>
                 <div class="voucher-dots"></div>
             </div>
 
@@ -474,10 +474,10 @@
                 </div>
                 <div class="voucher-right">
                     <div class="voucher-code">CPU500K</div>
-                    <div class="voucher-desc">Giảm 500.000₫ khi mua CPU</div>
-                    <div class="voucher-tag">Danh mục CPU</div>
+                    <div class="voucher-desc">Gi?m 500.000? khi mua CPU</div>
+                    <div class="voucher-tag">Danh m?c CPU</div>
                 </div>
-                <div class="voucher-scissor">✂</div>
+                <div class="voucher-scissor">?</div>
                 <div class="voucher-dots"></div>
             </div>
 
@@ -488,36 +488,36 @@
     <section class="build-section" id="build">
         <div class="build-bg"></div>
         <div class="build-content">
-            <span class="section-label light">Dịch Vụ</span>
-            <h2 class="build-title">Build PC<br /><em>Theo Yêu Cầu</em></h2>
+            <span class="section-label light">D?ch V?</span>
+            <h2 class="build-title">Build PC<br /><em>Theo Y�u C?u</em></h2>
             <p class="build-desc">
-                Đội ngũ chuyên gia của Luxury PC sẽ tư vấn và lắp ráp hệ thống hoàn hảo nhất dành riêng cho bạn — từ
-                workstation đồ họa đến chiến mã gaming không đối thủ.
+                �?i ngu chuy�n gia c?a Luxury PC s? tu v?n v� l?p r�p h? th?ng ho�n h?o nh?t d�nh ri�ng cho b?n � t?
+                workstation d? h?a d?n chi?n m� gaming kh�ng d?i th?.
             </p>
             <div class="build-features">
                 <div class="build-feat">
-                    <div class="feat-icon">◈</div>
+                    <div class="feat-icon">?</div>
                     <div class="feat-text">
-                        <strong>Tư Vấn Miễn Phí</strong>
-                        <span>Chuyên gia phân tích nhu cầu của bạn</span>
+                        <strong>Tu V?n Mi?n Ph�</strong>
+                        <span>Chuy�n gia ph�n t�ch nhu c?u c?a b?n</span>
                     </div>
                 </div>
                 <div class="build-feat">
-                    <div class="feat-icon">◈</div>
+                    <div class="feat-icon">?</div>
                     <div class="feat-text">
-                        <strong>Lắp Ráp Chuyên Nghiệp</strong>
-                        <span>Lắp ráp trong phòng sạch, kiểm tra 100%</span>
+                        <strong>L?p R�p Chuy�n Nghi?p</strong>
+                        <span>L?p r�p trong ph�ng s?ch, ki?m tra 100%</span>
                     </div>
                 </div>
                 <div class="build-feat">
-                    <div class="feat-icon">◈</div>
+                    <div class="feat-icon">?</div>
                     <div class="feat-text">
-                        <strong>Bảo Hành 3 Năm</strong>
-                        <span>Cam kết chất lượng đẳng cấp hàng đầu</span>
+                        <strong>B?o H�nh 3 Nam</strong>
+                        <span>Cam k?t ch?t lu?ng d?ng c?p h�ng d?u</span>
                     </div>
                 </div>
             </div>
-            <a href="/build-pc/index.html" class="btn-primary" id="btn-build-pc"><span>Bắt Đầu Build Ngay</span></a>
+            <a href="/build-pc/index.html" class="btn-primary" id="btn-build-pc"><span>B?t �?u Build Ngay</span></a>
         </div>
     </section>
 
@@ -525,65 +525,65 @@
     <section class="stats">
         <div class="stat-item">
             <div class="stat-num" data-target="15000">0</div>
-            <div class="stat-label">Khách Hàng Tin Tưởng</div>
+            <div class="stat-label">Kh�ch H�ng Tin Tu?ng</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
             <div class="stat-num" data-target="500">0</div>
-            <div class="stat-label">Linh Kiện Chính Hãng</div>
+            <div class="stat-label">Linh Ki?n Ch�nh H�ng</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
             <div class="stat-num" data-target="10">0</div>
-            <div class="stat-label">Năm Kinh Nghiệm</div>
+            <div class="stat-label">Nam Kinh Nghi?m</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
             <div class="stat-num" data-target="99">0</div>
-            <div class="stat-label">% Khách Hàng Hài Lòng</div>
+            <div class="stat-label">% Kh�ch H�ng H�i L�ng</div>
         </div>
     </section>
 
     <!-- TESTIMONIALS -->
     <section class="testimonials" id="testimonials">
         <div class="section-header">
-            <span class="section-label">Đánh Giá</span>
-            <h2 class="section-title">Khách Hàng Nói Gì</h2>
+            <span class="section-label">��nh Gi�</span>
+            <h2 class="section-title">Kh�ch H�ng N�i G�</h2>
         </div>
         <div class="testi-slider" id="testi-slider">
             <div class="testi-card active" id="testi-1">
-                <div class="testi-stars">★★★★★</div>
-                <p class="testi-text">"Máy build từ Luxury PC chạy mượt như mơ. RTX 4090 kết hợp với i9-14900K — không
-                    có game nào kháng cự được. Đáng từng đồng bỏ ra."</p>
+                <div class="testi-stars">?????</div>
+                <p class="testi-text">"M�y build t? Luxury PC ch?y mu?t nhu mo. RTX 4090 k?t h?p v?i i9-14900K � kh�ng
+                    c� game n�o kh�ng c? du?c. ��ng t?ng d?ng b? ra."</p>
                 <div class="testi-author">
                     <div class="testi-avatar">TM</div>
                     <div>
                         <strong>Thanh Minh</strong>
-                        <span>Game thủ chuyên nghiệp · TP.HCM</span>
+                        <span>Game th? chuy�n nghi?p � TP.HCM</span>
                     </div>
                 </div>
             </div>
             <div class="testi-card" id="testi-2">
-                <div class="testi-stars">★★★★★</div>
-                <p class="testi-text">"Workstation đồ họa 3D của tôi được Apex tư vấn và lắp ráp cực kỳ chuyên nghiệp.
-                    Render nhanh gấp đôi máy cũ, thoi quen làm việc thay đổi hoàn toàn."</p>
+                <div class="testi-stars">?????</div>
+                <p class="testi-text">"Workstation d? h?a 3D c?a t�i du?c Apex tu v?n v� l?p r�p c?c k? chuy�n nghi?p.
+                    Render nhanh g?p d�i m�y cu, thoi quen l�m vi?c thay d?i ho�n to�n."</p>
                 <div class="testi-author">
                     <div class="testi-avatar">HN</div>
                     <div>
-                        <strong>Hoàng Nguyên</strong>
-                        <span>Motion Designer · Hà Nội</span>
+                        <strong>Ho�ng Nguy�n</strong>
+                        <span>Motion Designer � H� N?i</span>
                     </div>
                 </div>
             </div>
             <div class="testi-card" id="testi-3">
-                <div class="testi-stars">★★★★★</div>
-                <p class="testi-text">"Dịch vụ bảo hành và hậu mãi tuyệt vời. Gặp lỗi nhỏ được hỗ trợ ngay trong ngày.
-                    Đây là lần thứ 3 tôi mua linh kiện tại Luxury PC và sẽ không đi đâu khác."</p>
+                <div class="testi-stars">?????</div>
+                <p class="testi-text">"D?ch v? b?o h�nh v� h?u m�i tuy?t v?i. G?p l?i nh? du?c h? tr? ngay trong ng�y.
+                    ��y l� l?n th? 3 t�i mua linh ki?n t?i Luxury PC v� s? kh�ng di d�u kh�c."</p>
                 <div class="testi-author">
                     <div class="testi-avatar">PL</div>
                     <div>
-                        <strong>Phương Linh</strong>
-                        <span>Content Creator · Đà Nẵng</span>
+                        <strong>Phuong Linh</strong>
+                        <span>Content Creator � �� N?ng</span>
                     </div>
                 </div>
             </div>
@@ -598,13 +598,13 @@
     <!-- NEWSLETTER -->
     <section class="newsletter">
         <div class="newsletter-inner">
-            <h2 class="newsletter-title">Nhận Ưu Đãi <em>Độc Quyền</em></h2>
-            <p class="newsletter-sub">Đăng ký để nhận thông báo giảm giá, sản phẩm mới nhất và lời khuyên build PC từ
-                chuyên gia.</p>
+            <h2 class="newsletter-title">Nh?n Uu ��i <em>�?c Quy?n</em></h2>
+            <p class="newsletter-sub">�ang k� d? nh?n th�ng b�o gi?m gi�, s?n ph?m m?i nh?t v� l?i khuy�n build PC t?
+                chuy�n gia.</p>
             <form class="newsletter-form" id="newsletter-form">
                 <input type="email" id="newsletter-email" data-translate-placeholder="newsletter-email-placeholder"
-                    placeholder="Email của bạn..." required aria-label="Email đăng ký" />
-                <button type="submit" id="newsletter-submit">Đăng Ký</button>
+                    placeholder="Email c?a b?n..." required aria-label="Email dang k�" />
+                <button type="submit" id="newsletter-submit">�ang K�</button>
             </form>
         </div>
     </section>
@@ -613,45 +613,45 @@
     <footer class="footer">
         <div class="footer-top">
             <div class="footer-brand">
-                <div class="footer-logo">LUXURY · PC</div>
-                <p>Nơi công nghệ gặp gỡ sự xa xỉ. Linh kiện cao cấp, tư vấn chuyên nghiệp, dịch vụ hoàn hảo.</p>
+                <div class="footer-logo">LUXURY � PC</div>
+                <p>Noi c�ng ngh? g?p g? s? xa x?. Linh ki?n cao c?p, tu v?n chuy�n nghi?p, d?ch v? ho�n h?o.</p>
             </div>
             <div class="footer-links-group">
-                <h4>Linh Kiện</h4>
+                <h4>Linh Ki?n</h4>
                 <ul>
-                    <li><a href="#">CPU & Bộ Xử Lý</a></li>
-                    <li><a href="#">VGA & Card Đồ Họa</a></li>
+                    <li><a href="#">CPU & B? X? L�</a></li>
+                    <li><a href="#">VGA & Card �? H?a</a></li>
                     <li><a href="#">Mainboard</a></li>
-                    <li><a href="#">RAM & Bộ Nhớ</a></li>
-                    <li><a href="#">SSD & Lưu Trữ</a></li>
+                    <li><a href="#">RAM & B? Nh?</a></li>
+                    <li><a href="#">SSD & Luu Tr?</a></li>
                 </ul>
             </div>
             <div class="footer-links-group">
-                <h4>Dịch Vụ</h4>
+                <h4>D?ch V?</h4>
                 <ul>
-                    <li><a href="#">Build PC Theo Yêu Cầu</a></li>
-                    <li><a href="#">Tư Vấn Cấu Hình</a></li>
-                    <li><a href="#">Bảo Hành & Sửa Chữa</a></li>
-                    <li><a href="#">Nâng Cấp Hệ Thống</a></li>
-                    <li><a href="#">PC Gaming Cao Cấp</a></li>
+                    <li><a href="#">Build PC Theo Y�u C?u</a></li>
+                    <li><a href="#">Tu V?n C?u H�nh</a></li>
+                    <li><a href="#">B?o H�nh & S?a Ch?a</a></li>
+                    <li><a href="#">N�ng C?p H? Th?ng</a></li>
+                    <li><a href="#">PC Gaming Cao C?p</a></li>
                 </ul>
             </div>
             <div class="footer-links-group">
-                <h4>Liên Hệ</h4>
+                <h4>Li�n H?</h4>
                 <ul>
-                    <li><a href="#">📍 123 Nguyễn Huệ, Q1, TP.HCM</a></li>
-                    <li><a href="#">📞 1800-LUXURY</a></li>
-                    <li><a href="#">✉️ hello@luxurypc.vn</a></li>
-                    <li><a href="#">🕐 T2–CN: 9:00 – 21:00</a></li>
+                    <li><a href="#">?? 123 Nguy?n Hu?, Q1, TP.HCM</a></li>
+                    <li><a href="#">?? 1800-LUXURY</a></li>
+                    <li><a href="#">?? hello@luxurypc.vn</a></li>
+                    <li><a href="#">?? T2�CN: 9:00 � 21:00</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2025 Luxury PC. Tất cả quyền được bảo lưu. Bản quyền thuộc Luxury Technology JSC.</p>
+            <p>� 2025 Luxury PC. T?t c? quy?n du?c b?o luu. B?n quy?n thu?c Luxury Technology JSC.</p>
             <div class="footer-social">
                 <a href="#" id="social-fb" aria-label="Facebook">f</a>
-                <a href="#" id="social-yt" aria-label="YouTube">▶</a>
-                <a href="#" id="social-tt" aria-label="TikTok">♪</a>
+                <a href="#" id="social-yt" aria-label="YouTube">?</a>
+                <a href="#" id="social-tt" aria-label="TikTok">?</a>
             </div>
         </div>
     </footer>
@@ -659,18 +659,18 @@
     <!-- CART DRAWER -->
     <div class="cart-drawer" id="cart-drawer">
         <div class="cart-header">
-            <h3>Giỏ Hàng</h3>
-            <button class="cart-close" id="cart-close" aria-label="Đóng giỏ hàng">✕</button>
+            <h3>Gi? H�ng</h3>
+            <button class="cart-close" id="cart-close" aria-label="��ng gi? h�ng">?</button>
         </div>
         <div class="cart-items" id="cart-items">
-            <p class="cart-empty">Giỏ hàng của bạn đang trống.</p>
+            <p class="cart-empty">Gi? h�ng c?a b?n dang tr?ng.</p>
         </div>
         <div class="cart-footer">
             <div class="cart-total-row">
-                <span>Tổng cộng</span>
-                <span class="cart-total" id="cart-total">0₫</span>
+                <span>T?ng c?ng</span>
+                <span class="cart-total" id="cart-total">0?</span>
             </div>
-            <button class="btn-primary full" id="btn-checkout"><span>Thanh Toán Ngay</span></button>
+            <button class="btn-primary full" id="btn-checkout"><span>Thanh To�n Ngay</span></button>
         </div>
     </div>
     <div class="cart-overlay" id="cart-overlay"></div>
@@ -681,34 +681,34 @@
     <!-- VOUCHER MODAL -->
     <div class="voucher-modal-overlay" id="voucher-modal-overlay">
         <div class="voucher-modal" id="voucher-modal">
-            <button class="voucher-modal-close" id="voucher-modal-close" aria-label="Đóng">✕</button>
-            <div class="vmodal-badge" id="vmodal-badge">Giảm Giá</div>
+            <button class="voucher-modal-close" id="voucher-modal-close" aria-label="��ng">?</button>
+            <div class="vmodal-badge" id="vmodal-badge">Gi?m Gi�</div>
             <div class="vmodal-pct" id="vmodal-pct">10%</div>
             <div class="vmodal-code-wrap">
-                <span class="vmodal-code-label">Mã Voucher</span>
+                <span class="vmodal-code-label">M� Voucher</span>
                 <div class="vmodal-code" id="vmodal-code">Apex 10</div>
             </div>
             <div class="vmodal-divider"></div>
             <div class="vmodal-info">
                 <div class="vmodal-row">
-                    <span class="vmodal-key">Ưu đãi</span>
-                    <span class="vmodal-val" id="vmodal-desc">Giảm 10% cho tất cả đơn hàng</span>
+                    <span class="vmodal-key">Uu d�i</span>
+                    <span class="vmodal-val" id="vmodal-desc">Gi?m 10% cho t?t c? don h�ng</span>
                 </div>
                 <div class="vmodal-row">
-                    <span class="vmodal-key">Áp dụng</span>
-                    <span class="vmodal-val" id="vmodal-apply">Tất cả sản phẩm</span>
+                    <span class="vmodal-key">�p d?ng</span>
+                    <span class="vmodal-val" id="vmodal-apply">T?t c? s?n ph?m</span>
                 </div>
                 <div class="vmodal-row">
-                    <span class="vmodal-key">Thời hạn</span>
+                    <span class="vmodal-key">Th?i h?n</span>
                     <span class="vmodal-val" id="vmodal-expire">31/03/2026</span>
                 </div>
                 <div class="vmodal-row">
-                    <span class="vmodal-key">Lượt dùng</span>
-                    <span class="vmodal-val" id="vmodal-limit">Không giới hạn</span>
+                    <span class="vmodal-key">Lu?t d�ng</span>
+                    <span class="vmodal-val" id="vmodal-limit">Kh�ng gi?i h?n</span>
                 </div>
             </div>
-            <button class="vmodal-copy-btn" id="vmodal-copy-btn">Sao Chép Mã Voucher</button>
-            <div class="vmodal-note">Nhập mã tại bước thanh toán để áp dụng ưu đãi.</div>
+            <button class="vmodal-copy-btn" id="vmodal-copy-btn">Sao Ch�p M� Voucher</button>
+            <div class="vmodal-note">Nh?p m� t?i bu?c thanh to�n d? �p d?ng uu d�i.</div>
         </div>
     </div>
 

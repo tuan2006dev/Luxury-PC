@@ -13,6 +13,7 @@
   <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
   <link rel="stylesheet" th:href="@{/css/product/product-detail.css}" />
   <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
+  <link rel="stylesheet" th:href="@{/css/cursor.css}" />
 </head>
 
 <body>
@@ -23,7 +24,7 @@
   <div class="breadcrumb">
     <a th:href="@{/}" data-translate="product-breadcrumb-home">Trang chủ</a>
     <span>›</span>
-    <a th:href="@{/products(cid=${product.category.id})}" th:text="${product.category.name}">VGA</a>
+    <a th:href="@{/products(cid=${product.category != null ? product.category.id : ''})}" th:text="${product.category != null ? product.category.name : 'Sản phẩm'}">VGA</a>
     <span>›</span>
     <span class="current" th:text="${product.name}">Sản Phẩm</span>
   </div>
@@ -60,7 +61,7 @@
 
     <!-- RIGHT: Info -->
     <div class="info-panel">
-      <div class="prod-tag" th:text="${product.category.name} + ' · LUXURY Exclusive'">VGA · NVIDIA · LUXURY Exclusive
+      <div class="prod-tag" th:text="${product.category != null ? product.category.name : 'Sản phẩm'} + ' · LUXURY Exclusive'">VGA · NVIDIA · LUXURY Exclusive
       </div>
       <h1 class="prod-title" th:text="${product.name}">RTX 4090<br />Titan Edition</h1>
       <div class="prod-sub" th:text="${product.description}">ASUS ROG × LUXURY PC Limited — Chỉ 50 chiếc tại Việt Nam
@@ -288,7 +289,8 @@
           
           <div id="review-form-container" style="display: none; background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
             <p sec:authorize="isAnonymous()">Vui lòng <a th:href="@{/auth/login}" style="color:var(--gold)">đăng nhập</a> để gửi đánh giá.</p>
-            <form class="customer-review-form" sec:authorize="isAuthenticated()" th:action="@{'/product/' + ${product.id} + '/review'}" method="post" style="margin-top:0;">
+            <p sec:authorize="isAuthenticated()" th:if="${!canReview && !isAdmin}" style="color:var(--gold); margin-bottom:0;">Bạn cần mua sản phẩm này và nhận hàng thành công để có thể đánh giá.</p>
+            <form class="customer-review-form" sec:authorize="isAuthenticated()" th:if="${canReview || isAdmin}" th:action="@{'/product/' + ${product.id} + '/review'}" method="post" enctype="multipart/form-data" style="margin-top:0;">
               <label style="display:block; margin-bottom:10px; color:var(--gold); font-size:0.85rem;" data-translate="product-reviews-write">Viết đánh giá của bạn</label>
               <div class="review-form-stars" style="margin-bottom:10px;">
                 <input type="hidden" name="stars" id="form-stars" value="5" />
@@ -299,6 +301,18 @@
                 <button type="button" class="form-star-btn active" onclick="setFormStars(5)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
               </div>
               <textarea name="content" class="review-input" required data-translate-placeholder="product-reviews-input-placeholder" placeholder="Gửi nhận xét của bạn..." style="width:100%; min-height:80px; background:rgba(0,0,0,0.5); border:1px solid rgba(201,168,76,0.2); color:#fff; padding:10px; border-radius:4px; margin-bottom:10px;"></textarea>
+              
+              <div style="margin-bottom:15px; display:flex; gap:15px; flex-wrap:wrap;">
+                <div>
+                  <label style="color:var(--gold); font-size:0.85rem; display:block; margin-bottom:5px;">Tải ảnh lên</label>
+                  <input type="file" name="imageFile" accept="image/*" style="color:var(--white); font-size:0.85rem;" />
+                </div>
+                <div>
+                  <label style="color:var(--gold); font-size:0.85rem; display:block; margin-bottom:5px;">Tải video lên</label>
+                  <input type="file" name="videoFile" accept="video/*" style="color:var(--white); font-size:0.85rem;" />
+                </div>
+              </div>
+
               <button type="submit" style="background:var(--gold); color:#000; border:none; padding:8px 20px; font-weight:bold; cursor:pointer; border-radius:4px;" data-translate="product-reviews-submit">Gửi Đánh Giá</button>
             </form>
           </div>
@@ -306,13 +320,32 @@
           <div class="customer-review-list">
              <div th:each="rv : ${reviews}" class="customer-review-card" style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.05); background:transparent;">
                <div class="rv-header" style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                 <span class="rv-name" th:text="${rv.user.fullName != null && !rv.user.fullName.isEmpty() ? rv.user.fullName : rv.user.username}" style="font-weight:600; color:var(--white);">User</span>
+                 <span class="rv-name" th:text="${rv.user != null ? (rv.user.fullName != null && !rv.user.fullName.isEmpty() ? rv.user.fullName : rv.user.username) : 'Ẩn danh'}" style="font-weight:600; color:var(--white);">User</span>
                  <span class="rv-date" th:text="${rv.createdAt != null} ? ${#temporals.format(rv.createdAt, 'dd/MM/yyyy HH:mm')} : ''" style="color:var(--muted); font-size:0.8rem;">Date</span>
                </div>
                <div class="rv-stars" style="color:var(--gold); margin-bottom:10px; font-size:0.9rem;">
                  <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i <= rv.stars ? '★' : '☆'}">☆</span>
                </div>
                <p class="rv-text" th:text="${rv.content}" style="color:var(--cream); font-size:0.9rem; line-height:1.6;"></p>
+               
+               <!-- Hien thi anh va video -->
+               <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+                 <img th:if="${rv.image != null && !rv.image.isEmpty()}" th:src="${rv.image}" style="max-width:200px; max-height:200px; border-radius:4px; object-fit:cover; border:1px solid rgba(255,255,255,0.1);" />
+                 <video th:if="${rv.video != null && !rv.video.isEmpty()}" th:src="${rv.video}" controls style="max-width:200px; max-height:200px; border-radius:4px; background:#000; border:1px solid rgba(255,255,255,0.1);"></video>
+               </div>
+
+               <!-- Nut thao tac -->
+               <div style="margin-top:10px; display:flex; gap:10px;" sec:authorize="isAuthenticated()">
+                 <button th:if="${currentUser != null && rv.user != null && currentUser.id == rv.user.id}" type="button"
+                         th:data-rv-id="${rv.id}"
+                         th:data-rv-stars="${rv.stars}"
+                         th:data-rv-content="${rv.content}"
+                         th:data-rv-image="${rv.image != null ? rv.image : ''}"
+                         th:data-rv-video="${rv.video != null ? rv.video : ''}"
+                         onclick="openEditReviewModalFromBtn(this)"
+                         style="background:rgba(255,255,255,0.1); color:var(--white); border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:0.8rem;">Sửa</button>
+                 <button th:if="${isAdmin}" type="button" th:onclick="'deleteReview(' + ${rv.id} + ')'" style="background:rgba(255,0,0,0.5); color:var(--white); border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:0.8rem;">Xóa</button>
+               </div>
              </div>
              <div th:if="${reviews == null || reviews.size() == 0}" class="customer-review-empty" style="color:var(--muted); font-style:italic;" data-translate="product-reviews-empty">Chưa có đánh giá nào từ khách hàng.</div>
           </div>
@@ -357,6 +390,47 @@
   </section>
 
   <div th:replace="~{layout/footer :: footer}"></div>
+
+  <!-- EDIT REVIEW MODAL -->
+  <div id="editReviewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#111; border:1px solid rgba(201,168,76,0.2); padding:2rem; border-radius:8px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto;">
+      <h3 style="color:var(--gold); margin-bottom:1rem; font-family:var(--font-serif);">Sửa Đánh Giá</h3>
+      <form id="editReviewForm" onsubmit="submitEditReview(event)" enctype="multipart/form-data">
+        <input type="hidden" id="edit-review-id" />
+        <input type="hidden" id="edit-stars" name="stars" />
+        <input type="hidden" id="edit-removeImage" name="removeImage" value="false" />
+        <input type="hidden" id="edit-removeVideo" name="removeVideo" value="false" />
+        
+        <div style="margin-bottom:10px;">
+          <button type="button" class="edit-star-btn" onclick="setEditStars(1)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
+          <button type="button" class="edit-star-btn" onclick="setEditStars(2)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
+          <button type="button" class="edit-star-btn" onclick="setEditStars(3)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
+          <button type="button" class="edit-star-btn" onclick="setEditStars(4)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
+          <button type="button" class="edit-star-btn" onclick="setEditStars(5)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
+        </div>
+
+        <textarea id="edit-content" name="content" required style="width:100%; min-height:80px; background:rgba(0,0,0,0.5); border:1px solid rgba(201,168,76,0.2); color:#fff; padding:10px; border-radius:4px; margin-bottom:15px;"></textarea>
+        
+        <div id="edit-media-preview" style="margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap;"></div>
+
+        <div style="margin-bottom:15px; display:flex; gap:15px; flex-wrap:wrap;">
+          <div>
+            <label style="color:var(--gold); font-size:0.85rem; display:block; margin-bottom:5px;">Đổi/Thêm ảnh</label>
+            <input type="file" id="edit-imageFile" name="imageFile" accept="image/*" style="color:var(--white); font-size:0.85rem;" />
+          </div>
+          <div>
+            <label style="color:var(--gold); font-size:0.85rem; display:block; margin-bottom:5px;">Đổi/Thêm video</label>
+            <input type="file" id="edit-videoFile" name="videoFile" accept="video/*" style="color:var(--white); font-size:0.85rem;" />
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" onclick="closeEditReviewModal()" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:8px 20px; font-weight:bold; cursor:pointer; border-radius:4px;">Hủy</button>
+          <button type="submit" style="background:var(--gold); color:#000; border:none; padding:8px 20px; font-weight:bold; cursor:pointer; border-radius:4px;">Lưu Thay Đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script th:inline="javascript">
     let qty = 1;
@@ -468,6 +542,142 @@
       } catch (e) {
         toast('Lỗi kết nối. Vui lòng thử lại.');
       }
+    }
+
+    // ── REVIEW SUBMIT ──
+    document.addEventListener('DOMContentLoaded', () => {
+      const reviewForm = document.querySelector('.customer-review-form');
+      if (reviewForm) {
+        reviewForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(reviewForm);
+          try {
+            const res = await fetch(reviewForm.action, {
+              method: 'POST',
+              body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+              toast(data.message);
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              toast(data.message || 'Có lỗi xảy ra.');
+            }
+          } catch (err) {
+            toast('Lỗi kết nối.');
+          }
+        });
+      }
+    });
+
+    // ── DELETE REVIEW ──
+    async function deleteReview(id) {
+      if (!confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) return;
+      try {
+        const res = await fetch('/product/review/' + id + '/delete', {
+          method: 'POST'
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast(data.message);
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          toast(data.message || 'Có lỗi xảy ra.');
+        }
+      } catch (e) {
+        toast('Lỗi kết nối.');
+      }
+    }
+
+    // ── EDIT REVIEW ──
+    function openEditReviewModal(id, stars, content, image, video) {
+      document.getElementById('editReviewModal').style.display = 'flex';
+      document.getElementById('edit-review-id').value = id;
+      document.getElementById('edit-stars').value = stars;
+      document.getElementById('edit-content').value = content;
+      
+      // Reset files
+      document.getElementById('edit-imageFile').value = '';
+      document.getElementById('edit-videoFile').value = '';
+      document.getElementById('edit-removeImage').value = 'false';
+      document.getElementById('edit-removeVideo').value = 'false';
+
+      // Update stars UI
+      document.querySelectorAll('.edit-star-btn').forEach((b, i) => {
+        b.style.color = (i < stars) ? 'var(--gold)' : 'var(--muted)';
+      });
+      
+      // Update media preview
+      const mediaPreview = document.getElementById('edit-media-preview');
+      mediaPreview.innerHTML = '';
+      if (image) {
+        mediaPreview.innerHTML += `<div id="preview-img-container" style="position:relative; display:inline-block; margin-right:10px;">
+          <img src="${image}" style="max-height:100px; border-radius:4px; border:1px solid rgba(255,255,255,0.2);" />
+          <button type="button" onclick="removeEditImage()" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;">×</button>
+        </div>`;
+      }
+      if (video) {
+        mediaPreview.innerHTML += `<div id="preview-vid-container" style="position:relative; display:inline-block;">
+          <video src="${video}" style="max-height:100px; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:#000;"></video>
+          <button type="button" onclick="removeEditVideo()" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;">×</button>
+        </div>`;
+      }
+    }
+
+    function closeEditReviewModal() {
+      document.getElementById('editReviewModal').style.display = 'none';
+    }
+
+    function removeEditImage() {
+      document.getElementById('edit-removeImage').value = 'true';
+      const el = document.getElementById('preview-img-container');
+      if (el) el.remove();
+    }
+
+    function removeEditVideo() {
+      document.getElementById('edit-removeVideo').value = 'true';
+      const el = document.getElementById('preview-vid-container');
+      if (el) el.remove();
+    }
+
+    function setEditStars(val) {
+      document.getElementById('edit-stars').value = val;
+      document.querySelectorAll('.edit-star-btn').forEach((b, i) => {
+        b.style.color = (i < val) ? 'var(--gold)' : 'var(--muted)';
+      });
+    }
+
+    async function submitEditReview(event) {
+      event.preventDefault();
+      const form = event.target;
+      const id = document.getElementById('edit-review-id').value;
+      const formData = new FormData(form);
+      try {
+        const res = await fetch('/product/review/' + id + '/edit', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast(data.message);
+          closeEditReviewModal();
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          toast(data.message || 'Có lỗi xảy ra.');
+        }
+      } catch (e) {
+        toast('Lỗi kết nối.');
+      }
+    }
+
+    // Helper: đọc data-* attributes thay vì String inline trong th:onclick (Thymeleaf 3.1+ security)
+    function openEditReviewModalFromBtn(btn) {
+      const id      = btn.getAttribute('data-rv-id');
+      const stars   = btn.getAttribute('data-rv-stars');
+      const content = btn.getAttribute('data-rv-content') || '';
+      const image   = btn.getAttribute('data-rv-image') || '';
+      const video   = btn.getAttribute('data-rv-video') || '';
+      openEditReviewModal(id, stars, content, image, video);
     }
 
   </script>

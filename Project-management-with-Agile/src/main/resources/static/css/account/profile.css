@@ -37,6 +37,7 @@ body {
   min-height: 100vh;
   cursor: auto;
   overflow-x: hidden;
+  padding-bottom: 0;
 }
 
 body.custom-cursor-enabled,
@@ -61,7 +62,7 @@ img {
   background: var(--gold);
   border-radius: 50%;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 2147483647;
   transform: translate(-50%, -50%);
 }
 
@@ -72,7 +73,7 @@ img {
   border: 1px solid var(--gold);
   border-radius: 50%;
   pointer-events: none;
-  z-index: 9998;
+  z-index: 2147483646;
   transform: translate(-50%, -50%);
   opacity: .5;
   transition: width .25s, height .25s;
@@ -165,12 +166,26 @@ img {
   background: var(--deep);
   border-right: 1px solid rgba(201, 168, 76, 0.1);
   padding: 3rem 0;
+  height: calc(100vh - 74px);
   position: sticky;
   top: 74px;
-  height: calc(100vh - 74px);
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.2);
+  border-radius: 2px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
 }
 
 /* Avatar section */
@@ -262,6 +277,8 @@ img {
 /* Sidebar menu */
 .sb-menu {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .sb-section-label {

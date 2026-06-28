@@ -76,7 +76,7 @@
                 <div th:if="${flashSaleItems != null}" th:each="item : ${flashSaleItems}" class="flash-product-card" th:id="'fp-' + ${item.product.id}">
                     <div class="flash-discount-badge" th:text="'-' + ${item.discountPercent} + '%'">-25%</div>
                     <div class="flash-prod-img">
-                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" />
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; let p=this.closest('.flash-product-card'); if(p) p.parentElement.appendChild(p);" />
                     </div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name" th:text="${item.product.name}">Core i7-14700K</div>
@@ -96,7 +96,7 @@
                 <div th:if="${flashSaleItems == null and flashSaleProducts != null}" th:each="p : ${flashSaleProducts}" class="flash-product-card" th:id="'fp-' + ${p.id}">
                     <div th:if="${p.stock < 10}" class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
                     <div class="flash-prod-img">
-                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" />
+                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; let p=this.closest('.flash-product-card'); if(p) p.parentElement.appendChild(p);" />
                     </div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name" th:text="${p.name}">Core i7-14700K</div>
@@ -212,14 +212,14 @@
 
         <div class="products-grid vertical-slider" id="products-grid">
             <!-- Featured products from database -->
-            <article th:each="p : ${featuredProducts}" class="product-card" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
+            <article th:each="p : ${featuredProducts}" class="product-card" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category != null ? p.category.name.toLowerCase() : 'other'}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
                 <div class="product-img-wrap">
-                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" />
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; let p=this.closest('.product-card'); if(p) p.parentElement.appendChild(p);" />
                     <div th:if="${p.price > 30000000}" class="product-badge gold" data-translate="badge-featured-gold">Đỉnh Cao</div>
                     <button class="product-wishlist" aria-label="Yêu thích" th:onclick="|addToWishlist(this, ${p.id})|">♡</button>
                 </div>
                 <div class="product-info">
-                    <span class="product-cat" th:text="${p.category.name} + ' · LUXURY'">CPU · Intel</span>
+                    <span class="product-cat" th:text="${p.category != null ? p.category.name : 'Khác'} + ' · LUXURY'">CPU · Intel</span>
                     <h3 class="product-name" th:text="${p.name}">Core i9-14900K</h3>
                     <p class="product-spec" th:text="${p.description}">Description</p>
                     <div class="product-price-row">
@@ -338,10 +338,10 @@
                 <div class="testi-stars" th:text="${'★'.repeat(rev.stars)}">★★★★★</div>
                 <p class="testi-text" th:text="|&quot;${rev.content}&quot;|">"Content"</p>
                 <div class="testi-author">
-                    <div class="testi-avatar" th:text="${#strings.substring(rev.user.fullName,0,1)}">U</div>
+                    <div class="testi-avatar" th:text="${rev.user != null ? #strings.substring(rev.user.fullName != null ? rev.user.fullName : 'U', 0, 1) : 'U'}">U</div>
                     <div>
-                        <strong th:text="${rev.user.fullName}">User Name</strong>
-                        <span th:text="${rev.user.email}">user@email.com</span>
+                        <strong th:text="${rev.user != null ? (rev.user.fullName != null ? rev.user.fullName : rev.user.username) : 'Ẩn danh'}">User Name</strong>
+                        <span th:text="${rev.user != null ? rev.user.email : ''}">user@email.com</span>
                     </div>
                 </div>
             </div>

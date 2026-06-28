@@ -15,8 +15,9 @@ public class Review implements Serializable {
     private String content;
     private Integer stars; // 1 to 5
     private String image;
+    private String video;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -83,5 +84,13 @@ public class Review implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
     }
 }
