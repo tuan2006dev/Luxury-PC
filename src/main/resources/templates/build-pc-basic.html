@@ -698,7 +698,7 @@
     <div class="combo-section">
         <h2 class="section-title">
             <i class="fa-solid fa-crown" style="color: var(--gold);"></i>
-            <span th:text="'&#128081; ' + ${#lists.size(combos)} + ' Combo Ưu Đãi Đặc Biệt'">Combo Ưu Đãi</span>
+            <span id="combo-title-text" th:data-count="${#lists.size(combos)}" th:text="${#lists.size(combos)} + ' Combo Ưu Đãi Đặc Biệt'">Combo Ưu Đãi</span>
         </h2>
         <div class="combo-grid">
             <div th:each="combo : ${combos}"
@@ -1000,6 +1000,17 @@
             document.querySelectorAll('.combo-card .combo-price button').forEach(btn => {
                 btn.innerText = t('build-pc-btn-select', 'Chọn');
             });
+
+            // Re-render combo section title
+            const comboTitle = document.getElementById('combo-title-text');
+            if (comboTitle) {
+                const count = comboTitle.getAttribute('data-count') || '0';
+                if (lang === 'en') {
+                    comboTitle.innerHTML = `${count} Special Offer Combos`;
+                } else {
+                    comboTitle.innerHTML = `${count} Combo Ưu Đãi Đặc Biệt`;
+                }
+            }
             
             // Re-render steam search loading & empty messages
             const gameLoading = document.getElementById('game-performance-loading');
@@ -1015,7 +1026,7 @@
         };
 
         const currentBuild = { cpu: null, mainboard: null, ram: null, vga: null, storage: null, psu: null, case: null, cooling: null };
-        let activeCategory = '';
+        let activeBuildCategory = '';
 
         // Smooth scroll to builder section after choosing a combo
         function scrollToBuilder() {
@@ -1032,7 +1043,7 @@
         };
 
         function openModal(category) {
-            activeCategory = category;
+            activeBuildCategory = category;
             const titles = {
                 cpu: t('build-pc-cat-cpu', 'Vi xử lý (CPU)'), mainboard: t('build-pc-cat-mainboard', 'Bo mạch chủ'), ram: t('build-pc-cat-ram', 'Bộ nhớ trong (RAM)'),
                 vga: t('build-pc-cat-vga', 'Card đồ họa (VGA)'), storage: t('build-pc-cat-storage', 'Ổ cứng'), psu: t('build-pc-cat-psu', 'Nguồn'), case: t('build-pc-cat-case', 'Vỏ máy'), cooling: t('build-pc-cat-cooling', 'Tản nhiệt')
@@ -1070,13 +1081,13 @@
 
         document.getElementById('searchInput').addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
-            const filtered = productsData[activeCategory].filter(p => p.name.toLowerCase().includes(term));
+            const filtered = productsData[activeBuildCategory].filter(p => p.name.toLowerCase().includes(term));
             renderProducts(filtered);
         });
 
         function selectProduct(product) {
-            currentBuild[activeCategory] = product;
-            updateUI(activeCategory);
+            currentBuild[activeBuildCategory] = product;
+            updateUI(activeBuildCategory);
             updateSummary();
             closeModal();
         }

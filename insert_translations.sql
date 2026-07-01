@@ -816,6 +816,8 @@ INSERT INTO translations (key, lang, value) VALUES
 ('header-search-placeholder', 'en', 'Search components, brands...'),
 ('footer-chatbot-placeholder', 'vi', 'Hỏi về linh kiện, budget, tương thích...'),
 ('footer-chatbot-placeholder', 'en', 'Ask about components, budget, compatibility...'),
+('footer-chatbot-label', 'vi', 'Hỗ trợ'),
+('footer-chatbot-label', 'en', 'Support'),
 ('checkout-placeholder-address', 'vi', 'Số nhà, tên đường, quận/huyện...'),
 ('checkout-placeholder-address', 'en', 'House number, street, district...'),
 ('profile-voucher-placeholder', 'vi', 'Nhập mã voucher để lưu...'),
