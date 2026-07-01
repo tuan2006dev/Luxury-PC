@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="_csrf" th:content="${_csrf?.token}" />
   <meta name="_csrf_header" th:content="${_csrf?.headerName}" />
-  <title>Luxury PC — Hồ Sơ Cá Nhân</title>
+  <title data-translate="profile-page-title">Luxury PC — Hồ Sơ Cá Nhân</title>
   <meta name="description" content="Quản lý tài khoản và hồ sơ cá nhân Luxury PC của bạn." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,9 +14,9 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
   <link rel="stylesheet" th:href="@{/css/cursor.css}" />
   <link rel="stylesheet" th:href="@{/css/account/profile.css}" />
+  <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
 </head>
 
 <body>
@@ -35,50 +35,52 @@
             <span th:if="${user == null || user.avatar == null || user.avatar.isEmpty()}" th:text="${avatarInitial}"
               id="avatar-initial-view">TM</span>
           </div>
-          <button class="avatar-edit" title="Đổi ảnh"
+          <button class="avatar-edit" data-translate-title="profile-avatar-edit-title" title="Đổi ảnh"
             onclick="document.getElementById('avatar-file-input').click()">✎</button>
           <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" />
         </div>
         <div class="sb-name" th:text="${name}">Thanh Minh</div>
         <div class="sb-email" th:text="${email}">thanh.minh@email.com</div>
-        <div class="sb-badge" th:text="${userRank != 'None' ? '⭐ ' + userRank : 'Thành viên mới'}">⭐ Thành viên VIP
+        <div class="sb-badge">
+          <span th:if="${userRank != 'None'}" th:text="'⭐ ' + ${userRank}">⭐ VIP</span>
+          <span th:if="${userRank == 'None'}" data-translate="profile-sb-badge-new">Thành viên mới</span>
         </div>
       </div>
 
       <nav class="sb-menu">
-        <div class="sb-section-label">Tài khoản</div>
+        <div class="sb-section-label" data-translate="profile-sb-account">Tài khoản</div>
         <a class="sb-item active" onclick="setTab('info')" href="#">
-          Thông Tin Cá Nhân
+          <span data-translate="profile-sb-menu-info">Thông Tin Cá Nhân</span>
         </a>
         <a class="sb-item" onclick="setTab('orders')" href="#">
-          Đơn Hàng Của Tôi
+          <span data-translate="profile-sb-menu-orders">Đơn Hàng Của Tôi</span>
           <span class="sb-item-badge" th:text="${totalOrders != null ? totalOrders : 0}">0</span>
         </a>
         <a class="sb-item" onclick="setTab('vouchers')" href="#">
-          Ví Voucher
+          <span data-translate="profile-sb-menu-vouchers">Ví Voucher</span>
           <span class="sb-item-badge" th:text="${voucherCount != null ? voucherCount : 0}">0</span>
         </a>
         <a class="sb-item" onclick="setTab('wishlist')" href="#">
-          Danh Sách Yêu Thích
+          <span data-translate="profile-sb-menu-wishlist">Danh Sách Yêu Thích</span>
           <span class="sb-item-badge" th:text="${wishlistCount != null ? wishlistCount : 0}">0</span>
         </a>
 
-        <div class="sb-section-label">Cài đặt</div>
+        <div class="sb-section-label" data-translate="profile-sb-settings">Cài đặt</div>
         <a class="sb-item" onclick="setTab('security')" href="#">
-          Bảo Mật
+          <span data-translate="profile-sb-menu-security">Bảo Mật</span>
         </a>
         <a class="sb-item" onclick="setTab('notifications')" href="#">
-          Thông Báo
+          <span data-translate="profile-sb-menu-notifications">Thông Báo</span>
         </a>
         <a class="sb-item" onclick="setTab('address')" href="#">
-          Địa Chỉ Giao Hàng
+          <span data-translate="profile-sb-menu-address">Địa Chỉ Giao Hàng</span>
         </a>
 
         <form th:action="@{/logout}" method="POST" style="display:block; width:100%; margin-top: auto;">
           <button type="submit" class="sb-item" style="width: 100%; text-align: left; background: none; border: none; outline: none; text-transform: uppercase; font-family: inherit; font-weight: 600; color: rgba(239, 68, 68, 0.85); transition: all var(--ease); display: flex; align-items: center; gap: 0.9rem;"
             onmouseover="this.style.color='var(--red)'; this.style.background='rgba(239, 68, 68, 0.06)'; this.style.borderLeftColor='var(--red)';"
             onmouseout="this.style.color='rgba(239, 68, 68, 0.85)'; this.style.background='none'; this.style.borderLeftColor='transparent';">
-            🚪 Đăng Xuất
+            🚪 <span data-translate="profile-logout">Đăng Xuất</span>
           </button>
         </form>
 
@@ -90,85 +92,85 @@
 
       <!-- TABS -->
       <div class="profile-tabs">
-        <button class="profile-tab active" id="pt-info" onclick="setTab('info')">Thông Tin</button>
-        <button class="profile-tab" id="pt-orders" onclick="setTab('orders')">Đơn Hàng</button>
-        <button class="profile-tab" id="pt-vouchers" onclick="setTab('vouchers')">Ví Voucher</button>
-        <button class="profile-tab" id="pt-wishlist" onclick="setTab('wishlist')">Yêu Thích</button>
-        <button class="profile-tab" id="pt-security" onclick="setTab('security')">Bảo Mật</button>
-        <button class="profile-tab" id="pt-notifications" onclick="setTab('notifications')">Thông Báo</button>
-        <button class="profile-tab" id="pt-address" onclick="setTab('address')">Địa Chỉ</button>
+        <button class="profile-tab active" id="pt-info" onclick="setTab('info')" data-translate="profile-tab-info">Thông Tin</button>
+        <button class="profile-tab" id="pt-orders" onclick="setTab('orders')" data-translate="profile-tab-orders">Đơn Hàng</button>
+        <button class="profile-tab" id="pt-vouchers" onclick="setTab('vouchers')" data-translate="profile-tab-vouchers">Ví Voucher</button>
+        <button class="profile-tab" id="pt-wishlist" onclick="setTab('wishlist')" data-translate="profile-tab-wishlist">Yêu Thích</button>
+        <button class="profile-tab" id="pt-security" onclick="setTab('security')" data-translate="profile-tab-security">Bảo Mật</button>
+        <button class="profile-tab" id="pt-notifications" onclick="setTab('notifications')" data-translate="profile-tab-notifications">Thông Báo</button>
+        <button class="profile-tab" id="pt-address" onclick="setTab('address')" data-translate="profile-tab-address">Địa Chỉ</button>
       </div>
 
       <!-- ============ INFO ============ -->
       <div class="profile-section active" id="sec-info">
         <div class="section-head">
           <div>
-            <div class="section-tag">Tài khoản</div>
-            <div class="section-h">Thông Tin Cá Nhân</div>
+            <div class="section-tag" data-translate="profile-sb-account">Tài khoản</div>
+            <div class="section-h" data-translate="profile-sb-menu-info">Thông Tin Cá Nhân</div>
           </div>
           <button type="button" class="btn-edit" id="profile-edit-toggle" aria-expanded="false"
-            onclick="toggleProfileEditForm()">Chỉnh Sửa</button>
+            onclick="toggleProfileEditForm()" data-translate="profile-btn-edit">Chỉnh Sửa</button>
         </div>
 
         <!-- Stats strip -->
         <div class="stats-strip">
           <div class="stat-cell">
             <div class="stat-num" th:text="${totalOrders}">12</div>
-            <div class="stat-lbl">Đơn đã đặt</div>
+            <div class="stat-lbl" data-translate="profile-stat-orders">Đơn đã đặt</div>
           </div>
           <div class="stat-cell" th:title="${#numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT')} + '₫'">
             <div class="stat-num"
               th:text="${totalSpent >= 1000000 ? #numbers.formatDecimal(totalSpent / 1000000, 0, 'COMMA', 0, 'POINT') + 'M' : #numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT')}">
               142M</div>
-            <div class="stat-lbl">Tổng chi tiêu</div>
+            <div class="stat-lbl" data-translate="profile-stat-spent">Tổng chi tiêu</div>
           </div>
           <div class="stat-cell">
             <div class="stat-num" th:text="${wishlistCount != null ? wishlistCount : 0}">0</div>
-            <div class="stat-lbl">Yêu thích</div>
+            <div class="stat-lbl" data-translate="profile-stat-wishlist">Yêu thích</div>
           </div>
           <div class="stat-cell">
             <div class="stat-num" th:text="${userRank}">VIP</div>
-            <div class="stat-lbl">Hạng thành viên</div>
+            <div class="stat-lbl" data-translate="profile-stat-rank">Hạng thành viên</div>
           </div>
         </div>
 
         <!-- Info cards -->
         <div class="info-grid">
           <div class="info-card">
-            <label>Họ & Tên</label>
+            <label data-translate="profile-info-fullname">Họ & Tên</label>
             <div class="form-val" th:text="${name}">Nguyễn Thanh Minh</div>
           </div>
           <div class="info-card">
-            <label>Email</label>
+            <label data-translate="profile-info-email">Email</label>
             <div class="form-val" th:text="${email}">thanh.minh@email.com</div>
-            <div class="ic-sub">✓ Đã xác minh</div>
+            <div class="ic-sub" data-translate="profile-info-verified">✓ Đã xác minh</div>
           </div>
           <div class="info-card">
-            <label>Số điện thoại</label>
-            <div class="form-val" th:text="${user != null && user.phone != null ? user.phone : 'Chưa cập nhật'}">Chưa
-              cập nhật</div>
-            <div class="ic-sub" th:if="${user != null && user.phone != null && !user.phone.isEmpty()}">✓ Đã liên kết</div>
-            <div class="ic-sub" th:if="${user == null || user.phone == null || user.phone.isEmpty()}" style="color: var(--muted);">✗ Chưa liên kết</div>
+            <label data-translate="profile-info-phone">Số điện thoại</label>
+            <div class="form-val" th:if="${user != null && user.phone != null && !user.phone.isEmpty()}" th:text="${user.phone}">0901 234 567</div>
+            <div class="form-val" th:if="${user == null || user.phone == null || user.phone.isEmpty()}" data-translate="profile-info-not-updated">Chưa cập nhật</div>
+            <div class="ic-sub" th:if="${user != null && user.phone != null && !user.phone.isEmpty()}" data-translate="profile-info-linked">✓ Đã liên kết</div>
+            <div class="ic-sub" th:if="${user == null || user.phone == null || user.phone.isEmpty()}" style="color: var(--muted);" data-translate="profile-info-not-linked">✗ Chưa liên kết</div>
           </div>
           <div class="info-card">
-            <label>Ngày sinh</label>
-            <div class="form-val"
-              th:text="${user != null && user.birthday != null ? #dates.format(user.birthday, 'dd/MM/yyyy') : 'Chưa cập nhật'}">
-              15/08/1995</div>
+            <label data-translate="profile-info-birthday">Ngày sinh</label>
+            <div class="form-val" th:if="${user != null && user.birthday != null}" th:text="${#dates.format(user.birthday, 'dd/MM/yyyy')}">15/08/1995</div>
+            <div class="form-val" th:if="${user == null || user.birthday == null}" data-translate="profile-info-not-updated">Chưa cập nhật</div>
           </div>
           <div class="info-card">
-            <div class="ic-label">Thành viên từ</div>
+            <div class="ic-label" data-translate="profile-info-member-since">Thành viên từ</div>
+            <div class="ic-value" th:if="${user != null && user.createdAt != null}" th:text="${#dates.format(user.createdAt, 'MM/yyyy')}">03/2026</div>
+            <div class="ic-value" th:if="${user == null || user.createdAt == null}" data-translate="profile-info-not-updated">Chưa cập nhật</div>
+            <div class="ic-sub" data-translate="profile-info-data-source">Dữ liệu từ hồ sơ tài khoản</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label" data-translate="profile-info-rank">Hạng thành viên</div>
             <div class="ic-value"
-              th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'MM/yyyy') : 'Chưa cập nhật'}">
-              Chưa cập nhật</div>
-            <div class="ic-sub">Dữ liệu từ hồ sơ tài khoản</div>
-          </div>
-          <div class="info-card">
-            <div class="ic-label">Hạng thành viên</div>
-            <div class="ic-value"
-              th:style="${userRank == 'Diamond' ? 'color:#b9f2ff; text-shadow:0 0 8px #b9f2ff;' : (userRank == 'Platinum' ? 'color:#e5e4e2;' : (userRank == 'Silver' ? 'color:#c0c0c0;' : 'color:var(--cream);'))}"
-              th:text="${userRank != 'None' ? '⭐ ' + userRank : 'Thành viên mới'}">⭐ VIP Gold</div>
-            <div class="ic-sub">Dựa trên tổng mức chi tiêu</div>
+              th:style="${userRank == 'Diamond' ? 'color:#b9f2ff; text-shadow:0 0 8px #b9f2ff;' : (userRank == 'Platinum' ? 'color:#e5e4e2;' : (userRank == 'Silver' ? 'color:#c0c0c0;' : 'color:var(--cream);'))}">
+              <span th:if="${userRank != 'None'}" th:text="'⭐ ' + ${userRank}">⭐ VIP Gold</span>
+              <span th:if="${userRank == 'None'}" data-translate="profile-sb-badge-new">Thành viên mới</span>
+            </div>
+            <div class="ic-sub" data-translate="profile-info-rank-desc">Dựa trên tổng mức chi tiêu</div>
           </div>
         </div>
 
@@ -178,54 +180,55 @@
           <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
           <div class="form-error" data-error-for="form" style="display:none;color:#ff6b6b;margin-bottom:1rem;"></div>
           <div
-            style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">
+            style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;"
+            data-translate="profile-edit-title">
             Cập Nhật Thông Tin</div>
           <div class="form-2col">
             <div class="form-group full">
-              <label class="form-label">Họ và Tên</label>
+              <label class="form-label" data-translate="profile-info-fullname">Họ và Tên</label>
               <input type="text" name="firstName" class="form-input" required maxlength="100"
                 th:value="${user != null && user.fullName != null ? user.fullName : ''}"
-                placeholder="Nhập đầy đủ họ và tên của bạn" />
+                data-translate-placeholder="profile-edit-fullname-placeholder" placeholder="Nhập đầy đủ họ và tên của bạn" />
             </div>
             <div class="form-group">
-              <label class="form-label">Email</label>
+              <label class="form-label" data-translate="profile-info-email">Email</label>
               <input type="email" name="email" id="profile-email" class="form-input" required maxlength="100"
                 th:value="${email}" th:data-original-email="${email}" />
             </div>
             <div class="form-group" id="email-otp-group" style="display:none;">
-              <label class="form-label" style="color:var(--gold);">Mã OTP Xác Minh Email</label>
+              <label class="form-label" style="color:var(--gold);" data-translate="profile-edit-otp-label">Mã OTP Xác Minh Email</label>
               <div style="display:flex; gap:10px;">
-                <input type="text" name="emailOtp" id="profile-email-otp" class="form-input" placeholder="Nhập mã OTP"
+                <input type="text" name="emailOtp" id="profile-email-otp" class="form-input" data-translate-placeholder="profile-edit-otp-placeholder" placeholder="Nhập mã OTP"
                   maxlength="6" />
                 <button type="button" class="btn-save" id="btn-send-email-otp"
-                  style="white-space:nowrap; padding: 0.5rem 1rem;">Gửi OTP</button>
+                  style="white-space:nowrap; padding: 0.5rem 1rem;" data-translate="profile-edit-otp-send-btn">Gửi OTP</button>
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Số điện thoại</label>
+              <label class="form-label" data-translate="profile-info-phone">Số điện thoại</label>
               <input type="tel" name="phone" class="form-input" pattern="^(0|\+84)(3|5|7|8|9)[0-9]{8}$"
                 th:value="${user != null ? user.phone : ''}" placeholder="0901 234 567" />
             </div>
             <div class="form-group">
-              <label class="form-label">Ngày sinh</label>
+              <label class="form-label" data-translate="profile-info-birthday">Ngày sinh</label>
               <input type="date" name="birthday" class="form-input"
                 th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
                 th:value="${user != null && user.birthday != null ? #dates.format(user.birthday, 'yyyy-MM-dd') : ''}" />
             </div>
             <div class="form-group">
-              <label class="form-label">Giới tính</label>
+              <label class="form-label" data-translate="profile-edit-gender">Giới tính</label>
               <select name="gender" class="form-select">
-                <option value="" th:selected="${user == null || user.gender == null}">Khác</option>
-                <option value="true" th:selected="${user != null && user.gender == true}">Nam</option>
-                <option value="false" th:selected="${user != null && user.gender == false}">Nữ</option>
+                <option value="" th:selected="${user == null || user.gender == null}" data-translate="profile-edit-gender-other">Khác</option>
+                <option value="true" th:selected="${user != null && user.gender == true}" data-translate="profile-edit-gender-male">Nam</option>
+                <option value="false" th:selected="${user != null && user.gender == false}" data-translate="profile-edit-gender-female">Nữ</option>
               </select>
             </div>
           </div>
           <button type="submit" class="btn-save">
-            <span class="btn-save-inner">Lưu Thay Đổi</span>
+            <span class="btn-save-inner" data-translate="profile-edit-save-btn">Lưu Thay Đổi</span>
           </button>
           <button type="button" class="btn-edit" style="margin-left:.75rem;"
-            onclick="toggleProfileEditForm(false)">Hủy</button>
+            onclick="toggleProfileEditForm(false)" data-translate="profile-btn-cancel">Hủy</button>
         </form>
       </div>
 
@@ -233,8 +236,8 @@
       <div class="profile-section" id="sec-orders">
         <div class="section-head">
           <div>
-            <div class="section-tag">Lịch sử</div>
-            <div class="section-h">Đơn Hàng Của Tôi</div>
+            <div class="section-tag" data-translate="profile-order-section-tag">Lịch sử</div>
+            <div class="section-h" data-translate="profile-sb-menu-orders">Đơn Hàng Của Tôi</div>
           </div>
         </div>
         <style>
@@ -393,45 +396,45 @@
                 <div class="order-h-id" th:text="'#Luxury-' + ${order.id}">#LUXURY-2603</div>
                 <div class="order-h-date" th:text="${#calendars.format(order.createdAt, 'dd/MM/yyyy')}">12/03/2026</div>
               </div>
-              <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px;"
-                th:text="${order.orderItems != null && order.orderItems.size() > 0 ? order.orderItems[0].product.name + ' × ' + order.orderItems[0].quantity + (order.orderItems.size() > 1 ? ' (...)' : '') : 'Đơn hàng trống'}">
-                Sản phẩm...
+              <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px;">
+                <span th:if="${order.orderItems != null && order.orderItems.size() > 0}" th:text="${order.orderItems[0].product.name + ' × ' + order.orderItems[0].quantity + (order.orderItems.size() > 1 ? ' (...)' : '')}">Sản phẩm...</span>
+                <span th:if="${order.orderItems == null || order.orderItems.size() == 0}" data-translate="profile-order-empty">Đơn hàng trống</span>
               </div>
               <div class="order-total"
                 th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</div>
               <div>
                 <span
                   th:class="'order-status status-' + ${(order.status != null ? order.status : 'PENDING').toLowerCase()}"
+                  th:data-translate="'profile-order-status-' + ${(order.status != null ? order.status : 'PENDING').toLowerCase()}"
                   th:text="${order.status == 'PENDING' ? 'Chờ xử lý' : (order.status == 'PAID' ? 'Đã thanh toán' : (order.status == 'COMPLETED' ? 'Hoàn thành' : (order.status == 'SHIPPING' ? 'Đang giao' : (order.status == 'CANCELED' || order.status == 'CANCELLED' ? 'Đã hủy' : (order.status != null ? order.status : 'Chờ xử lý')))))}">
                   Đang xử lý
                 </span>
               </div>
-              <div><button class="order-detail-btn">Chi Tiết ▼</button></div>
+              <div><button class="order-detail-btn" data-translate="profile-order-detail-btn">Chi Tiết ▼</button></div>
             </div>
             <div class="order-details-pane" th:id="'order-' + ${order.id}">
               <!-- COD Timeline (Đã đặt -> Đang giao -> Đã thanh toán -> Hoàn thành) -->
               <div th:if="${order.paymentMethod == 'COD' or order.paymentMethod == null}" class="timeline-track">
                 <div class="tl-step done">
                   <div class="tl-dot">✔</div>
-                  <div class="tl-label">Đã Đặt Hàng</div>
+                  <div class="tl-label" data-translate="profile-order-tl-placed">Đã Đặt Hàng</div>
                 </div>
                 <div
                   th:class="${order.status == 'SHIPPING' or order.status == 'PAID' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
                   <div class="tl-dot">🚚</div>
-                  <div class="tl-label">Đang Giao Vận</div>
+                  <div class="tl-label" data-translate="profile-order-tl-shipping">Đang Giao Vận</div>
                 </div>
                 <div
                   th:class="${order.status == 'PAID' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
                   <div class="tl-dot">✔</div>
-                  <div class="tl-label">Đã Thanh Toán</div>
+                  <div class="tl-label" data-translate="profile-order-tl-paid">Đã Thanh Toán</div>
                 </div>
                 <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }"
                   th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}">
                   <div class="tl-dot"
                     th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">
                     ★</div>
-                  <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn
-                    Thành</div>
+                  <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label" data-translate="profile-order-tl-completed">Hoàn Thành</div>
                 </div>
               </div>
 
@@ -439,30 +442,28 @@
               <div th:if="${order.paymentMethod != 'COD' and order.paymentMethod != null}" class="timeline-track">
                 <div class="tl-step done">
                   <div class="tl-dot">✔</div>
-                  <div class="tl-label">Đã Đặt Hàng</div>
+                  <div class="tl-label" data-translate="profile-order-tl-placed">Đã Đặt Hàng</div>
                 </div>
                 <div
                   th:class="${order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
                   <div class="tl-dot">✔</div>
-                  <div class="tl-label">Đã Thanh Toán</div>
+                  <div class="tl-label" data-translate="profile-order-tl-paid">Đã Thanh Toán</div>
                 </div>
                 <div
                   th:class="${order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
                   <div class="tl-dot">🚚</div>
-                  <div class="tl-label">Đang Giao Vận</div>
+                  <div class="tl-label" data-translate="profile-order-tl-shipping">Đang Giao Vận</div>
                 </div>
                 <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }"
                   th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}">
                   <div class="tl-dot"
                     th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">
                     ★</div>
-                  <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn
-                    Thành</div>
+                  <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label" data-translate="profile-order-tl-completed">Hoàn Thành</div>
                 </div>
               </div>
               <div class="item-mini-list">
-                <div style="font-size:0.75rem; color:var(--gold); margin-bottom: 15px; text-transform: uppercase;">Sản
-                  phẩm trong đơn hàng</div>
+                <div style="font-size:0.75rem; color:var(--gold); margin-bottom: 15px; text-transform: uppercase;" data-translate="profile-order-items-label">Sản phẩm trong đơn hàng</div>
                 <div class="item-mini" th:each="oi : ${order.orderItems}">
                   <div style="flex: 1;">
                     <div th:text="${oi.quantity} + 'x ' + ${oi.product.name}" style="margin-bottom: 5px;">1x Intel Core
@@ -474,41 +475,44 @@
                       style="display:inline-block; font-size:0.65rem; color:var(--gold); background:transparent; border:1px solid rgba(201,168,76,0.5); padding:3px 8px; border-radius:3px; transition: 0.3s; cursor:pointer;"
                       onmouseover="this.style.background='var(--gold)'; this.style.color='var(--black)';"
                       onmouseout="this.style.background='transparent'; this.style.color='var(--gold)';">
-                      ⭐ Viết Đánh Giá
+                      ⭐ <span data-translate="profile-order-write-review">Viết Đánh Giá</span>
                     </button>
                   </div>
                   <span style="color:var(--gold);"
                     th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
                 </div>
                 <div class="item-mini">
-                  <span>Phí vận chuyển (Hỏa tốc)</span>
+                  <span data-translate="profile-order-shipping-fee">Phí vận chuyển (Hỏa tốc)</span>
                   <span style="color:var(--gold);">0 ₫</span>
                 </div>
               </div>
               <!-- Delivery & Payment Information -->
               <div style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(201, 168, 76, 0.15); border-radius: 6px; font-size: 0.8rem; line-height: 1.7;">
-                <div style="font-size: 0.75rem; color: var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; border-bottom: 1px solid rgba(201, 168, 76, 0.15); padding-bottom: 0.5rem;">
+                <div style="font-size: 0.75rem; color: var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; border-bottom: 1px solid rgba(201, 168, 76, 0.15); padding-bottom: 0.5rem;" data-translate="profile-order-details-title">
                   Thông tin nhận hàng & Thanh toán
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                   <div>
-                    <div style="color: var(--muted); margin-bottom: 0.2rem;">Người nhận hàng</div>
+                    <div style="color: var(--muted); margin-bottom: 0.2rem;" data-translate="profile-order-recipient">Người nhận hàng</div>
                     <div style="color: var(--white); font-weight: 500;" th:text="${order.fullName}">Nguyễn Văn A</div>
                   </div>
                   <div>
-                    <div style="color: var(--muted); margin-bottom: 0.2rem;">Số điện thoại</div>
+                    <div style="color: var(--muted); margin-bottom: 0.2rem;" data-translate="profile-info-phone">Số điện thoại</div>
                     <div style="color: var(--white); font-weight: 500;" th:text="${order.phone}">0901234567</div>
                   </div>
                   <div style="grid-column: span 2;">
-                    <div style="color: var(--muted); margin-bottom: 0.2rem;">Địa chỉ giao hàng</div>
+                    <div style="color: var(--muted); margin-bottom: 0.2rem;" data-translate="profile-order-shipping-address">Địa chỉ giao hàng</div>
                     <div style="color: var(--white); font-weight: 500;" th:text="${order.address}">123 Đường ABC, Quận 1, TP. Hồ Chí Minh</div>
                   </div>
                   <div style="grid-column: span 2;">
-                    <div style="color: var(--muted); margin-bottom: 0.2rem;">Phương thức thanh toán</div>
+                    <div style="color: var(--muted); margin-bottom: 0.2rem;" data-translate="profile-order-payment-method">Phương thức thanh toán</div>
                     <div style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
-                      <span th:if="${order.paymentMethod == 'COD'}" style="color: var(--gold);">💵 Thanh toán khi nhận hàng (COD)</span>
-                      <span th:if="${order.paymentMethod == 'INSTALLMENT'}" style="color: #60a5fa;">💳 Trả góp (Installment)</span>
-                      <span th:if="${order.paymentMethod != 'COD' and order.paymentMethod != 'INSTALLMENT'}" th:text="${order.paymentMethod != null ? order.paymentMethod : 'COD (Mặc định)'}" style="color: var(--gold);">COD</span>
+                      <span th:if="${order.paymentMethod == 'COD'}" style="color: var(--gold);" data-translate="profile-order-pay-cod">💵 Thanh toán khi nhận hàng (COD)</span>
+                      <span th:if="${order.paymentMethod == 'INSTALLMENT'}" style="color: #60a5fa;" data-translate="profile-order-pay-installment">💳 Trả góp (Installment)</span>
+                      <span th:if="${order.paymentMethod != 'COD' and order.paymentMethod != 'INSTALLMENT'}" style="color: var(--gold);">
+                        <span th:text="${order.paymentMethod}" th:if="${order.paymentMethod != null}"></span>
+                        <span th:if="${order.paymentMethod == null}" data-translate="profile-order-pay-cod-default">COD (Mặc định)</span>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -518,13 +522,13 @@
                   style="display:inline-block; font-size:0.75rem; color:var(--red); background:transparent; border:1px solid rgba(239,68,68,0.5); padding:6px 15px; border-radius:3px; transition: 0.3s; cursor:pointer;"
                   onmouseover="this.style.background='var(--red)'; this.style.color='var(--white)';"
                   onmouseout="this.style.background='transparent'; this.style.color='var(--red)';">
-                  ⚠️ Hủy Đơn Hàng
+                  ⚠️ <span data-translate="profile-order-cancel-btn">Hủy Đơn Hàng</span>
                 </button>
               </div>
             </div>
           </div>
           <div th:if="${orders.size() == 0}">
-            <div style="text-align:center; padding: 2rem; color: var(--muted);">Bạn chưa có đơn hàng nào.</div>
+            <div style="text-align:center; padding: 2rem; color: var(--muted);" data-translate="profile-order-none">Bạn chưa có đơn hàng nào.</div>
           </div>
         </div>
 
@@ -546,51 +550,50 @@
       <div class="profile-section" id="sec-vouchers">
         <div class="section-head">
           <div>
-            <div class="section-tag">Khuyến mãi</div>
-            <div class="section-h">Ví Voucher Của Tôi</div>
+            <div class="section-tag" data-translate="profile-voucher-section-tag">Khuyến mãi</div>
+            <div class="section-h" data-translate="profile-sb-menu-vouchers">Ví Voucher Của Tôi</div>
           </div>
-          <button class="btn-edit" onclick="document.getElementById('input-voucher-code').focus()">+ Lưu Mã</button>
+          <button class="btn-edit" onclick="document.getElementById('input-voucher-code').focus()" data-translate="profile-voucher-save-btn-plus">+ Lưu Mã</button>
         </div>
 
         <div
           style="background:var(--deep);border:1px solid rgba(201,168,76,.1);padding:1.5rem;margin-bottom:2rem; display:flex; gap:10px;">
           <input type="text" id="input-voucher-code" class="form-input" style="flex:1"
-            placeholder="Nhập mã voucher để lưu..." />
-          <button class="btn-save" onclick="saveVoucherCode()">Lưu Mã</button>
+            data-translate-placeholder="profile-voucher-input-placeholder" placeholder="Nhập mã voucher để lưu..." />
+          <button class="btn-save" onclick="saveVoucherCode()" data-translate="profile-voucher-save-btn">Lưu Mã</button>
         </div>
 
         <div class="wishlist-grid">
           <div class="wl-card" th:each="uv : ${vouchers}"
             style="display:flex; flex-direction:column; justify-content:space-between;">
             <div class="wl-info">
-              <div class="wl-cat">Voucher · <span
-                  th:text="${uv.voucher.discountType.name() == 'PERCENTAGE' ? 'Giảm %' : 'Giảm Tiền'}">Giảm giá</span>
+              <div class="wl-cat">Voucher · <span th:if="${uv.voucher.discountType.name() == 'PERCENTAGE'}" data-translate="profile-voucher-type-percent">Giảm %</span><span th:if="${uv.voucher.discountType.name() != 'PERCENTAGE'}" data-translate="profile-voucher-type-cash">Giảm Tiền</span>
               </div>
               <div class="wl-name" style="font-size:1.3rem; letter-spacing:2px; font-weight:700;"
                 th:text="${uv.voucher.code}">CODE</div>
               <div class="wl-price" style="font-size:0.85rem; color:var(--cream); margin-top:5px;"
                 th:text="${uv.voucher.description}">Mô tả voucher</div>
               <div style="font-size:0.75rem; color:var(--muted); margin-top:10px;">
-                ĐH Tối thiểu: <span style="color:var(--gold);"
+                <span data-translate="profile-voucher-min-order">ĐH Tối thiểu:</span> <span style="color:var(--gold);"
                   th:text="${#numbers.formatDecimal(uv.voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span><br />
-                HSD: <span
-                  th:text="${uv.voucher.endDate != null ? #calendars.format(uv.voucher.endDate, 'dd/MM/yyyy') : 'Vô thời hạn'}">Vô
-                  thời hạn</span>
+                <span data-translate="profile-voucher-expiry">HSD:</span> <span th:if="${uv.voucher.endDate != null}"
+                  th:text="${#calendars.format(uv.voucher.endDate, 'dd/MM/yyyy')}">12/12/2026</span>
+                <span th:if="${uv.voucher.endDate == null}" data-translate="profile-voucher-expiry-none">Vô thời hạn</span>
               </div>
             </div>
             <div style="padding:1rem; border-top:1px dashed rgba(201,168,76,.2); text-align:center;">
               <!-- Đã sử dụng -->
-              <span th:if="${uv.isUsed}" class="order-status" style="background: rgba(255, 255, 255, 0.05); color: var(--muted); border: 1px solid rgba(255, 255, 255, 0.1);">Đã sử dụng</span>
+              <span th:if="${uv.isUsed}" class="order-status" style="background: rgba(255, 255, 255, 0.05); color: var(--muted); border: 1px solid rgba(255, 255, 255, 0.1);" data-translate="profile-voucher-status-used">Đã sử dụng</span>
               
               <!-- Đã hết hạn hoặc ngừng hoạt động -->
-              <span th:if="${!uv.isUsed and ((uv.voucher.endDate != null and uv.voucher.endDate.before(#dates.createNow())) or !uv.voucher.active)}" class="order-status status-canceled">Đã hết hạn</span>
+              <span th:if="${!uv.isUsed and ((uv.voucher.endDate != null and uv.voucher.endDate.before(#dates.createNow())) or !uv.voucher.active)}" class="order-status status-canceled" data-translate="profile-voucher-status-expired">Đã hết hạn</span>
               
               <!-- Sẵn sàng sử dụng -->
-              <span th:if="${!uv.isUsed and (uv.voucher.endDate == null or !uv.voucher.endDate.before(#dates.createNow())) and uv.voucher.active}" class="order-status status-delivered">Sẵn sàng sử dụng</span>
+              <span th:if="${!uv.isUsed and (uv.voucher.endDate == null or !uv.voucher.endDate.before(#dates.createNow())) and uv.voucher.active}" class="order-status status-delivered" data-translate="profile-voucher-status-ready">Sẵn sàng sử dụng</span>
             </div>
           </div>
           <div th:if="${vouchers == null or vouchers.size() == 0}"
-            style="grid-column: span 3; text-align: center; color: var(--muted); padding: 2rem;">
+            style="grid-column: span 3; text-align: center; color: var(--muted); padding: 2rem;" data-translate="profile-voucher-empty">
             Bạn chưa có mã voucher nào. Hãy tìm thêm ở trang chủ!
           </div>
         </div>
@@ -623,10 +626,10 @@
       <div class="profile-section" id="sec-wishlist">
         <div class="section-head">
           <div>
-            <div class="section-tag">Bộ sưu tập</div>
-            <div class="section-h">Danh Sách Yêu Thích</div>
+            <div class="section-tag" data-translate="profile-wishlist-section-tag">Bộ sưu tập</div>
+            <div class="section-h" data-translate="profile-sb-menu-wishlist">Danh Sách Yêu Thích</div>
           </div>
-          <button class="btn-edit" onclick="removeAllWishlist()">Xóa Tất Cả</button>
+          <button class="btn-edit" onclick="removeAllWishlist()" data-translate="profile-wishlist-clear-all-btn">Xóa Tất Cả</button>
         </div>
         <div class="wishlist-grid">
           <div class="wl-card" th:each="wishitem : ${wishlistItems}">
@@ -637,15 +640,15 @@
                 onclick="removeFromWishlist(this)">✕</button>
             </div>
             <div class="wl-info">
-              <div class="wl-cat"
-                th:text="${wishitem.product.category != null ? wishitem.product.category.name : 'Khác'}">Danh mục</div>
+              <div class="wl-cat" th:if="${wishitem.product.category != null}" th:text="${wishitem.product.category.name}">Danh mục</div>
+              <div class="wl-cat" th:if="${wishitem.product.category == null}" data-translate="profile-category-other">Khác</div>
               <div class="wl-name" th:text="${wishitem.product.name}">Tên sản phẩm</div>
               <div class="wl-price"
                 th:text="${#numbers.formatDecimal(wishitem.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</div>
             </div>
           </div>
           <div th:if="${wishlistItems == null or wishlistItems.size() == 0}"
-            style="grid-column: span 3; text-align: center; color: var(--muted); padding: 2rem;">
+            style="grid-column: span 3; text-align: center; color: var(--muted); padding: 2rem;" data-translate="profile-wishlist-empty">
             Bạn chưa có sản phẩm yêu thích nào. Hãy thêm từ trang sản phẩm!
           </div>
         </div>
@@ -655,19 +658,19 @@
       <div class="profile-section" id="sec-security">
         <div class="section-head">
           <div>
-            <div class="section-tag">Tài khoản</div>
-            <div class="section-h">Bảo Mật</div>
+            <div class="section-tag" data-translate="profile-sb-account">Tài khoản</div>
+            <div class="section-h" data-translate="profile-sb-menu-security">Bảo Mật</div>
           </div>
         </div>
         <div class="security-list">
           <div class="sec-item">
             <div class="sec-icon">🔑</div>
             <div class="sec-info">
-              <div class="sec-title">Mật khẩu</div>
-              <div class="sec-sub">Cập nhật lần cuối: 12/01/2026 · Sử dụng mật khẩu mạnh với ít nhất 8 ký tự.</div>
-              <div class="sec-status-ok">● Cài đặt hoàn chỉnh</div>
+              <div class="sec-title" data-translate="profile-security-pw-title">Mật khẩu</div>
+              <div class="sec-sub" data-translate="profile-security-pw-sub">Cập nhật lần cuối: 12/01/2026 · Sử dụng mật khẩu mạnh với ít nhất 8 ký tự.</div>
+              <div class="sec-status-ok" data-translate="profile-security-pw-status">● Cài đặt hoàn chỉnh</div>
             </div>
-            <button class="btn-sec" id="btn-toggle-password-form" onclick="togglePasswordForm()">Đổi Mật Khẩu</button>
+            <button class="btn-sec" id="btn-toggle-password-form" onclick="togglePasswordForm()" data-translate="profile-security-pw-btn">Đổi Mật Khẩu</button>
           </div>
 
           <!-- Password change form -->
@@ -675,72 +678,71 @@
             style="background:var(--deep);border:1px solid rgba(201,168,76,.1);padding:2rem;margin-bottom:1rem;margin-top:-0.5rem;">
             <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
             <div
-              style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">
+              style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;"
+              data-translate="profile-security-pw-btn">
               Đổi Mật Khẩu</div>
             <div class="form-group">
-              <label class="form-label">Mật khẩu hiện tại</label>
-              <input type="password" name="currentPassword" class="form-input" placeholder="Nhập mật khẩu hiện tại"
+              <label class="form-label" data-translate="profile-security-current-pw-lbl">Mật khẩu hiện tại</label>
+              <input type="password" name="currentPassword" class="form-input" data-translate-placeholder="profile-security-current-pw-ph" placeholder="Nhập mật khẩu hiện tại"
                 required />
             </div>
             <div class="form-2col">
               <div class="form-group">
-                <label class="form-label">Mật khẩu mới</label>
-                <input type="password" name="newPassword" class="form-input" placeholder="Tối thiểu 8 ký tự"
+                <label class="form-label" data-translate="profile-security-new-pw-lbl">Mật khẩu mới</label>
+                <input type="password" name="newPassword" class="form-input" data-translate-placeholder="profile-security-new-pw-ph" placeholder="Tối thiểu 8 ký tự"
                   minlength="8" required />
               </div>
               <div class="form-group">
-                <label class="form-label">Xác nhận mật khẩu mới</label>
-                <input type="password" name="confirmPassword" class="form-input" placeholder="Xác nhận lại mật khẩu mới"
+                <label class="form-label" data-translate="profile-security-confirm-pw-lbl">Xác nhận mật khẩu mới</label>
+                <input type="password" name="confirmPassword" class="form-input" data-translate-placeholder="profile-security-confirm-pw-ph" placeholder="Xác nhận lại mật khẩu mới"
                   minlength="8" required />
               </div>
             </div>
             <div style="margin-top:1rem;">
               <button type="submit" class="btn-save">
-                <span class="btn-save-inner">Cập Nhật Mật Khẩu</span>
+                <span class="btn-save-inner" data-translate="profile-security-update-pw-btn">Cập Nhật Mật Khẩu</span>
               </button>
               <button type="button" class="btn-edit" style="margin-left:.75rem;"
-                onclick="togglePasswordForm(false)">Hủy</button>
+                onclick="togglePasswordForm(false)" data-translate="profile-btn-cancel">Hủy</button>
             </div>
           </form>
 
           <div class="sec-item">
             <div class="sec-icon">📱</div>
             <div class="sec-info">
-              <div class="sec-title">Xác thực 2 yếu tố (2FA)</div>
-              <div class="sec-sub">Bảo vệ tài khoản bằng mã xác thực OTP gửi qua hòm thư Email khi đăng nhập.</div>
+              <div class="sec-title" data-translate="profile-security-2fa-title">Xác thực 2 yếu tố (2FA)</div>
+              <div class="sec-sub" data-translate="profile-security-2fa-sub">Bảo vệ tài khoản bằng mã xác thực OTP gửi qua hòm thư Email khi đăng nhập.</div>
               <div th:class="${user != null && user.twoFactorEnabled == true ? 'sec-status-ok' : 'sec-status-warn'}"
+                   th:data-translate="${user != null && user.twoFactorEnabled == true ? 'profile-security-2fa-status-on' : 'profile-security-2fa-status-off'}"
                    th:text="${user != null && user.twoFactorEnabled == true ? '● Đã bật' : '● Chưa bật'}">● Chưa bật</div>
             </div>
-            <button th:if="${user == null || user.twoFactorEnabled != true}" class="btn-sec" onclick="open2FAModal()">Bật 2FA</button>
-            <button th:if="${user != null && user.twoFactorEnabled == true}" class="btn-sec" style="border-color:var(--red); color:var(--red);" onclick="disable2FA()">Tắt 2FA</button>
+            <button th:if="${user == null || user.twoFactorEnabled != true}" class="btn-sec" onclick="open2FAModal()" data-translate="profile-security-2fa-enable-btn">Bật 2FA</button>
+            <button th:if="${user != null && user.twoFactorEnabled == true}" class="btn-sec" style="border-color:var(--red); color:var(--red);" onclick="disable2FA()" data-translate="profile-security-2fa-disable-btn">Tắt 2FA</button>
           </div>
           <div class="sec-item">
             <div class="sec-icon">📧</div>
             <div class="sec-info">
-              <div class="sec-title">Email xác minh</div>
-              <div class="sec-sub"><span th:text="${email}">thanh.minh@email.com</span> đã được xác minh và liên kết với
-                tài khoản.</div>
-              <div class="sec-status-ok">● Đã xác minh</div>
+              <div class="sec-title" data-translate="profile-security-email-title">Email xác minh</div>
+              <div class="sec-sub"><span th:text="${email}">thanh.minh@email.com</span> <span data-translate="profile-security-email-sub">đã được xác minh và liên kết với tài khoản.</span></div>
+              <div class="sec-status-ok" data-translate="profile-info-verified">● Đã xác minh</div>
             </div>
-            <button class="btn-sec" onclick="openEmailDetailsModal()">Xem Chi Tiết</button>
+            <button class="btn-sec" onclick="openEmailDetailsModal()" data-translate="profile-security-email-detail-btn">Xem Chi Tiết</button>
           </div>
           <div class="sec-item">
             <div class="sec-icon">🖥️</div>
             <div class="sec-info">
-              <div class="sec-title">Phiên đăng nhập</div>
+              <div class="sec-title" data-translate="profile-security-session-title">Phiên đăng nhập</div>
               <div class="sec-sub" th:text="${currentSessionInfo}">Hiện tại: Chrome · Windows 11 · TP.HCM — Đăng nhập
                 12/03/2026 16:45</div>
-              <div class="sec-status-ok">● Thiết bị hiện tại</div>
+              <div class="sec-status-ok" data-translate="profile-security-session-status">● Thiết bị hiện tại</div>
             </div>
-            <button class="btn-sec" onclick="openSessionsModal()">Quản Lý</button>
+            <button class="btn-sec" onclick="openSessionsModal()" data-translate="profile-security-session-manage-btn">Quản Lý</button>
           </div>
         </div>
         <div class="danger-zone">
-          <div class="danger-title">⚠️ Vùng nguy hiểm</div>
-          <div class="danger-sub">Xóa tài khoản sẽ xóa vĩnh viễn tất cả dữ liệu của bạn bao gồm lịch sử đơn hàng, danh
-            sách yêu thích và điểm tích lũy. Thao tác này không thể hoàn tác.</div>
-          <button class="btn-danger" onclick="deleteAccount()">Xóa Tài
-            Khoản</button>
+          <div class="danger-title" data-translate="profile-security-danger-title">⚠️ Vùng nguy hiểm</div>
+          <div class="danger-sub" data-translate="profile-security-danger-sub">Xóa tài khoản sẽ xóa vĩnh viễn tất cả dữ liệu của bạn bao gồm lịch sử đơn hàng, danh sách yêu thích và điểm tích lũy. Thao tác này không thể hoàn tác.</div>
+          <button class="btn-danger" onclick="deleteAccount()" data-translate="profile-security-danger-btn">Xóa Tài Khoản</button>
         </div>
       </div>
 
@@ -756,13 +758,13 @@
             <span class="btn-save-inner">Lưu</span>
           </button>
         </div>
-        <div style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">
+        <div style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;" data-translate="profile-notif-section">
           Email & SMS</div>
         <div class="notif-list">
           <div class="notif-item">
             <div class="notif-info">
-              <div class="notif-title">Cập nhật đơn hàng</div>
-              <div class="notif-sub">Nhận thông báo khi trạng thái đơn hàng thay đổi</div>
+              <div class="notif-title" data-translate="profile-notif-order-title">Cập nhật đơn hàng</div>
+              <div class="notif-sub" data-translate="profile-notif-order-sub">Nhận thông báo khi trạng thái đơn hàng thay đổi</div>
             </div>
             <label class="toggle"><input type="checkbox" name="orderUpdates"
                 th:checked="${notificationSettings == null || notificationSettings['orderUpdates']}" /><span
@@ -770,8 +772,8 @@
           </div>
           <div class="notif-item">
             <div class="notif-info">
-              <div class="notif-title">Flash Sale & Khuyến mãi</div>
-              <div class="notif-sub">Nhận thông báo về các chương trình giảm giá đặc biệt</div>
+              <div class="notif-title" data-translate="profile-notif-sale-title">Flash Sale & Khuyến mãi</div>
+              <div class="notif-sub" data-translate="profile-notif-sale-sub">Nhận thông báo về các chương trình giảm giá đặc biệt</div>
             </div>
             <label class="toggle"><input type="checkbox" name="flashSale"
                 th:checked="${notificationSettings == null || notificationSettings['flashSale']}" /><span
@@ -779,8 +781,8 @@
           </div>
           <div class="notif-item">
             <div class="notif-info">
-              <div class="notif-title">Sản phẩm mới</div>
-              <div class="notif-sub">Thông báo khi có linh kiện mới về kho</div>
+              <div class="notif-title" data-translate="profile-notif-new-title">Sản phẩm mới</div>
+              <div class="notif-sub" data-translate="profile-notif-new-sub">Thông báo khi có linh kiện mới về kho</div>
             </div>
             <label class="toggle"><input type="checkbox" name="newProducts"
                 th:checked="${notificationSettings != null && notificationSettings['newProducts']}" /><span
@@ -788,8 +790,8 @@
           </div>
           <div class="notif-item">
             <div class="notif-info">
-              <div class="notif-title">Bản tin hàng tuần</div>
-              <div class="notif-sub">Email tổng hợp xu hướng công nghệ & review mỗi thứ Hai</div>
+              <div class="notif-title" data-translate="profile-notif-weekly-title">Bản tin hàng tuần</div>
+              <div class="notif-sub" data-translate="profile-notif-weekly-sub">Email tổng hợp xu hướng công nghệ & review mỗi thứ Hai</div>
             </div>
             <label class="toggle"><input type="checkbox" name="weeklyNewsletter"
                 th:checked="${notificationSettings == null || notificationSettings['weeklyNewsletter']}" /><span
@@ -802,10 +804,10 @@
       <div class="profile-section" id="sec-address">
         <div class="section-head">
           <div>
-            <div class="section-tag">Giao hàng</div>
-            <div class="section-h">Địa Chỉ Giao Hàng</div>
+            <div class="section-tag" data-translate="profile-address-section-tag">Giao hàng</div>
+            <div class="section-h" data-translate="profile-sb-menu-address">Địa Chỉ Giao Hàng</div>
           </div>
-          <button class="btn-edit" onclick="openAddressForm()">+ Thêm Địa Chỉ</button>
+          <button class="btn-edit" onclick="openAddressForm()" data-translate="profile-address-add-btn">+ Thêm Địa Chỉ</button>
         </div>
 
         <!-- Saved address cards -->
@@ -817,51 +819,52 @@
         <div id="address-form-container"
           style="background:var(--deep);border:1px solid rgba(201,168,76,.1);padding:2rem; display:none;">
           <div
-            style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">
+            style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;"
+            data-translate="profile-address-add-edit-title">
             Thêm / Chỉnh Sửa Địa Chỉ</div>
           <input type="hidden" id="address-id-edit" />
           <div class="form-2col">
             <div class="form-group">
-              <label class="form-label">Họ và tên</label>
-              <input type="text" id="address-name" class="form-input" placeholder="Người nhận" required />
+              <label class="form-label" data-translate="profile-info-fullname">Họ và tên</label>
+              <input type="text" id="address-name" class="form-input" data-translate-placeholder="profile-address-recipient-ph" placeholder="Người nhận" required />
               <div class="form-error" id="address-name-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Số điện thoại</label>
-              <input type="tel" id="address-phone" class="form-input" placeholder="Ví dụ: 0901234567"
+              <label class="form-label" data-translate="profile-info-phone">Số điện thoại</label>
+              <input type="tel" id="address-phone" class="form-input" data-translate-placeholder="profile-address-phone-ph" placeholder="Ví dụ: 0901234567"
                 pattern="^0(3|5|7|8|9)[0-9]{8}$" required />
               <div class="form-error" id="address-phone-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
               </div>
             </div>
             <div class="form-group full">
-              <label>Địa chỉ chi tiết</label>
-              <input type="text" id="address-detail" class="form-input" placeholder="Số nhà, đường phố..." required />
+              <label data-translate="profile-address-detail-lbl">Địa chỉ chi tiết</label>
+              <input type="text" id="address-detail" class="form-input" data-translate-placeholder="profile-address-detail-ph" placeholder="Số nhà, đường phố..." required />
               <div class="form-error" id="address-detail-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Tỉnh / Thành phố</label>
-              <input type="text" id="address-city" class="form-input" placeholder="TP. Hồ Chí Minh" required />
+              <label class="form-label" data-translate="profile-address-city-lbl">Tỉnh / Thành phố</label>
+              <input type="text" id="address-city" class="form-input" data-translate-placeholder="profile-address-city-ph" placeholder="TP. Hồ Chí Minh" required />
               <div class="form-error" id="address-city-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Quận / Huyện</label>
-              <input type="text" id="address-district" class="form-input" placeholder="Quận 1" required />
+              <label class="form-label" data-translate="profile-address-district-lbl">Quận / Huyện</label>
+              <input type="text" id="address-district" class="form-input" data-translate-placeholder="profile-address-district-ph" placeholder="Quận 1" required />
               <div class="form-error" id="address-district-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Mã bưu điện</label>
+              <label class="form-label" data-translate="profile-address-postal-lbl">Mã bưu điện</label>
               <input type="text" id="address-postal" class="form-input" placeholder="700000" />
             </div>
           </div>
           <div style="display:flex;gap:1rem;">
             <button class="btn-save" onclick="saveAddress()">
-              <span class="btn-save-inner">Lưu Địa Chỉ</span>
+              <span class="btn-save-inner" data-translate="profile-address-save-btn">Lưu Địa Chỉ</span>
             </button>
-            <button type="button" class="btn-edit" onclick="closeAddressForm()">Hủy</button>
+            <button type="button" class="btn-edit" onclick="closeAddressForm()" data-translate="profile-btn-cancel">Hủy</button>
           </div>
         </div>
       </div>
@@ -894,9 +897,8 @@
       <button class="modal-close" onclick="closeOrderModal()">✕</button>
       <div class="modal-head">
         <div>
-          <div class="section-tag">Đánh giá sản phẩm</div>
-          <h3 id="modal-review-product-title" style="color:var(--white); margin-top:5px; font-size:1.1rem;">Đánh giá sản
-            phẩm</h3>
+          <div class="section-tag" data-translate="profile-review-modal-title">Đánh giá sản phẩm</div>
+          <h3 id="modal-review-product-title" style="color:var(--white); margin-top:5px; font-size:1.1rem;" data-translate="profile-review-modal-title">Đánh giá sản phẩm</h3>
         </div>
       </div>
       <div class="modal-content" id="order-modal-content" style="padding-top: 15px;">
@@ -913,23 +915,22 @@
           </div>
           <div
             style="font-size: 0.75rem; color: var(--gold); margin-top: 8px; letter-spacing: 1px; text-transform: uppercase;"
-            id="star-desc">Chọn số sao đánh giá</div>
+            id="star-desc" data-translate="profile-review-star-select">Chọn số sao đánh giá</div>
         </div>
 
         <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: var(--cream);">Bình luận / Nhận
-            xét</label>
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: var(--cream);" data-translate="profile-review-comment-lbl">Bình luận / Nhận xét</label>
           <textarea id="review-comment" class="form-input" rows="4"
-            placeholder="Nhập chia sẻ của bạn về sản phẩm này..."
+            data-translate-placeholder="profile-review-comment-ph" placeholder="Nhập chia sẻ của bạn về sản phẩm này..."
             style="width: 100%; box-sizing: border-box; background: var(--dark); color: var(--white); border: 1px solid rgba(201,168,76,.2); padding: 12px; border-radius: 4px; resize: none; font-family: inherit; font-size: 0.85rem; line-height: 1.5;"></textarea>
         </div>
 
         <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
           <button type="button" class="btn-save" onclick="submitReview()" style="padding: 0.6rem 1.5rem;">
-            <span class="btn-save-inner">Gửi Đánh Giá</span>
+            <span class="btn-save-inner" data-translate="profile-review-submit-btn">Gửi Đánh Giá</span>
           </button>
           <button type="button" class="btn-edit" onclick="closeOrderModal()"
-            style="padding: 0.6rem 1.5rem;">Hủy</button>
+            style="padding: 0.6rem 1.5rem;" data-translate="profile-btn-cancel">Hủy</button>
         </div>
       </div>
     </div>
@@ -941,23 +942,23 @@
       <button class="modal-close" onclick="close2FAModal()">✕</button>
       <div class="modal-head">
         <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;">Kích hoạt xác thực 2 lớp (2FA)</h3>
+          <div class="section-tag" data-translate="profile-security-modal-tag">Bảo mật tài khoản</div>
+          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;" data-translate="profile-security-2fa-modal-title">Kích hoạt xác thực 2 lớp (2FA)</h3>
         </div>
       </div>
       <div class="modal-content" style="padding-top: 15px;">
-        <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem;">
+        <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem;" data-translate="profile-security-2fa-modal-desc">
           Chúng tôi đã gửi một mã xác thực OTP gồm 6 chữ số đến email của bạn. Vui lòng nhập mã này dưới đây để xác nhận kích hoạt tính năng đăng nhập 2 lớp.
         </p>
         <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: var(--cream);">Mã OTP Xác Thực</label>
-          <input type="text" id="2fa-otp-input" class="form-input" placeholder="Nhập mã OTP 6 số" maxlength="6" style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; background: var(--dark);" />
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: var(--cream);" data-translate="profile-security-2fa-otp-lbl">Mã OTP Xác Thực</label>
+          <input type="text" id="2fa-otp-input" class="form-input" data-translate-placeholder="profile-security-2fa-otp-ph" placeholder="Nhập mã OTP 6 số" maxlength="6" style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; background: var(--dark);" />
         </div>
         <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
           <button type="button" class="btn-save" onclick="verifyAndEnable2FA()" style="padding: 0.6rem 1.5rem;">
-            <span class="btn-save-inner">Kích Hoạt</span>
+            <span class="btn-save-inner" data-translate="profile-security-2fa-activate-btn">Kích Hoạt</span>
           </button>
-          <button type="button" class="btn-edit" onclick="close2FAModal()" style="padding: 0.6rem 1.5rem;">Hủy</button>
+          <button type="button" class="btn-edit" onclick="close2FAModal()" style="padding: 0.6rem 1.5rem;" data-translate="profile-btn-cancel">Hủy</button>
         </div>
       </div>
     </div>
@@ -969,28 +970,29 @@
       <button class="modal-close" onclick="closeEmailDetailsModal()">✕</button>
       <div class="modal-head">
         <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;">Chi Tiết Email Xác Minh</h3>
+          <div class="section-tag" data-translate="profile-security-modal-tag">Bảo mật tài khoản</div>
+          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;" data-translate="profile-security-email-detail-title">Chi Tiết Email Xác Minh</h3>
         </div>
       </div>
       <div class="modal-content" style="padding-top: 15px;">
         <div style="display: flex; flex-direction: column; gap: 1rem; color: var(--cream);">
           <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(201,168,76,.1); padding-bottom: 0.8rem;">
-            <span style="color: var(--muted); font-size: 0.8rem;">Địa chỉ Email:</span>
+            <span style="color: var(--muted); font-size: 0.8rem;" data-translate="profile-security-email-detail-lbl">Địa chỉ Email:</span>
             <strong th:text="${email}">you@email.com</strong>
           </div>
           <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(201,168,76,.1); padding-bottom: 0.8rem;">
-            <span style="color: var(--muted); font-size: 0.8rem;">Trạng thái xác minh:</span>
-            <span class="sec-status-ok" style="font-size: 0.8rem;">● Đã xác minh</span>
+            <span style="color: var(--muted); font-size: 0.8rem;" data-translate="profile-security-email-status-lbl">Trạng thái xác minh:</span>
+            <span class="sec-status-ok" style="font-size: 0.8rem;" data-translate="profile-info-verified">● Đã xác minh</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding-bottom: 0.8rem;">
-            <span style="color: var(--muted); font-size: 0.8rem;">Ngày tạo tài khoản:</span>
-            <strong th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'dd/MM/yyyy HH:mm') : 'Chưa xác định'}">01/01/2026</strong>
+            <span style="color: var(--muted); font-size: 0.8rem;" data-translate="profile-security-email-created-lbl">Ngày tạo tài khoản:</span>
+            <strong th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'dd/MM/yyyy HH:mm') : ''}" th:if="${user != null && user.createdAt != null}">01/01/2026</strong>
+            <strong th:if="${user == null || user.createdAt == null}" data-translate="profile-info-not-determined">Chưa xác định</strong>
           </div>
         </div>
         <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
           <button type="button" class="btn-save" onclick="closeEmailDetailsModal()" style="padding: 0.6rem 2rem;">
-            <span class="btn-save-inner">Đóng</span>
+            <span class="btn-save-inner" data-translate="profile-btn-close">Đóng</span>
           </button>
         </div>
       </div>
@@ -1003,12 +1005,12 @@
       <button class="modal-close" onclick="closeSessionsModal()">✕</button>
       <div class="modal-head">
         <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;">Quản Lý Phiên Đăng Nhập</h3>
+          <div class="section-tag" data-translate="profile-security-modal-tag">Bảo mật tài khoản</div>
+          <h3 style="color:var(--white); margin-top:5px; font-size:1.1rem;" data-translate="profile-security-session-manage-title">Quản Lý Phiên Đăng Nhập</h3>
         </div>
       </div>
       <div class="modal-content" style="padding-top: 15px;">
-        <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem;">
+        <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem;" data-translate="profile-security-session-manage-desc">
           Dưới đây là danh sách các thiết bị hiện đang đăng nhập vào tài khoản của bạn. Bạn có thể đăng xuất khỏi các thiết bị từ xa.
         </p>
         <div id="active-sessions-list" style="display: flex; flex-direction: column; gap: 1rem;">
@@ -1016,7 +1018,7 @@
         </div>
         <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
           <button type="button" class="btn-save" onclick="closeSessionsModal()" style="padding: 0.6rem 2rem;">
-            <span class="btn-save-inner">Đóng</span>
+            <span class="btn-save-inner" data-translate="profile-btn-close">Đóng</span>
           </button>
         </div>
       </div>
@@ -1302,14 +1304,6 @@
 
     let orderModalState = { currentOrder: null, stars: 0 };
 
-    const starDescs = [
-      'Chọn số sao đánh giá',
-      '⭐ Rất Tệ',
-      '⭐⭐ Tệ',
-      '⭐⭐⭐ Bình Thường',
-      '⭐⭐⭐⭐ Tốt',
-      '⭐⭐⭐⭐⭐ Rất Tốt'
-    ];
 
     function openReviewModal(productId, productName) {
       orderModalState.stars = 0;
@@ -1318,14 +1312,14 @@
       document.querySelectorAll('.order-modal .review-stars button').forEach(btn => {
         btn.classList.remove('active');
       });
-      document.getElementById('star-desc').textContent = 'Chọn số sao đánh giá';
+      document.getElementById('star-desc').textContent = window.t('profile-review-star-select', 'Chọn số sao đánh giá');
 
       // Set input values
       document.getElementById('review-product-id').value = productId;
       document.getElementById('review-product-name').value = productName;
       document.getElementById('review-comment').value = '';
 
-      document.getElementById('modal-review-product-title').textContent = 'Đánh giá sản phẩm: ' + productName;
+      document.getElementById('modal-review-product-title').textContent = window.t('profile-review-modal-product-title', 'Đánh giá sản phẩm: ') + productName;
 
       // Show backdrop
       document.getElementById('order-modal-backdrop').classList.add('open');
@@ -1340,7 +1334,15 @@
       document.querySelectorAll('.order-modal .review-stars button').forEach((btn, index) => {
         btn.classList.toggle('active', index < star);
       });
-      document.getElementById('star-desc').textContent = starDescs[star] || 'Chọn số sao đánh giá';
+      const starDescs = [
+        window.t('profile-review-star-select', 'Chọn số sao đánh giá'),
+        '⭐ ' + window.t('profile-review-star-1', 'Rất Tệ'),
+        '⭐⭐ ' + window.t('profile-review-star-2', 'Tệ'),
+        '⭐⭐⭐ ' + window.t('profile-review-star-3', 'Bình Thường'),
+        '⭐⭐⭐⭐ ' + window.t('profile-review-star-4', 'Tốt'),
+        '⭐⭐⭐⭐⭐ ' + window.t('profile-review-star-5', 'Rất Tốt')
+      ];
+      document.getElementById('star-desc').textContent = starDescs[star] || window.t('profile-review-star-select', 'Chọn số sao đánh giá');
     }
 
     function submitReview() {
@@ -1582,22 +1584,22 @@
         const container = document.getElementById('address-list-container');
         if (!container) return;
         if (!data.success || !data.data || data.data.length === 0) {
-          container.innerHTML = '<p style="grid-column:span 2;text-align:center;color:var(--muted);padding:2rem;">Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.</p>';
+          container.innerHTML = `<p style="grid-column:span 2;text-align:center;color:var(--muted);padding:2rem;">${window.t('profile-address-empty', 'Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.')}</p>`;
           return;
         }
         container.innerHTML = data.data.map(addr => `
           <div style="background:var(--deep);border:1px solid ${addr.isDefault ? 'var(--gold)' : 'rgba(201,168,76,.1)'};padding:1.5rem;">
             <div style="font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:${addr.isDefault ? 'var(--gold)' : 'var(--muted)'};margin-bottom:.8rem;">
-              📍 ${addr.isDefault ? 'Địa chỉ mặc định' : 'Địa chỉ khác'}
+              ${addr.isDefault ? window.t('profile-address-default', '📍 Địa chỉ mặc định') : window.t('profile-address-other', '📍 Địa chỉ khác')}
             </div>
             <div style="font-size:.9rem;color:var(--white);margin-bottom:.3rem;font-weight:500;">${addr.recipientName}</div>
             <div style="font-size:.8rem;color:var(--muted);line-height:1.7;">
               ${addr.detailedAddress}<br>${addr.district}, ${addr.city}<br>📞 ${addr.phone}
             </div>
             <div style="display:flex;gap:.5rem;margin-top:1rem;">
-              <button class="btn-sec" onclick="editAddress(${addr.id})">Sửa</button>
-              <button class="btn-sec" onclick="deleteAddress(${addr.id})">Xóa</button>
-              ${!addr.isDefault ? `<button class="btn-sec" style="border-color:var(--gold);color:var(--gold);" onclick="setDefaultAddress(${addr.id})">Đặt mặc định</button>` : ''}
+              <button class="btn-sec" onclick="editAddress(${addr.id})">${window.t('profile-address-btn-edit', 'Sửa')}</button>
+              <button class="btn-sec" onclick="deleteAddress(${addr.id})">${window.t('profile-address-btn-delete', 'Xóa')}</button>
+              ${!addr.isDefault ? `<button class="btn-sec" style="border-color:var(--gold);color:var(--gold);" onclick="setDefaultAddress(${addr.id})">${window.t('profile-address-set-default', 'Đặt mặc định')}</button>` : ''}
             </div>
           </div>
         `).join('');
@@ -1853,6 +1855,7 @@
     }
   </script>
   <script th:src="@{/js/script.js}"></script>
+  <script th:src="@{/js/cursor.js}"></script>
   <script th:src="@{/js/confirm-popup.js}"></script>
 </body>
 

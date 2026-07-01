@@ -1,11 +1,46 @@
 /* Admin Luxury Global CSS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 13px;
+  scroll-behavior: smooth;
+}
 
 :root {
-    --gold-gradient: linear-gradient(135deg, var(--gold), var(--gold-l));
-    --glass-bg: rgba(26, 26, 26, 0.7);
-    --glass-border: rgba(201, 168, 76, 0.15);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --black: #0a0a0a;
+  --deep: #111111;
+  --dark: #1a1a1a;
+  --mid: #2a2a2a;
+  --cream: #f5f0e8;
+  --white: #ffffff;
+  --muted: #888888;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dark: #8a7030;
+  --gold-gradient: linear-gradient(135deg, #c9a84c, #e8c97a);
+  --blue: #3b82f6;
+  --red: #ef4444;
+  --sans: 'Inter', sans-serif;
+  --transition: 0.3s ease;
+  --glass-bg: rgba(26, 26, 26, 0.7);
+  --glass-border: rgba(201, 168, 76, 0.15);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+body {
+  background-color: var(--black) !important;
+  color: var(--white) !important;
+  font-family: var(--sans);
+  margin: 0;
+  padding: 0;
 }
 
 /* Animations */
@@ -164,4 +199,14 @@ tbody tr:hover td {
     background: rgba(239, 68, 68, 1) !important;
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
     transform: translateY(-2px);
+}
+
+/* Hide spin buttons for number inputs */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] {
+  -moz-appearance: textfield;
 }

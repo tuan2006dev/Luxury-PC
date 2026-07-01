@@ -2,19 +2,20 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Luxury PC — Thanh Toán Đơn Hàng</title>
+  <title data-translate="checkout-page-title">Luxury PC — Thanh Toán Đơn Hàng</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
   <link rel="stylesheet" th:href="@{/css/checkout.css}" />
 </head>
 
 <body>
 
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-f" id="cursor-f"></div>
 
   <div class="success-ov" id="suc" th:classappend="${param.success != null} ? 'show' : ''">
     <div style="font-size:4rem; color:var(--green); margin-bottom:1rem;">✓</div>
@@ -45,6 +46,7 @@
   </div>
 
   <form th:action="@{/checkout/submit}" method="POST" class="checkout-layout">
+    <input type="hidden" name="checkoutType" th:value="${checkoutType}" />
     <div class="checkout-left">
 
       <div id="step-info">
@@ -170,7 +172,14 @@
       <div class="section-h" style="font-size:1.2rem; border-bottom:1px solid #222; padding-bottom:10px;"
         data-translate="checkout-summary-header">Đơn Hàng</div>
       <div th:each="item : ${cartItems}" class="cart-item">
-        <div class="ci-img">💻</div>
+        <div class="ci-img">
+          <img th:if="${item.image != null and !item.image.isEmpty()}"
+               th:src="@{${item.image.startsWith('http') or item.image.startsWith('/') ? item.image : '/uploads/products/' + item.image}}"
+               th:alt="${item.name}"
+               style="width:100%; height:100%; object-fit:cover; border-radius:4px;">
+          <span th:unless="${item.image != null and !item.image.isEmpty()}"
+                style="font-size:1.5rem;">💻</span>
+        </div>
         <div class="ci-info">
           <div class="ci-name" th:text="${item.name}">Sản phẩm</div>
           <div style="font-size:.7rem; color:var(--muted);">
@@ -246,6 +255,16 @@
         document.getElementById('sd2').innerText = '2';
         document.getElementById('sd3').className = 'cstep-dot';
       } else if (n === 3) {
+        // Validate required fields before proceeding
+        const fullName = document.querySelector('input[name="fullName"]');
+        const phone = document.querySelector('input[name="phone"]');
+        const address = document.querySelector('input[name="address"]');
+        if (!fullName.value.trim() || !phone.value.trim() || !address.value.trim()) {
+          if (!fullName.value.trim()) fullName.focus();
+          else if (!phone.value.trim()) phone.focus();
+          else if (!address.value.trim()) address.focus();
+          return;
+        }
         document.getElementById('step-info').style.display = 'none';
         document.getElementById('step-payment').style.display = 'block';
         document.getElementById('sd2').className = 'cstep-dot done';
@@ -299,11 +318,13 @@
         }
         let html = '';
         vouchers.forEach(v => {
-          const code = v.voucher.code;
-          html += `<div style="background:var(--dark); border:1px solid rgba(201,168,76,.3); padding:10px; margin-bottom:10px; cursor:pointer;" onclick="selectVoucher('${code}')">
+          const code = v.code;
+          const expDate = v.endDate ? new Date(v.endDate).toLocaleDateString('vi-VN') : t('checkout-voucher-no-expiry', 'Không giới hạn');
+          html += `<div style="background:var(--dark); border:1px solid rgba(201,168,76,.3); padding:10px; margin-bottom:10px; cursor:pointer; border-radius:4px; transition:.2s;" onmouseenter="this.style.borderColor='var(--gold)'" onmouseleave="this.style.borderColor='rgba(201,168,76,.3)'" onclick="selectVoucher('${code}')">
                  <div style="font-weight:bold; color:var(--gold); font-size:1.1rem; letter-spacing:1px;">${code}</div>
-                 <div style="font-size:0.75rem; color:var(--cream);">${v.voucher.description}</div>
-                 <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">${t('checkout-voucher-min-order', 'ĐH Tối thiểu')}: ${new Intl.NumberFormat('vi-VN').format(v.voucher.minOrderAmount)}₫</div>
+                 <div style="font-size:0.75rem; color:var(--cream);">${v.description || ''}</div>
+                 <div style="font-size:0.7rem; color:var(--muted); margin-top:4px;">${t('checkout-voucher-min-order', 'ĐH Tối thiểu')}: ${v.minOrderAmount ? new Intl.NumberFormat('vi-VN').format(v.minOrderAmount) + '₫' : t('checkout-voucher-no-min', 'Không yêu cầu')}</div>
+                 <div style="font-size:0.65rem; color:var(--muted);">${t('profile-vouchers-expiry', 'HSD')}: ${expDate}</div>
               </div>`;
         });
         walletContainer.innerHTML = html;
@@ -367,41 +388,17 @@
       }
     }
 
-    /* CURSOR JS */
-    const cursor = document.getElementById('cursor');
-    const cursorF = document.getElementById('cursor-f');
-    if (cursor && cursorF) {
-      let mx = 0, my = 0, fx = 0, fy = 0;
-      document.addEventListener('mousemove', e => {
-        mx = e.clientX;
-        my = e.clientY;
-        cursor.style.left = mx + 'px';
-        cursor.style.top = my + 'px';
-      });
-      (function loop() {
-        fx += (mx - fx) * 0.12;
-        fy += (my - fy) * 0.12;
-        cursorF.style.left = fx + 'px';
-        cursorF.style.top = fy + 'px';
-        requestAnimationFrame(loop);
-      })();
-      document.querySelectorAll('a, button, input, select, textarea, .pay-card, .cstep').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          cursor.style.transform = 'translate(-50%, -50%) scale(2)';
-          cursorF.style.width = '60px';
-          cursorF.style.height = '60px';
-          cursorF.style.opacity = '0.2';
-        });
-        el.addEventListener('mouseleave', () => {
-          cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-          cursorF.style.width = '36px';
-          cursorF.style.height = '36px';
-          cursorF.style.opacity = '0.4';
-        });
-      });
-    }
+
   </script>
+  <script th:src="@{/js/cursor.js}"></script>
   <script th:src="@{/js/script.js}"></script>
+
+<!-- THEME TOGGLE -->
+<button class="theme-toggle-btn floating-theme-btn" id="theme-toggle" aria-label="Chuyển đổi giao diện Sáng/Tối">
+    <i class="fa-regular fa-moon"></i>
+</button>
+<script th:src="@{/js/theme.js}"></script>
+
 </body>
 
 </html>

@@ -25,7 +25,9 @@ public interface UserVoucherDAO extends JpaRepository<UserVoucher, Integer> {
     // Count how many times a voucher was saved globally (optional logic)
     int countByVoucher(Voucher voucher);
 
-    @org.springframework.data.jpa.repository.Modifying
-    @org.springframework.data.jpa.repository.Query("DELETE FROM UserVoucher uv WHERE uv.user.id = :userId")
-    void deleteByUserId(@org.springframework.data.repository.query.Param("userId") Integer userId);
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByVoucherId(Integer voucherId);
+
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByUserId(Integer userId);
 }

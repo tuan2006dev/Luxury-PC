@@ -92,9 +92,15 @@ function App() {
               return normName.includes(normMock) || normMock.includes(normName);
             });
 
+            let fixedImage = item.image;
+            if (fixedImage && fixedImage.startsWith('/') && import.meta.env.DEV) {
+              fixedImage = `http://localhost:8080${fixedImage}`;
+            }
+
             if (mockMatch) {
               return {
                 ...item,
+                image: fixedImage || mockMatch.image,
                 tdp: mockMatch.tdp,
                 maxGpuLength: mockMatch.maxGpuLength,
                 maxCoolerHeight: mockMatch.maxCoolerHeight,
@@ -106,7 +112,7 @@ function App() {
                 wattage: mockMatch.wattage
               };
             } else {
-              const enrichedItem = { ...item };
+              const enrichedItem = { ...item, image: fixedImage };
               if (category === 'CASE') {
                 enrichedItem.maxGpuLength = 380;
                 enrichedItem.maxCoolerHeight = 165;
@@ -560,7 +566,7 @@ function App() {
   }
 
   return (
-    <div className={`builder-layout ${isSidebarHidden ? 'sidebar-hidden' : ''}`}>
+    <div className={`builder-layout ${isSidebarHidden ? 'sidebar-hidden' : ''} ${!isDarkRoom ? 'light-mode' : ''}`}>
       <div className={`toast-msg ${toast ? 'show' : ''}`}>{toast}</div>
 
       {/* Sidebar */}

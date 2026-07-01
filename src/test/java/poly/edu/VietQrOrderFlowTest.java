@@ -10,11 +10,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.ExtendedModelMap;
-import poly.edu.controller.PaymentController;
+import poly.edu.controller.web.PaymentController;
 import poly.edu.dao.OrderDAO;
+import poly.edu.dao.ProductDAO;
 import poly.edu.dao.UserDAO;
 import poly.edu.entity.CartItem;
 import poly.edu.entity.Order;
+import poly.edu.entity.Product;
 import poly.edu.entity.User;
 import poly.edu.service.AdminService;
 import poly.edu.service.CustomerOrderService;
@@ -34,10 +36,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Transactional
 @AutoConfigureMockMvc
+@SuppressWarnings("null")
 class VietQrOrderFlowTest {
 
     @Autowired
     private OrderDAO orderDAO;
+
+    @Autowired
+    private ProductDAO productDAO;
 
     @Autowired
     private AdminService adminService;
@@ -56,13 +62,19 @@ class VietQrOrderFlowTest {
 
     @Test
     void checkoutCreatesPersistedVietQrOrderAndRedirectsToQrPage() throws Exception {
-        MockHttpSession session = new MockHttpSession();
+        Product mockProduct = new Product();
+        mockProduct.setName("QA VietQR");
+        mockProduct.setPrice(17_200_000D);
+        mockProduct.setStock(10);
+        mockProduct = productDAO.saveAndFlush(mockProduct);
+
+        MockHttpSession mockSession = new MockHttpSession();
         Map<Integer, CartItem> cart = new HashMap<>();
-        cart.put(999_999, new CartItem(999_999, "QA VietQR", 17_200_000D, 1));
-        session.setAttribute("cart", cart);
+        cart.put(mockProduct.getId(), new CartItem(mockProduct.getId(), "QA VietQR", 17_200_000D, 1));
+        mockSession.setAttribute("cart", cart);
 
         mockMvc.perform(post("/checkout/submit")
-                        .session(session)
+                        .session(mockSession)
                         .param("fullName", "QA VietQR")
                         .param("phone", "0900000000")
                         .param("address", "QA Address")
@@ -87,9 +99,9 @@ class VietQrOrderFlowTest {
     void vietQrPageUsesPersistedOrderAmountAndStatus() {
         Order order = saveOrder("VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 17_200_000D);
         ExtendedModelMap model = new ExtendedModelMap();
-        HttpSession session = new MockHttpSession();
+        HttpSession mockSession = new MockHttpSession();
 
-        String view = paymentController.vietQrPayment(1L, order.getOrderCode(), model, session);
+        String view = paymentController.vietQrPayment(1L, order.getOrderCode(), model, mockSession);
 
         assertEquals("payment-vietqr", view);
         assertEquals(17_200_000L, model.get("amount"));
@@ -257,13 +269,19 @@ class VietQrOrderFlowTest {
     }
 
     private void assertNonQrCheckout(String paymentMethod) throws Exception {
-        MockHttpSession session = new MockHttpSession();
+        Product mockProduct = new Product();
+        mockProduct.setName("QA " + paymentMethod);
+        mockProduct.setPrice(1_000_000D);
+        mockProduct.setStock(10);
+        mockProduct = productDAO.saveAndFlush(mockProduct);
+
+        MockHttpSession mockSession = new MockHttpSession();
         Map<Integer, CartItem> cart = new HashMap<>();
-        cart.put(999_999, new CartItem(999_999, "QA " + paymentMethod, 1_000_000D, 1));
-        session.setAttribute("cart", cart);
+        cart.put(mockProduct.getId(), new CartItem(mockProduct.getId(), "QA " + paymentMethod, 1_000_000D, 1));
+        mockSession.setAttribute("cart", cart);
 
         mockMvc.perform(post("/checkout/submit")
-                        .session(session)
+                        .session(mockSession)
                         .param("fullName", "QA " + paymentMethod)
                         .param("phone", "0900000000")
                         .param("address", "QA Address")

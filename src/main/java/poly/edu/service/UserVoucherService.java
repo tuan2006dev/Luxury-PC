@@ -26,7 +26,8 @@ public class UserVoucherService {
     public Map<String, Object> saveVoucherForUser(User user, String voucherCode) {
         Map<String, Object> response = new HashMap<>();
 
-        Optional<Voucher> voucherOpt = voucherDAO.findByCode(voucherCode);
+        String codeUpper = (voucherCode != null) ? voucherCode.trim().toUpperCase() : "";
+        Optional<Voucher> voucherOpt = voucherDAO.findByCode(codeUpper);
         if (voucherOpt.isEmpty()) {
             response.put("success", false);
             response.put("message", "Mã voucher không tồn tại.");
@@ -80,7 +81,8 @@ public class UserVoucherService {
     }
 
     public void markVoucherAsUsed(User user, String voucherCode) {
-        Optional<UserVoucher> uvOpt = userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(user, voucherCode);
+        String codeUpper = (voucherCode != null) ? voucherCode.trim().toUpperCase() : "";
+        Optional<UserVoucher> uvOpt = userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(user, codeUpper);
         if (uvOpt.isPresent()) {
             UserVoucher uv = uvOpt.get();
             uv.setIsUsed(true);

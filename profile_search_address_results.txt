@@ -1,0 +1,24 @@
+Searching for address and voucher untranslated terms in profile.html:
+Term 'Nhập mã voucher để lưu': Found 1 matches
+  Context: data-translate-placeholder="profile-voucher-input-placeholder" placeholder="Nhập mã voucher để lưu..." />
+          <button class="btn-save" onclick="saveVoucherCode()" data-tran
+
+Term 'Người nhận': Found 2 matches
+  Context: var(--muted); margin-bottom: 0.2rem;" data-translate="profile-order-recipient">Người nhận hàng</div>
+                    <div style="color: var(--white); font-weight: 50
+
+  Context: m-input" data-translate-placeholder="profile-address-recipient-ph" placeholder="Người nhận" required />
+              <div class="form-error" id="address-name-error" styl
+
+Term 'Ví dụ: 0901234567': Found 1 matches
+  Context: "form-input" data-translate-placeholder="profile-address-phone-ph" placeholder="Ví dụ: 0901234567"
+                pattern="^0(3|5|7|8|9)[0-9]{8}$" required />
+              <di
+
+Term 'Số nhà, đường phố': Found 1 matches
+  Context: form-input" data-translate-placeholder="profile-address-detail-ph" placeholder="Số nhà, đường phố..." required />
+              <div class="form-error" id="address-detail-error"
+
+Term 'ĐỊA CHỈ MẶC ĐỊNH': Found 0 matches
+Term 'ĐỊA CHỈ KHÁC': Found 0 matches
+Term 'ĐẶT MẶC ĐỊNH': Found 0 matches

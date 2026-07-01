@@ -1,0 +1,126 @@
+Line 2962: .nav-lang { position: relative; margin-left: 10px; }
+--- CONTEXT ---
+  2957: }
+  2958: /* FADE IN SCROLL */
+  2959: .fade-in-up-hidden { opacity: 0; transform: translateY(30px); }
+  2960: .fade-in-up-visible { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+  2961: /* LANG SELECT (combobox) */
+  2962: .nav-lang { position: relative; margin-left: 10px; }
+  2963: .nav-lang-btn { background: var(--dark); border: 1px solid var(--gold); border-radius: 50px; min-width: 40px; height: 32px; padding: 0 12px; color: var(--gold); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+  2964: .nav-lang-btn:hover { background: var(--gold); color: var(--black); }
+  2965: 
+  2966: .lang-dropdown-menu {
+  2967:   position: absolute;
+  2968:   top: 130%;
+  2969:   right: 0;
+  2970:   background: rgba(10, 10, 10, 0.95);
+  2971:   border: 1px solid rgba(201, 168, 76, 0.3);
+
+Line 2963: .nav-lang-btn { background: var(--dark); border: 1px solid var(--gold); border-radius: 50px; min-width: 40px; height: 32px; padding: 0 12px; color: var(--gold); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+--- CONTEXT ---
+  2958: /* FADE IN SCROLL */
+  2959: .fade-in-up-hidden { opacity: 0; transform: translateY(30px); }
+  2960: .fade-in-up-visible { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+  2961: /* LANG SELECT (combobox) */
+  2962: .nav-lang { position: relative; margin-left: 10px; }
+  2963: .nav-lang-btn { background: var(--dark); border: 1px solid var(--gold); border-radius: 50px; min-width: 40px; height: 32px; padding: 0 12px; color: var(--gold); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+  2964: .nav-lang-btn:hover { background: var(--gold); color: var(--black); }
+  2965: 
+  2966: .lang-dropdown-menu {
+  2967:   position: absolute;
+  2968:   top: 130%;
+  2969:   right: 0;
+  2970:   background: rgba(10, 10, 10, 0.95);
+  2971:   border: 1px solid rgba(201, 168, 76, 0.3);
+  2972:   border-radius: 8px;
+
+Line 2964: .nav-lang-btn:hover { background: var(--gold); color: var(--black); }
+--- CONTEXT ---
+  2959: .fade-in-up-hidden { opacity: 0; transform: translateY(30px); }
+  2960: .fade-in-up-visible { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+  2961: /* LANG SELECT (combobox) */
+  2962: .nav-lang { position: relative; margin-left: 10px; }
+  2963: .nav-lang-btn { background: var(--dark); border: 1px solid var(--gold); border-radius: 50px; min-width: 40px; height: 32px; padding: 0 12px; color: var(--gold); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+  2964: .nav-lang-btn:hover { background: var(--gold); color: var(--black); }
+  2965: 
+  2966: .lang-dropdown-menu {
+  2967:   position: absolute;
+  2968:   top: 130%;
+  2969:   right: 0;
+  2970:   background: rgba(10, 10, 10, 0.95);
+  2971:   border: 1px solid rgba(201, 168, 76, 0.3);
+  2972:   border-radius: 8px;
+  2973:   min-width: 140px;
+
+Line 2966: .lang-dropdown-menu {
+--- CONTEXT ---
+  2961: /* LANG SELECT (combobox) */
+  2962: .nav-lang { position: relative; margin-left: 10px; }
+  2963: .nav-lang-btn { background: var(--dark); border: 1px solid var(--gold); border-radius: 50px; min-width: 40px; height: 32px; padding: 0 12px; color: var(--gold); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+  2964: .nav-lang-btn:hover { background: var(--gold); color: var(--black); }
+  2965: 
+  2966: .lang-dropdown-menu {
+  2967:   position: absolute;
+  2968:   top: 130%;
+  2969:   right: 0;
+  2970:   background: rgba(10, 10, 10, 0.95);
+  2971:   border: 1px solid rgba(201, 168, 76, 0.3);
+  2972:   border-radius: 8px;
+  2973:   min-width: 140px;
+  2974:   display: none;
+  2975:   flex-direction: column;
+
+Line 2983: .lang-dropdown-menu.show {
+--- CONTEXT ---
+  2978:   z-index: 1000;
+  2979:   overflow: hidden;
+  2980:   animation: fadeUp 0.2s ease-out forwards;
+  2981: }
+  2982: 
+  2983: .lang-dropdown-menu.show {
+  2984:   display: flex;
+  2985: }
+  2986: 
+  2987: .lang-dropdown-item {
+  2988:   padding: 0.8rem 1.2rem;
+  2989:   color: var(--cream);
+  2990:   font-size: 0.8rem;
+  2991:   font-family: var(--font-sans);
+  2992:   text-decoration: none;
+
+Line 2987: .lang-dropdown-item {
+--- CONTEXT ---
+  2982: 
+  2983: .lang-dropdown-menu.show {
+  2984:   display: flex;
+  2985: }
+  2986: 
+  2987: .lang-dropdown-item {
+  2988:   padding: 0.8rem 1.2rem;
+  2989:   color: var(--cream);
+  2990:   font-size: 0.8rem;
+  2991:   font-family: var(--font-sans);
+  2992:   text-decoration: none;
+  2993:   transition: background 0.2s, color 0.2s;
+  2994:   display: flex;
+  2995:   align-items: center;
+  2996:   gap: 8px;
+
+Line 2999: .lang-dropdown-item:hover {
+--- CONTEXT ---
+  2994:   display: flex;
+  2995:   align-items: center;
+  2996:   gap: 8px;
+  2997: }
+  2998: 
+  2999: .lang-dropdown-item:hover {
+  3000:   background: rgba(201, 168, 76, 0.15);
+  3001:   color: var(--gold);
+  3002: }
+  3003: 
+  3004: @keyframes fadeUp {
+  3005:   from { opacity: 0; transform: translateY(10px); }
+  3006:   to { opacity: 1; transform: translateY(0); }
+  3007: }
+  3008: 
+

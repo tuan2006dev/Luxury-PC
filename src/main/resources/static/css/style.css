@@ -3,22 +3,69 @@
    Design: Rolls-Royce luxury × NguyenCongPC
    Color Palette: Black #0a0a0a, Gold #c9a84c, Cream #f5f0e8
 ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('./cursor.css');
+@import url('./theme.css');
+
+@font-face {
+  font-family: 'NumInter';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7W0Q5nw.woff2') format('woff2');
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002D, U+20AB, U+003A;
+}
+@font-face {
+  font-family: 'NumInter';
+  font-style: normal;
+  font-weight: 500;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa2pL7W0Q5nw.woff2') format('woff2');
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002D, U+20AB, U+003A;
+}
+@font-face {
+  font-family: 'NumInter';
+  font-style: normal;
+  font-weight: 600;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1pL7W0Q5nw.woff2') format('woff2');
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002D, U+20AB, U+003A;
+}
+@font-face {
+  font-family: 'NumInter';
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa0ZL7W0Q5nw.woff2') format('woff2');
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002D, U+20AB, U+003A;
+}
 
 :root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dark: #8a7030;
+  --font-serif: 'NumInter', 'Playfair Display', serif;
+  --font-sans: 'NumInter', 'Outfit', sans-serif;
+  --font-old: 'NumInter', 'Inter', sans-serif;
+  --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Dark theme (default) */
+:root, body {
   --black: #0a0a0a;
   --deep: #111111;
   --dark: #1a1a1a;
   --mid: #2a2a2a;
-  --gold: #c9a84c;
-  --gold-light: #e8c97a;
-  --gold-dark: #8a7030;
   --cream: #f5f0e8;
   --white: #ffffff;
   --text-muted: #888888;
-  --font-serif: 'Inter', sans-serif;
-  --font-sans: 'Inter', sans-serif;
-  --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111111;
+  --bg-tertiary: #1a1a1a;
+  --text-primary: #f5f0e8;
+  --text-secondary: #ffffff;
+  --border-color: rgba(201, 168, 76, 0.15);
+  --card-bg: var(--dark);
+  --card-hover: var(--mid);
 }
+
+/* Light mode has been extracted to light-theme.css */
 
 *,
 *::before,
@@ -30,7 +77,7 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 body {
@@ -131,37 +178,7 @@ img {
   }
 }
 
-/* ============================================
-   CUSTOM CURSOR
-============================================ */
-.cursor {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  background: var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 999999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease, background 0.2s;
-}
 
-.cursor-follower {
-  position: fixed;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 999998;
-  transform: translate(-50%, -50%);
-  transition: transform 0.25s ease, width 0.25s, height 0.25s, opacity 0.25s;
-  opacity: 0.6;
-}
-
-body:hover .cursor {
-  opacity: 1;
-}
 
 /* ============================================
    NAVBAR
@@ -172,9 +189,10 @@ body:hover .cursor {
   left: 0;
   right: 0;
   z-index: 1000;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
+  gap: 2rem;
   padding: 1.4rem 4rem;
   background: transparent;
   transition: background var(--transition), padding var(--transition);
@@ -188,11 +206,19 @@ body:hover .cursor {
   border-bottom: 1px solid rgba(201, 168, 76, 0.15);
 }
 
-.nav-left,
+.nav-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+  line-height: 1;
+}
+
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 2.5rem;
+  justify-content: flex-end;
+  gap: 2rem;
   line-height: 1;
 }
 
@@ -205,6 +231,7 @@ body:hover .cursor {
   color: rgba(245, 240, 232, 0.75);
   transition: color var(--transition);
   position: relative;
+  white-space: nowrap;
 }
 
 .nav-link::after {
@@ -228,6 +255,7 @@ body:hover .cursor {
 
 .nav-logo {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 10px;
 }
@@ -258,21 +286,30 @@ body:hover .cursor {
 }
 
 .nav-cart {
-  background: none;
-  border: 1px solid rgba(201, 168, 76, 0.4);
-  color: var(--cream);
-  padding: 0.45rem 1rem;
+  background: rgba(10, 10, 10, 0.4);
+  border: 1px solid var(--gold);
+  border-radius: 50px;
+  color: var(--gold);
+  padding: 0 14px;
+  height: 32px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  cursor: none;
-  transition: var(--transition);
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
 }
 
 .nav-cart:hover {
-  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--black);
+}
+.nav-cart:hover .cart-icon svg {
+  stroke: var(--black);
+}
+.nav-cart:hover .cart-count {
+  background: var(--black);
   color: var(--gold);
 }
 
@@ -280,16 +317,16 @@ body:hover .cursor {
 .nav-search-btn {
   background: none;
   border: none;
-  color: rgba(245, 240, 232, 0.7);
-  font-size: 1.25rem;
-  cursor: none;
-  padding: 0.3rem 0.5rem;
-  transition: color var(--transition);
-  line-height: 1;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  transition: transform 0.3s ease;
 }
 
 .nav-search-btn:hover {
-  color: var(--gold);
+  transform: scale(1.15);
 }
 
 .cart-count {
@@ -320,6 +357,19 @@ body:hover .cursor {
 .hero-bg {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.hero-video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .hero-img {
@@ -341,11 +391,12 @@ body:hover .cursor {
       rgba(10, 10, 10, 0.85) 0%,
       rgba(10, 10, 10, 0.45) 50%,
       rgba(10, 10, 10, 0.2) 100%);
+  z-index: 2;
 }
 
 .hero-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   max-width: 680px;
   padding: 0 6rem;
   animation: heroIn 1.2s 1s ease both;
@@ -775,8 +826,8 @@ body:hover .cursor {
 }
 
 .products-grid .product-card {
-  flex: 0 0 calc(33.333% - 1rem);
-  min-width: calc(33.333% - 1rem);
+  flex: 0 0 calc(25% - 1.125rem);
+  min-width: calc(25% - 1.125rem);
   scroll-snap-align: start;
 }
 
@@ -881,7 +932,7 @@ body:hover .cursor {
 
 .product-name {
   font-family: var(--font-serif);
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 400;
   color: var(--white);
   margin: 0.5rem 0;
@@ -918,7 +969,7 @@ body:hover .cursor {
 
 .product-price {
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   color: var(--gold);
   font-weight: 400;
 }
@@ -3352,10 +3403,236 @@ input[type=number] {
 }
 
 
+.quick-btn {
+  padding: 0.25rem 0.6rem;
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  color: #aaa;
+  border-radius: 20px;
+  cursor: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.quick-btn:hover {
+  background: rgba(201, 168, 76, 0.12);
+  color: var(--gold);
+  border-color: rgba(201, 168, 76, 0.4);
+}
+
+.chatbot-input-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  align-items: flex-end;
+}
+
+.chatbot-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--cream);
+  font-size: 0.72rem;
+  padding: 0.55rem 0.8rem;
+  resize: none;
+  font-family: var(--font-sans);
+  line-height: 1.4;
+  max-height: 80px;
+  transition: border-color 0.2s;
+}
+.chatbot-input:focus { outline: none; border-color: rgba(201, 168, 76, 0.4); }
+.chatbot-input::placeholder { color: #555; }
+
+.chatbot-send {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  border: none;
+  border-radius: 8px;
+  color: var(--black);
+  font-size: 0.85rem;
+  cursor: none;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.chatbot-send:hover { background: var(--gold-light); transform: scale(1.05); }
+.chatbot-send:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+/* Mode Bar */
+.chatbot-mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.mode-step {
+  color: #444;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: color 0.3s ease;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.mode-step.done { color: #666; }
+.mode-step.active {
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+}
+.mode-arrow { color: #333; font-size: 0.9rem; }
+
+.quick-btn-consultant {
+  background: rgba(201, 168, 76, 0.08) !important;
+  border-color: rgba(201, 168, 76, 0.35) !important;
+  color: var(--gold) !important;
+  font-weight: 700;
+}
+.quick-btn-consultant:hover {
+  background: rgba(201, 168, 76, 0.18) !important;
+}
+
+/* AI Loading Indicator */
+#ai-loading-indicator span {
+  display: inline-block;
+  font-style: italic;
+  color: var(--text-muted);
+  animation: ai-pulse 1.5s infinite;
+}
+
+@keyframes ai-pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+
+
+
+
+/* Autosuggest Search */
+.search-results-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    margin-top: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+.search-results-box.show {
+    display: block;
+}
+.search-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #222;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.2s;
+}
+.search-item:hover {
+    background: #222;
+    color: #fff;
+}
+.search-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 4px;
+    background: #fff;
+}
+.search-item-info {
+    flex: 1;
+}
+.search-item-title {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+}
+.search-item-price {
+    color: #c9a84c;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+
+/* Hide number input spinners globally */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+
+
+/* Safely shift chatbot components left by animating right property */
+
+/* Ensure chatbot components transition right smoothly */
+.chatbot-fab, .chatbot-window, .socket-chat-btn, .socket-chat-window {
+    transition: transform 0.3s, opacity 0.3s !important;
+}
+
+
 /* Ensure cursor is absolutely always on top */
 .cursor, .cursor-f, .cursor-follower {
     z-index: 9999999 !important;
 }
 
+/* OVERRIDE CHO NHỮNG CHỖ CẦN GIỮ FONT CŨ (GIÁ, CON SỐ) */
+.product-price, .product-old-price, .flash-new-price, .flash-old-price,
+.price-main, .price-old, .price-save, .installment, .ci-price, .os-total-num, .item-price, .summary-total, .summary-row,
+.stock-label, input[type=number], .qty-num, .result-num,
+.bp-item-price, .bp-total-num, .total-price, .stat-num, .order-total, .order-h-id, .order-h-date, .wl-price, .cart-item-price, .subtotal, .total, .tstat-val, .tstat-label, .ticket-id, .ticket-date,
+.promo-cd-num, .sv-discount, .promo-deal-new, .promo-deal-old {
+    font-family: var(--font-old) !important;
+}
 
-
+.btn-buy-now {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+.btn-buy-now:hover {
+  background: var(--gold);
+  color: var(--black);
+}

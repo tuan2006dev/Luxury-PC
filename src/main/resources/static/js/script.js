@@ -25,48 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 500); // reduced timeout for better UX
 });
 
-// =========================================
-// CUSTOM CURSOR
-// =========================================
-const cursor = document.getElementById('cursor');
-const cursorFollower = document.getElementById('cursor-follower');
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
-
-if (cursor && cursorFollower) { document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
-  });
-
-  function animateFollower() {
-    followerX += (mouseX - followerX) * 0.12;
-    followerY += (mouseY - followerY) * 0.12;
-    cursorFollower.style.left = followerX + 'px';
-    cursorFollower.style.top = followerY + 'px';
-    requestAnimationFrame(animateFollower);
-  }
-  animateFollower();
-}
-
-// Expand follower on hoverable elements
-if (cursor && cursorFollower) {
-  document.querySelectorAll('a, button, .cat-card, .product-card, .btn-add-cart, .nav-cart').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-      cursorFollower.style.width = '60px';
-      cursorFollower.style.height = '60px';
-      cursorFollower.style.opacity = '0.3';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-      cursorFollower.style.width = '36px';
-      cursorFollower.style.height = '36px';
-      cursorFollower.style.opacity = '0.6';
-    });
-  });
-}
 
 // =========================================
 // NAVBAR SCROLL
@@ -517,24 +475,6 @@ if (copyBtn) copyBtn.addEventListener('click', () => {
   }
 });
 
-// Expand cursor follower on new interactive elements
-if (cursor && cursorFollower) {
-  document.querySelectorAll('.flash-product-card, .voucher-card, .vmodal-copy-btn, .voucher-modal-close').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-      cursorFollower.style.width = '60px';
-      cursorFollower.style.height = '60px';
-      cursorFollower.style.opacity = '0.3';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-      cursorFollower.style.width = '36px';
-      cursorFollower.style.height = '36px';
-      cursorFollower.style.opacity = '0.6';
-    });
-  });
-}
-
 // =========================================
 // PRODUCT CATALOG DATA (for search)
 // =========================================
@@ -723,24 +663,6 @@ if (sortSelect) {
   });
 }
 
-// Expand cursor on new elements
-if (cursor && cursorFollower) {
-  document.querySelectorAll('.nav-search-btn, .search-close, .search-tag, .search-result-item, .filter-chip, .sort-select').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-      cursorFollower.style.width = '60px';
-      cursorFollower.style.height = '60px';
-      cursorFollower.style.opacity = '0.3';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-      cursorFollower.style.width = '36px';
-      cursorFollower.style.height = '36px';
-      cursorFollower.style.opacity = '0.6';
-    });
-  });
-}
-
 // LOGIN
 async function login() {
 
@@ -854,13 +776,16 @@ window.t = function(key, defaultValue) {
 };
 
 window.toggleLangMenu = function(event) {
+    console.log("toggleLangMenu triggered!", event);
     if (event) {
         event.preventDefault();
         event.stopPropagation();
     }
     const menu = document.getElementById('lang-dropdown-menu');
+    console.log("Menu found:", menu);
     if (menu) {
         menu.classList.toggle('show');
+        console.log("Menu classes after toggle:", menu.className);
     }
 };
 
@@ -878,6 +803,7 @@ window.selectLanguage = function(lang, event) {
 
 window.setLanguage = function(lang) {
     localStorage.setItem('lang', lang);
+    window.translations = translations;
     
     // Toggle active state in language selector (if exists)
     document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -984,9 +910,36 @@ document.addEventListener('click', (event) => {
   }
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+function initApp() {
     window.loadTranslations();
     window.startTranslationObserver();
+
+    // Robust direct event binding for language selector
+    const toggleBtn = document.getElementById("btn-lang-toggle");
+    if (toggleBtn) {
+        toggleBtn.removeAttribute("onclick");
+        toggleBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.toggleLangMenu(e);
+        });
+    }
+
+    // Robust direct event binding for language selection items
+    const dropdownMenu = document.getElementById("lang-dropdown-menu");
+    if (dropdownMenu) {
+        dropdownMenu.querySelectorAll(".lang-dropdown-item").forEach(item => {
+            // Read language from existing onclick attribute if present before removing it
+            const onclickAttr = item.getAttribute("onclick") || "";
+            const lang = onclickAttr.includes("'en'") || onclickAttr.includes('"en"') ? "en" : "vi";
+            item.removeAttribute("onclick");
+            item.addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.selectLanguage(lang, e);
+            });
+        });
+    }
 
     // Auto-suggest search
     const searchInput = document.getElementById("search-input");
@@ -1026,7 +979,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 });
                                 resultsBox.classList.add("show");
                             } else {
-                                resultsBox.innerHTML = `<div style="padding: 10px; color: #888; text-align: center;">Kh�ng t�m th?y s?n ph?m</div>`;
+                                resultsBox.innerHTML = `<div style="padding: 10px; color: #888; text-align: center;">Không tìm thấy sản phẩm</div>`;
                                 resultsBox.classList.add("show");
                             }
                         })
@@ -1045,7 +998,13 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     }
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initApp);
+} else {
+    initApp();
+}
 
 
 

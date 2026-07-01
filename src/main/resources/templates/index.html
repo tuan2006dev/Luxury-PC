@@ -5,39 +5,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Luxury PC | Công Nghệ Cao Cấp & Xa Xỉ</title>
+    <title data-translate="index-page-title">Luxury PC | Công Nghệ Cao Cấp & Xa Xỉ</title>
     <meta name="description" content="Luxury PC — Nơi công nghệ gặp gỡ sự xa xỉ. Linh kiện máy tính cao cấp nhất, được chọn lọc kỹ lưỡng dành cho người dùng tinh tế." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <style>
-      /* Style override to integrate AI Chat and Live Chat panels */
-      #socketChatBtn {
-        display: none !important; /* Hide default live chat button on index */
-      }
-      
-      #socketChatWindow {
-        bottom: 6rem !important;
-        right: 2rem !important;
-        width: 360px !important;
-        height: 520px !important;
-        z-index: 10000 !important;
-      }
-      
-      #ai-chat-window {
-        height: 520px !important; /* Lock height to match socket chat window */
-      }
-      
-      #chatbot-fab-trigger, #ai-chat-window, #ai-chat-window * {
-        cursor: none !important; /* Enable custom cursor support */
-      }
-      
-      .chatbot-mode-bar .mode-step {
-        cursor: none !important;
-      }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
+    <link rel="stylesheet" th:href="@{/css/index.css}" />
 </head>
 
 <body>
@@ -51,16 +27,16 @@
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-        <!-- <div class="hero-bg">
-            <img th:src="@{/hero_banner.png}" alt="Luxury PC" class="hero-img" id="hero-img" />
+        <div class="hero-bg">
+            <img class="hero-video-bg" th:src="@{/hero_bg.png}" alt="Hero Background">
             <div class="hero-overlay"></div>
-        </div> -->
+        </div>
         <div class="hero-content">
             <h1 class="hero-title"><span data-translate="hero-title-1">Được Tạo Ra</span><br /><em data-translate="hero-title-2">Để Thống Trị</em></h1>
             <p class="hero-subtitle" data-translate="hero-subtitle">Linh kiện máy tính được tuyển chọn dành cho những người không chấp nhận điều tầm thường.</p>
             <div class="hero-cta">
                 <a href="#products" class="btn-primary" id="hero-explore"><span data-translate="hero-explore">Khám Phá Ngay</span></a>
-                <a href="/build-pc/index.html" class="btn-secondary" id="hero-build"><span data-translate="hero-build">Build PC Của Bạn</span></a>
+                <a href="/build-pc-basic" class="btn-secondary" id="hero-build"><span data-translate="hero-build">Build PC Basic</span></a>
             </div>
         </div>
     </section>
@@ -100,7 +76,7 @@
                 <div th:if="${flashSaleItems != null}" th:each="item : ${flashSaleItems}" class="flash-product-card" th:id="'fp-' + ${item.product.id}">
                     <div class="flash-discount-badge" th:text="'-' + ${item.discountPercent} + '%'">-25%</div>
                     <div class="flash-prod-img">
-                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" />
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; let p=this.closest('.flash-product-card'); if(p) p.parentElement.appendChild(p);" />
                     </div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name" th:text="${item.product.name}">Core i7-14700K</div>
@@ -120,7 +96,7 @@
                 <div th:if="${flashSaleItems == null and flashSaleProducts != null}" th:each="p : ${flashSaleProducts}" class="flash-product-card" th:id="'fp-' + ${p.id}">
                     <div th:if="${p.stock < 10}" class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
                     <div class="flash-prod-img">
-                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" />
+                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; let p=this.closest('.flash-product-card'); if(p) p.parentElement.appendChild(p);" />
                     </div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name" th:text="${p.name}">Core i7-14700K</div>
@@ -236,14 +212,14 @@
 
         <div class="products-grid vertical-slider" id="products-grid">
             <!-- Featured products from database -->
-            <article th:each="p : ${featuredProducts}" class="product-card" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
+            <article th:each="p : ${featuredProducts}" class="product-card" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category != null ? p.category.name.toLowerCase() : 'other'}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
                 <div class="product-img-wrap">
-                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" />
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; let p=this.closest('.product-card'); if(p) p.parentElement.appendChild(p);" />
                     <div th:if="${p.price > 30000000}" class="product-badge gold" data-translate="badge-featured-gold">Đỉnh Cao</div>
                     <button class="product-wishlist" aria-label="Yêu thích" th:onclick="|addToWishlist(this, ${p.id})|">♡</button>
                 </div>
                 <div class="product-info">
-                    <span class="product-cat" th:text="${p.category.name} + ' · LUXURY'">CPU · Intel</span>
+                    <span class="product-cat" th:text="${p.category != null ? p.category.name : 'Khác'} + ' · LUXURY'">CPU · Intel</span>
                     <h3 class="product-name" th:text="${p.name}">Core i9-14900K</h3>
                     <p class="product-spec" th:text="${p.description}">Description</p>
                     <div class="product-price-row">
@@ -271,8 +247,8 @@
                  th:data-limit="${v.usageLimit != null ? (v.usageLimit - v.usedCount) + ' lượt còn lại' : 'Không giới hạn'}">
                 <div class="voucher-left">
                     <div class="voucher-pct">
-                        <span th:if="${v.discountType.name() == 'PERCENTAGE'}" th:text="${v.discountValue.intValue()} + '%'">10%</span>
-                        <span th:if="${v.discountType.name() == 'FIXED_AMOUNT'}" th:text="${#numbers.formatDecimal(v.discountValue / 1000, 0, 'COMMA', 0, 'POINT')} + 'K'">500K</span>
+                        <span th:if="${v.discountType != null and v.discountType.name() == 'PERCENTAGE'}" th:text="${v.discountValue != null ? v.discountValue.intValue() + '%' : '0%'}">10%</span>
+                        <span th:if="${v.discountType != null and v.discountType.name() == 'FIXED_AMOUNT'}" th:text="${v.discountValue != null ? #numbers.formatDecimal(v.discountValue / 1000, 0, 'COMMA', 0, 'POINT') + 'K' : '0K'}">500K</span>
                     </div>
                     <div class="voucher-type" th:text="${v.category != null ? v.category.name : 'Giảm Giá'}" th:data-translate="${v.category != null ? v.category.name : 'Giảm Giá'}">Giảm Giá</div>
                 </div>
@@ -324,7 +300,7 @@
                     </div>
                 </div>
             </div>
-            <a href="/build-pc/index.html" class="btn-primary" id="btn-build-pc"><span data-translate="build-section-cta">Bắt Đầu Build Ngay</span></a>
+            <a href="/build-pc-basic" class="btn-primary" id="btn-build-pc"><span data-translate="build-section-cta">Bắt Đầu Build Ngay</span></a>
         </div>
     </section>
 
@@ -362,10 +338,10 @@
                 <div class="testi-stars" th:text="${'★'.repeat(rev.stars)}">★★★★★</div>
                 <p class="testi-text" th:text="|&quot;${rev.content}&quot;|">"Content"</p>
                 <div class="testi-author">
-                    <div class="testi-avatar" th:text="${#strings.substring(rev.user.fullName,0,1)}">U</div>
+                    <div class="testi-avatar" th:text="${rev.user != null ? #strings.substring(rev.user.fullName != null ? rev.user.fullName : 'U', 0, 1) : 'U'}">U</div>
                     <div>
-                        <strong th:text="${rev.user.fullName}">User Name</strong>
-                        <span th:text="${rev.user.email}">user@email.com</span>
+                        <strong th:text="${rev.user != null ? (rev.user.fullName != null ? rev.user.fullName : rev.user.username) : 'Ẩn danh'}">User Name</strong>
+                        <span th:text="${rev.user != null ? rev.user.email : ''}">user@email.com</span>
                     </div>
                 </div>
             </div>
@@ -391,7 +367,7 @@
     <!-- NEWSLETTER -->
     <section class="newsletter">
         <div class="newsletter-inner">
-            <h2 class="newsletter-title" data-translate="newsletter-section-title">Nhận Ưu Đãi <em>Độc Quyền</em></h2>
+            <h2 class="newsletter-title"><span data-translate="newsletter-title-part1">Nhận Ưu Đãi</span> <em><span data-translate="newsletter-title-part2">Độc Quyền</span></em></h2>
             <p class="newsletter-sub" data-translate="newsletter-section-sub">Đăng ký để nhận thông báo giảm giá, sản phẩm mới nhất và lời khuyên build PC từ chuyên gia.</p>
             <form class="newsletter-form" id="newsletter-form">
                 <input type="email" id="newsletter-email" data-translate-placeholder="newsletter-email-placeholder" placeholder="Email của bạn..." required aria-label="Email đăng ký" />
@@ -409,7 +385,8 @@
         // Flash Sale countdown - endTime from database
         window.flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
     </script>
-    <script th:src="@{/js/script.js(v=4)}"></script>
+    <script th:src="@{/js/cursor.js}"></script>
+    <script th:src="@{/js/script.js(v=10)}"></script>
 
 </body>
 

@@ -62,42 +62,7 @@
             overlay.classList.add('show');
             yesBtn.focus(); // Focus vào nút xác nhận mặc định
 
-            // Hỗ trợ Custom Cursor toàn cục
-            const cursor = document.getElementById('cursor') || document.querySelector('.cursor');
-            const cursorF = document.getElementById('cursor-follower') || document.getElementById('cursor-f') || document.querySelector('.cursor-follower') || document.querySelector('.cursor-f');
-
-            function onMouseEnter() {
-                if (cursor) cursor.style.transform = 'translate(-50%, -50%) scale(2)';
-                if (cursorF) {
-                    cursorF.style.width = '60px';
-                    cursorF.style.height = '60px';
-                    cursorF.style.backgroundColor = 'rgba(201, 168, 76, 0.1)';
-                }
-            }
-
-            function onMouseLeave() {
-                if (cursor) cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-                if (cursorF) {
-                    cursorF.style.width = '36px';
-                    cursorF.style.height = '36px';
-                    cursorF.style.backgroundColor = 'transparent';
-                }
-            }
-
-            function bindCursorHover(el) {
-                if (!cursor && !cursorF) return;
-                el.addEventListener('mouseenter', onMouseEnter);
-                el.addEventListener('mouseleave', onMouseLeave);
-            }
-
-            function unbindCursorHover(el) {
-                if (!cursor && !cursorF) return;
-                el.removeEventListener('mouseenter', onMouseEnter);
-                el.removeEventListener('mouseleave', onMouseLeave);
-            }
-
-            bindCursorHover(yesBtn);
-            bindCursorHover(noBtn);
+            // Cursor hover is handled globally by cursor.js for buttons
 
             // Hàm đóng và dọn dẹp
             function closeConfirm(result) {
@@ -108,9 +73,6 @@
                 overlay.removeEventListener('click', onOverlayClick);
                 
                 // Trả cursor về trạng thái bình thường và gỡ bỏ event hover
-                onMouseLeave();
-                unbindCursorHover(yesBtn);
-                unbindCursorHover(noBtn);
 
                 // Ẩn hẳn display: none sau khi kết thúc transition (250ms)
                 setTimeout(() => {

@@ -1,68 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Sản Phẩm — Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root{ --black:#0a0a0a; --deep:#111; --dark:#1a1a1a; --mid:#2a2a2a; --gold:#c9a84c; --gold-l:#e8c97a; --cream:#f5f0e8; --white:#fff; --muted:#888; --red:#ef4444; --green:#22c55e; --blue:#3b82f6; --sans:'Montserrat',sans-serif; }
-        *{ margin:0; padding:0; box-sizing:border-box; }
-        body{ background:var(--black); color:var(--cream); font-family:var(--sans); display:flex; min-height: 100vh;}
-        
-        .sidebar { width: 280px; background: var(--deep); border-right: 1px solid rgba(201,168,76,0.1); padding: 2rem; position: fixed; height: 100vh; z-index: 100;}
-        .logo { font-size: 1.5rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 3rem; display: block; text-decoration: none; font-weight: 700; text-align: center;}
-        .nav-link { display: flex; align-items: center; color: var(--muted); padding: 1rem; text-decoration: none; transition: 0.3s; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .nav-link i { width: 25px; font-size: 1.1rem; }
-        .nav-link:hover, .nav-link.active { background: rgba(201,168,76,0.05); color: var(--gold); }
-
-        .main-content{ margin-left:280px; flex:1; padding:3rem; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1.5rem;}
-        .title h1 { font-size: 1.8rem; font-weight: 400; color: #fff;}
-        .user-info { display: flex; align-items: center; gap: 10px; background: var(--dark); padding: 8px 20px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.2);}
-        
-        .card{ background:var(--dark); padding:2rem; border:1px solid rgba(201,168,76,0.1); border-radius:8px; margin-bottom:2rem; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        
-        .btn { padding: 0.6rem 1.2rem; border-radius: 4px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block;}
-        .btn-gold { background: var(--gold); color: var(--black); }
-        .btn-gold:hover { background: var(--gold-l); }
-        .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold);}
-        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid var(--red);}
-        .btn-danger:hover { background: var(--red); color: #fff;}
-
-        /* Table */
-        table{ width:100%; border-collapse:collapse; }
-        th{ text-align:left; font-size:0.75rem; color:var(--muted); padding:1rem; background:rgba(0,0,0,0.2); text-transform: uppercase;}
-        td{ padding:1rem; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.85rem; vertical-align: middle;}
-        
-        .product-img { width: 50px; height: 50px; background: var(--deep); border: 1px solid rgba(201,168,76,0.2); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: var(--gold); vertical-align: middle; margin-right: 15px;}
-        .product-info { display: inline-block; vertical-align: middle;}
-        .product-name { font-weight: 600; color: #fff; margin-bottom: 5px;}
-        .product-cat { font-size: 0.7rem; color: var(--muted); background: var(--mid); padding: 2px 5px; border-radius: 3px;}
-        
-        .action-btns { display: flex; gap: 8px;}
-        .icon-btn { width: 30px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid; cursor: pointer; background: transparent;}
-        .icon-btn-edit { color: var(--blue); border-color: var(--blue); }
-        .icon-btn-edit:hover { background: var(--blue); color: #fff;}
-        .icon-btn-del { color: var(--red); border-color: var(--red); }
-        .icon-btn-del:hover { background: var(--red); color: #fff;}
-
-        /* Form (Hidden by default, can be toggled by JS) */
-        .form-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1.5rem; }
-        .input-group{ display:flex; flex-direction:column; font-size:0.85rem; }
-        .input-group.full { grid-column: span 2; }
-        .input-group label{ margin-bottom:0.5rem; color:var(--muted); }
-        .input-group input, .input-group select, .input-group textarea{ background:var(--mid); border:1px solid rgba(201,168,76,0.2); color:var(--white); padding:0.8rem; border-radius:4px; outline:none; font-family: var(--sans);}
-        .input-group select option { background: var(--mid); color: var(--white); }
-        .input-group input:focus, .input-group textarea:focus, .input-group select:focus{ border-color:var(--gold); }
-        
-        .add-form-container { display: none; }
-        .add-form-container.active { display: block; animation: slideDown 0.3s ease;}
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px);} to { opacity: 1; transform: translateY(0);}}
-    </style>
+    <link rel="stylesheet" th:href="@{/css/admin/products.css}" />
 </head>
 <body>
 
@@ -81,7 +26,7 @@
 
     <!-- Nút mở form tạo -->
     <div style="margin-bottom: 1.5rem;">
-        <button class="btn btn-gold" onclick="toggleForm()"><i class="fa-solid fa-plus"></i> <span data-translate="admin-products-btn-add">Thêm Sản Phẩm Mới</span></button>
+        <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()"><i class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-products-btn-add">Thêm Sản Phẩm Mới</span></button>
     </div>
 
     <!-- Form Thêm / Sửa -->
@@ -90,17 +35,17 @@
             <h2 th:data-translate="${product.id == null ? 'admin-products-title-add' : 'admin-products-title-edit'}" th:text="${product.id == null ? 'Thêm Sản Phẩm Mới' : 'Cập Nhật Sản Phẩm'}">Thông Tin Sản Phẩm</h2>
             <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form th:action="@{/admin/products/save}" method="post" th:object="${product}" enctype="multipart/form-data">
+        <form novalidate id="productFormElement" autocomplete="off" th:action="@{/admin/products/save}" method="post" th:object="${product}" enctype="multipart/form-data">
 
-            <input type="hidden" th:field="*{id}">
+            <input autocomplete="off" type="hidden" th:field="*{id}">
             <div class="form-grid">
                 <div class="input-group full">
                     <label><span data-translate="admin-products-label-name">Tên Sản Phẩm</span> *</label>
-                    <input type="text" th:field="*{name}" required placeholder="VD: Card Màn Hình ASUS ROG Strix GeForce RTX 4090" data-translate-placeholder="admin-products-placeholder-name">
+                    <input autocomplete="off" type="text" th:field="*{name}" required placeholder="VD: Card Màn Hình ASUS ROG Strix GeForce RTX 4090" data-translate-placeholder="admin-products-placeholder-name">
                 </div>
                 <div class="input-group">
                     <label><span data-translate="admin-products-label-price">Giá Bán (VNĐ)</span> *</label>
-                    <input type="number" th:field="*{price}" required placeholder="VD: 54990000" data-translate-placeholder="admin-products-placeholder-price">
+                    <input autocomplete="off" type="number" th:field="*{price}" required min="0" placeholder="VD: 54990000" data-translate-placeholder="admin-products-placeholder-price">
                 </div>
                 <div class="input-group">
                     <label><span data-translate="admin-products-label-category">Danh Mục</span> *</label>
@@ -115,16 +60,29 @@
                 </div>
                 <div class="input-group">
                     <label data-translate="admin-products-label-image">Tải Ảnh Lên</label>
-                    <input type="file" name="imageFile" accept="image/*">
+                    <div class="file-upload-wrapper">
+                        <label class="file-upload-label">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span class="file-name" data-translate="admin-products-file-choose">Chọn ảnh tải lên...</span>
+                            <input autocomplete="off" type="file" name="imageFile" accept="image/*" class="file-input-hidden" onchange="
+                                const fileName = this.files.length > 0 ? this.files[0].name : 'Chọn ảnh tải lên...';
+                                const label = this.closest('.file-upload-label');
+                                const textSpan = label.querySelector('.file-name');
+                                if (textSpan) textSpan.innerText = fileName;
+                                if (this.files.length > 0) label.classList.add('has-file');
+                                else label.classList.remove('has-file');
+                            ">
+                        </label>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label data-translate="admin-products-label-stock">Số lượng kho</label>
-                    <input type="number" th:field="*{stock}">
+                    <input autocomplete="off" type="number" th:field="*{stock}" min="0">
                 </div>
                 <div class="input-group full" th:if="${product.image != null}">
                     <label data-translate="admin-products-label-current-image">Ảnh hiện tại:</label>
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <img th:src="@{|/images/products/${product.image}|}" th:alt="${product.name}" style="width:100px; border:1px solid var(--gold); border-radius:4px;">
+                        <img th:src="@{${product.image != null ? (product.image.startsWith('http') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}}" th:alt="${product.name}" onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';" style="width:100px; border:1px solid var(--gold); border-radius:4px;">
                         <span th:text="${product.image}" style="font-size:0.8rem; color:var(--muted);"></span>
                     </div>
                 </div>
@@ -152,8 +110,8 @@
             <tr th:each="p : ${products}">
                 <td>
                     <div class="product-img">
-                        <img th:if="${p.image != null}" th:src="@{|/images/products/${p.image}|}" th:alt="${p.name}" style="width:100%; height:100%; object-fit:cover;">
-                        <i th:if="${p.image == null}" class="fa-solid fa-microchip"></i>
+                        <img th:if="${p.image != null}" th:src="@{${p.image.startsWith('http') ? p.image : '/images/products/' + p.image}}" th:alt="${p.name}" onerror="this.onerror=null; this.src='https://placehold.co/50x50/111/c9a84c?text=Error';" style="width:100%; height:100%; object-fit:cover; border-radius:inherit; border:none;">
+                        <span th:if="${p.image == null}" style="font-size:0.6rem; text-align:center;">No<br>Image</span>
                     </div>
                     <div class="product-info">
                         <div class="product-name" th:text="${p.name}">Intel Core i9-14900K</div>
@@ -165,10 +123,19 @@
                 <td th:text="${p.stock}">0</td>
                 <td>
                     <div class="action-btns">
-                        <a th:href="@{|/admin/products/edit/${p.id}|}" class="icon-btn icon-btn-edit" title="Sửa"><i class="fa-solid fa-pen"></i></a>
-                        <form th:action="@{|/admin/products/delete/${p.id}|}" method="post" style="display:inline;">
+                        <button type="button" class="icon-btn icon-btn-edit" title="Sửa"
+                                th:data-id="${p.id}"
+                                th:data-name="${p.name}"
+                                th:data-price="${p.price != null ? #numbers.formatDecimal(p.price, 0, 'NONE', 0, 'POINT') : 0}"
+                                th:data-cat="${p.category != null ? p.category.id : ''}"
+                                th:data-desc="${p.description}"
+                                th:data-stock="${p.stock}"
+                                onclick="editProduct(this)">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <form novalidate autocomplete="off" th:action="@{|/admin/products/delete/${p.id}|}" method="post" style="display:inline;">
                 
-                            <button type="submit" class="icon-btn icon-btn-del" title="Xóa" onclick="return confirm(window.t('admin-products-confirm-delete', 'Xóa sản phẩm này?'))" style="border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                            <button type="button" class="icon-btn icon-btn-del" title="Xóa" onclick="window.confirmDelete(this.form, window.t('admin-products-confirm-delete', 'Xóa sản phẩm này?'))" style="border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
                         </form>
                     </div>
                 </td>
@@ -176,8 +143,7 @@
             </tbody>
         </table>
     </div>
+    <script th:src="@{/js/admin/products.js}"></script>
 </div>
-
-<script th:src="@{/js/admin/products.js}"></script>
 </body>
 </html>

@@ -34,13 +34,13 @@ public class ProfileService {
     private final OrderDAO orderDAO;
 
     public ProfileService(UserRepository userRepository,
-                          ShippingAddressRepository shippingAddressRepository,
-                          UserRoleDAO userRoleDAO,
-                          UserSessionDAO userSessionDAO,
-                          UserVoucherDAO userVoucherDAO,
-                          WishlistItemRepository wishlistItemRepository,
-                          ReviewDAO reviewDAO,
-                          OrderDAO orderDAO) {
+            ShippingAddressRepository shippingAddressRepository,
+            UserRoleDAO userRoleDAO,
+            UserSessionDAO userSessionDAO,
+            UserVoucherDAO userVoucherDAO,
+            WishlistItemRepository wishlistItemRepository,
+            ReviewDAO reviewDAO,
+            OrderDAO orderDAO) {
         this.userRepository = userRepository;
         this.shippingAddressRepository = shippingAddressRepository;
         this.userRoleDAO = userRoleDAO;
@@ -80,7 +80,8 @@ public class ProfileService {
     public Map<String, Boolean> getCurrentUserNotificationSettings(Authentication authentication) {
         User user = getCurrentUser(authentication);
         Map<String, Boolean> m = new HashMap<>();
-        m.put("orderUpdates", user.getNotifyOrderUpdates() == null || Boolean.TRUE.equals(user.getNotifyOrderUpdates()));
+        m.put("orderUpdates",
+                user.getNotifyOrderUpdates() == null || Boolean.TRUE.equals(user.getNotifyOrderUpdates()));
         m.put("flashSale", user.getNotifyFlashSale() == null || Boolean.TRUE.equals(user.getNotifyFlashSale()));
         m.put("newProducts", Boolean.TRUE.equals(user.getNotifyNewProducts()));
         m.put("weeklyNewsletter",
@@ -107,7 +108,8 @@ public class ProfileService {
     @Transactional
     public void setDefaultAddress(Authentication authentication, Integer id) {
         User user = getCurrentUser(authentication);
-        List<ShippingAddress> all = shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+        List<ShippingAddress> all = shippingAddressRepository
+                .findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
         boolean found = false;
         for (ShippingAddress a : all) {
             boolean isTarget = a.getId().equals(id);
@@ -133,7 +135,8 @@ public class ProfileService {
         boolean wasDefault = a.isDefault();
         shippingAddressRepository.delete(a);
         if (wasDefault) {
-            List<ShippingAddress> rest = shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+            List<ShippingAddress> rest = shippingAddressRepository
+                    .findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
             if (!rest.isEmpty()) {
                 ShippingAddress first = rest.get(0);
                 first.setDefault(true);

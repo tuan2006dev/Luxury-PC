@@ -112,6 +112,7 @@ public class FlashSaleItem {
      * Còn hàng sale không
      */
     public boolean isAvailable() {
+        if (saleQuantity == null || soldCount == null) return false;
         return soldCount < saleQuantity;
     }
 }

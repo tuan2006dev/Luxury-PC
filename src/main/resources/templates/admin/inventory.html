@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Kho Hàng — Luxury PC</title>
@@ -34,19 +35,21 @@
                         </td>
                         <td th:text="${item.product.category.name}">Category</td>
                         <td>
-                            <span th:text="${item.quantity}">0</span>
-                            <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:5px;" data-translate="admin-inventory-badge-low">Sắp hết</span>
+                            <div style="display: flex; align-items: center; white-space: nowrap;">
+                                <span th:text="${item.quantity}" style="min-width: 20px;">0</span>
+                                <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:8px;" data-translate="admin-inventory-badge-low">Sắp hết</span>
+                            </div>
                         </td>
                         <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
                         <td>
-                            <form action="/admin/inventory/adjust" method="post" style="display:flex; align-items:center;">
-                                <input type="hidden" name="productId" th:value="${item.product.id}">
-                                <input type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
+                            <form autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post" style="display:flex; align-items:center;">
+                                <input autocomplete="off" type="hidden" name="productId" th:value="${item.product.id}">
+                                <input autocomplete="off" type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
                                 <select name="type" class="type-select">
                                     <option value="IMPORT" data-translate="admin-inventory-option-import">Nhập Kho</option>
                                     <option value="EXPORT" data-translate="admin-inventory-option-export">Xuất Kho</option>
                                 </select>
-                                <input type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú" data-translate-placeholder="admin-inventory-placeholder-note">
+                                <input autocomplete="off" type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú" data-translate-placeholder="admin-inventory-placeholder-note">
                                 <button type="submit" class="adj-btn" data-translate="admin-inventory-btn-submit">Xác Nhận</button>
                             </form>
                         </td>

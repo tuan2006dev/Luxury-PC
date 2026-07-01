@@ -1,20 +1,6 @@
-:root {
-            --black: #0a0a0a;
-            --deep: #111;
-            --dark: #1a1a1a;
-            --gold: #c9a84c;
-            --gold-l: #e8c97a;
-            --cream: #f5f0e8;
-            --white: #fff;
-            --muted: #888;
-            --red: #ef4444;
-            --green: #22c55e;
-            --blue: #3b82f6;
-            --mid: #2a2a2a;
-            --sans: 'Montserrat', sans-serif;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background: var(--black); color: var(--cream); font-family: var(--sans); display: flex; }
+
+
+
         .sidebar { width: 280px; background: var(--deep); border-right: 1px solid rgba(201,168,76,0.1); padding: 2rem; position: fixed; height: 100vh; }
         .logo { font-size: 1.5rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 3rem; display: block; text-decoration: none; font-weight: 700; text-align: center;}
         .nav-link { display: flex; align-items: center; color: var(--muted); padding: 1rem; text-decoration: none; border-radius: 4px; margin-bottom: 0.5rem; font-size: 0.9rem; transition: 0.3s; }
@@ -24,9 +10,9 @@
         .table-card { background: var(--dark); padding: 2rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; }
         .table-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 1.2rem; background: rgba(0,0,0,0.2); }
-        td { padding: 1.2rem; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .badge { padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+        th { text-align: left; color: var(--muted); font-size: 0.7rem; text-transform: uppercase; padding: 0.8rem 0.5rem; background: rgba(0,0,0,0.2); white-space: nowrap; letter-spacing: 0.05em; }
+        td { padding: 0.8rem 0.5rem; font-size: 0.82rem; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+        .badge { padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
         .badge-pending { background: rgba(201,168,76,0.1); color: var(--gold); }
         .badge-completed { background: rgba(34,197,94,0.1); color: var(--green); }
         .badge-shipping { background: rgba(59,130,246,0.1); color: var(--blue); }
@@ -37,19 +23,22 @@
 
         /* Added for VietQR, Refund Actions and table responsive */
         .table-card { overflow-x: auto; }
-        td { vertical-align: top; }
         .badge-cho_xac_nhan_thanh_toan { background: rgba(201,168,76,0.1); color: var(--gold); }
         .badge-da_thanh_toan { background: rgba(34,197,94,0.1); color: var(--green); }
         .badge-cho_hoan_tien { background: rgba(201,168,76,0.1); color: var(--gold); }
         .badge-da_hoan_tien { background: rgba(59,130,246,0.1); color: var(--blue); }
         .badge-thu_hoi, .badge-da_huy { background: rgba(239,68,68,0.1); color: var(--red); }
         .badge-yeu_cau_hoan_tien { background: rgba(201,168,76,0.15); color: var(--gold-l); }
-        .action-menu { min-width:230px; }
-        .action-menu summary { cursor:pointer; color:var(--gold); font-weight:700; }
-        .action-panel { display:grid; gap:.65rem; margin-top:.7rem; padding:.8rem; background:var(--deep); border:1px solid rgba(201,168,76,.15); }
+        .action-menu { position: relative; }
+        .action-menu summary { cursor:pointer; color:var(--gold); font-weight:700; white-space: nowrap; list-style: none; outline: none; }
+        .action-menu summary::-webkit-details-marker { display: none; }
+        .action-menu summary::before { content: '►'; margin-right: 5px; font-size: 0.8em; display: inline-block; transition: 0.2s; }
+        .action-menu[open] summary::before { transform: rotate(90deg); }
+        .action-menu[open] { z-index: 99; }
+        .action-panel { display:grid; gap:.65rem; margin-top:.7rem; padding:.8rem; background:var(--deep); border:1px solid rgba(201,168,76,.15); position: absolute; right: 0; z-index: 100; min-width: 260px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-radius: 6px; }
         .action-form { display:grid; gap:.4rem; padding-bottom:.65rem; border-bottom:1px solid rgba(255,255,255,.06); }
         .action-form:last-child { border-bottom:0; padding-bottom:0; }
         .action-form input, .action-form select { width:100%; min-width:0; background:var(--mid); color:var(--white); border:1px solid rgba(201,168,76,.2); padding:.45rem; border-radius:4px; }
         .action-form .update-btn { width:100%; margin-left:0; }
-        .admin-note { max-width:220px; color:var(--muted); font-size:.75rem; line-height:1.5; overflow-wrap:anywhere; }
+        .admin-note { min-width: 180px; max-width: 280px; color:var(--muted); font-size:.75rem; line-height:1.5; overflow-wrap:anywhere; }
         .note-label { color:var(--gold); font-size:.65rem; text-transform:uppercase; display:block; margin-bottom:.2rem; }

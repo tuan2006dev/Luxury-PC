@@ -1,30 +1,6 @@
 <div class="sidebar" th:fragment="sidebar">
     <link rel="stylesheet" th:href="@{/css/admin/admin-luxury.css}">
-    <style>
-        .sidebar { width: 280px; background: rgba(17, 17, 17, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-right: 1px solid rgba(201,168,76,0.15); padding: 2rem; position: fixed; height: 100vh; z-index: 100; overflow-y: auto; box-shadow: 4px 0 24px rgba(0,0,0,0.4); }
-        .sidebar::-webkit-scrollbar { width: 4px; }
-        .sidebar::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 4px; }
-        .logo { font-size: 1.8rem; color: var(--gold, #c9a84c); letter-spacing: 0.15em; margin-bottom: 2.5rem; display: block; text-decoration: none; font-weight: 700; text-align: center; background: linear-gradient(135deg, var(--gold), #e8c97a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
-        .nav-link { display: flex; align-items: center; color: var(--muted, #888); padding: 1rem 1.2rem; text-decoration: none; transition: all 0.3s ease; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; border: 1px solid transparent;}
-        .nav-link i { width: 30px; font-size: 1.2rem; }
-        .nav-link:hover { background: rgba(201,168,76,0.05); color: var(--gold, #c9a84c); transform: translateX(4px); }
-        .nav-link.active { background: rgba(201,168,76,0.1); color: var(--gold, #c9a84c); border-color: rgba(201,168,76,0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        
-        .menu-group { margin-bottom: 0.8rem; }
-        .menu-title { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.2rem; cursor: pointer; color: var(--muted, #888); border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease; border: 1px solid transparent;}
-        .menu-title:hover { background: rgba(201,168,76,0.05); color: var(--gold, #c9a84c); transform: translateX(4px);}
-        .menu-title.active { color: var(--gold, #c9a84c); font-weight: 600; background: rgba(255,255,255,0.02);}
-        .menu-title i.main-icon { width: 30px; font-size: 1.2rem; }
-        .menu-title i.chevron { font-size: 0.8rem; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .menu-title.active i.chevron { transform: rotate(180deg); }
-        
-        /* Smooth Slide Down for sub-menu */
-        .sub-menu { overflow: hidden; max-height: 0; padding-left: 30px; margin-top: 0; transition: max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), margin-top 0.4s ease, opacity 0.3s ease; opacity: 0; }
-        .sub-menu.show { max-height: 500px; margin-top: 0.4rem; opacity: 1; }
-        .sub-menu a { display: block; padding: 0.8rem 1rem; color: var(--muted, #888); text-decoration: none; border-radius: 6px; margin: 4px 0; font-size: 0.85rem; transition: all 0.3s ease; border-left: 2px solid transparent;}
-        .sub-menu a:hover { background: rgba(201,168,76,0.05); color: var(--gold, #c9a84c); border-left-color: var(--gold); padding-left: 1.2rem;}
-        .sub-menu a.active { background: rgba(201,168,76,0.08); color: var(--gold, #c9a84c); font-weight: 600; border-left-color: var(--gold);}
-    </style>
+    <link rel="stylesheet" th:href="@{/css/admin/layout/sidebar.css}" />
     
     <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
     <nav>
@@ -42,6 +18,7 @@
             <div class="sub-menu" id="productMenu">
                 <a href="/admin/products" id="nav-products" data-translate="admin-sidebar-products">Sản phẩm</a>
                 <a href="/admin/categories" id="nav-categories" data-translate="admin-sidebar-categories">Danh mục</a>
+                <a href="/admin/combos" id="nav-combos">Quản lý Combo</a>
                 <a href="/admin/flash-sales" id="nav-flash-sales" data-translate="admin-sidebar-flashsales">Flash Sale</a>
             </div>
         </div>
@@ -79,156 +56,22 @@
             </button>
         </form>
     </nav>
-    <script>
-        function toggleSidebarMenu(menuId, titleEl) {
-            const menu = document.getElementById(menuId);
-            const isShowing = menu.classList.contains('show');
-            
-            if (isShowing) {
-                menu.classList.remove('show');
-                titleEl.classList.remove('active');
-            } else {
-                menu.classList.add('show');
-                titleEl.classList.add('active');
-            }
-        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const path = window.location.pathname;
-            const linkMap = {
-                '/admin/dashboard': 'nav-dashboard',
-                '/admin/products': 'nav-products',
-                '/admin/categories': 'nav-categories',
-                '/admin/flash-sales': 'nav-flash-sales',
-                '/admin/flash-sale-items': 'nav-flash-sales',
-                '/admin/inventory': 'nav-inventory',
-                '/admin/orders': 'nav-orders',
-                '/admin/account': 'nav-account',
-                '/admin/vouchers': 'nav-vouchers',
-                '/admin/tickets': 'nav-tickets'
-            };
-
-            let activeId = null;
-            for (let key in linkMap) {
-                if (path.startsWith(key)) {
-                    activeId = linkMap[key];
-                }
-            }
-
-            if (activeId) {
-                const activeEl = document.getElementById(activeId);
-                if (activeEl) {
-                    activeEl.classList.add('active');
-                    const parentMenu = activeEl.closest('.sub-menu');
-                    if (parentMenu) {
-                        parentMenu.classList.add('show');
-                        const titleEl = parentMenu.previousElementSibling;
-                        if (titleEl && titleEl.classList.contains('menu-title')) {
-                            titleEl.classList.add('active');
-                        }
-                    }
-                }
-            }
-        });
-    </script>
+    <script th:src="@{/js/admin/layout/sidebar.js}"></script>
 
     <!-- ADMIN GLOBAL TRANSLATION SCRIPT -->
-    <script>
-        let translations = {};
-        const reportedKeys = new Set();
+    
+    <!-- SweetAlert2 for Delete Confirmation Popups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Flatpickr for Date Time Inputs -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    
 
-        window.t = function(key, defaultValue) {
-            const lang = localStorage.getItem('lang') || 'vi';
-            return (translations[lang] && translations[lang][key]) || defaultValue;
-        };
-
-        function setLanguage(lang) {
-            localStorage.setItem('lang', lang);
-            
-            document.querySelectorAll('[data-translate]').forEach(el => {
-                const key = el.getAttribute('data-translate');
-                if (translations[lang] && translations[lang][key]) {
-                    const val = translations[lang][key];
-                    if (el.children.length === 0) {
-                        el.textContent = val;
-                    } else {
-                        let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
-                        if (textNode) {
-                            textNode.nodeValue = val;
-                        }
-                    }
-                } else {
-                    reportMissingKey(key, el.textContent.trim());
-                }
-            });
-
-            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-translate-placeholder');
-                if (translations[lang] && translations[lang][key]) {
-                    el.setAttribute('placeholder', translations[lang][key]);
-                }
-            });
-        }
-
-        function reportMissingKey(key, defaultValue) {
-            if (!key || !defaultValue || reportedKeys.has(key)) return;
-            reportedKeys.add(key);
-
-            fetch('/api/translations/missing', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key: key, defaultValue: defaultValue })
-            }).catch(err => console.warn("Lỗi gửi báo cáo dịch tự động (admin):", err));
-        }
-
-        async function loadTranslations() {
-            const savedLang = localStorage.getItem('lang') || 'vi';
-
-            const cachedData = localStorage.getItem('translations_cache');
-            if (cachedData) {
-                try {
-                    translations = JSON.parse(cachedData);
-                    setLanguage(savedLang);
-                } catch (e) {
-                    console.error("Lỗi đọc cache dịch admin:", e);
-                }
-            }
-
-            try {
-                const response = await fetch('/api/translations');
-                const newData = await response.json();
-                
-                localStorage.setItem('translations_cache', JSON.stringify(newData));
-                translations = newData;
-                setLanguage(savedLang);
-            } catch (error) {
-                console.error("Lỗi khi tải bộ từ điển dịch thuật admin:", error);
-            }
-        }
-
-        function startTranslationObserver() {
-            const observer = new MutationObserver((mutations) => {
-                let hasNewTranslateElement = false;
-                mutations.forEach(mutation => {
-                    mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            if (node.hasAttribute('data-translate') || node.querySelector('[data-translate]')) {
-                                hasNewTranslateElement = true;
-                            }
-                        }
-                    });
-                });
-                if (hasNewTranslateElement) {
-                    const savedLang = localStorage.getItem('lang') || 'vi';
-                    setLanguage(savedLang);
-                }
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadTranslations();
-            startTranslationObserver();
-        });
-    </script>
+    
+    
+    <script th:src="@{/js/cursor.js}"></script>
 </div>

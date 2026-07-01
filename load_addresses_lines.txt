@@ -1,0 +1,80 @@
+1580:     async function loadAddresses() {
+1581:       try {
+1582:         const res = await fetch('/api/address');
+1583:         const data = await res.json();
+1584:         const container = document.getElementById('address-list-container');
+1585:         if (!container) return;
+1586:         if (!data.success || !data.data || data.data.length === 0) {
+1587:           container.innerHTML = '<p style="grid-column:span 2;text-align:center;color:var(--muted);padding:2rem;">Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.</p>';
+1588:           return;
+1589:         }
+1590:         container.innerHTML = data.data.map(addr => `
+1591:           <div style="background:var(--deep);border:1px solid ${addr.isDefault ? 'var(--gold)' : 'rgba(201,168,76,.1)'};padding:1.5rem;">
+1592:             <div style="font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:${addr.isDefault ? 'var(--gold)' : 'var(--muted)'};margin-bottom:.8rem;">
+1593:               📍 ${addr.isDefault ? 'Địa chỉ mặc định' : 'Địa chỉ khác'}
+1594:             </div>
+1595:             <div style="font-size:.9rem;color:var(--white);margin-bottom:.3rem;font-weight:500;">${addr.recipientName}</div>
+1596:             <div style="font-size:.8rem;color:var(--muted);line-height:1.7;">
+1597:               ${addr.detailedAddress}<br>${addr.district}, ${addr.city}<br>📞 ${addr.phone}
+1598:             </div>
+1599:             <div style="display:flex;gap:.5rem;margin-top:1rem;">
+1600:               <button class="btn-sec" onclick="editAddress(${addr.id})">Sửa</button>
+1601:               <button class="btn-sec" onclick="deleteAddress(${addr.id})">Xóa</button>
+1602:               ${!addr.isDefault ? `<button class="btn-sec" style="border-color:var(--gold);color:var(--gold);" onclick="setDefaultAddress(${addr.id})">Đặt mặc định</button>` : ''}
+1603:             </div>
+1604:           </div>
+1605:         `).join('');
+1606:       } catch (err) {
+1607:         console.error('Load addresses error:', err);
+1608:         toast('Không thể tải danh sách địa chỉ.');
+1609:       }
+1610:     }
+1611: 
+1612:     function setDefaultAddress(id) {
+1613:       fetch('/api/address/' + id + '/default', {
+1614:         method: 'PUT',
+1615:         headers: { [csrfHeader]: csrfToken }
+1616:       })
+1617:         .then(res => res.json())
+1618:         .then(data => {
+1619:           if (data.success) {
+1620:             toast('✓ Đã thay đổi địa chỉ mặc định.');
+1621:             loadAddresses();
+1622:           } else {
+1623:             toast('⚠️ ' + (data.message || 'Lỗi khi thiết lập địa chỉ mặc định.'));
+1624:           }
+1625:         })
+1626:         .catch(err => {
+1627:           console.error('Set default address error:', err);
+1628:           toast('⚠️ Không thể kết nối đến máy chủ.');
+1629:         });
+1630:     }
+1631: 
+1632:     function openAddressForm() {
+1633:       document.getElementById('address-id-edit').value = '';
+1634:       document.getElementById('address-name').value = '';
+1635:       document.getElementById('address-phone').value = '';
+1636:       document.getElementById('address-detail').value = '';
+1637:       document.getElementById('address-city').value = '';
+1638:       document.getElementById('address-district').value = '';
+1639:       document.getElementById('address-postal').value = '';
+1640:       document.getElementById('address-form-container').style.display = 'block';
+1641:     }
+1642: 
+1643:     function closeAddressForm() {
+1644:       document.getElementById('address-form-container').style.display = 'none';
+1645:     }
+1646: 
+1647:     function editAddress(id) {
+1648:       fetch('/api/address/' + id)
+1649:         .then(res => res.json())
+1650:         .then(data => {
+1651:           if (data.success && data.data) {
+1652:             const addr = data.data;
+1653:             document.getElementById('address-id-edit').value = addr.id || '';
+1654:             document.getElementById('address-name').value = addr.recipientName || '';
+1655:             document.getElementById('address-phone').value = addr.phone || '';
+1656:             document.getElementById('address-detail').value = addr.detailedAddress || '';
+1657:             document.getElementById('address-city').value = addr.city || '';
+1658:             document.getElementById('address-district').value = addr.district || '';
+1659:             document.getElementById('address-postal').value = addr.postalCode || '';

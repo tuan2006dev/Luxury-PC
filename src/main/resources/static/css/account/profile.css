@@ -33,17 +33,14 @@ body {
   background: var(--black);
   color: var(--cream);
   font-family: var(--sans);
-  font-weight: 450;
+  font-weight: 300;
   min-height: 100vh;
   cursor: auto;
   overflow-x: hidden;
   padding-bottom: 0;
 }
 
-body.custom-cursor-enabled,
-body.custom-cursor-enabled * {
-  cursor: none !important;
-}
+
 
 a {
   color: inherit;
@@ -54,62 +51,12 @@ img {
   display: block;
 }
 
-/* CURSOR */
-.cursor {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  background: var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 2147483647;
-  transform: translate(-50%, -50%);
-}
-
-.cursor-f {
-  position: fixed;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 2147483646;
-  transform: translate(-50%, -50%);
-  opacity: .5;
-  transition: width .25s, height .25s;
-}
-
-/* NAVBAR BACKGROUND OVERRIDE FOR PROFILE PAGE */
-.navbar {
-  background: rgba(10, 10, 10, 0.92);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
-}
-
-.nav-logout-btn {
-  background: none;
-  border: 1px solid rgba(201, 168, 76, .4);
-  color: var(--cream);
-  font-family: var(--sans);
-  font-size: .68rem;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  padding: .45rem 1rem;
-  cursor: auto;
-  transition: color var(--ease), border-color var(--ease);
-}
-
-.nav-logout-btn:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
 /* LAYOUT */
 .profile-page {
   display: grid;
   grid-template-columns: 280px 1fr;
   min-height: 100vh;
-  padding-top: 74px;
+  padding-top: 96px;
 }
 
 /* SIDEBAR */
@@ -117,9 +64,9 @@ img {
   background: var(--deep);
   border-right: 1px solid rgba(201, 168, 76, 0.1);
   padding: 3rem 0;
-  height: calc(100vh - 74px);
+  height: calc(100vh - 96px);
   position: sticky;
-  top: 74px;
+  top: 96px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -336,7 +283,7 @@ img {
 .section-h {
   font-family: var(--serif);
   font-size: 2rem;
-  font-weight: 500;
+  font-weight: 300;
   color: var(--white);
 }
 
@@ -873,7 +820,7 @@ img {
 .stat-num {
   font-family: var(--serif);
   font-size: 2rem;
-  font-weight: 500;
+  font-weight: 300;
   color: var(--gold);
   line-height: 1;
 }
@@ -1054,7 +1001,7 @@ img {
 .order-modal .modal-head h3 {
   font-family: var(--serif);
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: 300;
   color: var(--white);
   margin-top: 0.35rem;
 }
@@ -1257,22 +1204,13 @@ img {
   .wishlist-grid {
     grid-template-columns: 1fr;
   }
+
 }
 
 /* ===== LIGHT MODE FIX FOR PROFILE PAGE ===== */
-body.light-mode .navbar {
-  background: rgba(244, 241, 234, 0.95) !important;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.05) !important;
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-body.light-mode {
-  --muted: var(--text-muted);
-}
-
 body.light-mode .profile-page {
   background: var(--black);
+  font-weight: 400; /* Cho chữ trong profile chế độ sáng dày hơn */
 }
 
 body.light-mode .sidebar {
@@ -1280,27 +1218,53 @@ body.light-mode .sidebar {
   border-right: 1px solid var(--border-color);
 }
 
-body.light-mode .profile-main {
-  background: var(--black);
+body.light-mode .sb-name {
+  color: #1a1a1a;
+  font-weight: 600;
 }
 
-/* Sidebar Menu Items in Light Mode */
+body.light-mode .sb-email {
+  color: #666666;
+  font-weight: 500;
+}
+
+body.light-mode .sb-section-label {
+  color: #444444;
+  font-weight: 700;
+}
+
 body.light-mode .sb-item {
-  color: var(--cream);
+  color: #333333; /* Chỉnh lại chữ menu cho rõ hơn, không bị chìm */
+  font-weight: 500; /* Chữ dày hơn một chút */
 }
 
 body.light-mode .sb-item:hover {
-  color: var(--white);
+  color: var(--gold-dark);
   background: rgba(201, 168, 76, 0.06);
 }
 
 body.light-mode .sb-item.active {
-  color: var(--gold);
-  background: rgba(201, 168, 76, 0.08);
+  color: var(--gold-dark);
+  font-weight: 600;
+  background: rgba(201, 168, 76, 0.1);
 }
 
-body.light-mode .sb-section-label {
-  color: var(--text-muted);
+body.light-mode .profile-main {
+  background: var(--black);
+}
+
+body.light-mode .section-h {
+  color: #1a1a1a;
+  font-weight: 400;
+}
+
+body.light-mode .profile-tab {
+  color: #666666;
+  font-weight: 600;
+}
+
+body.light-mode .profile-tab.active {
+  color: var(--gold-dark);
 }
 
 body.light-mode .info-card,
@@ -1308,6 +1272,21 @@ body.light-mode .sec-item,
 body.light-mode .notif-item {
   background: var(--deep);
   border-color: var(--border-color);
+}
+
+body.light-mode .ic-label,
+body.light-mode .info-card label,
+body.light-mode .form-label {
+  color: #666666;
+  font-weight: 600; /* Làm dày nhãn thông tin */
+}
+
+body.light-mode .ic-value,
+body.light-mode .form-val,
+body.light-mode .sec-title,
+body.light-mode .notif-title {
+  color: #111111;
+  font-weight: 500; /* Làm dày nội dung thông tin */
 }
 
 body.light-mode .order-row {
@@ -1321,6 +1300,11 @@ body.light-mode .order-details-pane {
 body.light-mode .wl-card {
   background: var(--deep);
   border-color: var(--border-color);
+}
+
+body.light-mode .wl-name {
+  color: #111111;
+  font-weight: 500;
 }
 
 body.light-mode .form-input,

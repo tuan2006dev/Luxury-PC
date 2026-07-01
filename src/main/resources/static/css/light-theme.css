@@ -69,7 +69,7 @@ body.light-mode h1, body.light-mode h2, body.light-mode h3 {
   letter-spacing: 0.5px;
 }
 
-body.light-mode section {
+body.light-mode section:not(.support-left):not(.support-right):not(.filters-section):not(.products-grid):not(.promo-banners):not(.promo-categories):not(.my-vouchers-section):not(.promo-info-section) {
   padding: 120px 0 !important;
 }
 
@@ -378,19 +378,105 @@ body.light-mode .product-img-wrap {
 }
 
 /* ============================================
-   LANGUAGE DROPDOWN IN LIGHT MODE
+   LANGUAGE DROPDOWN MENU
    ============================================ */
 body.light-mode .lang-dropdown-menu {
-  background: rgba(255, 255, 255, 0.97) !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+  background: #FFFFFF !important;
+  border-color: rgba(201, 168, 76, 0.4) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
 }
 
 body.light-mode .lang-dropdown-item {
-  color: var(--text-primary) !important;
+  color: #333333 !important;
 }
 
 body.light-mode .lang-dropdown-item:hover {
-  background: rgba(201, 168, 76, 0.12) !important;
-  color: var(--gold-dark) !important;
+  background: rgba(201, 168, 76, 0.1) !important;
+  color: var(--gold) !important;
 }
+
+/* ============================================
+   PROMOTIONS PAGE OVERRIDES
+   ============================================ */
+body.light-mode .promo-hero {
+  background: linear-gradient(135deg, #F8F6F0 0%, #FCFBF8 50%, #F5EFE4 100%) !important;
+}
+
+body.light-mode .promo-hero::before {
+  background: 
+    radial-gradient(ellipse 600px 400px at 20% 50%, rgba(201, 168, 76, 0.15), transparent),
+    radial-gradient(ellipse 400px 300px at 80% 30%, rgba(220, 80, 60, 0.1), transparent),
+    radial-gradient(ellipse 300px 300px at 50% 80%, rgba(201, 168, 76, 0.08), transparent) !important;
+}
+
+body.light-mode .promo-hero::after {
+  background: linear-gradient(to top, var(--black), transparent) !important;
+}
+
+body.light-mode .promo-hero-sub {
+  color: var(--text-secondary) !important;
+}
+
+body.light-mode .promo-countdown-strip {
+  background: linear-gradient(90deg, #FDF5F2 0%, #FFF8F5 50%, #FDF5F2 100%) !important;
+  border-top-color: rgba(220, 80, 60, 0.15) !important;
+  border-bottom-color: rgba(201, 168, 76, 0.1) !important;
+}
+
+body.light-mode .promo-cd-block {
+  background: rgba(220, 80, 60, 0.08) !important;
+  border-color: rgba(220, 80, 60, 0.2) !important;
+}
+
+body.light-mode .promo-cd-num {
+  color: #ff6b56 !important;
+}
+
+body.light-mode .promo-cd-unit {
+  color: #888888 !important;
+}
+
+body.light-mode .promo-banner-bg-1 {
+  background: linear-gradient(135deg, #FAF4FC 0%, #FCF3F7 50%, #FAF0F4 100%) !important;
+}
+
+body.light-mode .promo-banner-bg-2 {
+  background: linear-gradient(135deg, #F3FAF6 0%, #EDF7F1 50%, #E6F2EA 100%) !important;
+}
+
+body.light-mode .promo-banner-bg-3 {
+  background: linear-gradient(135deg, #F3F3FA 0%, #ECECF7 50%, #E4E5F2 100%) !important;
+}
+
+body.light-mode .shopee-voucher-card.vip {
+  background: linear-gradient(135deg, #FCF8EE 0%, #FFFDF8 100%) !important;
+  border-color: rgba(201, 168, 76, 0.4) !important;
+}
+
+body.light-mode .shopee-voucher-card.vip .sv-left {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.15) 0%, rgba(201, 168, 76, 0.05) 100%) !important;
+}
+
+body.light-mode .shopee-voucher-card.vip .sv-left::before {
+  background: repeating-radial-gradient(
+    circle at right,
+    transparent 0,
+    transparent 5px,
+    #FCF8EE 5px,
+    #FCF8EE 12px
+  ) !important;
+}
+
+body.light-mode .shopee-voucher-card.vip::after {
+  color: #FFFFFF !important;
+}
+
+body.light-mode .promo-deals-header .section-title {
+  color: var(--text-primary) !important;
+}
+
+body.light-mode .promo-deals {
+  background: var(--bg-secondary) !important;
+}
+
+

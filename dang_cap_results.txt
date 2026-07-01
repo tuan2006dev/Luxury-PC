@@ -1,0 +1,8 @@
+Searching for 'Đẳng Cấp':
+Found in: d:/21_DUANTOTNGHIEP/moi/LuxuryPC/src/main/resources/templates\build-pc.html
+  Line: <div class="preset-desc" data-translate="build-pc-preset-desc-creator">Render 8K, 3D animation, AI generation. Workstation đẳng cấp chuyên nghiệp.</div>
+Found in: d:/21_DUANTOTNGHIEP/moi/LuxuryPC/src/main/resources/templates\index.html
+  Line: <span data-translate="build-feat-3-desc">Cam kết chất lượng đẳng cấp hàng đầu</span>
+Found in: d:/21_DUANTOTNGHIEP/moi/LuxuryPC/src/main/resources/templates\account\auth.html
+  Line: content="Đăng nhập hoặc tạo tài khoản Luxury PC để trải nghiệm mua sắm linh kiện đẳng cấp." />
+  Line: <h1 class="av-title" data-translate="auth-visual-title">Gia Nhập<br /><em>Đẳng Cấp</em></h1>

@@ -47,7 +47,11 @@ public class AdminDataLoader implements CommandLineRunner {
                 Inventory inv = new Inventory();
                 inv.setProduct(p);
                 inv.setQuantity(p.getStock() != null ? p.getStock() : 10);
-                inventoryDAO.save(inv);
+                try {
+                    inventoryDAO.save(inv);
+                } catch (Exception e) {
+                    System.out.println(">>> Failed to seed inventory for product " + p.getId() + ": " + e.getMessage());
+                }
             }
         }
 
