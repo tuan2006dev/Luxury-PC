@@ -1,12 +1,10 @@
 package poly.edu.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.Product;
 import poly.edu.service.ProductService;
+import poly.edu.service.FlashSaleService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,6 +15,9 @@ public class ProductApiController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private FlashSaleService flashSaleService;
 
     @GetMapping("/api/products")
     public List<Map<String, Object>> getProducts() {
@@ -304,4 +305,22 @@ public class ProductApiController {
             }).collect(Collectors.toList());
     }
 
+    /**
+     * API endpoint to delete flash sale
+     * DELETE /api/flash-sales/delete/{id}
+     * POST /api/flash-sales/delete/{id}
+     */
+    @DeleteMapping("/api/flash-sales/delete/{id}")
+    public Map<String, Object> deleteFlashSaleApi(@PathVariable("id") Integer id) {
+        flashSaleService.deleteFlashSale(id);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", true);
+        resp.put("message", "Đã xóa Flash Sale thành công!");
+        return resp;
+    }
+
+    @PostMapping("/api/flash-sales/delete/{id}")
+    public Map<String, Object> deleteFlashSaleApiPost(@PathVariable("id") Integer id) {
+        return deleteFlashSaleApi(id);
+    }
 }

@@ -12,10 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import poly.edu.entity.Product;
 import poly.edu.entity.Review;
 import poly.edu.entity.User;
+import poly.edu.entity.FlashSale;
+import poly.edu.entity.FlashSaleItem;
 import poly.edu.service.CategoryService;
 import poly.edu.service.ProductService;
 import poly.edu.service.WishlistService;
+import poly.edu.service.FlashSaleService;
 import poly.edu.dao.ReviewDAO;
+import poly.edu.dao.FlashSaleItemDAO;
 import poly.edu.repository.UserRepository;
 
 import java.util.Collections;
@@ -44,6 +48,12 @@ public class ProductPageController {
 
     @Autowired
     WishlistService wishlistService;
+
+    @Autowired
+    FlashSaleService flashSaleService;
+
+    @Autowired
+    FlashSaleItemDAO flashSaleItemDAO;
 
     @GetMapping("/products")
     public String showProductsPage(

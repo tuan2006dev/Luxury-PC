@@ -46,7 +46,9 @@ public class HomeController {
         Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
         if (currentSale.isPresent()) {
             FlashSale sale = currentSale.get();
-            List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId());
+            List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId()).stream()
+                .filter(item -> item.getSoldCount() < item.getSaleQuantity())
+                .collect(Collectors.toList());
             model.addAttribute("flashSale", sale);
             model.addAttribute("flashSaleItems", saleItems);
             model.addAttribute("flashSaleEndTime", sale.getEndTime().getTime());
@@ -69,6 +71,22 @@ public class HomeController {
 
     @GetMapping("/promotions")
     public String promotions(Model model) {
+        // Flash Sale từ database
+        Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
+        if (currentSale.isPresent()) {
+            FlashSale sale = currentSale.get();
+            List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId()).stream()
+                .filter(item -> item.getSoldCount() < item.getSaleQuantity())
+                .collect(Collectors.toList());
+            model.addAttribute("flashSale", sale);
+            model.addAttribute("flashSaleItems", saleItems);
+            model.addAttribute("flashSaleEndTime", sale.getEndTime().getTime());
+        } else {
+            model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
+            model.addAttribute("flashSaleEndTime", 0);
+        }
+
+        // Voucher từ database
         model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
         return "promotions";
     }

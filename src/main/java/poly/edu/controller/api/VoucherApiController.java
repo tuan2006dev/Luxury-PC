@@ -51,4 +51,23 @@ public class VoucherApiController {
 
         return voucherService.validateVoucher(code, cartTotal, user);
     }
+
+    /**
+     * API endpoint to delete voucher
+     * DELETE /api/voucher/delete/{id}
+     * POST /api/voucher/delete/{id}
+     */
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Object> deleteVoucherApi(@PathVariable("id") Integer id) {
+        voucherService.deleteVoucher(id);
+        Map<String, Object> resp = new java.util.HashMap<>();
+        resp.put("success", true);
+        resp.put("message", "Đã xóa voucher thành công!");
+        return resp;
+    }
+
+    @PostMapping("/delete/{id}")
+    public Map<String, Object> deleteVoucherApiPost(@PathVariable("id") Integer id) {
+        return deleteVoucherApi(id);
+    }
 }
