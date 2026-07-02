@@ -389,8 +389,8 @@ public class CartController {
                 p.setStock(p.getStock() - item.getQuantity());
                 productDAO.save(p);
 
-                // Cập nhật sold count cho flash sale
-                flashSaleService.incrementSoldCount(item.getId());
+                // Cập nhật sold count cho flash sale theo số lượng mua thực tế
+                flashSaleService.incrementSoldCount(item.getId(), item.getQuantity());
             }
         }
 

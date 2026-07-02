@@ -70,7 +70,23 @@
         <a href="#" class="rating-link" onclick="setDetailTab('reviews'); return false;" data-translate="product-rating-no-reviews">Chưa có đánh giá</a>
       </div>
 
-      <div class="price-block">
+      <!-- Price block khi CO Flash Sale -->
+      <div class="price-block" th:if="${flashSaleItem != null}">
+        <div class="price-main" style="color:#ef4444;" th:text="${#numbers.formatDecimal(flashSaleItem.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">
+          Sale Price</div>
+        <div class="price-old" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">
+          Original Price</div>
+        <div class="price-save">
+          <span data-translate="product-price-save">Tiết kiệm </span>
+          <span th:text="${#numbers.formatDecimal(product.price - flashSaleItem.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">Saved Amount</span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--gold); margin-top: 8px; font-weight: 600;">
+          ⚡ Flash Sale - Còn lại: <span th:text="${flashSaleItem.saleQuantity - flashSaleItem.soldCount}">45</span> sản phẩm sale
+        </div>
+      </div>
+
+      <!-- Price block khi KHONG co Flash Sale -->
+      <div class="price-block" th:if="${flashSaleItem == null}">
         <div class="price-main" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">
           42.990.000₫</div>
         <div class="price-old" th:text="${#numbers.formatDecimal(product.price * 1.2, 0, 'COMMA', 0, 'POINT')} + '₫'">
@@ -109,7 +125,10 @@
         <span class="qty-label" data-translate="product-label-qty">Số lượng</span>
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <input type="number" class="qty-num" id="qty" value="1" min="1" onchange="manualQtyChange(this)" style="background:transparent;border:none;color:#fff;width:40px;text-align:center;font-weight:600;outline:none;" />
+          <input type="number" class="qty-num" id="qty" value="1" min="1" 
+                 th:max="${flashSaleItem != null ? (flashSaleItem.saleQuantity - flashSaleItem.soldCount) : product.stock}"
+                 onchange="manualQtyChange(this)" 
+                 style="background:transparent;border:none;color:#fff;width:40px;text-align:center;font-weight:600;outline:none;" />
           <button class="qty-btn" onclick="changeQty(1)">+</button>
         </div>
         <span class="stock-label" th:if="${product.stock > 5}" th:text="'● Còn ' + ${product.stock} + ' sản phẩm'">● Còn 7 sản phẩm</span>
@@ -139,7 +158,7 @@
         <form th:action="@{/cart/add}" method="post" style="display:contents;">
           <input type="hidden" name="id" th:value="${product.id}" />
           <input type="hidden" name="name" th:value="${product.name}" />
-          <input type="hidden" name="price" th:value="${product.price != null ? product.price.longValue() : 0}" />
+          <input type="hidden" name="price" th:value="${flashSaleItem != null ? flashSaleItem.salePrice.longValue() : (product.price != null ? product.price.longValue() : 0)}" />
           <input type="hidden" name="quantity" id="form-qty" value="1" />
           
           <button type="submit" class="btn-primary-lg" style="flex: 1;" th:disabled="${product.stock <= 0}">
@@ -381,7 +400,7 @@
 
   <script th:inline="javascript">
     let qty = 1;
-    const maxStock = /*[[${product.stock}]]*/ 99;
+    const maxStock = /*[[${flashSaleItem != null ? (flashSaleItem.saleQuantity - flashSaleItem.soldCount) : product.stock}]]*/ 99;
 
     // ── SỐ LƯỢNG ──
     function manualQtyChange(input) {

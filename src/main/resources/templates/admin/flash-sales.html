@@ -103,6 +103,16 @@
                         </td>
                         <td>
                             <div class="actions-cell">
+                                <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/activate/{id}(id=${fs.id})}" method="POST" style="display:inline;">
+                                    <!-- Khi chưa kích hoạt: Nút Bật (Kích hoạt) -->
+                                    <button type="submit" class="btn btn-sm btn-gold" th:if="${!fs.active}" title="Kích hoạt">
+                                        <i class="fa-solid fa-play"></i> Kích hoạt
+                                    </button>
+                                    <!-- Khi đang kích hoạt: Nút Tắt (Bấm để tắt) -->
+                                    <button type="submit" class="btn btn-sm" style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);cursor:pointer;" th:if="${fs.active}" title="Tắt hiển thị">
+                                        <i class="fa-solid fa-circle-check"></i> Đang hiện (Bấm để tắt)
+                                    </button>
+                                </form>
                                 <button type="button" class="btn btn-sm" style="border:1px solid var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);"
                                         th:data-id="${fs.id}"
                                         th:data-name="${fs.name}"
@@ -112,9 +122,7 @@
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
                                 <a th:href="@{/admin/flash-sales/{id}/items(id=${fs.id})}" class="btn btn-sm btn-blue"><i class="fa-solid fa-cubes"></i> <span data-translate="admin-flashsales-btn-products">Sản Phẩm</span></a>
-                                <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/delete/{id}(id=${fs.id})}" method="POST" style="display:inline;" th:onsubmit="event.preventDefault(); window.confirmDelete(this, window.t('admin-flashsales-confirm-delete', 'Xóa chương trình Flash Sale này?'));">
-                                    <button type="submit" class="btn btn-sm btn-red" title="Xóa"><i class="fa-solid fa-trash"></i></button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-red" title="Xóa" th:onclick="'deleteFlashSaleApi(' + ${fs.id} + ')'"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>

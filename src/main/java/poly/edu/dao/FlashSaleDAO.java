@@ -10,8 +10,11 @@ import java.util.Optional;
 
 public interface FlashSaleDAO extends JpaRepository<FlashSale, Integer> {
 
-    @Query("SELECT fs FROM FlashSale fs WHERE fs.active = true AND fs.startTime <= :now AND fs.endTime > :now")
-    Optional<FlashSale> findCurrentActiveSale(@Param("now") Date now);
+    @Query("SELECT fs FROM FlashSale fs WHERE fs.active = true")
+    List<FlashSale> findCurrentActiveSale();
+
+    @Query("SELECT fs FROM FlashSale fs WHERE fs.startTime <= :now AND fs.endTime >= :now ORDER BY fs.startTime ASC")
+    List<FlashSale> findValidSalesForTime(@Param("now") Date now);
 
     List<FlashSale> findAllByOrderByCreatedAtDesc();
 }
