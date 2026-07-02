@@ -13,7 +13,7 @@
     <h2 data-translate="pay-header">Thanh toán đơn hàng</h2>
 
     <p class="amount">
-        <span th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ
+        <span th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')}"></span> <span data-translate="currency-vnd">VNĐ</span>
     </p>
 
     <img th:src="${qrUrl}" alt="QR thanh toán">

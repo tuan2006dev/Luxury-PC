@@ -127,7 +127,7 @@ img {
   display: grid;
   grid-template-columns: 280px 1fr;
   min-height: 100vh;
-  padding-top: 74px;
+  padding-top: 96px;
 }
 
 /* SIDEBAR */
@@ -135,9 +135,9 @@ img {
   background: var(--deep);
   border-right: 1px solid rgba(201, 168, 76, 0.1);
   padding: 3rem 0;
-  height: calc(100vh - 74px);
+  height: calc(100vh - 96px);
   position: sticky;
-  top: 74px;
+  top: 96px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;

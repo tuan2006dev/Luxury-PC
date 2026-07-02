@@ -1,0 +1,90 @@
+771: const reportedKeys = new Set();
+772: 
+773: window.t = function(key, defaultValue) {
+774:     const lang = localStorage.getItem('lang') || 'vi';
+775:     return (translations[lang] && translations[lang][key]) || defaultValue;
+776: };
+777: 
+778: window.toggleLangMenu = function(event) {
+779:     console.log("toggleLangMenu triggered!", event);
+780:     if (event) {
+781:         event.preventDefault();
+782:         event.stopPropagation();
+783:     }
+784:     const menu = document.getElementById('lang-dropdown-menu');
+785:     console.log("Menu found:", menu);
+786:     if (menu) {
+787:         menu.classList.toggle('show');
+788:         console.log("Menu classes after toggle:", menu.className);
+789:     }
+790: };
+791: 
+792: window.selectLanguage = function(lang, event) {
+793:     if (event) {
+794:         event.preventDefault();
+795:         event.stopPropagation();
+796:     }
+797:     const menu = document.getElementById('lang-dropdown-menu');
+798:     if (menu) {
+799:         menu.classList.remove('show');
+800:     }
+801:     window.setLanguage(lang);
+802: };
+803: 
+804: window.setLanguage = function(lang) {
+805:     localStorage.setItem('lang', lang);
+806:     window.translations = translations;
+807:     
+808:     // Toggle active state in language selector (if exists)
+809:     document.querySelectorAll('.lang-btn').forEach(btn => {
+810:         btn.classList.toggle('active', btn.dataset.lang === lang);
+811:     });
+812: 
+813:     const langText = document.getElementById('current-lang-text');
+814:     if (langText) {
+815:         langText.textContent = lang.toUpperCase();
+816:     }
+817: 
+818:     document.querySelectorAll('[data-translate]').forEach(el => {
+819:         const key = el.getAttribute('data-translate');
+820:         if (translations[lang] && translations[lang][key]) {
+821:             const val = translations[lang][key];
+822:             if (el.children.length === 0) {
+823:                 el.textContent = val;
+824:             } else {
+825:                 let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+826:                 if (textNode) {
+827:                     textNode.nodeValue = val;
+828:                 }
+829:             }
+830:         } else {
+831:             window.reportMissingKey(key, el.textContent.trim());
+832:         }
+833:     });
+834: 
+835:     document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+836:         const key = el.getAttribute('data-translate-placeholder');
+837:         if (translations[lang] && translations[lang][key]) {
+838:             el.setAttribute('placeholder', translations[lang][key]);
+839:         }
+840:     });
+841: 
+842:     // Invoke page-specific hooks (e.g. rebuild pc slots or checkout calculation)
+843:     if (typeof window.onLanguageChange === 'function') {
+844:         window.onLanguageChange(lang);
+845:     }
+846: };
+847: 
+848: window.reportMissingKey = function(key, defaultValue) {
+849:     if (!key || !defaultValue || reportedKeys.has(key)) return;
+850:     reportedKeys.add(key);
+851: 
+852:     fetch('/api/translations/missing', {
+853:         method: 'POST',
+854:         headers: { 'Content-Type': 'application/json' },
+855:         body: JSON.stringify({ key: key, defaultValue: defaultValue })
+856:     }).catch(err => console.warn("Lỗi gửi báo cáo dịch tự động:", err));
+857: };
+858: 
+859: window.loadTranslations = async function() {
+860:     const savedLang = localStorage.getItem('lang') || 'vi';

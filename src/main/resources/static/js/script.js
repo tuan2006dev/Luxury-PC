@@ -776,13 +776,16 @@ window.t = function(key, defaultValue) {
 };
 
 window.toggleLangMenu = function(event) {
+    console.log("toggleLangMenu triggered!", event);
     if (event) {
         event.preventDefault();
         event.stopPropagation();
     }
     const menu = document.getElementById('lang-dropdown-menu');
+    console.log("Menu found:", menu);
     if (menu) {
         menu.classList.toggle('show');
+        console.log("Menu classes after toggle:", menu.className);
     }
 };
 
@@ -800,6 +803,7 @@ window.selectLanguage = function(lang, event) {
 
 window.setLanguage = function(lang) {
     localStorage.setItem('lang', lang);
+    window.translations = translations;
     
     // Toggle active state in language selector (if exists)
     document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -906,9 +910,36 @@ document.addEventListener('click', (event) => {
   }
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+function initApp() {
     window.loadTranslations();
     window.startTranslationObserver();
+
+    // Robust direct event binding for language selector
+    const toggleBtn = document.getElementById("btn-lang-toggle");
+    if (toggleBtn) {
+        toggleBtn.removeAttribute("onclick");
+        toggleBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.toggleLangMenu(e);
+        });
+    }
+
+    // Robust direct event binding for language selection items
+    const dropdownMenu = document.getElementById("lang-dropdown-menu");
+    if (dropdownMenu) {
+        dropdownMenu.querySelectorAll(".lang-dropdown-item").forEach(item => {
+            // Read language from existing onclick attribute if present before removing it
+            const onclickAttr = item.getAttribute("onclick") || "";
+            const lang = onclickAttr.includes("'en'") || onclickAttr.includes('"en"') ? "en" : "vi";
+            item.removeAttribute("onclick");
+            item.addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.selectLanguage(lang, e);
+            });
+        });
+    }
 
     // Auto-suggest search
     const searchInput = document.getElementById("search-input");
@@ -948,7 +979,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 });
                                 resultsBox.classList.add("show");
                             } else {
-                                resultsBox.innerHTML = `<div style="padding: 10px; color: #888; text-align: center;">Kh�ng t�m th?y s?n ph?m</div>`;
+                                resultsBox.innerHTML = `<div style="padding: 10px; color: #888; text-align: center;">Không tìm thấy sản phẩm</div>`;
                                 resultsBox.classList.add("show");
                             }
                         })
@@ -967,7 +998,13 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     }
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initApp);
+} else {
+    initApp();
+}
 
 
 

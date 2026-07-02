@@ -1,0 +1,24 @@
+Found 2 matches of 'loadTranslations'
+--- MATCH ---
+defaultValue })
+    }).catch(err => console.warn("Lỗi gửi báo cáo dịch tự động:", err));
+};
+
+window.loadTranslations = async function() {
+    const savedLang = localStorage.getItem('lang') || 'vi';
+    const cachedData = localStorage.getItem('translations_cache');
+    if (cachedData) {
+        try {
+--- MATCH ---
+emove('show');
+    }
+  }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    window.loadTranslations();
+    window.startTranslationObserver();
+
+    // Robust direct event binding for language selector
+    const toggleBtn = document.getElementById("btn-lang-toggle");
+    if (toggleBtn

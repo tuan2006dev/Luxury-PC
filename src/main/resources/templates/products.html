@@ -4,7 +4,7 @@
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Luxury PC | Sản Phẩm</title>
+    <title data-translate="products-page-title">Luxury PC | Sản Phẩm</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -39,23 +39,8 @@
         </div>
     </nav>
 
-    <!-- SEARCH OVERLAY -->
-    <div class="search-overlay" id="search-overlay">
-        <div class="search-overlay-inner">
-            <div class="search-close-row">
-                <span class="search-brand">LUXURY · PC</span>
-                <button class="search-close" id="search-close">✕</button>
-            </div>
-            <div class="search-input-wrap">
-                <span class="search-icon-big">⌕</span>
-                <input type="text" id="search-input" class="search-input" data-translate-placeholder="products-filter-search-placeholder" placeholder="Tìm kiếm linh kiện..." autocomplete="off" />
-                <button class="search-clear" id="search-clear">✕</button>
-            </div>
-            <div class="search-results" id="search-results">
-                <p class="search-hint" data-translate="search-hint">Nhập từ khóa để tìm kiếm.</p>
-            </div>
-        </div>
-    </div>
+
+    <div th:replace="~{layout/header :: header}"></div>
 
     <!-- PRODUCTS -->
     <section class="products" id="products">
