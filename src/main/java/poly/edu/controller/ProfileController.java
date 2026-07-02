@@ -49,6 +49,9 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String profile(Authentication authentication, Model model, HttpServletRequest request, HttpSession session) {
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+            return "redirect:/auth/login";
+        }
         try {
             User user = profileService.getCurrentUser(authentication);
             model.addAttribute("user", user);

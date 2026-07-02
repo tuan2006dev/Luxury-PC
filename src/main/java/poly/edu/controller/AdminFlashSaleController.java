@@ -39,6 +39,11 @@ public class AdminFlashSaleController {
             @RequestParam(value = "active", required = false, defaultValue = "true") Boolean active,
             RedirectAttributes ra) {
 
+        if (startTime != null && endTime != null && endTime.before(startTime)) {
+            ra.addFlashAttribute("error", "Thời gian kết thúc phải sau thời gian bắt đầu!");
+            return "redirect:/admin/flash-sales";
+        }
+
         FlashSale sale;
         if (id != null) {
             sale = flashSaleService.getById(id);

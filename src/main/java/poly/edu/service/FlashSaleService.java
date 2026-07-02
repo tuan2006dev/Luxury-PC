@@ -131,6 +131,14 @@ public class FlashSaleService {
         flashSaleItemDAO.deleteById(itemId);
     }
 
+    public Optional<FlashSaleItem> getActiveFlashSaleItem(Integer productId) {
+        Optional<FlashSale> current = getCurrentFlashSale();
+        if (current.isPresent()) {
+            return flashSaleItemDAO.findByFlashSaleIdAndProductId(current.get().getId(), productId);
+        }
+        return Optional.empty();
+    }
+
     /**
      * Lấy giá effective: nếu sản phẩm đang trong flash sale → giá sale, ngược lại → giá gốc
      */
@@ -158,7 +166,8 @@ public class FlashSaleService {
                     .findByFlashSaleIdAndProductId(current.get().getId(), productId);
             if (item.isPresent()) {
                 FlashSaleItem fsi = item.get();
-                fsi.setSoldCount(fsi.getSoldCount() + 1);
+                int currentSold = fsi.getSoldCount() != null ? fsi.getSoldCount() : 0;
+                fsi.setSoldCount(currentSold + 1);
                 flashSaleItemDAO.save(fsi);
             }
         }
@@ -172,7 +181,8 @@ public class FlashSaleService {
                     .findByFlashSaleIdAndProductId(current.get().getId(), productId);
             if (item.isPresent()) {
                 FlashSaleItem fsi = item.get();
-                fsi.setSoldCount(fsi.getSoldCount() + quantity);
+                int currentSold = fsi.getSoldCount() != null ? fsi.getSoldCount() : 0;
+                fsi.setSoldCount(currentSold + quantity);
                 flashSaleItemDAO.save(fsi);
             }
         }

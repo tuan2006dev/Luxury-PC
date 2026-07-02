@@ -228,7 +228,7 @@
                             <span class="flash-new-price" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
                         </div>
                         <div class="flash-sale-qty" style="font-size: 0.72rem; color: var(--gold); margin-top: 4px; font-weight: 500;">
-                            Còn lại: <span th:text="${item.saleQuantity - item.soldCount}">45</span> sản phẩm
+                            Còn lại: <span th:text="${T(java.lang.Math).min(item.saleQuantity - item.soldCount, item.product.stock)}">45</span> sản phẩm
                         </div>
                     </div>
                 </div>
