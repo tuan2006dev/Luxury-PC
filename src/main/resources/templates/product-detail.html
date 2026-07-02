@@ -81,7 +81,7 @@
           <span th:text="${#numbers.formatDecimal(product.price - flashSaleItem.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">Saved Amount</span>
         </div>
         <div style="font-size: 0.85rem; color: var(--gold); margin-top: 8px; font-weight: 600;">
-          ⚡ Flash Sale - Còn lại: <span th:text="${flashSaleItem.saleQuantity - flashSaleItem.soldCount}">45</span> sản phẩm sale
+          ⚡ Flash Sale - Còn lại: <span th:text="${T(java.lang.Math).min(flashSaleItem.saleQuantity - flashSaleItem.soldCount, product.stock)}">45</span> sản phẩm sale
         </div>
       </div>
 
@@ -126,7 +126,7 @@
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(-1)">−</button>
           <input type="number" class="qty-num" id="qty" value="1" min="1" 
-                 th:max="${flashSaleItem != null ? (flashSaleItem.saleQuantity - flashSaleItem.soldCount) : product.stock}"
+                 th:max="${flashSaleItem != null ? T(java.lang.Math).min(flashSaleItem.saleQuantity - flashSaleItem.soldCount, product.stock) : product.stock}"
                  onchange="manualQtyChange(this)" 
                  style="background:transparent;border:none;color:#fff;width:40px;text-align:center;font-weight:600;outline:none;" />
           <button class="qty-btn" onclick="changeQty(1)">+</button>

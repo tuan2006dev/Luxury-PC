@@ -6,37 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Luxury PC | Công Nghệ Cao Cấp & Xa Xỉ</title>
-    <meta name="description" content="Luxury PC — Nơi công nghệ gặp gỡ sự xa xỉ. Linh kiện máy tính cao cấp nhất, được chọn lọc kỹ lưỡng dành cho người dùng tinh tế." />
+    <meta name="description"
+        content="Luxury PC — Nơi công nghệ gặp gỡ sự xa xỉ. Linh kiện máy tính cao cấp nhất, được chọn lọc kỹ lưỡng dành cho người dùng tinh tế." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <style>
-      /* Style override to integrate AI Chat and Live Chat panels */
-      #socketChatBtn {
-        display: none !important; /* Hide default live chat button on index */
-      }
-      
-      #socketChatWindow {
-        bottom: 6rem !important;
-        right: 2rem !important;
-        width: 360px !important;
-        height: 520px !important;
-        z-index: 10000 !important;
-      }
-      
-      #ai-chat-window {
-        height: 520px !important; /* Lock height to match socket chat window */
-      }
-      
-      #chatbot-fab-trigger, #ai-chat-window, #ai-chat-window * {
-        cursor: none !important; /* Enable custom cursor support */
-      }
-      
-      .chatbot-mode-bar .mode-step {
-        cursor: none !important;
-      }
+        /* Style override to integrate AI Chat and Live Chat panels */
+        #socketChatBtn {
+            display: none !important;
+            /* Hide default live chat button on index */
+        }
+
+        #socketChatWindow {
+            bottom: 6rem !important;
+            right: 2rem !important;
+            width: 360px !important;
+            height: 520px !important;
+            z-index: 10000 !important;
+        }
+
+        #ai-chat-window {
+            height: 520px !important;
+            /* Lock height to match socket chat window */
+        }
+
+        #chatbot-fab-trigger,
+        #ai-chat-window,
+        #ai-chat-window * {
+            cursor: none !important;
+            /* Enable custom cursor support */
+        }
+
+        .chatbot-mode-bar .mode-step {
+            cursor: none !important;
+        }
     </style>
 </head>
 
@@ -56,11 +63,15 @@
             <div class="hero-overlay"></div>
         </div> -->
         <div class="hero-content">
-            <h1 class="hero-title"><span data-translate="hero-title-1">Được Tạo Ra</span><br /><em data-translate="hero-title-2">Để Thống Trị</em></h1>
-            <p class="hero-subtitle" data-translate="hero-subtitle">Linh kiện máy tính được tuyển chọn dành cho những người không chấp nhận điều tầm thường.</p>
+            <h1 class="hero-title"><span data-translate="hero-title-1">Được Tạo Ra</span><br /><em
+                    data-translate="hero-title-2">Để Thống Trị</em></h1>
+            <p class="hero-subtitle" data-translate="hero-subtitle">Linh kiện máy tính được tuyển chọn dành cho những
+                người không chấp nhận điều tầm thường.</p>
             <div class="hero-cta">
-                <a href="#products" class="btn-primary" id="hero-explore"><span data-translate="hero-explore">Khám Phá Ngay</span></a>
-                <a href="/build-pc/index.html" class="btn-secondary" id="hero-build"><span data-translate="hero-build">Build PC Của Bạn</span></a>
+                <a href="#products" class="btn-primary" id="hero-explore"><span data-translate="hero-explore">Khám Phá
+                        Ngay</span></a>
+                <a href="/build-pc/index.html" class="btn-secondary" id="hero-build"><span
+                        data-translate="hero-build">Build PC Của Bạn</span></a>
             </div>
         </div>
     </section>
@@ -97,31 +108,40 @@
             </div>
             <div class="flash-products">
                 <!-- Flash Sale items from database campaign -->
-                <div th:if="${flashSaleItems != null}" th:each="item : ${flashSaleItems}" class="flash-product-card" th:id="'fp-' + ${item.product.id}" th:onclick="|location.href='@{/promotions}'|" style="cursor: pointer;">
+                <div th:if="${flashSaleItems != null}" th:each="item : ${flashSaleItems}" class="flash-product-card"
+                    th:id="'fp-' + ${item.product.id}" th:onclick="|location.href='@{/promotions}'|"
+                    style="cursor: pointer;">
                     <div class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
                     <div class="flash-prod-img">
-                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" />
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}"
+                            th:alt="${item.product.name}" />
                     </div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name" th:text="${item.product.name}">Core i7-14700K</div>
                         <div class="flash-prod-prices">
-                            <span class="flash-new-price" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
+                            <span class="flash-new-price"
+                                th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
                         </div>
-                        <div class="flash-sale-qty" style="font-size: 0.72rem; color: var(--gold); margin-top: 4px; font-weight: 500;">
-                            Còn lại: <span th:text="${item.saleQuantity - item.soldCount}">45</span> sản phẩm
+                        <div class="flash-sale-qty"
+                            style="font-size: 0.72rem; color: var(--gold); margin-top: 4px; font-weight: 500;">
+                            Còn lại: <span th:text="${T(java.lang.Math).min(item.saleQuantity - item.soldCount, item.product.stock)}">45</span> sản phẩm
                         </div>
                     </div>
                 </div>
                 <!-- Fallback: old flash sale products (stock < 10) -->
-                <div th:if="${flashSaleItems == null and flashSaleProducts != null}" th:each="p : ${flashSaleProducts}" class="flash-product-card" th:id="'fp-' + ${p.id}" th:onclick="|location.href='@{/promotions}'|" style="cursor: pointer;">
+                <div th:if="${flashSaleItems == null and flashSaleProducts != null}" th:each="p : ${flashSaleProducts}"
+                    class="flash-product-card" th:id="'fp-' + ${p.id}" th:onclick="|location.href='@{/promotions}'|"
+                    style="cursor: pointer;">
                     <div th:if="${p.stock < 10}" class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
                     <div class="flash-prod-img">
-                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" />
+                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                            th:alt="${p.name}" />
                     </div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name" th:text="${p.name}">Core i7-14700K</div>
                         <div class="flash-prod-prices">
-                            <span class="flash-new-price" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
+                            <span class="flash-new-price"
+                                th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
                         </div>
                     </div>
                 </div>
@@ -199,12 +219,14 @@
             <div class="filter-group" id="filter-cats">
                 <span class="filter-group-label" data-translate="products-filter-category">Danh Mục</span>
                 <div class="filter-chips">
-                    <button class="filter-chip active" data-cat="all" id="fcat-all" data-translate="promo-filter-all">Tất Cả</button>
+                    <button class="filter-chip active" data-cat="all" id="fcat-all"
+                        data-translate="promo-filter-all">Tất Cả</button>
                     <button class="filter-chip" data-cat="cpu" id="fcat-cpu">CPU</button>
                     <button class="filter-chip" data-cat="vga" id="fcat-vga">VGA</button>
                     <button class="filter-chip" data-cat="ram" id="fcat-ram">RAM</button>
                     <button class="filter-chip" data-cat="mainboard" id="fcat-mainboard">Mainboard</button>
-                    <button class="filter-chip" data-cat="monitor" id="fcat-monitor" data-translate="cat-monitor">Màn Hình</button>
+                    <button class="filter-chip" data-cat="monitor" id="fcat-monitor" data-translate="cat-monitor">Màn
+                        Hình</button>
                 </div>
             </div>
 
@@ -232,19 +254,27 @@
 
         <div class="products-grid vertical-slider" id="products-grid">
             <!-- Featured products from database -->
-            <article th:each="p : ${featuredProducts}" class="product-card" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
+            <article th:each="p : ${featuredProducts}" class="product-card" th:id="'prod-' + ${p.id}"
+                th:data-price="${p.price}" th:data-cat="${p.category.name.toLowerCase()}"
+                th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
                 <div class="product-img-wrap">
-                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" />
-                    <div th:if="${p.price > 30000000}" class="product-badge gold" data-translate="badge-featured-gold">Đỉnh Cao</div>
-                    <button class="product-wishlist" aria-label="Yêu thích" th:onclick="|addToWishlist(this, ${p.id})|">♡</button>
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                        th:alt="${p.name}" class="product-img" />
+                    <div th:if="${p.price > 30000000}" class="product-badge gold" data-translate="badge-featured-gold">
+                        Đỉnh Cao</div>
+                    <button class="product-wishlist" aria-label="Yêu thích"
+                        th:onclick="|addToWishlist(this, ${p.id})|">♡</button>
                 </div>
                 <div class="product-info">
                     <span class="product-cat" th:text="${p.category.name} + ' · LUXURY'">CPU · Intel</span>
                     <h3 class="product-name" th:text="${p.name}">Core i9-14900K</h3>
                     <p class="product-spec" th:text="${p.description}">Description</p>
                     <div class="product-price-row">
-                        <span class="product-price" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
-                        <button class="btn-add-cart" th:data-id="${p.id}" th:data-name="${p.name}" th:data-price="${p.price}"><span data-translate="btn-add-cart-text">Thêm Vào Giỏ</span></button>
+                        <span class="product-price"
+                            th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
+                        <button class="btn-add-cart" th:data-id="${p.id}" th:data-name="${p.name}"
+                            th:data-price="${p.price}"><span data-translate="btn-add-cart-text">Thêm Vào
+                                Giỏ</span></button>
                     </div>
                 </div>
             </article>
@@ -256,33 +286,40 @@
         <div class="section-header">
             <span class="section-label" data-translate="voucher-section-label">Ưu Đãi</span>
             <h2 class="section-title" data-translate="voucher-section-title">Mã Khuyến Mãi</h2>
-            <p class="voucher-section-sub" data-translate="voucher-section-sub">Nhấn vào voucher để xem chi tiết điều kiện và cách sử dụng.</p>
+            <p class="voucher-section-sub" data-translate="voucher-section-sub">Nhấn vào voucher để xem chi tiết điều
+                kiện và cách sử dụng.</p>
         </div>
         <div class="voucher-grid">
             <!-- Dynamic vouchers from database -->
-            <div th:each="v : ${activeVouchers}" class="voucher-card" th:id="'vc-' + ${v.code}" th:data-voucher="${v.code}"
-                 th:data-desc="${v.description}"
-                 th:data-apply="${v.category != null ? v.category.name : 'Tất cả sản phẩm'}"
-                 th:data-expire="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}"
-                 th:data-limit="${v.usageLimit != null ? (v.usageLimit - v.usedCount) + ' lượt còn lại' : 'Không giới hạn'}">
+            <div th:each="v : ${activeVouchers}" class="voucher-card" th:id="'vc-' + ${v.code}"
+                th:data-voucher="${v.code}" th:data-desc="${v.description}"
+                th:data-apply="${v.category != null ? v.category.name : 'Tất cả sản phẩm'}"
+                th:data-expire="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}"
+                th:data-limit="${v.usageLimit != null ? (v.usageLimit - v.usedCount) + ' lượt còn lại' : 'Không giới hạn'}">
                 <div class="voucher-left">
                     <div class="voucher-pct">
-                        <span th:if="${v.discountType != null and v.discountType.name() == 'PERCENTAGE'}" th:text="${v.discountValue != null ? v.discountValue.intValue() + '%' : '0%'}">10%</span>
-                        <span th:if="${v.discountType != null and v.discountType.name() == 'FIXED_AMOUNT'}" th:text="${v.discountValue != null ? #numbers.formatDecimal(v.discountValue / 1000, 0, 'COMMA', 0, 'POINT') + 'K' : '0K'}">500K</span>
+                        <span th:if="${v.discountType != null and v.discountType.name() == 'PERCENTAGE'}"
+                            th:text="${v.discountValue != null ? v.discountValue.intValue() + '%' : '0%'}">10%</span>
+                        <span th:if="${v.discountType != null and v.discountType.name() == 'FIXED_AMOUNT'}"
+                            th:text="${v.discountValue != null ? #numbers.formatDecimal(v.discountValue / 1000, 0, 'COMMA', 0, 'POINT') + 'K' : '0K'}">500K</span>
                     </div>
-                    <div class="voucher-type" th:text="${v.category != null ? v.category.name : 'Giảm Giá'}" th:data-translate="${v.category != null ? v.category.name : 'Giảm Giá'}">Giảm Giá</div>
+                    <div class="voucher-type" th:text="${v.category != null ? v.category.name : 'Giảm Giá'}"
+                        th:data-translate="${v.category != null ? v.category.name : 'Giảm Giá'}">Giảm Giá</div>
                 </div>
                 <div class="voucher-right">
                     <div class="voucher-code" th:text="${v.code}">LUXURY10</div>
                     <div class="voucher-desc" th:text="${v.description}">Giảm 10% cho tất cả đơn hàng</div>
-                    <div class="voucher-tag" th:text="${v.minOrderAmount != null ? 'Đơn ≥ ' + #numbers.formatDecimal(v.minOrderAmount, 0, 'COMMA', 0, 'POINT') + '₫' : 'Tất cả đơn hàng'}">Tất cả sản phẩm</div>
+                    <div class="voucher-tag"
+                        th:text="${v.minOrderAmount != null ? 'Đơn ≥ ' + #numbers.formatDecimal(v.minOrderAmount, 0, 'COMMA', 0, 'POINT') + '₫' : 'Tất cả đơn hàng'}">
+                        Tất cả sản phẩm</div>
                 </div>
                 <div class="voucher-scissor">✂</div>
                 <div class="voucher-dots"></div>
             </div>
 
             <!-- Empty state if no vouchers -->
-            <div th:if="${activeVouchers == null or activeVouchers.isEmpty()}" style="grid-column: span 3; text-align:center; padding:2rem; color:var(--muted);">
+            <div th:if="${activeVouchers == null or activeVouchers.isEmpty()}"
+                style="grid-column: span 3; text-align:center; padding:2rem; color:var(--muted);">
                 <p data-translate="voucher-empty-state">Hiện chưa có mã khuyến mãi nào. Hãy quay lại sau!</p>
             </div>
         </div>
@@ -295,7 +332,8 @@
             <span class="section-label light" data-translate="build-section-label">Dịch Vụ</span>
             <h2 class="build-title">Build PC<br /><em data-translate="build-section-title-em">Theo Yêu Cầu</em></h2>
             <p class="build-desc" data-translate="build-section-desc">
-                Đội ngũ chuyên gia của Luxury PC sẽ tư vấn và lắp ráp hệ thống hoàn hảo nhất dành riêng cho bạn — từ workstation đồ họa đến chiến mã gaming không đối thủ.
+                Đội ngũ chuyên gia của Luxury PC sẽ tư vấn và lắp ráp hệ thống hoàn hảo nhất dành riêng cho bạn — từ
+                workstation đồ họa đến chiến mã gaming không đối thủ.
             </p>
             <div class="build-features">
                 <div class="build-feat">
@@ -320,7 +358,8 @@
                     </div>
                 </div>
             </div>
-            <a href="/build-pc/index.html" class="btn-primary" id="btn-build-pc"><span data-translate="build-section-cta">Bắt Đầu Build Ngay</span></a>
+            <a href="/build-pc/index.html" class="btn-primary" id="btn-build-pc"><span
+                    data-translate="build-section-cta">Bắt Đầu Build Ngay</span></a>
         </div>
     </section>
 
@@ -354,7 +393,8 @@
             <h2 class="section-title" data-translate="review-section-title">Khách Hàng Nói Gì</h2>
         </div>
         <div class="testi-slider" id="testi-slider">
-            <div th:each="rev, iter : ${reviews}" class="testi-card" th:classappend="${iter.index == 0 ? 'active' : ''}" th:id="|testi-${rev.id}|">
+            <div th:each="rev, iter : ${reviews}" class="testi-card" th:classappend="${iter.index == 0 ? 'active' : ''}"
+                th:id="|testi-${rev.id}|">
                 <div class="testi-stars" th:text="${'★'.repeat(rev.stars)}">★★★★★</div>
                 <p class="testi-text" th:text="|&quot;${rev.content}&quot;|">"Content"</p>
                 <div class="testi-author">
@@ -365,7 +405,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Default if no reviews -->
             <div th:if="${#lists.isEmpty(reviews)}" class="testi-card active">
                 <div class="testi-stars">★★★★★</div>
@@ -380,17 +420,20 @@
             </div>
         </div>
         <div class="testi-dots" th:if="${not #lists.isEmpty(reviews)}">
-            <button th:each="rev, iter : ${reviews}" class="dot-btn" th:classappend="${iter.index == 0 ? 'active' : ''}" th:data-idx="${iter.index}"></button>
+            <button th:each="rev, iter : ${reviews}" class="dot-btn" th:classappend="${iter.index == 0 ? 'active' : ''}"
+                th:data-idx="${iter.index}"></button>
         </div>
     </section>
 
     <!-- NEWSLETTER -->
     <section class="newsletter">
         <div class="newsletter-inner">
-            <h2 class="newsletter-title" data-translate="newsletter-section-title">Nhận Ưu Đãi <em>Độc Quyền</em></h2>
-            <p class="newsletter-sub" data-translate="newsletter-section-sub">Đăng ký để nhận thông báo giảm giá, sản phẩm mới nhất và lời khuyên build PC từ chuyên gia.</p>
+            <h2 class="newsletter-title" data-translate="newsletter-section-title">Nhận Ưu Đãi Độc Quyền</h2>
+            <p class="newsletter-sub" data-translate="newsletter-section-sub">Đăng ký để nhận thông báo giảm giá, sản
+                phẩm mới nhất và lời khuyên build PC từ chuyên gia.</p>
             <form class="newsletter-form" id="newsletter-form">
-                <input type="email" id="newsletter-email" data-translate-placeholder="newsletter-email-placeholder" placeholder="Email của bạn..." required aria-label="Email đăng ký" />
+                <input type="email" id="newsletter-email" data-translate-placeholder="newsletter-email-placeholder"
+                    placeholder="Email của bạn..." required aria-label="Email đăng ký" />
                 <button type="submit" id="newsletter-submit" data-translate="newsletter-submit-btn">Đăng Ký</button>
             </form>
         </div>
