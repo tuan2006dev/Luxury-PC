@@ -42,3 +42,61 @@ function editFlashSale(btn) {
     
     document.getElementById('flashSaleModal').classList.add('show');
 }
+
+function deleteFlashSaleApi(id) {
+    const confirmMsg = window.t ? window.t('admin-flashsales-confirm-delete', 'Xóa chương trình Flash Sale này?') : 'Xóa chương trình Flash Sale này?';
+    
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: confirmMsg,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            background: '#1a1a1a',
+            color: '#f5f0e8',
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#c9a84c'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                performDelete(id);
+            }
+        });
+    } else {
+        if (confirm(confirmMsg)) {
+            performDelete(id);
+        }
+    }
+
+    function performDelete(id) {
+        fetch('/api/flash-sales/delete/' + id, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Đã xóa!',
+                        text: data.message || 'Xóa chương trình thành công.',
+                        icon: 'success',
+                        background: '#1a1a1a',
+                        color: '#f5f0e8',
+                        confirmButtonColor: '#c9a84c'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    alert(data.message || 'Xóa chương trình thành công.');
+                    location.reload();
+                }
+            } else {
+                alert(data.message || 'Có lỗi xảy ra.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Lỗi kết nối server.');
+        });
+    }
+}

@@ -32,11 +32,11 @@ public class AdminFlashSaleController {
 
     @PostMapping("/save")
     public String saveFlashSale(
-            @RequestParam(required = false) Integer id,
-            @RequestParam String name,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startTime,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date endTime,
-            @RequestParam(required = false, defaultValue = "true") Boolean active,
+            @RequestParam(value = "id", required = false) Integer id,
+            @RequestParam("name") String name,
+            @RequestParam("startTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startTime,
+            @RequestParam("endTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date endTime,
+            @RequestParam(value = "active", required = false, defaultValue = "true") Boolean active,
             RedirectAttributes ra) {
 
         FlashSale sale;
@@ -61,14 +61,14 @@ public class AdminFlashSaleController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteFlashSale(@PathVariable Integer id, RedirectAttributes ra) {
+    public String deleteFlashSale(@PathVariable("id") Integer id, RedirectAttributes ra) {
         flashSaleService.deleteFlashSale(id);
         ra.addFlashAttribute("success", "Đã xóa Flash Sale!");
         return "redirect:/admin/flash-sales";
     }
 
     @GetMapping("/{id}/items")
-    public String manageItems(@PathVariable Integer id, Model model) {
+    public String manageItems(@PathVariable("id") Integer id, Model model) {
         FlashSale sale = flashSaleService.getById(id);
         if (sale == null) return "redirect:/admin/flash-sales";
 
@@ -80,10 +80,10 @@ public class AdminFlashSaleController {
 
     @PostMapping("/{id}/items/add")
     public String addItem(
-            @PathVariable Integer id,
-            @RequestParam(required = false) Integer productId,
-            @RequestParam(required = false) Double salePrice,
-            @RequestParam(required = false) Integer saleQuantity,
+            @PathVariable("id") Integer id,
+            @RequestParam(value = "productId", required = false) Integer productId,
+            @RequestParam(value = "salePrice", required = false) Double salePrice,
+            @RequestParam(value = "saleQuantity", required = false) Integer saleQuantity,
             RedirectAttributes ra) {
 
         if (productId == null || salePrice == null || saleQuantity == null) {
@@ -101,9 +101,21 @@ public class AdminFlashSaleController {
     }
 
     @PostMapping("/{saleId}/items/remove/{itemId}")
-    public String removeItem(@PathVariable Integer saleId, @PathVariable Integer itemId, RedirectAttributes ra) {
+    public String removeItem(@PathVariable("saleId") Integer saleId, @PathVariable("itemId") Integer itemId, RedirectAttributes ra) {
         flashSaleService.removeItemFromSale(itemId);
         ra.addFlashAttribute("success", "Đã xóa sản phẩm khỏi Flash Sale!");
         return "redirect:/admin/flash-sales/" + saleId + "/items";
+    }
+
+    @PostMapping("/activate/{id}")
+    public String activateFlashSale(@PathVariable("id") Integer id, RedirectAttributes ra) {
+        flashSaleService.toggleFlashSale(id);
+        ra.addFlashAttribute("success", "Đã cập nhật trạng thái chương trình Flash Sale thành công!");
+        return "redirect:/admin/flash-sales";
+    }
+
+    @PostMapping("/toggle/{id}")
+    public String toggleFlashSale(@PathVariable("id") Integer id, RedirectAttributes ra) {
+        return activateFlashSale(id, ra);
     }
 }

@@ -189,50 +189,50 @@
 
     <!-- ============ FLASH DEAL PRODUCTS — từ DB ============ -->
     <!-- Chỉ hiện section này khi có Flash Sale đang chạy -->
-    <section class="promo-deals" id="promo-deals" th:if="${flashSale != null and flashSaleItems != null and !flashSaleItems.isEmpty()}">
-        <div class="promo-deals-header">
-            <span class="section-label">⚡ <span th:text="${flashSale.name}">Flash Sale</span></span>
-            <h2 class="section-title" data-translate="promo-deals-title">Deal Sốc Hôm Nay</h2>
-        </div>
-        <div class="promo-deals-grid" id="promo-deals-grid">
-
-            <!-- Deal từ DB -->
-            <div th:each="item : ${flashSaleItems}" class="promo-deal-card" th:id="'deal-' + ${item.id}">
-                <div class="promo-deal-img">
-                    <img th:src="@{/images/{img}(img=${item.product.image})}" th:alt="${item.product.name}"
-                         onerror="this.src='/images/default-product.png'" />
-                    <div class="promo-deal-badge" th:text="'-' + ${item.discountPercent} + '%'">-%</div>
-                    <div class="promo-deal-timer"><span class="deal-timer-text">⏰ 00:00:00</span></div>
-                </div>
-                <div class="promo-deal-info">
-                    <div class="promo-deal-name" th:text="${item.product.name}">Sản phẩm</div>
-                    <div class="promo-deal-prices">
-                        <span class="promo-deal-new"
-                              th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
-                        <span class="promo-deal-old"
-                              th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
+    <!-- FLASH SALE -->
+    <section class="flash-sale" id="flash-sale" th:if="${flashSale != null and flashSaleItems != null and !flashSaleItems.isEmpty()}">
+        <div class="flash-sale-inner">
+            <div class="flash-sale-left">
+                <div class="flash-badge" data-translate="flash-hot-deal">🔥 HOT DEAL</div>
+                <h2 class="flash-title">
+                    <span th:text="${flashSale.name}">Flash Sale</span>
+                </h2>
+                <p class="flash-sub" data-translate="flash-sub">Ưu đãi cực sốc — số lượng có hạn!</p>
+                <div class="flash-countdown" id="flash-countdown">
+                    <div class="countdown-block">
+                        <span class="countdown-num" id="fs-hours">00</span>
+                        <span class="countdown-label" data-translate="promo-hour">Giờ</span>
                     </div>
-                    <div class="promo-deal-sold">
-                        <div class="promo-deal-sold-bar">
-                            <div class="promo-deal-sold-fill" th:style="'width:' + ${item.soldPercent} + '%'">
-                                <span class="promo-deal-sold-text"
-                                      th:text="${item.soldPercent >= 90} ? 'Sắp hết!' : ('Đã bán ' + item.soldPercent + '%')">Đã bán</span>
-                            </div>
-                        </div>
+                    <div class="countdown-sep">:</div>
+                    <div class="countdown-block">
+                        <span class="countdown-num" id="fs-minutes">00</span>
+                        <span class="countdown-label" data-translate="promo-minute">Phút</span>
                     </div>
-                    <!-- Nút mua ngay với giá sale -->
-                    <form th:action="@{/cart/buy-now}" method="POST" style="margin-top:0.5rem;">
-                        <input type="hidden" name="id" th:value="${item.product.id}" />
-                        <input type="hidden" name="name" th:value="${item.product.name}" />
-                        <input type="hidden" name="price" th:value="${item.salePrice}" />
-                        <input type="hidden" name="quantity" value="1" />
-                        <button type="submit" class="promo-deal-buy-btn"
-                                th:disabled="${!item.available}"
-                                th:text="${item.available} ? 'Mua Ngay' : 'Hết Hàng'">Mua Ngay</button>
-                    </form>
+                    <div class="countdown-sep">:</div>
+                    <div class="countdown-block">
+                        <span class="countdown-num" id="fs-seconds">00</span>
+                        <span class="countdown-label" data-translate="promo-second">Giây</span>
+                    </div>
                 </div>
             </div>
-
+            <div class="flash-products">
+                <!-- Flash Sale items from database campaign -->
+                <div th:each="item : ${flashSaleItems}" class="flash-product-card" th:id="'fp-' + ${item.product.id}" th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|" style="cursor: pointer;">
+                    <div class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
+                    <div class="flash-prod-img">
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" />
+                    </div>
+                    <div class="flash-prod-info">
+                        <div class="flash-prod-name" th:text="${item.product.name}">Core i7-14700K</div>
+                        <div class="flash-prod-prices">
+                            <span class="flash-new-price" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
+                        </div>
+                        <div class="flash-sale-qty" style="font-size: 0.72rem; color: var(--gold); margin-top: 4px; font-weight: 500;">
+                            Còn lại: <span th:text="${item.saleQuantity - item.soldCount}">45</span> sản phẩm
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -297,8 +297,8 @@
     <!-- ============ PROMOTIONS PAGE JS ============ -->
     <script th:inline="javascript">
     (function() {
-        // ---- Countdown Timer từ endTime thật của Flash Sale ----
-        const flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
+        window.flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
+        const flashSaleEndTime = window.flashSaleEndTime;
 
         function startCountdown() {
             if (!flashSaleEndTime || flashSaleEndTime === 0) return;

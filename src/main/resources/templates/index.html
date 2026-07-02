@@ -97,27 +97,23 @@
             </div>
             <div class="flash-products">
                 <!-- Flash Sale items from database campaign -->
-                <div th:if="${flashSaleItems != null}" th:each="item : ${flashSaleItems}" class="flash-product-card" th:id="'fp-' + ${item.product.id}">
-                    <div class="flash-discount-badge" th:text="'-' + ${item.discountPercent} + '%'">-25%</div>
+                <div th:if="${flashSaleItems != null}" th:each="item : ${flashSaleItems}" class="flash-product-card" th:id="'fp-' + ${item.product.id}" th:onclick="|location.href='@{/promotions}'|" style="cursor: pointer;">
+                    <div class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
                     <div class="flash-prod-img">
                         <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" />
                     </div>
                     <div class="flash-prod-info">
                         <div class="flash-prod-name" th:text="${item.product.name}">Core i7-14700K</div>
                         <div class="flash-prod-prices">
-                            <span class="flash-old-price" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'" style="text-decoration:line-through;color:var(--muted);font-size:.8rem;margin-right:6px;">15.000.000₫</span>
                             <span class="flash-new-price" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
                         </div>
-                        <div style="margin-top:6px;">
-                            <div style="width:100%;height:4px;background:rgba(201,168,76,0.15);border-radius:2px;overflow:hidden;">
-                                <div style="height:100%;background:var(--gold);border-radius:2px;transition:.3s;" th:style="'width:' + ${item.soldPercent} + '%'"></div>
-                            </div>
-                            <div style="font-size:.65rem;color:var(--muted);margin-top:3px;" th:text="'Đã bán ' + ${item.soldCount} + '/' + ${item.saleQuantity}">Đã bán 5/50</div>
+                        <div class="flash-sale-qty" style="font-size: 0.72rem; color: var(--gold); margin-top: 4px; font-weight: 500;">
+                            Còn lại: <span th:text="${item.saleQuantity - item.soldCount}">45</span> sản phẩm
                         </div>
                     </div>
                 </div>
                 <!-- Fallback: old flash sale products (stock < 10) -->
-                <div th:if="${flashSaleItems == null and flashSaleProducts != null}" th:each="p : ${flashSaleProducts}" class="flash-product-card" th:id="'fp-' + ${p.id}">
+                <div th:if="${flashSaleItems == null and flashSaleProducts != null}" th:each="p : ${flashSaleProducts}" class="flash-product-card" th:id="'fp-' + ${p.id}" th:onclick="|location.href='@{/promotions}'|" style="cursor: pointer;">
                     <div th:if="${p.stock < 10}" class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
                     <div class="flash-prod-img">
                         <img th:src="@{${p.image != null ? (p.image.startsWith('http') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" />

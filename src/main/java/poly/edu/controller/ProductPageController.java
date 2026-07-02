@@ -12,10 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import poly.edu.entity.Product;
 import poly.edu.entity.Review;
 import poly.edu.entity.User;
+import poly.edu.entity.FlashSale;
+import poly.edu.entity.FlashSaleItem;
 import poly.edu.service.CategoryService;
 import poly.edu.service.ProductService;
 import poly.edu.service.WishlistService;
+import poly.edu.service.FlashSaleService;
 import poly.edu.dao.ReviewDAO;
+import poly.edu.dao.FlashSaleItemDAO;
 import poly.edu.repository.UserRepository;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -42,6 +46,12 @@ public class ProductPageController {
 
     @Autowired
     WishlistService wishlistService;
+
+    @Autowired
+    FlashSaleService flashSaleService;
+
+    @Autowired
+    FlashSaleItemDAO flashSaleItemDAO;
 
     @GetMapping("/products")
     public String showProductsPage(
@@ -127,6 +137,19 @@ public class ProductPageController {
         }
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("isAdmin", isAdmin);
+
+        // Kiểm tra xem sản phẩm có thuộc chương trình Flash Sale đang kích hoạt không và chưa bán hết
+        Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
+        if (currentSale.isPresent()) {
+            Optional<FlashSaleItem> fsItemOpt = flashSaleItemDAO.findByFlashSaleIdAndProductId(currentSale.get().getId(), id);
+            if (fsItemOpt.isPresent()) {
+                FlashSaleItem fsItem = fsItemOpt.get();
+                if (fsItem.getSoldCount() < fsItem.getSaleQuantity()) {
+                    model.addAttribute("flashSaleItem", fsItem);
+                    model.addAttribute("flashSaleEndTime", currentSale.get().getEndTime().getTime());
+                }
+            }
+        }
 
         return "product-detail";
     }
