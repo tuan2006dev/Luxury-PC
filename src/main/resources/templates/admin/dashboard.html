@@ -7,6 +7,7 @@
     <title>Admin Dashboard — Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
 </head>
@@ -48,102 +49,160 @@
             </div>
         </div>
 
-        <div class="chart-container fade-in-up delay-2">
-            <div class="table-h"><i class="fa-solid fa-chart-area"></i> <span data-translate="admin-dashboard-chart-title">Biểu Đồ Doanh Thu Học Kỳ 1 - 2026</span></div>
-            <canvas id="revenueChart" height="80"></canvas>
+        <div class="dashboard-tabs fade-in-up delay-2">
+            <button class="tab-btn active" onclick="switchTab('tab-charts', event)"><i class="fa-solid fa-chart-line"></i> Biểu Đồ Doanh Thu</button>
+            <button class="tab-btn" onclick="switchTab('tab-users', event)"><i class="fa-solid fa-users"></i> Phân Tích Người Dùng</button>
+            <button class="tab-btn" onclick="switchTab('tab-products', event)"><i class="fa-solid fa-box"></i> Báo Cáo Sản Phẩm</button>
         </div>
 
-        <div class="dashboard-grid fade-in-up delay-3">
-            <div class="table-card">
-                <div class="table-h"><i class="fa-solid fa-fire"></i> <span data-translate="admin-dashboard-best-sellers-title">Sản Phẩm Bán Chạy Nhất</span></div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-translate="admin-dashboard-col-product" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tên Linh Kiện</th>
-                                <th style="text-align: right; position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;" data-translate="admin-dashboard-col-sold">Đã Bán</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="p : ${topProducts}">
-                                <td th:text="${p.name}">RTX 4090 Global</td>
-                                <td th:text="${p.totalQty}" style="text-align: right; font-weight: bold; color: var(--gold);">15</td>
-                            </tr>
-                            <tr th:if="${topProducts == null or topProducts.empty}">
-                                <td>Intel Core i9-14900K</td><td style="text-align: right; color: var(--gold); font-weight: bold;">42</td>
-                            </tr>
-                            <tr th:if="${topProducts == null or topProducts.empty}">
-                                <td>RTX 4090 Asus ROG</td><td style="text-align: right; color: var(--gold); font-weight: bold;">28</td>
-                            </tr>
-                            <tr th:if="${topProducts == null or topProducts.empty}">
-                                <td>RAM Corsair DDR5 64GB</td><td style="text-align: right; color: var(--gold); font-weight: bold;">120</td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <div class="tab-content fade-in-up delay-2">
+            <!-- Tab 1: Charts -->
+            <div id="tab-charts" class="tab-pane active">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="table-h" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div><i class="fa-solid fa-chart-area"></i> <span data-translate="admin-dashboard-chart-title">Biểu Đồ Doanh Thu</span></div>
+                            <select id="daysFilter" class="form-select" style="width: auto; background: var(--dark); color: #fff; border: 1px solid rgba(201,168,76,0.2); padding: 5px 10px; border-radius: 4px; outline: none; font-family: inherit; font-size: 0.9rem;" onchange="window.loadDashboardStats(this.value)">
+                                <option value="7">7 Ngày Qua</option>
+                                <option value="15">15 Ngày Qua</option>
+                                <option value="30" selected>30 Ngày Qua</option>
+                                <option value="90">3 Tháng Qua</option>
+                            </select>
+                        </div>
+                        <canvas id="revenueChart" height="120"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="table-h"><i class="fa-solid fa-chart-pie"></i> <span>Trạng Thái Đơn Hàng</span></div>
+                        <canvas id="orderStatusChart" height="250"></canvas>
+                    </div>
                 </div>
             </div>
 
-            <div class="table-card">
-                <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> <span data-translate="admin-dashboard-stock-alerts-title">Cảnh Báo Kho Hàng (Sắp Hết)</span></div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-translate="admin-dashboard-col-alert-product" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tên Sản Phẩm</th>
-                                <th data-translate="admin-dashboard-col-stock" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tồn Kho</th>
-                                <th data-translate="admin-dashboard-col-status" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Trạng Thái</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="item : ${lowStock}">
-                                <td th:text="${item.product.name}">CPU i9-14900K</td>
-                                <td th:text="${item.quantity}" style="font-weight: bold;">2</td>
-                                <td><span class="badge badge-red" data-translate="admin-dashboard-badge-low">Chỉ còn ít</span></td>
-                            </tr>
-                            <tr th:if="${lowStock == null or lowStock.empty}">
-                                <td colspan="3" style="text-align: center; color: var(--green); padding: 2rem 0;">
-                                    <i class="fa-solid fa-check-circle" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
-                                    <span data-translate="admin-dashboard-stock-ok">Tất cả sản phẩm đều đủ hàng.</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Tab 2: Users -->
+            <div id="tab-users" class="tab-pane">
+                <div class="chart-container" style="margin-bottom: 3rem;">
+                    <div class="table-h"><i class="fa-solid fa-users"></i> <span>Người Dùng Đăng Ký Mới</span></div>
+                    <canvas id="newUsersChart" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Tab 3: Products -->
+            <div id="tab-products" class="tab-pane">
+                <div class="dashboard-grid">
+                    <div class="table-card">
+                        <div class="table-h"><i class="fa-solid fa-fire"></i> <span data-translate="admin-dashboard-best-sellers-title">Sản Phẩm Bán Chạy Nhất</span></div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th data-translate="admin-dashboard-col-product" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tên Linh Kiện</th>
+                                        <th style="text-align: right; position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;" data-translate="admin-dashboard-col-sold">Đã Bán</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="p : ${topProducts}">
+                                        <td th:text="${p.name}">RTX 4090 Global</td>
+                                        <td th:text="${p.totalQty}" style="text-align: right; font-weight: bold; color: var(--gold);">15</td>
+                                    </tr>
+                                    <tr th:if="${topProducts == null or topProducts.empty}">
+                                        <td>Intel Core i9-14900K</td><td style="text-align: right; color: var(--gold); font-weight: bold;">42</td>
+                                    </tr>
+                                    <tr th:if="${topProducts == null or topProducts.empty}">
+                                        <td>RTX 4090 Asus ROG</td><td style="text-align: right; color: var(--gold); font-weight: bold;">28</td>
+                                    </tr>
+                                    <tr th:if="${topProducts == null or topProducts.empty}">
+                                        <td>RAM Corsair DDR5 64GB</td><td style="text-align: right; color: var(--gold); font-weight: bold;">120</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> <span data-translate="admin-dashboard-stock-alerts-title">Cảnh Báo Kho Hàng (Sắp Hết)</span></div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th data-translate="admin-dashboard-col-alert-product" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tên Sản Phẩm</th>
+                                        <th data-translate="admin-dashboard-col-stock" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Tồn Kho</th>
+                                        <th data-translate="admin-dashboard-col-status" style="position: sticky; top: 0; background: #1a1a1a !important; z-index: 999 !important;">Trạng Thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${lowStock}">
+                                        <td th:text="${item.product.name}">CPU i9-14900K</td>
+                                        <td th:text="${item.quantity}" style="font-weight: bold;">2</td>
+                                        <td><span class="badge badge-red" data-translate="admin-dashboard-badge-low">Chỉ còn ít</span></td>
+                                    </tr>
+                                    <tr th:if="${lowStock == null or lowStock.empty}">
+                                        <td colspan="3" style="text-align: center; color: var(--green); padding: 2rem 0;">
+                                            <i class="fa-solid fa-check-circle" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                                            <span data-translate="admin-dashboard-stock-ok">Tất cả sản phẩm đều đủ hàng.</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     <script th:inline="javascript">
+    window.switchTab = function(tabId, event) {
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    };
     (function() {
         document.getElementById('current-month').innerText = new Date().getMonth() + 1;
-        // Dữ liệu giả lập mượt mà để biểu đồ luôn hiện nếu backend trống
-        let rawRevenue = /*[[${revenue}]]*/ null;
-        let chartLabels = [];
-        let chartValues = [];
 
-        if (rawRevenue && rawRevenue.length > 0) {
-            chartLabels = rawRevenue.map(item => item.month);
-            chartValues = rawRevenue.map(item => item.revenue);
-        } else {
-            chartLabels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'];
-            chartValues = [250000000, 310000000, 280000000, 452500000, 480000000, 500000000];
-        }
+        let revenueChartInstance = null;
+        let orderStatusChartInstance = null;
+        let newUsersChartInstance = null;
 
-        function initChart() {
+        window.loadDashboardStats = async function(days = 30) {
+            try {
+                const response = await fetch(`/api/admin/dashboard/stats?days=${days}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                renderRevenueChart(data.dailyRevenue || []);
+                renderOrderStatusChart(data.orderStatusStats || []);
+                renderNewUsersChart(data.newUsersByDate || []);
+            } catch (error) {
+                console.error("Failed to load dashboard stats", error);
+                // Fallback mock data
+                renderRevenueChart([]);
+                renderOrderStatusChart([]);
+                renderNewUsersChart([]);
+            }
+        };
+
+        function renderRevenueChart(dailyRevenue) {
             const ctx = document.getElementById('revenueChart');
             if (!ctx) return;
             const context2d = ctx.getContext('2d');
             
-            // Tạo gradient màu vàng nổi bật cho chart
+            if (revenueChartInstance) {
+                revenueChartInstance.destroy();
+            }
+
+            let chartLabels = dailyRevenue.length > 0 ? dailyRevenue.map(item => item.date) : ['Ngày 1', 'Ngày 2', 'Ngày 3', 'Ngày 4', 'Ngày 5'];
+            let chartValues = dailyRevenue.length > 0 ? dailyRevenue.map(item => item.revenue) : [0, 0, 0, 0, 0];
+            
             let gradient = context2d.createLinearGradient(0, 0, 0, 400);
             gradient.addColorStop(0, 'rgba(201, 168, 76, 0.6)');
             gradient.addColorStop(1, 'rgba(201, 168, 76, 0.05)');
 
-            new Chart(context2d, {
+            revenueChartInstance = new Chart(context2d, {
                 type: 'line',
                 data: {
-                    labels: chartLabels.reverse(),
+                    labels: chartLabels,
                     datasets: [{
                         label: 'Doanh Thu (VNĐ)',
-                        data: chartValues.reverse(),
+                        data: chartValues,
                         borderColor: '#c9a84c',
                         backgroundColor: gradient,
                         borderWidth: 3,
@@ -151,7 +210,6 @@
                         pointBorderColor: '#c9a84c',
                         pointBorderWidth: 2,
                         pointRadius: 4,
-                        pointHoverRadius: 6,
                         fill: true,
                         tension: 0.4
                     }]
@@ -159,30 +217,13 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) { label += ': '; }
-                                    if (context.parsed.y !== null) {
-                                        label += new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' ₫';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
+                        legend: { display: false }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { 
-                                color: '#888',
-                                callback: function(value) {
-                                    return (value / 1000000) + ' Tr';
-                                }
-                            }
+                            ticks: { color: '#888' }
                         },
                         x: {
                             grid: { display: false },
@@ -193,13 +234,129 @@
             });
         }
 
+        function renderOrderStatusChart(orderStatusStats) {
+            const ctx = document.getElementById('orderStatusChart');
+            if (!ctx) return;
+            
+            if (orderStatusChartInstance) {
+                orderStatusChartInstance.destroy();
+            }
+
+            const statusLabels = {
+                'PENDING': 'Chờ xử lý',
+                'CHO_XAC_NHAN_THANH_TOAN': 'Chờ xác nhận TT',
+                'DA_THANH_TOAN': 'Đã thanh toán',
+                'SHIPPING': 'Đang giao',
+                'COMPLETED': 'Hoàn thành',
+                'YEU_CAU_HOAN_TIEN': 'Yêu cầu hoàn tiền',
+                'DA_HOAN_TIEN': 'Đã hoàn tiền',
+                'THU_HOI': 'Thu hồi'
+            };
+
+            const statusColors = {
+                'PENDING': '#ef4444', // Red
+                'CHO_XAC_NHAN_THANH_TOAN': '#f59e0b', // Amber
+                'DA_THANH_TOAN': '#8b5cf6', // Purple
+                'SHIPPING': '#3b82f6', // Blue
+                'COMPLETED': '#10b981', // Green
+                'YEU_CAU_HOAN_TIEN': '#eab308', // Yellow
+                'DA_HOAN_TIEN': '#64748b', // Slate
+                'THU_HOI': '#ec4899' // Pink
+            };
+            
+            let labels = [];
+            let data = [];
+            let bgColors = [];
+            
+            if (orderStatusStats.length > 0) {
+                labels = orderStatusStats.map(item => statusLabels[item.status] || item.status);
+                data = orderStatusStats.map(item => item.count);
+                bgColors = orderStatusStats.map(item => statusColors[item.status] || '#888');
+            } else {
+                labels = ['Chưa có dữ liệu'];
+                data = [1];
+                bgColors = ['#333'];
+            }
+
+            orderStatusChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                plugins: typeof ChartDataLabels !== 'undefined' ? [ChartDataLabels] : [],
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: bgColors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { 
+                            position: 'right', 
+                            labels: { 
+                                color: '#fff',
+                                boxWidth: 12,
+                                padding: 12,
+                                font: { size: 11 }
+                            } 
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            formatter: function(value) {
+                                return value > 0 ? value : '';
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderNewUsersChart(newUsersByDate) {
+            const ctx = document.getElementById('newUsersChart');
+            if (!ctx) return;
+            
+            if (newUsersChartInstance) {
+                newUsersChartInstance.destroy();
+            }
+
+            let labels = newUsersByDate.length > 0 ? newUsersByDate.map(item => item.date) : ['Ngày 1', 'Ngày 2', 'Ngày 3'];
+            let data = newUsersByDate.length > 0 ? newUsersByDate.map(item => item.count) : [0, 0, 0];
+
+            newUsersChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Người Dùng Mới',
+                        data: data,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', stepSize: 1 } },
+                        x: { grid: { display: false }, ticks: { color: '#888' } }
+                    }
+                }
+            });
+        }
+
         if (typeof Chart === 'undefined') {
             let script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-            script.onload = initChart;
+            script.onload = () => window.loadDashboardStats(30);
             document.head.appendChild(script);
         } else {
-            initChart();
+            window.loadDashboardStats(30);
         }
     })();
     </script>

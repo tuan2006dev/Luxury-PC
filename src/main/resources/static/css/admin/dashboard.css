@@ -22,7 +22,8 @@
         .stat-icon { position: absolute; right: 20px; top: 20px; font-size: 2rem; color: rgba(201,168,76,0.1); }
 
         /* Charts */
-        .chart-container { background: var(--dark); padding: 2rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; margin-bottom: 3rem; }
+        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        .chart-container { background: var(--dark); padding: 2rem; border: 1px solid rgba(201,168,76,0.1); border-radius: 8px; }
 
         /* Tables */
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
@@ -41,3 +42,14 @@
         .badge { padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: bold;}
         .badge-red { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.3);}
         .badge-green { background: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.3);}
+
+        /* Tabs */
+        .dashboard-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .tab-btn { background: transparent; border: none; color: var(--muted); padding: 1rem 1.5rem; font-size: 1rem; font-family: inherit; cursor: pointer; transition: all 0.3s ease; position: relative; font-weight: 500; }
+        .tab-btn i { margin-right: 8px; }
+        .tab-btn:hover { color: #fff; }
+        .tab-btn.active { color: var(--gold); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--gold); }
+        .tab-pane { display: none; animation: fadeIn 0.3s ease; }
+        .tab-pane.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

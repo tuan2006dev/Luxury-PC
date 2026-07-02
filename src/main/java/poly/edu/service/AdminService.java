@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.*;
 import poly.edu.entity.*;
+import poly.edu.repository.UserRepository;
 import java.util.*;
 
 @Service
@@ -129,6 +130,27 @@ public class AdminService {
 
     public List<Map<String, Object>> getMonthlyRevenue() {
         return orderDAO.getMonthlyRevenue();
+    }
+
+    public List<Map<String, Object>> getDailyRevenue(int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -days);
+        return orderDAO.getDailyRevenue(cal.getTime());
+    }
+
+    public List<Map<String, Object>> getOrderStatusStats(int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -days);
+        return orderDAO.getOrderStatusStats(cal.getTime());
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public List<Map<String, Object>> getNewUsersByDate(int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -days);
+        return userRepository.getNewUsersByDate(cal.getTime());
     }
 
     public List<Map<String, Object>> getTopSellingProducts() {

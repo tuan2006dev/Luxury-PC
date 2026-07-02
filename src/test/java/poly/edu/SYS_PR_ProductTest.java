@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import poly.edu.dao.CategoryDAO;
 import poly.edu.dao.ProductDAO;
+import poly.edu.dao.PcComboDAO;
+import poly.edu.dao.PcComboDetailDAO;
 import poly.edu.entity.Category;
 import poly.edu.entity.Product;
 import poly.edu.service.ProductService;
@@ -34,6 +36,12 @@ public class SYS_PR_ProductTest {
 
     @Autowired
     private ProductDAO productDAO;
+
+    @Autowired
+    private PcComboDAO pcComboDAO;
+
+    @Autowired
+    private PcComboDetailDAO pcComboDetailDAO;
 
     @Autowired
     private CategoryDAO categoryDAO;
@@ -188,6 +196,8 @@ public class SYS_PR_ProductTest {
 
     @Test
     public void test_SYS_PR_10_EmptyStateLogic() throws Exception {
+        pcComboDetailDAO.deleteAll();
+        pcComboDAO.deleteAll();
         productDAO.deleteAll(); // Ensure DB is empty
 
         mockMvc.perform(get("/api/products"))

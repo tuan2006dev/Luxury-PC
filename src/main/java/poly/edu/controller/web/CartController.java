@@ -27,6 +27,9 @@ public class CartController {
     @Autowired
     private poly.edu.service.CartService cartService;
 
+    @Autowired
+    private poly.edu.service.FlashSaleService flashSaleService;
+
     /**
      * 1. THÊM SẢN PHẨM: Xử lý khi nhấn "THÊM VÀO GIỎ HÀNG"
      */

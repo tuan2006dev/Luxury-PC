@@ -17,6 +17,14 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
                    "GROUP BY month ORDER BY month DESC", nativeQuery = true)
     List<Map<String, Object>> getMonthlyRevenue();
 
+    @Query(value = "SELECT TO_CHAR(created_at, 'YYYY-MM-DD') as date, SUM(total_price) as revenue " +
+                   "FROM orders WHERE status = 'COMPLETED' AND created_at >= :startDate " +
+                   "GROUP BY date ORDER BY date ASC", nativeQuery = true)
+    List<Map<String, Object>> getDailyRevenue(@org.springframework.data.repository.query.Param("startDate") java.util.Date startDate);
+
+    @Query(value = "SELECT status, COUNT(*) as count FROM orders WHERE created_at >= :startDate GROUP BY status", nativeQuery = true)
+    List<Map<String, Object>> getOrderStatusStats(@org.springframework.data.repository.query.Param("startDate") java.util.Date startDate);
+
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('PENDING', 'CHO_XAC_NHAN_THANH_TOAN')")
     long countPendingOrders();
 
