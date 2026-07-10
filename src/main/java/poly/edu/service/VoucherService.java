@@ -21,6 +21,7 @@ public class VoucherService {
         return voucherDAO.findAllByOrderByCreatedAtDesc();
     }
 
+    @org.springframework.cache.annotation.Cacheable("activeVouchers")
     public List<Voucher> getActiveVouchers() {
         return voucherDAO.findActiveVouchers();
     }

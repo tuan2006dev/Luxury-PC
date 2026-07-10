@@ -25,41 +25,46 @@ public class FlashSaleService {
     private ProductDAO productDAO;
 
     /**
-     * Lấy chương trình Flash Sale đang diễn ra
+     * Lấy chương trình Flash Sale đang diễn ra (chỉ đọc, không ghi DB)
      */
-    @Transactional
+    @org.springframework.cache.annotation.Cacheable("currentFlashSale")
     public Optional<FlashSale> getCurrentFlashSale() {
-        Date now = new Date();
         List<FlashSale> activeSales = flashSaleDAO.findCurrentActiveSale();
         if (activeSales != null && !activeSales.isEmpty()) {
-            FlashSale current = activeSales.get(0);
-            // Kiểm tra xem chiến dịch active đã quá hạn chưa
-            if (current.getEndTime() != null && current.getEndTime().before(now)) {
-                // Quá hạn -> Tắt kích hoạt chương trình cũ
-                current.setActive(false);
-                flashSaleDAO.save(current);
-
-                // Tìm chiến dịch tiếp theo phù hợp thời gian hiện tại
-                List<FlashSale> nextSales = flashSaleDAO.findValidSalesForTime(now);
-                if (nextSales != null && !nextSales.isEmpty()) {
-                    FlashSale nextSale = nextSales.get(0);
-                    // Kích hoạt chiến dịch mới (đồng thời tắt tất cả chiến dịch khác)
-                    activateFlashSale(nextSale.getId());
-                    return Optional.of(nextSale);
-                }
-                return Optional.empty();
-            }
-            return Optional.of(current);
-        } else {
-            // Không có chiến dịch nào active -> Tìm xem có chiến dịch nào đang trong thời gian diễn ra để tự động bật
-            List<FlashSale> nextSales = flashSaleDAO.findValidSalesForTime(now);
-            if (nextSales != null && !nextSales.isEmpty()) {
-                FlashSale nextSale = nextSales.get(0);
-                activateFlashSale(nextSale.getId());
-                return Optional.of(nextSale);
-            }
+            return Optional.of(activeSales.get(0));
         }
         return Optional.empty();
+    }
+
+    /**
+     * Job chạy ngầm mỗi phút để tự động bật/tắt flash sale
+     */
+    @org.springframework.scheduling.annotation.Scheduled(cron = "0 * * * * *")
+    @Transactional
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
+    public void autoSyncFlashSaleStatus() {
+        Date now = new Date();
+        List<FlashSale> activeSales = flashSaleDAO.findCurrentActiveSale();
+        
+        if (activeSales != null && !activeSales.isEmpty()) {
+            FlashSale current = activeSales.get(0);
+            if (current.getEndTime() != null && current.getEndTime().before(now)) {
+                // Hết hạn -> Tắt
+                flashSaleDAO.deactivateAllSales();
+                
+                // Tìm chiến dịch tiếp theo
+                List<FlashSale> nextSales = flashSaleDAO.findValidSalesForTime(now);
+                if (nextSales != null && !nextSales.isEmpty()) {
+                    flashSaleDAO.activateSale(nextSales.get(0).getId());
+                }
+            }
+        } else {
+            // Tự động bật nếu có chiến dịch đang trong thời gian
+            List<FlashSale> nextSales = flashSaleDAO.findValidSalesForTime(now);
+            if (nextSales != null && !nextSales.isEmpty()) {
+                activateFlashSale(nextSales.get(0).getId());
+            }
+        }
     }
 
     /**
@@ -82,14 +87,17 @@ public class FlashSaleService {
         return flashSaleDAO.findById(id).orElse(null);
     }
 
+    @org.springframework.cache.annotation.Cacheable(value = "flashSaleItems", key = "#saleId")
     public List<FlashSaleItem> getItemsBySaleId(Integer saleId) {
         return flashSaleItemDAO.findByFlashSaleIdWithProduct(saleId);
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
     public FlashSale saveFlashSale(FlashSale flashSale) {
         return flashSaleDAO.save(flashSale);
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
     @Transactional
     public void deleteFlashSale(Integer id) {
         List<FlashSaleItem> items = getItemsBySaleId(id);
@@ -99,6 +107,7 @@ public class FlashSaleService {
         flashSaleDAO.deleteById(id);
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
     @Transactional
     public FlashSaleItem addItemToSale(Integer saleId, Integer productId, Double salePrice, Integer saleQuantity) {
         FlashSale sale = flashSaleDAO.findById(saleId).orElse(null);
@@ -127,6 +136,7 @@ public class FlashSaleService {
         return flashSaleItemDAO.save(item);
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
     public void removeItemFromSale(Integer itemId) {
         flashSaleItemDAO.deleteById(itemId);
     }
@@ -191,19 +201,14 @@ public class FlashSaleService {
     /**
      * Kích hoạt chương trình Flash Sale được chọn và tắt tất cả chương trình khác
      */
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
     @Transactional
     public void activateFlashSale(Integer id) {
-        List<FlashSale> sales = flashSaleDAO.findAll();
-        for (FlashSale sale : sales) {
-            if (sale.getId().equals(id)) {
-                sale.setActive(true);
-            } else {
-                sale.setActive(false);
-            }
-            flashSaleDAO.save(sale);
-        }
+        flashSaleDAO.deactivateAllSales();
+        flashSaleDAO.activateSale(id);
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
     @Transactional
     public void toggleFlashSale(Integer id) {
         FlashSale target = flashSaleDAO.findById(id).orElse(null);
@@ -211,18 +216,9 @@ public class FlashSaleService {
 
         boolean targetNewState = !Boolean.TRUE.equals(target.getActive());
         if (targetNewState) {
-            // Kích hoạt chương trình được chọn, tắt tất cả chương trình khác
-            List<FlashSale> sales = flashSaleDAO.findAll();
-            for (FlashSale sale : sales) {
-                if (sale.getId().equals(id)) {
-                    sale.setActive(true);
-                } else {
-                    sale.setActive(false);
-                }
-                flashSaleDAO.save(sale);
-            }
+            flashSaleDAO.deactivateAllSales();
+            flashSaleDAO.activateSale(id);
         } else {
-            // Tắt chương trình đang chọn
             target.setActive(false);
             flashSaleDAO.save(target);
         }

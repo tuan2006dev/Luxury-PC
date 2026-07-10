@@ -1,6 +1,8 @@
 package poly.edu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.ProductDAO;
@@ -18,10 +20,17 @@ public class ProductService {
         return productDAO.findAll();
     }
 
+    @Cacheable("topProducts")
+    public List<Product> getTopProducts(int limit) {
+        return productDAO.findTopProducts(org.springframework.data.domain.PageRequest.of(0, limit));
+    }
+
+    @Cacheable("featuredProducts")
     public List<Product> getFeaturedProducts() {
         return productDAO.findFeaturedProducts();
     }
 
+    @Cacheable("flashSaleProducts")
     public List<Product> getFlashSaleProducts() {
         return productDAO.findFlashSaleProducts();
     }
@@ -36,15 +45,17 @@ public class ProductService {
         return productDAO.findById(id).orElse(null);
     }
 
-    public List<Product> searchProducts(Integer cid, Double min, Double max, String kw) {
-        return productDAO.searchProducts(cid, min, max, kw);
+    public List<Product> searchProducts(Integer cid, Double min, Double max, String kw, String brand) {
+        return productDAO.searchProducts(cid, min, max, kw, brand, org.springframework.data.domain.PageRequest.of(0, 100)); // Limit to top 100 for performance
     }
 
+    @CacheEvict(value = {"featuredProducts", "flashSaleProducts", "topProducts"}, allEntries = true)
     @Transactional
     public Product saveProduct(Product product) {
         return productDAO.save(product);
     }
 
+    @CacheEvict(value = {"featuredProducts", "flashSaleProducts", "topProducts"}, allEntries = true)
     @Transactional
     public void deleteProduct(Integer id) {
         productDAO.deleteById(id);

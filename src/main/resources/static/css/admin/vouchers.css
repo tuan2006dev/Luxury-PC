@@ -1,3 +1,4 @@
+:root { --deep: #ffffff; --dark: #ffffff; --black: #f8fafc; --cream: #0f172a; --muted: #64748b; --gold: #3b82f6; --gold-l: #2563eb; --green: #16a34a; --red: #dc2626; --blue: #3b82f6; }
 
 
 
@@ -7,7 +8,7 @@
         .sidebar {
             width: 280px;
             background: var(--deep);
-            border-right: 1px solid rgba(201, 168, 76, 0.1);
+            border-right: 1px solid #e2e8f0;
             padding: 2rem;
             position: fixed;
             height: 100vh;
@@ -60,14 +61,14 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 1.5rem;
         }
 
         .title h1 {
             font-size: 1.8rem;
             font-weight: 400;
-            color: #fff;
+            color: #0f172a;
         }
 
         .title p {
@@ -139,7 +140,7 @@
         .table-card {
             background: var(--dark);
             padding: 1.5rem;
-            border: 1px solid rgba(201, 168, 76, 0.1);
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
         }
 
@@ -147,7 +148,7 @@
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 1rem;
             color: var(--gold);
             display: flex;
@@ -172,7 +173,7 @@
         td {
             padding: .8rem .5rem;
             font-size: .82rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .badge {
@@ -195,7 +196,7 @@
         }
 
         .badge-gold {
-            background: rgba(201, 168, 76, 0.1);
+            background: #e2e8f0;
             color: var(--gold);
             border: 1px solid rgba(201, 168, 76, 0.3);
         }
@@ -217,7 +218,7 @@
 
         .modal {
             background: var(--dark);
-            border: 1px solid rgba(201, 168, 76, 0.15);
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             padding: 2rem;
             width: 600px;
@@ -259,7 +260,7 @@
         .form-group textarea {
             width: 100%;
             background: var(--black);
-            border: 1px solid rgba(201, 168, 76, 0.15);
+            border: 1px solid #e2e8f0;
             color: var(--cream);
             padding: .6rem .8rem;
             border-radius: 4px;

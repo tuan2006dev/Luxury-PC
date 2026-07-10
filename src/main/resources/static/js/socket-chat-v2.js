@@ -434,7 +434,7 @@
         nameInput.value = username;
         emailInput.value = userEmail;
 
-        alert('Đã kết thúc và đóng cuộc trò chuyện.');
+        if(typeof showToast === 'function') { showToast('Đã kết thúc và đóng cuộc trò chuyện.'); } else { alert('Đã kết thúc và đóng cuộc trò chuyện.'); }
     });
 
     // New Chat button - reset ticket to start a new conversation
@@ -471,7 +471,7 @@
     async function startChat() {
         const name = nameInput.value.trim();
         if (!name) {
-            alert('Vui lòng nhập tên!');
+            if(typeof showToast === 'function') { showToast('Vui lòng nhập tên!'); } else { alert('Vui lòng nhập tên!'); }
             nameInput.focus();
             return;
         }

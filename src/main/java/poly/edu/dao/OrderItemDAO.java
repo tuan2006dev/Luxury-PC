@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderItemDAO extends JpaRepository<OrderItem, Integer> {
-    @Query("SELECT oi.product.name as name, SUM(oi.quantity) as totalQty " +
-           "FROM OrderItem oi GROUP BY oi.product.id, oi.product.name " +
+    @Query("SELECT oi.product.name as name, oi.product.image as image, SUM(oi.quantity) as totalQty " +
+           "FROM OrderItem oi GROUP BY oi.product.id, oi.product.name, oi.product.image " +
            "ORDER BY SUM(oi.quantity) DESC")
     List<Map<String, Object>> findTopSellingProducts();
 

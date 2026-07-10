@@ -17,4 +17,12 @@ public interface FlashSaleDAO extends JpaRepository<FlashSale, Integer> {
     List<FlashSale> findValidSalesForTime(@Param("now") Date now);
 
     List<FlashSale> findAllByOrderByCreatedAtDesc();
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("UPDATE FlashSale fs SET fs.active = false")
+    void deactivateAllSales();
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("UPDATE FlashSale fs SET fs.active = true WHERE fs.id = :id")
+    void activateSale(@Param("id") Integer id);
 }

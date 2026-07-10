@@ -70,6 +70,7 @@ public class BuildPcBasicController {
                         } catch (Exception e) {}
                     }
                     map.put("power", power);
+                    map.put("description", p.getDescription());
                     return map;
                 })
                 .collect(Collectors.toList());

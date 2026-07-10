@@ -2,705 +2,302 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title th:text="'Luxury PC — ' + ${product.name}">Luxury PC — Sản Phẩm</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/png" th:href="@{/logo.png}" />
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
-  <link rel="stylesheet" th:href="@{/css/product/product-detail.css}" />
-  <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
-  <link rel="stylesheet" th:href="@{/css/cursor.css}" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="'Luxury PC | ' + ${product.name}">Luxury PC | Chi tiết Sản Phẩm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
 </head>
 
 <body>
+    <div th:replace="~{layout/header :: header}"></div>
 
-  <div th:replace="~{layout/header :: header}"></div>
-
-  <!-- BREADCRUMB -->
-  <div class="breadcrumb">
-    <a th:href="@{/}" data-translate="product-breadcrumb-home">Trang chủ</a>
-    <span>›</span>
-    <a th:href="@{/products(cid=${product.category != null ? product.category.id : ''})}" th:text="${product.category != null ? product.category.name : 'Sản phẩm'}">VGA</a>
-    <span>›</span>
-    <span class="current" th:text="${product.name}">Sản Phẩm</span>
-  </div>
-
-  <!-- PRODUCT LAYOUT -->
-  <div class="product-layout">
-
-    <!-- LEFT: Images -->
-    <div class="img-panel">
-      <div class="main-img-wrap" id="main-img">
-        <div class="img-badge-wrap">
-          <span th:if="${product.price > 30000000}" class="img-badge badge-top" data-translate="product-badge-premium">Premium</span>
-          <span th:if="${product.stock > 0 and product.stock < 10}" class="img-badge badge-new" data-translate="product-badge-lowstock">Sắp Hết</span>
-          <span th:if="${product.stock <= 0}" class="img-badge badge-new" style="background:var(--red);border-color:var(--red);color:var(--white);" data-translate="product-badge-outofstock">Hết Hàng</span>
+    <div class="container" style="padding-top: 20px;">
+        <!-- BREADCRUMB -->
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> > 
+            <a th:href="@{/products}">Sản phẩm</a> > 
+            <a th:href="@{/products(cid=${product.category != null ? product.category.id : ''})}" th:text="${product.category != null ? product.category.name : 'Linh kiện'}">VGA</a> > 
+            <span th:text="${product.name}">Product Name</span>
         </div>
-        <img th:src="@{${product.image != null ? product.image : '/images/placeholder.png'}}" th:alt="${product.name}"
-          style="max-width: 100%; height: auto;" />
-      </div>
-      <div class="thumb-row">
-        <div class="thumb active" onclick="setImg(this.querySelector('img').src, this)">
-          <img th:src="@{${product.image != null ? product.image : '/images/placeholder.png'}}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" />
-        </div>
-        <div class="thumb" onclick="setImg('https://images.unsplash.com/photo-1587202372634-32705e3bf49c?q=80&w=400&auto=format&fit=crop', this)">
-          <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?q=80&w=400&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" />
-        </div>
-        <div class="thumb" onclick="setImg('https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&w=400&auto=format&fit=crop', this)">
-          <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&w=400&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" />
-        </div>
-        <div class="thumb" onclick="setImg('https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=400&auto=format&fit=crop', this)">
-          <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=400&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" />
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT: Info -->
-    <div class="info-panel">
-      <div class="prod-tag" th:text="${product.category != null ? product.category.name : 'Sản phẩm'} + ' · LUXURY Exclusive'">VGA · NVIDIA · LUXURY Exclusive
-      </div>
-      <h1 class="prod-title" th:text="${product.name}">RTX 4090<br />Titan Edition</h1>
-      <div class="prod-sub" th:text="${product.description}">ASUS ROG × LUXURY PC Limited — Chỉ 50 chiếc tại Việt Nam
-      </div>
-
-      <div class="rating-row">
-        <span class="stars">☆☆☆☆☆</span>
-        <span class="rating-count">0.0/5</span>
-        <a href="#" class="rating-link" onclick="setDetailTab('reviews'); return false;" data-translate="product-rating-no-reviews">Chưa có đánh giá</a>
-      </div>
-
-      <!-- Price block khi CO Flash Sale -->
-      <div class="price-block" th:if="${flashSaleItem != null}">
-        <div class="price-main" style="color:#ef4444;" th:text="${#numbers.formatDecimal(flashSaleItem.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">
-          Sale Price</div>
-        <div class="price-old" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">
-          Original Price</div>
-        <div class="price-save">
-          <span data-translate="product-price-save">Tiết kiệm </span>
-          <span th:text="${#numbers.formatDecimal(product.price - flashSaleItem.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">Saved Amount</span>
-        </div>
-        <div style="font-size: 0.85rem; color: var(--gold); margin-top: 8px; font-weight: 600;">
-          ⚡ Flash Sale - Còn lại: <span th:text="${T(java.lang.Math).min(flashSaleItem.saleQuantity - flashSaleItem.soldCount, product.stock)}">45</span> sản phẩm sale
-        </div>
-      </div>
-
-      <!-- Price block khi KHONG co Flash Sale -->
-      <div class="price-block" th:if="${flashSaleItem == null}">
-        <div class="price-main" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">
-          42.990.000₫</div>
-        <div class="price-old" th:text="${#numbers.formatDecimal(product.price * 1.2, 0, 'COMMA', 0, 'POINT')} + '₫'">
-          49.990.000₫</div>
-        <div class="price-save">
-          <span data-translate="product-price-save">Tiết kiệm </span>
-          <span th:text="${#numbers.formatDecimal(product.price * 0.2, 0, 'COMMA', 0, 'POINT')} + '₫'">7.000.000₫</span>
-        </div>
-        <div class="installment">
-          <span data-translate="product-price-installment">Trả góp 0%: </span>
-          <b th:text="${#numbers.formatDecimal(product.price / 12, 0, 'COMMA', 0, 'POINT')} + '₫'">3.582.500₫</b>
-          <span data-translate="product-price-installment-suffix">/tháng × 12 tháng</span>
-        </div>
-      </div>
-
-      <div class="specs-quick">
-        <div class="spec-chip">
-          <div class="spec-chip-key">VRAM</div>
-          <div class="spec-chip-val">24GB GDDR6X</div>
-        </div>
-        <div class="spec-chip">
-          <div class="spec-chip-key">CUDA Cores</div>
-          <div class="spec-chip-val">16,384</div>
-        </div>
-        <div class="spec-chip">
-          <div class="spec-chip-key">Boost Clock</div>
-          <div class="spec-chip-val">2.61 GHz</div>
-        </div>
-        <div class="spec-chip">
-          <div class="spec-chip-key">TDP</div>
-          <div class="spec-chip-val">450W</div>
-        </div>
-      </div>
-
-      <div class="qty-row" th:if="${product.stock > 0}">
-        <span class="qty-label" data-translate="product-label-qty">Số lượng</span>
-        <div class="qty-ctrl">
-          <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <input type="number" class="qty-num" id="qty" value="1" min="1" 
-                 th:max="${flashSaleItem != null ? T(java.lang.Math).min(flashSaleItem.saleQuantity - flashSaleItem.soldCount, product.stock) : product.stock}"
-                 onchange="manualQtyChange(this)" 
-                 style="background:transparent;border:none;color:#fff;width:40px;text-align:center;font-weight:600;outline:none;" />
-          <button class="qty-btn" onclick="changeQty(1)">+</button>
-        </div>
-        <span class="stock-label" th:if="${product.stock > 5}" th:text="'● Còn ' + ${product.stock} + ' sản phẩm'">● Còn 7 sản phẩm</span>
-      </div>
-
-      <!-- Panel Cảnh Báo Số Lượng Kho Thấp -->
-      <div th:if="${product.stock > 0 and product.stock <= 5}" class="stock-warning-panel">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <div>
-          <strong data-translate="product-warning-title">Sắp Hết Hàng!</strong>
-          <span data-translate="product-warning-desc-1"> Chỉ còn </span>
-          <span th:text="${product.stock}">5</span>
-          <span data-translate="product-warning-desc-2"> sản phẩm cuối cùng trong kho.</span>
-        </div>
-      </div>
-
-      <!-- Panel Thông Báo Hết Hàng -->
-      <div th:if="${product.stock <= 0}" class="stock-danger-panel">
-        <i class="fa-solid fa-circle-xmark"></i>
-        <div>
-          <strong data-translate="product-danger-title">Hết Hàng!</strong>
-          <span data-translate="product-danger-desc"> Sản phẩm này hiện tại đã hết hàng. Vui lòng quay lại sau hoặc liên hệ hỗ trợ.</span>
-        </div>
-      </div>
-
-      <div class="action-buttons">
-        <form th:action="@{/cart/add}" method="post" style="display:contents;">
-          <input type="hidden" name="id" th:value="${product.id}" />
-          <input type="hidden" name="name" th:value="${product.name}" />
-          <input type="hidden" name="price" th:value="${flashSaleItem != null ? flashSaleItem.salePrice.longValue() : (product.price != null ? product.price.longValue() : 0)}" />
-          <input type="hidden" name="quantity" id="form-qty" value="1" />
-          
-          <button type="submit" class="btn-primary-lg" style="flex: 1;" th:disabled="${product.stock <= 0}">
-            <span th:if="${product.stock > 0}" data-translate="product-btn-add-cart">Thêm Vào Giỏ Hàng</span>
-            <span th:if="${product.stock <= 0}" data-translate="product-badge-outofstock">Hết Hàng</span>
-          </button>
-          
-          <button type="submit" th:formaction="@{/cart/buy-now}" class="btn-primary-lg" 
-                  style="flex: 1; background: var(--gold); color: var(--black); border-color: var(--gold);" 
-                  th:disabled="${product.stock <= 0}" th:if="${product.stock > 0}"
-                  onclick="this.form.classList.add('is-buy-now'); this.form.action='/cart/buy-now';">
-            <span data-translate="product-btn-buy-now">Mua Ngay</span>
-          </button>
-        </form>
-
-        <!-- Wishlist Button - AJAX Toggle -->
-        <button class="btn-outline-lg wishlist-btn" id="wishlist-btn"
-                th:data-product-id="${product.id}"
-                th:data-wished="${productInWishlist}"
-                th:classappend="${productInWishlist} ? ' wished' : ''"
-                onclick="toggleWishlist(this)">
-          <span id="wishlist-icon" th:text="${productInWishlist} ? '♥' : '♡'">♡</span>
-          <span id="wishlist-label" th:text="${productInWishlist} ? 'Đã Yêu Thích' : 'Thêm Vào Yêu Thích'" th:data-translate="${productInWishlist} ? 'product-btn-wished' : 'product-btn-add-wishlist'">Thêm Vào Yêu Thích</span>
-        </button>
-      </div>
-
-      <div class="perks-row">
-        <div class="perk"><span class="perk-icon">✈</span> <span data-translate="product-perk-shipping">Miễn phí giao hàng</span></div>
-        <div class="perk"><span class="perk-icon">🛡</span> <span data-translate="product-perk-warranty">Bảo hành 3 năm</span></div>
-        <div class="perk"><span class="perk-icon">↩</span> <span data-translate="product-perk-return">Đổi trả 30 ngày</span></div>
-        <div class="perk"><span class="perk-icon">✓</span> <span data-translate="product-perk-genuine">Hàng chính hãng</span></div>
-      </div>
-
-      <!-- Detail Tabs -->
-      <div class="detail-tabs">
-        <button class="detail-tab active" onclick="setDetailTab('specs')" data-translate="product-tab-specs">Thông Số Kỹ Thuật</button>
-        <button class="detail-tab" onclick="setDetailTab('desc')" data-translate="product-tab-desc">Mô Tả</button>
-        <button class="detail-tab" id="tab-reviews" onclick="setDetailTab('reviews')"><span data-translate="product-tab-reviews">Đánh Giá </span>(<span th:text="${reviewCount != null ? reviewCount : 0}">0</span>)</button>
-      </div>
-
-      <!-- SPECS -->
-      <div class="detail-section active" id="ds-specs">
-        <table class="spec-table">
-          <tr>
-            <td data-translate="product-spec-architecture">Kiến trúc</td>
-            <td>Ada Lovelace</td>
-          </tr>
-          <tr>
-            <td>CUDA Cores</td>
-            <td>16,384</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-memory">Bộ nhớ</td>
-            <td>24GB GDDR6X</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-bandwidth">Băng thông bộ nhớ</td>
-            <td>1,008 GB/s</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-bus">Bus bộ nhớ</td>
-            <td>384-bit</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-clock">Xung nhịp Base / Boost</td>
-            <td>2.23 GHz / 2.61 GHz</td>
-          </tr>
-          <tr>
-            <td>TDP</td>
-            <td>450W</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-connectivity">Kết nối</td>
-            <td>3× DisplayPort 1.4a, 1× HDMI 2.1</td>
-          </tr>
-          <tr>
-            <td>PCIe</td>
-            <td>PCIe 4.0 × 16</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-psurequirement">Nguồn yêu cầu</td>
-            <td>Tối thiểu 850W</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-dimensions">Kích thước</td>
-            <td>348 × 140 × 58 mm</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-weight">Trọng lượng</td>
-            <td>2.18 kg</td>
-          </tr>
-          <tr>
-            <td data-translate="product-spec-warranty">Bảo hành</td>
-            <td>36 tháng (LUXURY PC + ASUS)</td>
-          </tr>
-        </table>
-      </div>
-
-      <!-- DESCRIPTION -->
-      <div class="detail-section" id="ds-desc">
-        <p style="font-size:.85rem;color:rgba(245,240,232,.75);line-height:2;margin-bottom:1rem;" th:text="${product.description}">Mô tả sản phẩm.</p>
-        <div style="background:rgba(201,168,76,.05);border-left:3px solid var(--gold);padding:1rem;margin-top:1rem;">
-          <div data-translate="product-exclusive-title"
-            style="font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;">
-            LUXURY EXCLUSIVE</div>
-          <div style="font-size:.8rem;color:var(--cream);" data-translate="product-exclusive-desc">Mỗi sản phẩm được kiểm tra chất lượng nghiêm ngặt, kèm certificate hiệu
-            năng và số serial riêng.</div>
-        </div>
-      </div>
-
-      <!-- REVIEWS -->
-      <div class="detail-section" id="ds-reviews">
         
-        <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
-
-        <div class="review-stats-box">
-          <div class="rs-left">
-            <div class="rs-score" th:text="${#numbers.formatDecimal(avgRating, 1, 1)}">0.0</div>
-            <div class="rs-stars">
-              <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="${avgRating != null && i <= avgRating ? '★' : '☆'}">☆</span>
-            </div>
-            <div class="rs-count">
-              <span th:if="${reviewCount > 0}">
-                <span th:text="${reviewCount}">5</span>
-                <span data-translate="product-tab-reviews"> đánh giá</span>
-              </span>
-              <span th:if="${reviewCount == 0}" data-translate="product-reviews-empty">Chưa có đánh giá</span>
-            </div>
-          </div>
-          <div class="rs-right">
-            <div class="rs-bar-row"><span>5★</span><div class="rs-bar-wrap"><div class="rs-bar-fill" th:style="'width:' + (${reviewCount > 0 && avgRating >= 4.5 ? '80%' : '0%'})"></div></div><span class="rs-bar-count" th:text="${reviewCount > 0 && avgRating >= 4.5 ? reviewCount : 0}">0</span></div>
-            <div class="rs-bar-row"><span>4★</span><div class="rs-bar-wrap"><div class="rs-bar-fill" th:style="'width:' + (${reviewCount > 0 && avgRating >= 3.5 && avgRating < 4.5 ? '100%' : '0%'})"></div></div><span class="rs-bar-count" th:text="${reviewCount > 0 && avgRating >= 3.5 && avgRating < 4.5 ? reviewCount : 0}">0</span></div>
-            <div class="rs-bar-row"><span>3★</span><div class="rs-bar-wrap"><div class="rs-bar-fill" th:style="'width:' + (${reviewCount > 0 && avgRating >= 2.5 && avgRating < 3.5 ? '100%' : '0%'})"></div></div><span class="rs-bar-count" th:text="${reviewCount > 0 && avgRating >= 2.5 && avgRating < 3.5 ? reviewCount : 0}">0</span></div>
-            <div class="rs-bar-row"><span>2★</span><div class="rs-bar-wrap"><div class="rs-bar-fill" th:style="'width:' + (${reviewCount > 0 && avgRating >= 1.5 && avgRating < 2.5 ? '100%' : '0%'})"></div></div><span class="rs-bar-count" th:text="${reviewCount > 0 && avgRating >= 1.5 && avgRating < 2.5 ? reviewCount : 0}">0</span></div>
-            <div class="rs-bar-row"><span>1★</span><div class="rs-bar-wrap"><div class="rs-bar-fill" th:style="'width:' + (${reviewCount > 0 && avgRating < 1.5 ? '100%' : '0%'})"></div></div><span class="rs-bar-count" th:text="${reviewCount > 0 && avgRating > 0 && avgRating < 1.5 ? reviewCount : 0}">0</span></div>
-          </div>
-          <button class="btn-write-review-circle" title="Viết đánh giá" onclick="toggleReviewForm()">✎</button>
-        </div>
-
-        <div class="customer-review-section">
-          <div class="customer-review-top" style="margin-bottom: 1.5rem;">
-            <h3 style="font-family:var(--sans); font-size:1.1rem; letter-spacing:0.1em; text-transform:uppercase;" data-translate="product-reviews-header">ĐÁNH GIÁ NỔI BẬT</h3>
-          </div>
-          
-          <div id="review-form-container" style="display: none; background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
-            <p sec:authorize="isAnonymous()">Vui lòng <a th:href="@{/auth/login}" style="color:var(--gold)">đăng nhập</a> để gửi đánh giá.</p>
-            <p sec:authorize="isAuthenticated()" th:if="${!canReview && !isAdmin}" style="color:var(--gold); margin-bottom:0;">Bạn cần mua sản phẩm này và nhận hàng thành công để có thể đánh giá.</p>
-            <form class="customer-review-form" sec:authorize="isAuthenticated()" th:if="${canReview || isAdmin}" th:action="@{'/product/' + ${product.id} + '/review'}" method="post" enctype="multipart/form-data" style="margin-top:0;">
-              <label style="display:block; margin-bottom:10px; color:var(--gold); font-size:0.85rem;" data-translate="product-reviews-write">Viết đánh giá của bạn</label>
-              <div class="review-form-stars" style="margin-bottom:10px;">
-                <input type="hidden" name="stars" id="form-stars" value="5" />
-                <button type="button" class="form-star-btn active" onclick="setFormStars(1)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-                <button type="button" class="form-star-btn active" onclick="setFormStars(2)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-                <button type="button" class="form-star-btn active" onclick="setFormStars(3)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-                <button type="button" class="form-star-btn active" onclick="setFormStars(4)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-                <button type="button" class="form-star-btn active" onclick="setFormStars(5)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-              </div>
-              <textarea name="content" class="review-input" required data-translate-placeholder="product-reviews-input-placeholder" placeholder="Gửi nhận xét của bạn..." style="width:100%; min-height:80px; background:rgba(0,0,0,0.5); border:1px solid rgba(201,168,76,0.2); color:#fff; padding:10px; border-radius:4px; margin-bottom:10px;"></textarea>
-              
-              <div style="margin-bottom:15px; display:flex; gap:15px; flex-wrap:wrap;">
-                <div>
-                  <label style="color:var(--gold); font-size:0.85rem; display:block; margin-bottom:5px;">Tải ảnh lên</label>
-                  <input type="file" name="imageFile" accept="image/*" style="color:var(--white); font-size:0.85rem;" />
+        <div class="pd-layout">
+            <!-- Left: Gallery -->
+            <div class="pd-gallery">
+                <div class="pd-main-img">
+                    <!-- img badge -->
+                    <div style="position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; flex-direction: column; gap: 5px;">
+                        <span th:if="${flashSaleItem != null}" class="badge-discount" style="background:#ef4444; color:white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Flash Sale</span>
+                        <span th:if="${product.stock <= 0}" class="badge-stock" style="background:#000; color:white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Hết Hàng</span>
+                    </div>
+                    <img id="main-image" th:src="@{${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}}" th:alt="${product.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';"/>
                 </div>
-                <div>
-                  <label style="color:var(--gold); font-size:0.85rem; display:block; margin-bottom:5px;">Tải video lên</label>
-                  <input type="file" name="videoFile" accept="video/*" style="color:var(--white); font-size:0.85rem;" />
+                <div class="pd-thumbnails">
+                    <img th:src="@{${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}}" class="active" onclick="changeMainImage(this.src, this)" onerror="this.onerror=null; this.src='/images/placeholder.png';">
                 </div>
-              </div>
+            </div>
 
-              <button type="submit" style="background:var(--gold); color:#000; border:none; padding:8px 20px; font-weight:bold; cursor:pointer; border-radius:4px;" data-translate="product-reviews-submit">Gửi Đánh Giá</button>
-            </form>
-          </div>
-          
-          <div class="customer-review-list">
-             <div th:each="rv : ${reviews}" class="customer-review-card" style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.05); background:transparent;">
-               <div class="rv-header" style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                 <span class="rv-name" th:text="${rv.user != null ? (rv.user.fullName != null && !rv.user.fullName.isEmpty() ? rv.user.fullName : rv.user.username) : 'Ẩn danh'}" style="font-weight:600; color:var(--white);">User</span>
-                 <span class="rv-date" th:text="${rv.createdAt != null} ? ${#temporals.format(rv.createdAt, 'dd/MM/yyyy HH:mm')} : ''" style="color:var(--muted); font-size:0.8rem;">Date</span>
-               </div>
-               <div class="rv-stars" style="color:var(--gold); margin-bottom:10px; font-size:0.9rem;">
-                 <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i <= rv.stars ? '★' : '☆'}">☆</span>
-               </div>
-               <p class="rv-text" th:text="${rv.content}" style="color:var(--cream); font-size:0.9rem; line-height:1.6;"></p>
-               
-               <!-- Hien thi anh va video -->
-               <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-                 <img th:if="${rv.image != null && !rv.image.isEmpty()}" th:src="${rv.image}" style="max-width:200px; max-height:200px; border-radius:4px; object-fit:cover; border:1px solid rgba(255,255,255,0.1);" />
-                 <video th:if="${rv.video != null && !rv.video.isEmpty()}" th:src="${rv.video}" controls style="max-width:200px; max-height:200px; border-radius:4px; background:#000; border:1px solid rgba(255,255,255,0.1);"></video>
-               </div>
+            <!-- Right: Info -->
+            <div class="pd-info">
+                <h1 class="pd-title" th:text="${product.name}">Tên Sản Phẩm</h1>
+                <div class="pd-meta">
+                    <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></span>
+                    <span class="reviews"><a href="#" onclick="document.querySelector('[data-tab=\'tab-reviews\']').click(); document.getElementById('tab-reviews').scrollIntoView({behavior:'smooth'});">(Xem đánh giá)</a></span>
+                    <span class="divider">|</span>
+                    <span class="sku" th:text="'Thương hiệu: ' + ${product.brand != null ? product.brand : 'Đang cập nhật'}">Brand</span>
+                    <span class="divider">|</span>
+                    <span th:classappend="${product.stock > 0 ? 'status text-success' : 'status text-danger'}" th:text="${product.stock > 0 ? 'Còn hàng' : 'Hết hàng'}" style="font-weight: 600;">Còn hàng</span>
+                </div>
+                
+                <!-- Giá Flash Sale -->
+                <div class="pd-price-box" th:if="${flashSaleItem != null}" style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px;">
+                    <div style="font-size: 13px; font-weight: 600; color: #ef4444; margin-bottom: 5px; display: flex; align-items: center; gap: 5px;">
+                        <i class="fa-solid fa-bolt"></i> GIÁ FLASH SALE
+                    </div>
+                    <div style="display: flex; align-items: baseline; gap: 15px;">
+                        <div class="pd-price-new" style="color: #ef4444; font-size: 28px; font-weight: 700;" th:text="${#numbers.formatDecimal(flashSaleItem.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá KM</div>
+                        <div class="pd-price-old" style="color: #999; text-decoration: line-through; font-size: 16px;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá gốc</div>
+                        <div class="pd-discount" style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                            Tiết kiệm <span th:text="${#numbers.formatDecimal(product.price - flashSaleItem.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 13px; color: #666;">
+                        Còn lại: <strong th:text="${T(java.lang.Math).min(flashSaleItem.saleQuantity - flashSaleItem.soldCount, product.stock)}" style="color: #ef4444;"></strong> sản phẩm sale
+                    </div>
+                </div>
 
-               <!-- Nut thao tac -->
-               <div style="margin-top:10px; display:flex; gap:10px;" sec:authorize="isAuthenticated()">
-                 <button th:if="${currentUser != null && rv.user != null && currentUser.id == rv.user.id}" type="button"
-                         th:data-rv-id="${rv.id}"
-                         th:data-rv-stars="${rv.stars}"
-                         th:data-rv-content="${rv.content}"
-                         th:data-rv-image="${rv.image != null ? rv.image : ''}"
-                         th:data-rv-video="${rv.video != null ? rv.video : ''}"
-                         onclick="openEditReviewModalFromBtn(this)"
-                         style="background:rgba(255,255,255,0.1); color:var(--white); border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:0.8rem;">Sửa</button>
-                 <button th:if="${isAdmin}" type="button" th:onclick="'deleteReview(' + ${rv.id} + ')'" style="background:rgba(255,0,0,0.5); color:var(--white); border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:0.8rem;">Xóa</button>
-               </div>
-             </div>
-             <div th:if="${reviews == null || reviews.size() == 0}" class="customer-review-empty" style="color:var(--muted); font-style:italic;" data-translate="product-reviews-empty">Chưa có đánh giá nào từ khách hàng.</div>
-          </div>
+                <!-- Giá Bình Thường -->
+                <div class="pd-price-box" th:if="${flashSaleItem == null}">
+                    <div style="display: flex; align-items: baseline; gap: 15px;">
+                        <div class="pd-price-new" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá bán</div>
+                    </div>
+                </div>
+
+                <div class="pd-promo">
+                    <h4><i class="fa-solid fa-shield-halved"></i> Bảo hành & Cam kết</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 13px; line-height: 1.6;">
+                        <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 5px;"></i> Cam kết hàng chính hãng 100%</li>
+                        <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 5px;"></i> Bảo hành <strong>36</strong> tháng</li>
+                        <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 5px;"></i> Lỗi 1 đổi 1 trong 15 ngày đầu</li>
+                        <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 5px;"></i> Miễn phí vận chuyển toàn quốc</li>
+                    </ul>
+                </div>
+
+                <div class="pd-specs-short" th:if="${product.description != null and !product.description.isEmpty()}">
+                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 10px;">Mô tả ngắn:</h4>
+                    <p style="font-size: 14px; color: #444; line-height: 1.6;" th:text="${product.description}">Mô tả</p>
+                </div>
+
+                <div class="pd-actions" th:if="${product.stock > 0}">
+                    <div class="quantity-box" style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; width: 120px;">
+                        <button style="width: 40px; height: 40px; background: #f9f9f9; border: none; font-size: 18px; cursor: pointer;" onclick="changeQty(-1)">-</button>
+                        <input type="number" id="qty" value="1" min="1" th:max="${flashSaleItem != null ? T(java.lang.Math).min(flashSaleItem.saleQuantity - flashSaleItem.soldCount, product.stock) : product.stock}" style="width: 40px; height: 40px; text-align: center; border: none; font-size: 15px; font-weight: 600; outline: none;" onchange="manualQtyChange(this)">
+                        <button style="width: 40px; height: 40px; background: #f9f9f9; border: none; font-size: 18px; cursor: pointer;" onclick="changeQty(1)">+</button>
+                    </div>
+                    
+                    <form th:action="@{/cart/add}" method="post" id="addToCartForm" style="display: none;">
+                        <input type="hidden" name="id" th:value="${product.id}" />
+                        <input type="hidden" name="name" th:value="${product.name}" />
+                        <input type="hidden" name="price" th:value="${product.price != null ? product.price.longValue() : 0}" />
+                        <input type="hidden" name="quantity" id="form-qty" value="1" />
+                    </form>
+
+                    <button class="btn-add-cart" onclick="submitAddToCart()" style="flex: 1; background: white; color: #000; border: 1px solid #000; padding: 12px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-cart-shopping"></i> Thêm vào giỏ
+                    </button>
+                    <button class="btn-buy-now" onclick="submitBuyNow()" style="flex: 1; background: #000; color: #fff; border: 1px solid #000; padding: 12px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        MUA NGAY
+                    </button>
+                    <button class="btn-wishlist" th:onclick="|addToWishlist(this, ${product.id})|" style="width: 44px; height: 44px; background: white; color: #666; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.2s;">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                </div>
+                <div th:if="${product.stock <= 0}" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-left: 4px solid #999; color: #666;">
+                    Sản phẩm hiện đang tạm hết hàng. Vui lòng quay lại sau!
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- RELATED PRODUCTS -->
-  <section class="related">
-    <div style="text-align:center;margin-bottom:2.5rem;">
-      <span data-translate="product-related-label"
-        style="font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:.8rem;">Có Thể Bạn Thích</span>
-      <h2 style="font-family:var(--serif);font-size:2rem;font-weight:300;color:var(--white);" data-translate="product-related-title">Linh Kiện Phù Hợp</h2>
-    </div>
-    <div class="related-grid">
-      <div class="rel-card" onclick="toast('Xem chi tiết CPU i9-14900K')">
-        <div class="rel-img">⚙️</div>
-        <div class="rel-cat">CPU · Intel</div>
-        <div class="rel-name">Core i9-14900K</div>
-        <div class="rel-price">18.990.000₫</div>
-      </div>
-      <div class="rel-card" onclick="toast('Xem chi tiết Mainboard ROG Z790')">
-        <div class="rel-img">🔌</div>
-        <div class="rel-cat">Mainboard · ASUS ROG</div>
-        <div class="rel-name">ROG Maximus Z790</div>
-        <div class="rel-price">12.490.000₫</div>
-      </div>
-      <div class="rel-card" onclick="toast('Xem chi tiết RAM DDR5')">
-        <div class="rel-img">💾</div>
-        <div class="rel-cat">RAM · Corsair</div>
-        <div class="rel-name">Dominator Platinum DDR5</div>
-        <div class="rel-price">6.490.000₫</div>
-      </div>
-      <div class="rel-card" onclick="toast('Xem chi tiết Màn hình OLED')">
-        <div class="rel-img">🖥️</div>
-        <div class="rel-cat">Màn Hình · LG</div>
-        <div class="rel-name">UltraGear 4K OLED</div>
-        <div class="rel-price">22.990.000₫</div>
-      </div>
-    </div>
-  </section>
+        <!-- Description & Specs Tabs -->
+        <div class="pd-tabs-section" style="margin-top: 50px; margin-bottom: 50px;">
+            <div class="pd-tabs" style="display: flex; border-bottom: 1px solid #ddd; gap: 30px; margin-bottom: 30px;">
+                <button class="pd-tab active" data-tab="tab-desc" onclick="switchTab(this)" style="background: none; border: none; font-size: 16px; font-weight: 600; padding: 15px 0; color: #000; border-bottom: 2px solid #000; cursor: pointer;">Mô tả sản phẩm</button>
+                <button class="pd-tab" data-tab="tab-specs" onclick="switchTab(this)" style="background: none; border: none; font-size: 16px; font-weight: 600; padding: 15px 0; color: #666; border-bottom: 2px solid transparent; cursor: pointer;">Thông số kỹ thuật</button>
+                <button class="pd-tab" data-tab="tab-reviews" onclick="switchTab(this)" style="background: none; border: none; font-size: 16px; font-weight: 600; padding: 15px 0; color: #666; border-bottom: 2px solid transparent; cursor: pointer;">Đánh giá</button>
+            </div>
+            
+            <div id="tab-desc" class="pd-tab-content active" style="line-height: 1.8; color: #444; font-size: 15px;">
+                <h3 style="font-size: 20px; color: #000; margin-bottom: 20px;" th:text="${product.name}">Tên sản phẩm</h3>
+                <div th:utext="${product.description}">
+                    Chi tiết sản phẩm đang được cập nhật...
+                </div>
+            </div>
 
-  <div th:replace="~{layout/footer :: footer}"></div>
+            <div id="tab-specs" class="pd-tab-content" style="display: none;">
+                <h3 style="font-size: 20px; color: #000; margin-bottom: 20px;">Thông số kỹ thuật chi tiết</h3>
+                <table class="specs-table" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <tr><td style="padding: 12px; border: 1px solid #ddd; background: #f9f9f9; width: 30%; font-weight: 600;">Thương hiệu</td><td style="padding: 12px; border: 1px solid #ddd;" th:text="${product.brand != null ? product.brand : 'Đang cập nhật'}"></td></tr>
+                    <tr><td style="padding: 12px; border: 1px solid #ddd; background: #f9f9f9; font-weight: 600;">Danh mục</td><td style="padding: 12px; border: 1px solid #ddd;" th:text="${product.category != null ? product.category.name : 'Đang cập nhật'}"></td></tr>
+                    <tr><td style="padding: 12px; border: 1px solid #ddd; background: #f9f9f9; font-weight: 600;">Bảo hành</td><td style="padding: 12px; border: 1px solid #ddd;">36 tháng</td></tr>
+                    <tr th:each="spec : ${parsedSpecs}">
+                        <td style="padding: 12px; border: 1px solid #ddd; background: #f9f9f9; font-weight: 600;" th:text="${spec.key}"></td>
+                        <td style="padding: 12px; border: 1px solid #ddd;" th:text="${spec.value}"></td>
+                    </tr>
+                    <tr th:if="${otherDescLines != null and not #lists.isEmpty(otherDescLines)}">
+                        <td style="padding: 12px; border: 1px solid #ddd; background: #f9f9f9; font-weight: 600;">Thông tin thêm</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">
+                            <ul style="margin: 0; padding-left: 20px;">
+                                <li th:each="line : ${otherDescLines}" th:text="${line}"></li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-  <!-- EDIT REVIEW MODAL -->
-  <div id="editReviewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:#111; border:1px solid rgba(201,168,76,0.2); padding:2rem; border-radius:8px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto;">
-      <h3 style="color:var(--gold); margin-bottom:1rem; font-family:var(--font-serif);">Sửa Đánh Giá</h3>
-      <form id="editReviewForm" onsubmit="submitEditReview(event)" enctype="multipart/form-data">
-        <input type="hidden" id="edit-review-id" />
-        <input type="hidden" id="edit-stars" name="stars" />
-        <input type="hidden" id="edit-removeImage" name="removeImage" value="false" />
-        <input type="hidden" id="edit-removeVideo" name="removeVideo" value="false" />
+            <div id="tab-reviews" class="pd-tab-content" style="display: none;">
+                <h3 style="font-size: 20px; color: #000; margin-bottom: 20px;">Đánh giá từ khách hàng</h3>
+                
+                <!-- Form Đánh giá đã bị ẩn (chỉ đánh giá từ trang Đơn hàng của tôi) -->
+
+                <div th:if="${reviews != null and !reviews.isEmpty()}" class="review-list" style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="review-item" th:each="rv : ${reviews}" style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div style="font-weight: 600; font-size: 15px;" th:text="${rv.user != null ? rv.user.username : 'Khách hàng'}">User</div>
+                            <div style="color: #999; font-size: 12px;" th:text="${#temporals.format(rv.createdAt, 'dd/MM/yyyy HH:mm')}">Date</div>
+                        </div>
+                        <div class="stars" style="color: #fbbf24; font-size: 12px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-star" th:each="i : ${#numbers.sequence(1, rv.stars != null ? rv.stars : 5)}"></i>
+                            <i class="fa-regular fa-star" th:if="${rv.stars != null and rv.stars < 5}" th:each="i : ${#numbers.sequence(rv.stars + 1, 5)}"></i>
+                        </div>
+                        <div class="review-text" style="color: #444; font-size: 14px; line-height: 1.5;" th:text="${rv.content}">Nội dung đánh giá</div>
+                        <div th:if="${rv.image != null}" style="margin-top: 10px;">
+                            <img th:src="${rv.image}" style="max-height: 100px; border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${reviews == null or reviews.isEmpty()}" style="text-align: center; padding: 40px 0; color: #666;">
+                    Chưa có đánh giá nào cho sản phẩm này.
+                </div>
+            </div>
+        </div>
         
-        <div style="margin-bottom:10px;">
-          <button type="button" class="edit-star-btn" onclick="setEditStars(1)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-          <button type="button" class="edit-star-btn" onclick="setEditStars(2)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-          <button type="button" class="edit-star-btn" onclick="setEditStars(3)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-          <button type="button" class="edit-star-btn" onclick="setEditStars(4)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
-          <button type="button" class="edit-star-btn" onclick="setEditStars(5)" style="border:none;background:none;color:var(--gold);font-size:1.5rem;cursor:pointer;">★</button>
+        <!-- Related Products -->
+        <div class="section-header" style="margin-top: 60px;" th:if="${relatedProducts != null and !relatedProducts.isEmpty()}">
+            <h2 class="section-title">Sản phẩm tương tự</h2>
         </div>
-
-        <textarea id="edit-content" name="content" required style="width:100%; min-height:80px; background:rgba(0,0,0,0.5); border:1px solid rgba(201,168,76,0.2); color:#fff; padding:10px; border-radius:4px; margin-bottom:15px;"></textarea>
-        
-        <div id="edit-media-preview" style="margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap;"></div>
-
-        <div style="margin-bottom:15px; display:flex; gap:15px; flex-wrap:wrap;">
-          <div>
-            <label style="color:var(--gold); font-size:0.85rem; display:block; margin-bottom:5px;">Đổi/Thêm ảnh</label>
-            <input type="file" id="edit-imageFile" name="imageFile" accept="image/*" style="color:var(--white); font-size:0.85rem;" />
-          </div>
-          <div>
-            <label style="color:var(--gold); font-size:0.85rem; display:block; margin-bottom:5px;">Đổi/Thêm video</label>
-            <input type="file" id="edit-videoFile" name="videoFile" accept="video/*" style="color:var(--white); font-size:0.85rem;" />
-          </div>
+        <div class="product-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 60px;" th:if="${relatedProducts != null and !relatedProducts.isEmpty()}">
+            <div class="product-card" th:each="p, iterStat : ${relatedProducts}" th:if="${iterStat.index < 5}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.2s;">
+                <div class="product-card-img" style="height: 140px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.onerror=null; this.src='/images/placeholder.png';"/>
+                </div>
+                <h4 class="product-card-title" th:text="${p.name}" style="font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; height: 36px; overflow: hidden;">Tên sản phẩm</h4>
+                <p class="product-spec" style="font-size: 12px; color: #666; margin: 0 0 10px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" th:text="${p.description != null ? p.description : 'Sản phẩm cao cấp'}">Description</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div class="promo-price-new" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'" style="font-size: 15px; font-weight: 700; color: #000;">Giá</div>
+                    </div>
+                    <div th:if="${p.stock != null and p.stock <= 0}" style="text-align: center; color: red; font-weight: bold; font-size: 14px; padding: 5px 0; border: 1px solid red; border-radius: 4px; background-color: #fff5f5; width: 100%;">Hết hàng</div>
+                    <div th:if="${p.stock == null or p.stock > 0}" style="display:flex; gap:5px;">
+                        <button class="btn-buy-small" style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 10px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px;" th:onclick="'buyNow(' + ${p.id} + '); event.stopPropagation();'" title="Mua ngay">Mua ngay</button>
+                        <button class="btn-cart-small" style="position:static; width:30px; height:30px; font-size:14px; background: #f5f5f5; border: none; border-radius: 4px; cursor: pointer;" th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'"><i class="fa-solid fa-cart-shopping"></i></button>
+                    </div>
+            </div>
         </div>
-
-        <div style="display:flex; gap:10px; justify-content:flex-end;">
-          <button type="button" onclick="closeEditReviewModal()" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:8px 20px; font-weight:bold; cursor:pointer; border-radius:4px;">Hủy</button>
-          <button type="submit" style="background:var(--gold); color:#000; border:none; padding:8px 20px; font-weight:bold; cursor:pointer; border-radius:4px;">Lưu Thay Đổi</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <script th:inline="javascript">
-    let qty = 1;
-    const maxStock = /*[[${flashSaleItem != null ? (flashSaleItem.saleQuantity - flashSaleItem.soldCount) : product.stock}]]*/ 99;
+    <!-- FOOTER CONTAINER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
 
-    // ── SỐ LƯỢNG ──
-    function manualQtyChange(input) {
-      let val = parseInt(input.value);
-      if (isNaN(val) || val < 1) val = 1;
-      if (val > maxStock) {
-        toast('Quá số lượng sản phẩm hiện có!');
-        val = maxStock;
-      }
-      qty = val;
-      input.value = qty;
-      const fq = document.getElementById('form-qty');
-      if (fq) fq.value = qty;
-    }
-
-    function changeQty(d) {
-      let newQty = qty + d;
-      if (newQty > maxStock) {
-        toast('Quá số lượng sản phẩm hiện có!');
-        newQty = maxStock;
-      } else if (newQty < 1) {
-        newQty = 1;
-      }
-      qty = newQty;
-      document.getElementById('qty').value = qty;
-      const fq = document.getElementById('form-qty');
-      if (fq) fq.value = qty;
-    }
-
-    // ── ẢNH ──
-    function setImg(imgSrc, thumb) {
-      const mainImg = document.querySelector('#main-img img');
-      if (mainImg) mainImg.src = imgSrc;
-      document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-      thumb.classList.add('active');
-    }
-
-    // ── TABS (KHÔNG TỰ SCROLL) ──
-    const detailTabs = ['specs', 'desc', 'reviews'];
-    function setDetailTab(id) {
-      detailTabs.forEach(t => {
-        document.getElementById('ds-' + t)?.classList.toggle('active', t === id);
-      });
-      document.querySelectorAll('.detail-tab').forEach((tab, i) => {
-        tab.classList.toggle('active', detailTabs[i] === id);
-      });
-    }
-
-    // ── TOAST ──
-    function toast(msg) {
-      if (typeof showToast === 'function') {
-        showToast(msg);
-      } else {
-        const t = document.getElementById('toast');
-        if (t) {
-          t.textContent = msg;
-          t.classList.add('show');
-          setTimeout(() => t.classList.remove('show'), 3000);
-        }
-      }
-    }
-
-    // ── REVIEW FORM ──
-    function toggleReviewForm() {
-      const form = document.getElementById('review-form-container');
-      if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function setFormStars(val) {
-      document.getElementById('form-stars').value = val;
-      document.querySelectorAll('.form-star-btn').forEach((b, i) => {
-        b.style.color = (i < val) ? 'var(--gold)' : 'var(--muted)';
-      });
-    }
-
-    // ── WISHLIST AJAX TOGGLE ──
-    async function toggleWishlist(btn) {
-      const productId = btn.dataset.productId;
-      const icon  = document.getElementById('wishlist-icon');
-      const label = document.getElementById('wishlist-label');
-
-      try {
-        const res  = await fetch(`/api/wishlist/toggle/${productId}`, {
-          method: 'POST',
-          headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        const data = await res.json();
-
-        if (res.status === 401 || data.loginRequired) {
-          toast('Vui lòng đăng nhập để lưu sản phẩm yêu thích!');
-          setTimeout(() => window.location.href = '/auth/login', 1500);
-          return;
+    <script>
+        function changeMainImage(src, element) {
+            document.getElementById('main-image').src = src;
+            document.querySelectorAll('.pd-thumbnails img').forEach(img => img.classList.remove('active'));
+            element.classList.add('active');
         }
 
-        if (data.success) {
-          const wished = data.wished;
-          btn.dataset.wished = wished;
-          icon.textContent  = wished ? '♥' : '♡';
-          label.textContent = wished ? 'Đã Yêu Thích' : 'Thêm Vào Yêu Thích';
-          btn.classList.toggle('wished', wished);
-          toast(data.message);
-        } else {
-          toast('Không thể cập nhật danh sách yêu thích.');
+        function changeQty(delta) {
+            const input = document.getElementById('qty');
+            let val = parseInt(input.value) + delta;
+            const max = parseInt(input.getAttribute('max')) || 99;
+            if (val < 1) val = 1;
+            if (val > max) val = max;
+            input.value = val;
         }
-      } catch (e) {
-        toast('Lỗi kết nối. Vui lòng thử lại.');
-      }
-    }
 
-    // ── REVIEW SUBMIT ──
-    document.addEventListener('DOMContentLoaded', () => {
-      const reviewForm = document.querySelector('.customer-review-form');
-      if (reviewForm) {
-        reviewForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const formData = new FormData(reviewForm);
-          try {
-            const res = await fetch(reviewForm.action, {
-              method: 'POST',
-              body: formData
+        function manualQtyChange(input) {
+            let val = parseInt(input.value);
+            const max = parseInt(input.getAttribute('max')) || 99;
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > max) val = max;
+            input.value = val;
+        }
+
+        function submitAddToCart() {
+            const form = document.getElementById('addToCartForm');
+            const qty = document.getElementById('qty').value;
+            document.getElementById('form-qty').value = qty;
+            
+            // Convert to JS cart method if required, or submit form
+            // Assuming standard form submission works based on old code
+            form.submit();
+        }
+
+        function submitBuyNow() {
+            const form = document.getElementById('addToCartForm');
+            const qty = document.getElementById('qty').value;
+            document.getElementById('form-qty').value = qty;
+            form.action = '/cart/buy-now';
+            form.submit();
+        }
+
+        function switchTab(btn) {
+            const target = btn.getAttribute('data-tab');
+            document.querySelectorAll('.pd-tab').forEach(b => {
+                b.classList.remove('active');
+                b.style.color = '#666';
+                b.style.borderBottomColor = 'transparent';
             });
-            const data = await res.json();
-            if (data.success) {
-              toast(data.message);
-              setTimeout(() => location.reload(), 1500);
-            } else {
-              toast(data.message || 'Có lỗi xảy ra.');
+            btn.classList.add('active');
+            btn.style.color = '#000';
+            btn.style.borderBottomColor = '#000';
+
+            document.querySelectorAll('.pd-tab-content').forEach(c => {
+                c.style.display = 'none';
+                c.classList.remove('active');
+            });
+            document.getElementById(target).style.display = 'block';
+            document.getElementById(target).classList.add('active');
+        }
+
+        async function submitReview() {
+            const form = document.getElementById('reviewForm');
+            if(!form.reportValidity()) return;
+            
+            const formData = new FormData(form);
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    if(typeof showToast === 'function') { showToast('Cảm ơn bạn đã đánh giá sản phẩm!'); } else { alert('Cảm ơn bạn đã đánh giá sản phẩm!'); }
+                    location.reload();
+                } else {
+                    if(typeof showToast === 'function') { showToast('Lỗi: ' + result.message); } else { alert('Lỗi: ' + result.message); }
+                }
+            } catch (error) {
+                if(typeof showToast === 'function') { showToast('Đã xảy ra lỗi khi gửi đánh giá.'); } else { alert('Đã xảy ra lỗi khi gửi đánh giá.'); }
+                console.error(error);
             }
-          } catch (err) {
-            toast('Lỗi kết nối.');
-          }
-        });
-      }
-    });
-
-    // ── DELETE REVIEW ──
-    async function deleteReview(id) {
-      if (!confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) return;
-      try {
-        const res = await fetch('/product/review/' + id + '/delete', {
-          method: 'POST'
-        });
-        const data = await res.json();
-        if (data.success) {
-          toast(data.message);
-          setTimeout(() => location.reload(), 1500);
-        } else {
-          toast(data.message || 'Có lỗi xảy ra.');
         }
-      } catch (e) {
-        toast('Lỗi kết nối.');
-      }
-    }
-
-    // ── EDIT REVIEW ──
-    function openEditReviewModal(id, stars, content, image, video) {
-      document.getElementById('editReviewModal').style.display = 'flex';
-      document.getElementById('edit-review-id').value = id;
-      document.getElementById('edit-stars').value = stars;
-      document.getElementById('edit-content').value = content;
-      
-      // Reset files
-      document.getElementById('edit-imageFile').value = '';
-      document.getElementById('edit-videoFile').value = '';
-      document.getElementById('edit-removeImage').value = 'false';
-      document.getElementById('edit-removeVideo').value = 'false';
-
-      // Update stars UI
-      document.querySelectorAll('.edit-star-btn').forEach((b, i) => {
-        b.style.color = (i < stars) ? 'var(--gold)' : 'var(--muted)';
-      });
-      
-      // Update media preview
-      const mediaPreview = document.getElementById('edit-media-preview');
-      mediaPreview.innerHTML = '';
-      if (image) {
-        mediaPreview.innerHTML += `<div id="preview-img-container" style="position:relative; display:inline-block; margin-right:10px;">
-          <img src="${image}" style="max-height:100px; border-radius:4px; border:1px solid rgba(255,255,255,0.2);" />
-          <button type="button" onclick="removeEditImage()" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;">×</button>
-        </div>`;
-      }
-      if (video) {
-        mediaPreview.innerHTML += `<div id="preview-vid-container" style="position:relative; display:inline-block;">
-          <video src="${video}" style="max-height:100px; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:#000;"></video>
-          <button type="button" onclick="removeEditVideo()" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;">×</button>
-        </div>`;
-      }
-    }
-
-    function closeEditReviewModal() {
-      document.getElementById('editReviewModal').style.display = 'none';
-    }
-
-    function removeEditImage() {
-      document.getElementById('edit-removeImage').value = 'true';
-      const el = document.getElementById('preview-img-container');
-      if (el) el.remove();
-    }
-
-    function removeEditVideo() {
-      document.getElementById('edit-removeVideo').value = 'true';
-      const el = document.getElementById('preview-vid-container');
-      if (el) el.remove();
-    }
-
-    function setEditStars(val) {
-      document.getElementById('edit-stars').value = val;
-      document.querySelectorAll('.edit-star-btn').forEach((b, i) => {
-        b.style.color = (i < val) ? 'var(--gold)' : 'var(--muted)';
-      });
-    }
-
-    async function submitEditReview(event) {
-      event.preventDefault();
-      const form = event.target;
-      const id = document.getElementById('edit-review-id').value;
-      const formData = new FormData(form);
-      try {
-        const res = await fetch('/product/review/' + id + '/edit', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        if (data.success) {
-          toast(data.message);
-          closeEditReviewModal();
-          setTimeout(() => location.reload(), 1500);
-        } else {
-          toast(data.message || 'Có lỗi xảy ra.');
-        }
-      } catch (e) {
-        toast('Lỗi kết nối.');
-      }
-    }
-
-    // Helper: đọc data-* attributes thay vì String inline trong th:onclick (Thymeleaf 3.1+ security)
-    function openEditReviewModalFromBtn(btn) {
-      const id      = btn.getAttribute('data-rv-id');
-      const stars   = btn.getAttribute('data-rv-stars');
-      const content = btn.getAttribute('data-rv-content') || '';
-      const image   = btn.getAttribute('data-rv-image') || '';
-      const video   = btn.getAttribute('data-rv-video') || '';
-      openEditReviewModal(id, stars, content, image, video);
-    }
-
-  </script>
-  <script th:src="@{/js/cursor.js}"></script>
+    </script>
+    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/cart.js}"></script>
 </body>
-
 </html>
+

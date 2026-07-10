@@ -1,5 +1,6 @@
 package poly.edu.controller.api;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ public class AiAdvisorRestController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Autowired
+    private poly.edu.service.ProductService productService;
+
     @PostMapping("/ai-advisor")
     public ResponseEntity<Map<String, Object>> askAiAdvisor(@RequestBody Map<String, String> request) {
         String userMessage = request.get("message");
@@ -29,6 +33,34 @@ public class AiAdvisorRestController {
         }
 
         try {
+            // Lấy danh sách ID sản phẩm thực tế từ Database
+            List<poly.edu.entity.Product> allProducts = productService.getAllProducts();
+            Map<String, List<String>> catToIds = new HashMap<>();
+            String[] cats = {"CASE", "MAINBOARD", "CPU", "COOLER", "RAM", "GPU", "PSU"};
+            for (String cat : cats) catToIds.put(cat, new ArrayList<>());
+            
+            for (poly.edu.entity.Product p : allProducts) {
+                if (p.getCategory() == null || p.getCategory().getName() == null) continue;
+                String c = p.getCategory().getName().toUpperCase();
+                String name = p.getName().toLowerCase();
+                String idStr = String.valueOf(p.getId());
+                
+                if (c.contains("CASE") || c.contains("VỎ")) catToIds.get("CASE").add(idStr);
+                else if (c.contains("MAIN") || c.contains("BO MẠCH")) catToIds.get("MAINBOARD").add(idStr);
+                else if (c.contains("CPU") || c.contains("VI XỬ LÝ")) catToIds.get("CPU").add(idStr);
+                else if (c.contains("TẢN") || c.contains("COOLER")) catToIds.get("COOLER").add(idStr);
+                else if (c.contains("RAM")) catToIds.get("RAM").add(idStr);
+                else if (c.contains("VGA") || c.contains("CARD")) catToIds.get("GPU").add(idStr);
+                else if (c.contains("NGUỒN") || c.contains("PSU")) catToIds.get("PSU").add(idStr);
+            }
+            
+            // Hàm tiện ích lấy tối đa 5 ID cho mỗi loại
+            java.util.function.Function<String, String> getTopIds = (category) -> {
+                List<String> list = catToIds.get(category);
+                if (list.isEmpty()) return "không có dữ liệu";
+                return String.join(", ", list.subList(0, Math.min(5, list.size())));
+            };
+
             // 1. Chuẩn bị URL chứa API Key
             String urlWithKey = apiUrl + "?key=" + apiKey;
 
@@ -67,14 +99,14 @@ public class AiAdvisorRestController {
                 "  }\n" +
                 "}\n" +
                 "```\n" +
-                "Chỉ sử dụng các ID hợp lệ sau: \n" +
-                "CASE: case_lianli, case_corsair_white, case_hyte_red, case_fractal_black, case_nzxt_blue\n" +
-                "MAIN: main_asus_z790, main_msi_z790, main_gigabyte_x670, main_msi_b650, main_asrock_b760\n" +
-                "CPU: cpu_i9_14900k, cpu_r9_7950x3d, cpu_i7_14700k, cpu_r7_7800x3d, cpu_i5_14600k\n" +
-                "COOLER: cooler_nzxt_360, cooler_corsair_h150i, cooler_arctic_360, cooler_noctua_nh\n" +
-                "RAM: ram_gskill_32gb, ram_corsair_64gb, ram_kingston_32gb, ram_teamgroup_32gb\n" +
-                "GPU: gpu_4090, gpu_4080s, gpu_7900xtx, gpu_4070ti, gpu_7800xt, gpu_4060ti\n" +
-                "PSU: psu_seasonic_1300, psu_rog_1200, psu_corsair_1000, psu_evga_850, psu_msi_750"
+                "Chỉ sử dụng các ID hợp lệ sau (đây là các ID thực tế từ database): \n" +
+                "CASE: " + getTopIds.apply("CASE") + "\n" +
+                "MAINBOARD: " + getTopIds.apply("MAINBOARD") + "\n" +
+                "CPU: " + getTopIds.apply("CPU") + "\n" +
+                "COOLER: " + getTopIds.apply("COOLER") + "\n" +
+                "RAM: " + getTopIds.apply("RAM") + "\n" +
+                "GPU: " + getTopIds.apply("GPU") + "\n" +
+                "PSU: " + getTopIds.apply("PSU")
             );
 
             Map<String, Object> systemInstruction = new HashMap<>();

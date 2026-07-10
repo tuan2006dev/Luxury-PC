@@ -29,7 +29,7 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
+/* body {
   background: var(--black);
   color: var(--cream);
   font-family: var(--sans);
@@ -37,7 +37,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   padding-bottom: 0;
-}
+} */
 
 
 

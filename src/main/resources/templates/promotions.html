@@ -1,473 +1,221 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-translate="promo-page-title">Khuyến Mãi & Voucher | Luxury PC</title>
-    <meta name="description" content="Tổng hợp ưu đãi, mã giảm giá và chương trình khuyến mãi hấp dẫn tại Luxury PC." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khuyến mãi - LUXURY | PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
-    <link rel="stylesheet" th:href="@{/css/style.css(v=5)}" />
-    <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
-    <link rel="stylesheet" th:href="@{/css/promotions.css(v=5)}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/promotions.css}">
 </head>
-
 <body>
+    <!-- HEADER -->
     <div th:replace="~{layout/header :: header}"></div>
 
-    <!-- ============ PROMO HERO ============ -->
-    <section class="promo-hero" id="promo-hero">
-        <div class="promo-sparkles">
-            <div class="promo-sparkle"></div>
-            <div class="promo-sparkle"></div>
-            <div class="promo-sparkle"></div>
-            <div class="promo-sparkle"></div>
-            <div class="promo-sparkle"></div>
-            <div class="promo-sparkle"></div>
-        </div>
-        <div class="promo-hero-content">
-            <div class="promo-hero-badge" data-translate="promo-hero-badge">🔥 Siêu Sale Tháng 6</div>
-            <h1 class="promo-hero-title"><span data-translate="promo-hero-title-1">Ưu Đãi Bùng Nổ</span><br/><span data-translate="promo-hero-title-2">Giảm Đến 50%</span></h1>
-            <p class="promo-hero-sub" data-translate="promo-hero-sub">Săn voucher, chớp deal sốc — hàng trăm linh kiện cao cấp đang chờ bạn với giá không tưởng. Chỉ có tại Luxury PC!</p>
-            <a href="#voucher-center" class="btn-primary" id="promo-hero-cta"><span data-translate="promo-hero-cta">Săn Voucher Ngay</span></a>
-        </div>
-    </section>
-
-    <!-- ============ COUNTDOWN STRIP ============ -->
-    <!-- Chỉ hiện countdown khi có flash sale đang chạy -->
-    <div class="promo-countdown-strip" id="promo-countdown-strip" th:if="${flashSale != null}">
-        <div class="promo-cd-label">⚡ <span th:text="${flashSale.name}">Flash Sale</span> — <span data-translate="promo-countdown">kết thúc trong</span></div>
-        <div class="promo-cd-timer" id="promo-cd-timer">
-            <div class="promo-cd-block">
-                <span class="promo-cd-num" id="promo-hours">--</span>
-                <span class="promo-cd-unit" data-translate="promo-hour">Giờ</span>
-            </div>
-            <span class="promo-cd-sep">:</span>
-            <div class="promo-cd-block">
-                <span class="promo-cd-num" id="promo-minutes">--</span>
-                <span class="promo-cd-unit" data-translate="promo-minute">Phút</span>
-            </div>
-            <span class="promo-cd-sep">:</span>
-            <div class="promo-cd-block">
-                <span class="promo-cd-num" id="promo-seconds">--</span>
-                <span class="promo-cd-unit" data-translate="promo-second">Giây</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============ PROMO BANNERS ============ -->
-    <section class="promo-banners">
-        <div class="promo-banner-slider">
-            <div class="promo-banner-card">
-                <div class="promo-banner-bg promo-banner-bg-1"></div>
-                <div class="promo-banner-content">
-                    <div class="promo-banner-tag" data-translate="promo-tag-gaming">🎮 Gaming Week</div>
-                    <div class="promo-banner-title" data-translate="promo-deal-vga">VGA & CPU Giảm 25%</div>
-                    <span class="promo-banner-cta" data-translate="promo-cta-view">Xem Ngay →</span>
-                </div>
-            </div>
-            <div class="promo-banner-card">
-                <div class="promo-banner-bg promo-banner-bg-2"></div>
-                <div class="promo-banner-content">
-                    <div class="promo-banner-tag" data-translate="promo-tag-freeship">🚚 Free Ship</div>
-                    <div class="promo-banner-title" data-translate="promo-deal-freeship">Miễn Phí Vận Chuyển Toàn Quốc</div>
-                    <span class="promo-banner-cta" data-translate="promo-cta-apply">Áp Dụng →</span>
-                </div>
-            </div>
-            <div class="promo-banner-card">
-                <div class="promo-banner-bg promo-banner-bg-3"></div>
-                <div class="promo-banner-content">
-                    <div class="promo-banner-tag" data-translate="promo-tag-vip">👑 VIP Member</div>
-                    <div class="promo-banner-title" data-translate="promo-deal-vip">Ưu Đãi Độc Quyền Thành Viên</div>
-                    <span class="promo-banner-cta" data-translate="promo-cta-register">Đăng Ký →</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ PROMO CATEGORIES ============ -->
-    <section class="promo-categories">
-        <div class="section-header">
-            <span class="section-label" data-translate="promo-cat-title">Danh Mục Khuyến Mãi</span>
-            <h2 class="section-title" data-translate="promo-cat-sub">Ưu Đãi Theo Danh Mục</h2>
-        </div>
-        <div class="promo-cat-grid">
-            <div class="promo-cat-card" id="pcat-cpu">
-                <span class="promo-cat-icon">🖥️</span>
-                <div class="promo-cat-name">CPU</div>
-                <div class="promo-cat-deal"><span data-translate="promo-deal-upto">Giảm đến </span>20%</div>
-            </div>
-            <div class="promo-cat-card" id="pcat-vga">
-                <span class="promo-cat-icon">🎮</span>
-                <div class="promo-cat-name">VGA</div>
-                <div class="promo-cat-deal"><span data-translate="promo-deal-upto">Giảm đến </span>30%</div>
-            </div>
-            <div class="promo-cat-card" id="pcat-ram">
-                <span class="promo-cat-icon">💾</span>
-                <div class="promo-cat-name">RAM</div>
-                <div class="promo-cat-deal"><span data-translate="promo-deal-upto">Giảm đến </span>15%</div>
-            </div>
-            <div class="promo-cat-card" id="pcat-ssd">
-                <span class="promo-cat-icon">💿</span>
-                <div class="promo-cat-name">SSD</div>
-                <div class="promo-cat-deal"><span data-translate="promo-deal-upto">Giảm đến </span>25%</div>
-            </div>
-            <div class="promo-cat-card" id="pcat-monitor">
-                <span class="promo-cat-icon">🖥️</span>
-                <div class="promo-cat-name">Màn Hình</div>
-                <div class="promo-cat-deal"><span data-translate="promo-deal-upto">Giảm đến </span>18%</div>
-            </div>
-            <div class="promo-cat-card" id="pcat-psu">
-                <span class="promo-cat-icon">⚡</span>
-                <div class="promo-cat-name">Nguồn PSU</div>
-                <div class="promo-cat-deal"><span data-translate="promo-deal-upto">Giảm đến </span>22%</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ VOUCHER CENTER (Shopee-style) ============ -->
-    <section class="voucher-center" id="voucher-center">
-        <div class="voucher-center-header">
-            <div>
-                <span class="section-label" data-translate="promo-voucher-center">🎟️ Kho Voucher</span>
-                <h2 class="section-title" data-translate="promo-voucher-today">Mã Giảm Giá Hôm Nay</h2>
-            </div>
-            <div class="voucher-filter-tabs">
-                <button class="voucher-filter-tab active" data-filter="all" id="vf-all" data-translate="promo-filter-all">Tất Cả</button>
-                <button class="voucher-filter-tab" data-filter="discount" id="vf-discount" data-translate="promo-filter-discount">Giảm Giá</button>
-                <button class="voucher-filter-tab" data-filter="freeship" id="vf-freeship" data-translate="promo-filter-freeship">Free Ship</button>
-                <button class="voucher-filter-tab" data-filter="category" id="vf-category" data-translate="promo-filter-category">Theo Danh Mục</button>
-            </div>
+    <main class="promo-container" style="padding-top: 20px;">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> > <span>Khuyến mãi</span>
         </div>
 
-        <div class="shopee-voucher-grid" id="shopee-voucher-grid">
+        <!-- Header -->
+        <div class="promo-page-header">
+            <h1 class="promo-page-title">KHUYẾN MÃI</h1>
+            <p class="promo-page-desc">Săn ưu đãi cực hời - Tiết kiệm tối đa khi mua sắm tại Luxury PC</p>
+        </div>
 
-            <div th:each="v : ${activeVouchers}" 
-                 class="shopee-voucher-card" 
-                 th:classappend="${v.category != null ? 'category' : (v.discountType.name() == 'PERCENTAGE' ? 'discount' : 'freeship')}" 
-                 th:data-type="${v.category != null ? 'category' : (v.discountType.name() == 'PERCENTAGE' ? 'discount' : 'discount')}">
-                <div class="sv-left">
-                    <span class="sv-icon" th:text="${v.category != null ? '🛍️' : (v.discountType.name() == 'PERCENTAGE' ? '🏷️' : '💵')}">🏷️</span>
-                    <div class="sv-discount">
-                        <span th:if="${v.discountType.name() == 'PERCENTAGE'}" th:text="${#numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT')} + '%'"></span>
-                        <span th:if="${v.discountType.name() == 'FIXED_AMOUNT'}" th:text="${#numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+        <!-- Banners -->
+        <div class="promo-banners">
+            <div class="promo-banner-card banner-red">
+                <div class="banner-content">
+                    <h2 style="font-size: 28px;">FLASH SALE<br><span style="font-size: 20px; font-weight: 500;">GIỜ VÀNG GIÁ SỐC</span></h2>
+                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 10px;">
+                        Giảm đến <span style="font-size: 40px;">50%</span>
                     </div>
-                    <div class="sv-discount-label" th:text="${v.discountType.name() == 'PERCENTAGE' ? 'Giảm Giá' : 'Giảm Trực Tiếp'}" data-translate="promo-filter-discount">Giảm Giá</div>
-                </div>
-                <div class="sv-right">
-                    <div class="sv-title" th:text="${v.code}">Voucher VIP</div>
-                    <div class="sv-desc" th:text="${v.description}">Mô tả voucher</div>
-                    <div class="sv-conditions">
-                        <span class="sv-condition-tag" th:if="${v.category != null}" th:text="${v.category.name}">Danh mục</span>
-                        <span class="sv-condition-tag" th:if="${v.minOrderAmount != null}" th:text="'Đơn ≥ ' + ${#numbers.formatDecimal(v.minOrderAmount/1000000.0, 0, 'COMMA', 0, 'POINT')} + 'TR'"></span>
-                        <span class="sv-condition-tag" th:if="${v.minOrderAmount == null}">Mọi đơn</span>
-                        <span class="sv-expire"><span data-translate="profile-vouchers-expiry">HSD: </span><span th:text="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}"></span></span>
+                    <div style="background: #fff; color: #ef4444; font-size: 12px; font-weight: 700; padding: 4px 10px; display: inline-block; border-radius: 4px; margin-bottom: 20px;">
+                        DUY NHẤT HÔM NAY
                     </div>
-                    <div class="sv-actions">
-                        <div class="sv-usage-bar" th:if="${v.usageLimit != null}">
-                            <div class="sv-usage-track">
-                                <div class="sv-usage-fill" th:style="'width: ' + ${v.usedCount * 100.0 / v.usageLimit} + '%;'"></div>
+                    <br>
+                    <a href="#flash-sale" class="btn-banner">Xem ngay <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                <img th:src="@{/images/case_purple.png}" class="banner-img" style="right: 50px; bottom: 0; height: 90%;">
+            </div>
+
+            <div class="promo-banner-card banner-blue">
+                <div class="banner-content">
+                    <h2 style="font-size: 22px; font-weight: 600; text-transform: uppercase;">Khuyến mãi hè 2025</h2>
+                    <div style="font-size: 28px; font-weight: 800; margin-bottom: 10px; line-height: 1.2;">Build PC cực chất<br>Nhận quà cực đã</div>
+                    <div style="font-size: 14px; margin-bottom: 20px;">
+                        Quà tặng lên đến<br><span style="font-size: 22px; font-weight: 700; color: #fbbf24;">2.000.000đ</span>
+                    </div>
+                    <a href="#vouchers" class="btn-banner">Xem chi tiết <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                <img th:src="@{/images/case_purple.png}" class="banner-img" style="right: 10px; height: 90%; bottom: 0;">
+            </div>
+        </div>
+
+        <!-- Categories Filter -->
+        <div class="promo-categories">
+            <div class="promo-cat-item active">
+                <i class="fa-solid fa-layer-group promo-cat-icon"></i>
+                <div class="promo-cat-info">
+                    <h4>Tất cả</h4>
+                    <span>Nhiều khuyến mãi</span>
+                </div>
+            </div>
+            <div class="promo-cat-item flash">
+                <i class="fa-solid fa-bolt promo-cat-icon"></i>
+                <div class="promo-cat-info">
+                    <h4>Flash Sale</h4>
+                    <span th:text="${flashSale != null ? 'Đang diễn ra' : 'Sắp diễn ra'}">Đang diễn ra</span>
+                </div>
+            </div>
+            <div class="promo-cat-item">
+                <i class="fa-solid fa-microchip promo-cat-icon"></i>
+                <div class="promo-cat-info">
+                    <h4>Voucher</h4>
+                    <span th:text="${activeVouchers != null ? activeVouchers.size() + ' mã' : '0 mã'}">8 mã</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Sale Section -->
+        <div class="layout-2col" id="flash-sale" th:if="${flashSale != null and flashSaleItems != null and !flashSaleItems.isEmpty()}">
+            <div class="flash-sale-main">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fa-solid fa-bolt"></i>
+                        <h2 style="margin: 0; font-size: 20px;" th:text="${flashSale.name}">FLASH SALE</h2>
+                        <p style="margin: 0; font-size: 13px; color: #666; margin-top: 5px;">Sản phẩm giảm giá sâu trong khung giờ vàng. Số lượng có hạn!</p>
+                    </div>
+                </div>
+
+                <div class="flash-grid">
+                    <div class="flash-card" th:each="item : ${flashSaleItems}" th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|" style="cursor: pointer;">
+                        <div class="flash-badge">-<span th:text="${#numbers.formatDecimal((1 - item.salePrice * 1.0 / item.product.price) * 100, 0, 0)}">30</span>%</div>
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" alt="Product">
+                        <h4 th:text="${item.product.name}">Product Name</h4>
+                        <div class="price-row" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
+                            <div class="old-price" style="text-decoration: line-through; color: #999; font-size: 13px;" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">4.590.000đ</div>
+                            <div class="new-price" style="color: #ef4444; font-size: 18px; font-weight: 700;" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">2.990.000đ</div>
+                        </div>
+                        <div class="progress-bar-container" style="background: #eee; height: 16px; border-radius: 8px; position: relative; overflow: hidden; margin-bottom: 15px;">
+                            <div class="progress-fill" style="background: #ef4444; height: 100%; border-radius: 8px;" th:style="'width: ' + (${item.soldCount * 100.0 / item.saleQuantity}) + '%;'"></div>
+                            <div class="progress-text" style="position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 10px; color: #fff; font-weight: 600; line-height: 16px;" th:text="'Đã bán ' + ${item.soldCount} + '/' + ${item.saleQuantity}">Đã bán 32/50</div>
+                        </div>
+                        <button class="btn-add-cart" style="width: 100%; padding: 10px; background: #000; color: #fff; border: none; border-radius: 4px; font-weight: 600;"><i class="fa-solid fa-cart-shopping"></i> Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar-box" style="background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; align-self: start;">
+                <div class="sidebar-box-title" style="font-size: 16px; font-weight: 700; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">SẮP DIỄN RA</div>
+                <div class="upcoming-list">
+                    <p style="font-size: 13px; color: #666; text-align: center;">Chưa có sự kiện nào sắp diễn ra</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vouchers Section -->
+        <div class="layout-2col" id="vouchers" style="margin-top: 40px;">
+            <div class="vouchers-main">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fa-solid fa-ticket" style="color: #f97316;"></i>
+                        <h2 style="margin: 0; font-size: 20px;">KHUYẾN MÃI HOT</h2>
+                        <div class="voucher-tabs" style="display: flex; gap: 15px; margin-top: 15px;">
+                            <div class="voucher-tab active" style="font-size: 13px; font-weight: 600; padding-bottom: 5px; border-bottom: 2px solid #000; cursor: pointer;">Tất cả</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="voucher-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                    
+                    <div class="voucher-card" th:each="v : ${activeVouchers}" style="display: flex; background: #fff; border: 1px solid #eee; border-radius: 8px; overflow: hidden; height: 120px;">
+                        <div class="voucher-left" style="width: 30%; background: #fef2f2; border-right: 2px dashed #fecaca; display: flex; align-items: center; justify-content: center; padding: 15px;">
+                            <div class="voucher-logo" style="font-size: 18px; font-weight: 800; color: #ef4444; text-align: center; word-break: break-all;" th:text="${v.code}">PCSTORE</div>
+                        </div>
+                        <div class="voucher-right" style="width: 70%; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div class="voucher-title" style="font-size: 16px; font-weight: 700;" th:text="${v.description}">Giảm giá</div>
+                                <div class="voucher-desc" style="font-size: 12px; color: #666; margin-top: 5px;" th:if="${v.minOrderAmount != null}" th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(v.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">Đơn tối thiểu 2M</div>
+                                <div class="voucher-meta" style="font-size: 11px; color: #999; margin-top: 5px;">
+                                    HSD: <span th:text="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}">30/06/2025</span>
+                                </div>
                             </div>
-                            <div class="sv-usage-text"><span data-translate="promo-usage-text">Đã dùng </span><span th:text="${#numbers.formatDecimal(v.usedCount * 100.0 / v.usageLimit, 0, 0)}"></span>%</div>
+                            <button class="btn-copy" th:attr="onclick='saveVoucher(this, \'' + ${v.code} + '\')'" style="align-self: flex-end; background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Lưu mã</button>
                         </div>
-                        <div class="sv-usage-bar" th:if="${v.usageLimit == null}">
-                            <div class="sv-usage-text">Số lượng: Không giới hạn</div>
-                        </div>
-                        <button class="sv-save-btn" th:attr="onclick='saveVoucher(this, \'' + ${v.code} + '\')'" data-translate="promo-save-btn">Lưu</button>
                     </div>
+
+                    <div th:if="${activeVouchers == null or activeVouchers.isEmpty()}" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
+                        Hiện tại không có mã giảm giá nào. Vui lòng quay lại sau!
+                    </div>
+
                 </div>
             </div>
-            
-            <div th:if="${activeVouchers == null or activeVouchers.isEmpty()}" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--muted);">
-                Hiện tại không có mã giảm giá nào. Vui lòng quay lại sau!
-            </div>
 
+            <!-- Terms -->
+            <div class="terms-box" style="background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 20px; align-self: start;">
+                <div class="sidebar-box-title" style="font-size: 14px; font-weight: 700; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">ĐIỀU KIỆN & HƯỚNG DẪN</div>
+                <ul class="terms-list" style="padding-left: 20px; font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 15px;">
+                    <li>Chương trình Flash Sale có số lượng và thời gian giới hạn.</li>
+                    <li>Mã giảm giá chỉ áp dụng 1 lần/đơn hàng.</li>
+                    <li>Không áp dụng đồng thời nhiều mã giảm giá.</li>
+                    <li>Kiểm tra kỹ giỏ hàng và thông tin trước khi thanh toán.</li>
+                </ul>
+            </div>
         </div>
-    </section>
+    </main>
 
-    <!-- ============ FLASH DEAL PRODUCTS — từ DB ============ -->
-    <!-- Chỉ hiện section này khi có Flash Sale đang chạy -->
-    <!-- FLASH SALE -->
-    <section class="flash-sale" id="flash-sale" th:if="${flashSale != null and flashSaleItems != null and !flashSaleItems.isEmpty()}">
-        <div class="flash-sale-inner">
-            <div class="flash-sale-left">
-                <div class="flash-badge" data-translate="flash-hot-deal">🔥 HOT DEAL</div>
-                <h2 class="flash-title">
-                    <span th:text="${flashSale.name}">Flash Sale</span>
-                </h2>
-                <p class="flash-sub" data-translate="flash-sub">Ưu đãi cực sốc — số lượng có hạn!</p>
-                <div class="flash-countdown" id="flash-countdown">
-                    <div class="countdown-block">
-                        <span class="countdown-num" id="fs-hours">00</span>
-                        <span class="countdown-label" data-translate="promo-hour">Giờ</span>
-                    </div>
-                    <div class="countdown-sep">:</div>
-                    <div class="countdown-block">
-                        <span class="countdown-num" id="fs-minutes">00</span>
-                        <span class="countdown-label" data-translate="promo-minute">Phút</span>
-                    </div>
-                    <div class="countdown-sep">:</div>
-                    <div class="countdown-block">
-                        <span class="countdown-num" id="fs-seconds">00</span>
-                        <span class="countdown-label" data-translate="promo-second">Giây</span>
-                    </div>
-                </div>
-            </div>
-            <div class="flash-products">
-                <!-- Flash Sale items from database campaign -->
-                <div th:each="item : ${flashSaleItems}" class="flash-product-card" th:id="'fp-' + ${item.product.id}" th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|" style="cursor: pointer;">
-                    <div class="flash-discount-badge" th:text="'Sắp hết!'">Sắp hết!</div>
-                    <div class="flash-prod-img">
-                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" />
-                    </div>
-                    <div class="flash-prod-info">
-                        <div class="flash-prod-name" th:text="${item.product.name}">Core i7-14700K</div>
-                        <div class="flash-prod-prices">
-                            <span class="flash-new-price" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">11.475.000₫</span>
-                        </div>
-                        <div class="flash-sale-qty" style="font-size: 0.72rem; color: var(--gold); margin-top: 4px; font-weight: 500;">
-                            Còn lại: <span th:text="${T(java.lang.Math).min(item.saleQuantity - item.soldCount, item.product.stock)}">45</span> sản phẩm
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ MY VOUCHERS (Ví Voucher) ============ -->
-    <section class="my-vouchers-section" id="my-vouchers">
-        <div class="section-header">
-            <span class="section-label" data-translate="promo-my-vouchers">💰 Ví Voucher Của Tôi</span>
-            <h2 class="section-title" data-translate="promo-vouchers-saved">Voucher Đã Lưu</h2>
-        </div>
-        <div class="my-vouchers-list" id="my-vouchers-list">
-            <!-- Items will be added by JS when user clicks "Lưu" -->
-            <div class="my-vouchers-empty" id="my-vouchers-empty">
-                <p data-translate="promo-vouchers-empty">Bạn chưa lưu voucher nào. Hãy chọn "Lưu" ở các voucher bên trên!</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ HOW TO USE ============ -->
-    <section class="promo-info-section" id="promo-info">
-        <div class="section-header">
-            <span class="section-label" data-translate="promo-guide-label">Hướng Dẫn</span>
-            <h2 class="section-title" data-translate="promo-guide-title">Cách Sử Dụng Voucher</h2>
-        </div>
-        <div class="promo-info-grid">
-            <div class="promo-info-card" id="info-step-1">
-                <span class="promo-info-icon">🎟️</span>
-                <div class="promo-info-title" data-translate="promo-guide-step1-title">Bước 1: Lưu Mã</div>
-                <div class="promo-info-desc" data-translate="promo-guide-step1-desc">Chọn voucher phù hợp và nhấn "Lưu" để thêm vào ví voucher của bạn.</div>
-            </div>
-            <div class="promo-info-card" id="info-step-2">
-                <span class="promo-info-icon">🛒</span>
-                <div class="promo-info-title" data-translate="promo-guide-step2-title">Bước 2: Mua Sắm</div>
-                <div class="promo-info-desc" data-translate="promo-guide-step2-desc">Chọn sản phẩm yêu thích và thêm vào giỏ hàng. Đảm bảo đạt điều kiện đơn hàng tối thiểu.</div>
-            </div>
-            <div class="promo-info-card" id="info-step-3">
-                <span class="promo-info-icon">💳</span>
-                <div class="promo-info-title" data-translate="promo-guide-step3-title">Bước 3: Áp Dụng</div>
-                <div class="promo-info-desc" data-translate="promo-guide-step3-desc">Tại bước thanh toán, chọn voucher từ ví hoặc nhập mã để áp dụng giảm giá.</div>
-            </div>
-            <div class="promo-info-card" id="info-step-4">
-                <span class="promo-info-icon">🎉</span>
-                <div class="promo-info-title" data-translate="promo-guide-step4-title">Bước 4: Nhận Hàng</div>
-                <div class="promo-info-desc" data-translate="promo-guide-step4-desc">Hoàn tất thanh toán và chờ nhận hàng. Tận hưởng linh kiện cao cấp với giá ưu đãi!</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- NEWSLETTER -->
-    <section class="newsletter">
-        <div class="newsletter-inner">
-            <h2 class="newsletter-title"><span data-translate="newsletter-title-part1">Nhận Ưu Đãi</span> <em><span data-translate="newsletter-title-part2">Độc Quyền</span></em></h2>
-            <p class="newsletter-sub" data-translate="promo-newsletter-sub">Đăng ký để nhận thông báo giảm giá, voucher mới nhất và deal sốc từ Luxury PC.</p>
-            <form class="newsletter-form" id="newsletter-form">
-                <input type="email" id="newsletter-email" data-translate-placeholder="newsletter-email-placeholder" placeholder="Email của bạn..." required aria-label="Email đăng ký" />
-                <button type="submit" id="newsletter-submit" data-translate="newsletter-submit-btn">Đăng Ký</button>
-            </form>
-        </div>
-    </section>
-
+    <!-- FOOTER -->
     <div th:replace="~{layout/footer :: footer}"></div>
+    <div id="toast" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;"></div>
 
-    <!-- ============ PROMOTIONS PAGE JS ============ -->
-    <script th:inline="javascript">
-    (function() {
-        window.flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
-        const flashSaleEndTime = window.flashSaleEndTime;
-
-        function startCountdown() {
-            if (!flashSaleEndTime || flashSaleEndTime === 0) return;
-
-            function update() {
-                const now = Date.now();
-                let diff = Math.max(0, flashSaleEndTime - now);
-
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                diff -= hours * 1000 * 60 * 60;
-                const minutes = Math.floor(diff / (1000 * 60));
-                diff -= minutes * 1000 * 60;
-                const seconds = Math.floor(diff / 1000);
-
-                const hEl = document.getElementById('promo-hours');
-                const mEl = document.getElementById('promo-minutes');
-                const sEl = document.getElementById('promo-seconds');
-                if (hEl) hEl.textContent = String(hours).padStart(2, '0');
-                if (mEl) mEl.textContent = String(minutes).padStart(2, '0');
-                if (sEl) sEl.textContent = String(seconds).padStart(2, '0');
-
-                // Cập nhật timer trên các deal card
-                const timeStr = '⏰ ' + String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
-                document.querySelectorAll('.deal-timer-text').forEach(el => {
-                    el.textContent = diff === 0 ? '⏰ Đã kết thúc' : timeStr;
-                });
-            }
-
-            update();
-            setInterval(update, 1000);
+    <script th:src="@{/js/script.js}"></script>
+    <script>
+        function toast(msg) { 
+            const el = document.getElementById('toast'); 
+            el.textContent = msg; 
+            el.style.display = 'block'; 
+            setTimeout(() => el.style.display = 'none', 3500); 
         }
 
-        // ---- Voucher Filter ----
-        function initVoucherFilter() {
-            const tabs = document.querySelectorAll('.voucher-filter-tab');
-            const cards = document.querySelectorAll('.shopee-voucher-card');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-
-                    const filter = tab.dataset.filter;
-                    cards.forEach(card => {
-                        if (filter === 'all' || card.dataset.type === filter) {
-                            card.style.display = 'flex';
-                            card.style.animation = 'filterFadeIn 0.4s ease forwards';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            });
-        }
-
-        function t(key, defaultValue) {
-            const lang = localStorage.getItem('lang') || 'vi';
-            const dict = window.translations || (typeof translations !== 'undefined' ? translations : {});
-            return (dict[lang] && dict[lang][key]) || defaultValue;
-        }
-
-        // ---- Save Voucher — gọi API thật ----
-        window.saveVoucher = async function(btn, code) {
+        function saveVoucher(btn, code) {
             btn.disabled = true;
-            btn.textContent = '...';
-            try {
-                const res = await fetch('/api/user-voucher/save?code=' + encodeURIComponent(code), {
-                    method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                });
-
-                if (res.status === 401 || res.redirected) {
-                    // Chưa đăng nhập — hiện toast
-                    showPromoToast('🔒 ' + t('promo-login-required', 'Vui lòng đăng nhập để lưu voucher!'));
-                    btn.disabled = false;
-                    btn.textContent = t('promo-save-btn', 'Lưu');
-                    return;
-                }
-
-                const data = await res.json();
-
-                if (data.success) {
-                    btn.classList.add('saved');
-                    btn.textContent = t('promo-saved-btn', 'Đã Lưu ✓');
-                    btn.disabled = true;
-
-                    // Cập nhật ví voucher section
-                    const emptyMsg = document.getElementById('my-vouchers-empty');
-                    if (emptyMsg) emptyMsg.style.display = 'none';
-
-                    const list = document.getElementById('my-vouchers-list');
-                    const card = btn.closest('.shopee-voucher-card');
-                    const title = card.querySelector('.sv-title')?.textContent || code;
-                    const desc = card.querySelector('.sv-desc')?.textContent || '';
-                    const iconEl = card.querySelector('.sv-icon');
-                    const icon = iconEl ? iconEl.textContent : '🎟️';
-
-                    const item = document.createElement('div');
-                    item.className = 'my-voucher-item';
-                    item.style.animation = 'filterFadeIn 0.4s ease forwards';
-                    item.innerHTML = 
-                        '<div class="my-voucher-icon"><span>' + icon + '</span></div>' +
-                        '<div class="my-voucher-info">' +
-                            '<div class="my-voucher-code">' + code + '</div>' +
-                            '<div class="my-voucher-desc">' + desc + '</div>' +
-                        '</div>' +
-                        '<button class="my-voucher-use-btn" onclick="useVoucher(\'' + code + '\')">' + t('promo-use-now', 'Dùng Ngay') + '</button>';
-                    list.appendChild(item);
-
-                    showPromoToast('✅ ' + (data.message || (t('promo-saved-toast-prefix', 'Đã lưu voucher') + ' ' + code + ' ' + t('promo-saved-toast-suffix', 'vào ví!'))));
+            btn.innerHTML = 'Đang lưu...';
+            
+            fetch('/api/vouchers/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'code=' + code
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    btn.innerHTML = 'Đã lưu';
+                    btn.style.background = '#10b981';
+                    toast('Đã lưu mã giảm giá thành công!');
                 } else {
+                    btn.innerHTML = 'Lưu mã';
                     btn.disabled = false;
-                    btn.textContent = t('promo-save-btn', 'Lưu');
-                    showPromoToast('⚠️ ' + (data.message || 'Không thể lưu voucher'));
-                }
-            } catch (err) {
-                btn.disabled = false;
-                btn.textContent = t('promo-save-btn', 'Lưu');
-                showPromoToast('❌ ' + t('promo-error-connection', 'Lỗi kết nối, vui lòng thử lại'));
-            }
-        };
-
-        window.useVoucher = function(code) {
-            showPromoToast(t('promo-applied-toast-prefix', '🛒 Đã áp dụng mã') + ' ' + code + ' ' + t('promo-applied-toast-suffix', '— chuyển đến giỏ hàng!'));
-        };
-
-        // ---- Toast ----
-        function showPromoToast(message) {
-            // Use existing toast system
-            const toast = document.getElementById('toast');
-            if (toast) {
-                toast.textContent = message;
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
-            }
-        }
-
-        // ---- Scroll Animations ----
-        function initScrollAnimations() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+                    toast(data.message || 'Lỗi khi lưu mã');
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
                     }
-                });
-            }, { threshold: 0.1 });
-
-            // Exclude .shopee-voucher-card from animations to load instantly and prevent invisible display issues
-            document.querySelectorAll('.promo-deal-card, .promo-cat-card, .promo-info-card, .promo-banner-card').forEach((el, i) => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'opacity 0.5s ease ' + (i * 0.08) + 's, transform 0.5s ease ' + (i * 0.08) + 's';
-                observer.observe(el);
+                }
+            })
+            .catch(err => {
+                btn.innerHTML = 'Lưu mã';
+                btn.disabled = false;
+                toast('Lỗi kết nối. Vui lòng thử lại sau.');
             });
         }
-
-        // ---- Init ----
-        document.addEventListener('DOMContentLoaded', () => {
-            startCountdown();
-            initVoucherFilter();
-            initScrollAnimations();
-        });
-    })();
     </script>
-
-    <script th:src="@{/js/cursor.js}"></script>
-    <script th:src="@{/js/script.js(v=4)}"></script>
 </body>
-
 </html>
+

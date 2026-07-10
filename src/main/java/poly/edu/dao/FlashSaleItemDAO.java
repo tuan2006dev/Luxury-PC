@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface FlashSaleItemDAO extends JpaRepository<FlashSaleItem, Integer> {
 
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"product"})
     List<FlashSaleItem> findByFlashSaleId(Integer flashSaleId);
 
     @Query("SELECT fsi FROM FlashSaleItem fsi WHERE fsi.flashSale.id = :saleId AND fsi.soldCount < fsi.saleQuantity")

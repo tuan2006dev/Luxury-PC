@@ -23,6 +23,9 @@ public class Product implements Serializable {
     private String description;
     private String image;
     private Integer stock;
+    
+    @Column(name = "brand", length = 100)
+    private String brand;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -35,13 +38,14 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public Product(Integer id, String name, Double price, String description, String image, Integer stock, Category category, Date createdAt) {
+    public Product(Integer id, String name, Double price, String description, String image, Integer stock, String brand, Category category, Date createdAt) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
         this.image = image;
         this.stock = stock;
+        this.brand = brand;
         this.category = category;
         this.createdAt = createdAt;
     }
@@ -92,6 +96,14 @@ public class Product implements Serializable {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public Category getCategory() {

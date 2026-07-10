@@ -159,7 +159,7 @@ public class SYS_PR_ProductTest {
 
         productDAO.flush();
 
-        var filtered = productDAO.searchProducts(null, null, 1000000.0, null);
+        var filtered = productDAO.searchProducts(null, null, 1000000.0, null, null, org.springframework.data.domain.PageRequest.of(0, 100));
         assertTrue(filtered.stream().anyMatch(p -> p.getName().equals("Cheap Item")));
         assertFalse(filtered.stream().anyMatch(p -> p.getName().equals("Expensive Item")));
     }
@@ -180,7 +180,7 @@ public class SYS_PR_ProductTest {
 
         productDAO.flush();
 
-        var searchResult = productDAO.searchProducts(null, null, null, "Laptop");
+        var searchResult = productDAO.searchProducts(null, null, null, "Laptop", null, org.springframework.data.domain.PageRequest.of(0, 100));
         assertTrue(searchResult.stream().anyMatch(p -> p.getName().contains("Laptop")));
         assertFalse(searchResult.stream().anyMatch(p -> p.getName().equals("Desktop PC")));
     }

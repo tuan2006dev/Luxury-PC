@@ -11,8 +11,15 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
+    private final poly.edu.service.ProfileService profileService;
+
+    public GlobalControllerAdvice(poly.edu.service.ProfileService profileService) {
+        this.profileService = profileService;
+    }
+
     @ModelAttribute
-    public void addGlobalAttributes(HttpSession session, Model model) {
+    public void addGlobalAttributes(jakarta.servlet.http.HttpServletRequest request, HttpSession session, Model model) {
+        model.addAttribute("requestURI", request.getRequestURI());
         // Lấy giỏ hàng từ session
         @SuppressWarnings("unchecked")
         Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
@@ -23,5 +30,15 @@ public class GlobalControllerAdvice {
         }
         
         model.addAttribute("cartCount", cartCount);
+
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
+            try {
+                poly.edu.entity.User user = profileService.getCurrentUser(auth);
+                model.addAttribute("currentUser", user);
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
     }
 }

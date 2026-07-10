@@ -1,65 +1,45 @@
-// Toggle FAQ Accordion
-        function toggleFaq(header) {
-            const item = header.parentElement;
+document.addEventListener('DOMContentLoaded', () => {
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+            // Check if this item is already active
             const isActive = item.classList.contains('active');
             
-            document.querySelectorAll('.faq-item').forEach(el => {
-                el.classList.remove('active');
+            // Close all items
+            faqItems.forEach(faq => {
+                faq.classList.remove('active');
+                const icon = faq.querySelector('.faq-question i');
+                if (icon) {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
             });
-            
+
+            // If it wasn't active, open it
             if (!isActive) {
                 item.classList.add('active');
-            }
-        }
-
-
-
-        let translations = {};
-        
-        function setLanguage(lang) {
-            localStorage.setItem('lang', lang);
-            document.querySelectorAll('[data-translate]').forEach(el => {
-                const key = el.getAttribute('data-translate');
-                if (translations[lang] && translations[lang][key]) {
-                    const val = translations[lang][key];
-                    if (el.children.length === 0) {
-                        el.textContent = val;
-                    } else {
-                        let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
-                        if (textNode) {
-                            textNode.nodeValue = val;
-                        }
-                    }
-                }
-            });
-            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-translate-placeholder');
-                if (translations[lang] && translations[lang][key]) {
-                    el.setAttribute('placeholder', translations[lang][key]);
-                }
-            });
-        }
-
-        async function loadTranslations() {
-            const savedLang = localStorage.getItem('lang') || 'vi';
-            const cachedData = localStorage.getItem('translations_cache');
-            if (cachedData) {
-                try {
-                    translations = JSON.parse(cachedData);
-                    setLanguage(savedLang);
-                } catch (e) {
-                    console.error(e);
+                const icon = item.querySelector('.faq-question i');
+                if (icon) {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
                 }
             }
+        });
+    });
 
-            try {
-                const response = await fetch('/api/translations');
-                translations = await response.json();
-                localStorage.setItem('translations_cache', JSON.stringify(translations));
-                setLanguage(savedLang);
-            } catch (error) {
-                console.error(error);
+    // Handle form submit
+    const supportForm = document.getElementById('support-form');
+    if (supportForm) {
+        supportForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(typeof showToast === 'function') {
+                showToast('Yêu cầu hỗ trợ của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ lại trong thời gian sớm nhất!');
+            } else {
+                alert('Yêu cầu hỗ trợ của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ lại trong thời gian sớm nhất!');
             }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadTranslations);
+            supportForm.reset();
+        });
+    }
+});

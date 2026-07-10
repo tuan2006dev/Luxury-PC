@@ -35,8 +35,8 @@ public class CartController {
      */
     @PostMapping("/cart/add")
     public String addToCart(@RequestParam("id") Integer id,
-                            @RequestParam("name") String name,
-                            @RequestParam("price") Double price,
+                            @RequestParam(value = "name", required = false) String name,
+                            @RequestParam(value = "price", required = false) Double price,
                             @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
                             HttpSession session,
                             RedirectAttributes redirectAttributes,
@@ -49,6 +49,12 @@ public class CartController {
         Optional<Product> pOpt = productDAO.findById(id);
         if (pOpt.isPresent()) {
             productStock = pOpt.get().getStock();
+            if (name == null || "1".equals(name) || name.isEmpty() || name.equals("undefined")) {
+                name = pOpt.get().getName();
+            }
+            if (price == null || price.isNaN()) {
+                price = pOpt.get().getPrice();
+            }
         }
 
         if (productStock <= 0) {
@@ -96,8 +102,8 @@ public class CartController {
 
     @PostMapping("/cart/buy-now")
     public String buyNow(@RequestParam("id") Integer id,
-                         @RequestParam("name") String name,
-                         @RequestParam("price") Double price,
+                         @RequestParam(value = "name", required = false) String name,
+                         @RequestParam(value = "price", required = false) Double price,
                          @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
                          HttpSession session,
                          RedirectAttributes redirectAttributes,
@@ -110,6 +116,12 @@ public class CartController {
         Optional<Product> pOpt = productDAO.findById(id);
         if (pOpt.isPresent()) {
             productStock = pOpt.get().getStock();
+            if (name == null || "1".equals(name) || name.isEmpty() || name.equals("undefined")) {
+                name = pOpt.get().getName();
+            }
+            if (price == null || price.isNaN()) {
+                price = pOpt.get().getPrice();
+            }
         }
 
         if (productStock <= 0) {
@@ -144,15 +156,11 @@ public class CartController {
             quantity = allowedQuantity;
         }
 
-        if (cart.containsKey(id)) {
-            CartItem item = cart.get(id);
-            item.setQuantity(item.getQuantity() + quantity);
-        } else {
-            cart.put(id, new CartItem(id, name, price, quantity));
-        }
+        Map<Integer, CartItem> buyNowCart = new java.util.HashMap<>();
+        buyNowCart.put(id, new CartItem(id, name, price, quantity));
 
-        session.setAttribute("cart", cart);
-        return "redirect:/checkout";
+        session.setAttribute("buyNowCart", buyNowCart);
+        return "redirect:/checkout?type=buynow";
     }
 
     @PostMapping("/api/cart/add-build")
@@ -299,10 +307,18 @@ public class CartController {
      */
     @GetMapping("/checkout")
     public String viewCheckout(Model model, HttpSession session, @AuthenticationPrincipal Object principal,
-                               @RequestParam(value = "type", required = false) String type) {
-        if (principal == null) {
-            return "redirect:/auth/login";
+                               @RequestParam(value = "type", required = false) String type,
+                               @RequestParam(value = "success", required = false) String success) {
+        if (success != null) {
+            model.addAttribute("checkoutType", "cart");
+            model.addAttribute("cartItems", new java.util.ArrayList<>());
+            model.addAttribute("totalPrice", 0.0);
+            model.addAttribute("discountAmt", 0.0);
+            model.addAttribute("finalPrice", 0.0);
+            model.addAttribute("activeVouchers", new java.util.ArrayList<>());
+            return "checkout";
         }
+
         Map<Integer, CartItem> targetCart;
         if ("buynow".equals(type)) {
             targetCart = (Map<Integer, CartItem>) session.getAttribute("buyNowCart");
@@ -344,6 +360,10 @@ public class CartController {
                 session.setAttribute("cart", targetCart);
             }
         }
+
+        if (targetCart.isEmpty()) {
+            return "redirect:/cart";
+        }
         
         double baseTotal = cartService.calculateTotal(targetCart.values());
         double discountRate = cartService.getDiscountRate(principal);
@@ -369,10 +389,6 @@ public class CartController {
             HttpSession session,
             RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal Object principal) {
-
-        if (principal == null) {
-            return "redirect:/auth/login";
-        }
 
         Map<Integer, CartItem> targetCart;
         if ("buynow".equals(checkoutType)) {
@@ -432,6 +448,7 @@ public class CartController {
             Optional<Product> pOpt = productDAO.findById(item.getId());
             if (pOpt.isPresent()) {
                 item.setStock(pOpt.get().getStock());
+                item.setImage(pOpt.get().getImage());
             } else {
                 item.setStock(5);
             }

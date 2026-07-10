@@ -109,6 +109,7 @@ function editProduct(btn) {
     const name = btn.getAttribute('data-name');
     const price = btn.getAttribute('data-price');
     const cat = btn.getAttribute('data-cat');
+    const brand = btn.getAttribute('data-brand');
     const desc = btn.getAttribute('data-desc');
     const stock = btn.getAttribute('data-stock');
     
@@ -119,7 +120,11 @@ function editProduct(btn) {
     const catSelect = document.querySelector('select[name="category.id"]');
     if (catSelect) catSelect.value = cat || '';
     
-    document.getElementById('description').value = desc || '';
+    const brandInput = document.getElementById('brand');
+    if (brandInput) brandInput.value = brand || '';
+    
+    const descEl = document.getElementById('description');
+    if (descEl) descEl.value = desc || '';
     document.getElementById('stock').value = stock || '0';
     
     // Update header

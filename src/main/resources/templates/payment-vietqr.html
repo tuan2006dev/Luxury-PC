@@ -1,46 +1,143 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thanh toán VietQR</title>
-    <link rel="stylesheet" th:href="@{/css/payment-vietqr.css}" />
+    <title>Thanh toán VietQR - LUXURY | PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/checkout.css}">
 </head>
 <body>
-<main class="payment-box">
-    <h1 data-translate="pay-vietqr-header">Thanh toán qua VietQR</h1>
-    <p class="subtitle" data-translate="pay-subtitle">Quét mã bằng ứng dụng ngân hàng và giữ nguyên nội dung chuyển khoản.</p>
+    <!-- HEADER -->
+    <div th:replace="~{layout/header :: header}"></div>
 
-    <div class="qr-wrap">
-        <img th:src="${qrUrl}" alt="Mã QR thanh toán VietQR">
+    <div class="container" style="max-width: 1200px; margin-top: 20px;">
+        
+        <!-- BREADCRUMB -->
+        <div class="breadcrumb" style="margin-bottom: 15px;">
+            <a th:href="@{/}">Trang chủ</a> > <span>Thanh toán QR</span>
+        </div>
+
+        <h1 style="font-size: 24px; font-weight: 700; color: #000; text-transform: uppercase; margin-bottom: 5px;">THANH TOÁN VIETQR</h1>
+        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 40px;">Quét mã QR bằng ứng dụng ngân hàng để hoàn tất thanh toán</p>
+
+        <!-- Progress Steps -->
+        <div class="checkout-steps">
+            <div class="step completed">
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div>
+                <div class="step-label">Giỏ hàng</div>
+            </div>
+            <div class="step completed">
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div>
+                <div class="step-label">Thông tin giao hàng</div>
+            </div>
+            <div class="step active">
+                <div class="step-circle">3</div>
+                <div class="step-label">Thanh toán</div>
+            </div>
+            <div class="step">
+                <div class="step-circle">4</div>
+                <div class="step-label">Hoàn thành</div>
+            </div>
+        </div>
+
+        <div class="checkout-layout">
+            <!-- Main Content -->
+            <div style="grid-column: span 1;">
+                <div class="checkout-block">
+                    <div class="checkout-block-header">
+                        <h2>THÔNG TIN CHUYỂN KHOẢN</h2>
+                    </div>
+                    
+                    <div class="qr-section" style="margin-top: 20px; display: block; border: 2px solid #3b82f6; border-radius: 8px; padding: 30px; background: #eff6ff;">
+                        <div class="qr-section-title" style="text-align: center; font-size: 18px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px;">THANH TOÁN BẰNG QR CODE</div>
+                        <div class="qr-section-desc" style="text-align: center; font-size: 14px; color: #666; margin-bottom: 30px;">Quét mã QR bằng ứng dụng ngân hàng hoặc ví điện tử</div>
+
+                        <div class="qr-content" style="display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap;">
+                            <div class="qr-image-box" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;">
+                                <img th:src="${qrUrl}" alt="QR Code" style="width: 200px; margin-bottom: 15px; display: block;">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; color: #1e3a8a;">
+                                    <span style="font-size: 18px; font-style: italic;">napas</span> 247
+                                </div>
+                            </div>
+                            
+                            <div class="bank-info" style="flex: 1; min-width: 250px;">
+                                <div style="margin-bottom: 15px;">
+                                    <div class="bank-info-item" style="font-size: 13px; color: #666; margin-bottom: 5px;">Số tiền cần thanh toán</div>
+                                    <div class="bank-info-amount" style="font-size: 24px; font-weight: 700; color: #ef4444;" th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + 'đ'">21.970.000đ</div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div class="bank-info-item" style="font-size: 13px; color: #666; margin-bottom: 5px;">Nội dung chuyển khoản</div>
+                                    <div class="bank-info-val" style="font-size: 16px; font-weight: 600; color: #000;" th:text="${transferContent}">PCTORE250531015</div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div class="bank-info-item" style="font-size: 13px; color: #666; margin-bottom: 5px;">Ngân hàng</div>
+                                    <div class="bank-info-val" style="font-size: 16px; font-weight: 600; color: #000;" th:text="${bankDisplayName}">MB Bank</div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div class="bank-info-item" style="font-size: 13px; color: #666; margin-bottom: 5px;">Số tài khoản</div>
+                                    <div class="bank-info-val" style="font-size: 16px; font-weight: 600; color: #000;" th:text="${accountNo}">9999999999</div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div class="bank-info-item" style="font-size: 13px; color: #666; margin-bottom: 5px;">Chủ tài khoản</div>
+                                    <div class="bank-info-val" style="font-size: 16px; font-weight: 600; color: #000;" th:text="${accountName}">LUXURYPC</div>
+                                </div>
+                                <div>
+                                    <div class="bank-info-item" style="font-size: 13px; color: #666; margin-bottom: 5px;">Trạng thái</div>
+                                    <div class="bank-info-val" style="font-size: 16px; font-weight: 700; color: #f59e0b;" th:text="${paymentStatus}">Chờ xác nhận thanh toán</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="qr-alert" style="background: #e0f2fe; color: #0369a1; padding: 12px 15px; border-radius: 6px; font-size: 13px; margin-top: 25px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-circle-info"></i> Sau khi thanh toán thành công, hệ thống sẽ tự động xác nhận trong vòng 1-2 phút.
+                        </div>
+
+                        <div style="text-align: center; margin-top: 25px;">
+                            <a th:href="@{/}" style="display: inline-block; padding: 10px 25px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600;">Tiếp tục mua sắm</a>
+                            <a th:href="@{/profile#orders}" style="display: inline-block; padding: 10px 25px; border: 1px solid #ddd; color: #000; text-decoration: none; border-radius: 4px; font-weight: 600; margin-left: 10px;">Xem đơn hàng</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="order-sidebar">
+                <div class="order-header">
+                    <h3>THÔNG TIN ĐƠN HÀNG</h3>
+                </div>
+
+                <div class="order-items" style="padding: 15px 0;">
+                    <div style="font-size: 14px; margin-bottom: 10px;">
+                        <span style="color: #666;">Mã đơn:</span> <span style="font-weight: 700;" th:text="${orderCode}">DH123</span>
+                    </div>
+                    <div style="font-size: 14px; margin-bottom: 10px;">
+                        <span style="color: #666;">Phương thức:</span> <span style="font-weight: 600;">Chuyển khoản VietQR</span>
+                    </div>
+                </div>
+
+                <div class="summary-row total" style="margin-top: 15px;">
+                    <div class="label">TỔNG THANH TOÁN</div>
+                    <div style="text-align: right;">
+                        <div class="summary-total-price" th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + 'đ'">21.970.000đ</div>
+                    </div>
+                </div>
+
+                <div class="security-badge" style="margin-top: 30px;">
+                    <i class="fa-solid fa-lock"></i>
+                    Giao dịch an toàn & bảo mật
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="amount"
-         th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">150.000 VNĐ</div>
-
-    <div class="info">
-        <div class="info-row"><span class="label" data-translate="pay-label-order-code">Mã đơn</span><span class="value" th:text="${orderCode}">DH123</span></div>
-        <div class="info-row"><span class="label" data-translate="pay-label-bank">Ngân hàng</span><span class="value" th:text="${bankDisplayName}">MB Bank</span></div>
-        <div class="info-row"><span class="label" data-translate="pay-label-account-no">Số tài khoản</span><span class="value" th:text="${accountNo}">9999999999</span></div>
-        <div class="info-row"><span class="label" data-translate="pay-label-account-name">Chủ tài khoản</span><span class="value" th:text="${accountName}">LUXURYPC</span></div>
-        <div class="info-row"><span class="label" data-translate="pay-label-transfer-content">Nội dung chuyển khoản</span><span class="value" th:text="${transferContent}">THANH TOAN DH123</span></div>
-        <div class="info-row"><span class="label" data-translate="pay-label-status">Trạng thái</span><span class="value" style="color:#c9a84c;" th:text="${paymentStatus}" th:data-translate="${paymentStatus}">Chờ xác nhận thanh toán</span></div>
-    </div>
-
-    <div class="actions">
-        <a class="btn" th:href="@{/cart}" data-translate="pay-btn-cart">Về giỏ hàng</a>
-        <a class="btn btn-primary" th:href="@{/}" data-translate="pay-btn-home">Về trang chủ</a>
-    </div>
-</main>
-
-<script th:src="@{/js/payment-vietqr.js}"></script>
-
-<!-- THEME TOGGLE -->
-<button class="theme-toggle-btn floating-theme-btn" id="theme-toggle" aria-label="Chuyển đổi giao diện Sáng/Tối">
-    <i class="fa-regular fa-moon"></i>
-</button>
-<script th:src="@{/js/theme.js}"></script>
-
+    <!-- FOOTER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+    
+    <script th:src="@{/js/payment-vietqr.js}"></script>
+    <script th:src="@{/js/script.js}"></script>
 </body>
 </html>

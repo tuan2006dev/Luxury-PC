@@ -103,9 +103,90 @@
                 }
             }
 
-            // Gắn sự kiện
+    // Gắn sự kiện
             yesBtn.addEventListener('click', onYes);
             noBtn.addEventListener('click', onNo);
+            document.addEventListener('keydown', onKeyDown);
+            overlay.addEventListener('click', onOverlayClick);
+        });
+    };
+
+    // Hàm hiển thị Alert popup
+    window.showAlert = function(message, isSuccess = true) {
+        return new Promise((resolve) => {
+            injectHTML();
+
+            const overlay = document.getElementById('confirm-overlay');
+            const msgEl = document.getElementById('confirm-msg');
+            const yesBtn = document.getElementById('confirm-btn-yes');
+            const noBtn = document.getElementById('confirm-btn-no');
+
+            if (!overlay || !msgEl || !yesBtn || !noBtn) {
+                alert(message);
+                resolve();
+                return;
+            }
+
+            msgEl.innerHTML = message;
+            
+            // Tùy chỉnh icon
+            const iconEl = overlay.querySelector('.confirm-icon');
+            if (iconEl) {
+                if (isSuccess) {
+                    iconEl.textContent = '✅';
+                    iconEl.style.color = '#10b981';
+                } else {
+                    iconEl.textContent = '❌';
+                    iconEl.style.color = '#ef4444';
+                }
+            }
+
+            noBtn.style.display = 'none'; // Ẩn nút hủy
+            yesBtn.textContent = 'Đóng';
+            yesBtn.style.background = isSuccess ? '#10b981' : '#000';
+            yesBtn.style.color = '#fff';
+
+            overlay.style.display = 'flex';
+            overlay.offsetHeight; 
+            overlay.classList.add('show');
+            yesBtn.focus();
+
+            function closeAlert() {
+                overlay.classList.remove('show');
+                yesBtn.removeEventListener('click', onYes);
+                document.removeEventListener('keydown', onKeyDown);
+                overlay.removeEventListener('click', onOverlayClick);
+                
+                setTimeout(() => {
+                    if (!overlay.classList.contains('show')) {
+                        overlay.style.display = 'none';
+                        // Khôi phục style cũ để dùng cho confirm
+                        noBtn.style.display = '';
+                        yesBtn.textContent = 'Xác nhận';
+                        yesBtn.style.background = '';
+                        yesBtn.style.color = '';
+                        if (iconEl) {
+                            iconEl.textContent = '⚠️';
+                            iconEl.style.color = '';
+                        }
+                    }
+                }, 250);
+
+                resolve();
+            }
+
+            function onYes() { closeAlert(); }
+            function onKeyDown(e) {
+                if (e.key === 'Escape' || e.key === 'Enter') {
+                    e.preventDefault();
+                    closeAlert();
+                }
+            }
+            function onOverlayClick(e) {
+                if (e.target === overlay) closeAlert();
+            }
+
+            yesBtn.addEventListener('click', onYes);
             document.addEventListener('keydown', onKeyDown);
             overlay.addEventListener('click', onOverlayClick);
         });

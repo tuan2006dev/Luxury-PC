@@ -1,0 +1,30 @@
+<!-- Header -->
+<header class="top-header" th:fragment="top-header">
+    <div class="header-left">
+        <button class="btn-menu"><i class="fa-solid fa-bars"></i></button>
+        <div class="page-title" th:text="${pageTitle}">Dashboard</div>
+    </div>
+    
+    <div class="header-right">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Tìm kiếm...">
+        </div>
+        
+        <div class="header-icons">
+            <button class="btn-icon">
+                <i class="fa-regular fa-bell"></i>
+                <span class="badge-dot"></span>
+            </button>
+        </div>
+
+        <div class="admin-profile" th:with="shortName=${#strings.contains(#authentication.name, '@') ? #strings.substringBefore(#authentication.name, '@') : #authentication.name}">
+            <img th:src="@{'https://ui-avatars.com/api/?name=' + ${shortName} + '&background=0D8ABC&color=fff'}" alt="Admin" class="admin-avatar">
+            <div class="admin-info">
+                <span class="admin-name" th:text="${shortName}">Admin</span>
+                <span class="admin-role">Quản trị viên</span>
+            </div>
+            <i class="fa-solid fa-angle-down" style="color: var(--admin-text-muted); margin-left: 5px;"></i>
+        </div>
+    </div>
+</header>

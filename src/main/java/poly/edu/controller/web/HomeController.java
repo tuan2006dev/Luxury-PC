@@ -35,15 +35,25 @@ public class HomeController {
     @Autowired
     WishlistService wishlistService;
 
+    // hasValidImage removed for performance
+
     @GetMapping("/")
     public String index(Model model) {
+        long totalStart = System.nanoTime();
+
+        long t0 = System.nanoTime();
         model.addAttribute("featuredProducts", productService.getFeaturedProducts());
+        long t1 = System.nanoTime();
         model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
-        model.addAttribute("allProducts", productService.getAllProducts().stream().limit(20).collect(Collectors.toList()));
+        long t2 = System.nanoTime();
+        model.addAttribute("allProducts", productService.getTopProducts(20));
+        long t3 = System.nanoTime();
         model.addAttribute("reviews", reviewService.getLatestReviews());
+        long t4 = System.nanoTime();
 
         // Flash Sale từ database
         Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
+        long t5 = System.nanoTime();
         if (currentSale.isPresent()) {
             FlashSale sale = currentSale.get();
             List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId()).stream()
@@ -57,14 +67,32 @@ public class HomeController {
             model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
             model.addAttribute("flashSaleEndTime", 0);
         }
+        long t6 = System.nanoTime();
 
         // Voucher từ database
         model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
+        long t7 = System.nanoTime();
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             model.addAttribute("wishlistProductIds", wishlistService.getWishlistProductIds(auth));
         }
+        long t8 = System.nanoTime();
+
+        long totalElapsed = (t8 - totalStart) / 1_000_000;
+        System.out.println("╔══════════════════════════════════════════════════╗");
+        System.out.printf("║ [PERF] HomeController.index()                    ║%n");
+        System.out.println("╠══════════════════════════════════════════════════╣");
+        System.out.printf("║ featuredProducts .............. %6d ms          ║%n", (t1-t0)/1_000_000);
+        System.out.printf("║ flashSaleProducts ............ %6d ms          ║%n", (t2-t1)/1_000_000);
+        System.out.printf("║ topProducts .................. %6d ms          ║%n", (t3-t2)/1_000_000);
+        System.out.printf("║ latestReviews ................ %6d ms          ║%n", (t4-t3)/1_000_000);
+        System.out.printf("║ currentFlashSale ............. %6d ms          ║%n", (t5-t4)/1_000_000);
+        System.out.printf("║ flashSaleItems ............... %6d ms          ║%n", (t6-t5)/1_000_000);
+        System.out.printf("║ activeVouchers ............... %6d ms          ║%n", (t7-t6)/1_000_000);
+        System.out.printf("║ wishlistProductIds ........... %6d ms          ║%n", (t8-t7)/1_000_000);
+        System.out.printf("║ TOTAL CONTROLLER ............. %6d ms          ║%n", totalElapsed);
+        System.out.println("╚══════════════════════════════════════════════════╝");
 
         return "index";
     }

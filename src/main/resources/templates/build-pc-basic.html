@@ -1024,6 +1024,7 @@
                 card.innerHTML = `
                     <img src="${product.img}" alt="${product.name}">
                     <h4>${product.name}</h4>
+                    <p class="product-spec" style="font-size: 11px; color: var(--text-muted); margin: 4px 0 8px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${product.description || 'Sản phẩm cao cấp'}</p>
                     <div class="price">${formatMoney(product.price)}</div>
                     <button class="btn-primary" style="width: 100%; padding: 0.6rem;">Chọn linh kiện</button>
                 `;
@@ -1119,7 +1120,7 @@
             });
 
             if (productIds.length < 7) {
-                alert("Vui lòng chọn đầy đủ linh kiện (ít nhất 7 món) trước khi thanh toán!");
+                if(typeof showToast === 'function') { showToast("Vui lòng chọn đầy đủ linh kiện (ít nhất 7 món) trước khi thanh toán!"); } else { alert("Vui lòng chọn đầy đủ linh kiện (ít nhất 7 món) trước khi thanh toán!"); }
                 return;
             }
 
@@ -1139,13 +1140,13 @@
                 if (data.success) {
                     window.location.href = '/checkout';
                 } else {
-                    alert("Có lỗi xảy ra: " + data.message);
+                    if(typeof showToast === 'function') { showToast("Có lỗi xảy ra: " + data.message); } else { alert("Có lỗi xảy ra: " + data.message); }
                     btn.innerHTML = '<i class="fa-solid fa-cart-shopping" style="margin-right: 8px;"></i> Thanh toán cấu hình này';
                     btn.disabled = false;
                 }
             })
             .catch(err => {
-                alert("Lỗi kết nối đến máy chủ.");
+                if(typeof showToast === 'function') { showToast("Lỗi kết nối đến máy chủ."); } else { alert("Lỗi kết nối đến máy chủ."); }
                 btn.innerHTML = '<i class="fa-solid fa-cart-shopping" style="margin-right: 8px;"></i> Thanh toán cấu hình này';
                 btn.disabled = false;
             });

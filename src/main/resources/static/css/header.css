@@ -1,0 +1,96 @@
+/* Header */
+.header { background: var(--bg-surface); border-bottom: 1px solid var(--border-color); }
+.header-top { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+.main-nav { display: flex; gap: 24px; align-items: center; }
+.main-nav a { font-weight: 500; font-size: 15px; color: var(--text-primary); }
+.main-nav a:hover { color: var(--accent-blue); }
+.logo { font-size: 28px; font-weight: 300; letter-spacing: 1px; color: var(--text-secondary); }
+.logo strong { font-weight: 600; color: #000; }
+.user-actions { display: flex; gap: 20px; align-items: center; }
+
+
+/* --- RESPONSIVE HEADER --- */
+@media (max-width: 991px) {
+    .topbar { display: none; } /* Hide topbar on mobile/tablet to save space */
+    
+    .hamburger-btn {
+        display: block !important;
+        font-size: 24px;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        padding: 5px;
+        order: -1; /* Move to the left */
+        margin-right: 15px;
+    }
+
+    .main-nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        background: #fff;
+        z-index: 1000;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        transition: 0.3s ease;
+        padding-top: 60px;
+    }
+
+    .main-nav.active {
+        left: 0;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+
+    .nav-list li {
+        width: 100%;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-list li a {
+        display: block;
+        padding: 15px 20px;
+    }
+
+    /* Mobile menu overlay */
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        display: none;
+    }
+    
+    .menu-overlay.active {
+        display: block;
+    }
+    
+    .menu-close-btn {
+        display: block !important;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 24px;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+    }
+    
+    .header-actions {
+        gap: 15px;
+    }
+    
+    .header-actions > a:first-child {
+        display: none; /* Hide username text on mobile to save space */
+    }
+}

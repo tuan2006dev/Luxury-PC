@@ -127,6 +127,8 @@ function formatMoney(amount) {
           qtyInput.value = newQty;
           updateGrandTotal();
           syncWithServer(id, newQty, qtyInput, currentQty, row, prodName);
+      } else {
+          removeItem(id);
       }
   }
 

@@ -1,212 +1,283 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build PC - LUXURY | PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Luxury PC — 3D PC Configurator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  
-  <!-- THREE.JS & ORBIT CONTROLS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-
-  <link rel="stylesheet" th:href="@{/css/build-pc.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/build-pc.css}">
 </head>
 <body>
+    <!-- HEADER -->
+    <div th:replace="~{layout/header :: header}"></div>
 
-
-
-<div th:replace="~{layout/header :: header}"></div>
-
-<!-- HERO -->
-<div class="build-hero">
-  <div class="hero-tag" data-translate="build-pc-hero-tag">Luxury PC Configurator</div>
-  <h1 class="hero-title"><span data-translate="build-pc-hero-title-1">Thiết Kế</span><br/><em><span data-translate="build-pc-hero-title-2">Bộ PC Hoàn Hảo</span></em></h1>
-  <p class="hero-sub" data-translate="build-pc-hero-desc">Chọn từng linh kiện theo nhu cầu của bạn. Hệ thống kiểm tra tương thích tự động, đảm bảo mọi thứ hoạt động hoàn hảo cùng nhau.</p>
-  <div class="hero-deco">PC</div>
-</div>
-
-<!-- PRESET BUILDS -->
-<div class="preset-section">
-  <div class="section-tag" data-translate="build-pc-preset-tag">Cấu Hình Gợi Ý</div>
-  <div class="section-h" data-translate="build-pc-preset-h">Chọn Build Phù Hợp</div>
-  <div class="preset-grid">
-    <div class="preset-card active" onclick="loadPreset('gaming',this)" id="preset-gaming">
-      <div class="preset-badge" data-translate="build-pc-preset-badge-gaming">Phổ Biến Nhất</div>
-      <div class="preset-icon">🎮</div>
-      <div class="preset-name" data-translate="build-pc-preset-name-gaming">Gaming Beast</div>
-      <div class="preset-desc" data-translate="build-pc-preset-desc-gaming">Tối ưu cho gaming 4K/144Hz. RTX 4090 + i9-14900K — bộ đôi không có đối thủ.</div>
-      <div class="preset-price"><span data-translate="build-pc-preset-from">từ</span> 89.990.000₫</div>
-    </div>
-    <div class="preset-card" onclick="loadPreset('creator',this)" id="preset-creator">
-      <div class="preset-badge" data-translate="build-pc-preset-badge-creator">Cho Sáng Tạo</div>
-      <div class="preset-icon">🎨</div>
-      <div class="preset-name" data-translate="build-pc-preset-name-creator">Creator Pro</div>
-      <div class="preset-desc" data-translate="build-pc-preset-desc-creator">Render 8K, 3D animation, AI generation. Workstation đẳng cấp chuyên nghiệp.</div>
-      <div class="preset-price"><span data-translate="build-pc-preset-from">từ</span> 92.990.000₫</div>
-    </div>
-    <div class="preset-card" onclick="loadPreset('budget',this)" id="preset-budget">
-      <div class="preset-badge" data-translate="build-pc-preset-badge-budget">Tối Ưu Chi Phí</div>
-      <div class="preset-icon">⚡</div>
-      <div class="preset-name" data-translate="build-pc-preset-name-budget">Performance</div>
-      <div class="preset-desc" data-translate="build-pc-preset-desc-budget">Hiệu năng cao, giá hợp lý. Lý tưởng cho gaming 1440p và làm việc đa nhiệm.</div>
-      <div class="preset-price"><span data-translate="build-pc-preset-from">từ</span> 55.990.000₫</div>
-    </div>
-  </div>
-</div>
-
-<!-- CONFIGURATOR -->
-<div class="config-layout">
-
-  <!-- PARTS PICKER (LEFT COLUMN) -->
-  <div class="parts-panel">
-    <div class="parts-header">
-      <div>
-        <div class="section-tag" data-translate="build-pc-custom-tag">Tùy Chỉnh</div>
-        <div class="section-h" style="margin-bottom:0;font-size:1.2rem;" data-translate="build-pc-custom-h">Linh Kiện Lắp Ráp</div>
-      </div>
-      <button onclick="resetBuild()" style="background:none;border:1px solid rgba(201,168,76,.15);color:var(--muted);font-size:.62rem;letter-spacing:.15em;padding:.5rem 1rem;text-transform:uppercase;cursor:none;transition:var(--ease);" onmouseenter="this.style.borderColor='rgba(201,168,76,.4)';this.style.color='var(--cream)'" onmouseleave="this.style.borderColor='rgba(201,168,76,.15)';this.style.color='var(--muted)'" data-translate="build-pc-btn-reset">↺ Reset</button>
-    </div>
-
-    <!-- Tab Switcher -->
-    <div class="builder-tabs">
-      <button class="builder-tab active" id="tab-custom" onclick="switchTab('custom')" data-translate="build-pc-tab-custom">
-        🔧 Build Tự Chọn
-      </button>
-      <button class="builder-tab" id="tab-packages" onclick="switchTab('packages')" data-translate="build-pc-tab-packages">
-        📦 Chọn Gói Sẵn
-      </button>
-      <button class="builder-tab" onclick="window.location.href='/build-pc-basic'" style="background: var(--gold); color: var(--black); font-weight: 600; border-color: var(--gold);">
-        ⚡ Trải Nghiệm Build Cơ Bản
-      </button>
-    </div>
-
-    <!-- Custom slots view -->
-    <div id="custom-builder-view" style="display: block;">
-      <div id="slots-container">
-        <!-- RENDERED BY JAVASCRIPT -->
-      </div>
-    </div>
-
-    <!-- Pre-built packages view -->
-    <div id="packages-builder-view" class="packages-container">
-      <!-- RENDERED BY JAVASCRIPT -->
-    </div>
-  </div>
-
-  <!-- VIEWER PANEL (MIDDLE COLUMN) -->
-  <div class="viewer-panel">
-    <div class="viewer-title">
-      <h3 style="font-family:var(--sans);font-weight:300;font-size:1.1rem;color:var(--white);letter-spacing:1px;margin-bottom:2px;" data-translate="build-pc-viewer-title">Mô Phỏng 3D Máy Tính</h3>
-      <p style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;" data-translate="build-pc-viewer-desc">Giữ chuột trái xoay, chuột phải di chuyển, cuộn để zoom</p>
-    </div>
-
-    <!-- Canvas container -->
-    <div id="three-canvas-container"></div>
-
-    <!-- Canvas controls overlay -->
-    <div class="canvas-overlay-ui">
-      <button class="control-btn active" id="btn-power" onclick="togglePower()" data-translate="build-pc-btn-power">Khởi Động: Bật</button>
-      <button class="control-btn" id="btn-rgb" onclick="cycleRgbMode()" data-translate="build-pc-btn-rgb">RGB: Rainbow</button>
-      <button class="control-btn" onclick="resetCamera()" data-translate="build-pc-btn-camera">Xoay Camera</button>
-    </div>
-
-    <!-- AI Advisor Panel -->
-    <div class="ai-advisor-container">
-      <div class="ai-advisor-window" id="ai-chat-window">
-        <div class="ai-header">
-          <div class="ai-info">
-            <div class="ai-avatar">🤖</div>
-            <div class="ai-title-wrap">
-              <span class="ai-title" data-translate="build-pc-ai-title">Luxury AI Advisor</span>
-              <span class="ai-status" data-translate="build-pc-ai-status">Đang trực tuyến</span>
+    <div class="build-container" style="margin-top: 20px;">
+        
+        <!-- Top Actions -->
+        <div class="build-top-bar">
+            <div class="build-title">
+                <h1>BUILD PC TỰ CHỌN</h1>
+                <p>Tự do lựa chọn linh kiện và xây dựng cấu hình PC theo nhu cầu của bạn</p>
             </div>
-          </div>
-          <button class="ai-close-btn" onclick="toggleChatWindow()">✕</button>
+            <div class="build-actions-top">
+                <button class="btn-action-top"><i class="fa-solid fa-book-open"></i> Hướng dẫn build PC</button>
+                <button class="btn-action-top"><i class="fa-regular fa-bookmark"></i> Lưu cấu hình</button>
+                <button class="btn-action-top"><i class="fa-solid fa-share-nodes"></i> Chia sẻ cấu hình</button>
+                <button class="btn-action-top btn-action-delete"><i class="fa-regular fa-trash-can"></i> Xóa tất cả</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="build-tabs">
+            <button class="build-tab active"><i class="fa-solid fa-wrench"></i> TỰ BUILD PC</button>
+            <button class="build-tab"><i class="fa-solid fa-box-open"></i> COMBO CÓ SẴN</button>
+        </div>
+
+        <div class="build-layout-3col">
+            <!-- Left: Components List -->
+            <div class="comp-list-wrapper">
+                <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase;">LINH KIỆN ĐÃ CHỌN (4)</h2>
+                
+                <div class="comp-list-header">
+                    <div>Linh kiện</div>
+                    <div>Sản phẩm đã chọn</div>
+                    <div>Giá</div>
+                </div>
+
+                <!-- CPU -->
+                <div class="comp-row">
+                    <div class="comp-cat">
+                        <div class="comp-cat-icon"><i class="fa-solid fa-microchip"></i></div>
+                        CPU
+                    </div>
+                    <div class="comp-info">
+                        <div class="comp-img"><img th:src="@{/images/placeholder.png}" alt="CPU"></div>
+                        <div class="comp-details">
+                            <div class="comp-name">Chưa chọn CPU</div>
+                            <div class="comp-desc">Vui lòng chọn CPU</div>
+                        </div>
+                    </div>
+                    <div class="comp-price-action">
+                        <div class="comp-price">0đ</div>
+                        <div class="comp-actions">
+                            <button class="btn-comp-action"><i class="fa-solid fa-plus"></i> Chọn</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mainboard -->
+                <div class="comp-row">
+                    <div class="comp-cat">
+                        <div class="comp-cat-icon"><i class="fa-solid fa-chess-board"></i></div>
+                        MAINBOARD
+                    </div>
+                    <div class="comp-info">
+                        <div class="comp-img"><img th:src="@{/images/placeholder.png}" alt="Main"></div>
+                        <div class="comp-details">
+                            <div class="comp-name">Chưa chọn Mainboard</div>
+                            <div class="comp-desc">Vui lòng chọn bo mạch chủ</div>
+                        </div>
+                    </div>
+                    <div class="comp-price-action">
+                        <div class="comp-price">0đ</div>
+                        <div class="comp-actions">
+                            <button class="btn-comp-action"><i class="fa-solid fa-plus"></i> Chọn</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RAM -->
+                <div class="comp-row">
+                    <div class="comp-cat">
+                        <div class="comp-cat-icon"><i class="fa-solid fa-memory"></i></div>
+                        RAM
+                    </div>
+                    <div class="comp-info">
+                        <div class="comp-img"><img th:src="@{/images/placeholder.png}" alt="RAM"></div>
+                        <div class="comp-details">
+                            <div class="comp-name">Chưa chọn RAM</div>
+                            <div class="comp-desc">Vui lòng chọn bộ nhớ trong</div>
+                        </div>
+                    </div>
+                    <div class="comp-price-action">
+                        <div class="comp-price">0đ</div>
+                        <div class="comp-actions">
+                            <button class="btn-comp-action"><i class="fa-solid fa-plus"></i> Chọn</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VGA -->
+                <div class="comp-row">
+                    <div class="comp-cat">
+                        <div class="comp-cat-icon"><i class="fa-solid fa-tv"></i></div>
+                        VGA
+                    </div>
+                    <div class="comp-info">
+                        <div class="comp-img"><img th:src="@{/images/placeholder.png}" alt="VGA"></div>
+                        <div class="comp-details">
+                            <div class="comp-name">Chưa chọn VGA</div>
+                            <div class="comp-desc">Vui lòng chọn Card màn hình</div>
+                        </div>
+                    </div>
+                    <div class="comp-price-action">
+                        <div class="comp-price">0đ</div>
+                        <div class="comp-actions">
+                            <button class="btn-comp-action"><i class="fa-solid fa-plus"></i> Chọn</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-add-more"><i class="fa-solid fa-plus"></i> Thêm linh kiện khác (SSD, HDD, PSU, Case, Cooling...)</button>
+            </div>
+
+            <!-- Middle Column: Compatibility -->
+            <div>
+                <!-- Compatibility -->
+                <div class="build-block">
+                    <h3 class="build-block-title">KIỂM TRA TƯƠNG THÍCH</h3>
+                    <div class="compat-status" style="background: #f9f9f9; border-left: 4px solid #ccc; margin-bottom: 20px;">
+                        <div class="compat-icon" style="color: #666;"><i class="fa-solid fa-circle-info"></i></div>
+                        <div class="compat-title">Chưa đủ dữ liệu</div>
+                        <div class="compat-desc">Vui lòng chọn thêm linh kiện để kiểm tra tương thích.</div>
+                    </div>
+                    
+                    <ul class="compat-list">
+                        <li>
+                            <div class="item"><i class="fa-solid fa-microchip"></i> CPU & Mainboard</div>
+                            <div class="status" style="color: #999;">Chờ kiểm tra</div>
+                        </li>
+                        <li>
+                            <div class="item"><i class="fa-solid fa-memory"></i> RAM & Mainboard</div>
+                            <div class="status" style="color: #999;">Chờ kiểm tra</div>
+                        </li>
+                        <li>
+                            <div class="item"><i class="fa-solid fa-tv"></i> VGA & Mainboard</div>
+                            <div class="status" style="color: #999;">Chờ kiểm tra</div>
+                        </li>
+                        <li>
+                            <div class="item"><i class="fa-solid fa-plug"></i> PSU & Hệ thống</div>
+                            <div class="status" style="color: #999;">Chờ kiểm tra</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Performance -->
+                <div class="build-block">
+                    <h3 class="build-block-title">HIỆU NĂNG DỰ KIẾN</h3>
+                    
+                    <div class="perf-score-container">
+                        <div class="perf-circle" style="border-color: #eee;">
+                            <div class="perf-circle-content">
+                                <div class="perf-score" style="color: #999;">?</div>
+                                <div class="perf-max">/10</div>
+                                <div class="perf-label" style="color: #999;">Chưa có dữ liệu</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="perf-bars">
+                        <div class="perf-bar-row">
+                            <div class="perf-bar-label">Gaming</div>
+                            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width: 0%;"></div></div>
+                            <div class="perf-bar-val">0/10</div>
+                        </div>
+                        <div class="perf-bar-row">
+                            <div class="perf-bar-label">Đồ họa</div>
+                            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width: 0%;"></div></div>
+                            <div class="perf-bar-val">0/10</div>
+                        </div>
+                        <div class="perf-bar-row">
+                            <div class="perf-bar-label">Làm việc</div>
+                            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width: 0%;"></div></div>
+                            <div class="perf-bar-val">0/10</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Overview -->
+            <div>
+                <div class="build-block">
+                    <h3 class="build-block-title">TỔNG QUAN CẤU HÌNH</h3>
+                    
+                    <div class="overview-row">
+                        <span class="label">Số lượng linh kiện</span>
+                        <span class="val">0</span>
+                    </div>
+                    <div class="overview-row">
+                        <span class="label">Tổng tiền</span>
+                        <span class="val">0đ</span>
+                    </div>
+                    <div class="overview-row">
+                        <span class="label">Tiết kiệm</span>
+                        <span class="val" style="color: #10b981;">-0đ</span>
+                    </div>
+
+                    <div class="overview-row total">
+                        <span class="label" style="font-weight: 700; color: #000; font-size: 16px;">TỔNG CỘNG</span>
+                        <span class="val">0đ</span>
+                    </div>
+
+                    <button class="btn-add-cart-large" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fa-solid fa-cart-shopping"></i> THÊM VÀO GIỎ HÀNG</button>
+                    <button class="btn-buy-now" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fa-solid fa-cart-arrow-down"></i> MUA NGAY</button>
+                </div>
+
+                <div class="build-block">
+                    <h3 class="build-block-title">FPS TRONG GAME (DỰ KIẾN)</h3>
+                    
+                    <div style="text-align: center; color: #999; padding: 20px 0; font-size: 13px;">
+                        Vui lòng chọn linh kiện (CPU, VGA) để xem dự kiến mức FPS trong các tựa game.
+                    </div>
+                </div>
+
+                <div class="build-block consult-block">
+                    <div class="consult-title">TƯ VẤN CẤU HÌNH</div>
+                    <div class="consult-desc">Cần hỗ trợ build PC?<br>Đội ngũ chuyên viên của chúng tôi sẽ tư vấn cấu hình phù hợp với nhu cầu và ngân sách của bạn.</div>
+                    <button class="btn-contact"><i class="fa-solid fa-headset"></i> LIÊN HỆ TƯ VẤN NGAY</button>
+                </div>
+            </div>
         </div>
         
-        <div class="chat-messages" id="chat-messages-area">
-          <div class="chat-msg bot" data-translate="build-pc-ai-welcome">
-            Xin chào! Tôi là Trợ Lý Ảo của Luxury PC. Tôi có thể tư vấn cấu hình phù hợp với nhu cầu và ngân sách của bạn. Hãy chọn một tùy chọn nhanh hoặc nhập câu hỏi bên dưới nhé!
-          </div>
+        <!-- Trust Banner -->
+        <div class="trust-banner">
+            <div class="trust-item">
+                <div class="trust-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="trust-info">
+                    <h4>CAM KẾT CHÍNH HÃNG</h4>
+                    <p>100% sản phẩm chính hãng</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                <div class="trust-info">
+                    <h4>ĐỔI TRẢ DỄ DÀNG</h4>
+                    <p>Đổi trả trong 7 ngày</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                <div class="trust-info">
+                    <h4>GIAO HÀNG TOÀN QUỐC</h4>
+                    <p>Nhận hàng và thanh toán</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i class="fa-solid fa-headset"></i></div>
+                <div class="trust-info">
+                    <h4>HỖ TRỢ 24/7</h4>
+                    <p>Hỗ trợ khách hàng mọi lúc</p>
+                </div>
+            </div>
         </div>
-        
-        <div class="chat-chips">
-          <button class="chat-chip" onclick="askAdvisorQuick('game')" data-translate="build-pc-ai-chip-gaming">🎮 PC Gaming 4K</button>
-          <button class="chat-chip" onclick="askAdvisorQuick('graphic')" data-translate="build-pc-ai-chip-graphic">🖥️ Đồ họa 3D</button>
-          <button class="chat-chip" onclick="askAdvisorQuick('ai')" data-translate="build-pc-ai-chip-ai">🧠 AI Station</button>
-          <button class="chat-chip" onclick="askAdvisorQuick('cool')" data-translate="build-pc-ai-chip-cooler">❄️ Tản Nhiệt</button>
-        </div>
-        
-        <div class="chat-input-row">
-          <input type="text" class="chat-input" id="chat-input-field" placeholder="Nhập câu hỏi của bạn..." data-translate-placeholder="build-pc-ai-placeholder" onkeypress="handleChatKeyPress(event)">
-          <button class="chat-send-btn" onclick="sendChatMessage()">➔</button>
-        </div>
-      </div>
-      
-      <button class="ai-advisor-btn" onclick="toggleChatWindow()">🤖</button>
-    </div>
-  </div>
-
-  <!-- SUMMARY PANEL (RIGHT COLUMN) -->
-  <div class="summary-panel">
-    <div class="sum-h" data-translate="build-pc-sum-title">Cấu Hình Của Bạn</div>
-    <div id="pkg-active-badge" style="display: none; font-size: 0.65rem; color: var(--gold); background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.15); padding: 6px 12px; border-radius: 4px; margin-bottom: 12px; align-items: center; gap: 6px;">
-      <span data-translate="build-pc-sum-package-apply">📦 Đang áp dụng Gói:</span>
-      <strong id="pkg-active-name" style="font-weight: bold;color:var(--white);"><span data-translate="build-pc-package-name">Tên gói</span></strong>
-    </div>
-    <div class="sum-list" id="sum-list">
-      <!-- RENDERED BY JAVASCRIPT -->
     </div>
 
-    <!-- Performance meters -->
-    <div class="perf-section">
-      <div class="perf-label" data-translate="build-pc-perf-title">Hiệu Năng Ước Tính</div>
-      <div class="perf-metric">
-        <div class="perf-row"><span data-translate="build-pc-perf-gaming">Gaming 4K</span><span id="perf-gaming-v">0%</span></div>
-        <div class="perf-bar"><div class="perf-fill" id="perf-gaming" style="width:0%"></div></div>
-      </div>
-      <div class="perf-metric">
-        <div class="perf-row"><span data-translate="build-pc-perf-render">Render / 3D</span><span id="perf-render-v">0%</span></div>
-        <div class="perf-bar"><div class="perf-fill" id="perf-render" style="width:0%"></div></div>
-      </div>
-      <div class="perf-metric">
-        <div class="perf-row"><span data-translate="build-pc-perf-ai">AI / ML</span><span id="perf-ai-v">0%</span></div>
-        <div class="perf-bar"><div class="perf-fill" id="perf-ai" style="width:0%"></div></div>
-      </div>
-      <div class="perf-metric">
-        <div class="perf-row"><span data-translate="build-pc-perf-multi">Đa Nhiệm</span><span id="perf-multi-v">0%</span></div>
-        <div class="perf-bar"><div class="perf-fill" id="perf-multi" style="width:0%"></div></div>
-      </div>
-    </div>
-
-    <div class="compat-alert ok" id="compat-alert" style="display:flex;margin-top:1rem;">
-      <span>✓</span>
-      <span id="compat-msg" data-translate="build-pc-compat-ok">Hệ thống đồng bộ hoàn toàn (Compatible).</span>
-    </div>
-
-    <div class="sum-total-section">
-      <div class="sum-total-row">
-        <div class="sum-total-lbl" data-translate="build-pc-sum-total">Tổng Chi Phí</div>
-        <div class="sum-total-num" id="grand-total">0₫</div>
-      </div>
-      <div class="sum-count" id="part-count">0 <span data-translate="build-pc-sum-parts-selected">linh kiện đã chọn</span></div>
-      <button class="btn-full gold" onclick="addBuildToCart()"><span data-translate="build-pc-btn-cart">Thêm Vào Giỏ Hàng</span></button>
-      <button class="btn-full out" onclick="saveBuild()" style="margin-top:.5rem;"><span data-translate="build-pc-btn-save">💾 Lưu Cấu Hình</span></button>
-      <button class="btn-full out" onclick="shareBuild()" style="margin-top:.5rem;"><span data-translate="build-pc-btn-share">🔗 Chia Sẻ Build</span></button>
-    </div>
-  </div>
-
-</div>
-
-<div class="toast" id="toast"></div>
-
-<!-- THREE.JS 3D ENGINE & COMPONENT BUILDER -->
-<script th:src="@{/js/cursor.js}"></script>
-<script th:src="@{/js/build-pc.js}"></script>
-<script th:src="@{/js/script.js}"></script>
+    <!-- FOOTER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+    
+    <script th:src="@{/js/script.js}"></script>
 </body>
 </html>

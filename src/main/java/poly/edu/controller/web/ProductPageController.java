@@ -55,15 +55,21 @@ public class ProductPageController {
     @Autowired
     FlashSaleItemDAO flashSaleItemDAO;
 
+    // hasValidImage removed for performance
+
     @GetMapping("/products")
     public String showProductsPage(
             Model model,
             @RequestParam(name = "cid", required = false) Integer cid,
             @RequestParam(name = "min", required = false) Double min,
             @RequestParam(name = "max", required = false) Double max,
-            @RequestParam(name = "kw", required = false) String kw) {
+            @RequestParam(name = "kw", required = false) String kw,
+            @RequestParam(name = "brand", required = false) String brand) {
+        if (kw != null && kw.trim().isEmpty()) kw = null;
+        if (brand != null && brand.trim().isEmpty()) brand = null;
         
-        model.addAttribute("allProducts", productService.searchProducts(cid, min, max, kw));
+        List<Product> products = productService.searchProducts(cid, min, max, kw, brand);
+        model.addAttribute("allProducts", products);
         model.addAttribute("categories", categoryService.getAllCategories());
         
         // Gửi lại các tham số lọc để giữ trạng thái trên UI
@@ -71,6 +77,7 @@ public class ProductPageController {
         model.addAttribute("minPrice", min);
         model.addAttribute("maxPrice", max);
         model.addAttribute("keywords", kw);
+        model.addAttribute("selectedBrand", brand);
         addWishlistAttributes(model);
 
         return "all-products"; 
@@ -106,6 +113,42 @@ public class ProductPageController {
         model.addAttribute("count3", count3);
         model.addAttribute("count2", count2);
         model.addAttribute("count1", count1);
+
+        java.util.Map<String, String> parsedSpecs = new java.util.LinkedHashMap<>();
+        java.util.List<String> otherDescLines = new java.util.ArrayList<>();
+        if (p.getDescription() != null && !p.getDescription().isEmpty()) {
+            String[] lines = p.getDescription().replaceAll("<[^>]*>", "").split("\\r?\\n");
+            for (String line : lines) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+                if (line.contains(":")) {
+                    String[] parts = line.split(":", 2);
+                    parsedSpecs.put(parts[0].trim(), parts[1].trim());
+                } else if (line.contains(" - ")) {
+                    String[] parts = line.split(" - ", 2);
+                    parsedSpecs.put(parts[0].trim(), parts[1].trim());
+                } else {
+                    otherDescLines.add(line);
+                }
+            }
+        }
+        if (parsedSpecs.isEmpty() && !otherDescLines.isEmpty()) {
+            parsedSpecs.put("Đặc điểm", String.join(", ", otherDescLines));
+            otherDescLines.clear();
+        }
+        model.addAttribute("parsedSpecs", parsedSpecs);
+        model.addAttribute("otherDescLines", otherDescLines);
+
+        // Flash Sale item
+        java.util.Optional<poly.edu.entity.FlashSaleItem> fsiOpt = flashSaleService.getActiveFlashSaleItem(id);
+        fsiOpt.ifPresent(fsi -> model.addAttribute("flashSaleItem", fsi));
+
+        // Related Products
+        if (p.getCategory() != null) {
+            List<Product> related = productService.getProductsByCategory(p.getCategory().getId());
+            related.removeIf(prod -> prod.getId().equals(id));
+            model.addAttribute("relatedProducts", related);
+        }
         
         addWishlistAttributes(model);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

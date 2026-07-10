@@ -23,6 +23,7 @@ public class ReviewService {
     @Autowired
     ProfileService profileService;
 
+    @org.springframework.cache.annotation.Cacheable("latestReviews")
     public List<Review> getLatestReviews() {
         return reviewDAO.findTop10ByOrderByCreatedAtDesc();
     }
@@ -33,6 +34,7 @@ public class ReviewService {
         return reviewDAO.findByUser_IdOrderByCreatedAtDesc(user.getId());
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value = "latestReviews", allEntries = true)
     @Transactional
     public Review createReview(Authentication authentication, ReviewRequest request) {
         User user = profileService.getCurrentUser(authentication);
@@ -47,6 +49,7 @@ public class ReviewService {
         return reviewDAO.save(review);
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value = "latestReviews", allEntries = true)
     @Transactional
     public void deleteReview(Authentication authentication, Integer id) {
         User user = profileService.getCurrentUser(authentication);

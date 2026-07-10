@@ -1,3 +1,4 @@
+:root { --deep: #ffffff; --dark: #ffffff; --black: #f8fafc; --cream: #0f172a; --muted: #64748b; --gold: #3b82f6; --gold-l: #2563eb; --green: #16a34a; --red: #dc2626; --blue: #3b82f6; }
 
 
 
@@ -7,7 +8,7 @@
         .sidebar {
             width: 280px;
             background: var(--deep);
-            border-right: 1px solid rgba(201, 168, 76, 0.1);
+            border-right: 1px solid #e2e8f0;
             padding: 2rem;
             position: fixed;
             height: 100vh;
@@ -57,7 +58,7 @@
         .card {
             background: var(--dark);
             padding: 2rem;
-            border: 1px solid rgba(201, 168, 76, 0.1);
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             margin-bottom: 2rem;
         }
@@ -127,7 +128,7 @@
 
         td {
             padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid #e2e8f0;
             font-size: 0.85rem;
         }
 
@@ -164,7 +165,7 @@
 
         .btn-danger {
             background: #ef4444;
-            color: white;
+            color: #0f172a;
         }
 
         .btn-danger:hover {
@@ -222,5 +223,5 @@
 
         .icon-btn-del:hover {
             background: var(--red);
-            color: #fff;
+            color: #0f172a;
         }

@@ -54,6 +54,7 @@ public class AdminProductController {
             Product existing = productService.getProductById(product.getId());
             if (existing != null) {
                 product.setImage(existing.getImage());
+                product.setCreatedAt(existing.getCreatedAt());
             }
         }
 

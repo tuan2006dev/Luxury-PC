@@ -6,14 +6,15 @@
 
 
 
-    <title>Luxury PC | CÙng Ngh? Cao C?p & Xa X?</title>
+    <title>Luxury PC | CÔøΩng Ngh? Cao C?p & Xa X?</title>
     <meta name="description"
-        content="Luxury PC ó Noi cÙng ngh? g?p g? s? xa x?. Linh ki?n m·y tÌnh cao c?p nh?t, du?c ch?n l?c k? lu?ng d‡nh cho ngu?i d˘ng tinh t?." />
+        content="Luxury PC ÔøΩ Noi cÔøΩng ngh? g?p g? s? xa x?. Linh ki?n mÔøΩy tÔøΩnh cao c?p nh?t, du?c ch?n l?c k? lu?ng dÔøΩnh cho ngu?i dÔøΩng tinh t?." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
@@ -27,20 +28,20 @@
     <!-- NAVIGATION -->
     <nav class="navbar" id="navbar">
         <div class="nav-left">
-            <a href="#" class="nav-link" id="nav-linh-kien">Linh Ki?n</a>
+            <a href="/products" class="nav-link" id="nav-linh-kien">Linh Ki?n</a>
             <a href="/build-pc/index.html" class="nav-link" id="nav-build-pc">Build PC</a>
-            <a href="#" class="nav-link" id="nav-khuyen-mai">Khuy?n M„i</a>
+            <a href="/products" class="nav-link" id="nav-khuyen-mai">Khuy?n MÔøΩi</a>
         </div>
         <div class="nav-logo">
             <span class="logo-Luxury">LUXURY</span> <span class="logo-pc">PC</span>
         </div>
         <div class="nav-right">
-            <a href="#" class="nav-link" id="nav-tin-tuc">Tin T?c</a>
-            <a href="#" class="nav-link" id="nav-lien-he">LiÍn H?</a>
-            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link" id="nav-login">–ang Nh?p</a>
+            <a href="/products" class="nav-link" id="nav-tin-tuc">Tin T?c</a>
+            <a href="/products" class="nav-link" id="nav-lien-he">LiÔøΩn H?</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="nav-link" id="nav-login">ÔøΩang Nh?p</a>
             <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-link" id="nav-profile">H? So</a>
-            <button class="nav-search-btn" id="nav-search-btn" aria-label="TÏm ki?m">?</button>
-            <button class="nav-cart" id="nav-cart" aria-label="Gi? h‡ng">
+            <button class="nav-search-btn" id="nav-search-btn" aria-label="TÔøΩm ki?m">?</button>
+            <button class="nav-cart" id="nav-cart" aria-label="Gi? hÔøΩng">
                 <span class="cart-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                         viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -57,28 +58,28 @@
     <div class="search-overlay" id="search-overlay">
         <div class="search-overlay-inner">
             <div class="search-close-row">
-                <span class="search-brand">LUXURY ∑ PC</span>
-                <button class="search-close" id="search-close" aria-label="–Ûng tÏm ki?m">?</button>
+                <span class="search-brand">LUXURY ÔøΩ PC</span>
+                <button class="search-close" id="search-close" aria-label="ÔøΩÔøΩng tÔøΩm ki?m">?</button>
             </div>
             <div class="search-input-wrap">
                 <span class="search-icon-big">?</span>
                 <input type="text" id="search-input" class="search-input"
                     data-translate-placeholder="header-search-placeholder"
-                    placeholder="TÏm ki?m linh ki?n, thuong hi?u..." autocomplete="off"
-                    aria-label="TÏm ki?m s?n ph?m" />
-                <button class="search-clear" id="search-clear" aria-label="XÛa">?</button>
+                    placeholder="TÔøΩm ki?m linh ki?n, thuong hi?u..." autocomplete="off"
+                    aria-label="TÔøΩm ki?m s?n ph?m" />
+                <button class="search-clear" id="search-clear" aria-label="XÔøΩa">?</button>
             </div>
             <div class="search-tags">
-                <span class="search-tag-label">TÏm nhanh:</span>
+                <span class="search-tag-label">TÔøΩm nhanh:</span>
                 <button class="search-tag" data-query="CPU Intel">CPU Intel</button>
                 <button class="search-tag" data-query="RTX 4090">RTX 4090</button>
                 <button class="search-tag" data-query="DDR5">DDR5 RAM</button>
                 <button class="search-tag" data-query="SSD NVMe">SSD NVMe</button>
-                <button class="search-tag" data-query="M‡n hÏnh OLED">M‡n HÏnh OLED</button>
+                <button class="search-tag" data-query="MÔøΩn hÔøΩnh OLED">MÔøΩn HÔøΩnh OLED</button>
                 <button class="search-tag" data-query="Ngu?n PSU">Ngu?n PSU</button>
             </div>
             <div class="search-results" id="search-results">
-                <p class="search-hint">Nh?p t? khÛa d? tÏm ki?m s?n ph?m t?i Luxury PC.</p>
+                <p class="search-hint">Nh?p t? khÔøΩa d? tÔøΩm ki?m s?n ph?m t?i Luxury PC.</p>
             </div>
         </div>
     </div>
@@ -91,11 +92,11 @@
         </div>
         <div class="hero-content">
 
-            <h1 class="hero-title">–u?c T?o Ra<br /><em>–? Th?ng Tr?</em></h1>
-            <p class="hero-subtitle">Linh ki?n m·y tÌnh du?c tuy?n ch?n d‡nh cho nh?ng ngu?i khÙng ch?p nh?n di?u t?m
+            <h1 class="hero-title">ÔøΩu?c T?o Ra<br /><em>ÔøΩ? Th?ng Tr?</em></h1>
+            <p class="hero-subtitle">Linh ki?n mÔøΩy tÔøΩnh du?c tuy?n ch?n dÔøΩnh cho nh?ng ngu?i khÔøΩng ch?p nh?n di?u t?m
                 thu?ng.</p>
             <div class="hero-cta">
-                <a href="#products" class="btn-primary" id="hero-explore"><span>Kh·m Ph· Ngay</span></a>
+                <a href="#products" class="btn-primary" id="hero-explore"><span>KhÔøΩm PhÔøΩ Ngay</span></a>
                 <a href="/build-pc/index.html" class="btn-secondary" id="hero-build"><span>Build PC C?a B?n</span></a>
             </div>
         </div>
@@ -109,9 +110,9 @@
             <div class="flash-sale-left">
                 <div class="flash-badge">?? HOT DEAL</div>
                 <h2 class="flash-title">Flash Sale
-                    <span class="flash-title-accent">HÙm Nay</span>
+                    <span class="flash-title-accent">HÔøΩm Nay</span>
                 </h2>
-                <p class="flash-sub">Uu d„i c?c s?c ó ch? ·p d?ng trong hÙm nay. S? lu?ng cÛ h?n!</p>
+                <p class="flash-sub">Uu dÔøΩi c?c s?c ÔøΩ ch? ÔøΩp d?ng trong hÔøΩm nay. S? lu?ng cÔøΩ h?n!</p>
                 <div class="flash-countdown" id="flash-countdown">
                     <div class="countdown-block">
                         <span class="countdown-num" id="fs-hours">05</span>
@@ -120,61 +121,26 @@
                     <div class="countdown-sep">:</div>
                     <div class="countdown-block">
                         <span class="countdown-num" id="fs-minutes">59</span>
-                        <span class="countdown-label">Ph˙t</span>
+                        <span class="countdown-label">PhÔøΩt</span>
                     </div>
                     <div class="countdown-sep">:</div>
                     <div class="countdown-block">
                         <span class="countdown-num" id="fs-seconds">00</span>
-                        <span class="countdown-label">Gi‚y</span>
+                        <span class="countdown-label">GiÔøΩy</span>
                     </div>
                 </div>
             </div>
-            <div class="flash-products">
-                <!-- Flash product 1 -->
-                <div class="flash-product-card" id="fp-1">
-                    <div class="flash-discount-badge">-15%</div>
-                    <div class="flash-prod-img">???</div>
-                    <div class="flash-prod-info">
-                        <div class="flash-prod-name">Core i7-14700K</div>
-                        <div class="flash-prod-prices">
-                            <span class="flash-old-price">13.500.000?</span>
-                            <span class="flash-new-price">11.475.000?</span>
-                        </div>
+            <div class="flash-products" th:if="${flashSaleItems != null}">
+                <div class="flash-product-card" th:each="item, iterStat : ${flashSaleItems}" th:if="${iterStat.index < 4}" th:id="'fp-' + ${iterStat.count}" th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|" style="cursor:pointer;">
+                    <div class="flash-discount-badge" th:if="${item.product.price != null and item.product.price > 0}" th:text="'-' + ${#numbers.formatDecimal((1 - item.salePrice/item.product.price)*100, 0, 0)} + '%'">-15%</div>
+                    <div class="flash-prod-img">
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" th:alt="${item.product.name}" style="width:100%; height:100%; object-fit:contain;"/>
                     </div>
-                </div>
-                <!-- Flash product 2 -->
-                <div class="flash-product-card" id="fp-2">
-                    <div class="flash-discount-badge">-20%</div>
-                    <div class="flash-prod-img">??</div>
                     <div class="flash-prod-info">
-                        <div class="flash-prod-name">Samsung 990 Pro 2TB</div>
+                        <div class="flash-prod-name" th:text="${item.product.name}">Core i7-14700K</div>
                         <div class="flash-prod-prices">
-                            <span class="flash-old-price">4.200.000?</span>
-                            <span class="flash-new-price">3.360.000?</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Flash product 3 -->
-                <div class="flash-product-card" id="fp-3">
-                    <div class="flash-discount-badge">-10%</div>
-                    <div class="flash-prod-img">???</div>
-                    <div class="flash-prod-info">
-                        <div class="flash-prod-name">Noctua NH-D15 Chromax</div>
-                        <div class="flash-prod-prices">
-                            <span class="flash-old-price">2.100.000?</span>
-                            <span class="flash-new-price">1.890.000?</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Flash product 4 -->
-                <div class="flash-product-card" id="fp-4">
-                    <div class="flash-discount-badge">-18%</div>
-                    <div class="flash-prod-img">?</div>
-                    <div class="flash-prod-info">
-                        <div class="flash-prod-name">Seasonic Focus GX-850</div>
-                        <div class="flash-prod-prices">
-                            <span class="flash-old-price">3.500.000?</span>
-                            <span class="flash-new-price">2.870.000?</span>
+                            <span class="flash-old-price" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '‚Ç´'">13.500.000‚Ç´</span>
+                            <span class="flash-new-price" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '‚Ç´'">11.475.000‚Ç´</span>
                         </div>
                     </div>
                 </div>
@@ -187,7 +153,7 @@
         <div class="statement-inner">
             <div class="statement-line"></div>
             <p class="statement-text">
-                "Ch˙ng tÙi khÙng b·n linh ki?n. Ch˙ng tÙi b·n tr?i nghi?m hi?u nang <em>vu?t m?i gi?i h?n</em>."
+                "ChÔøΩng tÔøΩi khÔøΩng bÔøΩn linh ki?n. ChÔøΩng tÔøΩi bÔøΩn tr?i nghi?m hi?u nang <em>vu?t m?i gi?i h?n</em>."
             </p>
             <div class="statement-line"></div>
         </div>
@@ -197,19 +163,19 @@
     <section class="categories" id="categories">
         <div class="section-header">
             <span class="section-label">Danh M?c</span>
-            <h2 class="section-title">Ch?n DÚng Linh Ki?n</h2>
+            <h2 class="section-title">Ch?n DÔøΩng Linh Ki?n</h2>
         </div>
         <div class="cat-grid">
             <div class="cat-card" id="cat-cpu" data-cat="cpu">
                 <div class="cat-num">01</div>
                 <div class="cat-name">CPU</div>
-                <div class="cat-desc">B? vi x? l˝</div>
+                <div class="cat-desc">B? vi x? lÔøΩ</div>
                 <div class="cat-arrow">?</div>
             </div>
             <div class="cat-card" id="cat-vga" data-cat="vga">
                 <div class="cat-num">02</div>
                 <div class="cat-name">VGA</div>
-                <div class="cat-desc">Card m‡n hÏnh</div>
+                <div class="cat-desc">Card mÔøΩn hÔøΩnh</div>
                 <div class="cat-arrow">?</div>
             </div>
             <div class="cat-card" id="cat-mainboard" data-cat="mainboard">
@@ -232,7 +198,7 @@
             </div>
             <div class="cat-card" id="cat-monitor" data-cat="monitor">
                 <div class="cat-num">06</div>
-                <div class="cat-name">M‡n HÏnh</div>
+                <div class="cat-name">MÔøΩn HÔøΩnh</div>
                 <div class="cat-desc">Display premium</div>
                 <div class="cat-arrow">?</div>
             </div>
@@ -257,7 +223,7 @@
                     <button class="filter-chip" data-cat="vga" id="fcat-vga">VGA</button>
                     <button class="filter-chip" data-cat="ram" id="fcat-ram">RAM</button>
                     <button class="filter-chip" data-cat="mainboard" id="fcat-mainboard">Mainboard</button>
-                    <button class="filter-chip" data-cat="monitor" id="fcat-monitor">M‡n HÏnh</button>
+                    <button class="filter-chip" data-cat="monitor" id="fcat-monitor">MÔøΩn HÔøΩnh</button>
                 </div>
             </div>
 
@@ -266,9 +232,9 @@
                 <span class="filter-group-label">S?p X?p</span>
                 <div class="sort-select-wrap">
                     <select class="sort-select" id="sort-select" aria-label="S?p x?p s?n ph?m">
-                        <option value="default">M?c –?nh</option>
-                        <option value="price-asc">Gi·: Th?p ? Cao</option>
-                        <option value="price-desc">Gi·: Cao ? Th?p</option>
+                        <option value="default">M?c ÔøΩ?nh</option>
+                        <option value="price-asc">GiÔøΩ: Th?p ? Cao</option>
+                        <option value="price-desc">GiÔøΩ: Cao ? Th?p</option>
                         <option value="popular">Mua Nhi?u Nh?t</option>
                         <option value="newest">M?i Nh?t</option>
                     </select>
@@ -285,100 +251,20 @@
 
         <div class="products-grid" id="products-grid">
 
-            <!-- Product 1: CPU -->
-            <article class="product-card" id="prod-cpu-1" data-price="18990000" data-cat="cpu" data-popularity="4820">
-                <div class="product-img-wrap">
-                    <img th:src="@{/cpu.png}" alt="Intel Core i9-14900K" class="product-img" />
-                    <div class="product-badge">Bestseller</div>
-                    <button class="product-wishlist" aria-label="YÍu thÌch">?</button>
+            <article class="product-card" th:each="p : ${allProducts}" th:id="'prod-' + ${p.id}" th:data-price="${p.price}" th:data-cat="${p.category != null ? p.category.name.toLowerCase() : 'all'}" data-popularity="1000">
+                <div class="product-img-wrap" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor:pointer;">
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" class="product-img" style="width:100%; height:200px; object-fit:contain; padding:20px;"/>
+                    <div class="product-badge" th:if="${p.stock != null and p.stock <= 0}" style="background:var(--red);">H·∫øt h√†ng</div>
+                    <div class="product-badge" th:if="${p.stock == null or p.stock > 0}">M·ªõi</div>
+                    <button class="product-wishlist" aria-label="Y√™u th√≠ch">‚ô•</button>
                 </div>
                 <div class="product-info">
-                    <span class="product-cat">CPU ∑ Intel</span>
-                    <h3 class="product-name">Core i9-14900K</h3>
-                    <p class="product-spec">24 Cores ∑ 32 Threads ∑ 6.0 GHz Boost</p>
+                    <span class="product-cat" th:text="${(p.category != null ? p.category.name : 'Linh ki·ªán') + ' ‚Ä¢ ' + (p.brand != null ? p.brand : 'Ch√≠nh h√£ng')}">CPU - Intel</span>
+                    <h3 class="product-name" th:text="${p.name}">T√™n s·∫£n ph·∫©m</h3>
+                    <p class="product-spec" th:text="${p.description != null ? p.description : 'S·∫£n ph·∫©m cao c·∫•p'}" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3em;">Th√¥ng s·ªë k·ªπ thu·∫≠t</p>
                     <div class="product-price-row">
-                        <span class="product-price">18.990.000?</span>
-                        <button class="btn-add-cart" data-id="cpu1" data-name="Intel Core i9-14900K"
-                            data-price="18990000"><span>ThÍm V‡o Gi?</span></button>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Product 2: GPU -->
-            <article class="product-card large" id="prod-gpu-1" data-price="42990000" data-cat="vga"
-                data-popularity="3210">
-                <div class="product-img-wrap">
-                    <img th:src="@{/gpu.png}" alt="RTX 4090 Titan Edition" class="product-img" />
-                    <div class="product-badge gold">–?nh Cao</div>
-                    <button class="product-wishlist" aria-label="YÍu thÌch">?</button>
-                </div>
-                <div class="product-info">
-                    <span class="product-cat">VGA ∑ NVIDIA</span>
-                    <h3 class="product-name">RTX 4090 Titan Edition</h3>
-                    <p class="product-spec">24GB GDDR6X ∑ 16384 CUDA Cores ∑ 450W TDP</p>
-                    <div class="product-price-row">
-                        <span class="product-price">42.990.000?</span>
-                        <button class="btn-add-cart" data-id="gpu1" data-name="RTX 4090 Titan Edition"
-                            data-price="42990000"><span>ThÍm V‡o Gi?</span></button>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Product 3: RAM -->
-            <article class="product-card" id="prod-ram-1" data-price="6490000" data-cat="ram" data-popularity="5650">
-                <div class="product-img-wrap">
-                    <img th:src="@{/ram.png}" alt="Corsair Dominator Platinum RGB DDR5" class="product-img" />
-                    <div class="product-badge">M?i</div>
-                    <button class="product-wishlist" aria-label="YÍu thÌch">?</button>
-                </div>
-                <div class="product-info">
-                    <span class="product-cat">RAM ∑ Corsair</span>
-                    <h3 class="product-name">Dominator Platinum DDR5</h3>
-                    <p class="product-spec">64GB (2◊32GB) ∑ 6400MHz ∑ CL32</p>
-                    <div class="product-price-row">
-                        <span class="product-price">6.490.000?</span>
-                        <button class="btn-add-cart" data-id="ram1" data-name="Corsair Dominator Platinum DDR5"
-                            data-price="6490000"><span>ThÍm V‡o Gi?</span></button>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Product 4: Motherboard -->
-            <article class="product-card" id="prod-mb-1" data-price="12490000" data-cat="mainboard"
-                data-popularity="2100">
-                <div class="product-img-wrap">
-                    <img th:src="@{/motherboard.png}" alt="ASUS ROG Maximus Z790 Apex" class="product-img" />
-                    <div class="product-badge">Pro</div>
-                    <button class="product-wishlist" aria-label="YÍu thÌch">?</button>
-                </div>
-                <div class="product-info">
-                    <span class="product-cat">Mainboard ∑ ASUS ROG</span>
-                    <h3 class="product-name">ROG Maximus Z790 Apex </h3>
-                    <p class="product-spec">LGA1700 ∑ DDR5 ∑ PCIe 5.0 ∑ WiFi 6E</p>
-                    <div class="product-price-row">
-                        <span class="product-price">12.490.000?</span>
-                        <button class="btn-add-cart" data-id="mb1" data-name="ASUS ROG Maximus Z790 Apex "
-                            data-price="12490000"><span>ThÍm V‡o Gi?</span></button>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Product 5: Monitor -->
-            <article class="product-card large" id="prod-mon-1" data-price="22990000" data-cat="monitor"
-                data-popularity="1870">
-                <div class="product-img-wrap">
-                    <img th:src="@{/monitor.png}" alt="LG UltraGear 4K OLED 240Hz" class="product-img" />
-                    <div class="product-badge gold">OLED</div>
-                    <button class="product-wishlist" aria-label="YÍu thÌch">?</button>
-                </div>
-                <div class="product-info">
-                    <span class="product-cat">M‡n HÏnh ∑ LG</span>
-                    <h3 class="product-name">UltraGear 4K OLED 240Hz</h3>
-                    <p class="product-spec">27" ∑ 3840◊2160 ∑ 240Hz ∑ 0.03ms GtG</p>
-                    <div class="product-price-row">
-                        <span class="product-price">22.990.000?</span>
-                        <button class="btn-add-cart" data-id="mon1" data-name="LG UltraGear 4K OLED 240Hz"
-                            data-price="22990000"><span>ThÍm V‡o Gi?</span></button>
+                        <span class="product-price" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '‚Ç´'">Gi√°</span>
+                        <button class="btn-add-cart" th:data-id="${p.id}" th:data-name="${p.name}" th:data-price="${p.price}" th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'"><span>Th√™m V√†o Gi·ªè</span></button>
                     </div>
                 </div>
             </article>
@@ -389,95 +275,24 @@
     <!-- VOUCHERS -->
     <section class="vouchers-section" id="vouchers">
         <div class="section-header">
-            <span class="section-label">Uu –„i</span>
-            <h2 class="section-title">M„ Khuy?n M„i</h2>
-            <p class="voucher-section-sub">Nh?n v‡o voucher d? xem chi ti?t di?u ki?n v‡ c·ch s? d?ng.</p>
+            <span class="section-label">Uu i</span>
+            <h2 class="section-title">M Khuy?n Mi</h2>
+            <p class="voucher-section-sub">Nh?n vo voucher d? xem chi ti?t di?u ki?n v cch s? d?ng.</p>
         </div>
         <div class="voucher-grid">
 
-            <div class="voucher-card" id="vc-LUXURY10" data-voucher="LUXURY10">
+            <div class="voucher-card" th:each="v : ${activeVouchers}" th:id="'vc-' + ${v.code}" th:data-voucher="${v.code}">
                 <div class="voucher-left">
-                    <div class="voucher-pct">10%</div>
-                    <div class="voucher-type">Gi?m Gi·</div>
+                    <div class="voucher-pct" th:text="${v.discountType == 'PERCENT' ? v.discountValue + '%' : (#numbers.formatDecimal(v.discountValue/1000, 0, 0) + 'K')}">10%</div>
+                    <div class="voucher-type">Gi·∫£m Gi√°</div>
                 </div>
                 <div class="voucher-right">
-                    <div class="voucher-title">Voucher Linh Ki?n</div>
-                    <div class="voucher-code">LUXURY10</div>
-                    <div class="voucher-desc">Gi?m 10% cho t?t c? don h‡ng</div>
-                    <div class="voucher-tag">T?t c? s?n ph?m</div>
+                    <div class="voucher-title" th:text="${v.name != null ? v.name : 'Voucher ∆Øu ƒê√£i'}">Voucher Linh Ki·ªán</div>
+                    <div class="voucher-code" th:text="${v.code}">LUXURY10</div>
+                    <div class="voucher-desc" th:text="${'Gi·∫£m ' + (v.discountType == 'PERCENT' ? v.discountValue + '%' : #numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT') + '‚Ç´') + ' cho ƒë∆°n t·ª´ ' + #numbers.formatDecimal(v.minOrderValue, 0, 'COMMA', 0, 'POINT') + '‚Ç´'}">Gi·∫£m 10% cho t·∫•t c·∫£ ƒë∆°n h√†ng</div>
+                    <div class="voucher-tag" th:text="'ƒê∆°n ‚â• ' + ${#numbers.formatDecimal(v.minOrderValue, 0, 'COMMA', 0, 'POINT')} + '‚Ç´'">T·∫•t c·∫£ s·∫£n ph·∫©m</div>
                 </div>
-                <div class="voucher-scissor">?</div>
-                <div class="voucher-dots"></div>
-            </div>
-
-            <div class="voucher-card" id="vc-LUXURY15" data-voucher="LUXURY15">
-                <div class="voucher-left">
-                    <div class="voucher-pct">15%</div>
-                    <div class="voucher-type">Gi?m Gi·</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-title">Voucher Linh Ki?n</div>
-                    <div class="voucher-code">LUXURY15</div>
-                    <div class="voucher-desc">Gi?m 15% cho don t? 10 tri?u</div>
-                    <div class="voucher-tag">–on = 10.000.000?</div>
-                </div>
-                <div class="voucher-scissor">?</div>
-                <div class="voucher-dots"></div>
-            </div>
-
-            <div class="voucher-card featured" id="vc-vip20" data-voucher="vip20">
-                <div class="voucher-left">
-                    <div class="voucher-pct">20%</div>
-                    <div class="voucher-type">VIP</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">VIP20</div>
-                    <div class="voucher-desc">Gi?m 20% d‡nh cho th‡nh viÍn VIP</div>
-                    <div class="voucher-tag">Th‡nh viÍn VIP</div>
-                </div>
-                <div class="voucher-scissor">?</div>
-                <div class="voucher-dots"></div>
-            </div>
-
-            <div class="voucher-card" id="vc-freeship" data-voucher="freeship">
-                <div class="voucher-left">
-                    <div class="voucher-pct">FREE</div>
-                    <div class="voucher-type">Ship</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">FREESHIP</div>
-                    <div class="voucher-desc">Mi?n phÌ v?n chuy?n to‡n qu?c</div>
-                    <div class="voucher-tag">T?t c? don h‡ng</div>
-                </div>
-                <div class="voucher-scissor">?</div>
-                <div class="voucher-dots"></div>
-            </div>
-
-            <div class="voucher-card" id="vc-newuser" data-voucher="newuser">
-                <div class="voucher-left">
-                    <div class="voucher-pct">12%</div>
-                    <div class="voucher-type">M?i</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">NEWUSER</div>
-                    <div class="voucher-desc">Uu d„i ch‡o m?ng kh·ch h‡ng m?i</div>
-                    <div class="voucher-tag">–ang k˝ l?n d?u</div>
-                </div>
-                <div class="voucher-scissor">?</div>
-                <div class="voucher-dots"></div>
-            </div>
-
-            <div class="voucher-card" id="vc-cpu500k" data-voucher="cpu500k">
-                <div class="voucher-left">
-                    <div class="voucher-pct">500K</div>
-                    <div class="voucher-type">CPU</div>
-                </div>
-                <div class="voucher-right">
-                    <div class="voucher-code">CPU500K</div>
-                    <div class="voucher-desc">Gi?m 500.000? khi mua CPU</div>
-                    <div class="voucher-tag">Danh m?c CPU</div>
-                </div>
-                <div class="voucher-scissor">?</div>
+                <div class="voucher-scissor">‚úÇ</div>
                 <div class="voucher-dots"></div>
             </div>
 
@@ -489,35 +304,35 @@
         <div class="build-bg"></div>
         <div class="build-content">
             <span class="section-label light">D?ch V?</span>
-            <h2 class="build-title">Build PC<br /><em>Theo YÍu C?u</em></h2>
+            <h2 class="build-title">Build PC<br /><em>Theo YÔøΩu C?u</em></h2>
             <p class="build-desc">
-                –?i ngu chuyÍn gia c?a Luxury PC s? tu v?n v‡ l?p r·p h? th?ng ho‡n h?o nh?t d‡nh riÍng cho b?n ó t?
-                workstation d? h?a d?n chi?n m„ gaming khÙng d?i th?.
+                ÔøΩ?i ngu chuyÔøΩn gia c?a Luxury PC s? tu v?n vÔøΩ l?p rÔøΩp h? th?ng hoÔøΩn h?o nh?t dÔøΩnh riÔøΩng cho b?n ÔøΩ t?
+                workstation d? h?a d?n chi?n mÔøΩ gaming khÔøΩng d?i th?.
             </p>
             <div class="build-features">
                 <div class="build-feat">
                     <div class="feat-icon">?</div>
                     <div class="feat-text">
-                        <strong>Tu V?n Mi?n PhÌ</strong>
-                        <span>ChuyÍn gia ph‚n tÌch nhu c?u c?a b?n</span>
+                        <strong>Tu V?n Mi?n PhÔøΩ</strong>
+                        <span>ChuyÔøΩn gia phÔøΩn tÔøΩch nhu c?u c?a b?n</span>
                     </div>
                 </div>
                 <div class="build-feat">
                     <div class="feat-icon">?</div>
                     <div class="feat-text">
-                        <strong>L?p R·p ChuyÍn Nghi?p</strong>
-                        <span>L?p r·p trong phÚng s?ch, ki?m tra 100%</span>
+                        <strong>L?p RÔøΩp ChuyÔøΩn Nghi?p</strong>
+                        <span>L?p rÔøΩp trong phÔøΩng s?ch, ki?m tra 100%</span>
                     </div>
                 </div>
                 <div class="build-feat">
                     <div class="feat-icon">?</div>
                     <div class="feat-text">
-                        <strong>B?o H‡nh 3 Nam</strong>
-                        <span>Cam k?t ch?t lu?ng d?ng c?p h‡ng d?u</span>
+                        <strong>B?o HÔøΩnh 3 Nam</strong>
+                        <span>Cam k?t ch?t lu?ng d?ng c?p hÔøΩng d?u</span>
                     </div>
                 </div>
             </div>
-            <a href="/build-pc/index.html" class="btn-primary" id="btn-build-pc"><span>B?t –?u Build Ngay</span></a>
+            <a href="/build-pc/index.html" class="btn-primary" id="btn-build-pc"><span>B?t ÔøΩ?u Build Ngay</span></a>
         </div>
     </section>
 
@@ -525,12 +340,12 @@
     <section class="stats">
         <div class="stat-item">
             <div class="stat-num" data-target="15000">0</div>
-            <div class="stat-label">Kh·ch H‡ng Tin Tu?ng</div>
+            <div class="stat-label">KhÔøΩch HÔøΩng Tin Tu?ng</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
             <div class="stat-num" data-target="500">0</div>
-            <div class="stat-label">Linh Ki?n ChÌnh H„ng</div>
+            <div class="stat-label">Linh Ki?n ChÔøΩnh HÔøΩng</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
@@ -540,50 +355,50 @@
         <div class="stat-divider"></div>
         <div class="stat-item">
             <div class="stat-num" data-target="99">0</div>
-            <div class="stat-label">% Kh·ch H‡ng H‡i LÚng</div>
+            <div class="stat-label">% KhÔøΩch HÔøΩng HÔøΩi LÔøΩng</div>
         </div>
     </section>
 
     <!-- TESTIMONIALS -->
     <section class="testimonials" id="testimonials">
         <div class="section-header">
-            <span class="section-label">–·nh Gi·</span>
-            <h2 class="section-title">Kh·ch H‡ng NÛi GÏ</h2>
+            <span class="section-label">ÔøΩÔøΩnh GiÔøΩ</span>
+            <h2 class="section-title">KhÔøΩch HÔøΩng NÔøΩi GÔøΩ</h2>
         </div>
         <div class="testi-slider" id="testi-slider">
             <div class="testi-card active" id="testi-1">
                 <div class="testi-stars">?????</div>
-                <p class="testi-text">"M·y build t? Luxury PC ch?y mu?t nhu mo. RTX 4090 k?t h?p v?i i9-14900K ó khÙng
-                    cÛ game n‡o kh·ng c? du?c. –·ng t?ng d?ng b? ra."</p>
+                <p class="testi-text">"MÔøΩy build t? Luxury PC ch?y mu?t nhu mo. RTX 4090 k?t h?p v?i i9-14900K ÔøΩ khÔøΩng
+                    cÔøΩ game nÔøΩo khÔøΩng c? du?c. ÔøΩÔøΩng t?ng d?ng b? ra."</p>
                 <div class="testi-author">
                     <div class="testi-avatar">TM</div>
                     <div>
                         <strong>Thanh Minh</strong>
-                        <span>Game th? chuyÍn nghi?p ∑ TP.HCM</span>
+                        <span>Game th? chuyÔøΩn nghi?p ÔøΩ TP.HCM</span>
                     </div>
                 </div>
             </div>
             <div class="testi-card" id="testi-2">
                 <div class="testi-stars">?????</div>
-                <p class="testi-text">"Workstation d? h?a 3D c?a tÙi du?c Apex tu v?n v‡ l?p r·p c?c k? chuyÍn nghi?p.
-                    Render nhanh g?p dÙi m·y cu, thoi quen l‡m vi?c thay d?i ho‡n to‡n."</p>
+                <p class="testi-text">"Workstation d? h?a 3D c?a tÔøΩi du?c Apex tu v?n vÔøΩ l?p rÔøΩp c?c k? chuyÔøΩn nghi?p.
+                    Render nhanh g?p dÔøΩi mÔøΩy cu, thoi quen lÔøΩm vi?c thay d?i hoÔøΩn toÔøΩn."</p>
                 <div class="testi-author">
                     <div class="testi-avatar">HN</div>
                     <div>
-                        <strong>Ho‡ng NguyÍn</strong>
-                        <span>Motion Designer ∑ H‡ N?i</span>
+                        <strong>HoÔøΩng NguyÔøΩn</strong>
+                        <span>Motion Designer ÔøΩ HÔøΩ N?i</span>
                     </div>
                 </div>
             </div>
             <div class="testi-card" id="testi-3">
                 <div class="testi-stars">?????</div>
-                <p class="testi-text">"D?ch v? b?o h‡nh v‡ h?u m„i tuy?t v?i. G?p l?i nh? du?c h? tr? ngay trong ng‡y.
-                    –‚y l‡ l?n th? 3 tÙi mua linh ki?n t?i Luxury PC v‡ s? khÙng di d‚u kh·c."</p>
+                <p class="testi-text">"D?ch v? b?o hÔøΩnh vÔøΩ h?u mÔøΩi tuy?t v?i. G?p l?i nh? du?c h? tr? ngay trong ngÔøΩy.
+                    ÔøΩÔøΩy lÔøΩ l?n th? 3 tÔøΩi mua linh ki?n t?i Luxury PC vÔøΩ s? khÔøΩng di dÔøΩu khÔøΩc."</p>
                 <div class="testi-author">
                     <div class="testi-avatar">PL</div>
                     <div>
                         <strong>Phuong Linh</strong>
-                        <span>Content Creator ∑ –‡ N?ng</span>
+                        <span>Content Creator ÔøΩ ÔøΩÔøΩ N?ng</span>
                     </div>
                 </div>
             </div>
@@ -598,13 +413,13 @@
     <!-- NEWSLETTER -->
     <section class="newsletter">
         <div class="newsletter-inner">
-            <h2 class="newsletter-title">Nh?n Uu –„i <em>–?c Quy?n</em></h2>
-            <p class="newsletter-sub">–ang k˝ d? nh?n thÙng b·o gi?m gi·, s?n ph?m m?i nh?t v‡ l?i khuyÍn build PC t?
-                chuyÍn gia.</p>
+            <h2 class="newsletter-title">Nh?n Uu ÔøΩÔøΩi <em>ÔøΩ?c Quy?n</em></h2>
+            <p class="newsletter-sub">ÔøΩang kÔøΩ d? nh?n thÔøΩng bÔøΩo gi?m giÔøΩ, s?n ph?m m?i nh?t vÔøΩ l?i khuyÔøΩn build PC t?
+                chuyÔøΩn gia.</p>
             <form class="newsletter-form" id="newsletter-form">
                 <input type="email" id="newsletter-email" data-translate-placeholder="newsletter-email-placeholder"
-                    placeholder="Email c?a b?n..." required aria-label="Email dang k˝" />
-                <button type="submit" id="newsletter-submit">–ang K˝</button>
+                    placeholder="Email c?a b?n..." required aria-label="Email dang kÔøΩ" />
+                <button type="submit" id="newsletter-submit">ÔøΩang KÔøΩ</button>
             </form>
         </div>
     </section>
@@ -613,45 +428,45 @@
     <footer class="footer">
         <div class="footer-top">
             <div class="footer-brand">
-                <div class="footer-logo">LUXURY ∑ PC</div>
-                <p>Noi cÙng ngh? g?p g? s? xa x?. Linh ki?n cao c?p, tu v?n chuyÍn nghi?p, d?ch v? ho‡n h?o.</p>
+                <div class="footer-logo">LUXURY ÔøΩ PC</div>
+                <p>Noi cÔøΩng ngh? g?p g? s? xa x?. Linh ki?n cao c?p, tu v?n chuyÔøΩn nghi?p, d?ch v? hoÔøΩn h?o.</p>
             </div>
             <div class="footer-links-group">
                 <h4>Linh Ki?n</h4>
                 <ul>
-                    <li><a href="#">CPU & B? X? L˝</a></li>
-                    <li><a href="#">VGA & Card –? H?a</a></li>
-                    <li><a href="#">Mainboard</a></li>
-                    <li><a href="#">RAM & B? Nh?</a></li>
-                    <li><a href="#">SSD & Luu Tr?</a></li>
+                    <li><a href="/products">CPU & B? X? LÔøΩ</a></li>
+                    <li><a href="/products">VGA & Card ÔøΩ? H?a</a></li>
+                    <li><a href="/products">Mainboard</a></li>
+                    <li><a href="/products">RAM & B? Nh?</a></li>
+                    <li><a href="/products">SSD & Luu Tr?</a></li>
                 </ul>
             </div>
             <div class="footer-links-group">
                 <h4>D?ch V?</h4>
                 <ul>
-                    <li><a href="#">Build PC Theo YÍu C?u</a></li>
-                    <li><a href="#">Tu V?n C?u HÏnh</a></li>
-                    <li><a href="#">B?o H‡nh & S?a Ch?a</a></li>
-                    <li><a href="#">N‚ng C?p H? Th?ng</a></li>
-                    <li><a href="#">PC Gaming Cao C?p</a></li>
+                    <li><a href="/products">Build PC Theo YÔøΩu C?u</a></li>
+                    <li><a href="/products">Tu V?n C?u HÔøΩnh</a></li>
+                    <li><a href="/products">B?o HÔøΩnh & S?a Ch?a</a></li>
+                    <li><a href="/products">NÔøΩng C?p H? Th?ng</a></li>
+                    <li><a href="/products">PC Gaming Cao C?p</a></li>
                 </ul>
             </div>
             <div class="footer-links-group">
-                <h4>LiÍn H?</h4>
+                <h4>LiÔøΩn H?</h4>
                 <ul>
-                    <li><a href="#">?? 123 Nguy?n Hu?, Q1, TP.HCM</a></li>
-                    <li><a href="#">?? 1800-LUXURY</a></li>
-                    <li><a href="#">?? hello@luxurypc.vn</a></li>
-                    <li><a href="#">?? T2ñCN: 9:00 ñ 21:00</a></li>
+                    <li><a href="/products">?? 123 Nguy?n Hu?, Q1, TP.HCM</a></li>
+                    <li><a href="/products">?? 1800-LUXURY</a></li>
+                    <li><a href="/products">?? hello@luxurypc.vn</a></li>
+                    <li><a href="/products">?? T2ÔøΩCN: 9:00 ÔøΩ 21:00</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2025 Luxury PC. T?t c? quy?n du?c b?o luu. B?n quy?n thu?c Luxury Technology JSC.</p>
+            <p>ÔøΩ 2025 Luxury PC. T?t c? quy?n du?c b?o luu. B?n quy?n thu?c Luxury Technology JSC.</p>
             <div class="footer-social">
-                <a href="#" id="social-fb" aria-label="Facebook">f</a>
-                <a href="#" id="social-yt" aria-label="YouTube">?</a>
-                <a href="#" id="social-tt" aria-label="TikTok">?</a>
+                <a href="/products" id="social-fb" aria-label="Facebook">f</a>
+                <a href="/products" id="social-yt" aria-label="YouTube">?</a>
+                <a href="/products" id="social-tt" aria-label="TikTok">?</a>
             </div>
         </div>
     </footer>
@@ -659,18 +474,18 @@
     <!-- CART DRAWER -->
     <div class="cart-drawer" id="cart-drawer">
         <div class="cart-header">
-            <h3>Gi? H‡ng</h3>
-            <button class="cart-close" id="cart-close" aria-label="–Ûng gi? h‡ng">?</button>
+            <h3>Gi? HÔøΩng</h3>
+            <button class="cart-close" id="cart-close" aria-label="ÔøΩÔøΩng gi? hÔøΩng">?</button>
         </div>
         <div class="cart-items" id="cart-items">
-            <p class="cart-empty">Gi? h‡ng c?a b?n dang tr?ng.</p>
+            <p class="cart-empty">Gi? hÔøΩng c?a b?n dang tr?ng.</p>
         </div>
         <div class="cart-footer">
             <div class="cart-total-row">
                 <span>T?ng c?ng</span>
                 <span class="cart-total" id="cart-total">0?</span>
             </div>
-            <button class="btn-primary full" id="btn-checkout"><span>Thanh To·n Ngay</span></button>
+            <button class="btn-primary full" id="btn-checkout"><span>Thanh ToÔøΩn Ngay</span></button>
         </div>
     </div>
     <div class="cart-overlay" id="cart-overlay"></div>
@@ -681,21 +496,21 @@
     <!-- VOUCHER MODAL -->
     <div class="voucher-modal-overlay" id="voucher-modal-overlay">
         <div class="voucher-modal" id="voucher-modal">
-            <button class="voucher-modal-close" id="voucher-modal-close" aria-label="–Ûng">?</button>
-            <div class="vmodal-badge" id="vmodal-badge">Gi?m Gi·</div>
+            <button class="voucher-modal-close" id="voucher-modal-close" aria-label="ÔøΩÔøΩng">?</button>
+            <div class="vmodal-badge" id="vmodal-badge">Gi?m GiÔøΩ</div>
             <div class="vmodal-pct" id="vmodal-pct">10%</div>
             <div class="vmodal-code-wrap">
-                <span class="vmodal-code-label">M„ Voucher</span>
+                <span class="vmodal-code-label">MÔøΩ Voucher</span>
                 <div class="vmodal-code" id="vmodal-code">Apex 10</div>
             </div>
             <div class="vmodal-divider"></div>
             <div class="vmodal-info">
                 <div class="vmodal-row">
-                    <span class="vmodal-key">Uu d„i</span>
-                    <span class="vmodal-val" id="vmodal-desc">Gi?m 10% cho t?t c? don h‡ng</span>
+                    <span class="vmodal-key">Uu dÔøΩi</span>
+                    <span class="vmodal-val" id="vmodal-desc">Gi?m 10% cho t?t c? don hÔøΩng</span>
                 </div>
                 <div class="vmodal-row">
-                    <span class="vmodal-key">¡p d?ng</span>
+                    <span class="vmodal-key">ÔøΩp d?ng</span>
                     <span class="vmodal-val" id="vmodal-apply">T?t c? s?n ph?m</span>
                 </div>
                 <div class="vmodal-row">
@@ -703,12 +518,12 @@
                     <span class="vmodal-val" id="vmodal-expire">31/03/2026</span>
                 </div>
                 <div class="vmodal-row">
-                    <span class="vmodal-key">Lu?t d˘ng</span>
-                    <span class="vmodal-val" id="vmodal-limit">KhÙng gi?i h?n</span>
+                    <span class="vmodal-key">Lu?t dÔøΩng</span>
+                    <span class="vmodal-val" id="vmodal-limit">KhÔøΩng gi?i h?n</span>
                 </div>
             </div>
-            <button class="vmodal-copy-btn" id="vmodal-copy-btn">Sao ChÈp M„ Voucher</button>
-            <div class="vmodal-note">Nh?p m„ t?i bu?c thanh to·n d? ·p d?ng uu d„i.</div>
+            <button class="vmodal-copy-btn" id="vmodal-copy-btn">Sao ChÔøΩp MÔøΩ Voucher</button>
+            <div class="vmodal-note">Nh?p mÔøΩ t?i bu?c thanh toÔøΩn d? ÔøΩp d?ng uu dÔøΩi.</div>
         </div>
     </div>
 
