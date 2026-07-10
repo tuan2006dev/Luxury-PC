@@ -32,8 +32,11 @@ public class WebConfig implements WebMvcConfigurer {
         if (!uploadPath.endsWith("/")) {
             uploadPath += "/";
         }
+        
+        String classpathLocation = "classpath:/" + dirName.replace("src/main/resources/", "") + "/";
+        
         registry.addResourceHandler(pathPattern)
-                .addResourceLocations("file:" + uploadPath)
+                .addResourceLocations("file:" + uploadPath, classpathLocation)
                 .setCacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic());
     }
     @Override
