@@ -31,6 +31,9 @@ public class SharedBuild implements Serializable {
     @Column(name = "ram_id", length = 50)
     private String ramId;
 
+    @Column(name = "storage_id", length = 50)
+    private String storageId;
+
     @Column(name = "gpu_id", length = 50)
     private String gpuId;
 
@@ -101,6 +104,14 @@ public class SharedBuild implements Serializable {
 
     public void setRamId(String ramId) {
         this.ramId = ramId;
+    }
+
+    public String getStorageId() {
+        return storageId;
+    }
+
+    public void setStorageId(String storageId) {
+        this.storageId = storageId;
     }
 
     public String getGpuId() {

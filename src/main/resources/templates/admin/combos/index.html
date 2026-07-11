@@ -30,10 +30,12 @@
         <div class="title">
             <h1>Quản Lý Combo (<span th:text="${combos != null ? combos.size() : 0}">0</span>)</h1>
         </div>
-        <div class="user-info">
-            <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
-            <span th:text="${#authentication.name}">Admin</span>
-        </div>
+        <div class="user-info" style="display: flex; align-items: center;">
+                <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
+                <span th:text="${#authentication.name}" style="margin-left: 8px;">Admin</span>
+                <span sec:authorize="hasRole('ADMIN')" style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
+                <span sec:authorize="hasRole('STAFF')" style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
+            </div>
     </div>
 
     <div th:if="${message}" class="alert alert-success" style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 6px; color: #22c55e;">

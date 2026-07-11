@@ -19,44 +19,46 @@
                 <h2 data-translate="admin-inventory-title">Quản Lý Kho Hàng</h2>
                 <span><span th:text="${inventory.size()}">0</span> <span data-translate="admin-inventory-text-products">sản phẩm</span></span>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th data-translate="admin-inventory-th-product">Sản Phẩm</th>
-                        <th data-translate="admin-inventory-th-category">Danh Mục</th>
-                        <th data-translate="admin-inventory-th-stock">Tồn Kho</th>
-                        <th data-translate="admin-inventory-th-last-update">Cập Nhật Cuối</th>
-                        <th data-translate="admin-inventory-th-adjust">Điều Chỉnh Kho</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="item : ${inventory}">
-                        <td>
-                            <div th:text="${item.product.name}">Product Name</div>
-                        </td>
-                        <td th:text="${item.product.category.name}">Category</td>
-                        <td>
-                            <div style="display: flex; align-items: center; white-space: nowrap;">
-                                <span th:text="${item.quantity}" style="min-width: 20px;">0</span>
-                                <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:8px;" data-translate="admin-inventory-badge-low">Sắp hết</span>
-                            </div>
-                        </td>
-                        <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
-                        <td>
-                            <form autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post" style="display:flex; align-items:center;">
-                                <input autocomplete="off" type="hidden" name="productId" th:value="${item.product.id}">
-                                <input autocomplete="off" type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
-                                <select name="type" class="type-select">
-                                    <option value="IMPORT" data-translate="admin-inventory-option-import">Nhập Kho</option>
-                                    <option value="EXPORT" data-translate="admin-inventory-option-export">Xuất Kho</option>
-                                </select>
-                                <input autocomplete="off" type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú" data-translate-placeholder="admin-inventory-placeholder-note">
-                                <button type="submit" class="adj-btn" data-translate="admin-inventory-btn-submit">Xác Nhận</button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div style="width: 100%; overflow-x: auto;">
+                <table class="admin-table inventory-table">
+                    <thead>
+                        <tr>
+                            <th data-translate="admin-inventory-th-product">Sản Phẩm</th>
+                            <th data-translate="admin-inventory-th-category">Danh Mục</th>
+                            <th data-translate="admin-inventory-th-stock">Tồn Kho</th>
+                            <th data-translate="admin-inventory-th-last-update">Cập Nhật Cuối</th>
+                            <th data-translate="admin-inventory-th-adjust">Điều Chỉnh Kho</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${inventory}">
+                            <td>
+                                <div th:text="${item.product.name}">Product Name</div>
+                            </td>
+                            <td th:text="${item.product.category.name}">Category</td>
+                            <td>
+                                <div style="display: flex; align-items: center; white-space: nowrap;">
+                                    <span th:text="${item.quantity}" style="min-width: 20px;">0</span>
+                                    <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:8px;" data-translate="admin-inventory-badge-low">Sắp hết</span>
+                                </div>
+                            </td>
+                            <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
+                            <td>
+                                <form autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post" style="display:flex; align-items:center;">
+                                    <input autocomplete="off" type="hidden" name="productId" th:value="${item.product.id}">
+                                    <input autocomplete="off" type="number" name="quantity" class="stock-input" placeholder="Số lượng" required min="1" data-translate-placeholder="admin-inventory-placeholder-qty">
+                                    <select name="type" class="type-select">
+                                        <option value="IMPORT" data-translate="admin-inventory-option-import">Nhập Kho</option>
+                                        <option value="EXPORT" data-translate="admin-inventory-option-export">Xuất Kho</option>
+                                    </select>
+                                    <input autocomplete="off" type="text" name="note" class="stock-input" style="width:120px; margin-right:0.5rem" placeholder="Ghi chú" data-translate-placeholder="admin-inventory-placeholder-note">
+                                    <button type="submit" class="adj-btn" data-translate="admin-inventory-btn-submit">Xác Nhận</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>

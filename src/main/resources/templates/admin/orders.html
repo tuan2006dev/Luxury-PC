@@ -19,7 +19,8 @@
                 <h2 data-translate="admin-orders-title">Quản Lý Đơn Hàng</h2>
                 <span><span th:text="${orders.size()}">0</span> <span data-translate="admin-orders-text-orders">đơn hàng</span></span>
             </div>
-            <table>
+            <div style="width: 100%; overflow-x: auto;">
+                <table class="admin-table">
                 <thead>
                     <tr>
                         <th data-translate="admin-orders-th-code">Mã Đơn</th>
@@ -123,6 +124,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </body>

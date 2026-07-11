@@ -59,33 +59,33 @@
         </div>
 
         <nav class="sb-menu" style="padding: 15px 0;">
-          <a class="sb-item active" onclick="setTab('info')" href="#"
+          <a class="sb-item active" onclick="setTab('info', event)" href="#"
             style="display: flex; align-items: center; padding: 12px 20px; color: #444; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;"><i
               class="fa-regular fa-user" style="width: 20px; text-align: center; margin-right: 10px;"></i> Thông Tin Cá
             Nhân</a>
-          <a class="sb-item" onclick="setTab('orders')" href="#"
+          <a class="sb-item" onclick="setTab('orders', event)" href="#"
             style="display: flex; align-items: center; padding: 12px 20px; color: #444; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;"><i
               class="fa-solid fa-box" style="width: 20px; text-align: center; margin-right: 10px;"></i> Đơn Hàng Của
             Tôi</a>
-          <a class="sb-item" onclick="setTab('vouchers')" href="#"
+          <a class="sb-item" onclick="setTab('vouchers', event)" href="#"
             style="display: flex; align-items: center; padding: 12px 20px; color: #444; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;"><i
               class="fa-solid fa-ticket" style="width: 20px; text-align: center; margin-right: 10px;"></i> Ví
             Voucher</a>
-          <a class="sb-item" onclick="setTab('wishlist')" href="#"
+          <a class="sb-item" onclick="setTab('wishlist', event)" href="#"
             style="display: flex; align-items: center; padding: 12px 20px; color: #444; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;"><i
               class="fa-regular fa-heart" style="width: 20px; text-align: center; margin-right: 10px;"></i> Yêu
             Thích</a>
 
           <div style="height: 1px; background: #eee; margin: 10px 20px;"></div>
 
-          <a class="sb-item" onclick="setTab('security')" href="#"
+          <a class="sb-item" onclick="setTab('security', event)" href="#"
             style="display: flex; align-items: center; padding: 12px 20px; color: #444; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;"><i
               class="fa-solid fa-shield-halved" style="width: 20px; text-align: center; margin-right: 10px;"></i> Bảo
             Mật</a>
-          <a class="sb-item" onclick="setTab('notifications')" href="#"
+          <a class="sb-item" onclick="setTab('notifications', event)" href="#"
             style="display: flex; align-items: center; padding: 12px 20px; color: #444; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;"><i
               class="fa-regular fa-bell" style="width: 20px; text-align: center; margin-right: 10px;"></i> Thông Báo</a>
-          <a class="sb-item" onclick="setTab('address')" href="#"
+          <a class="sb-item" onclick="setTab('address', event)" href="#"
             style="display: flex; align-items: center; padding: 12px 20px; color: #444; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;"><i
               class="fa-solid fa-location-dot" style="width: 20px; text-align: center; margin-right: 10px;"></i> Địa Chỉ
             Giao Hàng</a>
@@ -663,9 +663,9 @@
               <div class="stat-num" th:text="${totalOrders}">12</div>
               <div class="stat-lbl" data-translate="profile-info-stat-orders">Đơn đã đặt</div>
             </div>
-            <div class="stat-cell" th:title="${#numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT')} + '₫'">
+            <div class="stat-cell" th:title="${#numbers.formatDecimal(totalSpent, 1, 'COMMA', 0, 'POINT')} + '₫'">
               <div class="stat-num"
-                th:text="${totalSpent >= 1000000 ? #numbers.formatDecimal(totalSpent / 1000000, 0, 'COMMA', 0, 'POINT') + 'M' : #numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT')}">
+                th:text="${totalSpent >= 1000000 ? #numbers.formatDecimal(totalSpent / 1000000, 1, 'COMMA', 0, 'POINT') + 'M' : #numbers.formatDecimal(totalSpent, 1, 'COMMA', 0, 'POINT')}">
                 142M</div>
               <div class="stat-lbl" data-translate="profile-info-stat-spent">Tổng chi tiêu</div>
             </div>
@@ -956,7 +956,7 @@
                     data-translate="profile-order-empty">Đơn hàng trống</span>
                 </div>
                 <div class="order-total"
-                  th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</div>
+                  th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</div>
                 <div>
                   <span
                     th:class="'order-status status-' + ${(order.status != null ? order.status : 'PENDING').toLowerCase()}"
@@ -1039,7 +1039,7 @@
                       </button>
                     </div>
                     <span style="color:#3b82f6;"
-                      th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
+                      th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
                   </div>
                   <div class="item-mini">
                     <span data-translate="profile-order-shipping">Phí vận chuyển (Hỏa tốc)</span>
@@ -1094,7 +1094,7 @@
                   <button type="button" th:data-order-id="${order.id}" onclick="cancelOrder(this)"
                     style="display:inline-block; font-size:0.75rem; color:var(--red); background:transparent; border:1px solid rgba(239,68,68,0.5); padding:6px 15px; border-radius:3px; transition: 0.3s; cursor:pointer;"
                     onmouseover="this.style.background='var(--red)'; this.style.color='#000';"
-                    onmouseout="this.style.background='transparent'; this.style.color='var(--red)';">
+                    onmouseout="this.style.background='transparent'; this.style.color='#var(--red)';">
                     ⚠️ <span data-translate="profile-order-cancel-btn">Hủy Đơn Hàng</span>
                   </button>
                 </div>
@@ -1154,7 +1154,7 @@
                   th:text="${uv.voucher.description}">Mô tả voucher</div>
                 <div style="font-size:0.75rem; color:#64748b; margin-top:10px;">
                   <span data-translate="profile-voucher-min-order">ĐH Tối thiểu:</span> <span style="color:#3b82f6;"
-                    th:text="${#numbers.formatDecimal(uv.voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span><br />
+                    th:text="${#numbers.formatDecimal(uv.voucher.minOrderAmount, 1, 'COMMA', 0, 'POINT')} + '₫'">0₫</span><br />
                   <span data-translate="profile-voucher-expiry">HSD:</span> <span th:if="${uv.voucher.endDate != null}"
                     th:text="${#calendars.format(uv.voucher.endDate, 'dd/MM/yyyy')}">12/12/2026</span>
                   <span th:if="${uv.voucher.endDate == null}" data-translate="profile-voucher-expiry-none">Vô thời
@@ -1234,7 +1234,7 @@
                   data-translate="profile-category-other">Khác</div>
                 <div class="wl-name" th:text="${wishitem.product.name}">Tên sản phẩm</div>
                 <div class="wl-price"
-                  th:text="${#numbers.formatDecimal(wishitem.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</div>
+                  th:text="${#numbers.formatDecimal(wishitem.product.price, 1, 'COMMA', 0, 'POINT')} + '₫'">Giá</div>
               </div>
             </div>
             <div th:if="${wishlistItems == null or wishlistItems.size() == 0}"
@@ -1877,9 +1877,9 @@
         }
       });
 
-      /* TABS */
       const tabIds = ['info', 'orders', 'vouchers', 'wishlist', 'security', 'notifications', 'address'];
-      function setTab(id) {
+      function setTab(id, event) {
+        if (event) event.preventDefault();
         tabIds.forEach(t => {
           document.getElementById('sec-' + t)?.classList.toggle('active', t === id);
           document.getElementById('pt-' + t)?.classList.toggle('active', t === id);
@@ -2537,6 +2537,14 @@
       /* TRANSLATION LOGIC */
       {
         let translations = {};
+        
+        window.t = function(key, defaultValue) {
+          const lang = localStorage.getItem('lang') || 'vi';
+          if (translations[lang] && translations[lang][key]) {
+            return translations[lang][key];
+          }
+          return defaultValue;
+        };
 
         function setLanguage(lang) {
           document.querySelectorAll('[data-translate]').forEach(el => {

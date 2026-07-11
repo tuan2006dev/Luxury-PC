@@ -19,10 +19,12 @@
         <div class="title">
             <h1><span data-translate="admin-products-title-text">Quản Lý Sản Phẩm</span> (<span th:text="${products != null ? products.size() : 0}">0</span>)</h1>
         </div>
-        <div class="user-info">
-            <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
-            <span th:text="${#authentication.name}">Admin</span>
-        </div>
+        <div class="user-info" style="display: flex; align-items: center;">
+                <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
+                <span th:text="${#authentication.name}" style="margin-left: 8px;">Admin</span>
+                <span sec:authorize="hasRole('ADMIN')" style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
+                <span sec:authorize="hasRole('STAFF')" style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
+            </div>
     </div>
 
     <!-- Nút mở form tạo -->
@@ -77,13 +79,17 @@
                     </div>
                 </div>
                 <div class="input-group">
+                    <label>Hoặc nhập Link Ảnh (URL)</label>
+                    <input autocomplete="off" type="text" id="imageUrl" th:field="*{image}" placeholder="VD: https://example.com/hinh-anh.jpg">
+                </div>
+                <div class="input-group">
                     <label data-translate="admin-products-label-stock">Số lượng kho</label>
                     <input autocomplete="off" type="number" th:field="*{stock}" min="0">
                 </div>
                 <div class="input-group full" th:if="${product.image != null}">
                     <label data-translate="admin-products-label-current-image">Ảnh hiện tại:</label>
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <img th:src="@{${product.image != null ? (product.image.startsWith('http') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}}" th:alt="${product.name}" onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';" style="width:100px; border:1px solid var(--gold); border-radius:4px;">
+                        <img th:src="@{${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}}" th:alt="${product.name}" onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';" style="width:100px; height:100px; object-fit:contain; border:1px solid var(--gold); border-radius:4px; padding:2px; background:#fff;">
                         <span th:text="${product.image}" style="font-size:0.8rem; color:var(--muted);"></span>
                     </div>
                 </div>
@@ -111,7 +117,7 @@
             <tr th:each="p : ${products}">
                 <td>
                     <div class="product-img">
-                        <img th:if="${p.image != null}" th:src="@{${p.image.startsWith('http') ? p.image : '/images/products/' + p.image}}" th:alt="${p.name}" onerror="this.onerror=null; this.src='https://placehold.co/50x50/111/c9a84c?text=Error';" style="width:100%; height:100%; object-fit:cover; border-radius:inherit; border:none;">
+                        <img th:if="${p.image != null}" th:src="@{${p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image}}" th:alt="${p.name}" onerror="this.onerror=null; this.src='https://placehold.co/50x50/111/c9a84c?text=Error';" style="width:100%; height:100%; object-fit:contain; border-radius:inherit; border:none; padding:2px;">
                         <span th:if="${p.image == null}" style="font-size:0.6rem; text-align:center;">No<br>Image</span>
                     </div>
                     <div class="product-info">
@@ -131,6 +137,7 @@
                                 th:data-cat="${p.category != null ? p.category.id : ''}"
                                 th:data-desc="${p.description}"
                                 th:data-stock="${p.stock}"
+                                th:data-image="${p.image}"
                                 onclick="editProduct(this)">
                             <i class="fa-solid fa-pen"></i>
                         </button>

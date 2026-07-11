@@ -19,7 +19,7 @@
                 <nav class="main-nav" id="mobile-nav" style="flex: 1; justify-content: flex-start;">
                     <button class="menu-close-btn" style="display: none;" id="mobile-menu-close"><i class="fa-solid fa-xmark"></i></button>
                     <a th:href="@{/products}" id="nav-linh-kien">Sản Phẩm</a>
-                    <a th:href="@{/build-pc-basic}" id="nav-build-pc">Build PC</a>
+                    <a th:href="@{/build-pc}" id="nav-build-pc">Build PC</a>
                     <a th:href="@{/promotions}" id="nav-khuyen-mai">Khuyến Mãi</a>
                 </nav>
                 
@@ -28,9 +28,9 @@
                 
                 <!-- Right Nav -->
                 <nav class="main-nav" style="flex: 1; justify-content: flex-end;">
-                    <a href="/products" id="nav-tin-tuc">Tin Tức</a>
+                    <a th:href="@{/news}" id="nav-tin-tuc">Tin Tức</a>
                     <a th:href="@{/support}" id="nav-lien-he">Hỗ Trợ</a>
-                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin</a>
+                    <a sec:authorize="hasAnyRole('ADMIN', 'STAFF')" th:href="@{/admin}">Admin</a>
                     <a sec:authorize="isAnonymous()" th:href="@{/auth/login}">Đăng Nhập</a>
                     <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-user-profile" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
                         <img th:if="${currentUser != null && currentUser.avatar != null && !currentUser.avatar.isEmpty()}" th:src="${currentUser.avatar}" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">

@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 import poly.edu.entity.User;
 import poly.edu.repository.UserRepository;
+import poly.edu.dao.RoleDAO;
+import poly.edu.dao.UserRoleDAO;
+import poly.edu.entity.Role;
+import poly.edu.entity.UserRole;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
@@ -18,6 +24,12 @@ public class AccountController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleDAO roleDAO;
+
+    @Autowired
+    private UserRoleDAO userRoleDAO;
 
 
     // ===============================
@@ -42,8 +54,10 @@ public class AccountController {
     // lưu user (thêm hoặc update)
     // ===============================
     @PostMapping("/save")
+    @Transactional
     public String saveUser(
-            @ModelAttribute User user
+            @ModelAttribute User user,
+            @RequestParam(value = "roleName", defaultValue = "USER") String roleName
     ){
 
         // nếu không nhập password thì giữ nguyên password cũ
@@ -67,7 +81,16 @@ public class AccountController {
             }
         }
 
-        userRepository.save(user);
+        user = userRepository.save(user);
+        
+        Role role = roleDAO.findByName(roleName);
+        if (role != null) {
+            userRoleDAO.deleteByUserId(user.getId());
+            UserRole userRole = new UserRole();
+            userRole.setUser(user);
+            userRole.setRole(role);
+            userRoleDAO.save(userRole);
+        }
 
         return "redirect:/admin/account";
     }
@@ -87,13 +110,15 @@ public class AccountController {
                 userRepository.findById(id);
 
         if(userOptional.isPresent()){
-
-            model.addAttribute(
-                    "user",
-                    userOptional.get()
-            );
-
+            User u = userOptional.get();
+            model.addAttribute("user", u);
+            String currentRole = "USER";
+            if(u.getUserRoles() != null && !u.getUserRoles().isEmpty()) {
+                currentRole = u.getUserRoles().get(0).getRole().getName();
+            }
+            model.addAttribute("currentRole", currentRole);
         }else{
+            model.addAttribute("currentRole", "USER");
 
             model.addAttribute(
                     "user",

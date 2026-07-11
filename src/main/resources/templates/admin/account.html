@@ -95,6 +95,15 @@
                     </div>
 
                     <div class="input-group">
+                        <label>Vai trò</label>
+                        <select name="roleName">
+                            <option value="USER" th:selected="${currentRole == 'USER'}">Khách hàng (USER)</option>
+                            <option value="STAFF" th:selected="${currentRole == 'STAFF'}">Nhân viên (STAFF)</option>
+                            <option value="ADMIN" th:selected="${currentRole == 'ADMIN'}">Quản trị viên (ADMIN)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
                         <label data-translate="admin-account-label-status">Trạng thái</label>
 
                         <select name="status">

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm/Sửa Tin Tức - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <!-- TinyMCE from cdnjs to avoid API key restrictions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        .form-container { background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 16px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 8px; color: #334155; }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: 'Outfit', sans-serif; }
+        .form-control:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; color: #fff; font-size: 15px; font-weight: 500; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #0ea5e9; }
+        .btn-primary:hover { background: #0284c7; }
+        .btn-secondary { background: #64748b; margin-right: 8px;}
+        .btn-secondary:hover { background: #475569; }
+        .check-wrap { display: flex; align-items: center; gap: 8px; }
+        .thumb-preview { margin-top: 10px; max-width: 200px; border-radius: 6px; }
+        .main-content { margin-left: 280px; flex: 1; padding: 3rem; overflow-x: hidden; }
+        .page-header { border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 2rem;}
+        /* Hide TinyMCE warnings */
+        .tox-notifications-container, .tox-notification, .tox-promotion { display: none !important; visibility: hidden !important; opacity: 0 !important; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h2 th:text="${news.id == null ? 'Đăng Bài Viết Mới' : 'Cập Nhật Bài Viết'}"></h2>
+        </div>
+        
+        <div class="form-container">
+            <form th:action="@{/admin/news/save}" method="post" enctype="multipart/form-data" th:object="${news}">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-group">
+                    <label>Tiêu đề bài viết</label>
+                    <input type="text" class="form-control" th:field="*{title}" required placeholder="Nhập tiêu đề...">
+                </div>
+
+                <div class="form-group">
+                    <label>Đường dẫn tĩnh (Slug) - Bỏ trống để tự tạo</label>
+                    <input type="text" class="form-control" th:field="*{slug}" placeholder="duong-dan-tinh">
+                </div>
+
+                <div class="form-group">
+                    <label>Ảnh bìa (Thumbnail)</label>
+                    <input type="file" name="thumbnailFile" class="form-control" accept="image/*">
+                    <div th:if="${news.thumbnail != null}">
+                        <img th:src="@{/uploads/news/{file}(file=${news.thumbnail})}" class="thumb-preview" alt="Preview"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tóm tắt (Mô tả ngắn)</label>
+                    <textarea class="form-control" th:field="*{summary}" rows="3" placeholder="Nhập tóm tắt bài viết..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung bài viết</label>
+                    <textarea id="news-editor" th:field="*{content}"></textarea>
+                </div>
+
+                <div class="form-group check-wrap">
+                    <input type="checkbox" th:field="*{published}" id="published">
+                    <label for="published" style="margin:0;">Hiển thị bài viết (Xuất bản)</label>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <a th:href="@{/admin/news}" class="btn btn-secondary">Hủy</a>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Lưu bài viết</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        tinymce.init({
+            selector: '#news-editor',
+            height: 500,
+            plugins: 'advlist autolink lists link image charmap preview anchor pagebreak',
+            toolbar_mode: 'floating',
+            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+            init_instance_callback: function (editor) {
+                // Tự động ẩn các cảnh báo của TinyMCE khi load xong
+                var elems = document.querySelectorAll('.tox-notifications-container');
+                elems.forEach(function(el) { el.style.display = 'none'; });
+            }
+        });
+    </script>
+</body>
+</html>

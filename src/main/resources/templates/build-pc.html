@@ -23,9 +23,9 @@
                 <p>Tự do lựa chọn linh kiện và xây dựng cấu hình PC theo nhu cầu của bạn</p>
             </div>
             <div class="build-actions-top">
-                <button class="btn-action-top"><i class="fa-solid fa-book-open"></i> Hướng dẫn build PC</button>
+                <button class="btn-action-top" onclick="showBuildGuide()"><i class="fa-solid fa-book-open"></i> Hướng dẫn build PC</button>
                 <button class="btn-action-top"><i class="fa-regular fa-bookmark"></i> Lưu cấu hình</button>
-                <button class="btn-action-top"><i class="fa-solid fa-share-nodes"></i> Chia sẻ cấu hình</button>
+                <button class="btn-action-top" onclick="shareBuild()"><i class="fa-solid fa-share-nodes"></i> Chia sẻ cấu hình</button>
                 <button class="btn-action-top btn-action-delete"><i class="fa-regular fa-trash-can"></i> Xóa tất cả</button>
             </div>
         </div>
@@ -34,6 +34,14 @@
         <div class="build-tabs">
             <button class="build-tab active"><i class="fa-solid fa-wrench"></i> TỰ BUILD PC</button>
             <button class="build-tab"><i class="fa-solid fa-box-open"></i> COMBO CÓ SẴN</button>
+        </div>
+
+        <!-- Combos (visible if Combo tab is active, for now showing to match screenshot) -->
+        <div class="combo-section">
+            <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 5px; text-transform: uppercase;">COMBO PC ĐỀ XUẤT</h2>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Các cấu hình tối ưu, sẵn sàng chiến mọi tựa game và công việc</p>
+            
+            <div class="combo-grid" id="combo-grid"></div>
         </div>
 
         <div class="build-layout-3col">
@@ -46,90 +54,7 @@
                     <div>Sản phẩm đã chọn</div>
                     <div>Giá</div>
                 </div>
-
-                <!-- CPU -->
-                <div class="comp-row">
-                    <div class="comp-cat">
-                        <div class="comp-cat-icon"><i class="fa-solid fa-microchip"></i></div>
-                        CPU
-                    </div>
-                    <div class="comp-info">
-                        <div class="comp-img"><img th:src="@{/images/placeholder.png}" alt="CPU"></div>
-                        <div class="comp-details">
-                            <div class="comp-name">Chưa chọn CPU</div>
-                            <div class="comp-desc">Vui lòng chọn CPU</div>
-                        </div>
-                    </div>
-                    <div class="comp-price-action">
-                        <div class="comp-price">0đ</div>
-                        <div class="comp-actions">
-                            <button class="btn-comp-action"><i class="fa-solid fa-plus"></i> Chọn</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mainboard -->
-                <div class="comp-row">
-                    <div class="comp-cat">
-                        <div class="comp-cat-icon"><i class="fa-solid fa-chess-board"></i></div>
-                        MAINBOARD
-                    </div>
-                    <div class="comp-info">
-                        <div class="comp-img"><img th:src="@{/images/placeholder.png}" alt="Main"></div>
-                        <div class="comp-details">
-                            <div class="comp-name">Chưa chọn Mainboard</div>
-                            <div class="comp-desc">Vui lòng chọn bo mạch chủ</div>
-                        </div>
-                    </div>
-                    <div class="comp-price-action">
-                        <div class="comp-price">0đ</div>
-                        <div class="comp-actions">
-                            <button class="btn-comp-action"><i class="fa-solid fa-plus"></i> Chọn</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RAM -->
-                <div class="comp-row">
-                    <div class="comp-cat">
-                        <div class="comp-cat-icon"><i class="fa-solid fa-memory"></i></div>
-                        RAM
-                    </div>
-                    <div class="comp-info">
-                        <div class="comp-img"><img th:src="@{/images/placeholder.png}" alt="RAM"></div>
-                        <div class="comp-details">
-                            <div class="comp-name">Chưa chọn RAM</div>
-                            <div class="comp-desc">Vui lòng chọn bộ nhớ trong</div>
-                        </div>
-                    </div>
-                    <div class="comp-price-action">
-                        <div class="comp-price">0đ</div>
-                        <div class="comp-actions">
-                            <button class="btn-comp-action"><i class="fa-solid fa-plus"></i> Chọn</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- VGA -->
-                <div class="comp-row">
-                    <div class="comp-cat">
-                        <div class="comp-cat-icon"><i class="fa-solid fa-tv"></i></div>
-                        VGA
-                    </div>
-                    <div class="comp-info">
-                        <div class="comp-img"><img th:src="@{/images/placeholder.png}" alt="VGA"></div>
-                        <div class="comp-details">
-                            <div class="comp-name">Chưa chọn VGA</div>
-                            <div class="comp-desc">Vui lòng chọn Card màn hình</div>
-                        </div>
-                    </div>
-                    <div class="comp-price-action">
-                        <div class="comp-price">0đ</div>
-                        <div class="comp-actions">
-                            <button class="btn-comp-action"><i class="fa-solid fa-plus"></i> Chọn</button>
-                        </div>
-                    </div>
-                </div>
+                <div id="build-components-list"></div>
 
                 <button class="btn-add-more"><i class="fa-solid fa-plus"></i> Thêm linh kiện khác (SSD, HDD, PSU, Case, Cooling...)</button>
             </div>
@@ -139,30 +64,38 @@
                 <!-- Compatibility -->
                 <div class="build-block">
                     <h3 class="build-block-title">KIỂM TRA TƯƠNG THÍCH</h3>
-                    <div class="compat-status" style="background: #f9f9f9; border-left: 4px solid #ccc; margin-bottom: 20px;">
-                        <div class="compat-icon" style="color: #666;"><i class="fa-solid fa-circle-info"></i></div>
-                        <div class="compat-title">Chưa đủ dữ liệu</div>
-                        <div class="compat-desc">Vui lòng chọn thêm linh kiện để kiểm tra tương thích.</div>
+                    <div class="compat-status">
+                        <div class="compat-icon"><i class="fa-solid fa-check"></i></div>
+                        <div class="compat-title">Tương thích hoàn toàn</div>
+                        <div class="compat-desc">Tất cả linh kiện đã được kiểm tra và tương thích với nhau.</div>
                     </div>
                     
                     <ul class="compat-list">
                         <li>
                             <div class="item"><i class="fa-solid fa-microchip"></i> CPU & Mainboard</div>
-                            <div class="status" style="color: #999;">Chờ kiểm tra</div>
+                            <div class="status">Tương thích</div>
                         </li>
                         <li>
                             <div class="item"><i class="fa-solid fa-memory"></i> RAM & Mainboard</div>
-                            <div class="status" style="color: #999;">Chờ kiểm tra</div>
+                            <div class="status">Tương thích</div>
                         </li>
                         <li>
                             <div class="item"><i class="fa-solid fa-tv"></i> VGA & Mainboard</div>
-                            <div class="status" style="color: #999;">Chờ kiểm tra</div>
+                            <div class="status">Tương thích</div>
                         </li>
                         <li>
                             <div class="item"><i class="fa-solid fa-plug"></i> PSU & Hệ thống</div>
-                            <div class="status" style="color: #999;">Chờ kiểm tra</div>
+                            <div class="status">Tương thích</div>
+                        </li>
+                        <li>
+                            <div class="item"><i class="fa-solid fa-maximize"></i> Kích thước & Hỗ trợ</div>
+                            <div class="status">Tương thích</div>
                         </li>
                     </ul>
+
+                    <div class="compat-alert">
+                        Cấu hình của bạn tương thích 100%.<br>Bạn có thể yên tâm sử dụng!
+                    </div>
                 </div>
 
                 <!-- Performance -->
@@ -170,11 +103,11 @@
                     <h3 class="build-block-title">HIỆU NĂNG DỰ KIẾN</h3>
                     
                     <div class="perf-score-container">
-                        <div class="perf-circle" style="border-color: #eee;">
+                        <div class="perf-circle">
                             <div class="perf-circle-content">
-                                <div class="perf-score" style="color: #999;">?</div>
+                                <div class="perf-score" id="main-perf-score">?</div>
                                 <div class="perf-max">/10</div>
-                                <div class="perf-label" style="color: #999;">Chưa có dữ liệu</div>
+                                <div class="perf-label" id="main-perf-label">...</div>
                             </div>
                         </div>
                     </div>
@@ -182,18 +115,23 @@
                     <div class="perf-bars">
                         <div class="perf-bar-row">
                             <div class="perf-bar-label">Gaming</div>
-                            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width: 0%;"></div></div>
-                            <div class="perf-bar-val">0/10</div>
+                            <div class="perf-bar-bg"><div class="perf-bar-fill" id="bar-gaming" style="width: 0%;"></div></div>
+                            <div class="perf-bar-val" id="val-gaming">0/10</div>
                         </div>
                         <div class="perf-bar-row">
                             <div class="perf-bar-label">Đồ họa</div>
-                            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width: 0%;"></div></div>
-                            <div class="perf-bar-val">0/10</div>
+                            <div class="perf-bar-bg"><div class="perf-bar-fill" id="bar-graphic" style="width: 0%;"></div></div>
+                            <div class="perf-bar-val" id="val-graphic">0/10</div>
                         </div>
                         <div class="perf-bar-row">
                             <div class="perf-bar-label">Làm việc</div>
-                            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width: 0%;"></div></div>
-                            <div class="perf-bar-val">0/10</div>
+                            <div class="perf-bar-bg"><div class="perf-bar-fill" id="bar-work" style="width: 0%;"></div></div>
+                            <div class="perf-bar-val" id="val-work">0/10</div>
+                        </div>
+                        <div class="perf-bar-row">
+                            <div class="perf-bar-label">Đa nhiệm</div>
+                            <div class="perf-bar-bg"><div class="perf-bar-fill" id="bar-multi" style="width: 0%;"></div></div>
+                            <div class="perf-bar-val" id="val-multi">0/10</div>
                         </div>
                     </div>
                 </div>
@@ -206,11 +144,11 @@
                     
                     <div class="overview-row">
                         <span class="label">Số lượng linh kiện</span>
-                        <span class="val">0</span>
+                        <span class="val">4</span>
                     </div>
                     <div class="overview-row">
                         <span class="label">Tổng tiền</span>
-                        <span class="val">0đ</span>
+                        <span class="val">35.960.000đ</span>
                     </div>
                     <div class="overview-row">
                         <span class="label">Tiết kiệm</span>
@@ -219,18 +157,29 @@
 
                     <div class="overview-row total">
                         <span class="label" style="font-weight: 700; color: #000; font-size: 16px;">TỔNG CỘNG</span>
-                        <span class="val">0đ</span>
+                        <span class="val">35.960.000đ</span>
                     </div>
 
-                    <button class="btn-add-cart-large" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fa-solid fa-cart-shopping"></i> THÊM VÀO GIỎ HÀNG</button>
-                    <button class="btn-buy-now" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fa-solid fa-cart-arrow-down"></i> MUA NGAY</button>
+                    <button class="btn-add-cart-large"><i class="fa-solid fa-cart-shopping"></i> THÊM VÀO GIỎ HÀNG</button>
+                    <button class="btn-buy-now"><i class="fa-solid fa-cart-arrow-down"></i> MUA NGAY</button>
                 </div>
 
                 <div class="build-block">
                     <h3 class="build-block-title">FPS TRONG GAME (DỰ KIẾN)</h3>
                     
-                    <div style="text-align: center; color: #999; padding: 20px 0; font-size: 13px;">
-                        Vui lòng chọn linh kiện (CPU, VGA) để xem dự kiến mức FPS trong các tựa game.
+                    <select class="fps-select">
+                        <option>Độ phân giải: 1920x1080 (Full HD)</option>
+                        <option>Độ phân giải: 2560x1440 (2K)</option>
+                        <option>Độ phân giải: 3840x2160 (4K)</option>
+                    </select>
+
+                    <div style="margin-bottom: 15px; position:relative;">
+                        <input type="text" id="steam-search-input" placeholder="Nhập tên game trên Steam..." style="width:100%; padding:10px; border:1px solid rgba(201,168,76,0.3); border-radius:4px; background:#fff; color:#000;">
+                        <div id="steam-search-dropdown" style="display:none; position:absolute; top:100%; left:0; width:100%; background:#fff; border:1px solid #ccc; z-index:99; max-height:250px; overflow-y:auto; box-shadow:0 5px 15px rgba(0,0,0,0.1);"></div>
+                    </div>
+                    
+                    <div class="fps-list" id="dynamic-fps-list">
+                        <!-- Dynamic Games will appear here -->
                     </div>
                 </div>
 
@@ -279,5 +228,29 @@
     <div th:replace="~{layout/footer :: footer}"></div>
     
     <script th:src="@{/js/script.js}"></script>
+
+    <!-- Product Selection Modal -->
+    <div id="productModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div class="modal-content" style="background-color:#fff; border-radius:8px; width:90%; max-width:800px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden;">
+            <div class="modal-header" style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                <h3 id="modalTitle" style="margin:0; font-size:18px; color:#000;">Chọn Linh Kiện</h3>
+                <button class="close-modal" onclick="closeModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#666;">&times;</button>
+            </div>
+            <div class="modal-search" style="padding:15px 20px; background:#f9f9f9; border-bottom:1px solid #eee;">
+                <input type="text" id="modalSearch" placeholder="Tìm kiếm sản phẩm..." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;" oninput="filterModalProducts()">
+            </div>
+            <div class="modal-body" id="modalProductList" style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:15px;">
+                <!-- Product Items -->
+            </div>
+        </div>
+    </div>
+
+
+    <script th:inline="javascript">
+        const productsData = /*[[${productsData}]]*/ {};
+        const combosData = /*[[${combosData}]]*/ [];
+    </script>
+
+    <script th:src="@{/js/build-pc-new.js}"></script>
 </body>
 </html>

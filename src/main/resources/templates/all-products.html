@@ -81,9 +81,9 @@
                     <div class="filter-section">
                         <h4>Khoảng giá</h4>
                         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
-                            <input type="number" name="min" th:value="${minPrice != null ? (minPrice < 0 ? 0 : minPrice.longValue()) : null}" placeholder="Từ..." style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;"/>
+                            <input type="number" name="min" th:value="${minPrice != null ? (minPrice < 0 ? 0 : minPrice.longValue()) : null}" placeholder="Từ..." style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;" min="0" />
                             <span>-</span>
-                            <input type="number" name="max" th:value="${maxPrice != null ? (maxPrice < 0 ? 0 : maxPrice.longValue()) : null}" placeholder="Đến..." style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;"/>
+                            <input type="number" name="max" th:value="${maxPrice != null ? (maxPrice < 0 ? 0 : maxPrice.longValue()) : null}" placeholder="Đến..." style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;" min="0" />
                         </div>
                     </div>
 

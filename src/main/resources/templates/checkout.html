@@ -2,256 +2,737 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thanh toán - LUXURY | PC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Thanh Toán - Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
-    
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/checkout.css}">
+    <style>
+        :root {
+            --primary: #0056b3;
+            --primary-hover: #004494;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --text-main: #333333;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Breadcrumb Stepper */
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .step.active {
+            color: var(--primary);
+        }
+        .step-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+        .step.active .step-circle {
+            background: var(--primary);
+            color: var(--white);
+        }
+        .step-line {
+            width: 100px;
+            height: 2px;
+            background: var(--border);
+            margin: 0 15px;
+        }
+        .step.active + .step-line {
+            background: var(--primary);
+        }
+
+        /* Layout */
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 65% 33%;
+            gap: 2%;
+            align-items: start;
+        }
+
+        .checkout-section {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group.full {
+            grid-column: span 2;
+        }
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+        .form-label span { color: var(--danger); }
+        .form-control {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .form-control:focus { border-color: var(--primary); }
+        select.form-control { cursor: pointer; }
+
+        /* Radio Blocks */
+        .radio-block {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .radio-block:hover { border-color: #cbd5e1; }
+        .radio-block input { margin-right: 12px; accent-color: var(--primary); width: 16px; height: 16px; }
+        .radio-content {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .radio-content i { font-size: 20px; color: var(--text-muted); }
+        .radio-price { font-weight: 600; color: var(--primary); }
+        .radio-block.active {
+            border-color: var(--primary);
+            background: #f0f7ff;
+        }
+
+        /* Order Summary */
+        .order-item {
+            display: flex;
+            gap: 12px;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .order-img {
+            width: 64px;
+            height: 64px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .order-img img { max-width: 90%; max-height: 90%; }
+        .order-info { flex: 1; display: flex; flex-direction: column; justify-content: center;}
+        .order-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .order-qty { font-size: 12px; color: var(--text-muted); }
+        .order-price { font-weight: 700; font-size: 14px; text-align: right; }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+        }
+        .summary-row.total {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .summary-row.total .price {
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        /* Voucher */
+        .voucher-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .voucher-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+        .btn-apply {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 0 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-apply:hover { background: #e5e7eb; }
+
+        /* Trust Box */
+        .trust-box {
+            background: #f0f7ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            font-size: 12px;
+        }
+        .trust-title {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .trust-list { list-style: none; }
+        .trust-list li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--text-main);
+        }
+        .trust-list li i { color: var(--success); margin-top: 2px; }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 16px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background: var(--primary-hover); }
+
+        /* Trust footer */
+        .checkout-footer {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border);
+            padding-top: 40px;
+            margin-top: 40px;
+        }
+        .cf-item { text-align: center; font-size: 13px; font-weight: 500; }
+        .cf-item i { font-size: 24px; margin-bottom: 8px; color: var(--text-muted); }
+    </style>
 </head>
 <body>
-    <!-- SUCCESS OVERLAY (Kept from old code for form submission success) -->
-    <div class="success-ov" id="suc" th:classappend="${param.success != null} ? 'show' : ''" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-        <div style="font-size:4rem; color:#10b981; margin-bottom:1rem;"><i class="fa-solid fa-circle-check"></i></div>
-        <h1 style="font-size:2.5rem; font-weight:700; color:#000; margin-bottom:10px;">ĐẶT HÀNG THÀNH CÔNG</h1>
-        <p style="color:#666; margin-bottom:2rem;">Cảm ơn bạn đã lựa chọn Luxury PC. Mã đơn hàng đã được ghi nhận!</p>
-        <button onclick="location.href='/products'" style="background:#000; color:#fff; border:none; padding:12px 30px; font-weight:600; cursor:pointer;">Tiếp tục mua sắm</button>
-    </div>
-    <script>
-        if (window.location.search.includes('success')) {
-            document.getElementById('suc').style.display = 'flex';
-        }
-    </script>
-
-    <!-- HEADER CONTAINER -->
     <div th:replace="~{layout/header :: header}"></div>
 
-    <div class="container" style="max-width: 1200px; margin-top: 20px;">
-        <!-- BREADCRUMB -->
-        <div class="breadcrumb" style="margin-bottom: 15px;">
-            <a th:href="@{/}">Trang chủ</a> > <a th:href="@{/cart}">Giỏ hàng</a> > <span>Thanh toán</span>
-        </div>
-
-        <h1 style="font-size: 24px; font-weight: 700; color: #000; text-transform: uppercase; margin-bottom: 5px;">THANH TOÁN</h1>
-        <p style="font-size: 14px; color: #666; margin-bottom: 40px;">Vui lòng kiểm tra thông tin và chọn phương thức thanh toán</p>
-
-        <!-- Progress Steps -->
-        <div class="checkout-steps">
-            <div class="step completed">
-                <div class="step-circle"><i class="fa-solid fa-check"></i></div>
-                <div class="step-label">Giỏ hàng</div>
-            </div>
-            <div class="step active">
-                <div class="step-circle">2</div>
-                <div class="step-label">Thông tin giao hàng</div>
-            </div>
-            <div class="step active">
-                <div class="step-circle">3</div>
-                <div class="step-label">Thanh toán</div>
-            </div>
+    <div class="checkout-container">
+        <!-- Stepper -->
+        <div class="stepper" th:if="${param.success == null}">
             <div class="step">
-                <div class="step-circle">4</div>
-                <div class="step-label">Hoàn thành</div>
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div> Giỏ hàng
+            </div>
+            <div class="step-line"></div>
+            <div class="step active">
+                <div class="step-circle">2</div> Thanh toán
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <div class="step-circle">3</div> Xác nhận
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <div class="step-circle">4</div> Hoàn thành
             </div>
         </div>
 
-        <form th:action="@{/checkout/submit}" method="POST" class="checkout-layout">
-            <input type="hidden" name="checkoutType" th:value="${checkoutType}" />
-            
-            <!-- Main Content -->
-            <div>
-                <!-- Block 2: Địa chỉ nhận hàng (Moved up for logical flow) -->
-                <div class="checkout-block" style="margin-bottom: 40px;">
-                    <div class="checkout-block-header" style="margin-bottom: 15px;">
-                        <h2>1. THÔNG TIN GIAO HÀNG</h2>
-                    </div>
-                    
-                    <div style="background: white; border: 1px solid #ddd; padding: 20px; border-radius: 4px;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                            <div>
-                                <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px;">Họ và tên *</label>
-                                <input type="text" name="fullName" required placeholder="Nguyễn Văn A" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px;">Số điện thoại *</label>
-                                <input type="tel" name="phone" required placeholder="0901 xxx xxx" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit;">
-                            </div>
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px;">Địa chỉ chi tiết *</label>
-                            <input type="text" name="address" required placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit;">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Block 1: Phương thức thanh toán -->
-                <div class="checkout-block">
-                    <div class="checkout-block-header">
-                        <h2>2. PHƯƠNG THỨC THANH TOÁN</h2>
-                    </div>
-                    
-                    <div class="payment-tabs" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
-                        <!-- Custom radio buttons styled as tabs -->
-                        <label class="payment-tab" style="cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #ddd; padding: 15px; text-align: center; font-weight: 600; border-radius: 4px; transition: all 0.2s;">
-                            <input type="radio" name="paymentMethod" value="COD" checked style="display:none;" onchange="updatePaymentTabUI(this)">
-                            <i class="fa-solid fa-truck"></i> Nhận hàng (COD)
-                        </label>
-                        <label class="payment-tab" style="cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #ddd; padding: 15px; text-align: center; font-weight: 600; border-radius: 4px; transition: all 0.2s;">
-                            <input type="radio" name="paymentMethod" value="VIETQR" style="display:none;" onchange="updatePaymentTabUI(this)">
-                            <i class="fa-solid fa-qrcode"></i> Chuyển khoản QR
-                        </label>
-                        <label class="payment-tab" style="cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #ddd; padding: 15px; text-align: center; font-weight: 600; border-radius: 4px; transition: all 0.2s;">
-                            <input type="radio" name="paymentMethod" value="INSTALLMENT" style="display:none;" onchange="updatePaymentTabUI(this)">
-                            <i class="fa-solid fa-percent"></i> Trả góp 0%
-                        </label>
-                    </div>
-
-                    <div id="payment-desc-cod" style="padding: 15px; background: #f9f9f9; border-left: 3px solid #000; font-size: 14px; margin-bottom: 20px;">
-                        Thanh toán bằng tiền mặt khi nhận hàng tại nhà.
-                    </div>
-                    
-                    <div id="payment-desc-qr" style="padding: 15px; background: #f9f9f9; border-left: 3px solid #000; font-size: 14px; margin-bottom: 20px; display: none;">
-                        Bạn sẽ được chuyển hướng đến trang thanh toán VietQR với mã QR tự động sau khi đặt hàng.
-                    </div>
-                    
-                    <div id="payment-desc-installment" style="padding: 15px; background: #f9f9f9; border-left: 3px solid #000; font-size: 14px; margin-bottom: 20px; display: none;">
-                        Thanh toán trả góp 0% qua thẻ tín dụng. Vui lòng làm theo hướng dẫn sau khi đặt hàng.
-                    </div>
-                </div>
+        <div class="stepper" th:if="${param.success != null}">
+            <div class="step">
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div> Giỏ hàng
             </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div> Thanh toán
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div> Xác nhận
+            </div>
+            <div class="step-line"></div>
+            <div class="step active">
+                <div class="step-circle">4</div> Hoàn thành
+            </div>
+        </div>
 
-            <!-- Right Sidebar -->
-            <div class="order-sidebar">
-                <div class="order-header">
-                    <h3>ĐƠN HÀNG CỦA BẠN <span th:text="'(' + ${cartItems.size()} + ' sản phẩm)'"></span></h3>
-                    <a th:href="@{/cart}" class="link-edit"><i class="fa-solid fa-pen"></i> Sửa giỏ hàng</a>
-                </div>
+        <form th:action="@{/checkout/submit}" method="post" id="checkoutForm" th:if="${param.success == null}">
+            <input type="hidden" name="checkoutType" th:value="${checkoutType}" />
+            <input type="hidden" name="address" id="hiddenAddress" value="" />
+            <input type="hidden" name="voucherCode" id="voucherCodeHidden" value="" />
 
-                <div class="order-items" style="max-height: 300px; overflow-y: auto;">
-                    <div class="order-item" th:each="item : ${cartItems}" style="display: flex; gap: 10px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
-                        <div class="order-item-img" style="width: 60px; height: 60px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: white;">
-                            <img th:if="${item.image != null and item.image != ''}" th:src="@{${item.image.startsWith('http') ? item.image : '/images/products/' + item.image}}" alt="Img" style="max-width: 100%; max-height: 100%;">
+            <div class="checkout-grid">
+                <!-- Left Column -->
+                <div>
+                    <!-- Shipping Info -->
+                    <div class="checkout-section">
+                        <div class="section-title">1. THÔNG TIN GIAO HÀNG</div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Họ và tên <span>*</span></label>
+                                <input type="text" class="form-control" name="fullName" required placeholder="Ví dụ: Nguyễn Văn A">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Số điện thoại <span>*</span></label>
+                                <input type="text" class="form-control" name="phone" required placeholder="0901 234 567">
+                            </div>
+                            <div class="form-group full">
+                                <label class="form-label">Địa chỉ cụ thể <span>*</span></label>
+                                <input type="text" class="form-control" id="addressLine" required placeholder="Số nhà, tên đường, phường/xã...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tỉnh / Thành phố <span>*</span></label>
+                                <select class="form-control" id="province" required>
+                                    <option value="">Chọn Tỉnh / Thành phố</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Quận / Huyện <span>*</span></label>
+                                <select class="form-control" id="district" required disabled>
+                                    <option value="">Chọn Quận / Huyện</option>
+                                </select>
+                            </div>
+                            <div class="form-group full">
+                                <label class="form-label">Phường / Xã <span>*</span></label>
+                                <select class="form-control" id="ward" required disabled>
+                                    <option value="">Chọn Phường / Xã</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="order-item-info" style="flex-grow: 1;">
-                            <div class="order-item-name" th:text="${item.name}" style="font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 5px;">Tên sản phẩm</div>
-                            <div class="order-item-qty" th:text="'x' + ${item.quantity}" style="font-size: 12px; color: #666;">x1</div>
+                    </div>
+
+                    <!-- Shipping Method -->
+                    <div class="checkout-section">
+                        <div class="section-title">2. PHƯƠNG THỨC VẬN CHUYỂN</div>
+                        
+                        <div id="shipping-methods-container">
+                            <div style="padding: 20px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 6px;">
+                                Vui lòng chọn Tỉnh / Thành phố để xem phí vận chuyển.
+                            </div>
                         </div>
-                        <div class="order-item-price" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + 'đ'" style="font-weight: 700; font-size: 14px;">Giá</div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="checkout-section">
+                        <div class="section-title">3. PHƯƠNG THỨC THANH TOÁN</div>
+                        
+                        <div class="form-grid">
+                            <label class="radio-block active" onclick="selectPayment(this)" style="margin-bottom:0;">
+                                <div class="radio-content">
+                                    <input type="radio" name="paymentMethod" value="COD" checked>
+                                    <i class="fa-solid fa-money-bill-wave"></i>
+                                    <div>Thanh toán khi nhận hàng (COD)</div>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-block" onclick="selectPayment(this)" style="margin-bottom:0;">
+                                <div class="radio-content">
+                                    <input type="radio" name="paymentMethod" value="VIETQR">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                    <div>Chuyển khoản ngân hàng</div>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-block" onclick="selectPayment(this)" style="margin-bottom:0;">
+                                <div class="radio-content">
+                                    <input type="radio" name="paymentMethod" value="INSTALLMENT">
+                                    <i class="fa-brands fa-cc-visa"></i>
+                                    <div>Thanh toán qua thẻ ATM/Visa</div>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-block" onclick="selectPayment(this)" style="margin-bottom:0;">
+                                <div class="radio-content">
+                                    <input type="radio" name="paymentMethod" value="EWALLET">
+                                    <i class="fa-solid fa-wallet"></i>
+                                    <div>Thanh toán qua Momo/ZaloPay</div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Voucher section -->
-                <div style="margin: 20px 0; border-top: 1px solid #eee; padding-top: 20px;">
-                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 10px; display: block;">Mã giảm giá</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="voucher-input" placeholder="Nhập mã giảm giá" style="flex: 1; padding: 10px; border: 1px solid #ddd; font-family: inherit;">
-                        <input type="hidden" name="voucherCode" id="voucher-code-hidden" value="" />
-                        <button type="button" onclick="applyVoucher()" style="background: #f0f0f0; border: 1px solid #ddd; padding: 0 15px; font-weight: 600; cursor: pointer;">Áp dụng</button>
-                    </div>
-                    <div id="voucher-result" style="font-size: 12px; margin-top: 5px; color: #ef4444; display: none;"></div>
-                </div>
+                <!-- Right Column (Summary) -->
+                <div>
+                    <div class="checkout-section" style="position: sticky; top: 20px;">
+                        <div class="section-title">ĐƠN HÀNG CỦA BẠN</div>
+                        
+                        <!-- Product List -->
+                        <div style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                            <div class="order-item" th:each="item : ${cartItems}">
+                                <div class="order-img">
+                                    <img th:if="${item.image != null and item.image != ''}" th:src="@{${item.image.startsWith('http') ? item.image : '/images/products/' + item.image}}" alt="Img">
+                                </div>
+                                <div class="order-info">
+                                    <div class="order-name" th:text="${item.name}">Product Name</div>
+                                    <div class="order-qty" th:text="'x' + ${item.quantity}">x1</div>
+                                </div>
+                                <div class="order-price" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</div>
+                            </div>
+                        </div>
 
-                <div class="order-summary-details">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px;">
-                        <span style="color: #666;">Tạm tính:</span>
-                        <strong th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px;">
-                        <span style="color: #666;">Phí vận chuyển:</span>
-                        <strong>Miễn phí</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #000;">
-                        <span style="font-weight: 700;">TỔNG CỘNG:</span>
-                        <strong style="color: #ef4444; font-size: 20px;" th:text="${#numbers.formatDecimal(finalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</strong>
+                        <!-- Summary -->
+                        <div class="summary-row">
+                            <span>Tạm tính (<span th:text="${cartItems.size()}">0</span> sản phẩm)</span>
+                            <span style="color: var(--text-main); font-weight:500;" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'" id="subTotalText">0đ</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Phí vận chuyển</span>
+                            <span style="color: var(--text-main); font-weight:500;" id="shippingFeeText">30.000đ</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Giảm giá</span>
+                            <span style="color: var(--danger); font-weight:500;" id="discountText">-0đ</span>
+                        </div>
+
+                        <!-- Voucher -->
+                        <div class="voucher-box">
+                            <input type="text" class="voucher-input" id="voucherInput" placeholder="Nhập mã giảm giá">
+                            <button type="button" class="btn-apply" onclick="applyVoucher()">ÁP DỤNG</button>
+                        </div>
+                        <div id="voucherMessage" style="font-size:12px; margin-top:-15px; margin-bottom:15px; display:none;"></div>
+
+                        <!-- Total -->
+                        <div class="summary-row total">
+                            <span>TỔNG THANH TOÁN</span>
+                            <div style="text-align:right;">
+                                <span class="price" id="finalTotalText">0đ</span><br>
+                                <span style="font-size:11px; color:var(--text-muted); font-weight:400;">Đã bao gồm VAT</span>
+                            </div>
+                        </div>
+
+                        <!-- Trust Box -->
+                        <div class="trust-box">
+                            <div class="trust-title"><i class="fa-solid fa-shield-halved"></i> Cam kết từ chúng tôi</div>
+                            <ul class="trust-list">
+                                <li><i class="fa-solid fa-check"></i> 100% sản phẩm chính hãng</li>
+                                <li><i class="fa-solid fa-check"></i> Giao nhanh trong 2h (Nội thành)</li>
+                                <li><i class="fa-solid fa-check"></i> Đổi mới trong 7 ngày nếu lỗi nhà sản xuất</li>
+                                <li><i class="fa-solid fa-check"></i> Thông tin bảo mật tuyệt đối</li>
+                            </ul>
+                        </div>
+
+                        <button type="submit" class="btn-submit" onclick="prepareSubmit(event)">THANH TOÁN</button>
                     </div>
                 </div>
-                
-                <button type="submit" style="width: 100%; background: #000; color: #fff; border: none; padding: 15px; font-size: 16px; font-weight: 700; margin-top: 20px; cursor: pointer; transition: background 0.2s;">ĐẶT HÀNG NGAY</button>
             </div>
         </form>
 
+
+        <!-- Success Message -->
+        <div class="checkout-section" th:if="${param.success != null}" style="text-align: center; padding: 60px 20px;">
+            <i class="fa-solid fa-circle-check" style="font-size: 64px; color: var(--success); margin-bottom: 20px;"></i>
+            <h2 style="margin-bottom: 15px; font-size: 28px; font-weight: 700;">ĐẶT HÀNG THÀNH CÔNG!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 16px;">
+                Cảm ơn bạn đã mua sắm tại Luxury PC. Đơn hàng của bạn đã được ghi nhận và đang được xử lý.<br>
+                Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.
+            </p>
+            <div>
+                <a href="/products" style="display: inline-block; padding: 12px 30px; background: var(--bg); color: var(--text-main); text-decoration: none; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); margin-right: 15px; transition: 0.2s;">Tiếp tục mua sắm</a>
+                <a href="/profile?tab=orders" style="display: inline-block; padding: 12px 30px; background: var(--primary); color: white; text-decoration: none; font-weight: 600; border-radius: 6px; transition: 0.2s;">Theo dõi đơn hàng</a>
+            </div>
+        </div>
+
+        <!-- Trust Footer -->
+        <div class="checkout-footer">
+            <div class="cf-item">
+                <i class="fa-solid fa-medal"></i>
+                <div>CAM KẾT CHÍNH HÃNG<br><span style="font-size:11px;color:var(--text-muted);">100% sản phẩm chính hãng</span></div>
+            </div>
+            <div class="cf-item">
+                <i class="fa-solid fa-rotate-left"></i>
+                <div>ĐỔI TRẢ DỄ DÀNG<br><span style="font-size:11px;color:var(--text-muted);">Đổi mới trong 7 ngày</span></div>
+            </div>
+            <div class="cf-item">
+                <i class="fa-solid fa-truck-fast"></i>
+                <div>GIAO HÀNG TOÀN QUỐC<br><span style="font-size:11px;color:var(--text-muted);">Nhận hàng và thanh toán</span></div>
+            </div>
+            <div class="cf-item">
+                <i class="fa-solid fa-headset"></i>
+                <div>HỖ TRỢ 24/7<br><span style="font-size:11px;color:var(--text-muted);">Hỗ trợ khách hàng mọi lúc</span></div>
+            </div>
+        </div>
     </div>
 
-    <!-- FOOTER CONTAINER -->
     <div th:replace="~{layout/footer :: footer}"></div>
-    
-    <script>
-        // Init payment tabs style
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkedRadio = document.querySelector('input[name="paymentMethod"]:checked');
-            if(checkedRadio) {
-                updatePaymentTabUI(checkedRadio);
-            }
-        });
 
-        function updatePaymentTabUI(radio) {
-            // Reset styles
-            document.querySelectorAll('.payment-tab').forEach(label => {
-                label.style.borderColor = '#ddd';
-                label.style.background = '#fff';
-            });
-            // Highlight selected
-            radio.parentElement.style.borderColor = '#000';
-            radio.parentElement.style.background = '#f9f9f9';
+    <!-- Data passing -->
+    <script th:inline="javascript">
+        const baseTotal = /*[[${totalPrice}]]*/ 0;
+    </script>
+
+    <script>
+        // State
+        let currentShipping = 30000;
+        let currentDiscount = 0;
+
+        // Number formatter
+        const formatter = new Intl.NumberFormat('vi-VN');
+
+        function updateTotal() {
+            document.getElementById('shippingFeeText').innerText = formatter.format(currentShipping) + 'đ';
+            document.getElementById('discountText').innerText = '-' + formatter.format(currentDiscount) + 'đ';
             
-            // Show description
-            document.getElementById('payment-desc-cod').style.display = 'none';
-            document.getElementById('payment-desc-qr').style.display = 'none';
-            document.getElementById('payment-desc-installment').style.display = 'none';
-            
-            if(radio.value === 'COD') document.getElementById('payment-desc-cod').style.display = 'block';
-            if(radio.value === 'VIETQR') document.getElementById('payment-desc-qr').style.display = 'block';
-            if(radio.value === 'INSTALLMENT') document.getElementById('payment-desc-installment').style.display = 'block';
+            const finalTotal = baseTotal + currentShipping - currentDiscount;
+            document.getElementById('finalTotalText').innerText = formatter.format(Math.max(0, finalTotal)) + 'đ';
         }
 
-        function applyVoucher() {
-            const val = document.getElementById('voucher-input').value;
-            const res = document.getElementById('voucher-result');
+        // Initialize Total
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchShippingMethods('');
+            loadProvinces();
+        });
+
+        // UI toggles
+        function selectShipping(el, fee) {
+            document.querySelectorAll('input[name="shippingMethodDummy"]').forEach(r => {
+                r.checked = false;
+                r.closest('.radio-block').classList.remove('active');
+            });
+            el.querySelector('input').checked = true;
+            el.classList.add('active');
+            currentShipping = fee;
+            updateTotal();
+        }
+
+        function selectPayment(el) {
+            document.querySelectorAll('input[name="paymentMethod"]').forEach(r => {
+                r.closest('.radio-block').classList.remove('active');
+            });
+            el.querySelector('input').checked = true;
+            el.classList.add('active');
+        }
+
+        
+        // Dynamic Shipping Logic
+        async function fetchShippingMethods(provinceCode) {
+            const container = document.getElementById('shipping-methods-container');
+            container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--primary);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tính phí vận chuyển...</div>';
+            
+            try {
+                const res = await fetch(`/api/shipping/calculate?provinceCode=${provinceCode || ''}`);
+                const methods = await res.json();
+                
+                container.innerHTML = '';
+                methods.forEach((m, index) => {
+                    const isActive = index === 0;
+                    if(isActive) currentShipping = m.fee;
+                    
+                    const el = document.createElement('label');
+                    el.className = `radio-block ${isActive ? 'active' : ''}`;
+                    el.onclick = function() { selectShipping(this, m.fee); };
+                    
+                    el.innerHTML = `
+                        <div class="radio-content">
+                            <input type="radio" name="shippingMethodDummy" ${isActive ? 'checked' : ''}>
+                            <i class="${m.icon}"></i>
+                            <div>
+                                ${m.name}<br>
+                                <span style="font-size:12px; color:#6b7280; font-weight:400;">${m.description}</span>
+                            </div>
+                        </div>
+                        <div class="radio-price">${m.fee === 0 ? 'Miễn phí' : formatter.format(m.fee) + 'đ'}</div>
+                    `;
+                    container.appendChild(el);
+                });
+                updateTotal();
+            } catch(e) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--danger);">Lỗi tải phương thức vận chuyển</div>';
+            }
+        }
+
+// Address API
+        async function loadProvinces() {
+            try {
+                const res = await fetch('https://provinces.open-api.vn/api/p/');
+                const data = await res.json();
+                const sel = document.getElementById('province');
+                data.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.code;
+                    opt.text = p.name;
+                    sel.appendChild(opt);
+                });
+            } catch(e) { console.error('Error loading provinces', e); }
+        }
+
+        document.getElementById('province').addEventListener('change', async function() {
+            const val = this.value;
+            fetchShippingMethods(val);
+            const distSel = document.getElementById('district');
+            const wardSel = document.getElementById('ward');
+            distSel.innerHTML = '<option value="">Chọn Quận / Huyện</option>';
+            wardSel.innerHTML = '<option value="">Chọn Phường / Xã</option>';
             
             if(!val) {
-                res.style.display = 'block';
-                res.style.color = '#ef4444';
-                res.innerText = 'Vui lòng nhập mã voucher';
+                distSel.disabled = true;
+                wardSel.disabled = true;
                 return;
             }
             
-            fetch('/api/voucher/validate?code=' + encodeURIComponent(val), {
-                method: 'POST'
-            })
-            .then(response => response.json())
+            try {
+                const res = await fetch(`https://provinces.open-api.vn/api/p/${val}?depth=2`);
+                const data = await res.json();
+                distSel.disabled = false;
+                data.districts.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.code;
+                    opt.text = d.name;
+                    distSel.appendChild(opt);
+                });
+            } catch(e) { console.error(e); }
+        });
+
+        document.getElementById('district').addEventListener('change', async function() {
+            const val = this.value;
+            const wardSel = document.getElementById('ward');
+            wardSel.innerHTML = '<option value="">Chọn Phường / Xã</option>';
+            
+            if(!val) {
+                wardSel.disabled = true;
+                return;
+            }
+            
+            try {
+                const res = await fetch(`https://provinces.open-api.vn/api/d/${val}?depth=2`);
+                const data = await res.json();
+                wardSel.disabled = false;
+                data.wards.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w.code;
+                    opt.text = w.name;
+                    wardSel.appendChild(opt);
+                });
+            } catch(e) { console.error(e); }
+        });
+
+        // Voucher logic
+        function applyVoucher() {
+            const code = document.getElementById('voucherInput').value.trim();
+            const msg = document.getElementById('voucherMessage');
+            if(!code) {
+                msg.style.display = 'block';
+                msg.style.color = 'var(--danger)';
+                msg.innerText = 'Vui lòng nhập mã giảm giá';
+                return;
+            }
+
+            fetch('/api/voucher/validate?code=' + encodeURIComponent(code), { method: 'POST' })
+            .then(res => res.json())
             .then(data => {
-                res.style.display = 'block';
-                if (data.success) {
-                    res.style.color = '#22c55e';
-                    res.innerText = data.message;
-                    document.getElementById('voucher-code-hidden').value = val;
+                msg.style.display = 'block';
+                if(data.success) {
+                    msg.style.color = 'var(--success)';
+                    msg.innerText = data.message;
+                    document.getElementById('voucherCodeHidden').value = code;
                     
-                    // Update prices on UI if available
-                    if (data.newTotal !== undefined) {
-                        const finalPriceElements = document.querySelectorAll('strong[style="color: #ef4444; font-size: 20px;"]');
-                        if (finalPriceElements.length > 0) {
-                            finalPriceElements[0].innerText = new Intl.NumberFormat('vi-VN').format(data.newTotal) + 'đ';
-                        }
-                    }
-                    if (typeof showToast === 'function') {
-                        showToast(data.message);
+                    if(data.newTotal !== undefined) {
+                        currentDiscount = baseTotal - data.newTotal;
+                        updateTotal();
                     }
                 } else {
-                    res.style.color = '#ef4444';
-                    res.innerText = data.message || 'Mã voucher không hợp lệ';
-                    document.getElementById('voucher-code-hidden').value = '';
+                    msg.style.color = 'var(--danger)';
+                    msg.innerText = data.message || 'Mã không hợp lệ';
+                    document.getElementById('voucherCodeHidden').value = '';
+                    currentDiscount = 0;
+                    updateTotal();
                 }
             })
-            .catch(error => {
-                res.style.display = 'block';
-                res.style.color = '#ef4444';
-                res.innerText = 'Lỗi kết nối khi kiểm tra mã voucher';
-                console.error(error);
+            .catch(e => {
+                msg.style.display = 'block';
+                msg.style.color = 'var(--danger)';
+                msg.innerText = 'Lỗi kết nối';
             });
         }
+
+        // Prepare submit
+        function prepareSubmit(e) {
+            const form = document.getElementById('checkoutForm');
+            if (!form.checkValidity()) {
+                // let HTML5 handle validation UI
+                return;
+            }
+            
+            // Build full address
+            const line = document.getElementById('addressLine').value;
+            const pSel = document.getElementById('province');
+            const dSel = document.getElementById('district');
+            const wSel = document.getElementById('ward');
+            
+            const pName = pSel.options[pSel.selectedIndex].text;
+            const dName = dSel.options[dSel.selectedIndex].text;
+            const wName = wSel.options[wSel.selectedIndex].text;
+            
+            const fullAddress = `${line}, ${wName}, ${dName}, ${pName}`;
+            document.getElementById('hiddenAddress').value = fullAddress;
+        }
     </script>
-    <script th:src="@{/js/script.js}"></script>
 </body>
 </html>

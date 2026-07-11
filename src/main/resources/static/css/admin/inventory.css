@@ -10,9 +10,8 @@
         .main-content { margin-left: 280px; flex: 1; padding: 3rem; }
         .table-card { background: var(--dark); padding: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; }
         .table-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; padding: 1.2rem; background: rgba(0,0,0,0.2); }
-        td { padding: 1.2rem; font-size: 0.85rem; border-bottom: 1px solid #e2e8f0; }
+
+
         .stock-input { background: var(--mid); color: var(--white); border: 1px solid rgba(201,168,76,0.2); padding: 0.4rem; border-radius: 4px; width: 80px; outline: none; }
         .type-select { background: var(--mid); color: var(--white); border: 1px solid rgba(201,168,76,0.2); padding: 0.4rem; border-radius: 4px; margin: 0 0.5rem; }
         button.adj-btn { background: var(--gold); color: var(--black); border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }

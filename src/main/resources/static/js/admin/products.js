@@ -127,6 +127,11 @@ function editProduct(btn) {
     if (descEl) descEl.value = desc || '';
     document.getElementById('stock').value = stock || '0';
     
+    const imageInput = document.getElementById('image');
+    if (imageInput) imageInput.value = btn.getAttribute('data-image') || '';
+    const imageUrlInput = document.getElementById('imageUrl');
+    if (imageUrlInput) imageUrlInput.value = btn.getAttribute('data-image') || '';
+    
     // Update header
     const h2 = document.querySelector('.card-header h2');
     if (h2) h2.innerText = 'Cập Nhật Sản Phẩm';

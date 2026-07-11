@@ -21,9 +21,11 @@
                 <h1 class="text-gradient" data-translate="admin-dashboard-title">Bảng Điều Khiển</h1>
                 <p><span data-translate="admin-dashboard-subtitle">Tổng quan tình hình kinh doanh tháng </span><span id="current-month"></span></p>
             </div>
-            <div class="user-info">
+            <div class="user-info" style="display: flex; align-items: center;">
                 <i class="fa-solid fa-user-shield"></i>
-                <span th:text="${#authentication.name}">Admin</span>
+                <span th:text="${#authentication.name}" style="margin-left: 8px;">Admin</span>
+                <span sec:authorize="hasRole('ADMIN')" style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
+                <span sec:authorize="hasRole('STAFF')" style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
             </div>
         </div>
 
@@ -63,7 +65,7 @@
                     <div class="chart-container">
                         <div class="table-h" style="display: flex; justify-content: space-between; align-items: center;">
                             <div><i class="fa-solid fa-chart-area"></i> <span data-translate="admin-dashboard-chart-title">Biểu Đồ Doanh Thu</span></div>
-                            <select id="daysFilter" class="form-select" style="width: auto; background: var(--dark); color: #fff; border: 1px solid rgba(201,168,76,0.2); padding: 5px 10px; border-radius: 4px; outline: none; font-family: inherit; font-size: 0.9rem;" onchange="window.loadDashboardStats(this.value)">
+                            <select id="daysFilter" class="form-select" style="width: auto; background: var(--dark); color: var(--admin-text-main); border: 1px solid rgba(201,168,76,0.2); padding: 5px 10px; border-radius: 4px; outline: none; font-family: inherit; font-size: 0.9rem;" onchange="window.loadDashboardStats(this.value)">
                                 <option value="7">7 Ngày Qua</option>
                                 <option value="15">15 Ngày Qua</option>
                                 <option value="30" selected>30 Ngày Qua</option>
@@ -194,8 +196,8 @@
             let chartValues = dailyRevenue.length > 0 ? dailyRevenue.map(item => item.revenue) : [0, 0, 0, 0, 0];
             
             let gradient = context2d.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(201, 168, 76, 0.6)');
-            gradient.addColorStop(1, 'rgba(201, 168, 76, 0.05)');
+            gradient.addColorStop(0, 'rgba(0, 102, 204, 0.4)');
+            gradient.addColorStop(1, 'rgba(0, 102, 204, 0.05)');
 
             revenueChartInstance = new Chart(context2d, {
                 type: 'line',
@@ -204,11 +206,11 @@
                     datasets: [{
                         label: 'Doanh Thu (VNĐ)',
                         data: chartValues,
-                        borderColor: '#c9a84c',
+                        borderColor: '#0066CC',
                         backgroundColor: gradient,
                         borderWidth: 3,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#c9a84c',
+                        pointBorderColor: '#0066CC',
                         pointBorderWidth: 2,
                         pointRadius: 4,
                         fill: true,
@@ -223,12 +225,12 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#888' }
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { color: '#666' }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#888' }
+                            ticks: { color: '#666' }
                         }
                     }
                 }
@@ -297,7 +299,7 @@
                         legend: { 
                             position: 'right', 
                             labels: { 
-                                color: '#fff',
+                                color: '#333',
                                 boxWidth: 12,
                                 padding: 12,
                                 font: { size: 11 }
@@ -344,8 +346,8 @@
                     responsive: true,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', stepSize: 1 } },
-                        x: { grid: { display: false }, ticks: { color: '#888' } }
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#666', stepSize: 1 } },
+                        x: { grid: { display: false }, ticks: { color: '#666' } }
                     }
                 }
             });

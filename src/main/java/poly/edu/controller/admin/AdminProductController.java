@@ -27,7 +27,11 @@ public class AdminProductController {
 
     @GetMapping("")
     public String list(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+        java.util.List<Product> prods = productService.getAllProducts();
+        for(Product p : prods) {
+            System.out.println("DEBUG PROD: " + p.getId() + " - " + p.getImage());
+        }
+        model.addAttribute("products", prods);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("product", new Product());
         return "admin/products";
@@ -50,10 +54,12 @@ public class AdminProductController {
             String fileName = uploadService.save(imageFile, "products");
             product.setImage(fileName);
         } else if (product.getId() != null) {
-            // Nếu không chọn ảnh mới khi sửa, giữ nguyên ảnh cũ
+            // Nếu không upload ảnh mới, kiểm tra xem có nhập URL không
             Product existing = productService.getProductById(product.getId());
             if (existing != null) {
-                product.setImage(existing.getImage());
+                if (product.getImage() == null || product.getImage().trim().isEmpty()) {
+                    product.setImage(existing.getImage());
+                }
                 product.setCreatedAt(existing.getCreatedAt());
             }
         }

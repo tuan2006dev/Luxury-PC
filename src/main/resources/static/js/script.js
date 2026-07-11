@@ -103,3 +103,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 5000);
 });
 
+
+
+// Prevent negative numbers and scientific notation globally on number inputs
+document.addEventListener('keydown', function(e) {
+    if (e.target && e.target.type === 'number') {
+        if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
+            e.preventDefault();
+        }
+    }
+});
+
+document.addEventListener('input', function(e) {
+    if (e.target && e.target.type === 'number') {
+        if (e.target.value < 0) {
+            e.target.value = '';
+        }
+    }
+});

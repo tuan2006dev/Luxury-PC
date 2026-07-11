@@ -40,14 +40,15 @@ public class SecurityConfig {
                 .securityContext(context -> context
                         .securityContextRepository(securityContextRepository()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/users/**", "/admin/roles/**", "/admin/account/**", "/admin/account").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp", "/api/forgot-password/**",
                                 "/api/voucher/**", "/api/cart", "/api/products", "/api/products/**", "/api/build/**", "/build-pc/**", "/api/tickets/**",
-                                "/api/reviews/**", "/api/wishlist/**", "/api/address/**", "/api/translations/**",
-                                "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/error",
+                                "/api/reviews/**", "/api/wishlist/**", "/api/address/**", "/api/translations/**", "/api/shipping/**",
+                                "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/error", "/testdb",
                                 "/profile", "/checkout", "/checkout/**", "/cart", "/cart/**", "/payment/vietqr",
                                 "/products", "/products/**", "/product/**",
-                                "/promotions",
+                                "/promotions", "/news", "/news/**",
                                 "/support", "/support/**", "/chat-socket", "/chat-socket/**")
                                 .permitAll()
                         .anyRequest().authenticated())

@@ -97,6 +97,14 @@ public class AdminDataLoader implements CommandLineRunner {
             admin = userDAO.save(admin);
         }
 
+        Role staffRole = roleDAO.findByName("STAFF");
+        if (staffRole == null) {
+            staffRole = new Role();
+            staffRole.setName("STAFF");
+            roleDAO.save(staffRole);
+            System.out.println(">>> Created STAFF role");
+        }
+
         Role adminRole = roleDAO.findByName("ADMIN");
         if (adminRole != null) {
             boolean hasAdminRole = userRoleDAO.findByUserId(admin.getId()).stream()

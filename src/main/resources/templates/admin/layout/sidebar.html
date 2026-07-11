@@ -44,9 +44,21 @@
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="userMenu">
-                <a href="/admin/account" id="nav-account" data-translate="admin-sidebar-users">Người dùng</a>
+                <a href="/admin/account" id="nav-account" data-translate="admin-sidebar-users" sec:authorize="hasRole('ADMIN')">Người dùng</a>
                 <a href="/admin/vouchers" id="nav-vouchers" data-translate="admin-sidebar-vouchers">Voucher</a>
                 <a href="/admin/tickets" id="nav-tickets" data-translate="admin-sidebar-tickets">Hỗ Trợ (Tickets)</a>
+            </div>
+        </div>
+
+        <div class="menu-group">
+            <div class="menu-title" onclick="toggleSidebarMenu('contentMenu', this)">
+                <div style="display:flex; align-items:center;">
+                    <i class="fa-solid fa-newspaper main-icon"></i> <span>Nội Dung</span>
+                </div>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+            </div>
+            <div class="sub-menu" id="contentMenu">
+                <a href="/admin/news" id="nav-news">Tin tức</a>
             </div>
         </div>
     
@@ -74,4 +86,9 @@
     
     
     <script th:src="@{/js/cursor.js}"></script>
+    <style>
+        body { display: block !important; height: auto !important; overflow: auto !important; }
+        .main-content { overflow-y: visible !important; height: auto !important; }
+        .add-form-container:not(.active) { display: none !important; }
+    </style>
 </div>
