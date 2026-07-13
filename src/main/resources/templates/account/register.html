@@ -52,7 +52,7 @@
             <div class="auth-box reset-form">
                 <h2 class="auth-box-title">ĐĂNG KÝ</h2>
                 <p class="auth-box-subtitle">Tạo tài khoản mới để bắt đầu mua sắm cùng chúng tôi</p>
-                <form id="form-register" action="/register" method="POST" onsubmit="submitRegister(event)" novalidate>
+                <form id="form-register" action="/api/register" method="POST" onsubmit="submitRegister(event)" novalidate>
                     <div class="form-row">
                         <div th:replace="~{custominput/components :: textInput(label='Họ *', name='firstName', type='text', placeholder='Nguyễn', required=true, id=null, value=null)}"></div>
                         <div th:replace="~{custominput/components :: textInput(label='Tên *', name='lastName', type='text', placeholder='Văn A', required=true, id=null, value=null)}"></div>
