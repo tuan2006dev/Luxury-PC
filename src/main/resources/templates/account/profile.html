@@ -1687,7 +1687,9 @@
         const panel = document.getElementById('profile-edit-panel');
         const button = document.getElementById('profile-edit-toggle');
         if (!panel || !button) return;
-        const shouldShow = typeof force === 'boolean' ? force : !panel.classList.contains('show');
+        const isHidden = panel.style.display === 'none' || panel.style.display === '';
+        const shouldShow = typeof force === 'boolean' ? force : isHidden;
+        panel.style.display = shouldShow ? 'block' : 'none';
         panel.classList.toggle('show', shouldShow);
         button.setAttribute('aria-expanded', String(shouldShow));
         button.textContent = shouldShow ? 'Ẩn Form' : 'Chỉnh Sửa';
@@ -1700,7 +1702,9 @@
         const panel = document.getElementById('password-change-panel');
         const button = document.getElementById('btn-toggle-password-form');
         if (!panel || !button) return;
-        const shouldShow = typeof force === 'boolean' ? force : !panel.classList.contains('show');
+        const isHidden = panel.style.display === 'none' || panel.style.display === '';
+        const shouldShow = typeof force === 'boolean' ? force : isHidden;
+        panel.style.display = shouldShow ? 'block' : 'none';
         panel.classList.toggle('show', shouldShow);
         button.setAttribute('aria-expanded', String(shouldShow));
         button.textContent = shouldShow ? 'Ẩn Form' : 'Đổi Mật Khẩu';
