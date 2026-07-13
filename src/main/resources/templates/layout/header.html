@@ -30,7 +30,8 @@
                 <nav class="main-nav" style="flex: 1; justify-content: flex-end;">
                     <a th:href="@{/news}" id="nav-tin-tuc">Tin Tức</a>
                     <a th:href="@{/support}" id="nav-lien-he">Hỗ Trợ</a>
-                    <a sec:authorize="hasAnyRole('ADMIN', 'STAFF')" th:href="@{/admin}">Admin</a>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin</a>
+                    <a sec:authorize="hasRole('STAFF')" th:href="@{/admin}">Staff</a>
                     <a sec:authorize="isAnonymous()" th:href="@{/auth/login}">Đăng Nhập</a>
                     <a sec:authorize="isAuthenticated()" th:href="@{/profile}" class="nav-user-profile" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
                         <img th:if="${currentUser != null && currentUser.avatar != null && !currentUser.avatar.isEmpty()}" th:src="${currentUser.avatar}" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
