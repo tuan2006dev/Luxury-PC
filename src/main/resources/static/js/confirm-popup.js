@@ -2,7 +2,7 @@
  * Custom Luxury Confirm Popup Integration
  * Luxury PC — Nơi công nghệ gặp gỡ sự xa xỉ
  */
-(function() {
+(function () {
     // 1. Tự động chèn CSS stylesheet vào head nếu chưa có
     if (!document.getElementById('confirm-popup-style')) {
         const link = document.createElement('link');
@@ -23,7 +23,8 @@
         overlay.innerHTML = `
             <div class="confirm-box">
                 <div class="confirm-icon">⚠️</div>
-                <div class="confirm-msg" id="confirm-msg">Bạn có chắc chắn muốn thực hiện thao tác này?</div>
+                <div class="confirm-msg" id="confirm-popup-msg">Bạn có chắc chắn muốn thực hiện thao tác này?</div>
+                <div class="confirm-msg" id="confirm-popup-msgotp">Đã gửi mã xác nhận (OTP) vui lòng kiểm tra gmail, kể cả thư rác</div>
                 <div class="confirm-buttons">
                     <button type="button" class="confirm-btn confirm-btn-no" id="confirm-btn-no">Hủy</button>
                     <button type="button" class="confirm-btn confirm-btn-yes" id="confirm-btn-yes">Xác nhận</button>
@@ -40,13 +41,13 @@
     }
 
     // 3. Hàm hiển thị popup trả về Promise
-    window.showConfirm = function(message) {
+    window.showConfirm = function (message) {
         return new Promise((resolve) => {
             // Đảm bảo HTML đã được inject
             injectHTML();
 
             const overlay = document.getElementById('confirm-overlay');
-            const msgEl = document.getElementById('confirm-msg');
+            const msgEl = document.getElementById('confirm-popup-msg');
             const yesBtn = document.getElementById('confirm-btn-yes');
             const noBtn = document.getElementById('confirm-btn-no');
 
@@ -71,7 +72,7 @@
                 noBtn.removeEventListener('click', onNo);
                 document.removeEventListener('keydown', onKeyDown);
                 overlay.removeEventListener('click', onOverlayClick);
-                
+
                 // Trả cursor về trạng thái bình thường và gỡ bỏ event hover
 
                 // Ẩn hẳn display: none sau khi kết thúc transition (250ms)
@@ -103,7 +104,7 @@
                 }
             }
 
-    // Gắn sự kiện
+            // Gắn sự kiện
             yesBtn.addEventListener('click', onYes);
             noBtn.addEventListener('click', onNo);
             document.addEventListener('keydown', onKeyDown);
@@ -112,12 +113,12 @@
     };
 
     // Hàm hiển thị Alert popup
-    window.showAlert = function(message, isSuccess = true) {
+    window.showAlert = function (message, isSuccess = true) {
         return new Promise((resolve) => {
             injectHTML();
 
             const overlay = document.getElementById('confirm-overlay');
-            const msgEl = document.getElementById('confirm-msg');
+            const msgEl = document.getElementById('confirm-popup-msg');
             const yesBtn = document.getElementById('confirm-btn-yes');
             const noBtn = document.getElementById('confirm-btn-no');
 
@@ -127,8 +128,10 @@
                 return;
             }
 
-            msgEl.innerHTML = message;
-            
+            if (message !== undefined && message !== null && message !== '') {
+                msgEl.innerHTML = message;
+            }
+
             // Tùy chỉnh icon
             const iconEl = overlay.querySelector('.confirm-icon');
             if (iconEl) {
@@ -147,7 +150,7 @@
             yesBtn.style.color = '#fff';
 
             overlay.style.display = 'flex';
-            overlay.offsetHeight; 
+            overlay.offsetHeight;
             overlay.classList.add('show');
             yesBtn.focus();
 
@@ -156,7 +159,7 @@
                 yesBtn.removeEventListener('click', onYes);
                 document.removeEventListener('keydown', onKeyDown);
                 overlay.removeEventListener('click', onOverlayClick);
-                
+
                 setTimeout(() => {
                     if (!overlay.classList.contains('show')) {
                         overlay.style.display = 'none';
@@ -194,9 +197,9 @@
 
     // 4. Đánh chặn (Intercept) toàn cục các thuộc tính inline onclick="return confirm('...')" và onsubmit="return confirm('...')"
     // Sử dụng capture phase (tham số thứ 3 là true) để bắt sự kiện trước khi inline attribute thực thi.
-    
+
     // Đánh chặn Click
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         const target = e.target.closest('a[onclick*="confirm"], button[onclick*="confirm"], input[onclick*="confirm"]');
         if (target) {
             const onclickAttr = target.getAttribute('onclick');
@@ -233,7 +236,7 @@
     }, true);
 
     // Đánh chặn Form Submit
-    document.addEventListener('submit', function(e) {
+    document.addEventListener('submit', function (e) {
         const form = e.target;
         const onsubmitAttr = form.getAttribute('onsubmit');
         if (onsubmitAttr && onsubmitAttr.includes('confirm(')) {
