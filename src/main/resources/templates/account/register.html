@@ -138,7 +138,11 @@
                 .then(res => res.text())
                 .then(data => {
                     if (data === 'success') {
-                        window.showAlert(null, true);
+                        window.showAlert({
+                            message: 'Đã gửi mã xác nhận (OTP)',
+                            subMessage: 'Vui lòng kiểm tra email của bạn (kể cả trong thư rác).',
+                            isSuccess: true
+                        });
 
                         // Countdown
                         let timeLeft = 60;

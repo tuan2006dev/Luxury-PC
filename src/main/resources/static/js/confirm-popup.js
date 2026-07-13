@@ -24,7 +24,7 @@
             <div class="confirm-box">
                 <div class="confirm-icon">⚠️</div>
                 <div class="confirm-msg" id="confirm-popup-msg">Bạn có chắc chắn muốn thực hiện thao tác này?</div>
-                <div class="confirm-msg" id="confirm-popup-msgotp">Đã gửi mã xác nhận (OTP) vui lòng kiểm tra gmail, kể cả thư rác</div>
+                <div class="confirm-sub-msg" id="confirm-popup-sub-msg" style="display: none; font-size: 14px; margin-top: 8px; color: #94a3b8; text-align: center; line-height: 1.5;"></div>
                 <div class="confirm-buttons">
                     <button type="button" class="confirm-btn confirm-btn-no" id="confirm-btn-no">Hủy</button>
                     <button type="button" class="confirm-btn confirm-btn-yes" id="confirm-btn-yes">Xác nhận</button>
@@ -113,12 +113,32 @@
     };
 
     // Hàm hiển thị Alert popup
-    window.showAlert = function (message, isSuccess = true) {
+    window.showAlert = function (options, isSuccess = true) {
+        let message = '';
+        let subMessage = '';
+        let customIcon = null;
+        let customIconColor = null;
+        let yesText = 'Đóng';
+        let yesBg = null;
+
+        if (typeof options === 'object' && options !== null) {
+            message = options.message || '';
+            subMessage = options.subMessage || '';
+            isSuccess = options.isSuccess !== undefined ? options.isSuccess : true;
+            customIcon = options.icon || null;
+            customIconColor = options.iconColor || null;
+            yesText = options.btnText || 'Đóng';
+            yesBg = options.btnBg || null;
+        } else {
+            message = options;
+        }
+
         return new Promise((resolve) => {
             injectHTML();
 
             const overlay = document.getElementById('confirm-overlay');
             const msgEl = document.getElementById('confirm-popup-msg');
+            const subMsgEl = document.getElementById('confirm-popup-sub-msg');
             const yesBtn = document.getElementById('confirm-btn-yes');
             const noBtn = document.getElementById('confirm-btn-no');
 
@@ -128,25 +148,37 @@
                 return;
             }
 
-            if (message !== undefined && message !== null && message !== '') {
-                msgEl.innerHTML = message;
+            msgEl.innerHTML = message;
+
+            if (subMsgEl) {
+                if (subMessage) {
+                    subMsgEl.innerHTML = subMessage;
+                    subMsgEl.style.display = 'block';
+                } else {
+                    subMsgEl.style.display = 'none';
+                }
             }
 
             // Tùy chỉnh icon
             const iconEl = overlay.querySelector('.confirm-icon');
             if (iconEl) {
-                if (isSuccess) {
-                    iconEl.textContent = '✅';
-                    iconEl.style.color = '#10b981';
+                if (customIcon) {
+                    iconEl.textContent = customIcon;
+                    iconEl.style.color = customIconColor || '';
                 } else {
-                    iconEl.textContent = '❌';
-                    iconEl.style.color = '#ef4444';
+                    if (isSuccess) {
+                        iconEl.textContent = '✅';
+                        iconEl.style.color = '#10b981';
+                    } else {
+                        iconEl.textContent = '❌';
+                        iconEl.style.color = '#ef4444';
+                    }
                 }
             }
 
             noBtn.style.display = 'none'; // Ẩn nút hủy
-            yesBtn.textContent = 'Đóng';
-            yesBtn.style.background = isSuccess ? '#10b981' : '#000';
+            yesBtn.textContent = yesText;
+            yesBtn.style.background = yesBg ? yesBg : (isSuccess ? '#10b981' : '#000');
             yesBtn.style.color = '#fff';
 
             overlay.style.display = 'flex';
@@ -168,6 +200,10 @@
                         yesBtn.textContent = 'Xác nhận';
                         yesBtn.style.background = '';
                         yesBtn.style.color = '';
+                        if (subMsgEl) {
+                            subMsgEl.style.display = 'none';
+                            subMsgEl.innerHTML = '';
+                        }
                         if (iconEl) {
                             iconEl.textContent = '⚠️';
                             iconEl.style.color = '';
