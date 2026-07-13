@@ -73,15 +73,11 @@
                         </div>
                     </div>
                     <div class="cart-item-actions">
-                        <div class="quantity-box">
-                            <button type="button" th:onclick="'updateQty(' + ${item.id} + ', -1)'">-</button>
-                            <input type="number" class="qty-input" th:id="'qty-' + ${item.id}" th:value="${item.quantity}" min="1" th:onchange="'manualQtyChange(' + ${item.id} + ', this, ' + ${item.quantity} + ')'">
-                            <button type="button" th:onclick="'updateQty(' + ${item.id} + ', 1)'">+</button>
-                        </div>
+                        <div th:replace="~{customnumber/components :: quantityBox(itemId=${item.id}, quantity=${item.quantity}, maxVal=null, onClickMinus='updateQty(' + ${item.id} + ', -1)', onClickPlus='updateQty(' + ${item.id} + ', 1)', onChange='manualQtyChange(' + ${item.id} + ', this, ' + ${item.quantity} + ')', isLarge=false)}"></div>
                         <div class="item-total-price" style="font-weight: 600; color: #ef4444; margin-right: 15px;">
                             <span class="item-total" th:id="'total-' + ${item.id}"></span>
                         </div>
-                        <button class="btn-remove" th:onclick="'removeItem(' + ${item.id} + ')'"><i class="fa-regular fa-trash-can"></i> Xóa</button>
+                        <button th:replace="~{customnumber/components :: removeBtn(itemId=${item.id})}"></button>
                     </div>
                 </div>
 

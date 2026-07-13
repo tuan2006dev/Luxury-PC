@@ -70,23 +70,23 @@ public class AuthController {
 
         // Simple email regex for KH_DK_04
         if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            return "redirect:/auth/login?invalidEmail=true";
+            return "redirect:/auth/register?invalidEmail=true";
         }
 
         if(userRepo.findByEmail(email).isPresent()) {
-            return "redirect:/auth/login?exist=true";
+            return "redirect:/auth/register?exist=true";
         }
         
         if(confirmPassword != null && !password.equals(confirmPassword)) {
-            return "redirect:/auth/login?mismatch=true";
+            return "redirect:/auth/register?mismatch=true";
         }
         
         if(!emailService.verifyOtp(email, otp)) {
-            return "redirect:/auth/login?invalidOtp=true";
+            return "redirect:/auth/register?invalidOtp=true";
         }
         
         if(phone != null && !phone.trim().isEmpty() && userRepo.findByPhone(phone.trim()).isPresent()) {
-            return "redirect:/auth/login?phoneExist=true";
+            return "redirect:/auth/register?phoneExist=true";
         }
 
         User user = new User();

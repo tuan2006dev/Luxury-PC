@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
-    
+
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         .fp-container {
@@ -18,24 +19,28 @@
             border: 1px solid #eee;
             border-radius: 8px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
+
         .fp-icon {
             font-size: 40px;
             color: #000;
             margin-bottom: 20px;
         }
+
         .fp-title {
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 10px;
         }
+
         .fp-sub {
             font-size: 14px;
             color: #666;
             margin-bottom: 30px;
             line-height: 1.5;
         }
+
         .btn-black {
             width: 100%;
             padding: 12px;
@@ -49,15 +54,18 @@
             margin-top: 15px;
             transition: background 0.2s;
         }
+
         .btn-black:hover {
             background: #333;
         }
+
         .otp-row {
             display: flex;
             justify-content: space-between;
             gap: 10px;
             margin-bottom: 20px;
         }
+
         .otp-input {
             width: 50px;
             height: 50px;
@@ -67,6 +75,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         .security-banner {
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
@@ -80,31 +89,39 @@
         }
     </style>
 </head>
+
 <body>
     <!-- NAVBAR (Simple) -->
-    <div style="background: #000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
-        <a th:href="@{/}" style="color: #fff; font-size: 24px; font-weight: 700; text-decoration: none;">LUXURY <span style="font-weight: 300;">PC</span></a>
-        <a th:href="@{/auth/login}" style="color: #fff; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Quay lại Đăng Nhập</a>
+    <div
+        style="background: #000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <a th:href="@{/}" style="color: #fff; font-size: 24px; font-weight: 700; text-decoration: none;">LUXURY <span
+                style="font-weight: 300;">PC</span></a>
+        <a th:href="@{/auth/login}" style="color: #fff; text-decoration: none; font-size: 14px;"><i
+                class="fa-solid fa-arrow-left"></i> Quay lại Đăng Nhập</a>
     </div>
 
     <div class="fp-container">
-        
+
         <!-- OTP Input Form -->
         <form th:action="@{/auth/login-2fa/verify}" method="post" id="2fa-login-form">
             <div class="fp-icon"><i class="fa-solid fa-shield-halved"></i></div>
             <h1 class="fp-title">Xác Minh Đăng Nhập</h1>
-            <p class="fp-sub">Chúng tôi đã gửi mã xác minh 6 chữ số đến email liên kết tài khoản của bạn: <strong th:text="${email}">you@email.com</strong>. Mã có hiệu lực trong <strong id="otp-timer">05:00</strong>.</p>
-            
+            <p class="fp-sub">Chúng tôi đã gửi mã xác minh 6 chữ số đến email liên kết tài khoản của bạn: <strong
+                    th:text="${email}">you@email.com</strong>. Mã có hiệu lực trong <strong
+                    id="otp-timer">05:00</strong>.</p>
+
             <div class="security-banner">
                 <i class="fa-solid fa-lock" style="font-size: 24px; color: #16a34a;"></i>
                 <div>
-                    <h4 style="margin: 0 0 5px; font-size: 14px; font-weight: 700; color: #166534;">Bảo Mật 2 Lớp (2FA) Đang Bật</h4>
-                    <p style="margin: 0; font-size: 12px; color: #15803d; line-height: 1.4;">Để đảm bảo an toàn cho tài khoản, hệ thống yêu cầu xác minh bằng mã OTP được gửi qua email.</p>
+                    <h4 style="margin: 0 0 5px; font-size: 14px; font-weight: 700; color: #166534;">Bảo Mật 2 Lớp (2FA)
+                        Đang Bật</h4>
+                    <p style="margin: 0; font-size: 12px; color: #15803d; line-height: 1.4;">Để đảm bảo an toàn cho tài
+                        khoản, hệ thống yêu cầu xác minh bằng mã OTP được gửi qua email.</p>
                 </div>
             </div>
 
             <script th:inline="javascript">
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     /*<![CDATA[*/
                     const hasError = /*[[${param.error != null}]]*/ false;
                     /*]]>*/
@@ -115,36 +132,46 @@
             </script>
 
             <div class="otp-row">
-                <input type="text" class="otp-input" id="otp1" maxlength="1" inputmode="numeric" oninput="otpNext(this,'','otp2')" required>
-                <input type="text" class="otp-input" id="otp2" maxlength="1" inputmode="numeric" oninput="otpNext(this,'otp1','otp3')" onkeydown="otpBack(event,this,'otp1')" required>
-                <input type="text" class="otp-input" id="otp3" maxlength="1" inputmode="numeric" oninput="otpNext(this,'otp2','otp4')" onkeydown="otpBack(event,this,'otp2')" required>
-                <input type="text" class="otp-input" id="otp4" maxlength="1" inputmode="numeric" oninput="otpNext(this,'otp3','otp5')" onkeydown="otpBack(event,this,'otp3')" required>
-                <input type="text" class="otp-input" id="otp5" maxlength="1" inputmode="numeric" oninput="otpNext(this,'otp4','otp6')" onkeydown="otpBack(event,this,'otp4')" required>
-                <input type="text" class="otp-input" id="otp6" maxlength="1" inputmode="numeric" oninput="otpNext(this,'otp5','')" onkeydown="otpBack(event,this,'otp5')" required>
+                <input type="text" class="otp-input" id="otp1" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'','otp2')" required>
+                <input type="text" class="otp-input" id="otp2" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp1','otp3')" onkeydown="otpBack(event,this,'otp1')" required>
+                <input type="text" class="otp-input" id="otp3" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp2','otp4')" onkeydown="otpBack(event,this,'otp2')" required>
+                <input type="text" class="otp-input" id="otp4" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp3','otp5')" onkeydown="otpBack(event,this,'otp3')" required>
+                <input type="text" class="otp-input" id="otp5" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp4','otp6')" onkeydown="otpBack(event,this,'otp4')" required>
+                <input type="text" class="otp-input" id="otp6" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp5','')" onkeydown="otpBack(event,this,'otp5')" required>
             </div>
 
             <!-- Hidden composite field to submit 6 digit code -->
             <input type="hidden" name="otp" id="final-otp-value" />
 
             <button type="submit" class="btn-black">Xác Nhận Đăng Nhập</button>
-            
+
             <div style="font-size: 13px; color: #666; margin-top: 15px;">
-                Chưa nhận được mã? <button type="button" id="btn-resend-otp" onclick="resend2faOtp()" style="background:none; border:none; color:#000; font-weight:600; cursor:pointer;">Gửi lại mã</button>
+                Chưa nhận được mã? <button type="button" id="btn-resend-otp" onclick="resend2faOtp()"
+                    style="background:none; border:none; color:#000; font-weight:600; cursor:pointer;">Gửi lại
+                    mã</button>
             </div>
         </form>
 
     </div>
 
     <!-- Toast container -->
-    <div id="toast" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;"></div>
+    <div id="toast"
+        style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;">
+    </div>
 
     <script th:inline="javascript">
         /* TOAST */
-        function toast(msg) { 
-            const el = document.getElementById('toast'); 
-            el.textContent = msg; 
-            el.style.display = 'block'; 
-            setTimeout(() => el.style.display = 'none', 3500); 
+        function toast(msg) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3500);
         }
 
         /* OTP HELPERS */
@@ -171,15 +198,15 @@
             const m = Math.floor(rem / 60).toString().padStart(2, '0');
             const s = (rem % 60).toString().padStart(2, '0');
             lbl.textContent = m + ':' + s;
-            if (--rem < 0) { 
-                clearInterval(timerInt); 
+            if (--rem < 0) {
+                clearInterval(timerInt);
                 lbl.textContent = 'Hết hạn';
                 toast('Mã OTP đã hết hạn, vui lòng quay lại đăng nhập lại.');
             }
         }, 1000);
 
         // Form submit listener
-        document.getElementById('2fa-login-form').addEventListener('submit', function(e) {
+        document.getElementById('2fa-login-form').addEventListener('submit', function (e) {
             updateFinalOtp();
             const finalVal = document.getElementById('final-otp-value').value;
             if (finalVal.length < 6) {
@@ -197,15 +224,16 @@
             btn.disabled = true;
             toast('Đang gửi mã OTP mới đến email của bạn...');
             fetch('/auth/login-2fa/resend', { method: 'POST' })
-            .then(r => r.text())
-            .then(res => {
-                toast(res);
-                rem = 300; 
-            }).catch(e => {
-                toast('Có lỗi xảy ra, vui lòng thử lại.');
-                btn.disabled = false;
-            });
+                .then(r => r.text())
+                .then(res => {
+                    toast(res);
+                    rem = 300;
+                }).catch(e => {
+                    toast('Có lỗi xảy ra, vui lòng thử lại.');
+                    btn.disabled = false;
+                });
         }
     </script>
 </body>
+
 </html>

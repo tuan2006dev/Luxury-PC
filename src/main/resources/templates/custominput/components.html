@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <!-- Standard Text Input Fragment -->
+    <div th:fragment="textInput(label, name, type, placeholder, required, id, value)" class="floating-group">
+        <input th:type="${type != null ? type : 'text'}" th:name="${name}" th:id="${id}" th:value="${value}"
+            th:required="${required}" placeholder=" ">
+        <label th:text="${label}">Label</label>
+        <span class="error-message"></span>
+    </div>
+
+    <!-- OTP Input Fragment -->
+    <div th:fragment="otpInput(label, name, placeholder, required, onClickSend)" class="form-group" style="margin-bottom: 20px;">
+        <div class="otp-group" style="display: flex; gap: 10px; width: 100%;">
+            <div class="floating-group" style="flex: 1; margin-bottom: 0;">
+                <input type="text" th:name="${name}" th:required="${required}" placeholder=" ">
+                <label th:text="${label}">Mã xác nhận (otp) *</label>
+            </div>
+            <button type="button" class="btn-otp" th:attr="onclick=${onClickSend}">GỬI MÃ</button>
+        </div>
+        <span class="error-message"></span>
+    </div>
+
+</body>
+
+</html>

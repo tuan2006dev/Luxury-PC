@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
@@ -7,25 +8,10 @@
     <title th:text="${news.title} + ' - Luxury PC'">Chi Tiết Tin Tức</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/index.css}">
-    <style>
-        .article-container { max-width: 800px; margin: 40px auto; padding: 0 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 40px; }
-        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #64748b; margin-bottom: 20px; }
-        .breadcrumb a { color: #0ea5e9; text-decoration: none; transition: color 0.2s; }
-        .breadcrumb a:hover { color: #0284c7; }
-        .article-title { font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 15px; line-height: 1.3; }
-        .article-meta { display: flex; align-items: center; gap: 20px; font-size: 14px; color: #64748b; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0; margin-bottom: 30px; }
-        .article-meta span { display: flex; align-items: center; gap: 6px; }
-        .article-summary { font-size: 18px; font-weight: 500; color: #475569; line-height: 1.6; margin-bottom: 30px; font-style: italic; border-left: 4px solid #0ea5e9; padding-left: 15px; background: #f8fafc; padding: 15px 15px 15px 20px; border-radius: 0 8px 8px 0;}
-        .article-thumb { width: 100%; max-height: 500px; object-fit: cover; border-radius: 8px; margin-bottom: 30px; }
-        .article-content { font-size: 16px; color: #334155; line-height: 1.8; }
-        .article-content h2, .article-content h3 { color: #0f172a; margin-top: 30px; margin-bottom: 15px; }
-        .article-content p { margin-bottom: 15px; }
-        .article-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 20px 0; }
-        .article-content a { color: #0ea5e9; text-decoration: none; }
-        .article-content a:hover { text-decoration: underline; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/news.css}">
 </head>
+
 <body>
     <div th:replace="~{layout/header :: header}"></div>
 
@@ -37,15 +23,19 @@
         </div>
 
         <h1 class="article-title" th:text="${news.title}">Tiêu đề bài viết</h1>
-        
+
         <div class="article-meta">
-            <span><i class="fa-regular fa-calendar"></i> Đăng lúc: <span th:text="${#dates.format(news.createdAt, 'dd/MM/yyyy HH:mm')}"></span></span>
-            <span><i class="fa-regular fa-user"></i> Tác giả: <span th:text="${news.author != null ? news.author.fullName : 'Ẩn danh'}"></span></span>
+            <span><i class="fa-regular fa-calendar"></i> Đăng lúc: <span
+                    th:text="${#dates.format(news.createdAt, 'dd/MM/yyyy HH:mm')}"></span></span>
+            <span><i class="fa-regular fa-user"></i> Tác giả: <span
+                    th:text="${news.author != null ? news.author.fullName : 'Ẩn danh'}"></span></span>
         </div>
 
-        <div th:if="${news.summary != null && !news.summary.isEmpty()}" class="article-summary" th:text="${news.summary}"></div>
+        <div th:if="${news.summary != null && !news.summary.isEmpty()}" class="article-summary"
+            th:text="${news.summary}"></div>
 
-        <img th:if="${news.thumbnail != null}" th:src="@{/uploads/news/{file}(file=${news.thumbnail})}" class="article-thumb" alt="Thumbnail">
+        <img th:if="${news.thumbnail != null}" th:src="@{/uploads/news/{file}(file=${news.thumbnail})}"
+            class="article-thumb" alt="Thumbnail">
 
         <div class="article-content" th:utext="${news.content}">
             Nội dung bài viết sẽ hiển thị ở đây
@@ -54,4 +44,5 @@
 
     <div th:replace="~{layout/footer :: footer}"></div>
 </body>
+
 </html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - LUXURY | PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+
+    <link rel="stylesheet" th:href="@{/css/style.css(v=2.0)}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v=2.0)}">
+</head>
+
+<body>
+    <!-- HEADER CONTAINER -->
+    <div th:replace="~{layout/header :: header}"></div>
+
+    <div class="container" style="padding-top: 20px;">
+        <!-- BREADCRUMB -->
+        <div class="breadcrumb" style="margin-bottom: 20px;">
+            <a th:href="@{/}">Trang chủ</a> > <span>Đăng nhập</span>
+        </div>
+
+        <h1 class="page-title">ĐĂNG NHẬP</h1>
+        <p class="page-subtitle">Đăng nhập để trải nghiệm mua sắm nhanh chóng và nhận các ưu đãi dành cho riêng bạn.</p>
+
+        <!-- Notification section -->
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                /*<![CDATA[*/
+                const hasError = /*[[${param.error != null}]]*/ false;
+                /*]]>*/
+
+                if (hasError) {
+                    const showFailurePopup = () => {
+                        if (typeof window.showAlert === 'function') {
+                            window.showAlert('Đăng nhập thất bại!', false);
+                        } else {
+                            alert('Đăng nhập thất bại!');
+                        }
+                    };
+
+                    if (document.readyState === 'complete') {
+                        showFailurePopup();
+                    } else {
+                        window.addEventListener('load', showFailurePopup);
+                    }
+                }
+            });
+        </script>
+
+        <!-- AUTH FORM LAYOUT -->
+        <div class="auth-layout" style="grid-template-columns: 1fr; max-width: 600px; margin: 0 auto 60px auto;">
+
+            <!-- CỘT ĐĂNG NHẬP -->
+            <div class="auth-box reset-form">
+                <h2 class="auth-box-title">ĐĂNG NHẬP</h2>
+                <p class="auth-box-subtitle">Chào mừng bạn trở lại !!</p>
+                <form action="/login" method="POST" novalidate onsubmit="return validateLogin(event)">
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Email hoặc Tên đăng nhập *', name='username', type='text', placeholder='Email hoặc username', required=true, id=null, value=null)}">
+                    </div>
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Mật khẩu *', name='password', type='password', placeholder='••••••••', required=true, id=null, value=null)}">
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember-me"> Ghi nhớ đăng nhập
+                        </label>
+                        <a th:href="@{/auth/forgot-password}" style="color: #666; text-decoration: underline;">Quên mật
+                            khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary">ĐĂNG NHẬP</button>
+
+                    <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                        Chưa có tài khoản? <a th:href="@{/auth/register}"
+                            style="color: var(--accent-blue); font-weight: 600; text-decoration: underline;">Đăng ký
+                            ngay</a>
+                    </div>
+
+                    <div class="or-divider"><span>HOẶC</span></div>
+
+                    <div class="social-login">
+                        <a href="/oauth2/authorization/google" class="btn btn-outline">
+                            <i class="fa-brands fa-google" style="color: #DB4437; font-size: 18px;"></i> Google
+                        </a>
+                        <a href="/oauth2/authorization/facebook" class="btn btn-outline">
+                            <i class="fa-brands fa-facebook" style="color: #1877F2; font-size: 18px;"></i> Facebook
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER CONTAINER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+
+    <script>
+        function validateLogin(e) {
+            // Reset previous invalid states and error text
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.innerText = '';
+            });
+            document.querySelectorAll('.reset-form input').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+
+            const usernameInput = document.querySelector('input[name="username"]');
+            const pwInput = document.querySelector('input[name="password"]');
+            let isValid = true;
+
+            if (!usernameInput.value.trim()) {
+                usernameInput.classList.add('is-invalid');
+                const errSpan = usernameInput.closest('.form-group').querySelector('.error-message');
+                if (errSpan) {
+                    errSpan.innerText = 'Vui lòng nhập Email hoặc Tên đăng nhập!';
+                    errSpan.style.display = 'block';
+                }
+                isValid = false;
+            }
+
+            if (!pwInput.value) {
+                pwInput.classList.add('is-invalid');
+                const errSpan = pwInput.closest('.form-group').querySelector('.error-message');
+                if (errSpan) {
+                    errSpan.innerText = 'Vui lòng nhập Mật khẩu!';
+                    errSpan.style.display = 'block';
+                }
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script th:src="@{/js/script.js}"></script>
+</body>
+
+</html>

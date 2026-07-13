@@ -26,7 +26,12 @@ public class AuthPageController {
 
     @GetMapping("/auth/login")
     public String showAuthPage() {
-        return "account/auth"; // file auth.html
+        return "account/login"; // file login.html
+    }
+
+    @GetMapping("/auth/register")
+    public String showRegisterPage() {
+        return "account/register"; // file register.html
     }
 
     @GetMapping("/auth/forgot-password")
