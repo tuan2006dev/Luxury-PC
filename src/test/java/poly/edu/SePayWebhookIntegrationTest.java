@@ -46,19 +46,22 @@ class SePayWebhookIntegrationTest {
     @Test
     void validWebhookMarksOrderPaidAndDuplicateDoesNotProcessAgain() throws Exception {
         Order order = saveVietQrOrder(500_000D);
-        String body = payload(9_001L, order.getOrderCode(), order.getOrderCode(), 500_000L);
+        String body = payload(9_001L, paymentCode(order), "SEVQR " + paymentCode(order), 500_000L);
 
         sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
         sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
 
         assertEquals("DA_THANH_TOAN", orderDAO.findById(order.getId()).orElseThrow().getStatus());
+        SePayTransaction transaction = transactionRepository.findBySepayTransactionId(9_001L).orElseThrow();
+        assertEquals(paymentCode(order), transaction.getPaymentCode());
+        assertEquals(order.getOrderCode(), transaction.getOrderCode());
         assertEquals(1L, transactionRepository.count());
     }
 
     @Test
     void webhookUsesStrictPaymentCodeFromContentWhenCodeIsMissing() throws Exception {
         Order order = saveVietQrOrder(750_000D);
-        String body = payload(9_002L, null, "Thanh toan " + order.getOrderCode(), 750_000L);
+        String body = payload(9_002L, null, "SEVQR " + paymentCode(order), 750_000L);
 
         sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
 
@@ -68,7 +71,7 @@ class SePayWebhookIntegrationTest {
     @Test
     void webhookWithNonExactAmountIsRecordedButDoesNotMarkOrderPaid() throws Exception {
         Order order = saveVietQrOrder(500_000D);
-        String body = payload(9_003L, order.getOrderCode(), order.getOrderCode(), 500_001L);
+        String body = payload(9_003L, paymentCode(order), "SEVQR " + paymentCode(order), 500_001L);
 
         sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
 
@@ -78,9 +81,21 @@ class SePayWebhookIntegrationTest {
     }
 
     @Test
+    void webhookWithUnknownPaymentCodeIsRejected() throws Exception {
+        String paymentCode = "DH999999";
+        String body = payload(9_004L, paymentCode, "SEVQR " + paymentCode, 500_000L);
+
+        sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
+
+        SePayTransaction transaction = transactionRepository.findBySepayTransactionId(9_004L).orElseThrow();
+        assertEquals(paymentCode, transaction.getPaymentCode());
+        assertEquals("REJECTED_ORDER_NOT_FOUND", transaction.getProcessingStatus());
+    }
+
+    @Test
     void invalidSignatureIsRejectedBeforeTransactionIsStored() throws Exception {
         Order order = saveVietQrOrder(500_000D);
-        String body = payload(9_004L, order.getOrderCode(), order.getOrderCode(), 500_000L);
+        String body = payload(9_005L, paymentCode(order), "SEVQR " + paymentCode(order), 500_000L);
         String timestamp = String.valueOf(Instant.now().getEpochSecond());
 
         mockMvc.perform(post("/api/sepay/webhook")
@@ -127,6 +142,10 @@ class SePayWebhookIntegrationTest {
                 + "}";
     }
 
+    private String paymentCode(Order order) {
+        return "DH" + order.getId();
+    }
+
     private Order saveVietQrOrder(Double amount) {
         Order order = new Order();
         order.setFullName("SePay QA");
@@ -136,7 +155,7 @@ class SePayWebhookIntegrationTest {
         order.setPaymentMethod("VIETQR");
         order.setStatus("CHO_XAC_NHAN_THANH_TOAN");
         order = orderDAO.saveAndFlush(order);
-        order.setOrderCode("DH" + order.getId());
+        order.setOrderCode("Luxury-" + order.getId());
         return orderDAO.saveAndFlush(order);
     }
 }

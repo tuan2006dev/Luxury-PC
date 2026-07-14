@@ -63,6 +63,10 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT o FROM Order o WHERE o.orderCode = :orderCode")
     Optional<Order> findByOrderCodeForUpdate(@org.springframework.data.repository.query.Param("orderCode") String orderCode);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT o FROM Order o WHERE o.id = :id")
+    Optional<Order> findByIdForUpdate(@org.springframework.data.repository.query.Param("id") Integer id);
     @org.springframework.data.jpa.repository.Modifying
     @org.springframework.data.jpa.repository.Query("UPDATE Order o SET o.user = null WHERE o.user.id = :userId")
     void nullifyUserReferences(@org.springframework.data.repository.query.Param("userId") Integer userId);

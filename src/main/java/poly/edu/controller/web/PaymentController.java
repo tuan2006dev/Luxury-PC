@@ -60,7 +60,7 @@ public class PaymentController {
 
         long amount = Math.round(order.getTotalPrice());
         String orderCode = order.getOrderCode();
-        String transferContent = orderCode;
+        String transferContent = "SEVQR " + sePayProperties.getPaymentCode().getPrefix() + order.getId();
         String encodedInfo = URLEncoder.encode(transferContent, StandardCharsets.UTF_8);
         String encodedName = URLEncoder.encode(sePayProperties.getBank().getAccountName(), StandardCharsets.UTF_8);
         String qrUrl = "https://img.vietqr.io/image/"

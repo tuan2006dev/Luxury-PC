@@ -55,8 +55,8 @@ public class SePayWebhookService {
             return;
         }
 
-        String resolvedOrderCode = resolveOrderCode(payload);
-        SePayTransaction transaction = newTransaction(payload, resolvedOrderCode, rawBody);
+        String paymentCode = resolvePaymentCode(payload);
+        SePayTransaction transaction = newTransaction(payload, paymentCode, rawBody);
         try {
             transactionRepository.saveAndFlush(transaction);
         } catch (DataIntegrityViolationException exception) {
@@ -81,18 +81,20 @@ public class SePayWebhookService {
             return;
         }
 
-        if (resolvedOrderCode == null) {
+        Integer orderId = parseOrderId(paymentCode);
+        if (orderId == null) {
             markProcessed(transaction, "REJECTED_PAYMENT_CODE");
             return;
         }
 
-        Optional<Order> orderOptional = orderDAO.findByOrderCodeForUpdate(resolvedOrderCode);
+        Optional<Order> orderOptional = orderDAO.findByIdForUpdate(orderId);
         if (orderOptional.isEmpty()) {
             markProcessed(transaction, "REJECTED_ORDER_NOT_FOUND");
             return;
         }
 
         Order order = orderOptional.get();
+        transaction.setOrderCode(order.getOrderCode());
         if (!"VIETQR".equals(order.getPaymentMethod())) {
             markProcessed(transaction, "REJECTED_PAYMENT_METHOD");
             return;
@@ -135,14 +137,13 @@ public class SePayWebhookService {
         }
     }
 
-    private SePayTransaction newTransaction(SePayWebhookPayload payload, String orderCode, byte[] rawBody) {
+    private SePayTransaction newTransaction(SePayWebhookPayload payload, String paymentCode, byte[] rawBody) {
         SePayTransaction transaction = new SePayTransaction();
         transaction.setSepayTransactionId(payload.id());
-        transaction.setOrderCode(orderCode);
         transaction.setTransferAmount(payload.transferAmount());
         transaction.setTransferType(payload.transferType());
         transaction.setAccountNumber(payload.accountNumber());
-        transaction.setPaymentCode(payload.code());
+        transaction.setPaymentCode(paymentCode);
         transaction.setProcessingStatus("RECEIVED");
         transaction.setRawPayload(new String(rawBody, StandardCharsets.UTF_8));
         transaction.setReceivedAt(Instant.now());
@@ -155,7 +156,7 @@ public class SePayWebhookService {
         transactionRepository.save(transaction);
     }
 
-    private String resolveOrderCode(SePayWebhookPayload payload) {
+    private String resolvePaymentCode(SePayWebhookPayload payload) {
         if (hasText(payload.code())) {
 
             return isStrictPaymentCode(payload.code()) ? normalize(payload.code()) : null;
@@ -165,6 +166,22 @@ public class SePayWebhookService {
         candidates.addAll(extractPaymentCodes(payload.content()));
         candidates.addAll(extractPaymentCodes(payload.description()));
         return candidates.size() == 1 ? candidates.iterator().next() : null;
+    }
+
+    private Integer parseOrderId(String paymentCode) {
+        if (paymentCode == null || !isValidPrefix()) {
+            return null;
+        }
+        String prefix = normalize(sePayProperties.getPaymentCode().getPrefix());
+        if (!paymentCode.startsWith(prefix) || paymentCode.length() == prefix.length()) {
+            return null;
+        }
+        try {
+            int orderId = Integer.parseInt(paymentCode.substring(prefix.length()));
+            return orderId > 0 ? orderId : null;
+        } catch (NumberFormatException exception) {
+            return null;
+        }
     }
 
     private Set<String> extractPaymentCodes(String value) {

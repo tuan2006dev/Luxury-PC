@@ -132,13 +132,15 @@ class VietQrOrderFlowTest {
 
         assertEquals("payment-vietqr", view);
         assertEquals(17_200_000L, model.get("amount"));
+        assertEquals("Luxury-" + order.getId(), model.get("orderCode"));
+        assertEquals("SEVQR DH" + order.getId(), model.get("transferContent"));
         assertEquals("Chờ xác nhận thanh toán", model.get("paymentStatus"));
         assertEquals("VietinBank", model.get("bankDisplayName"));
         assertEquals("123456789", model.get("accountNo"));
         assertEquals("TEST ACCOUNT", model.get("accountName"));
         assertEquals(
                 "https://img.vietqr.io/image/ICB-123456789-compact.png"
-                        + "?amount=17200000&addInfo=" + order.getOrderCode()
+                        + "?amount=17200000&addInfo=SEVQR+DH" + order.getId()
                         + "&accountName=SEPAY+TEST+ACCOUNT",
                 model.get("qrUrl"));
     }
@@ -292,7 +294,7 @@ class VietQrOrderFlowTest {
         order.setPaymentMethod(paymentMethod);
         order.setStatus(status);
         orderDAO.saveAndFlush(order);
-        order.setOrderCode("DH" + order.getId());
+        order.setOrderCode("Luxury-" + order.getId());
         return orderDAO.saveAndFlush(order);
     }
 

@@ -306,6 +306,15 @@
                     </div>
                   </div>
                 </div>
+                <div th:if="${order.paymentMethod == 'VIETQR' and order.status == 'CHO_XAC_NHAN_THANH_TOAN'}"
+                  style="margin-top: 15px; text-align: right;">
+                  <a th:href="@{/payment/vietqr(orderCode=${order.orderCode})}"
+                    style="display:inline-block; font-size:0.75rem; color:#3b82f6; background:transparent; border:1px solid rgba(59,130,246,0.5); padding:6px 15px; border-radius:3px; transition:0.3s; text-decoration:none;"
+                    onmouseover="this.style.background='#3b82f6'; this.style.color='#fff';"
+                    onmouseout="this.style.background='transparent'; this.style.color='#3b82f6';">
+                    Thanh toán lại
+                  </a>
+                </div>
                 <div th:if="${order.status == 'PENDING' or (order.status == 'PAID' and order.paymentMethod != 'COD')}"
                   style="margin-top: 15px; text-align: right;">
                   <button type="button" th:data-order-id="${order.id}" onclick="cancelOrder(this)"
