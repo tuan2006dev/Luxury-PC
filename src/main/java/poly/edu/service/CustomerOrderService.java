@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,10 +9,10 @@ import poly.edu.entity.Order;
 import poly.edu.entity.User;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerOrderService {
 
-    @Autowired
-    private OrderDAO orderDAO;
+    private final OrderDAO orderDAO;
 
     @Transactional
     public boolean requestRefund(Integer orderId, User user, String reason) {

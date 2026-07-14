@@ -1,6 +1,7 @@
 package poly.edu.controller.web;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,16 +21,14 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/admin/account")
 @SuppressWarnings("null")
+@RequiredArgsConstructor
 public class AccountController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleDAO roleDAO;
+    private final RoleDAO roleDAO;
 
-    @Autowired
-    private UserRoleDAO userRoleDAO;
+    private final UserRoleDAO userRoleDAO;
 
 
     // ===============================

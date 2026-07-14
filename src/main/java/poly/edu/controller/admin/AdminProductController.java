@@ -1,5 +1,8 @@
 package poly.edu.controller.admin;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,22 +17,22 @@ import java.util.Date;
 
 @Controller
 @RequestMapping("/admin/products")
+@RequiredArgsConstructor
 public class AdminProductController {
 
-    @Autowired
-    private ProductService productService;
+    private static final Logger log = LoggerFactory.getLogger(AdminProductController.class);
 
-    @Autowired
-    private CategoryService categoryService;
+    private final ProductService productService;
 
-    @Autowired
-    private UploadService uploadService;
+    private final CategoryService categoryService;
+
+    private final UploadService uploadService;
 
     @GetMapping("")
     public String list(Model model) {
         java.util.List<Product> prods = productService.getAllProducts();
         for(Product p : prods) {
-            System.out.println("DEBUG PROD: " + p.getId() + " - " + p.getImage());
+            log.debug("[AdminProduct] id={}, image={}", p.getId(), p.getImage());
         }
         model.addAttribute("products", prods);
         model.addAttribute("categories", categoryService.getAllCategories());

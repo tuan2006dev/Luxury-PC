@@ -1,5 +1,6 @@
 package poly.edu.controller.api;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.Product;
@@ -11,13 +12,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*") // Allow React to connect seamlessly
+@RequiredArgsConstructor
 public class ProductApiController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
-    @Autowired
-    private FlashSaleService flashSaleService;
+    private final FlashSaleService flashSaleService;
 
     @GetMapping("/api/products")
     public List<Map<String, Object>> getProducts() {

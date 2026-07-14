@@ -1,5 +1,6 @@
 package poly.edu.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -14,13 +15,12 @@ import java.util.Date;
 
 @Controller
 @RequestMapping("/admin/vouchers")
+@RequiredArgsConstructor
 public class AdminVoucherController {
 
-    @Autowired
-    private VoucherService voucherService;
+    private final VoucherService voucherService;
 
-    @Autowired
-    private CategoryDAO categoryDAO;
+    private final CategoryDAO categoryDAO;
 
     @GetMapping("")
     public String listVouchers(Model model) {

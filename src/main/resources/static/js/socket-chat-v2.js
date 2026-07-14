@@ -7,9 +7,9 @@
             right: 30px;
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #c9a84c, #e8c97a);
+            background: linear-gradient(135deg, #0066CC, #0088FF);
             border-radius: 50%;
-            box-shadow: 0 4px 20px rgba(201, 168, 76, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 102, 204, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -19,12 +19,12 @@
         }
         .socket-chat-btn:hover {
             transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 6px 25px rgba(201, 168, 76, 0.6);
+            box-shadow: 0 6px 25px rgba(0, 102, 204, 0.6);
         }
         .socket-chat-btn svg {
             width: 28px;
             height: 28px;
-            fill: #0a0a0a;
+            fill: #ffffff;
         }
         .socket-chat-badge {
             position: absolute;
@@ -43,21 +43,22 @@
         }
         .socket-chat-window {
             position: fixed;
-            bottom: 110px;
+            bottom: 30px;
             right: 30px;
-            width: 380px;
-            height: 520px;
-            background: rgba(17, 17, 17, 0.95);
+            width: 320px;
+            height: 460px;
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(201, 168, 76, 0.25);
+            border: 1px solid #E5E7EB;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
             z-index: 99999;
             overflow: hidden;
             transform: translateY(20px) scale(0.95);
+            transform-origin: bottom right;
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
@@ -68,8 +69,7 @@
             pointer-events: auto;
         }
         .socket-chat-header {
-            background: rgba(10, 10, 10, 0.95);
-            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+            background: #0066CC;
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
@@ -79,7 +79,7 @@
             font-family: 'Outfit', sans-serif;
             font-size: 1rem;
             font-weight: 500;
-            color: #fff;
+            color: #ffffff;
             letter-spacing: 1px;
             display: flex;
             align-items: center;
@@ -89,7 +89,7 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #888;
+            background: #e2e8f0;
             transition: background 0.3s;
         }
         .socket-chat-status.connected {
@@ -97,39 +97,39 @@
             box-shadow: 0 0 8px #22c55e;
         }
         .socket-chat-title span {
-            color: #c9a84c;
+            color: #E0F2FE;
             font-weight: 300;
         }
         .socket-chat-close {
             background: none;
             border: none;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.8);
             font-size: 1.2rem;
             cursor: pointer;
             transition: color 0.2s;
         }
         .socket-chat-close:hover {
-            color: #ef4444;
+            color: #ffffff;
         }
         .socket-chat-ticket-bar {
-            background: rgba(201, 168, 76, 0.06);
-            border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+            background: #F8FAFC;
+            border-bottom: 1px solid #E5E7EB;
             padding: 6px 20px;
             font-size: 0.7rem;
-            color: #c9a84c;
+            color: #666666;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .socket-chat-ticket-bar .new-chat-link {
-            color: rgba(255,255,255,0.4);
+            color: #0066CC;
             cursor: pointer;
             font-size: 0.65rem;
             text-decoration: underline;
             transition: color 0.2s;
         }
         .socket-chat-ticket-bar .new-chat-link:hover {
-            color: #fff;
+            color: #004d99;
         }
         .socket-chat-messages {
             flex: 1;
@@ -138,15 +138,15 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            background: rgba(0, 0, 0, 0.2);
+            background: #F9F9F9;
             scrollbar-width: thin;
-            scrollbar-color: rgba(201, 168, 76, 0.2) transparent;
+            scrollbar-color: rgba(0, 102, 204, 0.2) transparent;
         }
         .socket-chat-messages::-webkit-scrollbar {
             width: 4px;
         }
         .socket-chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(201, 168, 76, 0.2);
+            background: rgba(0, 102, 204, 0.2);
             border-radius: 2px;
         }
         .socket-chat-msg {
@@ -164,53 +164,58 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .socket-chat-msg.incoming {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #f5f0e8;
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            color: #333333;
             align-self: flex-start;
             border-top-left-radius: 2px;
         }
         .socket-chat-msg.outgoing {
-            background: rgba(201, 168, 76, 0.15);
-            border: 1px solid rgba(201, 168, 76, 0.25);
-            color: #fff;
+            background: #0066CC;
+            border: 1px solid #005bb5;
+            color: #ffffff;
             align-self: flex-end;
             border-top-right-radius: 2px;
         }
         .socket-chat-sender {
             font-size: 0.7rem;
-            color: #c9a84c;
+            color: #0066CC;
             margin-bottom: 4px;
             font-weight: bold;
         }
+        .socket-chat-msg.outgoing .socket-chat-time {
+            color: rgba(255,255,255,0.7);
+        }
+        .socket-chat-msg.incoming .socket-chat-time {
+            color: #999999;
+        }
         .socket-chat-time {
             font-size: 0.6rem;
-            color: rgba(255,255,255,0.25);
             margin-top: 4px;
             text-align: right;
         }
         .socket-chat-system {
             font-size: 0.75rem;
-            color: #888;
+            color: #666666;
             text-align: center;
             align-self: center;
             font-style: italic;
-            background: rgba(255,255,255,0.02);
+            background: #E5E7EB;
             padding: 4px 10px;
             border-radius: 10px;
         }
         .socket-chat-input-area {
             padding: 15px 20px;
-            background: rgba(10, 10, 10, 0.95);
-            border-top: 1px solid rgba(201, 168, 76, 0.15);
+            background: #FFFFFF;
+            border-top: 1px solid #E5E7EB;
             display: flex;
             gap: 10px;
         }
         .socket-chat-input {
             flex: 1;
-            background: #1a1a1a;
-            border: 1px solid rgba(201, 168, 76, 0.15);
-            color: #fff;
+            background: #F9F9F9;
+            border: 1px solid #E5E7EB;
+            color: #333333;
             padding: 10px 14px;
             border-radius: 4px;
             outline: none;
@@ -218,11 +223,11 @@
             transition: border-color 0.2s;
         }
         .socket-chat-input:focus {
-            border-color: #c9a84c;
+            border-color: #0066CC;
         }
         .socket-chat-send-btn {
-            background: #c9a84c;
-            color: #0a0a0a;
+            background: #0066CC;
+            color: #ffffff;
             border: none;
             padding: 10px 16px;
             border-radius: 4px;
@@ -231,7 +236,7 @@
             transition: background 0.2s;
         }
         .socket-chat-send-btn:hover {
-            background: #e8c97a;
+            background: #005bb5;
         }
         .socket-chat-setup {
             flex: 1;
@@ -242,17 +247,18 @@
             padding: 30px;
             text-align: center;
             gap: 12px;
+            background: #FFFFFF;
         }
         .socket-chat-setup p {
             font-size: 0.85rem;
-            color: #ccc;
+            color: #666666;
             line-height: 1.5;
         }
         .socket-chat-setup-input {
             width: 100%;
-            background: #1a1a1a;
-            border: 1px solid rgba(201, 168, 76, 0.15);
-            color: #fff;
+            background: #F9F9F9;
+            border: 1px solid #E5E7EB;
+            color: #333333;
             padding: 12px;
             border-radius: 4px;
             outline: none;
@@ -260,12 +266,12 @@
             font-size: 0.9rem;
         }
         .socket-chat-setup-input:focus {
-            border-color: #c9a84c;
+            border-color: #0066CC;
         }
         .socket-chat-setup-btn {
             width: 100%;
-            background: #c9a84c;
-            color: #0a0a0a;
+            background: #0066CC;
+            color: #ffffff;
             border: none;
             padding: 12px;
             border-radius: 4px;
@@ -277,23 +283,14 @@
             font-size: 0.85rem;
         }
         .socket-chat-setup-btn:hover {
-            background: #e8c97a;
+            background: #005bb5;
         }
         .socket-chat-setup-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         
-        /* Custom cursor support: hide default cursor */
-        #socketChatBtn, #socketChatWindow, #socketChatWindow * {
-            cursor: none !important;
-        }
-        .cursor {
-            z-index: 1000001 !important;
-        }
-        .cursor-follower {
-            z-index: 1000000 !important;
-        }
+
     `;
 
     const styleEl = document.createElement('style');
@@ -391,8 +388,10 @@
         const isOpen = win.classList.contains('open');
         if (isOpen) {
             win.classList.remove('open');
+            btn.style.display = 'flex';
         } else {
             win.classList.add('open');
+            btn.style.display = 'none';
             if (username && currentTicketId && !ws) {
                 connectWebSocket();
                 loadChatHistory();
@@ -404,6 +403,7 @@
 
     closeBtn.addEventListener('click', () => {
         win.classList.remove('open');
+        btn.style.display = 'flex';
     });
 
     // Close ticket button (Customer ends conversation)
@@ -702,8 +702,8 @@
     function updateLiveChatCooldown() {
         const now = Date.now();
         const elapsed = now - lastLiveChatTime;
-        if (elapsed < 30000) {
-            const remaining = Math.ceil((30000 - elapsed) / 1000);
+        if (elapsed < 3000) {
+            const remaining = Math.ceil((3000 - elapsed) / 1000);
             if (msgInput) {
                 msgInput.disabled = true;
                 msgInput.placeholder = `Vui lòng đợi ${remaining}s...`;
@@ -714,6 +714,10 @@
             if (msgInput) {
                 msgInput.disabled = false;
                 msgInput.placeholder = "Nhập tin nhắn...";
+                // Don't auto-focus if window is not open to prevent stealing focus
+                if (win.classList.contains('open')) {
+                    msgInput.focus();
+                }
             }
             if (sendBtn) sendBtn.disabled = false;
         }
@@ -727,10 +731,15 @@
         if (!text) return;
 
         const now = Date.now();
-        if (now - lastLiveChatTime < 2000) {
+        if (now - lastLiveChatTime < 3000) {
             return;
         }
+        
         lastLiveChatTime = now;
+        localStorage.setItem('lastLiveChatTime', now.toString());
+        
+        // Cập nhật giao diện chặn spam
+        updateLiveChatCooldown();
         
         if (!ws || ws.readyState !== WebSocket.OPEN) {
             appendSystemMessage('Đang kết nối lại...');

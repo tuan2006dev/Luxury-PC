@@ -1,5 +1,6 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,16 +17,14 @@ import java.util.*;
 
 @Controller
 @SuppressWarnings("null")
+@RequiredArgsConstructor
 public class SupportTicketController {
 
-    @Autowired
-    private SupportTicketRepository ticketRepo;
+    private final SupportTicketRepository ticketRepo;
 
-    @Autowired
-    private UserRepository userRepo;
+    private final UserRepository userRepo;
 
-    @Autowired
-    private ChatMessageRepository chatMessageRepo;
+    private final ChatMessageRepository chatMessageRepo;
 
     // ========================
     // CUSTOMER: Submit ticket via API (from 3D builder modal)

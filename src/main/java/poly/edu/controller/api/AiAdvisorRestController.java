@@ -1,5 +1,8 @@
 package poly.edu.controller.api;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -10,7 +13,10 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/build")
+@RequiredArgsConstructor
 public class AiAdvisorRestController {
+
+    private static final Logger log = LoggerFactory.getLogger(AiAdvisorRestController.class);
 
     @Value("${gemini.api.key}")
     private String apiKey;
@@ -20,8 +26,7 @@ public class AiAdvisorRestController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Autowired
-    private poly.edu.service.ProductService productService;
+    private final poly.edu.service.ProductService productService;
 
     @PostMapping("/ai-advisor")
     public ResponseEntity<Map<String, Object>> askAiAdvisor(@RequestBody Map<String, String> request) {
@@ -134,7 +139,7 @@ public class AiAdvisorRestController {
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("[AiAdvisor] Error calling Gemini API", e);
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "Lỗi kết nối AI: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);

@@ -1,5 +1,6 @@
 package poly.edu.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -13,16 +14,14 @@ import poly.edu.repository.UserRepository;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private poly.edu.dao.RoleDAO roleDAO;
+    private final poly.edu.dao.RoleDAO roleDAO;
 
-    @Autowired
-    private poly.edu.dao.UserRoleDAO userRoleDAO;
+    private final poly.edu.dao.UserRoleDAO userRoleDAO;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

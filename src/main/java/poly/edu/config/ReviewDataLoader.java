@@ -1,5 +1,8 @@
 package poly.edu.config;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -11,13 +14,14 @@ import java.util.Arrays;
 
 @Configuration
 @SuppressWarnings("null")
+@RequiredArgsConstructor
 public class ReviewDataLoader implements CommandLineRunner {
 
-    @Autowired
-    ReviewDAO reviewDAO;
+    private static final Logger log = LoggerFactory.getLogger(ReviewDataLoader.class);
 
-    @Autowired
-    UserRepository userRepo;
+    final ReviewDAO reviewDAO;
+
+    final UserRepository userRepo;
 
     @Override
     public void run(String... args) throws Exception {
@@ -48,7 +52,7 @@ public class ReviewDataLoader implements CommandLineRunner {
             r3.setUser(user);
 
             reviewDAO.saveAll(Arrays.asList(r1, r2, r3));
-            System.out.println(">> Database Seed: Initial reviews loaded.");
+            log.info("[ReviewDataLoader] Initial reviews seeded into database.");
         }
     }
 }

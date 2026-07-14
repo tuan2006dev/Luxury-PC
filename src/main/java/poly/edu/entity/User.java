@@ -23,7 +23,7 @@ public class User {
     private Date birthday;
     private Boolean status = true;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<UserRole> userRoles;
 
     @Temporal(TemporalType.TIMESTAMP)

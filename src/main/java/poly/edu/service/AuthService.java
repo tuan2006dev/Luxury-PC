@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,10 +12,10 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class AuthService implements UserDetailsService {	
 
-    @Autowired
-    UserDAO userDAO;
+    final UserDAO userDAO;
 
     public User login(String email, String password){
         return userDAO.findByEmailAndPassword(email, password);
@@ -27,9 +28,10 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
-        User user = userDAO.findByEmail(identifier);
+        // Use JOIN FETCH queries to load user + roles in one SQL (safe with LAZY fetch)
+        User user = userDAO.findByEmailWithRoles(identifier);
         if (user == null) {
-            user = userDAO.findByUsername(identifier);
+            user = userDAO.findByUsernameWithRoles(identifier);
         }
         if (user == null) {
             throw new UsernameNotFoundException("User not found: " + identifier);

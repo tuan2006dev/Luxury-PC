@@ -1,5 +1,6 @@
 package poly.edu.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -15,13 +16,12 @@ import java.util.Date;
 
 @Controller
 @RequestMapping("/admin/flash-sales")
+@RequiredArgsConstructor
 public class AdminFlashSaleController {
 
-    @Autowired
-    private FlashSaleService flashSaleService;
+    private final FlashSaleService flashSaleService;
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
     @GetMapping("")
     public String listFlashSales(Model model) {

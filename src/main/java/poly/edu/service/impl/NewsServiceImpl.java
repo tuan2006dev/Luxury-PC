@@ -1,6 +1,8 @@
 package poly.edu.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import poly.edu.entity.News;
@@ -11,10 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
 
-    @Autowired
-    private NewsRepository newsRepository;
+    private final NewsRepository newsRepository;
 
     @Override
     public List<News> getAllNews() {
@@ -22,8 +24,32 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public List<News> getPublishedNews() {
-        return newsRepository.findByPublishedTrueOrderByCreatedAtDesc();
+    public Page<poly.edu.dto.NewsSummaryDto> getPublishedNews(int page, int size, String keyword, Integer categoryId) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        if (keyword != null && !keyword.isEmpty()) {
+            return newsRepository.searchPublishedNews(keyword, pageable);
+        }
+        if (categoryId != null) {
+            return newsRepository.findByCategoryIdAndStatusOrderByCreatedAtDesc(categoryId, poly.edu.entity.NewsStatus.PUBLISHED, pageable);
+        }
+        return newsRepository.findByStatusOrderByCreatedAtDesc(poly.edu.entity.NewsStatus.PUBLISHED, pageable);
+    }
+    
+    @Override
+    public List<poly.edu.dto.NewsSummaryDto> getTop5LatestNews() {
+        return newsRepository.findTop5ByStatusOrderByCreatedAtDesc(poly.edu.entity.NewsStatus.PUBLISHED);
+    }
+    
+    @Override
+    public List<poly.edu.dto.NewsSummaryDto> getTop5MostViewedNews() {
+        return newsRepository.findTop5ByStatusOrderByViewCountDesc(poly.edu.entity.NewsStatus.PUBLISHED);
+    }
+    
+    @Override
+    public List<poly.edu.dto.NewsSummaryDto> getRelatedNews(Integer categoryId, Integer excludeNewsId) {
+        if (categoryId == null) return java.util.Collections.emptyList();
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 5); // Take top 5
+        return newsRepository.findRelatedNews(categoryId, excludeNewsId, pageable);
     }
 
     @Override
@@ -33,7 +59,11 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Optional<News> getNewsBySlug(String slug) {
-        return newsRepository.findBySlug(slug);
+        Optional<News> newsOpt = newsRepository.findBySlug(slug);
+        if (newsOpt.isPresent()) {
+            newsRepository.incrementViewCount(newsOpt.get().getId());
+        }
+        return newsOpt;
     }
 
     @Override

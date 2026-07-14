@@ -270,23 +270,46 @@ function updateTicketStatus(id, status) {
         .catch(err => console.error("Error updating status:", err));
 }
 
+let ticketToDelete = null;
+
 function deleteTicket(id) {
-    if (!confirm('Xóa ticket #' + id + '? Hành động này không thể hoàn tác.')) return;
-    fetch('/admin/tickets/delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: id })
-    }).then(r => r.json()).then(data => {
-        if (data.success) {
-            disconnectTicketWs(id);
-            const row = document.querySelector('[data-id="' + id + '"]');
-            row.style.opacity = '0';
-            row.style.transform = 'translateX(-20px)';
-            row.style.transition = '0.4s';
-            setTimeout(() => row.remove(), 400);
-        }
-    });
+    ticketToDelete = id;
+    document.getElementById('delete-modal-title').innerText = 'Xóa ticket #' + id + '?';
+    document.getElementById('delete-ticket-modal').classList.add('show');
 }
+
+function closeDeleteModal() {
+    ticketToDelete = null;
+    document.getElementById('delete-ticket-modal').classList.remove('show');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            if (!ticketToDelete) return;
+            const id = ticketToDelete;
+            closeDeleteModal();
+
+            fetch('/admin/tickets/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    disconnectTicketWs(id);
+                    const row = document.querySelector('[data-id="' + id + '"]');
+                    if (row) {
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateX(-20px)';
+                        row.style.transition = '0.4s';
+                        setTimeout(() => row.remove(), 400);
+                    }
+                }
+            }).catch(err => console.error("Error deleting ticket:", err));
+        });
+    }
+});
 
 function assignTicket(id) {
     return fetch('/admin/tickets/assign', {

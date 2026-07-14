@@ -1,5 +1,6 @@
 package poly.edu.controller.api;
 
+import lombok.RequiredArgsConstructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +22,12 @@ import poly.edu.service.UserVoucherService;
 
 @RestController
 @RequestMapping("/api/user-voucher")
+@RequiredArgsConstructor
 public class UserVoucherApiController {
 
-    @Autowired
-    private UserVoucherService userVoucherService;
+    private final UserVoucherService userVoucherService;
 
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
 
     @PostMapping("/save")
     public ResponseEntity<Map<String, Object>> saveVoucher(@RequestParam String code, Authentication authentication) {

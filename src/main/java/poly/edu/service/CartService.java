@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -19,28 +20,22 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CartService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private OrderDAO orderDAO;
+    private final OrderDAO orderDAO;
 
-    @Autowired
-    private OrderItemDAO orderItemDAO;
+    private final OrderItemDAO orderItemDAO;
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
-    @Autowired
-    private VoucherService voucherService;
+    private final VoucherService voucherService;
 
-    @Autowired
-    private FlashSaleService flashSaleService;
+    private final FlashSaleService flashSaleService;
 
-    @Autowired
-    private UserVoucherService userVoucherService;
+    private final UserVoucherService userVoucherService;
 
     public double calculateTotal(Collection<CartItem> items) {
         if (items == null || items.isEmpty()) return 0.0;

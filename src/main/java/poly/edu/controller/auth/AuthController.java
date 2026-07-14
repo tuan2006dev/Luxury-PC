@@ -1,5 +1,8 @@
 package poly.edu.controller.auth;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,19 +12,18 @@ import poly.edu.service.AuthService;
 
 @Controller
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    AuthService authService;
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    @Autowired
-    private poly.edu.repository.UserRepository userRepo;
+    final AuthService authService;
 
-    @Autowired
-    private PasswordEncoder encoder;
+    private final poly.edu.repository.UserRepository userRepo;
 
-    @Autowired
-    private org.springframework.security.web.context.SecurityContextRepository securityContextRepository;
+    private final PasswordEncoder encoder;
+
+    private final org.springframework.security.web.context.SecurityContextRepository securityContextRepository;
 
 
     @PostMapping("/login-api")
@@ -30,14 +32,11 @@ public class AuthController {
         return authService.login(user.getEmail(), user.getPassword());
     }
 
-    @Autowired
-    poly.edu.dao.RoleDAO roleDAO;
+    final poly.edu.dao.RoleDAO roleDAO;
 
-    @Autowired
-    poly.edu.dao.UserRoleDAO userRoleDAO;
+    final poly.edu.dao.UserRoleDAO userRoleDAO;
 
-    @Autowired
-    poly.edu.service.EmailService emailService;
+    final poly.edu.service.EmailService emailService;
 
     @PostMapping("/send-otp")
     @ResponseBody
@@ -49,7 +48,7 @@ public class AuthController {
             emailService.sendOtpEmail(email, email);
             return "success";
         } catch(Exception e) {
-            e.printStackTrace();
+            log.error("[Auth] Registration error", e);
             return "error_server";
         }
     }
@@ -126,7 +125,7 @@ public class AuthController {
             securityContextRepository.saveContext(org.springframework.security.core.context.SecurityContextHolder.getContext(), request, response);
             return "redirect:/";
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("[Auth] OTP verification error", e);
             return "redirect:/auth/login?success=true";
         }
     }
@@ -141,7 +140,7 @@ public class AuthController {
             emailService.sendForgotPasswordOtpEmail(email, email);
             return "success";
         } catch(Exception e) {
-            e.printStackTrace();
+            log.error("[Auth] Password reset error", e);
             return "error_server";
         }
     }

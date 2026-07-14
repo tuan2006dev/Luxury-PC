@@ -1,5 +1,6 @@
 package poly.edu.controller.api;
 
+import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -13,13 +14,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/voucher")
+@RequiredArgsConstructor
 public class VoucherApiController {
 
-    @Autowired
-    private VoucherService voucherService;
+    private final VoucherService voucherService;
 
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
 
     /**
      * AJAX endpoint: validate mã voucher

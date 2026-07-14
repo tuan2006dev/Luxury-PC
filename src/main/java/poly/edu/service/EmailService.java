@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,13 +11,12 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
-    @Autowired
-    private poly.edu.repository.PasswordResetRepository passwordResetRepo;
+    private final poly.edu.repository.PasswordResetRepository passwordResetRepo;
 
     public static class OtpData {
         private final String code;

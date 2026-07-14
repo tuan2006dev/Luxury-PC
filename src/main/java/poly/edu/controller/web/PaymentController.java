@@ -1,5 +1,6 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class PaymentController {
 
     private static final String BANK_ID = "MB";
@@ -22,8 +24,7 @@ public class PaymentController {
     private static final String ACCOUNT_NAME = "LUXURYPC";
     private static final long FALLBACK_AMOUNT = 150_000L;
 
-    @Autowired
-    private OrderDAO orderDAO;
+    private final OrderDAO orderDAO;
 
     @GetMapping("/payment/vietqr")
     public String vietQrPayment(

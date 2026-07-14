@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -13,15 +14,13 @@ import poly.edu.entity.User;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ReviewService {
-    @Autowired
-    ReviewDAO reviewDAO;
+    final ReviewDAO reviewDAO;
 
-    @Autowired
-    ProductDAO productDAO;
+    final ProductDAO productDAO;
 
-    @Autowired
-    ProfileService profileService;
+    final ProfileService profileService;
 
     @org.springframework.cache.annotation.Cacheable("latestReviews")
     public List<Review> getLatestReviews() {

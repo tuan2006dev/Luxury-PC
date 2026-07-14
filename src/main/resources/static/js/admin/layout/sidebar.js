@@ -274,21 +274,11 @@ document.addEventListener("DOMContentLoaded", function() {
             document.addEventListener('spa:load', initFlatpickr);
         });
 
-// Global Delete Confirmation using SweetAlert2
+// Global Delete Confirmation using Custom Popup
         window.confirmDelete = function(formElement, message) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: message || 'Bạn có chắc chắn muốn xóa?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'OK',
-                    cancelButtonText: 'Cancel',
-                    background: '#1a1a1a',
-                    color: '#f5f0e8',
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#c9a84c'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+            if (typeof window.showConfirm !== 'undefined') {
+                window.showConfirm(message || 'Bạn có chắc chắn muốn xóa?').then((confirmed) => {
+                    if (confirmed) {
                         formElement.submit();
                     }
                 });

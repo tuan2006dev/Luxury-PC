@@ -1,5 +1,8 @@
 package poly.edu.controller.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.nio.file.Files;
@@ -8,8 +11,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
+// SECURITY: This endpoint is restricted to 'dev' profile only.
+// CRITICAL: The hardcoded DB credentials below must be rotated immediately.
+// Move to application-dev.properties and use environment variables in production.
+@Profile("dev")
 @RestController
 public class SqlRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(SqlRunner.class);
 
     @GetMapping("/run-sql")
     public String runSql() {
@@ -22,7 +31,7 @@ public class SqlRunner {
             }
             return "SQL Script executed successfully!";
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("[SqlRunner] Error executing SQL script", e);
             return "Error executing SQL script: " + e.getMessage();
         }
     }

@@ -57,7 +57,7 @@
     text-decoration: none;
     color: var(--muted);
     background: var(--dark);
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid #e2e8f0;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
@@ -109,14 +109,14 @@
 /* ===== TICKET ROW ===== */
 .ticket-row {
     background: var(--dark);
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
     overflow: hidden;
     transition: border-color 0.2s;
 }
 
 .ticket-row:hover {
-    border-color: rgba(201,168,76,0.2);
+    border-color: #cbd5e1;
 }
 
 .ticket-row-header {
@@ -130,7 +130,7 @@
 }
 
 .ticket-row-header:hover {
-    background: rgba(255,255,255,0.02);
+    background: #ffffff;
 }
 
 .ticket-left {
@@ -171,7 +171,7 @@
 .ticket-subject {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #ddd;
+    color: #334155;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -220,9 +220,9 @@
 
 /* ===== TICKET DETAIL PANEL ===== */
 .ticket-detail {
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid #e2e8f0;
     padding: 1.5rem;
-    background: rgba(0,0,0,0.2);
+    background: #ffffff;
     animation: fadeDown 0.25s ease;
 }
 
@@ -285,17 +285,17 @@
 }
 
 .customer-bubble {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-left: 3px solid rgba(255,255,255,0.15);
-    color: #ccc;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #94a3b8;
+    color: #334155;
 }
 
 .admin-bubble {
-    background: rgba(201,168,76,0.06);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-left: 3px solid var(--gold);
-    color: #ddd;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-left: 3px solid var(--blue);
+    color: #1e3a8a;
 }
 
 .no-reply-note {
@@ -309,12 +309,12 @@
 }
 
 .build-config-box {
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 4px;
     padding: 0.8rem;
     font-size: 0.72rem;
-    color: #888;
+    color: #334155;
     font-family: monospace;
     max-height: 150px;
     overflow-y: auto;
@@ -330,10 +330,10 @@
 
 .reply-textarea {
     width: 100%;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
     border-radius: 6px;
-    color: var(--cream);
+    color: #0f172a;
     font-size: 0.82rem;
     padding: 0.8rem;
     resize: vertical;
@@ -344,7 +344,9 @@
 
 .reply-textarea:focus {
     outline: none;
-    border-color: rgba(201,168,76,0.4);
+    border-color: var(--blue);
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .reply-actions {
@@ -366,10 +368,10 @@
 .reply-btn {
     flex: 1;
     padding: 0.6rem 1rem;
-    background: linear-gradient(135deg, var(--gold), #8a7030);
+    background: var(--blue);
     border: none;
     border-radius: 4px;
-    color: #000;
+    color: #ffffff;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -382,8 +384,8 @@
 }
 
 .reply-btn:hover {
-    background: #e8c97a;
-    box-shadow: 0 4px 16px rgba(201,168,76,0.3);
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .delete-btn {
@@ -414,7 +416,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    background: rgba(0, 0, 0, 0.3);
+    background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
     padding: 1rem;
@@ -473,17 +475,17 @@
 }
 
 .admin-chat-messages .customer-bubble {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-top-left-radius: 2px;
-    color: #eee;
+    color: #334155;
 }
 
 .admin-chat-messages .admin-bubble {
-    background: rgba(201, 168, 76, 0.08);
-    border: 1px solid rgba(201, 168, 76, 0.25);
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
     border-top-right-radius: 2px;
-    color: #0f172a;
+    color: #1e3a8a;
 }
 
 .admin-chat-input-row {
@@ -497,10 +499,10 @@
 
 .admin-chat-input-row .chat-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
     border-radius: 6px;
-    color: var(--cream);
+    color: #0f172a;
     font-size: 0.8rem;
     padding: 0.6rem 0.8rem;
     resize: none;
@@ -510,7 +512,9 @@
 
 .admin-chat-input-row .chat-input:focus {
     outline: none;
-    border-color: rgba(201, 168, 76, 0.4);
+    border-color: var(--blue);
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .admin-chat-actions {
@@ -529,8 +533,8 @@
 }
 
 .status-control .status-select {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
     border-radius: 4px;
     color: #0f172a;
     padding: 0.35rem 0.6rem;
@@ -543,4 +547,94 @@
     color: var(--muted);
     font-size: 0.75rem;
     padding: 1.5rem 0;
+}
+
+/* ===== CUSTOM MODAL ===== */
+.custom-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s;
+}
+
+.custom-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.custom-modal {
+    background: #ffffff;
+    width: 350px;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.custom-modal-overlay.show .custom-modal {
+    transform: translateY(0);
+}
+
+.custom-modal-icon {
+    color: #dc2626;
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.custom-modal h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    color: #0f172a;
+}
+
+.custom-modal p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.custom-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.custom-modal-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.custom-modal-btn.cancel {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+}
+
+.custom-modal-btn.cancel:hover {
+    background: #f8fafc;
+}
+
+.custom-modal-btn.confirm {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.custom-modal-btn.confirm:hover {
+    background: #b91c1c;
 }

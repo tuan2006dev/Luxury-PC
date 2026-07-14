@@ -10,7 +10,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
-    <link rel="stylesheet" th:href="@{/css/admin/tickets.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/tickets.css(v=3.0)}" />
     <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
@@ -130,7 +130,7 @@
                 </div>
 
                 <!-- Ticket Detail Panel -->
-                <div class="ticket-detail" th:id="'detail-' + ${ticket.id}" style="display:none;">
+                <div class="ticket-detail" th:id="'detail-' + ${ticket.id}" style="display:none; background-color: #ffffff !important;">
                     <div class="ticket-detail-grid">
                         <!-- Left: Customer Info + Message -->
                         <div class="ticket-info-col">
@@ -180,7 +180,7 @@
                                     <i class="fa-solid fa-comments"></i> <span data-translate="admin-tickets-sec-chat">Trò chuyện trực tuyến</span>
                                 </div>
 
-                                <div class="admin-chat-container">
+                                <div class="admin-chat-container" style="background-color: #ffffff !important;">
                                     <div class="admin-chat-messages" th:id="'chat-messages-' + ${ticket.id}">
                                         <div class="chat-loading">
                                             <i class="fa-solid fa-spinner fa-spin"></i> <span data-translate="admin-tickets-chat-loading">Đang tải tin nhắn...</span>
@@ -226,7 +226,19 @@
                 </div>
             </div>
         </div>
-        <script th:src="@{/js/admin/tickets.js}"></script>
+        <script th:src="@{/js/admin/tickets.js(v=3.0)}"></script>
+        <!-- Custom Delete Ticket Modal -->
+        <div id="delete-ticket-modal" class="custom-modal-overlay">
+            <div class="custom-modal">
+                <div class="custom-modal-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                <h3 id="delete-modal-title">Xóa ticket?</h3>
+                <p data-translate="admin-tickets-delete-warning">Hành động này không thể hoàn tác. Toàn bộ nội dung trò chuyện sẽ bị mất.</p>
+                <div class="custom-modal-actions">
+                    <button class="custom-modal-btn cancel" onclick="closeDeleteModal()" data-translate="admin-tickets-btn-cancel">Hủy</button>
+                    <button class="custom-modal-btn confirm" id="confirm-delete-btn" data-translate="admin-tickets-btn-delete-confirm">Xóa ngay</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

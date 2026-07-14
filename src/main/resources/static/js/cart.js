@@ -14,7 +14,7 @@ function formatMoney(amount) {
 
       rows.forEach(row => {
           const priceEl = row.querySelector('.item-price');
-          const qtyInput = row.querySelector('.qty-input');
+          const qtyInput = row.querySelector('.no-spinner');
           if(priceEl && qtyInput) {
               const price = parseFloat(priceEl.getAttribute('data-price'));
               const qty = parseInt(qtyInput.value);
@@ -177,24 +177,25 @@ function formatMoney(amount) {
   function removeItem(id) {
       const lang = localStorage.getItem('lang') || 'vi';
       const msg = (translations[lang] && translations[lang]['cart-confirm-delete']) || "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?";
-      const title = (translations[lang] && translations[lang]['confirm-modal-title']) || "Xác nhận";
-      showConfirm(msg, function() {
-          fetch(`/cart/remove?id=${id}`, { method: 'POST' })
-          .then(response => {
-              if (response.ok) {
-                  const row = document.getElementById('row-' + id);
-                  row.style.transform = 'translateX(-20px)';
-                  row.style.opacity = '0';
-                  setTimeout(() => {
-                      row.remove();
-                      updateGrandTotal();
-                      const successMsg = (translations[lang] && translations[lang]['cart-delete-success']) || "Đã xóa sản phẩm khỏi giỏ hàng thành công!";
-                      const successTitle = (translations[lang] && translations[lang]['confirm-modal-ok']) || "Xóa Thành Công";
-                      showAlert(successMsg, successTitle);
-                  }, 300);
-              }
-          });
-      }, title);
+      
+      window.showConfirm(msg).then(confirmed => {
+          if (confirmed) {
+              fetch(`/cart/remove?id=${id}`, { method: 'POST' })
+              .then(response => {
+                  if (response.ok) {
+                      const row = document.getElementById('row-' + id);
+                      row.style.transform = 'translateX(-20px)';
+                      row.style.opacity = '0';
+                      setTimeout(() => {
+                          row.remove();
+                          updateGrandTotal();
+                          const successMsg = (translations[lang] && translations[lang]['cart-delete-success']) || "Đã xóa sản phẩm khỏi giỏ hàng thành công!";
+                          window.showAlert({message: successMsg, isSuccess: true});
+                      }, 300);
+                  }
+              });
+          }
+      });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -233,60 +234,4 @@ function formatMoney(amount) {
       });
     });
   })();
-
-let confirmCallback = null;
-    function showConfirm(msg, callback, title="Xác nhận") {
-        const overlay = document.getElementById('global-confirm-overlay');
-        const modal = overlay.querySelector('.confirm-modal');
-        document.getElementById('confirm-msg').innerText = msg;
-        document.getElementById('confirm-title').innerText = title;
-        confirmCallback = callback;
-        
-        overlay.style.display = 'flex';
-        void overlay.offsetWidth;
-        overlay.style.opacity = '1';
-        modal.style.transform = 'translateY(0)';
-    }
-
-    function closeConfirm() {
-        const overlay = document.getElementById('global-confirm-overlay');
-        const modal = overlay.querySelector('.confirm-modal');
-        overlay.style.opacity = '0';
-        modal.style.transform = 'translateY(-20px)';
-        setTimeout(() => {
-            overlay.style.display = 'none';
-        }, 300);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const cancelBtn = document.getElementById('confirm-cancel-btn');
-        const okBtn = document.getElementById('confirm-ok-btn');
-        if(cancelBtn) cancelBtn.addEventListener('click', closeConfirm);
-        if(okBtn) okBtn.addEventListener('click', () => {
-            closeConfirm();
-            if(confirmCallback) confirmCallback();
-        });
-    });
-
-    function showAlert(msg, title="Thông báo") {
-        const overlay = document.getElementById('global-confirm-overlay');
-        const modal = overlay.querySelector('.confirm-modal');
-        document.getElementById('confirm-msg').innerText = msg;
-        document.getElementById('confirm-title').innerText = title;
-        document.getElementById('confirm-cancel-btn').style.display = 'none';
-        document.getElementById('confirm-icon').className = 'fa-solid fa-check-circle';
-        confirmCallback = null;
-        
-        overlay.style.display = 'flex';
-        void overlay.offsetWidth;
-        overlay.style.opacity = '1';
-        modal.style.transform = 'translateY(0)';
-
-        document.getElementById('confirm-ok-btn').onclick = () => {
-            closeConfirm();
-            setTimeout(() => {
-                document.getElementById('confirm-cancel-btn').style.display = 'block';
-                document.getElementById('confirm-icon').className = 'fa-solid fa-circle-exclamation';
-            }, 300);
-        };
-    }
+

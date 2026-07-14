@@ -1,5 +1,8 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,31 +32,26 @@ import java.util.Set;
 
 @Controller
 @SuppressWarnings("null")
+@RequiredArgsConstructor
 public class ProductPageController {
 
-    @Autowired
-    ProductService productService;
+    private static final Logger log = LoggerFactory.getLogger(ProductPageController.class);
 
-    @Autowired
-    CategoryService categoryService;
+    final ProductService productService;
 
-    @Autowired
-    ReviewDAO reviewDAO;
+    final CategoryService categoryService;
 
-    @Autowired
-    UserRepository userRepository;
+    final ReviewDAO reviewDAO;
 
-    @Autowired
-    poly.edu.dao.OrderItemDAO orderItemDAO;
+    final UserRepository userRepository;
 
-    @Autowired
-    WishlistService wishlistService;
+    final poly.edu.dao.OrderItemDAO orderItemDAO;
 
-    @Autowired
-    FlashSaleService flashSaleService;
+    final WishlistService wishlistService;
 
-    @Autowired
-    FlashSaleItemDAO flashSaleItemDAO;
+    final FlashSaleService flashSaleService;
+
+    final FlashSaleItemDAO flashSaleItemDAO;
 
     // hasValidImage removed for performance
 
@@ -307,7 +305,7 @@ public class ProductPageController {
 
                 r.setImage("/uploads/reviews/" + filename);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("[ProductPage] Unexpected error", e);
                 response.put("success", false);
                 response.put("message", "Lỗi khi lưu trữ hình ảnh: " + e.getMessage());
                 return org.springframework.http.ResponseEntity.status(500).body(response);
@@ -353,7 +351,7 @@ public class ProductPageController {
 
                 r.setVideo("/uploads/reviews/" + filename);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("[ProductPage] Unexpected error", e);
                 response.put("success", false);
                 response.put("message", "Lỗi khi lưu trữ video: " + e.getMessage());
                 return org.springframework.http.ResponseEntity.status(500).body(response);
@@ -474,7 +472,7 @@ public class ProductPageController {
                     fileInTarget.delete();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("[ProductPage] Unexpected error", e);
             }
         }
 
@@ -491,7 +489,7 @@ public class ProductPageController {
                     fileInTarget.delete();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("[ProductPage] Unexpected error", e);
             }
         }
 
@@ -601,7 +599,7 @@ public class ProductPageController {
                     java.io.File fileInTarget = new java.io.File("target/classes/static" + imagePath);
                     if (fileInTarget.exists()) fileInTarget.delete();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("[ProductPage] Unexpected error", e);
                 }
                 r.setImage(null);
             }
@@ -625,7 +623,7 @@ public class ProductPageController {
                         java.io.File fileInTarget = new java.io.File("target/classes/static" + oldPath);
                         if (fileInTarget.exists()) fileInTarget.delete();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("[ProductPage] Unexpected error", e);
                     }
                 }
 
@@ -659,7 +657,7 @@ public class ProductPageController {
 
                 r.setImage("/uploads/reviews/" + filename);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("[ProductPage] Unexpected error", e);
                 response.put("success", false);
                 response.put("message", "Lỗi khi lưu trữ hình ảnh: " + e.getMessage());
                 return org.springframework.http.ResponseEntity.status(500).body(response);
@@ -676,7 +674,7 @@ public class ProductPageController {
                     java.io.File fileInTarget = new java.io.File("target/classes/static" + videoPath);
                     if (fileInTarget.exists()) fileInTarget.delete();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("[ProductPage] Unexpected error", e);
                 }
                 r.setVideo(null);
             }
@@ -700,7 +698,7 @@ public class ProductPageController {
                         java.io.File fileInTarget = new java.io.File("target/classes/static" + oldPath);
                         if (fileInTarget.exists()) fileInTarget.delete();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error("[ProductPage] Unexpected error", e);
                     }
                 }
 
@@ -734,7 +732,7 @@ public class ProductPageController {
 
                 r.setVideo("/uploads/reviews/" + filename);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("[ProductPage] Unexpected error", e);
                 response.put("success", false);
                 response.put("message", "Lỗi khi lưu trữ video: " + e.getMessage());
                 return org.springframework.http.ResponseEntity.status(500).body(response);

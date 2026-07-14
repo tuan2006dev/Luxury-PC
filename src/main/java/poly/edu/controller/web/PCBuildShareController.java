@@ -1,5 +1,6 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,10 @@ import java.util.Optional;
 @RequestMapping("/api/build/share")
 @CrossOrigin(origins = "*")
 @SuppressWarnings("null")
+@RequiredArgsConstructor
 public class PCBuildShareController {
 
-    @Autowired
-    private SharedBuildRepository sharedBuildRepository;
+    private final SharedBuildRepository sharedBuildRepository;
 
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int CODE_LENGTH = 9;

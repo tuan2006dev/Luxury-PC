@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,10 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UploadService {
 
-    @Autowired
-    ServletContext app;
+    final ServletContext app;
 
     public String save(MultipartFile file, String folder) {
         if (file == null || file.isEmpty()) {

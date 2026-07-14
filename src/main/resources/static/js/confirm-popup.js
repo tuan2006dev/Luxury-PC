@@ -8,7 +8,7 @@
         const link = document.createElement('link');
         link.id = 'confirm-popup-style';
         link.rel = 'stylesheet';
-        link.href = '/css/confirm-popup.css';
+        link.href = '/css/confirm-popup.css?v=' + new Date().getTime();
         document.head.appendChild(link);
     }
 

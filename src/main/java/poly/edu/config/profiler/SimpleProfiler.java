@@ -1,10 +1,14 @@
 package poly.edu.config.profiler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleProfiler {
     public static boolean ENABLED = true;
+
+    private static final Logger log = LoggerFactory.getLogger(SimpleProfiler.class);
 
     private static final ThreadLocal<List<String>> REPOSITORIES = ThreadLocal.withInitial(ArrayList::new);
     private static final ThreadLocal<List<String>> SERVICES = ThreadLocal.withInitial(ArrayList::new);
@@ -37,26 +41,22 @@ public class SimpleProfiler {
     
     public static void printReport(long totalMs, String uri) {
         if (!ENABLED) return;
-        System.out.println("\n\n");
-        System.out.println("=================================================");
-        System.out.println("REQUEST: " + uri);
-        System.out.println("=================================================");
-        
-        System.out.println("\nRepository:");
-        for (String s : REPOSITORIES.get()) System.out.println(s);
-        
-        System.out.println("\nService:");
-        for (String s : SERVICES.get()) System.out.println(s);
-        
-        System.out.println("\nController:");
-        for (String s : CONTROLLERS.get()) System.out.println(s);
-        
-        System.out.println("\nView Rendering:");
-        for (String s : VIEWS.get()) System.out.println(s);
-        
-        System.out.println("\nTOTAL REQUEST .............. " + totalMs + " ms");
-        System.out.println("=================================================\n\n");
-        
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n=================================================");
+        sb.append("\nREQUEST: ").append(uri);
+        sb.append("\n=================================================");
+        sb.append("\nRepository:");
+        for (String s : REPOSITORIES.get()) sb.append("\n  ").append(s);
+        sb.append("\nService:");
+        for (String s : SERVICES.get()) sb.append("\n  ").append(s);
+        sb.append("\nController:");
+        for (String s : CONTROLLERS.get()) sb.append("\n  ").append(s);
+        sb.append("\nView Rendering:");
+        for (String s : VIEWS.get()) sb.append("\n  ").append(s);
+        sb.append("\nTOTAL REQUEST .............. ").append(totalMs).append(" ms");
+        sb.append("\n=================================================");
+        log.debug("{}", sb);
+
         REPOSITORIES.remove();
         SERVICES.remove();
         CONTROLLERS.remove();

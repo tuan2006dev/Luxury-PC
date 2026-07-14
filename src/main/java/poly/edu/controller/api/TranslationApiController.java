@@ -1,5 +1,7 @@
 package poly.edu.controller.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/translations")
 public class TranslationApiController {
+
+    private static final Logger log = LoggerFactory.getLogger(TranslationApiController.class);
 
     private final TranslationRepository translationRepository;
 
@@ -70,7 +74,7 @@ public class TranslationApiController {
             Translation translationEn = new Translation(key, "en", translatedValue);
             translationRepository.save(translationEn);
             
-            System.out.println("Auto-translated and saved key: " + key + " -> [vi: " + defaultValue + ", en: " + translatedValue + "]");
+            log.info("[Translation] Auto-translated key={} -> [vi:{}, en:{}]", key, defaultValue, translatedValue);
         }
 
         return ResponseEntity.ok().build();
@@ -115,7 +119,7 @@ public class TranslationApiController {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error calling MyMemory translation API: " + e.getMessage());
+            log.warn("[Translation] Error calling MyMemory API: {}", e.getMessage());
         }
         return text + " (EN)"; // Fallback: default value with tag if translation service is down
     }

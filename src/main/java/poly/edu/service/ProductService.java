@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
@@ -11,10 +12,10 @@ import poly.edu.entity.Product;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-    @Autowired
-    ProductDAO productDAO;
+    final ProductDAO productDAO;
 
     public List<Product> getAllProducts() {
         return productDAO.findAll();

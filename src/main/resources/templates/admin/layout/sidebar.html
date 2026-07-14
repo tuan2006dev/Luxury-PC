@@ -59,6 +59,7 @@
             </div>
             <div class="sub-menu" id="contentMenu">
                 <a href="/admin/news" id="nav-news">Tin tức</a>
+                <a href="/admin/news-categories" id="nav-news-categories">Danh mục tin tức</a>
             </div>
         </div>
     
@@ -69,10 +70,13 @@
         </form>
     </nav>
 
-    <script th:src="@{/js/admin/layout/sidebar.js}"></script>
+    <script th:src="@{/js/admin/layout/sidebar.js?v=2.0}"></script>
 
     <!-- ADMIN GLOBAL TRANSLATION SCRIPT -->
     
+    <!-- Custom Confirm Popup (Global) -->
+    <script th:src="@{/js/confirm-popup.js}"></script>
+
     <!-- SweetAlert2 for Delete Confirmation Popups -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     

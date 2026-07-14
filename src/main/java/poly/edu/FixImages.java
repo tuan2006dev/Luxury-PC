@@ -52,7 +52,8 @@ public class FixImages {
                 System.out.println("SUCCESSFULLY UPDATED " + count + " PRODUCTS IN POSTGRESQL.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            // SECURITY WARNING: Hardcoded credentials above must be moved to environment variables
+            System.err.println("[FixImages] Error updating product images: " + e.getMessage());
         }
     }
 }

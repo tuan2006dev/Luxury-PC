@@ -1,5 +1,8 @@
 package poly.edu.config;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -15,33 +18,31 @@ import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Component
+@RequiredArgsConstructor
 public class BuildPcDataSeeder implements CommandLineRunner {
 
-    @Autowired
-    private CategoryDAO categoryDAO;
+    private static final Logger log = LoggerFactory.getLogger(BuildPcDataSeeder.class);
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final CategoryDAO categoryDAO;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final ProductDAO productDAO;
 
-    @Autowired
-    private poly.edu.dao.PcComboDAO comboDAO;
+    private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private poly.edu.dao.PcComboDetailDAO comboDetailDAO;
+    private final poly.edu.dao.PcComboDAO comboDAO;
+
+    private final poly.edu.dao.PcComboDetailDAO comboDetailDAO;
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Checking and seeding Build PC data...");
+        log.info("[BuildPcDataSeeder] Checking and seeding Build PC data...");
         
         try {
             jdbcTemplate.execute("SELECT setval('products_id_seq', (SELECT COALESCE(MAX(id), 1) FROM products))");
             jdbcTemplate.execute("SELECT setval('categories_id_seq', (SELECT COALESCE(MAX(id), 1) FROM categories))");
             jdbcTemplate.execute("SELECT setval('inventory_id_seq', (SELECT COALESCE(MAX(id), 1) FROM inventory))");
         } catch (Exception e) {
-            System.err.println("Could not reset sequences: " + e.getMessage());
+            log.warn("[BuildPcDataSeeder] Could not reset DB sequences: {}", e.getMessage());
         }
 
         // Ensure categories exist
@@ -55,9 +56,9 @@ public class BuildPcDataSeeder implements CommandLineRunner {
                     Category c = new Category();
                     c.setName(name);
                     categoryDAO.save(c);
-                    System.out.println("Seeded category: " + name);
+                    log.info("[BuildPcDataSeeder] Seeded category: {}", name);
                 } catch (Exception e) {
-                    System.err.println("Could not seed category " + name + ": " + e.getMessage());
+                    log.warn("[BuildPcDataSeeder] Could not seed category {}: {}", name, e.getMessage());
                 }
             }
         }
@@ -150,9 +151,9 @@ public class BuildPcDataSeeder implements CommandLineRunner {
                 p.setCreatedAt(new Date());
                 p.setDescription("TDP: " + power + "W"); // Lưu thông số công suất vào mô tả tạm thời
                 productDAO.save(p);
-                System.out.println("Seeded product: " + productName);
+                log.info("[BuildPcDataSeeder] Seeded product: {}", productName);
             } catch (Exception e) {
-                System.err.println("Could not seed product " + productName + ": " + e.getMessage());
+                log.warn("[BuildPcDataSeeder] Could not seed product {}: {}", productName, e.getMessage());
             }
         }
     }

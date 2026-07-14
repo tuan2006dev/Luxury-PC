@@ -1,5 +1,8 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,22 +21,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
 
-    @Autowired
-    ProductService productService;
+    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
-    @Autowired
-    poly.edu.service.ReviewService reviewService;
+    final ProductService productService;
 
-    @Autowired
-    VoucherService voucherService;
+    final poly.edu.service.ReviewService reviewService;
 
-    @Autowired
-    FlashSaleService flashSaleService;
+    final VoucherService voucherService;
 
-    @Autowired
-    WishlistService wishlistService;
+    final FlashSaleService flashSaleService;
+
+    final WishlistService wishlistService;
 
     // hasValidImage removed for performance
 
@@ -80,19 +81,9 @@ public class HomeController {
         long t8 = System.nanoTime();
 
         long totalElapsed = (t8 - totalStart) / 1_000_000;
-        System.out.println("╔══════════════════════════════════════════════════╗");
-        System.out.printf("║ [PERF] HomeController.index()                    ║%n");
-        System.out.println("╠══════════════════════════════════════════════════╣");
-        System.out.printf("║ featuredProducts .............. %6d ms          ║%n", (t1-t0)/1_000_000);
-        System.out.printf("║ flashSaleProducts ............ %6d ms          ║%n", (t2-t1)/1_000_000);
-        System.out.printf("║ topProducts .................. %6d ms          ║%n", (t3-t2)/1_000_000);
-        System.out.printf("║ latestReviews ................ %6d ms          ║%n", (t4-t3)/1_000_000);
-        System.out.printf("║ currentFlashSale ............. %6d ms          ║%n", (t5-t4)/1_000_000);
-        System.out.printf("║ flashSaleItems ............... %6d ms          ║%n", (t6-t5)/1_000_000);
-        System.out.printf("║ activeVouchers ............... %6d ms          ║%n", (t7-t6)/1_000_000);
-        System.out.printf("║ wishlistProductIds ........... %6d ms          ║%n", (t8-t7)/1_000_000);
-        System.out.printf("║ TOTAL CONTROLLER ............. %6d ms          ║%n", totalElapsed);
-        System.out.println("╚══════════════════════════════════════════════════╝");
+        log.debug("[HomeController] index() perf: total={}ms | featured={}ms | flashSale={}ms | top={}ms | reviews={}ms | vouchers={}ms | wishlist={}ms",
+                totalElapsed, (t1-t0)/1_000_000, (t2-t1)/1_000_000, (t3-t2)/1_000_000,
+                (t4-t3)/1_000_000, (t7-t6)/1_000_000, (t8-t7)/1_000_000);
 
         return "index";
     }

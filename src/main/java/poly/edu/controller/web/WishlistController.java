@@ -1,5 +1,7 @@
 package poly.edu.controller.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +12,8 @@ import poly.edu.service.WishlistService;
 
 @Controller
 public class WishlistController {
+
+    private static final Logger log = LoggerFactory.getLogger(WishlistController.class);
 
     private final WishlistService wishlistService;
 
@@ -24,8 +28,10 @@ public class WishlistController {
             Authentication authentication) {
         try {
             wishlistService.addProduct(authentication, productId);
-        } catch (Exception ignored) {
-            // redirect anyway; user may need to log in (handled by security)
+        } catch (Exception e) {
+            // Redirect anyway — security filter will handle unauthenticated users
+            log.warn("[Wishlist] Failed to add product id={} for user={}: {}", productId,
+                    authentication != null ? authentication.getName() : "anonymous", e.getMessage());
         }
         return "redirect:" + sanitizeRedirect(redirect);
     }
@@ -37,7 +43,9 @@ public class WishlistController {
             Authentication authentication) {
         try {
             wishlistService.removeProduct(authentication, productId);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.warn("[Wishlist] Failed to remove product id={} for user={}: {}", productId,
+                    authentication != null ? authentication.getName() : "anonymous", e.getMessage());
         }
         return "redirect:" + sanitizeRedirect(redirect);
     }
@@ -48,7 +56,9 @@ public class WishlistController {
             Authentication authentication) {
         try {
             wishlistService.clear(authentication);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.warn("[Wishlist] Failed to clear wishlist for user={}: {}",
+                    authentication != null ? authentication.getName() : "anonymous", e.getMessage());
         }
         return "redirect:" + sanitizeRedirect(redirect);
     }

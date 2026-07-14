@@ -1,5 +1,6 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +17,12 @@ import poly.edu.dao.PcComboDAO;
 import poly.edu.entity.PcCombo;
 
 @Controller
+@RequiredArgsConstructor
 public class BuildPcBasicController {
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
-    @Autowired
-    private PcComboDAO pcComboDAO;
+    private final PcComboDAO pcComboDAO;
 
     @GetMapping("/build-pc-basic")
     public String buildPcBasic(Model model) {

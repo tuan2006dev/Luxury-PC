@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,13 +10,12 @@ import poly.edu.entity.Voucher;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class VoucherService {
 
-    @Autowired
-    private VoucherDAO voucherDAO;
+    private final VoucherDAO voucherDAO;
 
-    @Autowired
-    private poly.edu.dao.UserVoucherDAO userVoucherDAO;
+    private final poly.edu.dao.UserVoucherDAO userVoucherDAO;
 
     public List<Voucher> getAllVouchers() {
         return voucherDAO.findAllByOrderByCreatedAtDesc();

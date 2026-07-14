@@ -1,5 +1,6 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,19 +21,16 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin/combos")
+@RequiredArgsConstructor
 public class AdminComboController {
 
-    @Autowired
-    private PcComboDAO pcComboDAO;
+    private final PcComboDAO pcComboDAO;
 
-    @Autowired
-    private PcComboDetailDAO pcComboDetailDAO;
+    private final PcComboDetailDAO pcComboDetailDAO;
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
-    @Autowired
-    private UploadService uploadService;
+    private final UploadService uploadService;
 
     @GetMapping
     public String index(Model model) {

@@ -1,5 +1,8 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +19,14 @@ import poly.edu.dao.PcComboDAO;
 import poly.edu.entity.PcCombo;
 
 @Controller
+@RequiredArgsConstructor
 public class BuildPcController {
 
-    @Autowired
-    private ProductDAO productDAO;
+    private static final Logger log = LoggerFactory.getLogger(BuildPcController.class);
 
-    @Autowired
-    private PcComboDAO pcComboDAO;
+    private final ProductDAO productDAO;
+
+    private final PcComboDAO pcComboDAO;
 
     @GetMapping("/build-pc")
     public String buildPc(Model model) {
@@ -67,7 +71,10 @@ public class BuildPcController {
                         try {
                             String powStr = p.getDescription().replaceAll("[^0-9]", "");
                             if(!powStr.isEmpty()) power = Integer.parseInt(powStr);
-                        } catch (Exception e) {}
+                        } catch (NumberFormatException e) {
+                            // Non-critical: product description has no parseable TDP value; defaulting to 0
+                            log.debug("Could not parse TDP from description for product id={}: {}", p.getId(), e.getMessage());
+                        }
                     }
                     map.put("power", power);
                     map.put("description", p.getDescription());

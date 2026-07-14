@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,16 +14,14 @@ import poly.edu.entity.Product;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class FlashSaleService {
 
-    @Autowired
-    private FlashSaleDAO flashSaleDAO;
+    private final FlashSaleDAO flashSaleDAO;
 
-    @Autowired
-    private FlashSaleItemDAO flashSaleItemDAO;
+    private final FlashSaleItemDAO flashSaleItemDAO;
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
     /**
      * Lấy chương trình Flash Sale đang diễn ra (chỉ đọc, không ghi DB)

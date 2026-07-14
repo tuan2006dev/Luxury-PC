@@ -1,5 +1,6 @@
 package poly.edu.controller.auth;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,13 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@RequiredArgsConstructor
 public class AuthPageController {
 
-    @Autowired
-    private poly.edu.repository.UserRepository userRepo;
+    private final poly.edu.repository.UserRepository userRepo;
 
-    @Autowired
-    private poly.edu.service.EmailService emailService;
+    private final poly.edu.service.EmailService emailService;
 
     @GetMapping("/login")
     public String redirectToCustomLogin() {

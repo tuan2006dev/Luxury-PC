@@ -1,7 +1,9 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.UserVoucherDAO;
 import poly.edu.dao.VoucherDAO;
 import poly.edu.entity.User;
@@ -15,14 +17,14 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserVoucherService {
 
-    @Autowired
-    private UserVoucherDAO userVoucherDAO;
+    private final UserVoucherDAO userVoucherDAO;
 
-    @Autowired
-    private VoucherDAO voucherDAO;
+    private final VoucherDAO voucherDAO;
 
+    @Transactional
     public Map<String, Object> saveVoucherForUser(User user, String voucherCode) {
         Map<String, Object> response = new HashMap<>();
 
@@ -80,6 +82,7 @@ public class UserVoucherService {
         return userVoucherDAO.findByUserAndIsUsedFalseOrderBySavedAtDesc(user);
     }
 
+    @Transactional
     public void markVoucherAsUsed(User user, String voucherCode) {
         String codeUpper = (voucherCode != null) ? voucherCode.trim().toUpperCase() : "";
         Optional<UserVoucher> uvOpt = userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(user, codeUpper);

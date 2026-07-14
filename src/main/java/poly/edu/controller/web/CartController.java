@@ -1,5 +1,6 @@
 package poly.edu.controller.web;
 
+import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,19 +17,16 @@ import java.util.Map;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class CartController {
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
-    @Autowired
-    private VoucherService voucherService;
+    private final VoucherService voucherService;
 
-    @Autowired
-    private poly.edu.service.CartService cartService;
+    private final poly.edu.service.CartService cartService;
 
-    @Autowired
-    private poly.edu.service.FlashSaleService flashSaleService;
+    private final poly.edu.service.FlashSaleService flashSaleService;
 
     /**
      * 1. THÊM SẢN PHẨM: Xử lý khi nhấn "THÊM VÀO GIỎ HÀNG"

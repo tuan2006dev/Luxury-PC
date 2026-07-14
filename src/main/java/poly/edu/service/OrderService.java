@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,28 +12,22 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
-    @Autowired
-    private InventoryDAO inventoryDAO;
+    private final InventoryDAO inventoryDAO;
 
-    @Autowired
-    private OrderDAO orderDAO;
+    private final OrderDAO orderDAO;
 
-    @Autowired
-    private OrderItemDAO orderItemDAO;
+    private final OrderItemDAO orderItemDAO;
 
-    @Autowired
-    private StockMovementDAO stockMovementDAO;
+    private final StockMovementDAO stockMovementDAO;
 
-    @Autowired
-    private FlashSaleService flashSaleService;
+    private final FlashSaleService flashSaleService;
 
-    @Autowired
-    private UserVoucherService userVoucherService;
+    private final UserVoucherService userVoucherService;
 
     @Transactional
     public Order placeOrder(Map<Integer, CartItem> cart, String fullName, String phone, String address, 

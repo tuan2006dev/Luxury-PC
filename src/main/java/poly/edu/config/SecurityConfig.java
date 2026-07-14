@@ -1,5 +1,6 @@
 package poly.edu.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,13 +17,12 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private poly.edu.security.CustomOAuth2UserService oauth2UserService;
+    private final poly.edu.security.CustomOAuth2UserService oauth2UserService;
 
-    @Autowired
-    private poly.edu.security.CustomAuthenticationSuccessHandler successHandler;
+    private final poly.edu.security.CustomAuthenticationSuccessHandler successHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .securityContext(context -> context
                         .securityContextRepository(securityContextRepository()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/users/**", "/admin/roles/**", "/admin/account/**", "/admin/account").hasRole("ADMIN")
+                        .requestMatchers("/admin/users/**", "/admin/roles/**", "/admin/account/**", "/admin/account", "/admin/news/create", "/admin/news/edit/**", "/admin/news/save", "/admin/news/delete/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp", "/api/forgot-password/**",
                                 "/api/voucher/**", "/api/cart", "/api/products", "/api/products/**", "/api/build/**", "/build-pc/**", "/api/tickets/**",

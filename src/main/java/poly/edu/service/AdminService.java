@@ -1,5 +1,6 @@
 package poly.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,19 +10,16 @@ import poly.edu.repository.UserRepository;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
 
-    @Autowired
-    private OrderDAO orderDAO;
+    private final OrderDAO orderDAO;
 
-    @Autowired
-    private OrderItemDAO orderItemDAO;
+    private final OrderItemDAO orderItemDAO;
 
-    @Autowired
-    private InventoryDAO inventoryDAO;
+    private final InventoryDAO inventoryDAO;
 
-    @Autowired
-    private StockMovementDAO stockMovementDAO;
+    private final StockMovementDAO stockMovementDAO;
 
     public List<Order> getAllOrders() {
         return orderDAO.findAllOrderedByDate();
@@ -144,8 +142,7 @@ public class AdminService {
         return orderDAO.getOrderStatusStats(cal.getTime());
     }
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public List<Map<String, Object>> getNewUsersByDate(int days) {
         Calendar cal = Calendar.getInstance();
@@ -167,8 +164,7 @@ public class AdminService {
         return inventoryDAO.findLowStockItems();
     }
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
     public List<Inventory> getFullInventory() {
         return inventoryDAO.findAllWithProductAndCategory();

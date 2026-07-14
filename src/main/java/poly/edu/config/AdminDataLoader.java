@@ -1,5 +1,8 @@
 package poly.edu.config;
 
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,34 +12,29 @@ import poly.edu.entity.*;
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class AdminDataLoader implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminDataLoader.class);
 
     private static final String TEST_ADMIN_EMAIL = "nguyentruongq169@gmail.com";
     private static final String TEST_ADMIN_PASSWORD = "123456";
 
-    @Autowired
-    private OrderDAO orderDAO;
+    private final OrderDAO orderDAO;
 
-    @Autowired
-    private OrderItemDAO orderItemDAO;
+    private final OrderItemDAO orderItemDAO;
 
-    @Autowired
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
 
-    @Autowired
-    private RoleDAO roleDAO;
+    private final RoleDAO roleDAO;
 
-    @Autowired
-    private UserRoleDAO userRoleDAO;
+    private final UserRoleDAO userRoleDAO;
 
-    @Autowired
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
-    @Autowired
-    private InventoryDAO inventoryDAO;
+    private final InventoryDAO inventoryDAO;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
@@ -50,7 +48,7 @@ public class AdminDataLoader implements CommandLineRunner {
                 try {
                     inventoryDAO.save(inv);
                 } catch (Exception e) {
-                    System.out.println(">>> Failed to seed inventory for product " + p.getId() + ": " + e.getMessage());
+                    log.warn("[DataLoader] Failed to seed inventory for product id={}: {}", p.getId(), e.getMessage());
                 }
             }
         }
@@ -81,7 +79,7 @@ public class AdminDataLoader implements CommandLineRunner {
             admin.setFullName("LuxuryPC Admin");
             admin.setPassword(passwordEncoder.encode(TEST_ADMIN_PASSWORD));
             admin = userDAO.save(admin);
-            System.out.println(">>> Created test admin: " + TEST_ADMIN_EMAIL);
+            log.info("[DataLoader] Created test admin account: {}", TEST_ADMIN_EMAIL);
         }
 
         boolean adminUpdated = false;
@@ -102,7 +100,7 @@ public class AdminDataLoader implements CommandLineRunner {
             staffRole = new Role();
             staffRole.setName("STAFF");
             roleDAO.save(staffRole);
-            System.out.println(">>> Created STAFF role");
+            log.info("[DataLoader] Created STAFF role");
         }
 
         Role adminRole = roleDAO.findByName("ADMIN");
@@ -114,7 +112,7 @@ public class AdminDataLoader implements CommandLineRunner {
                 userRole.setUser(admin);
                 userRole.setRole(adminRole);
                 userRoleDAO.save(userRole);
-                System.out.println(">>> Assigned ADMIN role: " + TEST_ADMIN_EMAIL);
+                log.info("[DataLoader] Assigned ADMIN role to: {}", TEST_ADMIN_EMAIL);
             }
         }
 
@@ -217,6 +215,6 @@ public class AdminDataLoader implements CommandLineRunner {
             orderItemDAO.save(item);
         }
 
-        System.out.println(">>> Created sample order: " + orderCode);
+        log.info("[DataLoader] Seeded sample order: {}", orderCode);
     }
 }

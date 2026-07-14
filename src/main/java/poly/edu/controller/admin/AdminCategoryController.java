@@ -1,5 +1,6 @@
 package poly.edu.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,10 +10,10 @@ import poly.edu.service.CategoryService;
 
 @Controller
 @RequestMapping("/admin/categories")
+@RequiredArgsConstructor
 public class AdminCategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @GetMapping("")
     public String list(Model model) {

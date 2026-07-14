@@ -1,5 +1,6 @@
 package poly.edu.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -18,13 +19,13 @@ import java.util.Set;
 
 @Component
 @SuppressWarnings("null")
+@RequiredArgsConstructor
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
