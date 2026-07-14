@@ -266,6 +266,7 @@ public class ProfileController {
     @PostMapping("/profile/password")
     public String changePassword(
             Authentication authentication,
+            HttpServletRequest request,
             @RequestParam(value = "currentPassword", required = false) String currentPassword,
             @RequestParam("newPassword") String newPassword,
             @RequestParam("confirmPassword") String confirmPassword,
@@ -297,9 +298,33 @@ public class ProfileController {
 
             user.setPassword(passwordEncoder.encode(newPassword));
             profileService.saveUser(user);
-            redirectAttributes.addFlashAttribute("securityMessage", "Đổi mật khẩu thành công.");
-            redirectAttributes.addFlashAttribute("securityMessageType", "success");
-            return "redirect:/profile?tab=security";
+
+            // Invalidate all active sessions of the user in SessionRegistry
+            try {
+                String currentPrincipalName = authentication.getName();
+                for (Object principal : sessionRegistry.getAllPrincipals()) {
+                    String principalName = extractPrincipalName(principal);
+                    if (principalName != null && principalName.equals(currentPrincipalName)) {
+                        java.util.List<SessionInformation> sessions = sessionRegistry.getAllSessions(principal, false);
+                        for (SessionInformation sessionInfo : sessions) {
+                            if (sessionInfo != null && !sessionInfo.isExpired()) {
+                                sessionInfo.expireNow();
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore session registry exceptions
+            }
+
+            // Immediately invalidate the current request session and clear authentication context
+            try {
+                request.logout();
+            } catch (Exception e) {
+                // Ignore logout exceptions
+            }
+
+            return "redirect:/auth/login?passwordChanged=true";
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("securityMessage", "Không thể đổi mật khẩu lúc này.");
             redirectAttributes.addFlashAttribute("securityMessageType", "error");

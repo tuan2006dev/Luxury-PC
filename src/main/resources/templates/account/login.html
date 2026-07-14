@@ -31,6 +31,7 @@
             document.addEventListener('DOMContentLoaded', function () {
                 /*<![CDATA[*/
                 const hasError = /*[[${param.error != null}]]*/ false;
+                const passwordChanged = /*[[${param.passwordChanged != null}]]*/ false;
                 /*]]>*/
 
                 if (hasError) {
@@ -46,6 +47,20 @@
                         showFailurePopup();
                     } else {
                         window.addEventListener('load', showFailurePopup);
+                    }
+                } else if (passwordChanged) {
+                    const showSuccessPopup = () => {
+                        if (typeof window.showAlert === 'function') {
+                            window.showAlert('Đổi mật khẩu thành công. Vui lòng đăng nhập lại.', true);
+                        } else {
+                            alert('Đổi mật khẩu thành công. Vui lòng đăng nhập lại.');
+                        }
+                    };
+
+                    if (document.readyState === 'complete') {
+                        showSuccessPopup();
+                    } else {
+                        window.addEventListener('load', showSuccessPopup);
                     }
                 }
             });

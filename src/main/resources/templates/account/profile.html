@@ -1463,7 +1463,7 @@
           <!-- Add/Edit address form -->
           <div id="address-form-container"
             style="background:#f8fafc;border:1px solid #e2e8f0;padding:2rem; display:none;">
-            <div
+            <div id="address-form-title"
               style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#3b82f6;margin-bottom:1.5rem;"
               data-translate="profile-address-form-header">
               Thêm / Chỉnh Sửa Địa Chỉ</div>
@@ -2255,6 +2255,8 @@
         return csrfHeader;
       }
 
+      let addressCount = 0;
+
       async function loadAddresses() {
         try {
           const res = await fetch('/api/address');
@@ -2262,9 +2264,11 @@
           const container = document.getElementById('address-list-container');
           if (!container) return;
           if (!data.success || !data.data || data.data.length === 0) {
+            addressCount = 0;
             container.innerHTML = `<p style="grid-column:span 2;text-align:center;color:#64748b;padding:2rem;">${window.t('profile-address-empty', 'Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.')}</p>`;
             return;
           }
+          addressCount = data.data.length;
           container.innerHTML = data.data.map(addr => `
           <div style="background:#f8fafc;border:1px solid ${addr.isDefault ? '#3b82f6' : '#e2e8f0'};padding:1.5rem;">
             <div style="font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:${addr.isDefault ? '#3b82f6' : '#64748b'};margin-bottom:.8rem;">
@@ -2308,6 +2312,10 @@
       }
 
       function openAddressForm() {
+        if (addressCount >= 5) {
+          toast('⚠️ Bạn chỉ được lưu tối đa 5 địa chỉ giao hàng.');
+          return;
+        }
         document.getElementById('address-id-edit').value = '';
         document.getElementById('address-name').value = '';
         document.getElementById('address-phone').value = '';
@@ -2315,6 +2323,20 @@
         document.getElementById('address-city').value = '';
         document.getElementById('address-district').value = '';
         document.getElementById('address-postal').value = '';
+
+        const formContainer = document.getElementById('address-form-container');
+        const listContainer = document.getElementById('address-list-container');
+        if (formContainer && listContainer) {
+          listContainer.parentNode.insertBefore(formContainer, listContainer);
+          formContainer.style.marginBottom = '2rem';
+          formContainer.style.marginTop = '0';
+        }
+
+        const titleEl = document.getElementById('address-form-title');
+        if (titleEl) {
+          titleEl.textContent = 'Thêm Địa Chỉ Mới';
+        }
+
         document.getElementById('address-form-container').style.display = 'block';
       }
 
@@ -2335,7 +2357,21 @@
               document.getElementById('address-city').value = addr.city || '';
               document.getElementById('address-district').value = addr.district || '';
               document.getElementById('address-postal').value = addr.postalCode || '';
-              openAddressForm();
+
+              const formContainer = document.getElementById('address-form-container');
+              const listContainer = document.getElementById('address-list-container');
+              if (formContainer && listContainer) {
+                listContainer.parentNode.insertBefore(formContainer, listContainer.nextSibling);
+                formContainer.style.marginBottom = '0';
+                formContainer.style.marginTop = '2rem';
+              }
+
+              const titleEl = document.getElementById('address-form-title');
+              if (titleEl) {
+                titleEl.textContent = 'Chỉnh Sửa Địa Chỉ';
+              }
+
+              document.getElementById('address-form-container').style.display = 'block';
             }
           })
           .catch(err => {
