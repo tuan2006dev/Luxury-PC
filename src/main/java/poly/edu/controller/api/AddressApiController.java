@@ -147,6 +147,11 @@ public class AddressApiController {
             return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng nhập tỉnh/thành phố.", null));
         }
 
+        long count = shippingAddressRepository.countByUser_Id(user.getId());
+        if (count >= 5) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Bạn chỉ được lưu tối đa 5 địa chỉ giao hàng.", null));
+        }
+
         ShippingAddress addr = new ShippingAddress();
         addr.setUser(user);
         addr.setRecipientName(request.getRecipientName().trim());
@@ -155,7 +160,6 @@ public class AddressApiController {
         addr.setDistrict(request.getDistrict() != null ? request.getDistrict().trim() : "");
         addr.setCity(request.getCity().trim());
         
-        long count = shippingAddressRepository.countByUser_Id(user.getId());
         addr.setDefault(count == 0);
 
         shippingAddressRepository.save(addr);
