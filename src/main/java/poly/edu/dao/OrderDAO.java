@@ -2,6 +2,8 @@ package poly.edu.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
 import poly.edu.entity.Order;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,10 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
 
     Optional<Order> findByOrderCode(String orderCode);
 
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT o FROM Order o WHERE o.orderCode = :orderCode")
+    Optional<Order> findByOrderCodeForUpdate(@org.springframework.data.repository.query.Param("orderCode") String orderCode);
     @org.springframework.data.jpa.repository.Modifying
     @org.springframework.data.jpa.repository.Query("UPDATE Order o SET o.user = null WHERE o.user.id = :userId")
     void nullifyUserReferences(@org.springframework.data.repository.query.Param("userId") Integer userId);

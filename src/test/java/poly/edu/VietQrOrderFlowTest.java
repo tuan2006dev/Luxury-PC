@@ -1,6 +1,7 @@
 package poly.edu;
 
 import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.ExtendedModelMap;
 import poly.edu.controller.web.PaymentController;
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@WithMockUser(username = "sepay-fixture@example.test", roles = "USER")
 @ActiveProfiles("test")
 @Transactional
 @AutoConfigureMockMvc
@@ -60,6 +63,20 @@ class VietQrOrderFlowTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    private User sepayFixtureUser;
+
+    @BeforeEach
+    void setUpSePayFixtureUser() {
+        sepayFixtureUser = userDAO.findByEmail("sepay-fixture@example.test");
+        if (sepayFixtureUser == null) {
+            sepayFixtureUser = new User();
+            sepayFixtureUser.setEmail("sepay-fixture@example.test");
+            sepayFixtureUser.setUsername("sepay-fixture@example.test");
+            sepayFixtureUser.setPassword("test-only");
+            sepayFixtureUser = userDAO.saveAndFlush(sepayFixtureUser);
+        }
+    }
 
     @Test
     @WithMockUser(username="testuser@gmail.com", roles={"USER"})
@@ -116,13 +133,13 @@ class VietQrOrderFlowTest {
         assertEquals("payment-vietqr", view);
         assertEquals(17_200_000L, model.get("amount"));
         assertEquals("Chờ xác nhận thanh toán", model.get("paymentStatus"));
-        assertEquals("MB Bank", model.get("bankDisplayName"));
-        assertEquals("9999999999", model.get("accountNo"));
-        assertEquals("LUXURYPC", model.get("accountName"));
+        assertEquals("VietinBank", model.get("bankDisplayName"));
+        assertEquals("123456789", model.get("accountNo"));
+        assertEquals("TEST ACCOUNT", model.get("accountName"));
         assertEquals(
-                "https://img.vietqr.io/image/MB-9999999999-compact.png"
-                        + "?amount=17200000&addInfo=THANH+TOAN+" + order.getOrderCode()
-                        + "&accountName=LUXURYPC",
+                "https://img.vietqr.io/image/ICB-123456789-compact.png"
+                        + "?amount=17200000&addInfo=" + order.getOrderCode()
+                        + "&accountName=SEPAY+TEST+ACCOUNT",
                 model.get("qrUrl"));
     }
 
@@ -267,6 +284,7 @@ class VietQrOrderFlowTest {
 
     private Order saveOrder(String paymentMethod, String status, Double totalPrice) {
         Order order = new Order();
+        order.setUser(sepayFixtureUser);
         order.setFullName("QA VietQR");
         order.setPhone("0900000000");
         order.setAddress("QA Address");
