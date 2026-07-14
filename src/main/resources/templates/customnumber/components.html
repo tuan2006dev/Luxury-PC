@@ -10,19 +10,19 @@
     <!-- Quantity Box Fragment -->
     <div th:fragment="quantityBox(itemId, quantity, maxVal, onClickMinus, onClickPlus, onChange, isLarge)"
         th:class="${isLarge} ? 'quantity-box large' : 'quantity-box'"
-        th:style="${isLarge} ? 'display: flex; align-items: center; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; width: 120px;' : null">
+        th:style="${isLarge} ? 'display: flex; align-items: center; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; width: 120px; background: var(--bg-surface);' : null">
 
         <button type="button" th:attr="onclick=${onClickMinus}"
-            th:style="${isLarge} ? 'width: 40px; height: 40px; background: #f9f9f9; border: none; font-size: 18px; cursor: pointer;' : null">-</button>
+            th:style="${isLarge} ? 'width: 40px; height: 40px; background: var(--bg-surface); border: none; font-size: 18px; cursor: pointer; color: var(--text-primary);' : null">-</button>
 
         <input type="number" class="no-spinner" th:id="${itemId != null ? 'qty-' + itemId : 'qty'}"
             th:value="${quantity}" th:max="${maxVal}" min="1" th:attr="onchange=${onChange}"
             onkeypress="return event.charCode >= 48 && event.charCode <= 57" onwheel="this.blur()"
             onkeydown="if(event.key === 'Enter') event.preventDefault();"
-            th:style="${isLarge} ? 'width: 40px; height: 40px; text-align: center; border: none; font-size: 15px; font-weight: 600; outline: none; -moz-appearance: textfield;' : null">
+            th:style="${isLarge} ? 'width: 40px; height: 40px; text-align: center; border: none; font-size: 15px; font-weight: 600; outline: none; -moz-appearance: textfield; background: var(--bg-surface); color: var(--text-primary);' : null">
 
         <button type="button" th:attr="onclick=${onClickPlus}"
-            th:style="${isLarge} ? 'width: 40px; height: 40px; background: #f9f9f9; border: none; font-size: 18px; cursor: pointer;' : null">+</button>
+            th:style="${isLarge} ? 'width: 40px; height: 40px; background: var(--bg-surface); border: none; font-size: 18px; cursor: pointer; color: var(--text-primary);' : null">+</button>
     </div>
 
     <!-- Remove Button Fragment -->

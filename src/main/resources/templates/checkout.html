@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Thanh Toán - Luxury PC</title>
@@ -19,7 +20,12 @@
             --success: #10b981;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
@@ -40,6 +46,7 @@
             justify-content: center;
             margin-bottom: 40px;
         }
+
         .step {
             display: flex;
             align-items: center;
@@ -47,9 +54,11 @@
             font-size: 14px;
             font-weight: 500;
         }
+
         .step.active {
             color: var(--primary);
         }
+
         .step-circle {
             width: 28px;
             height: 28px;
@@ -61,17 +70,20 @@
             margin-right: 8px;
             font-weight: 600;
         }
+
         .step.active .step-circle {
             background: var(--primary);
             color: var(--white);
         }
+
         .step-line {
             width: 100px;
             height: 2px;
             background: var(--border);
             margin: 0 15px;
         }
-        .step.active + .step-line {
+
+        .step.active+.step-line {
             background: var(--primary);
         }
 
@@ -88,8 +100,9 @@
             border-radius: 8px;
             padding: 24px;
             margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
+
         .section-title {
             font-size: 16px;
             font-weight: 700;
@@ -104,20 +117,27 @@
             gap: 16px;
             margin-bottom: 16px;
         }
+
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
+
         .form-group.full {
             grid-column: span 2;
         }
+
         .form-label {
             font-size: 13px;
             font-weight: 500;
             color: var(--text-main);
         }
-        .form-label span { color: var(--danger); }
+
+        .form-label span {
+            color: var(--danger);
+        }
+
         .form-control {
             padding: 12px;
             border: 1px solid var(--border);
@@ -127,8 +147,14 @@
             outline: none;
             transition: border 0.2s;
         }
-        .form-control:focus { border-color: var(--primary); }
-        select.form-control { cursor: pointer; }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
 
         /* Radio Blocks */
         .radio-block {
@@ -142,8 +168,18 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .radio-block:hover { border-color: #cbd5e1; }
-        .radio-block input { margin-right: 12px; accent-color: var(--primary); width: 16px; height: 16px; }
+
+        .radio-block:hover {
+            border-color: #cbd5e1;
+        }
+
+        .radio-block input {
+            margin-right: 12px;
+            accent-color: var(--primary);
+            width: 16px;
+            height: 16px;
+        }
+
         .radio-content {
             display: flex;
             align-items: center;
@@ -152,8 +188,17 @@
             font-size: 14px;
             font-weight: 500;
         }
-        .radio-content i { font-size: 20px; color: var(--text-muted); }
-        .radio-price { font-weight: 600; color: var(--primary); }
+
+        .radio-content i {
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+
+        .radio-price {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
         .radio-block.active {
             border-color: var(--primary);
             background: #f0f7ff;
@@ -167,6 +212,7 @@
             margin-bottom: 16px;
             border-bottom: 1px solid var(--border);
         }
+
         .order-img {
             width: 64px;
             height: 64px;
@@ -176,11 +222,35 @@
             align-items: center;
             justify-content: center;
         }
-        .order-img img { max-width: 90%; max-height: 90%; }
-        .order-info { flex: 1; display: flex; flex-direction: column; justify-content: center;}
-        .order-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-        .order-qty { font-size: 12px; color: var(--text-muted); }
-        .order-price { font-weight: 700; font-size: 14px; text-align: right; }
+
+        .order-img img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .order-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .order-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .order-qty {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .order-price {
+            font-weight: 700;
+            font-size: 14px;
+            text-align: right;
+        }
 
         .summary-row {
             display: flex;
@@ -189,6 +259,7 @@
             margin-bottom: 12px;
             color: var(--text-muted);
         }
+
         .summary-row.total {
             margin-top: 16px;
             padding-top: 16px;
@@ -197,6 +268,7 @@
             font-weight: 700;
             color: var(--text-main);
         }
+
         .summary-row.total .price {
             color: var(--primary);
             font-size: 20px;
@@ -208,6 +280,7 @@
             gap: 8px;
             margin-bottom: 24px;
         }
+
         .voucher-input {
             flex: 1;
             padding: 10px 12px;
@@ -216,6 +289,7 @@
             font-size: 13px;
             outline: none;
         }
+
         .btn-apply {
             background: var(--bg);
             border: 1px solid var(--border);
@@ -226,7 +300,10 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-apply:hover { background: #e5e7eb; }
+
+        .btn-apply:hover {
+            background: #e5e7eb;
+        }
 
         /* Trust Box */
         .trust-box {
@@ -237,6 +314,7 @@
             margin-bottom: 24px;
             font-size: 12px;
         }
+
         .trust-title {
             color: var(--primary);
             font-weight: 600;
@@ -245,7 +323,11 @@
             align-items: center;
             gap: 8px;
         }
-        .trust-list { list-style: none; }
+
+        .trust-list {
+            list-style: none;
+        }
+
         .trust-list li {
             margin-bottom: 8px;
             display: flex;
@@ -253,7 +335,11 @@
             gap: 8px;
             color: var(--text-main);
         }
-        .trust-list li i { color: var(--success); margin-top: 2px; }
+
+        .trust-list li i {
+            color: var(--success);
+            margin-top: 2px;
+        }
 
         .btn-submit {
             width: 100%;
@@ -267,7 +353,10 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-        .btn-submit:hover { background: var(--primary-hover); }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
 
         /* Trust footer */
         .checkout-footer {
@@ -277,10 +366,21 @@
             padding-top: 40px;
             margin-top: 40px;
         }
-        .cf-item { text-align: center; font-size: 13px; font-weight: 500; }
-        .cf-item i { font-size: 24px; margin-bottom: 8px; color: var(--text-muted); }
+
+        .cf-item {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .cf-item i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
     </style>
 </head>
+
 <body>
     <div th:replace="~{layout/header :: header}"></div>
 
@@ -333,19 +433,22 @@
                     <!-- Shipping Info -->
                     <div class="checkout-section">
                         <div class="section-title">1. THÔNG TIN GIAO HÀNG</div>
-                        
+
                         <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label">Họ và tên <span>*</span></label>
-                                <input type="text" class="form-control" name="fullName" required placeholder="Ví dụ: Nguyễn Văn A">
+                                <input type="text" class="form-control" name="fullName" required
+                                    placeholder="Ví dụ: Nguyễn Văn A">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Số điện thoại <span>*</span></label>
-                                <input type="text" class="form-control" name="phone" required placeholder="0901 234 567">
+                                <input type="text" class="form-control" name="phone" required
+                                    placeholder="0901 234 567">
                             </div>
                             <div class="form-group full">
                                 <label class="form-label">Địa chỉ cụ thể <span>*</span></label>
-                                <input type="text" class="form-control" id="addressLine" required placeholder="Số nhà, tên đường, phường/xã...">
+                                <input type="text" class="form-control" id="addressLine" required
+                                    placeholder="Số nhà, tên đường, phường/xã...">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Tỉnh / Thành phố <span>*</span></label>
@@ -371,9 +474,10 @@
                     <!-- Shipping Method -->
                     <div class="checkout-section">
                         <div class="section-title">2. PHƯƠNG THỨC VẬN CHUYỂN</div>
-                        
+
                         <div id="shipping-methods-container">
-                            <div style="padding: 20px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 6px;">
+                            <div
+                                style="padding: 20px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 6px;">
                                 Vui lòng chọn Tỉnh / Thành phố để xem phí vận chuyển.
                             </div>
                         </div>
@@ -382,7 +486,7 @@
                     <!-- Payment Method -->
                     <div class="checkout-section">
                         <div class="section-title">3. PHƯƠNG THỨC THANH TOÁN</div>
-                        
+
                         <div class="form-grid">
                             <label class="radio-block active" onclick="selectPayment(this)" style="margin-bottom:0;">
                                 <div class="radio-content">
@@ -391,7 +495,7 @@
                                     <div>Thanh toán khi nhận hàng (COD)</div>
                                 </div>
                             </label>
-                            
+
                             <label class="radio-block" onclick="selectPayment(this)" style="margin-bottom:0;">
                                 <div class="radio-content">
                                     <input type="radio" name="paymentMethod" value="VIETQR">
@@ -399,7 +503,7 @@
                                     <div>Chuyển khoản ngân hàng</div>
                                 </div>
                             </label>
-                            
+
                             <label class="radio-block" onclick="selectPayment(this)" style="margin-bottom:0;">
                                 <div class="radio-content">
                                     <input type="radio" name="paymentMethod" value="INSTALLMENT">
@@ -407,7 +511,7 @@
                                     <div>Thanh toán qua thẻ ATM/Visa</div>
                                 </div>
                             </label>
-                            
+
                             <label class="radio-block" onclick="selectPayment(this)" style="margin-bottom:0;">
                                 <div class="radio-content">
                                     <input type="radio" name="paymentMethod" value="EWALLET">
@@ -423,25 +527,31 @@
                 <div>
                     <div class="checkout-section" style="position: sticky; top: 20px;">
                         <div class="section-title">ĐƠN HÀNG CỦA BẠN</div>
-                        
+
                         <!-- Product List -->
                         <div style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
                             <div class="order-item" th:each="item : ${cartItems}">
                                 <div class="order-img">
-                                    <img th:if="${item.image != null and item.image != ''}" th:src="@{${item.image.startsWith('http') ? item.image : '/images/products/' + item.image}}" alt="Img">
+                                    <img th:if="${item.image != null and item.image != ''}"
+                                        th:src="@{${item.image.startsWith('http') ? item.image : '/images/products/' + item.image}}"
+                                        alt="Img">
                                 </div>
                                 <div class="order-info">
                                     <div class="order-name" th:text="${item.name}">Product Name</div>
                                     <div class="order-qty" th:text="'x' + ${item.quantity}">x1</div>
                                 </div>
-                                <div class="order-price" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</div>
+                                <div class="order-price"
+                                    th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                    0đ</div>
                             </div>
                         </div>
 
                         <!-- Summary -->
                         <div class="summary-row">
                             <span>Tạm tính (<span th:text="${cartItems.size()}">0</span> sản phẩm)</span>
-                            <span style="color: var(--text-main); font-weight:500;" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'" id="subTotalText">0đ</span>
+                            <span style="color: var(--text-main); font-weight:500;"
+                                th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'"
+                                id="subTotalText">0đ</span>
                         </div>
                         <div class="summary-row">
                             <span>Phí vận chuyển</span>
@@ -457,20 +567,23 @@
                             <input type="text" class="voucher-input" id="voucherInput" placeholder="Nhập mã giảm giá">
                             <button type="button" class="btn-apply" onclick="applyVoucher()">ÁP DỤNG</button>
                         </div>
-                        <div id="voucherMessage" style="font-size:12px; margin-top:-15px; margin-bottom:15px; display:none;"></div>
+                        <div id="voucherMessage"
+                            style="font-size:12px; margin-top:-15px; margin-bottom:15px; display:none;"></div>
 
                         <!-- Total -->
                         <div class="summary-row total">
                             <span>TỔNG THANH TOÁN</span>
                             <div style="text-align:right;">
                                 <span class="price" id="finalTotalText">0đ</span><br>
-                                <span style="font-size:11px; color:var(--text-muted); font-weight:400;">Đã bao gồm VAT</span>
+                                <span style="font-size:11px; color:var(--text-muted); font-weight:400;">Đã bao gồm
+                                    VAT</span>
                             </div>
                         </div>
 
                         <!-- Trust Box -->
                         <div class="trust-box">
-                            <div class="trust-title"><i class="fa-solid fa-shield-halved"></i> Cam kết từ chúng tôi</div>
+                            <div class="trust-title"><i class="fa-solid fa-shield-halved"></i> Cam kết từ chúng tôi
+                            </div>
                             <ul class="trust-list">
                                 <li><i class="fa-solid fa-check"></i> 100% sản phẩm chính hãng</li>
                                 <li><i class="fa-solid fa-check"></i> Giao nhanh trong 2h (Nội thành)</li>
@@ -488,39 +601,48 @@
 
         <!-- Success Message -->
         <div class="checkout-section" th:if="${param.success != null}" style="text-align: center; padding: 60px 20px;">
-            <i class="fa-solid fa-circle-check" style="font-size: 64px; color: var(--success); margin-bottom: 20px;"></i>
+            <i class="fa-solid fa-circle-check"
+                style="font-size: 64px; color: var(--success); margin-bottom: 20px;"></i>
             <h2 style="margin-bottom: 15px; font-size: 28px; font-weight: 700;">ĐẶT HÀNG THÀNH CÔNG!</h2>
             <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 16px;">
                 Cảm ơn bạn đã mua sắm tại Luxury PC. Đơn hàng của bạn đã được ghi nhận và đang được xử lý.<br>
                 Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.
             </p>
             <div>
-                <a href="/products" style="display: inline-block; padding: 12px 30px; background: var(--bg); color: var(--text-main); text-decoration: none; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); margin-right: 15px; transition: 0.2s;">Tiếp tục mua sắm</a>
-                <a href="/profile?tab=orders" style="display: inline-block; padding: 12px 30px; background: var(--primary); color: white; text-decoration: none; font-weight: 600; border-radius: 6px; transition: 0.2s;">Theo dõi đơn hàng</a>
+                <a href="/products"
+                    style="display: inline-block; padding: 12px 30px; background: var(--bg); color: var(--text-main); text-decoration: none; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); margin-right: 15px; transition: 0.2s;">Tiếp
+                    tục mua sắm</a>
+                <a href="/profile?tab=orders"
+                    style="display: inline-block; padding: 12px 30px; background: var(--primary); color: white; text-decoration: none; font-weight: 600; border-radius: 6px; transition: 0.2s;">Theo
+                    dõi đơn hàng</a>
             </div>
         </div>
 
         <!-- Trust Footer -->
-        <div class="checkout-footer">
-            <div class="cf-item">
-                <i class="fa-solid fa-medal"></i>
-                <div>CAM KẾT CHÍNH HÃNG<br><span style="font-size:11px;color:var(--text-muted);">100% sản phẩm chính hãng</span></div>
-            </div>
-            <div class="cf-item">
-                <i class="fa-solid fa-rotate-left"></i>
-                <div>ĐỔI TRẢ DỄ DÀNG<br><span style="font-size:11px;color:var(--text-muted);">Đổi mới trong 7 ngày</span></div>
-            </div>
-            <div class="cf-item">
-                <i class="fa-solid fa-truck-fast"></i>
-                <div>GIAO HÀNG TOÀN QUỐC<br><span style="font-size:11px;color:var(--text-muted);">Nhận hàng và thanh toán</span></div>
-            </div>
-            <div class="cf-item">
-                <i class="fa-solid fa-headset"></i>
-                <div>HỖ TRỢ 24/7<br><span style="font-size:11px;color:var(--text-muted);">Hỗ trợ khách hàng mọi lúc</span></div>
+    </div>
+    <!-- Trust Footer -->
+    <!-- <div class="checkout-footer">
+        <div class="cf-item">
+            <i class="fa-solid fa-medal"></i>
+            <div>CAM KẾT CHÍNH HÃNG<br><span style="font-size:11px;color:var(--text-muted);">100% sản phẩm chính
+                    hãng</span></div>
+        </div>
+        <div class="cf-item">
+            <i class="fa-solid fa-rotate-left"></i>
+            <div>ĐỔI TRẢ DỄ DÀNG<br><span style="font-size:11px;color:var(--text-muted);">Đổi mới trong 7 ngày</span>
             </div>
         </div>
-    </div>
-
+        <div class="cf-item">
+            <i class="fa-solid fa-truck-fast"></i>
+            <div>GIAO HÀNG TOÀN QUỐC<br><span style="font-size:11px;color:var(--text-muted);">Nhận hàng và thanh
+                    toán</span></div>
+        </div>
+        <div class="cf-item">
+            <i class="fa-solid fa-headset"></i>
+            <div>HỖ TRỢ 24/7<br><span style="font-size:11px;color:var(--text-muted);">Hỗ trợ khách hàng mọi lúc</span>
+            </div>
+        </div>
+    </div> -->
     <div th:replace="~{layout/footer :: footer}"></div>
 
     <!-- Data passing -->
@@ -539,7 +661,7 @@
         function updateTotal() {
             document.getElementById('shippingFeeText').innerText = formatter.format(currentShipping) + 'đ';
             document.getElementById('discountText').innerText = '-' + formatter.format(currentDiscount) + 'đ';
-            
+
             const finalTotal = baseTotal + currentShipping - currentDiscount;
             document.getElementById('finalTotalText').innerText = formatter.format(Math.max(0, finalTotal)) + 'đ';
         }
@@ -570,25 +692,25 @@
             el.classList.add('active');
         }
 
-        
+
         // Dynamic Shipping Logic
         async function fetchShippingMethods(provinceCode) {
             const container = document.getElementById('shipping-methods-container');
             container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--primary);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tính phí vận chuyển...</div>';
-            
+
             try {
                 const res = await fetch(`/api/shipping/calculate?provinceCode=${provinceCode || ''}`);
                 const methods = await res.json();
-                
+
                 container.innerHTML = '';
                 methods.forEach((m, index) => {
                     const isActive = index === 0;
-                    if(isActive) currentShipping = m.fee;
-                    
+                    if (isActive) currentShipping = m.fee;
+
                     const el = document.createElement('label');
                     el.className = `radio-block ${isActive ? 'active' : ''}`;
-                    el.onclick = function() { selectShipping(this, m.fee); };
-                    
+                    el.onclick = function () { selectShipping(this, m.fee); };
+
                     el.innerHTML = `
                         <div class="radio-content">
                             <input type="radio" name="shippingMethodDummy" ${isActive ? 'checked' : ''}>
@@ -603,12 +725,12 @@
                     container.appendChild(el);
                 });
                 updateTotal();
-            } catch(e) {
+            } catch (e) {
                 container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--danger);">Lỗi tải phương thức vận chuyển</div>';
             }
         }
 
-// Address API
+        // Address API
         async function loadProvinces() {
             try {
                 const res = await fetch('https://provinces.open-api.vn/api/p/');
@@ -620,23 +742,23 @@
                     opt.text = p.name;
                     sel.appendChild(opt);
                 });
-            } catch(e) { console.error('Error loading provinces', e); }
+            } catch (e) { console.error('Error loading provinces', e); }
         }
 
-        document.getElementById('province').addEventListener('change', async function() {
+        document.getElementById('province').addEventListener('change', async function () {
             const val = this.value;
             fetchShippingMethods(val);
             const distSel = document.getElementById('district');
             const wardSel = document.getElementById('ward');
             distSel.innerHTML = '<option value="">Chọn Quận / Huyện</option>';
             wardSel.innerHTML = '<option value="">Chọn Phường / Xã</option>';
-            
-            if(!val) {
+
+            if (!val) {
                 distSel.disabled = true;
                 wardSel.disabled = true;
                 return;
             }
-            
+
             try {
                 const res = await fetch(`https://provinces.open-api.vn/api/p/${val}?depth=2`);
                 const data = await res.json();
@@ -647,19 +769,19 @@
                     opt.text = d.name;
                     distSel.appendChild(opt);
                 });
-            } catch(e) { console.error(e); }
+            } catch (e) { console.error(e); }
         });
 
-        document.getElementById('district').addEventListener('change', async function() {
+        document.getElementById('district').addEventListener('change', async function () {
             const val = this.value;
             const wardSel = document.getElementById('ward');
             wardSel.innerHTML = '<option value="">Chọn Phường / Xã</option>';
-            
-            if(!val) {
+
+            if (!val) {
                 wardSel.disabled = true;
                 return;
             }
-            
+
             try {
                 const res = await fetch(`https://provinces.open-api.vn/api/d/${val}?depth=2`);
                 const data = await res.json();
@@ -670,14 +792,14 @@
                     opt.text = w.name;
                     wardSel.appendChild(opt);
                 });
-            } catch(e) { console.error(e); }
+            } catch (e) { console.error(e); }
         });
 
         // Voucher logic
         function applyVoucher() {
             const code = document.getElementById('voucherInput').value.trim();
             const msg = document.getElementById('voucherMessage');
-            if(!code) {
+            if (!code) {
                 msg.style.display = 'block';
                 msg.style.color = 'var(--danger)';
                 msg.innerText = 'Vui lòng nhập mã giảm giá';
@@ -685,31 +807,31 @@
             }
 
             fetch('/api/voucher/validate?code=' + encodeURIComponent(code), { method: 'POST' })
-            .then(res => res.json())
-            .then(data => {
-                msg.style.display = 'block';
-                if(data.success) {
-                    msg.style.color = 'var(--success)';
-                    msg.innerText = data.message;
-                    document.getElementById('voucherCodeHidden').value = code;
-                    
-                    if(data.newTotal !== undefined) {
-                        currentDiscount = baseTotal - data.newTotal;
+                .then(res => res.json())
+                .then(data => {
+                    msg.style.display = 'block';
+                    if (data.success) {
+                        msg.style.color = 'var(--success)';
+                        msg.innerText = data.message;
+                        document.getElementById('voucherCodeHidden').value = code;
+
+                        if (data.newTotal !== undefined) {
+                            currentDiscount = baseTotal - data.newTotal;
+                            updateTotal();
+                        }
+                    } else {
+                        msg.style.color = 'var(--danger)';
+                        msg.innerText = data.message || 'Mã không hợp lệ';
+                        document.getElementById('voucherCodeHidden').value = '';
+                        currentDiscount = 0;
                         updateTotal();
                     }
-                } else {
+                })
+                .catch(e => {
+                    msg.style.display = 'block';
                     msg.style.color = 'var(--danger)';
-                    msg.innerText = data.message || 'Mã không hợp lệ';
-                    document.getElementById('voucherCodeHidden').value = '';
-                    currentDiscount = 0;
-                    updateTotal();
-                }
-            })
-            .catch(e => {
-                msg.style.display = 'block';
-                msg.style.color = 'var(--danger)';
-                msg.innerText = 'Lỗi kết nối';
-            });
+                    msg.innerText = 'Lỗi kết nối';
+                });
         }
 
         // Prepare submit
@@ -719,20 +841,21 @@
                 // let HTML5 handle validation UI
                 return;
             }
-            
+
             // Build full address
             const line = document.getElementById('addressLine').value;
             const pSel = document.getElementById('province');
             const dSel = document.getElementById('district');
             const wSel = document.getElementById('ward');
-            
+
             const pName = pSel.options[pSel.selectedIndex].text;
             const dName = dSel.options[dSel.selectedIndex].text;
             const wName = wSel.options[wSel.selectedIndex].text;
-            
+
             const fullAddress = `${line}, ${wName}, ${dName}, ${pName}`;
             document.getElementById('hiddenAddress').value = fullAddress;
         }
     </script>
 </body>
+
 </html>

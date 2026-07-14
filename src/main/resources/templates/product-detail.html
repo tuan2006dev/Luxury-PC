@@ -128,8 +128,10 @@
                 </div>
 
                 <div class="pd-actions" th:if="${product.stock > 0}"
-                     th:with="maxQty=${flashSaleItem != null ? ((flashSaleItem.saleQuantity - flashSaleItem.soldCount) < product.stock ? (flashSaleItem.saleQuantity - flashSaleItem.soldCount) : product.stock) : product.stock}">
-                    <div th:replace="~{customnumber/components :: quantityBox(itemId=null, quantity=1, maxVal=${maxQty}, onClickMinus='changeQty(-1)', onClickPlus='changeQty(1)', onChange='manualQtyChange(this)', isLarge=true)}"></div>
+                    th:with="maxQty=${flashSaleItem != null ? ((flashSaleItem.saleQuantity - flashSaleItem.soldCount) < product.stock ? (flashSaleItem.saleQuantity - flashSaleItem.soldCount) : product.stock) : product.stock}">
+                    <div
+                        th:replace="~{customnumber/components :: quantityBox(itemId=null, quantity=1, maxVal=${maxQty}, onClickMinus='changeQty(-1)', onClickPlus='changeQty(1)', onChange='manualQtyChange(this)', isLarge=true)}">
+                    </div>
                     <form th:action="@{/cart/add}" method="post" id="addToCartForm" style="display: none;">
                         <input type="hidden" name="id" th:value="${product.id}" />
                         <input type="hidden" name="name" th:value="${product.name}" />
@@ -146,9 +148,12 @@
                         style="flex: 1; background: #000; color: #fff; border: 1px solid #000; padding: 12px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                         MUA NGAY
                     </button>
-                    <button class="btn-wishlist" th:onclick="|addToWishlist(this, ${product.id})|"
+                    <button class="btn-wishlist" th:data-product-id="${product.id}"
+                        th:onclick="|addToWishlist(this, ${product.id})|"
+                        th:classappend="${wishlistProductIds != null and #sets.contains(wishlistProductIds, product.id)} ? 'active' : ''"
                         style="width: 44px; height: 44px; background: white; color: #666; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.2s;">
-                        <i class="fa-regular fa-heart"></i>
+                        <i th:class="${wishlistProductIds != null and #sets.contains(wishlistProductIds, product.id)} ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"
+                            th:style="${wishlistProductIds != null and #sets.contains(wishlistProductIds, product.id)} ? 'color: #ef4444;' : ''"></i>
                     </button>
                 </div>
                 <div th:if="${product.stock <= 0}"
@@ -301,95 +306,95 @@
         </div>
     </div>
 
-        <!-- FOOTER CONTAINER -->
-        <div th:replace="~{layout/footer :: footer}"></div>
+    <!-- FOOTER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
 
-        <script>
-            function changeMainImage(src, element) {
-                document.getElementById('main-image').src = src;
-                document.querySelectorAll('.pd-thumbnails img').forEach(img => img.classList.remove('active'));
-                element.classList.add('active');
-            }
+    <script>
+        function changeMainImage(src, element) {
+            document.getElementById('main-image').src = src;
+            document.querySelectorAll('.pd-thumbnails img').forEach(img => img.classList.remove('active'));
+            element.classList.add('active');
+        }
 
-            function changeQty(delta) {
-                const input = document.getElementById('qty');
-                let val = parseInt(input.value) + delta;
-                const max = parseInt(input.getAttribute('max')) || 99;
-                if (val < 1) val = 1;
-                if (val > max) val = max;
-                input.value = val;
-            }
+        function changeQty(delta) {
+            const input = document.getElementById('qty');
+            let val = parseInt(input.value) + delta;
+            const max = parseInt(input.getAttribute('max')) || 99;
+            if (val < 1) val = 1;
+            if (val > max) val = max;
+            input.value = val;
+        }
 
-            function manualQtyChange(input) {
-                let val = parseInt(input.value);
-                const max = parseInt(input.getAttribute('max')) || 99;
-                if (isNaN(val) || val < 1) val = 1;
-                if (val > max) val = max;
-                input.value = val;
-            }
+        function manualQtyChange(input) {
+            let val = parseInt(input.value);
+            const max = parseInt(input.getAttribute('max')) || 99;
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > max) val = max;
+            input.value = val;
+        }
 
-            function submitAddToCart() {
-                const form = document.getElementById('addToCartForm');
-                const qty = document.getElementById('qty').value;
-                document.getElementById('form-qty').value = qty;
+        function submitAddToCart() {
+            const form = document.getElementById('addToCartForm');
+            const qty = document.getElementById('qty').value;
+            document.getElementById('form-qty').value = qty;
 
-                // Convert to JS cart method if required, or submit form
-                // Assuming standard form submission works based on old code
-                form.submit();
-            }
+            // Convert to JS cart method if required, or submit form
+            // Assuming standard form submission works based on old code
+            form.submit();
+        }
 
-            function submitBuyNow() {
-                const form = document.getElementById('addToCartForm');
-                const qty = document.getElementById('qty').value;
-                document.getElementById('form-qty').value = qty;
-                form.action = '/cart/buy-now';
-                form.submit();
-            }
+        function submitBuyNow() {
+            const form = document.getElementById('addToCartForm');
+            const qty = document.getElementById('qty').value;
+            document.getElementById('form-qty').value = qty;
+            form.action = '/cart/buy-now';
+            form.submit();
+        }
 
-            function switchTab(btn) {
-                const target = btn.getAttribute('data-tab');
-                document.querySelectorAll('.pd-tab').forEach(b => {
-                    b.classList.remove('active');
-                    b.style.color = '#666';
-                    b.style.borderBottomColor = 'transparent';
+        function switchTab(btn) {
+            const target = btn.getAttribute('data-tab');
+            document.querySelectorAll('.pd-tab').forEach(b => {
+                b.classList.remove('active');
+                b.style.color = '#666';
+                b.style.borderBottomColor = 'transparent';
+            });
+            btn.classList.add('active');
+            btn.style.color = '#000';
+            btn.style.borderBottomColor = '#000';
+
+            document.querySelectorAll('.pd-tab-content').forEach(c => {
+                c.style.display = 'none';
+                c.classList.remove('active');
+            });
+            document.getElementById(target).style.display = 'block';
+            document.getElementById(target).classList.add('active');
+        }
+
+        async function submitReview() {
+            const form = document.getElementById('reviewForm');
+            if (!form.reportValidity()) return;
+
+            const formData = new FormData(form);
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
                 });
-                btn.classList.add('active');
-                btn.style.color = '#000';
-                btn.style.borderBottomColor = '#000';
-
-                document.querySelectorAll('.pd-tab-content').forEach(c => {
-                    c.style.display = 'none';
-                    c.classList.remove('active');
-                });
-                document.getElementById(target).style.display = 'block';
-                document.getElementById(target).classList.add('active');
-            }
-
-            async function submitReview() {
-                const form = document.getElementById('reviewForm');
-                if (!form.reportValidity()) return;
-
-                const formData = new FormData(form);
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                        if (typeof showToast === 'function') { showToast('Cảm ơn bạn đã đánh giá sản phẩm!'); } else { alert('Cảm ơn bạn đã đánh giá sản phẩm!'); }
-                        location.reload();
-                    } else {
-                        if (typeof showToast === 'function') { showToast('Lỗi: ' + result.message); } else { alert('Lỗi: ' + result.message); }
-                    }
-                } catch (error) {
-                    if (typeof showToast === 'function') { showToast('Đã xảy ra lỗi khi gửi đánh giá.'); } else { alert('Đã xảy ra lỗi khi gửi đánh giá.'); }
-                    console.error(error);
+                const result = await response.json();
+                if (result.success) {
+                    if (typeof showToast === 'function') { showToast('Cảm ơn bạn đã đánh giá sản phẩm!'); } else { alert('Cảm ơn bạn đã đánh giá sản phẩm!'); }
+                    location.reload();
+                } else {
+                    if (typeof showToast === 'function') { showToast('Lỗi: ' + result.message); } else { alert('Lỗi: ' + result.message); }
                 }
+            } catch (error) {
+                if (typeof showToast === 'function') { showToast('Đã xảy ra lỗi khi gửi đánh giá.'); } else { alert('Đã xảy ra lỗi khi gửi đánh giá.'); }
+                console.error(error);
             }
-        </script>
-        <script th:src="@{/js/script.js}"></script>
-        <script th:src="@{/js/cart.js}"></script>
+        }
+    </script>
+    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/cart.js}"></script>
 </body>
 
 </html>

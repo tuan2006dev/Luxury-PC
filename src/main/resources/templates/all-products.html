@@ -5,10 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Luxury PC | Tất Cả Sản Phẩm</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
-    
+
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/all-products.css}" />
 </head>
@@ -21,15 +22,19 @@
         <div class="breadcrumb">
             <a th:href="@{/}">Trang chủ</a> > <span>Sản phẩm</span>
         </div>
-        
+
         <h1 class="page-title">SẢN PHẨM</h1>
-        <p class="page-subtitle">Khám phá hàng ngàn linh kiện chính hãng từ các thương hiệu hàng đầu, đáp ứng mọi nhu cầu</p>
+        <p class="page-subtitle">Khám phá hàng ngàn linh kiện chính hãng từ các thương hiệu hàng đầu, đáp ứng mọi nhu
+            cầu</p>
 
         <!-- CATEGORIES GRID -->
         <div class="categories-grid">
-            <div class="category-item" th:each="c : ${categories}" th:onclick="|location.href='@{/products(cid=${c.id})}'|" th:classappend="${c.id == selectedCid ? 'active' : ''}" style="cursor: pointer;">
+            <div class="category-item" th:each="c : ${categories}"
+                th:onclick="|location.href='@{/products(cid=${c.id})}'|"
+                th:classappend="${c.id == selectedCid ? 'active' : ''}" style="cursor: pointer;">
                 <!-- Sử dụng tên danh mục (c.name) làm tên ảnh .png -->
-                <img th:src="@{'/images/ui-new/' + ${c.name} + '.png'}" th:alt="${c.name}" onerror="this.onerror=null; this.src='/images/ui-new/PC.png';">
+                <img th:src="@{'/images/ui-new/' + ${c.name} + '.png'}" th:alt="${c.name}"
+                    onerror="this.onerror=null; this.src='/images/ui-new/PC.png';">
                 <span th:text="${c.name}">Category</span>
             </div>
         </div>
@@ -38,12 +43,13 @@
             <!-- CỘT TRÁI: SIDEBAR FILTER -->
             <aside class="sidebar">
                 <div class="sidebar-title">BỘ LỌC SẢN PHẨM</div>
-                
+
                 <form th:action="@{/products}" method="GET" id="filter-form">
                     <!-- Tìm kiếm -->
                     <div class="filter-section">
                         <h4>Tìm kiếm</h4>
-                        <input type="text" name="kw" th:value="${keywords}" placeholder="Tên sản phẩm..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 13px;" />
+                        <input type="text" name="kw" th:value="${keywords}" placeholder="Tên sản phẩm..."
+                            style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 13px;" />
                     </div>
 
                     <!-- Danh mục -->
@@ -57,7 +63,8 @@
                             </li>
                             <li th:each="c : ${categories}">
                                 <label>
-                                    <input type="radio" name="cid" th:value="${c.id}" th:checked="${c.id == selectedCid}"> <span th:text="${c.name}">Category</span>
+                                    <input type="radio" name="cid" th:value="${c.id}"
+                                        th:checked="${c.id == selectedCid}"> <span th:text="${c.name}">Category</span>
                                 </label>
                             </li>
                         </ul>
@@ -67,13 +74,21 @@
                     <div class="filter-section">
                         <h4>Hãng sản xuất</h4>
                         <ul class="filter-list">
-                            <li><label><input type="radio" name="brand" value="" th:checked="${selectedBrand == null or selectedBrand == ''}"> Tất cả</label></li>
-                            <li><label><input type="radio" name="brand" value="Intel" th:checked="${selectedBrand == 'Intel'}"> Intel</label></li>
-                            <li><label><input type="radio" name="brand" value="AMD" th:checked="${selectedBrand == 'AMD'}"> AMD</label></li>
-                            <li><label><input type="radio" name="brand" value="ASUS" th:checked="${selectedBrand == 'ASUS'}"> ASUS</label></li>
-                            <li><label><input type="radio" name="brand" value="MSI" th:checked="${selectedBrand == 'MSI'}"> MSI</label></li>
-                            <li><label><input type="radio" name="brand" value="GIGABYTE" th:checked="${selectedBrand == 'GIGABYTE'}"> GIGABYTE</label></li>
-                            <li><label><input type="radio" name="brand" value="Corsair" th:checked="${selectedBrand == 'Corsair'}"> Corsair</label></li>
+                            <li><label><input type="radio" name="brand" value=""
+                                        th:checked="${selectedBrand == null or selectedBrand == ''}"> Tất cả</label>
+                            </li>
+                            <li><label><input type="radio" name="brand" value="Intel"
+                                        th:checked="${selectedBrand == 'Intel'}"> Intel</label></li>
+                            <li><label><input type="radio" name="brand" value="AMD"
+                                        th:checked="${selectedBrand == 'AMD'}"> AMD</label></li>
+                            <li><label><input type="radio" name="brand" value="ASUS"
+                                        th:checked="${selectedBrand == 'ASUS'}"> ASUS</label></li>
+                            <li><label><input type="radio" name="brand" value="MSI"
+                                        th:checked="${selectedBrand == 'MSI'}"> MSI</label></li>
+                            <li><label><input type="radio" name="brand" value="GIGABYTE"
+                                        th:checked="${selectedBrand == 'GIGABYTE'}"> GIGABYTE</label></li>
+                            <li><label><input type="radio" name="brand" value="Corsair"
+                                        th:checked="${selectedBrand == 'Corsair'}"> Corsair</label></li>
                         </ul>
                     </div>
 
@@ -81,14 +96,26 @@
                     <div class="filter-section">
                         <h4>Khoảng giá</h4>
                         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
-                            <input type="number" name="min" th:value="${minPrice != null ? (minPrice < 0 ? 0 : minPrice.longValue()) : null}" placeholder="Từ..." style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;" min="0" />
+                            <input type="number" name="min"
+                                th:value="${minPrice != null ? (minPrice < 0 ? 0 : minPrice.longValue()) : null}"
+                                placeholder="Từ..."
+                                style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; -webkit-appearance: none; -moz-appearance: textfield;"
+                                min="0" />
                             <span>-</span>
-                            <input type="number" name="max" th:value="${maxPrice != null ? (maxPrice < 0 ? 0 : maxPrice.longValue()) : null}" placeholder="Đến..." style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;" min="0" />
+                            <input type="number" name="max"
+                                th:value="${maxPrice != null ? (maxPrice < 0 ? 0 : maxPrice.longValue()) : null}"
+                                placeholder="Đến..."
+                                style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; -webkit-appearance: none; -moz-appearance: textfield;"
+                                min="0" />
                         </div>
                     </div>
 
-                    <button type="submit" style="width: 100%; background: #000; color: #fff; border: none; padding: 10px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Áp dụng bộ lọc</button>
-                    <a th:href="@{/products}" style="display: block; text-align: center; margin-top: 10px; font-size: 13px; color: #666; text-decoration: underline;">Xóa bộ lọc</a>
+                    <button type="submit"
+                        style="width: 100%; background: #000; color: #fff; border: none; padding: 10px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Áp
+                        dụng bộ lọc</button>
+                    <a th:href="@{/products}"
+                        style="display: block; text-align: center; margin-top: 10px; font-size: 13px; color: #666; text-decoration: underline;">Xóa
+                        bộ lọc</a>
                 </form>
             </aside>
 
@@ -96,40 +123,65 @@
             <div class="product-lists">
                 <div class="brand-section">
                     <div class="brand-header">
-                        <h3 class="brand-title">KẾT QUẢ TÌM KIẾM <span th:text="'(' + ${allProducts.size()} + ' sản phẩm)'" style="font-weight: 400; font-size: 14px; color: #666; margin-left: 10px;"></span></h3>
+                        <h3 class="brand-title">KẾT QUẢ TÌM KIẾM <span
+                                th:text="'(' + ${allProducts.size()} + ' sản phẩm)'"
+                                style="font-weight: 400; font-size: 14px; color: #666; margin-left: 10px;"></span></h3>
                     </div>
-                    
+
                     <div class="product-grid" th:if="${!#lists.isEmpty(allProducts)}">
                         <!-- Thẻ sản phẩm chuẩn theo style.css (product-card) -->
-                        <div class="product-card" th:each="p : ${allProducts}" th:id="'prod-' + ${p.id}" th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
-                            <div class="product-card-fav" th:onclick="|addToWishlist(this, ${p.id}); event.stopPropagation();|">
-                                <i class="fa-regular fa-heart"></i>
+                        <div class="product-card" th:each="p : ${allProducts}" th:id="'prod-' + ${p.id}"
+                            th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor: pointer;">
+                            <div class="product-card-fav" th:data-product-id="${p.id}"
+                                th:classappend="${wishlistProductIds != null and #sets.contains(wishlistProductIds, p.id)} ? 'active' : ''"
+                                th:onclick="|addToWishlist(this, ${p.id}); event.stopPropagation();|">
+                                <i th:class="${wishlistProductIds != null and #sets.contains(wishlistProductIds, p.id)} ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"
+                                    th:style="${wishlistProductIds != null and #sets.contains(wishlistProductIds, p.id)} ? 'color: #ef4444;' : ''"></i>
                             </div>
-                            
+
                             <div class="product-card-img">
-                                <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}" th:alt="${p.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';"/>
+                                <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                                    th:alt="${p.name}"
+                                    onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                             </div>
-                            
+
                             <h4 class="product-card-title" th:text="${p.name}">Tên sản phẩm</h4>
-                            <p class="product-spec" style="font-size: 12px; color: #666; margin: 0 0 10px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" th:text="${p.description != null ? p.description : 'Sản phẩm cao cấp'}">Description</p>
-                            
-                            <div class="product-card-price" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</div>
-                            
+                            <p class="product-spec"
+                                style="font-size: 12px; color: #666; margin: 0 0 10px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                                th:text="${p.description != null ? p.description : 'Sản phẩm cao cấp'}">Description</p>
+
+                            <div class="product-card-price"
+                                th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</div>
 
 
-                            <div th:if="${p.stock != null and p.stock <= 0}" style="margin-top: 10px; text-align: center; color: red; font-weight: bold; font-size: 14px; padding: 5px 0; border: 1px solid red; border-radius: 4px; background-color: #fff5f5;">Hết hàng</div>
-                            <div th:if="${p.stock == null or p.stock > 0}" style="display:flex; gap:5px; margin-top: 10px;">
-                                <button th:onclick="'buyNow(' + ${p.id} + '); event.stopPropagation();'" class="btn-buy-small" style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 10px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px; flex:1;" title="Mua ngay">Mua ngay</button>
-                                <button th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'" class="btn-cart-small" style="position:static; width:30px; height:30px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i></button>
+
+                            <div th:if="${p.stock != null and p.stock <= 0}"
+                                style="margin-top: 10px; text-align: center; color: red; font-weight: bold; font-size: 14px; padding: 5px 0; border: 1px solid red; border-radius: 4px; background-color: #fff5f5;">
+                                Hết hàng</div>
+                            <div th:if="${p.stock == null or p.stock > 0}"
+                                style="display:flex; gap:5px; margin-top: 10px;">
+                                <button th:onclick="'buyNow(' + ${p.id} + '); event.stopPropagation();'"
+                                    class="btn-buy-small"
+                                    style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 10px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px; flex:1;"
+                                    title="Mua ngay">Mua ngay</button>
+                                <button th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'"
+                                    class="btn-cart-small"
+                                    style="position:static; width:30px; height:30px; font-size:14px;"><i
+                                        class="fa-solid fa-cart-shopping"></i></button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Không tìm thấy sản phẩm -->
-                    <div th:if="${#lists.isEmpty(allProducts)}" class="cart-empty-state" style="text-align: center; padding: 50px 0; border: 1px solid #ddd; background: #fff; border-radius: 4px;">
-                        <div class="empty-icon" style="font-size: 40px; color: #ddd; margin-bottom: 15px;"><i class="fa-solid fa-box-open"></i></div>
-                        <p style="color: #666; font-size: 15px;">Hiện chưa có sản phẩm nào phù hợp với tiêu chí của bạn.</p>
-                        <button onclick="location.href='/products'" style="margin-top: 15px; background: #000; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Xóa bộ lọc</button>
+                    <div th:if="${#lists.isEmpty(allProducts)}" class="cart-empty-state"
+                        style="text-align: center; padding: 50px 0; border: 1px solid #ddd; background: #fff; border-radius: 4px;">
+                        <div class="empty-icon" style="font-size: 40px; color: #ddd; margin-bottom: 15px;"><i
+                                class="fa-solid fa-box-open"></i></div>
+                        <p style="color: #666; font-size: 15px;">Hiện chưa có sản phẩm nào phù hợp với tiêu chí của bạn.
+                        </p>
+                        <button onclick="location.href='/products'"
+                            style="margin-top: 15px; background: #000; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Xóa
+                            bộ lọc</button>
                     </div>
                 </div>
             </div>
@@ -137,17 +189,33 @@
     </div>
 
     <div th:replace="~{layout/footer :: footer}"></div>
-    
+
     <style>
         /* Hover Effects */
-        .product-card:hover { border-color: var(--accent-blue); box-shadow: 0 5px 15px rgba(0,0,0,0.05); transform: translateY(-3px); transition: all 0.2s; }
-        .product-card:hover .product-card-title { color: var(--accent-blue); }
-        .category-item:hover { border-color: var(--accent-blue) !important; background: #f0f7ff; }
-        .category-item.active { border-color: var(--accent-blue) !important; background: #f0f7ff; }
+        .product-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(-3px);
+            transition: all 0.2s;
+        }
+
+        .product-card:hover .product-card-title {
+            color: var(--accent-blue);
+        }
+
+        .category-item:hover {
+            border-color: var(--accent-blue) !important;
+            background: #f0f7ff;
+        }
+
+        .category-item.active {
+            border-color: var(--accent-blue) !important;
+            background: #f0f7ff;
+        }
     </style>
-    
+
     <script th:src="@{/js/script.js}"></script>
     <script th:src="@{/js/cart.js}"></script>
 </body>
-</html>
 
+</html>

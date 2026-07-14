@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
-    
+
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/checkout.css}">
     <link rel="stylesheet" th:href="@{/css/cart.css}">
 </head>
+
 <body>
     <!-- HEADER CONTAINER -->
     <div th:replace="~{layout/header :: header}"></div>
@@ -41,14 +43,16 @@
                 <div class="step-label">Hoàn thành</div>
             </div>
         </div>
-        
+
         <!-- Alert panel for stock warning -->
-        <div id="stock-alert-panel" style="display: none; background: #fff3cd; border: 1px solid #ffe69c; color: #664d03; padding: 15px; border-radius: 4px; margin-bottom: 20px; align-items: center; justify-content: space-between;">
+        <div id="stock-alert-panel"
+            style="display: none; background: #fff3cd; border: 1px solid #ffe69c; color: #664d03; padding: 15px; border-radius: 4px; margin-bottom: 20px; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <span id="stock-alert-msg">Thông báo giới hạn số lượng sản phẩm.</span>
             </div>
-            <button type="button" onclick="closeStockAlert()" style="background: none; border: none; cursor: pointer; font-size: 18px;">&times;</button>
+            <button type="button" onclick="closeStockAlert()"
+                style="background: none; border: none; cursor: pointer; font-size: 18px;">&times;</button>
         </div>
 
         <div class="cart-layout" th:if="${!#lists.isEmpty(cartItems)}" id="cart-content">
@@ -60,20 +64,27 @@
                 </div>
 
                 <!-- Thymeleaf Loop for Cart Items -->
-                <div class="cart-item" th:each="item : ${cartItems}" th:id="'row-' + ${item.id}" th:data-stock="${item.stock}" th:data-name="${item.name}">
+                <div class="cart-item" th:each="item : ${cartItems}" th:id="'row-' + ${item.id}"
+                    th:data-stock="${item.stock}" th:data-name="${item.name}">
                     <div class="cart-item-img">
-                        <img th:if="${item.image != null and item.image != ''}" th:src="@{${item.image.startsWith('http') ? item.image : '/images/products/' + item.image}}" th:alt="${item.name}">
-                        <i th:unless="${item.image != null and item.image != ''}" class="fa-solid fa-computer" style="font-size: 40px; color: #ccc;"></i>
+                        <img th:if="${item.image != null and item.image != ''}"
+                            th:src="@{${item.image.startsWith('http') ? item.image : '/images/products/' + item.image}}"
+                            th:alt="${item.name}">
+                        <i th:unless="${item.image != null and item.image != ''}" class="fa-solid fa-computer"
+                            style="font-size: 40px; color: #ccc;"></i>
                     </div>
                     <div class="cart-item-info">
                         <h4 th:text="${item.name}">Tên sản phẩm</h4>
                         <div class="cart-item-meta" th:text="'Mã SP: ' + ${item.id}">Mã SP</div>
                         <div class="cart-item-price item-price" th:data-price="${item.price}">
-                            <span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">Giá</span>
+                            <span
+                                th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">Giá</span>
                         </div>
                     </div>
                     <div class="cart-item-actions">
-                        <div th:replace="~{customnumber/components :: quantityBox(itemId=${item.id}, quantity=${item.quantity}, maxVal=null, onClickMinus='updateQty(' + ${item.id} + ', -1)', onClickPlus='updateQty(' + ${item.id} + ', 1)', onChange='manualQtyChange(' + ${item.id} + ', this, ' + ${item.quantity} + ')', isLarge=false)}"></div>
+                        <div
+                            th:replace="~{customnumber/components :: quantityBox(itemId=${item.id}, quantity=${item.quantity}, maxVal=null, onClickMinus='updateQty(' + ${item.id} + ', -1)', onClickPlus='updateQty(' + ${item.id} + ', 1)', onChange='manualQtyChange(' + ${item.id} + ', this, ' + ${item.quantity} + ')', isLarge=false)}">
+                        </div>
                         <div class="item-total-price" style="font-weight: 600; color: #ef4444; margin-right: 15px;">
                             <span class="item-total" th:id="'total-' + ${item.id}"></span>
                         </div>
@@ -86,7 +97,7 @@
             <!-- Right: Order Summary -->
             <div class="order-summary" id="cart-footer">
                 <h3>Tóm tắt đơn hàng</h3>
-                
+
                 <div class="summary-row">
                     <span>Tạm tính:</span>
                     <span id="sub-total">0đ</span>
@@ -100,40 +111,46 @@
                     <span>Tổng cộng:</span>
                     <span class="total-price" id="grand-total">0đ</span>
                 </div>
-                <div style="text-align: right; font-size: 12px; color: #666; margin-bottom: 20px;">(Đã bao gồm VAT nếu có)</div>
-                
-                <a th:href="@{/checkout}" class="btn-checkout" style="display: block; text-align: center; text-decoration: none;">TIẾN HÀNH THANH TOÁN</a>
-                <a th:href="@{/products}" class="continue-shopping"><i class="fa-solid fa-arrow-left"></i> Tiếp tục mua sắm</a>
+                <div style="text-align: right; font-size: 12px; color: #666; margin-bottom: 20px;">(Đã bao gồm VAT nếu
+                    có)</div>
+
+                <a th:href="@{/checkout}" class="btn-checkout"
+                    style="display: block; text-align: center; text-decoration: none;">TIẾN HÀNH THANH TOÁN</a>
+                <a th:href="@{/products}" class="continue-shopping"><i class="fa-solid fa-arrow-left"></i> Tiếp tục mua
+                    sắm</a>
             </div>
         </div>
 
         <!-- Khi giỏ rỗng -->
-        <div id="ajax-empty-row" class="empty-cart" th:style="${#lists.isEmpty(cartItems)} ? 'display: block; text-align: center; padding: 50px 0;' : 'display: none; text-align: center; padding: 50px 0;'">
+        <div id="ajax-empty-row" class="empty-cart"
+            th:style="${#lists.isEmpty(cartItems)} ? 'display: block; text-align: center; padding: 50px 0;' : 'display: none; text-align: center; padding: 50px 0;'">
             <i class="fa-solid fa-cart-shopping" style="font-size: 50px; color: #ddd; margin-bottom: 20px;"></i>
             <h4 style="margin-bottom: 20px; color: #666;">Giỏ hàng của bạn đang trống.</h4>
-            <a th:href="@{/products}" class="btn-checkout" style="display: inline-block; width: auto; padding: 10px 30px; text-decoration: none;">Đến Cửa Hàng</a>
+            <a th:href="@{/products}" class="btn-checkout"
+                style="display: inline-block; width: auto; padding: 10px 30px; text-decoration: none;">Đến Cửa Hàng</a>
         </div>
 
     </div>
 
     <!-- FOOTER CONTAINER -->
     <div th:replace="~{layout/footer :: footer}"></div>
-    
+
     <script th:src="@{/js/cart.js}"></script>
     <script th:src="@{/js/script.js}"></script>
-    
+
     <!-- Fix Confirm Modal override -->
     <script>
         function closeStockAlert() {
             document.getElementById('stock-alert-panel').style.display = 'none';
         }
-        
+
         // Cập nhật lại UI lúc mới load để hiển thị item-total
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (typeof updateCartSummary === 'function') {
                 updateCartSummary();
             }
         });
     </script>
 </body>
+
 </html>
