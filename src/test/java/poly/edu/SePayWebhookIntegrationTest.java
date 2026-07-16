@@ -69,11 +69,11 @@ class SePayWebhookIntegrationTest {
     }
 
     @Test
-    void webhookWithNonExactAmountIsRecordedButDoesNotMarkOrderPaid() throws Exception {
+    void webhookWithNonExactAmountIsRecordedButReturnsBadRequest() throws Exception {
         Order order = saveVietQrOrder(500_000D);
         String body = payload(9_003L, paymentCode(order), "SEVQR " + paymentCode(order), 500_001L);
 
-        sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
+        sendSignedWebhook(body).andExpect(status().isBadRequest()).andExpect(jsonPath("$.success").value(false));
 
         assertEquals("CHO_XAC_NHAN_THANH_TOAN", orderDAO.findById(order.getId()).orElseThrow().getStatus());
         SePayTransaction transaction = transactionRepository.findBySepayTransactionId(9_003L).orElseThrow();
@@ -81,11 +81,11 @@ class SePayWebhookIntegrationTest {
     }
 
     @Test
-    void webhookWithUnknownPaymentCodeIsRejected() throws Exception {
+    void webhookWithUnknownPaymentCodeReturnsNotFound() throws Exception {
         String paymentCode = "DH999999";
         String body = payload(9_004L, paymentCode, "SEVQR " + paymentCode, 500_000L);
 
-        sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
+        sendSignedWebhook(body).andExpect(status().isNotFound()).andExpect(jsonPath("$.success").value(false));
 
         SePayTransaction transaction = transactionRepository.findBySepayTransactionId(9_004L).orElseThrow();
         assertEquals(paymentCode, transaction.getPaymentCode());
@@ -120,8 +120,11 @@ class SePayWebhookIntegrationTest {
 
     private String signature(String timestamp, String body) throws Exception {
         Mac mac = Mac.getInstance("HmacSHA256");
-        mac.init(new SecretKeySpec(sePayProperties.getWebhook().getSecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-        return "sha256=" + HexFormat.of().formatHex(mac.doFinal((timestamp + "." + body).getBytes(StandardCharsets.UTF_8)));
+        mac.init(new SecretKeySpec(
+                sePayProperties.getWebhook().getSecret().getBytes(StandardCharsets.UTF_8),
+                "HmacSHA256"));
+        return "sha256=" + HexFormat.of().formatHex(
+                mac.doFinal((timestamp + "." + body).getBytes(StandardCharsets.UTF_8)));
     }
 
     private String payload(Long transactionId, String code, String content, Long amount) {

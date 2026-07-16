@@ -14,6 +14,7 @@ import poly.edu.dto.SePayWebhookResponse;
 import poly.edu.service.SePayDuplicateTransactionException;
 import poly.edu.service.SePayWebhookAuthenticationException;
 import poly.edu.service.SePayWebhookPayloadTooLargeException;
+import poly.edu.service.SePayWebhookResult;
 import poly.edu.service.SePayWebhookService;
 
 import java.io.ByteArrayOutputStream;
@@ -41,8 +42,8 @@ public class SePayWebhookController {
             HttpServletRequest request) {
         try {
             byte[] rawBody = readRawBody(request);
-            sePayWebhookService.process(signature, timestamp, rawBody);
-            return ResponseEntity.ok(new SePayWebhookResponse(true));
+            SePayWebhookResult result = sePayWebhookService.process(signature, timestamp, rawBody);
+            return responseFor(result);
         } catch (SePayDuplicateTransactionException exception) {
             return ResponseEntity.ok(new SePayWebhookResponse(true));
         } catch (SePayWebhookAuthenticationException exception) {
@@ -52,12 +53,24 @@ public class SePayWebhookController {
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.badRequest().body(new SePayWebhookResponse(false));
         } catch (IllegalStateException exception) {
-            logger.error("SePay webhook configuration or cryptographic processing failed: {}", exception.getClass().getSimpleName());
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new SePayWebhookResponse(false));
+            logger.error("SePay webhook configuration or cryptographic processing failed: {}",
+                    exception.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SePayWebhookResponse(false));
         } catch (Exception exception) {
             logger.error("SePay webhook processing failed: {}", exception.getClass().getSimpleName());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SePayWebhookResponse(false));
         }
+    }
+
+    private ResponseEntity<SePayWebhookResponse> responseFor(SePayWebhookResult result) {
+        return switch (result) {
+            case PROCESSED, DUPLICATE -> ResponseEntity.ok(new SePayWebhookResponse(true));
+            case BAD_REQUEST -> ResponseEntity.badRequest().body(new SePayWebhookResponse(false));
+            case ORDER_NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new SePayWebhookResponse(false));
+            case ORDER_CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new SePayWebhookResponse(false));
+        };
     }
 
     private byte[] readRawBody(HttpServletRequest request) throws IOException {

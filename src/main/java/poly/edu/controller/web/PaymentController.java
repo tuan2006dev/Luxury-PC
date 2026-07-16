@@ -20,6 +20,7 @@ import poly.edu.entity.User;
 import poly.edu.service.SePayPaymentSession;
 import poly.edu.service.ProfileService;
 
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -54,11 +55,14 @@ public class PaymentController {
         if (!"VIETQR".equals(order.getPaymentMethod())) {
             throw new AccessDeniedException("Order is not a VietQR payment");
         }
+        if (!"CHO_XAC_NHAN_THANH_TOAN".equals(order.getStatus())) {
+            throw new AccessDeniedException("VietQR order is not awaiting payment");
+        }
         if (!sePayProperties.hasBankConfiguration()) {
             throw new IllegalStateException("SePay bank configuration is missing");
         }
 
-        long amount = Math.round(order.getTotalPrice());
+        long amount = exactOrderAmount(order);
         String orderCode = order.getOrderCode();
         String transferContent = "SEVQR " + sePayProperties.getPaymentCode().getPrefix() + order.getId();
         String encodedInfo = URLEncoder.encode(transferContent, StandardCharsets.UTF_8);
@@ -83,6 +87,18 @@ public class PaymentController {
         model.addAttribute("paymentToken", sePayPaymentSession.issueToken(session, orderCode));
 
         return "payment-vietqr";
+    }
+
+    private long exactOrderAmount(Order order) {
+        Double totalPrice = order.getTotalPrice();
+        if (totalPrice == null || !Double.isFinite(totalPrice) || totalPrice <= 0) {
+            throw new IllegalStateException("Order total is invalid");
+        }
+        try {
+            return BigDecimal.valueOf(totalPrice).longValueExact();
+        } catch (ArithmeticException exception) {
+            throw new IllegalStateException("Order total is not an exact VND amount", exception);
+        }
     }
 
     private User currentUser() {

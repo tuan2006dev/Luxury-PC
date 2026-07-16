@@ -1,6 +1,5 @@
 package poly.edu.service;
 
-import java.io.IOException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,8 @@ import poly.edu.dto.SePayWebhookPayload;
 import poly.edu.entity.Order;
 import poly.edu.entity.SePayTransaction;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -46,13 +47,13 @@ public class SePayWebhookService {
     }
 
     @Transactional
-    public void process(String signature, String timestamp, byte[] rawBody) {
+    public SePayWebhookResult process(String signature, String timestamp, byte[] rawBody) {
         signatureVerifier.verify(signature, timestamp, rawBody);
         SePayWebhookPayload payload = parsePayload(rawBody);
         validateRequiredFields(payload);
 
         if (transactionRepository.existsBySepayTransactionId(payload.id())) {
-            return;
+            return SePayWebhookResult.DUPLICATE;
         }
 
         String paymentCode = resolvePaymentCode(payload);
@@ -68,57 +69,57 @@ public class SePayWebhookService {
 
         if (!"in".equalsIgnoreCase(payload.transferType())) {
             markProcessed(transaction, "REJECTED_TRANSFER_TYPE");
-            return;
+            return SePayWebhookResult.BAD_REQUEST;
         }
 
         if (!sePayProperties.hasBankConfiguration()) {
-            markProcessed(transaction, "REJECTED_CONFIGURATION");
-            return;
+            throw new IllegalStateException("SePay bank configuration is missing");
         }
 
         if (!Objects.equals(sePayProperties.getBank().getAccountNumber(), payload.accountNumber())) {
             markProcessed(transaction, "REJECTED_ACCOUNT_MISMATCH");
-            return;
+            return SePayWebhookResult.BAD_REQUEST;
         }
 
         Integer orderId = parseOrderId(paymentCode);
         if (orderId == null) {
             markProcessed(transaction, "REJECTED_PAYMENT_CODE");
-            return;
+            return SePayWebhookResult.BAD_REQUEST;
         }
 
         Optional<Order> orderOptional = orderDAO.findByIdForUpdate(orderId);
         if (orderOptional.isEmpty()) {
             markProcessed(transaction, "REJECTED_ORDER_NOT_FOUND");
-            return;
+            return SePayWebhookResult.ORDER_NOT_FOUND;
         }
 
         Order order = orderOptional.get();
         transaction.setOrderCode(order.getOrderCode());
         if (!"VIETQR".equals(order.getPaymentMethod())) {
             markProcessed(transaction, "REJECTED_PAYMENT_METHOD");
-            return;
+            return SePayWebhookResult.BAD_REQUEST;
         }
 
-        long expectedAmount = Math.round(order.getTotalPrice());
+        long expectedAmount = exactOrderAmount(order);
         if (!Objects.equals(payload.transferAmount(), expectedAmount)) {
             markProcessed(transaction, "REJECTED_AMOUNT_MISMATCH");
-            return;
+            return SePayWebhookResult.BAD_REQUEST;
         }
 
         if ("DA_THANH_TOAN".equals(order.getStatus()) || "PAID".equals(order.getStatus())) {
             markProcessed(transaction, "IGNORED_ORDER_ALREADY_PAID");
-            return;
+            return SePayWebhookResult.ORDER_CONFLICT;
         }
 
         if (!"CHO_XAC_NHAN_THANH_TOAN".equals(order.getStatus())) {
             markProcessed(transaction, "REJECTED_ORDER_STATUS");
-            return;
+            return SePayWebhookResult.ORDER_CONFLICT;
         }
 
         order.setStatus("DA_THANH_TOAN");
         orderDAO.save(order);
         markProcessed(transaction, "PAID");
+        return SePayWebhookResult.PROCESSED;
     }
 
     private SePayWebhookPayload parsePayload(byte[] rawBody) {
@@ -157,15 +158,22 @@ public class SePayWebhookService {
     }
 
     private String resolvePaymentCode(SePayWebhookPayload payload) {
-        if (hasText(payload.code())) {
-
-            return isStrictPaymentCode(payload.code()) ? normalize(payload.code()) : null;
-        }
-
         Set<String> candidates = new LinkedHashSet<>();
+        candidates.addAll(extractPaymentCodes(payload.code()));
         candidates.addAll(extractPaymentCodes(payload.content()));
-        candidates.addAll(extractPaymentCodes(payload.description()));
         return candidates.size() == 1 ? candidates.iterator().next() : null;
+    }
+
+    private long exactOrderAmount(Order order) {
+        Double totalPrice = order.getTotalPrice();
+        if (totalPrice == null || !Double.isFinite(totalPrice) || totalPrice <= 0) {
+            throw new IllegalStateException("Order total is invalid");
+        }
+        try {
+            return BigDecimal.valueOf(totalPrice).longValueExact();
+        } catch (ArithmeticException exception) {
+            throw new IllegalStateException("Order total is not an exact VND amount", exception);
+        }
     }
 
     private Integer parseOrderId(String paymentCode) {
@@ -197,14 +205,6 @@ public class SePayWebhookService {
             matches.add(matcher.group(1));
         }
         return matches;
-    }
-
-    private boolean isStrictPaymentCode(String value) {
-        if (!isValidPrefix()) {
-            return false;
-        }
-        String prefix = normalize(sePayProperties.getPaymentCode().getPrefix());
-        return Pattern.compile("^" + Pattern.quote(prefix) + "[0-9]+$").matcher(normalize(value)).matches();
     }
 
     private boolean isValidPrefix() {

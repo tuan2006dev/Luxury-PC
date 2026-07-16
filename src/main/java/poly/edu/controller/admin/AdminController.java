@@ -2,6 +2,8 @@ package poly.edu.controller.admin;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import poly.edu.repository.AdminLogRepository;
 import poly.edu.repository.SupportTicketRepository;
 import poly.edu.repository.UserRepository;
 import poly.edu.service.AdminService;
+import poly.edu.service.VietQrManualConfirmationException;
 import poly.edu.entity.Inventory;
 
 import java.security.Principal;
@@ -81,6 +84,12 @@ public class AdminController {
         logAction(principal, request, "Xác nhận thanh toán VietQR", "Đơn hàng #" + orderId);
 
         return "redirect:/admin/orders";
+    }
+
+    @ExceptionHandler(VietQrManualConfirmationException.class)
+    @ResponseBody
+    public ResponseEntity<String> manualConfirmationConflict(VietQrManualConfirmationException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
     }
 
     @PostMapping("/orders/request-refund")
