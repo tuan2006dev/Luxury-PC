@@ -18,6 +18,10 @@ import poly.edu.service.WishlistService;
 import poly.edu.service.NewsService;
 import poly.edu.dao.CategoryDAO;
 
+import poly.edu.service.NewsCategoryService;
+import poly.edu.entity.NewsCategory;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +43,8 @@ public class HomeController {
     final WishlistService wishlistService;
 
     final NewsService newsService;
+
+    final NewsCategoryService newsCategoryService;
 
     final CategoryDAO categoryDAO;
 
@@ -79,8 +85,38 @@ public class HomeController {
         long t3 = System.nanoTime();
         model.addAttribute("reviews", reviewService.getLatestReviews());
         long t4 = System.nanoTime();
-        model.addAttribute("latestNews", newsService.getTop5LatestNews());
-        model.addAttribute("featuredNews", newsService.getTop5MostViewedNews());
+
+        List<NewsCategory> activeCategories = newsCategoryService.getActiveCategories();
+        record CategoryNewsGroup(NewsCategory category, List<poly.edu.dto.NewsSummaryDto> newsList, java.util.Date latestDate) {}
+        List<CategoryNewsGroup> groups = new java.util.ArrayList<>();
+        
+        for (NewsCategory cat : activeCategories) {
+            Page<poly.edu.dto.NewsSummaryDto> newsPage = newsService.getPublishedNews(0, 3, null, cat.getId());
+            List<poly.edu.dto.NewsSummaryDto> content = newsPage.getContent();
+            if (!content.isEmpty()) {
+                java.util.Date latestDate = content.get(0).getCreatedAt();
+                groups.add(new CategoryNewsGroup(cat, content, latestDate));
+            }
+        }
+        
+        // Sort groups by latestDate desc
+        groups.sort((g1, g2) -> g2.latestDate().compareTo(g1.latestDate()));
+        
+        if (groups.size() >= 1) {
+            model.addAttribute("leftCategory", groups.get(0).category());
+            model.addAttribute("leftNews", groups.get(0).newsList());
+        } else {
+            model.addAttribute("leftCategory", null);
+            model.addAttribute("leftNews", java.util.Collections.emptyList());
+        }
+        
+        if (groups.size() >= 2) {
+            model.addAttribute("rightCategory", groups.get(1).category());
+            model.addAttribute("rightNews", groups.get(1).newsList());
+        } else {
+            model.addAttribute("rightCategory", null);
+            model.addAttribute("rightNews", java.util.Collections.emptyList());
+        }
 
         // Flash Sale từ database
         Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();

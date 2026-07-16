@@ -16936,3 +16936,937 @@ TOTAL REQUEST .............. 562 ms
 2026-07-16 09:45:38.848 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-07-16 09:45:38.892 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-07-16 09:45:39.130 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-07-16 09:48:27.892 [restartedMain] INFO  poly.edu.LuxuryPcApplication - Starting LuxuryPcApplication using Java 25.0.1 with PID 21712 (C:\Backend\Luxury-PC\target\classes started by Thanh in C:\Backend\Luxury-PC)
+2026-07-16 09:48:27.894 [restartedMain] DEBUG poly.edu.LuxuryPcApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-07-16 09:48:27.895 [restartedMain] INFO  poly.edu.LuxuryPcApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-16 09:48:27.939 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-07-16 09:48:27.939 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-07-16 09:48:28.937 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-16 09:48:29.053 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 110 ms. Found 29 JPA repository interfaces.
+2026-07-16 09:48:29.835 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-07-16 09:48:29.844 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-16 09:48:29.844 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-07-16 09:48:29.885 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-07-16 09:48:29.885 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1945 ms
+2026-07-16 09:48:30.265 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-16 09:48:30.326 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-07-16 09:48:30.356 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-16 09:48:30.532 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-16 09:48:30.559 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-07-16 09:48:32.016 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7929b3b6
+2026-07-16 09:48:32.018 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-07-16 09:48:32.176 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-16 09:48:34.475 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-16 09:48:43.942 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 09:48:44.371 [restartedMain] INFO  o.s.d.p.DefaultProjectionInformation$PropertyDescriptorSource - Couldn't read class metadata for interface java.util.Map. Input property calculation might fail
+2026-07-16 09:48:44.380 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-16 09:48:45.061 [restartedMain] INFO  o.s.d.p.DefaultProjectionInformation$PropertyDescriptorSource - Couldn't read class metadata for interface java.util.Map. Input property calculation might fail
+2026-07-16 09:48:45.281 [restartedMain] INFO  o.s.d.p.DefaultProjectionInformation$PropertyDescriptorSource - Couldn't read class metadata for interface java.util.Map. Input property calculation might fail
+2026-07-16 09:48:50.586 [restartedMain] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2026-07-16 09:48:51.100 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 3 endpoint(s) beneath base path '/actuator'
+2026-07-16 09:48:51.295 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2363c1d, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2dfea0d9, org.springframework.security.web.context.SecurityContextHolderFilter@5a26ef41, org.springframework.security.web.header.HeaderWriterFilter@6058d475, org.springframework.web.filter.CorsFilter@72f5380, org.springframework.security.web.authentication.logout.LogoutFilter@4e2c8084, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@17f394b, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@4a7ca369, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@133159eb, org.springframework.security.web.session.ConcurrentSessionFilter@9ec6426, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@320647e8, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@78465e0b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@485830e8, org.springframework.security.web.session.SessionManagementFilter@67ce6e0, org.springframework.security.web.access.ExceptionTranslationFilter@6f9257a, org.springframework.security.web.access.intercept.AuthorizationFilter@5501a015]
+2026-07-16 09:48:51.979 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-07-16 09:48:52.050 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-07-16 09:48:52.062 [restartedMain] INFO  poly.edu.LuxuryPcApplication - Started LuxuryPcApplication in 24.634 seconds (process running for 24.971)
+2026-07-16 09:49:35.006 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-16 09:49:35.006 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-07-16 09:49:35.009 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-07-16 09:49:36.523 [http-nio-8080-exec-1] DEBUG p.edu.controller.web.HomeController - [HomeController] index() perf: total=1069ms | featured=146ms | flashSale=86ms | top=91ms | reviews=99ms | vouchers=92ms | wishlist=264ms
+2026-07-16 09:49:37.323 [http-nio-8080-exec-1] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 212 ms
+  NewsRepository.findTop5ByStatusOrderByCreatedAtDesc .......... 114 ms
+  NewsRepository.findTop5ByStatusOrderByViewCountDesc .......... 79 ms
+  UserRepository.findByEmail     .......... 89 ms
+  WishlistItemRepository.findProductIdsByUserId .......... 88 ms
+Service:
+  ProfileService.getCurrentUser  .......... 212 ms
+  ProductService.getFeaturedProducts .......... 143 ms
+  ProductService.getFlashSaleProducts .......... 87 ms
+  ProductService.getTopProducts  .......... 91 ms
+  ReviewService.getLatestReviews .......... 98 ms
+  NewsServiceImpl.getTop5LatestNews .......... 116 ms
+  NewsServiceImpl.getTop5MostViewedNews .......... 79 ms
+  FlashSaleService.getCurrentFlashSale .......... 91 ms
+  VoucherService.getActiveVouchers .......... 90 ms
+  ProfileService.getCurrentUser  .......... 89 ms
+  WishlistService.getWishlistProductIds .......... 177 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 212 ms
+  HomeController.index           .......... 1247 ms
+  DispatcherServlet_And_View     .......... 2275 ms
+View Rendering:
+  Thymeleaf                      .......... 785 ms
+TOTAL REQUEST .............. 2312 ms
+=================================================
+2026-07-16 09:49:37.666 [http-nio-8080-exec-3] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 184 ms
+Service:
+  ProfileService.getCurrentUser  .......... 184 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 184 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 213 ms
+View Rendering:
+TOTAL REQUEST .............. 216 ms
+=================================================
+2026-07-16 09:49:38.162 [http-nio-8080-exec-4] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 287 ms
+  ListCrudRepository.findAll     .......... 410 ms
+Service:
+  ProfileService.getCurrentUser  .......... 287 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 287 ms
+  TranslationApiController.getAllTranslations .......... 411 ms
+  DispatcherServlet_And_View     .......... 708 ms
+View Rendering:
+TOTAL REQUEST .............. 712 ms
+=================================================
+2026-07-16 09:49:51.152 [restartedMain] INFO  p.edu.config.DatabaseUpdateConfig - [DB] auth_provider and provider_id columns verified/added successfully.
+2026-07-16 09:49:51.603 [restartedMain] INFO  poly.edu.config.BuildPcDataSeeder - [BuildPcDataSeeder] Checking and seeding Build PC data...
+2026-07-16 09:52:31.292 [http-nio-8080-exec-8] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /products
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 295 ms
+  UserRepository.findByEmail     .......... 95 ms
+  WishlistItemRepository.findProductIdsByUserId .......... 105 ms
+Service:
+  ProfileService.getCurrentUser  .......... 300 ms
+  ProductService.searchProducts  .......... 407 ms
+  CategoryService.getAllCategories .......... 187 ms
+  ProfileService.getCurrentUser  .......... 95 ms
+  WishlistService.getWishlistProductIds .......... 214 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 301 ms
+  ProductPageController.showProductsPage .......... 904 ms
+  DispatcherServlet_And_View     .......... 2192 ms
+View Rendering:
+  Thymeleaf                      .......... 874 ms
+TOTAL REQUEST .............. 2371 ms
+=================================================
+2026-07-16 09:52:31.705 [http-nio-8080-exec-10] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 298 ms
+Service:
+  ProfileService.getCurrentUser  .......... 298 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 298 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 311 ms
+View Rendering:
+TOTAL REQUEST .............. 318 ms
+=================================================
+2026-07-16 09:52:32.254 [http-nio-8080-exec-1] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 378 ms
+  ListCrudRepository.findAll     .......... 474 ms
+Service:
+  ProfileService.getCurrentUser  .......... 378 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 378 ms
+  TranslationApiController.getAllTranslations .......... 476 ms
+  DispatcherServlet_And_View     .......... 860 ms
+View Rendering:
+TOTAL REQUEST .............. 862 ms
+=================================================
+2026-07-16 09:53:00.242 [http-nio-8080-exec-2] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /build-pc
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 182 ms
+Service:
+  ProfileService.getCurrentUser  .......... 182 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 182 ms
+  BuildPcController.buildPc      .......... 793 ms
+  DispatcherServlet_And_View     .......... 1231 ms
+View Rendering:
+  Thymeleaf                      .......... 216 ms
+TOTAL REQUEST .............. 1235 ms
+=================================================
+2026-07-16 09:53:00.435 [http-nio-8080-exec-6] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 84 ms
+Service:
+  ProfileService.getCurrentUser  .......... 84 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 84 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 89 ms
+View Rendering:
+TOTAL REQUEST .............. 93 ms
+=================================================
+2026-07-16 09:53:21.518 [http-nio-8080-exec-8] DEBUG p.edu.controller.web.HomeController - [HomeController] index() perf: total=1100ms | featured=110ms | flashSale=118ms | top=108ms | reviews=107ms | vouchers=88ms | wishlist=278ms
+2026-07-16 09:53:21.856 [http-nio-8080-exec-8] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 172 ms
+  NewsRepository.findTop5ByStatusOrderByCreatedAtDesc .......... 107 ms
+  NewsRepository.findTop5ByStatusOrderByViewCountDesc .......... 95 ms
+  UserRepository.findByEmail     .......... 85 ms
+  WishlistItemRepository.findProductIdsByUserId .......... 109 ms
+Service:
+  ProfileService.getCurrentUser  .......... 172 ms
+  ProductService.getFeaturedProducts .......... 108 ms
+  ProductService.getFlashSaleProducts .......... 90 ms
+  ProductService.getTopProducts  .......... 108 ms
+  ReviewService.getLatestReviews .......... 106 ms
+  NewsServiceImpl.getTop5LatestNews .......... 107 ms
+  NewsServiceImpl.getTop5MostViewedNews .......... 96 ms
+  FlashSaleService.getCurrentFlashSale .......... 85 ms
+  VoucherService.getActiveVouchers .......... 90 ms
+  ProfileService.getCurrentUser  .......... 85 ms
+  WishlistService.getWishlistProductIds .......... 194 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 172 ms
+  HomeController.index           .......... 1307 ms
+  DispatcherServlet_And_View     .......... 1817 ms
+View Rendering:
+  Thymeleaf                      .......... 334 ms
+TOTAL REQUEST .............. 1822 ms
+=================================================
+2026-07-16 09:53:22.053 [http-nio-8080-exec-10] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 91 ms
+Service:
+  ProfileService.getCurrentUser  .......... 91 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 93 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 95 ms
+View Rendering:
+TOTAL REQUEST .............. 98 ms
+=================================================
+2026-07-16 09:53:22.558 [http-nio-8080-exec-1] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 177 ms
+  ListCrudRepository.findAll     .......... 367 ms
+Service:
+  ProfileService.getCurrentUser  .......... 178 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 180 ms
+  TranslationApiController.getAllTranslations .......... 411 ms
+  DispatcherServlet_And_View     .......... 600 ms
+View Rendering:
+TOTAL REQUEST .............. 603 ms
+=================================================
+2026-07-16 09:53:25.004 [http-nio-8080-exec-3] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /news
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 187 ms
+  NewsRepository.findByStatusOrderByCreatedAtDesc .......... 136 ms
+  NewsCategoryRepository.findByStatus .......... 90 ms
+  NewsRepository.findTop5ByStatusOrderByViewCountDesc .......... 85 ms
+Service:
+  ProfileService.getCurrentUser  .......... 187 ms
+  NewsServiceImpl.getPublishedNews .......... 150 ms
+  NewsCategoryServiceImpl.getActiveCategories .......... 100 ms
+  NewsServiceImpl.getTop5MostViewedNews .......... 85 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 187 ms
+  NewsController.index           .......... 337 ms
+  DispatcherServlet_And_View     .......... 645 ms
+View Rendering:
+  Thymeleaf                      .......... 68 ms
+TOTAL REQUEST .............. 664 ms
+=================================================
+2026-07-16 09:53:25.250 [http-nio-8080-exec-4] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 194 ms
+Service:
+  ProfileService.getCurrentUser  .......... 195 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 195 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 196 ms
+View Rendering:
+TOTAL REQUEST .............. 201 ms
+=================================================
+2026-07-16 09:53:25.661 [http-nio-8080-exec-5] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 228 ms
+  ListCrudRepository.findAll     .......... 374 ms
+Service:
+  ProfileService.getCurrentUser  .......... 229 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 229 ms
+  TranslationApiController.getAllTranslations .......... 374 ms
+  DispatcherServlet_And_View     .......... 608 ms
+View Rendering:
+TOTAL REQUEST .............. 612 ms
+=================================================
+2026-07-16 09:53:30.650 [http-nio-8080-exec-6] DEBUG p.edu.controller.web.HomeController - [HomeController] index() perf: total=468ms | featured=0ms | flashSale=0ms | top=0ms | reviews=0ms | vouchers=0ms | wishlist=260ms
+2026-07-16 09:53:30.990 [http-nio-8080-exec-6] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 173 ms
+  NewsRepository.findTop5ByStatusOrderByCreatedAtDesc .......... 118 ms
+  NewsRepository.findTop5ByStatusOrderByViewCountDesc .......... 89 ms
+  UserRepository.findByEmail     .......... 88 ms
+  WishlistItemRepository.findProductIdsByUserId .......... 87 ms
+Service:
+  ProfileService.getCurrentUser  .......... 173 ms
+  NewsServiceImpl.getTop5LatestNews .......... 118 ms
+  NewsServiceImpl.getTop5MostViewedNews .......... 89 ms
+  ProfileService.getCurrentUser  .......... 88 ms
+  WishlistService.getWishlistProductIds .......... 175 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 174 ms
+  HomeController.index           .......... 641 ms
+  DispatcherServlet_And_View     .......... 1155 ms
+View Rendering:
+  Thymeleaf                      .......... 339 ms
+TOTAL REQUEST .............. 1157 ms
+=================================================
+2026-07-16 09:53:31.137 [http-nio-8080-exec-8] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 88 ms
+Service:
+  ProfileService.getCurrentUser  .......... 88 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 88 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 91 ms
+View Rendering:
+TOTAL REQUEST .............. 95 ms
+=================================================
+2026-07-16 09:53:31.587 [http-nio-8080-exec-9] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 171 ms
+  ListCrudRepository.findAll     .......... 358 ms
+Service:
+  ProfileService.getCurrentUser  .......... 171 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 171 ms
+  TranslationApiController.getAllTranslations .......... 360 ms
+  DispatcherServlet_And_View     .......... 540 ms
+View Rendering:
+TOTAL REQUEST .............. 545 ms
+=================================================
+2026-07-16 09:54:48.657 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 159 class path changes (0 additions, 157 deletions, 2 modifications)
+2026-07-16 09:54:49.129 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 09:54:49.244 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-07-16 09:54:49.421 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-07-16 09:54:50.113 [restartedMain] INFO  poly.edu.LuxuryPcApplication - Starting LuxuryPcApplication using Java 25.0.1 with PID 21712 (C:\Backend\Luxury-PC\target\classes started by Thanh in C:\Backend\Luxury-PC)
+2026-07-16 09:54:50.114 [restartedMain] DEBUG poly.edu.LuxuryPcApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-07-16 09:54:50.114 [restartedMain] INFO  poly.edu.LuxuryPcApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-16 09:54:50.617 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-16 09:54:50.619 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 1 ms. Found 0 JPA repository interfaces.
+2026-07-16 09:54:50.998 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-07-16 09:54:51.031 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-16 09:54:51.032 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-07-16 09:54:51.113 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-07-16 09:54:51.114 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 990 ms
+2026-07-16 09:54:51.282 [restartedMain] ERROR o.a.catalina.session.StandardManager - Exception loading sessions from persistent storage
+java.lang.ClassNotFoundException: poly.edu.entity.CartItem
+	at org.springframework.boot.web.embedded.tomcat.TomcatEmbeddedWebappClassLoader.loadClass(TomcatEmbeddedWebappClassLoader.java:72)
+	at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1165)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:547)
+	at org.apache.catalina.util.CustomObjectInputStream.resolveClass(CustomObjectInputStream.java:158)
+	at java.base/java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:1912)
+	at java.base/java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1785)
+	at java.base/java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:2101)
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1620)
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:487)
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:445)
+	at java.base/java.util.HashMap.readObject(HashMap.java:1561)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.io.ObjectStreamClass.invokeReadObject(ObjectStreamClass.java:976)
+	at java.base/java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:2302)
+	at java.base/java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:2133)
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1620)
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:487)
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:445)
+	at org.apache.catalina.session.StandardSession.doReadObject(StandardSession.java:1415)
+	at org.apache.catalina.session.StandardSession.readObjectData(StandardSession.java:985)
+	at org.apache.catalina.session.StandardManager.doLoad(StandardManager.java:210)
+	at org.apache.catalina.session.StandardManager.load(StandardManager.java:156)
+	at org.apache.catalina.session.StandardManager.startInternal(StandardManager.java:346)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4893)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:149)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:866)
+	at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:845)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+	at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:149)
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:866)
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:240)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardService.startInternal(StandardService.java:433)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:921)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:171)
+	at org.apache.catalina.startup.Tomcat.start(Tomcat.java:437)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:126)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:105)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:499)
+	at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:218)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:188)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:162)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:618)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at poly.edu.LuxuryPcApplication.main(LuxuryPcApplication.java:12)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+2026-07-16 09:54:51.395 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-16 09:54:51.399 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-16 09:54:51.404 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-16 09:54:51.406 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2026-07-16 09:54:52.582 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@5331ffbf
+2026-07-16 09:54:52.583 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2026-07-16 09:54:52.708 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-16 09:54:52.978 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-16 09:54:52.980 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 09:54:53.389 [restartedMain] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2026-07-16 09:54:54.398 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 3 endpoint(s) beneath base path '/actuator'
+2026-07-16 09:54:54.435 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3d4fb5dc, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2a0d7492, org.springframework.security.web.context.SecurityContextHolderFilter@43d85232, org.springframework.security.web.header.HeaderWriterFilter@24f84c1, org.springframework.web.filter.CorsFilter@3f1f6047, org.springframework.security.web.csrf.CsrfFilter@6fd7a470, org.springframework.security.web.authentication.logout.LogoutFilter@27943c6c, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@16e500fe, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@6467b069, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@5f64ed39, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@6d316b36, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@c0188de, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2cefe4f1, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@474d8e64, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4ca02dd7, org.springframework.security.oauth2.client.web.OAuth2AuthorizationCodeGrantFilter@66ce3374, org.springframework.security.web.access.ExceptionTranslationFilter@3a90d5ba, org.springframework.security.web.access.intercept.AuthorizationFilter@2d896815]
+2026-07-16 09:54:54.615 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-07-16 09:54:54.649 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-07-16 09:54:54.658 [restartedMain] INFO  poly.edu.LuxuryPcApplication - Started LuxuryPcApplication in 4.644 seconds (process running for 387.568)
+2026-07-16 09:54:54.667 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   OAuth2WebSecurityConfiguration.OAuth2SecurityFilterChainConfiguration matched:
+      - AllNestedConditions 2 matched 0 did not; NestedCondition on DefaultWebSecurityCondition.Beans @ConditionalOnMissingBean (types: org.springframework.security.web.SecurityFilterChain; SearchStrategy: all) did not find any beans; NestedCondition on DefaultWebSecurityCondition.Classes @ConditionalOnClass found required classes 'org.springframework.security.web.SecurityFilterChain', 'org.springframework.security.config.annotation.web.builders.HttpSecurity' (DefaultWebSecurityCondition)
+
+   SpringBootWebSecurityConfiguration.WebSecurityEnablerConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.EnableWebSecurity' (OnClassCondition)
+      - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   CacheMetricsAutoConfiguration:
+      Did not match:
+         - @ConditionalOnBean (types: org.springframework.cache.CacheManager; SearchStrategy: all) did not find any beans of type org.springframework.cache.CacheManager (OnBeanCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2026-07-16 09:54:54.745 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-16 09:54:54.746 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-07-16 09:54:54.748 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-07-16 09:54:56.277 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 158 class path changes (158 additions, 0 deletions, 0 modifications)
+2026-07-16 09:54:56.293 [Thread-7] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 09:54:56.302 [Thread-7] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2026-07-16 09:54:56.508 [Thread-7] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2026-07-16 09:54:56.644 [restartedMain] INFO  poly.edu.LuxuryPcApplication - Starting LuxuryPcApplication using Java 25.0.1 with PID 21712 (C:\Backend\Luxury-PC\target\classes started by Thanh in C:\Backend\Luxury-PC)
+2026-07-16 09:54:56.645 [restartedMain] DEBUG poly.edu.LuxuryPcApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-07-16 09:54:56.645 [restartedMain] INFO  poly.edu.LuxuryPcApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-16 09:54:57.158 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-16 09:54:57.241 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 82 ms. Found 29 JPA repository interfaces.
+2026-07-16 09:54:57.732 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-07-16 09:54:57.733 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-16 09:54:57.733 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-07-16 09:54:57.760 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-07-16 09:54:57.761 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1111 ms
+2026-07-16 09:54:58.077 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-16 09:54:58.081 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-07-16 09:54:58.088 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-16 09:54:58.090 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+2026-07-16 09:54:59.232 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@5d8fef2e
+2026-07-16 09:54:59.232 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+2026-07-16 09:54:59.342 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-16 09:55:00.486 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-16 09:55:09.699 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 09:55:10.032 [restartedMain] INFO  o.s.d.p.DefaultProjectionInformation$PropertyDescriptorSource - Couldn't read class metadata for interface java.util.Map. Input property calculation might fail
+2026-07-16 09:55:10.575 [restartedMain] INFO  o.s.d.p.DefaultProjectionInformation$PropertyDescriptorSource - Couldn't read class metadata for interface java.util.Map. Input property calculation might fail
+2026-07-16 09:55:10.676 [restartedMain] INFO  o.s.d.p.DefaultProjectionInformation$PropertyDescriptorSource - Couldn't read class metadata for interface java.util.Map. Input property calculation might fail
+2026-07-16 09:55:13.780 [restartedMain] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2026-07-16 09:55:14.445 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 3 endpoint(s) beneath base path '/actuator'
+2026-07-16 09:55:14.629 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@d615f8a, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@78deaf2c, org.springframework.security.web.context.SecurityContextHolderFilter@728b4dfa, org.springframework.security.web.header.HeaderWriterFilter@24d3a88a, org.springframework.web.filter.CorsFilter@60e1b4bc, org.springframework.security.web.authentication.logout.LogoutFilter@4c407691, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@33529380, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@6cd32321, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@fc57fd5, org.springframework.security.web.session.ConcurrentSessionFilter@6e780c8b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@24d8d5f9, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@43d9fe8d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7045af3b, org.springframework.security.web.session.SessionManagementFilter@58b5708b, org.springframework.security.web.access.ExceptionTranslationFilter@129e0d16, org.springframework.security.web.access.intercept.AuthorizationFilter@5a685f39]
+2026-07-16 09:55:15.417 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-07-16 09:55:15.468 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-07-16 09:55:15.479 [restartedMain] INFO  poly.edu.LuxuryPcApplication - Started LuxuryPcApplication in 18.885 seconds (process running for 408.388)
+2026-07-16 09:55:16.182 [restartedMain] INFO  p.edu.config.DatabaseUpdateConfig - [DB] auth_provider and provider_id columns verified/added successfully.
+2026-07-16 09:55:55.393 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-16 09:55:55.395 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-07-16 09:55:55.407 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 12 ms
+2026-07-16 09:55:57.270 [http-nio-8080-exec-1] DEBUG p.edu.controller.web.HomeController - [HomeController] index() perf: total=1384ms | featured=145ms | flashSale=124ms | top=109ms | reviews=108ms | vouchers=108ms | wishlist=337ms
+2026-07-16 09:55:57.745 [http-nio-8080-exec-1] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 227 ms
+  NewsCategoryRepository.findByStatus .......... 106 ms
+  NewsRepository.findByCategoryIdAndStatusOrderByCreatedAtDesc .......... 122 ms
+  NewsRepository.findByCategoryIdAndStatusOrderByCreatedAtDesc .......... 105 ms
+  UserRepository.findByEmail     .......... 112 ms
+  WishlistItemRepository.findProductIdsByUserId .......... 108 ms
+Service:
+  ProfileService.getCurrentUser  .......... 229 ms
+  ProductService.getFeaturedProducts .......... 141 ms
+  ProductService.getFlashSaleProducts .......... 123 ms
+  ProductService.getTopProducts  .......... 109 ms
+  ReviewService.getLatestReviews .......... 109 ms
+  NewsCategoryServiceImpl.getActiveCategories .......... 109 ms
+  NewsServiceImpl.getPublishedNews .......... 127 ms
+  NewsServiceImpl.getPublishedNews .......... 106 ms
+  FlashSaleService.getCurrentFlashSale .......... 108 ms
+  VoucherService.getActiveVouchers .......... 108 ms
+  ProfileService.getCurrentUser  .......... 112 ms
+  WishlistService.getWishlistProductIds .......... 222 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 230 ms
+  HomeController.index           .......... 1604 ms
+  DispatcherServlet_And_View     .......... 2317 ms
+View Rendering:
+  Thymeleaf                      .......... 471 ms
+TOTAL REQUEST .............. 2328 ms
+=================================================
+2026-07-16 09:55:57.955 [http-nio-8080-exec-10] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 114 ms
+Service:
+  ProfileService.getCurrentUser  .......... 114 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 114 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 121 ms
+View Rendering:
+TOTAL REQUEST .............. 123 ms
+=================================================
+2026-07-16 09:55:58.206 [http-nio-8080-exec-1] DEBUG p.e.exception.GlobalExceptionHandler - [GlobalHandler] No resource: /logo.png
+2026-07-16 09:55:58.209 [http-nio-8080-exec-1] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource logo.png.]
+2026-07-16 09:55:58.650 [http-nio-8080-exec-4] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 202 ms
+  ListCrudRepository.findAll     .......... 579 ms
+Service:
+  ProfileService.getCurrentUser  .......... 203 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 203 ms
+  TranslationApiController.getAllTranslations .......... 586 ms
+  DispatcherServlet_And_View     .......... 803 ms
+View Rendering:
+TOTAL REQUEST .............. 807 ms
+=================================================
+2026-07-16 09:56:04.573 [http-nio-8080-exec-7] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /news
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 204 ms
+  NewsRepository.findByCategoryIdAndStatusOrderByCreatedAtDesc .......... 112 ms
+  NewsCategoryRepository.findByStatus .......... 104 ms
+  NewsRepository.findTop5ByStatusOrderByViewCountDesc .......... 131 ms
+Service:
+  ProfileService.getCurrentUser  .......... 204 ms
+  NewsServiceImpl.getPublishedNews .......... 112 ms
+  NewsCategoryServiceImpl.getActiveCategories .......... 104 ms
+  NewsServiceImpl.getTop5MostViewedNews .......... 131 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 204 ms
+  NewsController.index           .......... 349 ms
+  DispatcherServlet_And_View     .......... 615 ms
+View Rendering:
+  Thymeleaf                      .......... 55 ms
+TOTAL REQUEST .............. 616 ms
+=================================================
+2026-07-16 09:56:04.810 [http-nio-8080-exec-8] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 103 ms
+Service:
+  ProfileService.getCurrentUser  .......... 103 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 103 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 106 ms
+View Rendering:
+TOTAL REQUEST .............. 108 ms
+=================================================
+2026-07-16 09:56:05.325 [http-nio-8080-exec-6] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 211 ms
+  ListCrudRepository.findAll     .......... 405 ms
+Service:
+  ProfileService.getCurrentUser  .......... 212 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 212 ms
+  TranslationApiController.getAllTranslations .......... 406 ms
+  DispatcherServlet_And_View     .......... 621 ms
+View Rendering:
+TOTAL REQUEST .............. 623 ms
+=================================================
+2026-07-16 09:56:08.421 [http-nio-8080-exec-3] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /news
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 209 ms
+  NewsRepository.findByCategoryIdAndStatusOrderByCreatedAtDesc .......... 107 ms
+  NewsCategoryRepository.findByStatus .......... 103 ms
+  NewsRepository.findTop5ByStatusOrderByViewCountDesc .......... 108 ms
+Service:
+  ProfileService.getCurrentUser  .......... 209 ms
+  NewsServiceImpl.getPublishedNews .......... 107 ms
+  NewsCategoryServiceImpl.getActiveCategories .......... 103 ms
+  NewsServiceImpl.getTop5MostViewedNews .......... 108 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 209 ms
+  NewsController.index           .......... 318 ms
+  DispatcherServlet_And_View     .......... 550 ms
+View Rendering:
+  Thymeleaf                      .......... 21 ms
+TOTAL REQUEST .............. 552 ms
+=================================================
+2026-07-16 09:56:08.707 [http-nio-8080-exec-5] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 201 ms
+Service:
+  ProfileService.getCurrentUser  .......... 201 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 201 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 205 ms
+View Rendering:
+TOTAL REQUEST .............. 206 ms
+=================================================
+2026-07-16 09:56:09.030 [http-nio-8080-exec-10] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 108 ms
+  ListCrudRepository.findAll     .......... 416 ms
+Service:
+  ProfileService.getCurrentUser  .......... 108 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 108 ms
+  TranslationApiController.getAllTranslations .......... 416 ms
+  DispatcherServlet_And_View     .......... 527 ms
+View Rendering:
+TOTAL REQUEST .............. 529 ms
+=================================================
+2026-07-16 09:56:10.220 [http-nio-8080-exec-1] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /news
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 206 ms
+  NewsRepository.findByStatusOrderByCreatedAtDesc .......... 110 ms
+  NewsCategoryRepository.findByStatus .......... 130 ms
+  NewsRepository.findTop5ByStatusOrderByViewCountDesc .......... 107 ms
+Service:
+  ProfileService.getCurrentUser  .......... 206 ms
+  NewsServiceImpl.getPublishedNews .......... 110 ms
+  NewsCategoryServiceImpl.getActiveCategories .......... 130 ms
+  NewsServiceImpl.getTop5MostViewedNews .......... 107 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 206 ms
+  NewsController.index           .......... 347 ms
+  DispatcherServlet_And_View     .......... 594 ms
+View Rendering:
+  Thymeleaf                      .......... 40 ms
+TOTAL REQUEST .............. 595 ms
+=================================================
+2026-07-16 09:56:10.427 [http-nio-8080-exec-7] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 103 ms
+Service:
+  ProfileService.getCurrentUser  .......... 104 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 104 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 107 ms
+View Rendering:
+TOTAL REQUEST .............. 108 ms
+=================================================
+2026-07-16 09:56:10.959 [http-nio-8080-exec-2] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 202 ms
+  ListCrudRepository.findAll     .......... 431 ms
+Service:
+  ProfileService.getCurrentUser  .......... 203 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 203 ms
+  TranslationApiController.getAllTranslations .......... 432 ms
+  DispatcherServlet_And_View     .......... 638 ms
+View Rendering:
+TOTAL REQUEST .............. 640 ms
+=================================================
+2026-07-16 09:56:13.348 [http-nio-8080-exec-8] DEBUG p.edu.controller.web.HomeController - [HomeController] index() perf: total=737ms | featured=0ms | flashSale=0ms | top=0ms | reviews=0ms | vouchers=0ms | wishlist=310ms
+2026-07-16 09:56:13.541 [http-nio-8080-exec-8] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 204 ms
+  NewsCategoryRepository.findByStatus .......... 116 ms
+  NewsRepository.findByCategoryIdAndStatusOrderByCreatedAtDesc .......... 106 ms
+  NewsRepository.findByCategoryIdAndStatusOrderByCreatedAtDesc .......... 102 ms
+  UserRepository.findByEmail     .......... 103 ms
+  WishlistItemRepository.findProductIdsByUserId .......... 101 ms
+Service:
+  ProfileService.getCurrentUser  .......... 204 ms
+  NewsCategoryServiceImpl.getActiveCategories .......... 116 ms
+  NewsServiceImpl.getPublishedNews .......... 106 ms
+  NewsServiceImpl.getPublishedNews .......... 102 ms
+  FlashSaleService.getCurrentFlashSale .......... 102 ms
+  ProfileService.getCurrentUser  .......... 103 ms
+  WishlistService.getWishlistProductIds .......... 205 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 204 ms
+  HomeController.index           .......... 941 ms
+  DispatcherServlet_And_View     .......... 1338 ms
+View Rendering:
+  Thymeleaf                      .......... 192 ms
+TOTAL REQUEST .............. 1340 ms
+=================================================
+2026-07-16 09:56:13.672 [http-nio-8080-exec-3] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/cart
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 105 ms
+Service:
+  ProfileService.getCurrentUser  .......... 105 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 105 ms
+  CartController.getCartApi      .......... 0 ms
+  DispatcherServlet_And_View     .......... 107 ms
+View Rendering:
+TOTAL REQUEST .............. 110 ms
+=================================================
+2026-07-16 09:56:14.181 [http-nio-8080-exec-9] DEBUG p.edu.config.profiler.SimpleProfiler - 
+=================================================
+REQUEST: /api/translations
+=================================================
+Repository:
+  UserRepository.findByEmail     .......... 198 ms
+  ListCrudRepository.findAll     .......... 411 ms
+Service:
+  ProfileService.getCurrentUser  .......... 198 ms
+Controller:
+  GlobalControllerAdvice.addGlobalAttributes .......... 198 ms
+  TranslationApiController.getAllTranslations .......... 412 ms
+  DispatcherServlet_And_View     .......... 617 ms
+View Rendering:
+TOTAL REQUEST .............. 618 ms
+=================================================
+2026-07-16 09:56:16.925 [restartedMain] INFO  poly.edu.config.BuildPcDataSeeder - [BuildPcDataSeeder] Checking and seeding Build PC data...
+2026-07-16 09:56:22.775 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-16 09:56:22.780 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2026-07-16 09:56:22.792 [restartedMain] WARN  c.zaxxer.hikari.pool.ProxyConnection - HikariPool-3 - Connection org.postgresql.jdbc.PgConnection@5d8fef2e marked as broken because of SQLSTATE(08006), ErrorCode(0)
+org.postgresql.util.PSQLException: An I/O error occurred while sending to the backend.
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:395)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:327)
+	at org.postgresql.jdbc.PgConnection.executeTransactionCommand(PgConnection.java:965)
+	at org.postgresql.jdbc.PgConnection.commit(PgConnection.java:987)
+	at com.zaxxer.hikari.pool.ProxyConnection.commit(ProxyConnection.java:377)
+	at com.zaxxer.hikari.pool.HikariProxyConnection.commit(HikariProxyConnection.java)
+	at org.hibernate.resource.jdbc.internal.AbstractLogicalConnectionImplementor.commit(AbstractLogicalConnectionImplementor.java:86)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:268)
+	at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101)
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:561)
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:794)
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:757)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:676)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:426)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:135)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
+	at jdk.proxy6/jdk.proxy6.$Proxy230.findAll(Unknown Source)
+	at poly.edu.config.BuildPcDataSeeder.seedProduct(BuildPcDataSeeder.java:140)
+	at poly.edu.config.BuildPcDataSeeder.run(BuildPcDataSeeder.java:99)
+	at org.springframework.boot.SpringApplication.lambda$callRunner$5(SpringApplication.java:790)
+	at org.springframework.util.function.ThrowingConsumer$1.acceptWithException(ThrowingConsumer.java:83)
+	at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:60)
+	at org.springframework.util.function.ThrowingConsumer$1.accept(ThrowingConsumer.java:88)
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:798)
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:789)
+	at org.springframework.boot.SpringApplication.lambda$callRunners$3(SpringApplication.java:774)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:186)
+	at java.base/java.util.stream.SortedOps$SizedRefSortingSink.end(SortedOps.java:357)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:571)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:153)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:176)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:265)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:632)
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:774)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:341)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at poly.edu.LuxuryPcApplication.main(LuxuryPcApplication.java:12)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.net.SocketException: Socket closed
+	at java.base/sun.nio.ch.NioSocketImpl.endRead(NioSocketImpl.java:242)
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:321)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:354)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:798)
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:974)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:964)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:489)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:483)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70)
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1461)
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1068)
+	at org.postgresql.core.VisibleBufferedInputStream.readMore(VisibleBufferedInputStream.java:161)
+	at org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:128)
+	at org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:113)
+	at org.postgresql.core.VisibleBufferedInputStream.read(VisibleBufferedInputStream.java:73)
+	at org.postgresql.core.PGStream.receiveChar(PGStream.java:465)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2155)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:368)
+	... 48 common frames omitted
+2026-07-16 09:56:22.813 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-07-16 09:56:22.839 [restartedMain] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'dataSourceScriptDatabaseInitializer': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:220)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory$1.orderedStream(DefaultListableBeanFactory.java:473)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.detectPersistenceExceptionTranslators(PersistenceExceptionTranslationInterceptor.java:167)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:149)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:135)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
+	at jdk.proxy6/jdk.proxy6.$Proxy230.findAll(Unknown Source)
+	at poly.edu.config.BuildPcDataSeeder.seedProduct(BuildPcDataSeeder.java:140)
+	at poly.edu.config.BuildPcDataSeeder.run(BuildPcDataSeeder.java:99)
+	at org.springframework.boot.SpringApplication.lambda$callRunner$5(SpringApplication.java:790)
+	at org.springframework.util.function.ThrowingConsumer$1.acceptWithException(ThrowingConsumer.java:83)
+	at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:60)
+	at org.springframework.util.function.ThrowingConsumer$1.accept(ThrowingConsumer.java:88)
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:798)
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:789)
+	at org.springframework.boot.SpringApplication.lambda$callRunners$3(SpringApplication.java:774)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:186)
+	at java.base/java.util.stream.SortedOps$SizedRefSortingSink.end(SortedOps.java:357)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:571)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:153)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:176)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:265)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:632)
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:774)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:341)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at poly.edu.LuxuryPcApplication.main(LuxuryPcApplication.java:12)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+2026-07-16 09:56:23.070 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
