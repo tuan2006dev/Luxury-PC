@@ -84,7 +84,7 @@
                 <div class="news-grid" th:unless="${newsPage.empty}">
                     <div class="news-card" th:each="n : ${newsPage.content}">
                         <a th:href="@{/news/{slug}(slug=${n.slug})}">
-                            <img class="news-thumb" th:src="${n.thumbnail != null ? '/images/news/' + n.thumbnail : '/images/placeholder.jpg'}" alt="Thumbnail">
+                            <img class="news-thumb" th:src="${not #strings.isEmpty(n.thumbnail) ? (n.thumbnail.startsWith('http') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.jpg'}" onerror="this.onerror=null;this.src='/images/placeholder.jpg';" alt="Thumbnail">
                         </a>
                         <div class="news-content-box">
                             <span class="news-category" th:text="${n.categoryName != null ? n.categoryName : 'Chưa phân loại'}">Category</span>
@@ -141,7 +141,7 @@
                     <h3 class="widget-title">Xem nhiều nhất</h3>
                     <div class="top-post" th:each="tn : ${topViewed}">
                         <a th:href="@{/news/{slug}(slug=${tn.slug})}">
-                            <img class="top-post-img" th:src="${tn.thumbnail != null ? '/images/news/' + tn.thumbnail : '/images/placeholder.jpg'}" alt="Thumb">
+                            <img class="top-post-img" th:src="${not #strings.isEmpty(tn.thumbnail) ? (tn.thumbnail.startsWith('http') ? tn.thumbnail : '/images/news/' + tn.thumbnail) : '/images/placeholder.jpg'}" onerror="this.onerror=null;this.src='/images/placeholder.jpg';" alt="Thumb">
                         </a>
                         <div class="top-post-info">
                             <a class="top-post-title" th:href="@{/news/{slug}(slug=${tn.slug})}" th:text="${tn.title}">Tiêu đề</a>
