@@ -98,6 +98,83 @@ public class CartController {
         return "redirect:/cart";
     }
 
+    /**
+     * 1b. AJAX: Thêm sản phẩm vào giỏ, trả về JSON (dùng cho nút thêm nhanh trên các trang)
+     */
+    @PostMapping("/api/cart/add")
+    @ResponseBody
+    public Map<String, Object> addToCartAjax(@RequestParam("id") Integer id,
+                                              @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
+                                              HttpSession session,
+                                              @AuthenticationPrincipal Object principal) {
+        Map<String, Object> result = new HashMap<>();
+
+        Optional<Product> pOpt = productDAO.findById(id);
+        if (pOpt.isEmpty()) {
+            result.put("success", false);
+            result.put("message", "Sản phẩm không tồn tại!");
+            return result;
+        }
+
+        Product product = pOpt.get();
+        String name = product.getName();
+        double price = product.getPrice();
+        int productStock = product.getStock();
+
+        if (productStock <= 0) {
+            result.put("success", false);
+            result.put("message", "Sản phẩm \"" + name + "\" đã hết hàng!");
+            return result;
+        }
+
+        // Kiểm tra Flash Sale
+        Optional<poly.edu.entity.FlashSaleItem> fsiOpt = flashSaleService.getActiveFlashSaleItem(id);
+        int maxAllowed = productStock;
+        if (fsiOpt.isPresent()) {
+            if (principal == null) {
+                result.put("success", false);
+                result.put("requireLogin", true);
+                result.put("message", "Vui lòng đăng nhập để mua sản phẩm Flash Sale!");
+                return result;
+            }
+            poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
+            price = fsi.getSalePrice();
+            maxAllowed = Math.min(productStock, fsi.getSaleQuantity() - fsi.getSoldCount());
+        }
+
+        if (maxAllowed <= 0) {
+            result.put("success", false);
+            result.put("message", "Sản phẩm đã hết lượt Flash Sale!");
+            return result;
+        }
+
+        Map<Integer, CartItem> cart = getCartFromSession(session);
+        int currentInCart = cart.containsKey(id) ? cart.get(id).getQuantity() : 0;
+
+        if (currentInCart + quantity > maxAllowed) {
+            int allowedQty = Math.max(0, maxAllowed - currentInCart);
+            if (allowedQty <= 0) {
+                result.put("success", false);
+                result.put("message", "Sản phẩm \"" + name + "\" đã đạt giới hạn tối đa (" + maxAllowed + " sản phẩm)!");
+                return result;
+            }
+            quantity = allowedQty;
+        }
+
+        if (cart.containsKey(id)) {
+            cart.get(id).setQuantity(cart.get(id).getQuantity() + quantity);
+        } else {
+            cart.put(id, new CartItem(id, name, price, quantity));
+        }
+
+        session.setAttribute("cart", cart);
+        result.put("success", true);
+        result.put("message", "Đã thêm \"" + name + "\" vào giỏ hàng!");
+        result.put("cartCount", cart.size());
+        return result;
+    }
+
+
     @PostMapping("/cart/buy-now")
     public String buyNow(@RequestParam("id") Integer id,
                          @RequestParam(value = "name", required = false) String name,

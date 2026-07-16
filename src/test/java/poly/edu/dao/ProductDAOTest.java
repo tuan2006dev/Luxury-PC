@@ -50,6 +50,17 @@ public class ProductDAOTest {
         Product p3 = new Product(null, "Corsair 32GB", 150.0, "DDR5 RAM", null, 8, "Corsair", ramCategory, new Date());
         entityManager.persist(p3);
 
+        // Add reviews to CPU and GPU so they have high stars for findFeaturedProducts test
+        poly.edu.entity.Review r1 = new poly.edu.entity.Review();
+        r1.setStars(5);
+        r1.setProduct(p1);
+        entityManager.persist(r1);
+
+        poly.edu.entity.Review r2 = new poly.edu.entity.Review();
+        r2.setStars(5);
+        r2.setProduct(p2);
+        entityManager.persist(r2);
+
         entityManager.flush();
         entityManager.clear();
     }
@@ -85,7 +96,7 @@ public class ProductDAOTest {
 
     @Test
     public void testFindFeaturedProducts() {
-        List<Product> featured = productDAO.findFeaturedProducts();
+        List<Product> featured = productDAO.findFeaturedProducts(PageRequest.of(0, 2));
         assertThat(featured).hasSize(2);
         assertThat(featured).extracting(p -> p.getCategory().getName())
                 .containsExactlyInAnyOrder("CPU", "GPU");

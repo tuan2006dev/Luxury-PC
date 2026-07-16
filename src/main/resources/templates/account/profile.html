@@ -1302,7 +1302,8 @@
             </div>
 
             <!-- Password change form -->
-            <form id="password-change-panel" class="edit-profile-panel" th:action="@{/profile/password}" method="post" novalidate
+            <form id="password-change-panel" class="edit-profile-panel" th:action="@{/profile/password}" method="post"
+              novalidate
               style="background:#f8fafc;border:1px solid #e2e8f0;padding:2rem;margin-bottom:1rem;margin-top:-0.5rem;">
               <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
               <div

@@ -249,6 +249,9 @@ textarea {
     border-radius: 4px;
     position: relative;
     transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-card:hover {
@@ -1252,6 +1255,7 @@ textarea {
     grid-template-columns: repeat(5, 1fr);
     gap: 15px;
     margin-bottom: 40px;
+    align-items: stretch;
 }
 
 /* ========== FLASH SALE ========== */
@@ -1385,7 +1389,7 @@ textarea {
     object-fit: contain;
 }
 
-.flash-prod-info {}
+
 
 .flash-prod-name {
     color: white;
@@ -1712,7 +1716,7 @@ textarea {
     padding: 15px 25px;
     border-radius: 8px;
     font-size: 14px;
-    z-index: 400;
+    z-index: 99999;
     transform: translateX(200%);
     transition: transform 0.3s;
 }
@@ -1720,6 +1724,13 @@ textarea {
 .toast.active {
     transform: translateX(0);
 }
+
+.toast.warning {
+    background: #b45309;
+    color: #fef3c7;
+    border-left: 4px solid #f59e0b;
+}
+
 
 /* ========== LOADING ========== */
 .loader {
@@ -1729,7 +1740,7 @@ textarea {
     width: 100%;
     height: 100%;
     background: white;
-    z-index: 999;
+    z-index: 100000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2120,6 +2131,9 @@ textarea {
     padding: 20px;
     border-radius: 4px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-card-fav {

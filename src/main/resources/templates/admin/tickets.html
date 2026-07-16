@@ -6,8 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Ticket — Luxury PC Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
     <link rel="stylesheet" th:href="@{/css/admin/tickets.css(v=3.0)}" />
@@ -16,18 +15,22 @@
 
 <body>
     <!-- SIDEBAR -->
-    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div><div class="main-content">
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+    <div class="main-content">
         <!-- Header -->
         <div class="header">
             <div class="title">
-                <h1><i class="fa-solid fa-headset" style="color:var(--gold);margin-right:0.6rem;"></i> <span data-translate="admin-tickets-title">Quản Lý Hỗ Trợ Khách Hàng</span></h1>
+                <h1><i class="fa-solid fa-headset" style="color:var(--gold);margin-right:0.6rem;"></i> <span
+                        data-translate="admin-tickets-title">Quản Lý Hỗ Trợ Khách Hàng</span></h1>
                 <p data-translate="admin-tickets-subtitle">Xem và phản hồi các yêu cầu tư vấn, hỗ trợ từ khách hàng</p>
             </div>
             <div class="user-info" style="display: flex; align-items: center;">
                 <i class="fa-solid fa-user-shield"></i>
                 <span th:text="${#authentication.name}" style="margin-left: 8px;">Admin</span>
-                <span sec:authorize="hasRole('ADMIN')" style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
-                <span sec:authorize="hasRole('STAFF')" style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
+                <span sec:authorize="hasRole('ADMIN')"
+                    style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
+                <span sec:authorize="hasRole('STAFF')"
+                    style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
             </div>
         </div>
 
@@ -63,15 +66,18 @@
             </a>
             <a th:href="@{/admin/tickets(status='OPEN')}" th:classappend="${filterStatus == 'OPEN'} ? 'active' : ''"
                 class="filter-tab open-tab">
-                <i class="fa-solid fa-circle-dot"></i> <span data-translate="admin-tickets-filter-open">Mới / Chờ xử lý</span>
+                <i class="fa-solid fa-circle-dot"></i> <span data-translate="admin-tickets-filter-open">Mới / Chờ xử
+                    lý</span>
             </a>
             <a th:href="@{/admin/tickets(status='IN_PROGRESS')}"
                 th:classappend="${filterStatus == 'IN_PROGRESS'} ? 'active' : ''" class="filter-tab progress-tab">
-                <i class="fa-solid fa-spinner"></i> <span data-translate="admin-tickets-filter-progress">Đang xử lý</span>
+                <i class="fa-solid fa-spinner"></i> <span data-translate="admin-tickets-filter-progress">Đang xử
+                    lý</span>
             </a>
             <a th:href="@{/admin/tickets(status='RESOLVED')}"
                 th:classappend="${filterStatus == 'RESOLVED'} ? 'active' : ''" class="filter-tab resolved-tab">
-                <i class="fa-solid fa-check-circle"></i> <span data-translate="admin-tickets-filter-resolved">Đã giải quyết</span>
+                <i class="fa-solid fa-check-circle"></i> <span data-translate="admin-tickets-filter-resolved">Đã giải
+                    quyết</span>
             </a>
             <a th:href="@{/admin/tickets(status='CLOSED')}" th:classappend="${filterStatus == 'CLOSED'} ? 'active' : ''"
                 class="filter-tab closed-tab">
@@ -84,7 +90,8 @@
             <div th:if="${tickets == null or tickets.empty}" class="empty-state">
                 <i class="fa-solid fa-inbox"></i>
                 <p data-translate="admin-tickets-empty">Chưa có ticket nào</p>
-                <span data-translate="admin-tickets-empty-desc">Các yêu cầu tư vấn từ khách hàng sẽ xuất hiện ở đây</span>
+                <span data-translate="admin-tickets-empty-desc">Các yêu cầu tư vấn từ khách hàng sẽ xuất hiện ở
+                    đây</span>
             </div>
 
             <div th:each="ticket : ${tickets}" class="ticket-row" th:attr="data-id=${ticket.id}">
@@ -95,9 +102,8 @@
                         <div class="ticket-category-badge" th:classappend="${ticket.category == 'BUILD_PC'} ? 'cat-build' :
                                              (${ticket.category == 'ORDER'} ? 'cat-order' :
                                              (${ticket.category == 'TECHNICAL'} ? 'cat-tech' :
-                                             (${ticket.category == 'PRICE'} ? 'cat-price' : 'cat-general')))" 
-                             th:data-translate="'admin-tickets-cat-' + ${ticket.category.toLowerCase()}"
-                             th:text="${ticket.category == 'BUILD_PC'} ? '🔧 Build PC' :
+                                             (${ticket.category == 'PRICE'} ? 'cat-price' : 'cat-general')))"
+                            th:data-translate="'admin-tickets-cat-' + ${ticket.category.toLowerCase()}" th:text="${ticket.category == 'BUILD_PC'} ? '🔧 Build PC' :
                                       (${ticket.category == 'ORDER'} ? '📦 Đơn hàng' :
                                       (${ticket.category == 'TECHNICAL'} ? '⚙️ Kỹ thuật' :
                                       (${ticket.category == 'PRICE'} ? '💰 Giá cả' : '💬 Chung')))">
@@ -111,17 +117,17 @@
                         </div>
                         <div class="ticket-date" th:text="${#dates.format(ticket.createdAt, 'dd/MM HH:mm')}">01/01 12:00
                         </div>
-                        <button type="button" class="reply-btn action-btn btn-process" th:if="${ticket.status == 'OPEN'}"
-                                th:id="'btn-process-header-' + ${ticket.id}"
-                                th:attr="onclick='event.stopPropagation(); processTicket(' + ${ticket.id} + ')'"
-                                style="padding: 4px 12px; font-size: 0.75rem; margin-right: 15px; background-color: var(--gold); border-radius: 4px; color: #000; border: none; font-weight: 600; cursor: pointer;">
-                            <i class="fa-solid fa-headset"></i> <span data-translate="admin-tickets-btn-process">Xử lý</span>
+                        <button type="button" class="reply-btn action-btn btn-process"
+                            th:if="${ticket.status == 'OPEN'}" th:id="'btn-process-header-' + ${ticket.id}"
+                            th:attr="onclick='event.stopPropagation(); processTicket(' + ${ticket.id} + ')'"
+                            style="padding: 4px 12px; font-size: 0.75rem; margin-right: 15px; background-color: var(--gold); border-radius: 4px; color: #000; border: none; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-headset"></i> <span data-translate="admin-tickets-btn-process">Xử
+                                lý</span>
                         </button>
                         <div class="ticket-status-badge" th:classappend="${ticket.status == 'OPEN'} ? 'st-open' :
                                              (${ticket.status == 'IN_PROGRESS'} ? 'st-progress' :
-                                             (${ticket.status == 'RESOLVED'} ? 'st-resolved' : 'st-closed'))" 
-                             th:data-translate="'admin-tickets-status-' + ${ticket.status.toLowerCase()}"
-                             th:text="${ticket.status == 'OPEN'} ? 'Mới' :
+                                             (${ticket.status == 'RESOLVED'} ? 'st-resolved' : 'st-closed'))"
+                            th:data-translate="'admin-tickets-status-' + ${ticket.status.toLowerCase()}" th:text="${ticket.status == 'OPEN'} ? 'Mới' :
                                       (${ticket.status == 'IN_PROGRESS'} ? 'Đang xử lý' :
                                       (${ticket.status == 'RESOLVED'} ? 'Đã xong' : 'Đã đóng'))">
                         </div>
@@ -130,12 +136,14 @@
                 </div>
 
                 <!-- Ticket Detail Panel -->
-                <div class="ticket-detail" th:id="'detail-' + ${ticket.id}" style="display:none; background-color: #ffffff !important;">
+                <div class="ticket-detail" th:id="'detail-' + ${ticket.id}"
+                    style="display:none; background-color: #ffffff !important;">
                     <div class="ticket-detail-grid">
                         <!-- Left: Customer Info + Message -->
                         <div class="ticket-info-col">
                             <div class="detail-section">
-                                <div class="detail-section-title"><i class="fa-solid fa-user-circle"></i> <span data-translate="admin-tickets-sec-cust-info">Thông tin khách hàng</span></div>
+                                <div class="detail-section-title"><i class="fa-solid fa-user-circle"></i> <span
+                                        data-translate="admin-tickets-sec-cust-info">Thông tin khách hàng</span></div>
                                 <div class="detail-row">
                                     <span class="detail-label" data-translate="admin-tickets-label-name">Họ tên:</span>
                                     <span th:text="${ticket.customerName}">—</span>
@@ -149,26 +157,36 @@
                                     <span class="detail-label" data-translate="admin-tickets-label-phone">SĐT:</span>
                                     <span th:text="${ticket.customerPhone ?: '—'}">—</span>
                                 </div>
-                                <div class="detail-row" th:id="'assigned-row-' + ${ticket.id}" th:style="${ticket.assignedAdmin != null} ? '' : 'display:none;'">
-                                    <span class="detail-label" data-translate="admin-tickets-label-assignee">Phụ trách:</span>
-                                    <span style="color:var(--gold);" th:id="'assigned-admin-' + ${ticket.id}" th:text="${ticket.assignedAdmin}">—</span>
+                                <div class="detail-row" th:id="'assigned-row-' + ${ticket.id}"
+                                    th:style="${ticket.assignedAdmin != null} ? '' : 'display:none;'">
+                                    <span class="detail-label" data-translate="admin-tickets-label-assignee">Phụ
+                                        trách:</span>
+                                    <span style="color:var(--gold);" th:id="'assigned-admin-' + ${ticket.id}"
+                                        th:text="${ticket.assignedAdmin}">—</span>
                                 </div>
-                                <div class="detail-row" th:id="'assign-btn-row-' + ${ticket.id}" th:style="${ticket.assignedAdmin == null} ? '' : 'display:none;'">
-                                    <button type="button" class="reply-btn assign-btn" th:attr="onclick='assignTicket(' + ${ticket.id} + ')'" style="width:100%; text-align:center; margin-top:10px; padding: 6px 12px; font-size: 0.8rem; background-color: var(--gold); border-radius: 4px; color: #000; border: none; font-weight: 600; cursor: pointer;">
-                                        <i class="fa-solid fa-user-check"></i> <span data-translate="admin-tickets-btn-assign">Nhận hỗ trợ ticket này</span>
+                                <div class="detail-row" th:id="'assign-btn-row-' + ${ticket.id}"
+                                    th:style="${ticket.assignedAdmin == null} ? '' : 'display:none;'">
+                                    <button type="button" class="reply-btn assign-btn"
+                                        th:attr="onclick='assignTicket(' + ${ticket.id} + ')'"
+                                        style="width:100%; text-align:center; margin-top:10px; padding: 6px 12px; font-size: 0.8rem; background-color: var(--gold); border-radius: 4px; color: #000; border: none; font-weight: 600; cursor: pointer;">
+                                        <i class="fa-solid fa-user-check"></i> <span
+                                            data-translate="admin-tickets-btn-assign">Nhận hỗ trợ ticket này</span>
                                     </button>
                                 </div>
                             </div>
 
                             <div class="detail-section">
-                                <div class="detail-section-title"><i class="fa-solid fa-comment-dots"></i> <span data-translate="admin-tickets-sec-req-content">Nội dung yêu cầu</span></div>
+                                <div class="detail-section-title"><i class="fa-solid fa-comment-dots"></i> <span
+                                        data-translate="admin-tickets-sec-req-content">Nội dung yêu cầu</span></div>
                                 <div class="message-bubble customer-bubble" th:text="${ticket.message}">...</div>
                             </div>
 
                             <!-- Build Config if any -->
                             <div class="detail-section"
                                 th:if="${ticket.buildConfig != null and !ticket.buildConfig.isEmpty()}">
-                                <div class="detail-section-title"><i class="fa-solid fa-computer"></i> <span data-translate="admin-tickets-sec-build-config">Cấu hình Build PC đính kèm</span></div>
+                                <div class="detail-section-title"><i class="fa-solid fa-computer"></i> <span
+                                        data-translate="admin-tickets-sec-build-config">Cấu hình Build PC đính
+                                        kèm</span></div>
                                 <div class="build-config-box" th:text="${ticket.buildConfig}"></div>
                             </div>
                         </div>
@@ -177,13 +195,15 @@
                         <div class="ticket-reply-col">
                             <div class="detail-section">
                                 <div class="detail-section-title">
-                                    <i class="fa-solid fa-comments"></i> <span data-translate="admin-tickets-sec-chat">Trò chuyện trực tuyến</span>
+                                    <i class="fa-solid fa-comments"></i> <span
+                                        data-translate="admin-tickets-sec-chat">Trò chuyện trực tuyến</span>
                                 </div>
 
                                 <div class="admin-chat-container" style="background-color: #ffffff !important;">
                                     <div class="admin-chat-messages" th:id="'chat-messages-' + ${ticket.id}">
                                         <div class="chat-loading">
-                                            <i class="fa-solid fa-spinner fa-spin"></i> <span data-translate="admin-tickets-chat-loading">Đang tải tin nhắn...</span>
+                                            <i class="fa-solid fa-spinner fa-spin"></i> <span
+                                                data-translate="admin-tickets-chat-loading">Đang tải tin nhắn...</span>
                                         </div>
                                     </div>
 
@@ -194,23 +214,29 @@
                                             th:attr="onkeydown='handleChatKey(event, ' + ${ticket.id} + ')'"></textarea>
                                         <div class="admin-chat-actions">
                                             <div class="status-control">
-                                                <label data-translate="admin-tickets-label-status-chat">Trạng thái: </label>
+                                                <label data-translate="admin-tickets-label-status-chat">Trạng thái:
+                                                </label>
                                                 <select th:id="'chat-status-' + ${ticket.id}" class="status-select"
                                                     th:attr="onchange='updateTicketStatus(' + ${ticket.id} + ', this.value)'">
-                                                    <option value="OPEN" th:selected="${ticket.status == 'OPEN'}" data-translate="admin-tickets-opt-open">Mới (Open)</option>
+                                                    <option value="OPEN" th:selected="${ticket.status == 'OPEN'}"
+                                                        data-translate="admin-tickets-opt-open">Mới (Open)</option>
                                                     <option value="IN_PROGRESS"
-                                                        th:selected="${ticket.status == 'IN_PROGRESS'}" data-translate="admin-tickets-opt-progress">Đang xử lý
+                                                        th:selected="${ticket.status == 'IN_PROGRESS'}"
+                                                        data-translate="admin-tickets-opt-progress">Đang xử lý
                                                     </option>
                                                     <option value="RESOLVED"
-                                                        th:selected="${ticket.status == 'RESOLVED'}" data-translate="admin-tickets-opt-resolved">Đã giải quyết
+                                                        th:selected="${ticket.status == 'RESOLVED'}"
+                                                        data-translate="admin-tickets-opt-resolved">Đã giải quyết
                                                     </option>
-                                                    <option value="CLOSED" th:selected="${ticket.status == 'CLOSED'}" data-translate="admin-tickets-opt-closed">
+                                                    <option value="CLOSED" th:selected="${ticket.status == 'CLOSED'}"
+                                                        data-translate="admin-tickets-opt-closed">
                                                         Đóng ticket</option>
                                                 </select>
                                             </div>
                                             <button th:attr="onclick='sendAdminMessage(' + ${ticket.id} + ')'"
                                                 class="reply-btn" style="max-width: 120px;">
-                                                <i class="fa-solid fa-paper-plane"></i> <span data-translate="admin-tickets-btn-send">Gửi</span>
+                                                <i class="fa-solid fa-paper-plane"></i> <span
+                                                    data-translate="admin-tickets-btn-send">Gửi</span>
                                             </button>
                                         </div>
                                     </div>
@@ -219,7 +245,8 @@
 
                             <!-- Quick Delete -->
                             <button class="delete-btn" th:attr="onclick='deleteTicket(' + ${ticket.id} + ')'">
-                                <i class="fa-solid fa-trash"></i> <span data-translate="admin-tickets-btn-delete">Xóa ticket</span>
+                                <i class="fa-solid fa-trash"></i> <span data-translate="admin-tickets-btn-delete">Xóa
+                                    ticket</span>
                             </button>
                         </div>
                     </div>
@@ -232,13 +259,17 @@
             <div class="custom-modal">
                 <div class="custom-modal-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
                 <h3 id="delete-modal-title">Xóa ticket?</h3>
-                <p data-translate="admin-tickets-delete-warning">Hành động này không thể hoàn tác. Toàn bộ nội dung trò chuyện sẽ bị mất.</p>
+                <p data-translate="admin-tickets-delete-warning">Hành động này không thể hoàn tác. Toàn bộ nội dung trò
+                    chuyện sẽ bị mất.</p>
                 <div class="custom-modal-actions">
-                    <button class="custom-modal-btn cancel" onclick="closeDeleteModal()" data-translate="admin-tickets-btn-cancel">Hủy</button>
-                    <button class="custom-modal-btn confirm" id="confirm-delete-btn" data-translate="admin-tickets-btn-delete-confirm">Xóa ngay</button>
+                    <button class="custom-modal-btn cancel" onclick="closeDeleteModal()"
+                        data-translate="admin-tickets-btn-cancel">Hủy</button>
+                    <button class="custom-modal-btn confirm" id="confirm-delete-btn"
+                        data-translate="admin-tickets-btn-delete-confirm">Xóa ngay</button>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

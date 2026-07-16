@@ -60,7 +60,7 @@
             <div class="cart-items-wrapper" id="cart-item-list">
                 <div class="cart-header">
                     <h2>Giỏ hàng</h2>
-                    <span id="total-qty" th:text="${cartItems.size()}">0</span><span> sản phẩm</span>
+                    <span><span id="total-qty" th:text="${cartItems.size()}">0</span> sản phẩm</span>
                 </div>
 
                 <!-- Thymeleaf Loop for Cart Items -->
@@ -75,20 +75,24 @@
                     </div>
                     <div class="cart-item-info">
                         <h4 th:text="${item.name}">Tên sản phẩm</h4>
-                        <div class="cart-item-meta" th:text="'Mã SP: ' + ${item.id}">Mã SP</div>
+                        <div class="cart-item-meta"
+                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <span th:text="'Mã SP: ' + ${item.id}">Mã SP</span>
+                            <div class="cart-item-actions">
+                                <div
+                                    th:replace="~{customnumber/components :: quantityBox(itemId=${item.id}, quantity=${item.quantity}, maxVal=null, onClickMinus='updateQty(' + ${item.id} + ', -1)', onClickPlus='updateQty(' + ${item.id} + ', 1)', onChange='manualQtyChange(' + ${item.id} + ', this, ' + ${item.quantity} + ')', isLarge=false)}">
+                                </div>
+                                <div class="item-total-price">
+                                    <span class="item-total" th:id="'total-' + ${item.id}"></span>
+                                </div>
+                                <button
+                                    th:replace="~{customnumber/components :: removeBtn(itemId=${item.id})}"></button>
+                            </div>
+                        </div>
                         <div class="cart-item-price item-price" th:data-price="${item.price}">
                             <span
                                 th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">Giá</span>
                         </div>
-                    </div>
-                    <div class="cart-item-actions">
-                        <div
-                            th:replace="~{customnumber/components :: quantityBox(itemId=${item.id}, quantity=${item.quantity}, maxVal=null, onClickMinus='updateQty(' + ${item.id} + ', -1)', onClickPlus='updateQty(' + ${item.id} + ', 1)', onChange='manualQtyChange(' + ${item.id} + ', this, ' + ${item.quantity} + ')', isLarge=false)}">
-                        </div>
-                        <div class="item-total-price" style="font-weight: 600; color: #ef4444; margin-right: 15px;">
-                            <span class="item-total" th:id="'total-' + ${item.id}"></span>
-                        </div>
-                        <button th:replace="~{customnumber/components :: removeBtn(itemId=${item.id})}"></button>
                     </div>
                 </div>
 

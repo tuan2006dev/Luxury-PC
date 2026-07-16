@@ -1,17 +1,18 @@
 <div class="sidebar" th:fragment="sidebar">
-    
+
     <link rel="stylesheet" th:href="@{/css/admin/layout/sidebar.css}" />
-    
+
     <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
     <nav>
         <a href="/admin/dashboard" class="nav-link" id="nav-dashboard">
             <i class="fa-solid fa-chart-line"></i> <span data-translate="admin-sidebar-dashboard">Dashboard</span>
         </a>
-    
+
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('productMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-box main-icon"></i> <span data-translate="admin-sidebar-manage-products">Quản Lý Sản Phẩm</span>
+                    <i class="fa-solid fa-box main-icon"></i> <span data-translate="admin-sidebar-manage-products">Quản
+                        Lý Sản Phẩm</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
@@ -19,14 +20,16 @@
                 <a href="/admin/products" id="nav-products" data-translate="admin-sidebar-products">Sản phẩm</a>
                 <a href="/admin/categories" id="nav-categories" data-translate="admin-sidebar-categories">Danh mục</a>
                 <a href="/admin/combos" id="nav-combos">Quản lý Combo</a>
-                <a href="/admin/flash-sales" id="nav-flash-sales" data-translate="admin-sidebar-flashsales">Flash Sale</a>
+                <a href="/admin/flash-sales" id="nav-flash-sales" data-translate="admin-sidebar-flashsales">Flash
+                    Sale</a>
             </div>
         </div>
-    
+
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('inventoryMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-warehouse main-icon"></i> <span data-translate="admin-sidebar-manage-inventory">Quản Lý Kho</span>
+                    <i class="fa-solid fa-warehouse main-icon"></i> <span
+                        data-translate="admin-sidebar-manage-inventory">Quản Lý Kho</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
@@ -35,16 +38,18 @@
                 <a href="/admin/orders" id="nav-orders" data-translate="admin-sidebar-orders">Đơn hàng</a>
             </div>
         </div>
-    
+
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('userMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-users main-icon"></i> <span data-translate="admin-sidebar-manage-users">Người Dùng & Hỗ Trợ</span>
+                    <i class="fa-solid fa-users main-icon"></i> <span data-translate="admin-sidebar-manage-users">Người
+                        Dùng & Hỗ Trợ</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="userMenu">
-                <a href="/admin/account" id="nav-account" data-translate="admin-sidebar-users" sec:authorize="hasRole('ADMIN')">Người dùng</a>
+                <a href="/admin/account" id="nav-account" data-translate="admin-sidebar-users"
+                    sec:authorize="hasRole('ADMIN')">Người dùng</a>
                 <a href="/admin/vouchers" id="nav-vouchers" data-translate="admin-sidebar-vouchers">Voucher</a>
                 <a href="/admin/tickets" id="nav-tickets" data-translate="admin-sidebar-tickets">Hỗ Trợ (Tickets)</a>
             </div>
@@ -62,10 +67,12 @@
                 <a href="/admin/news-categories" id="nav-news-categories">Danh mục tin tức</a>
             </div>
         </div>
-    
+
         <form method="post" th:action="@{/logout}" style="margin-top:2rem;">
-            <button type="submit" class="nav-link" style="color:var(--red, #ef4444); background:none; border:none; width:100%; text-align:left; cursor:pointer;">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span data-translate="admin-sidebar-logout">Đăng Xuất</span>
+            <button type="submit" class="nav-link"
+                style="color:var(--red, #ef4444); background:none; border:none; width:100%; text-align:left; cursor:pointer;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span data-translate="admin-sidebar-logout">Đăng
+                    Xuất</span>
             </button>
         </form>
     </nav>
@@ -73,26 +80,37 @@
     <script th:src="@{/js/admin/layout/sidebar.js?v=2.0}"></script>
 
     <!-- ADMIN GLOBAL TRANSLATION SCRIPT -->
-    
+
     <!-- Custom Confirm Popup (Global) -->
     <script th:src="@{/js/confirm-popup.js}"></script>
 
     <!-- SweetAlert2 for Delete Confirmation Popups -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <!-- Flatpickr for Date Time Inputs -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    
-    
 
-    
-    
+
+
+
+
     <script th:src="@{/js/cursor.js}"></script>
     <style>
-        body { display: block !important; height: auto !important; overflow: auto !important; }
-        .main-content { overflow-y: visible !important; height: auto !important; }
-        .add-form-container:not(.active) { display: none !important; }
+        body {
+            display: block !important;
+            height: auto !important;
+            overflow: auto !important;
+        }
+
+        .main-content {
+            overflow-y: visible !important;
+            height: auto !important;
+        }
+
+        .add-form-container:not(.active) {
+            display: none !important;
+        }
     </style>
 </div>

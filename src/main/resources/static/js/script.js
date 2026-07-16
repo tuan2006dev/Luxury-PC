@@ -124,14 +124,31 @@ document.addEventListener('input', function (e) {
 
 // Global Toast function
 let toastTimeout;
-window.showToast = function (msg) {
+window.showToast = function (msg, type = 'success') {
     const el = document.getElementById('toast');
     if (el) {
-        el.textContent = msg;
-        el.classList.add('active');
+        // Clear any active timeout to prevent previous toast call from hiding this one prematurely
         clearTimeout(toastTimeout);
+        
+        // Remove classes first to reset the entry animation
+        el.classList.remove('active', 'warning');
+        
+        // Force reflow so the browser registers the class removal before adding them back
+        void el.offsetWidth;
+        
+        // Set new message text
+        el.textContent = msg;
+        
+        // Apply variant class
+        if (type === 'warning') {
+            el.classList.add('warning');
+        }
+        
+        el.classList.add('active');
+        
+        // Hide after 3.5 seconds
         toastTimeout = setTimeout(() => {
-            el.classList.remove('active');
+            el.classList.remove('active', 'warning');
         }, 3500);
     } else {
         alert(msg);
@@ -192,3 +209,92 @@ window.addToWishlist = function (btn, productId) {
             window.showToast('⚠️ Lỗi kết nối máy chủ.');
         });
 };
+
+// Yellow warning toast (sản phẩm đã có trong giỏ)
+window.showToastWarning = function (msg) {
+    window.showToast(msg, 'warning');
+};
+
+// Set of product IDs currently in cart (populated on page load)
+window.cartProductIds = new Set();
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/api/cart')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (data && typeof data === 'object') {
+                Object.keys(data).forEach(id => window.cartProductIds.add(String(id)));
+            }
+        })
+        .catch(() => {}); // silent fail — cart IDs are optional optimization
+});
+
+// Global addToCart function (AJAX → /api/cart/add returns JSON, shows toast, syncs header count)
+window.addToCart = function (productId, quantity) {
+    const pid = String(productId);
+
+    // Nếu sản phẩm đã có trong giỏ → chỉ hiện cảnh báo màu vàng, không gọi API
+    if (window.cartProductIds.has(pid)) {
+        window.showToastWarning('⚠️ Sản phẩm này đã có trong giỏ hàng của bạn!');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('id', productId);
+    formData.append('quantity', quantity || 1);
+
+    fetch('/api/cart/add', { method: 'POST', body: formData })
+        .then(res => {
+            if (res.status === 401 || res.status === 403) {
+                const redirect = window.location.pathname + window.location.search;
+                window.location.href = '/auth/login?redirect=' + encodeURIComponent(redirect);
+                return null;
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (!data) return;
+            if (data.requireLogin) {
+                const redirect = window.location.pathname + window.location.search;
+                window.location.href = '/auth/login?redirect=' + encodeURIComponent(redirect);
+                return;
+            }
+            if (data.success) {
+                window.cartProductIds.add(pid); // đánh dấu đã thêm
+                window.showToast('✅ ' + data.message);
+                const cartCountEl = document.getElementById('cart-count');
+                if (cartCountEl && data.cartCount !== undefined) {
+                    cartCountEl.innerText = data.cartCount;
+                }
+            } else {
+                window.showToast('⚠️ ' + data.message);
+            }
+        })
+        .catch(err => {
+            console.error('Lỗi thêm vào giỏ hàng:', err);
+            window.showToast('⚠️ Lỗi kết nối, vui lòng thử lại.');
+        });
+};
+
+// Global buyNow function (creates form dynamically to submit POST request to /cart/add which redirects to /cart)
+window.buyNow = function (productId) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/cart/add';
+    
+    const idInput = document.createElement('input');
+    idInput.type = 'hidden';
+    idInput.name = 'id';
+    idInput.value = productId;
+    form.appendChild(idInput);
+    
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'hidden';
+    qtyInput.name = 'quantity';
+    qtyInput.value = 1;
+    form.appendChild(qtyInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+};
+

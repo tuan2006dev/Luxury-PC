@@ -28,7 +28,7 @@ public class ProductService {
 
     @Cacheable("featuredProducts")
     public List<Product> getFeaturedProducts() {
-        return productDAO.findFeaturedProducts();
+        return productDAO.findFeaturedProducts(org.springframework.data.domain.PageRequest.of(0, 20));
     }
 
     @Cacheable("flashSaleProducts")

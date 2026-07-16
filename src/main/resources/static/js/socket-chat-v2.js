@@ -14,7 +14,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 99999;
+            z-index: 9998;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
         }
         .socket-chat-btn:hover {
@@ -55,7 +55,7 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
-            z-index: 99999;
+            z-index: 9998;
             overflow: hidden;
             transform: translateY(20px) scale(0.95);
             transform-origin: bottom right;

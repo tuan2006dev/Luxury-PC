@@ -16,7 +16,8 @@
     </div>
 
     <!-- OTP Input Fragment -->
-    <div th:fragment="otpInput(label, name, placeholder, required, onClickSend)" class="form-group" style="margin-bottom: 20px;">
+    <div th:fragment="otpInput(label, name, placeholder, required, onClickSend)" class="form-group"
+        style="margin-bottom: 20px;">
         <div class="otp-group" style="display: flex; gap: 10px; width: 100%;">
             <div class="floating-group" style="flex: 1; margin-bottom: 0;">
                 <input type="text" th:name="${name}" th:required="${required}" placeholder=" ">

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8" />
@@ -7,11 +8,14 @@
     <title data-translate="products-page-title">Luxury PC | Sản Phẩm</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
     <link rel="stylesheet" th:href="@{/css/products.css}" />
 </head>
+
 <body>
 
 
@@ -24,9 +28,11 @@
         </div>
         <div class="nav-logo">
             <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap: 10px;">
-                <span class="logo-Luxury" style="font-family:'Inter', sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.35em; color:var(--gold);">LUXURY</span>
+                <span class="logo-Luxury"
+                    style="font-family:'Inter', sans-serif; font-size:2rem; font-weight:400; letter-spacing:0.35em; color:var(--gold);">LUXURY</span>
                 <div class="logo-divider" style="width:1px; height:28px; background:var(--gold); opacity:0.6;"></div>
-                <span class="logo-pc" style="font-family:'Inter', sans-serif; font-size:0.7rem; font-weight:500; letter-spacing:0.5em; color:#888; text-transform:uppercase;">PC</span>
+                <span class="logo-pc"
+                    style="font-family:'Inter', sans-serif; font-size:0.7rem; font-weight:500; letter-spacing:0.5em; color:#888; text-transform:uppercase;">PC</span>
             </a>
         </div>
         <div class="nav-right">
@@ -52,15 +58,21 @@
         <div class="products-grid" id="products-grid">
             <article class="product-card" th:each="product : ${allProducts}">
                 <div class="product-img-wrap" style="padding:2rem; text-align:center;">
-                    <img th:src="@{${product.image != null ? product.image : '/images/default.png'}}" alt="Product" style="max-height:180px; object-fit:contain;" />
+                    <img th:src="@{${product.image != null ? product.image : '/images/default.png'}}" alt="Product"
+                        style="max-height:180px; object-fit:contain;" />
                 </div>
                 <div class="product-info">
-                    <span class="product-cat" th:text="${product.category != null ? product.category.name : 'Khác'}">Danh mục</span>
+                    <span class="product-cat"
+                        th:text="${product.category != null ? product.category.name : 'Khác'}">Danh mục</span>
                     <h3 class="product-name" th:text="${product.name}">Tên sản phẩm</h3>
-                    <p class="product-spec" th:text="${product.description != null ? product.description : 'Sản phẩm cao cấp'}">Description</p>
+                    <p class="product-spec"
+                        th:text="${product.description != null ? product.description : 'Sản phẩm cao cấp'}">Description
+                    </p>
                     <div class="product-price-row">
-                        <span class="product-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</span>
-                        <button class="btn-add-cart"><span data-translate="btn-add-cart-text">Thêm Vào Giỏ</span></button>
+                        <span class="product-price"
+                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</span>
+                        <button class="btn-add-cart"><span data-translate="btn-add-cart-text">Thêm Vào
+                                Giỏ</span></button>
                     </div>
                 </div>
             </article>
@@ -71,4 +83,5 @@
     <div th:replace="~{layout/footer :: footer}"></div>
     <script th:src="@{/js/script.js}"></script>
 </body>
+
 </html>

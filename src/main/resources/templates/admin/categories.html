@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
@@ -10,78 +11,92 @@
     <link rel="stylesheet" th:href="@{/css/admin/categories.css}" />
     <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
+
 <body>
 
-<div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
-<div class="main-content">
-    <div class="header">
-        <div class="title">
-            <h1><span data-translate="admin-categories-title">Quản Lý Danh Mục</span> (<span th:text="${categories != null ? categories.size() : 0}">0</span>)</h1>
-        </div>
-        <div class="user-info" style="display: flex; align-items: center;">
+    <div class="main-content">
+        <div class="header">
+            <div class="title">
+                <h1><span data-translate="admin-categories-title">Quản Lý Danh Mục</span> (<span
+                        th:text="${categories != null ? categories.size() : 0}">0</span>)</h1>
+            </div>
+            <div class="user-info" style="display: flex; align-items: center;">
                 <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
                 <span th:text="${#authentication.name}" style="margin-left: 8px;">Admin</span>
-                <span sec:authorize="hasRole('ADMIN')" style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
-                <span sec:authorize="hasRole('STAFF')" style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
+                <span sec:authorize="hasRole('ADMIN')"
+                    style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
+                <span sec:authorize="hasRole('STAFF')"
+                    style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
             </div>
-    </div>
-
-    <div style="margin-bottom: 1.5rem;">
-        <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()"><i class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-categories-btn-add">Thêm Danh Mục Mới</span></button>
-    </div>
-
-    <div class="card add-form-container" id="categoryForm" th:classappend="${category.id != null ? 'active' : ''}">
-        <div class="card-header">
-            <h2 th:data-translate="${category.id == null ? 'admin-categories-form-add' : 'admin-categories-form-edit'}" th:text="${category.id == null ? 'Thêm Danh Mục' : 'Sửa Danh Mục'}">Thông Tin Danh Mục</h2>
-            <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form novalidate autocomplete="off" th:action="@{/admin/categories/save}" method="post" th:object="${category}">
 
-            <input autocomplete="off" type="hidden" th:field="*{id}">
-            <div class="input-group">
-                <label data-translate="admin-categories-label-name">Tên Danh Mục *</label>
-                <input autocomplete="off" type="text" th:field="*{name}" required data-translate-placeholder="admin-categories-placeholder-name" placeholder="VD: Card Màn Hình">
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn btn-gold" data-translate="admin-categories-btn-save">Lưu Danh Mục</button>
-                <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'" data-translate="admin-categories-btn-cancel">Hủy / Làm mới</button>
-            </div>
-        </form>
-    </div>
+        <div style="margin-bottom: 1.5rem;">
+            <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()"><i class="fa-solid fa-plus"></i>
+                <span class="btn-text" data-translate="admin-categories-btn-add">Thêm Danh Mục Mới</span></button>
+        </div>
 
-    <div class="card">
-        <table>
-            <thead>
-            <tr>
-                <th data-translate="admin-categories-th-id">ID</th>
-                <th data-translate="admin-categories-th-name">Tên Danh Mục</th>
-                <th style="width: 100px;" data-translate="admin-categories-th-actions">Thao Tác</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="c : ${categories}">
-                <td th:text="${c.id}">1</td>
-                <td th:text="${c.name}" style="font-weight: 600;">CPU</td>
-                <td>
-                    <div class="action-btns">
-                        <button type="button" class="icon-btn icon-btn-edit" title="Sửa"
-                                th:data-id="${c.id}"
-                                th:data-name="${c.name}"
-                                onclick="editCategory(this)">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <form novalidate autocomplete="off" th:action="@{|/admin/categories/delete/${c.id}|}" method="post" style="display:inline;">
-                
-                            <button type="button" class="icon-btn icon-btn-del" title="Xóa" onclick="window.confirmDelete(this.form, window.t('admin-categories-confirm-delete', 'Xóa danh mục này có thể ảnh hưởng đến sản phẩm liên quan. Tiếp tục?'))" style="border:none;background:none;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="card add-form-container" id="categoryForm" th:classappend="${category.id != null ? 'active' : ''}">
+            <div class="card-header">
+                <h2 th:data-translate="${category.id == null ? 'admin-categories-form-add' : 'admin-categories-form-edit'}"
+                    th:text="${category.id == null ? 'Thêm Danh Mục' : 'Sửa Danh Mục'}">Thông Tin Danh Mục</h2>
+                <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form novalidate autocomplete="off" th:action="@{/admin/categories/save}" method="post"
+                th:object="${category}">
+
+                <input autocomplete="off" type="hidden" th:field="*{id}">
+                <div class="input-group">
+                    <label data-translate="admin-categories-label-name">Tên Danh Mục *</label>
+                    <input autocomplete="off" type="text" th:field="*{name}" required
+                        data-translate-placeholder="admin-categories-placeholder-name" placeholder="VD: Card Màn Hình">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-gold" data-translate="admin-categories-btn-save">Lưu Danh
+                        Mục</button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'"
+                        data-translate="admin-categories-btn-cancel">Hủy / Làm mới</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th data-translate="admin-categories-th-id">ID</th>
+                        <th data-translate="admin-categories-th-name">Tên Danh Mục</th>
+                        <th style="width: 100px;" data-translate="admin-categories-th-actions">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${categories}">
+                        <td th:text="${c.id}">1</td>
+                        <td th:text="${c.name}" style="font-weight: 600;">CPU</td>
+                        <td>
+                            <div class="action-btns">
+                                <button type="button" class="icon-btn icon-btn-edit" title="Sửa" th:data-id="${c.id}"
+                                    th:data-name="${c.name}" onclick="editCategory(this)">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <form novalidate autocomplete="off" th:action="@{|/admin/categories/delete/${c.id}|}"
+                                    method="post" style="display:inline;">
+
+                                    <button type="button" class="icon-btn icon-btn-del" title="Xóa"
+                                        onclick="window.confirmDelete(this.form, window.t('admin-categories-confirm-delete', 'Xóa danh mục này có thể ảnh hưởng đến sản phẩm liên quan. Tiếp tục?'))"
+                                        style="border:none;background:none;cursor:pointer;"><i
+                                            class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <script th:src="@{/js/admin/categories.js}"></script>
     </div>
-    <script th:src="@{/js/admin/categories.js}"></script>
-</div>
 </body>
+
 </html>

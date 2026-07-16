@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
@@ -21,76 +22,90 @@
     </style>
     <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
+
 <body>
 
-<div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
-<div class="main-content">
-    <div class="header">
-        <div class="title">
-            <h1>Quản Lý Combo (<span th:text="${combos != null ? combos.size() : 0}">0</span>)</h1>
-        </div>
-        <div class="user-info" style="display: flex; align-items: center;">
+    <div class="main-content">
+        <div class="header">
+            <div class="title">
+                <h1>Quản Lý Combo (<span th:text="${combos != null ? combos.size() : 0}">0</span>)</h1>
+            </div>
+            <div class="user-info" style="display: flex; align-items: center;">
                 <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
                 <span th:text="${#authentication.name}" style="margin-left: 8px;">Admin</span>
-                <span sec:authorize="hasRole('ADMIN')" style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
-                <span sec:authorize="hasRole('STAFF')" style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
+                <span sec:authorize="hasRole('ADMIN')"
+                    style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
+                <span sec:authorize="hasRole('STAFF')"
+                    style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
             </div>
-    </div>
-
-    <div th:if="${message}" class="alert alert-success" style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 6px; color: #22c55e;">
-        <i class="fa-solid fa-circle-check"></i> <span th:text="${message}"></span>
-    </div>
-
-    <!-- Nút mở form tạo -->
-    <div style="margin-bottom: 1.5rem;">
-        <a th:href="@{/admin/combos/create}" class="btn btn-gold"><i class="fa-solid fa-plus"></i> <span class="btn-text">Thêm Combo Mới</span></a>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h2>Danh sách Combo hiện có</h2>
         </div>
-        
-        <div style="overflow-x: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th width="50">ID</th>
-                        <th width="100">Hình ảnh</th>
-                        <th>Tên Combo</th>
-                        <th>Nhãn (Badge)</th>
-                        <th>Giá Bán</th>
-                        <th width="120" style="text-align: center;">Thao Tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:if="${combos == null or combos.isEmpty()}">
-                        <td colspan="6" style="text-align: center; padding: 2rem; color: #888;">Không có Combo nào.</td>
-                    </tr>
-                    <tr th:each="c : ${combos}">
-                        <td th:text="${c.id}">1</td>
-                        <td>
-                            <div class="img-preview" style="background-image: url('');" th:style="'background-image: url(' + ${c.image != null and !c.image.startsWith('http') and !c.image.startsWith('/images') ? '/images/products/' + c.image : (c.image != null ? c.image : '/images/placeholder.jpg')} + ')'"></div>
-                        </td>
-                        <td><strong th:text="${c.name}">Combo Name</strong></td>
-                        <td>
-                            <span class="badge-preview" th:style="'background-color: ' + ${c.badgeColor != null and !c.badgeColor.isBlank() ? c.badgeColor : '#ef4444'}" th:text="${c.badge}">HOT</span>
-                        </td>
-                        <td th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
-                        <td style="text-align: center;">
-                            <a th:href="@{/admin/combos/edit/{id}(id=${c.id})}" class="icon-btn icon-btn-edit" title="Sửa"><i class="fa-solid fa-pen"></i></a>
-                            <a th:href="@{/admin/combos/delete/{id}(id=${c.id})}" class="icon-btn icon-btn-del" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa Combo này?');"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+        <div th:if="${message}" class="alert alert-success"
+            style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 6px; color: #22c55e;">
+            <i class="fa-solid fa-circle-check"></i> <span th:text="${message}"></span>
+        </div>
+
+        <!-- Nút mở form tạo -->
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/admin/combos/create}" class="btn btn-gold"><i class="fa-solid fa-plus"></i> <span
+                    class="btn-text">Thêm Combo Mới</span></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Danh sách Combo hiện có</h2>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="50">ID</th>
+                            <th width="100">Hình ảnh</th>
+                            <th>Tên Combo</th>
+                            <th>Nhãn (Badge)</th>
+                            <th>Giá Bán</th>
+                            <th width="120" style="text-align: center;">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${combos == null or combos.isEmpty()}">
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #888;">Không có Combo nào.
+                            </td>
+                        </tr>
+                        <tr th:each="c : ${combos}">
+                            <td th:text="${c.id}">1</td>
+                            <td>
+                                <div class="img-preview" style="background-image: url('');"
+                                    th:style="'background-image: url(' + ${c.image != null and !c.image.startsWith('http') and !c.image.startsWith('/images') ? '/images/products/' + c.image : (c.image != null ? c.image : '/images/placeholder.jpg')} + ')'">
+                                </div>
+                            </td>
+                            <td><strong th:text="${c.name}">Combo Name</strong></td>
+                            <td>
+                                <span class="badge-preview"
+                                    th:style="'background-color: ' + ${c.badgeColor != null and !c.badgeColor.isBlank() ? c.badgeColor : '#ef4444'}"
+                                    th:text="${c.badge}">HOT</span>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                            <td style="text-align: center;">
+                                <a th:href="@{/admin/combos/edit/{id}(id=${c.id})}" class="icon-btn icon-btn-edit"
+                                    title="Sửa"><i class="fa-solid fa-pen"></i></a>
+                                <a th:href="@{/admin/combos/delete/{id}(id=${c.id})}" class="icon-btn icon-btn-del"
+                                    title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa Combo này?');"><i
+                                        class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="cursor-glow"></div>
-<script th:src="@{/js/cursor.js}"></script>
+    <div class="cursor-glow"></div>
+    <script th:src="@{/js/cursor.js}"></script>
 
 </body>
+
 </html>

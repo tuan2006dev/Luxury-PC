@@ -15,6 +15,8 @@ import poly.edu.service.FlashSaleService;
 import poly.edu.service.ProductService;
 import poly.edu.service.VoucherService;
 import poly.edu.service.WishlistService;
+import poly.edu.service.NewsService;
+import poly.edu.dao.CategoryDAO;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,10 +38,36 @@ public class HomeController {
 
     final WishlistService wishlistService;
 
+    final NewsService newsService;
+
+    final CategoryDAO categoryDAO;
+
     // hasValidImage removed for performance
 
     @GetMapping("/")
     public String index(Model model) {
+        // Query Category IDs for Build PC banners and components
+        List<poly.edu.entity.Category> categories = categoryDAO.findAll();
+        Integer gamingCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Gaming") || c.getName().toLowerCase().contains("gaming")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer workstationCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Workstation") || c.getName().toLowerCase().contains("đồ hoạ") || c.getName().toLowerCase().contains("đồ họa") || c.getName().toLowerCase().contains("workstation")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer vanPhongCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Văn phòng") || c.getName().toLowerCase().contains("văn phòng") || c.getName().toLowerCase().contains("office")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer streamerCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Streamer") || c.getName().toLowerCase().contains("streamer")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        
+        Integer ramCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("RAM")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer vgaCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("VGA")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer caseCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("Case")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer mainboardCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("Mainboard")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer pcCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC") || c.getName().toLowerCase().contains("máy bộ")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+
+        model.addAttribute("gamingCid", gamingCid);
+        model.addAttribute("workstationCid", workstationCid);
+        model.addAttribute("vanPhongCid", vanPhongCid);
+        model.addAttribute("streamerCid", streamerCid);
+        model.addAttribute("ramCid", ramCid);
+        model.addAttribute("vgaCid", vgaCid);
+        model.addAttribute("caseCid", caseCid);
+        model.addAttribute("mainboardCid", mainboardCid);
+        model.addAttribute("pcCid", pcCid);
         long totalStart = System.nanoTime();
 
         long t0 = System.nanoTime();
@@ -47,10 +75,12 @@ public class HomeController {
         long t1 = System.nanoTime();
         model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
         long t2 = System.nanoTime();
-        model.addAttribute("allProducts", productService.getTopProducts(20));
+        model.addAttribute("allProducts", productService.getTopProducts(40));
         long t3 = System.nanoTime();
         model.addAttribute("reviews", reviewService.getLatestReviews());
         long t4 = System.nanoTime();
+        model.addAttribute("latestNews", newsService.getTop5LatestNews());
+        model.addAttribute("featuredNews", newsService.getTop5MostViewedNews());
 
         // Flash Sale từ database
         Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();

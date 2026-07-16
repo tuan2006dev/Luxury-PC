@@ -65,7 +65,7 @@
 .why-text p { font-size: 11px; color: var(--text-secondary); }
 
 /* 5 Column Grid */
-.grid-5-cols { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 40px; }
+.grid-5-cols { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 40px; align-items: stretch; }
 
 @media (max-width: 991px) {
     .grid-5-cols, .category-cards, .promo-cards { grid-template-columns: repeat(3, 1fr); }

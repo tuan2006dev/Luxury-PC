@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
 
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css(v=5)}" />
     <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
 </head>
 
@@ -280,7 +280,7 @@
                     style="font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; height: 36px; overflow: hidden;">
                     Tên sản phẩm</h4>
                 <p class="product-spec"
-                    style="font-size: 12px; color: #666; margin: 0 0 10px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                    style="font-size: 12px; color: #666; margin: 0 0 10px 0; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
                     th:text="${p.description != null ? p.description : 'Sản phẩm cao cấp'}">Description</p>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
@@ -334,20 +334,59 @@
         }
 
         function submitAddToCart() {
-            const form = document.getElementById('addToCartForm');
-            const qty = document.getElementById('qty').value;
-            document.getElementById('form-qty').value = qty;
+            const qty = parseInt(document.getElementById('qty').value) || 1;
+            const productId = String(document.querySelector('#addToCartForm input[name="id"]').value);
 
-            // Convert to JS cart method if required, or submit form
-            // Assuming standard form submission works based on old code
-            form.submit();
+            // Nếu sản phẩm đã có trong giỏ → chỉ hiện cảnh báo, không gọi API
+            if (window.cartProductIds && window.cartProductIds.has(productId)) {
+                if (typeof window.showToastWarning === 'function') {
+                    window.showToastWarning('⚠️ Sản phẩm này đã có trong giỏ hàng của bạn!');
+                }
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('id', productId);
+            formData.append('quantity', qty);
+
+            fetch('/api/cart/add', { method: 'POST', body: formData })
+                .then(res => {
+                    if (res.status === 401 || res.status === 403) {
+                        const redirect = window.location.pathname + window.location.search;
+                        window.location.href = '/auth/login?redirect=' + encodeURIComponent(redirect);
+                        return null;
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data) return;
+                    if (data.requireLogin) {
+                        const redirect = window.location.pathname + window.location.search;
+                        window.location.href = '/auth/login?redirect=' + encodeURIComponent(redirect);
+                        return;
+                    }
+                    if (data.success) {
+                        if (window.cartProductIds) window.cartProductIds.add(productId);
+                        if (typeof window.showToast === 'function') window.showToast('✅ ' + data.message);
+                        const cartCountEl = document.getElementById('cart-count');
+                        if (cartCountEl && data.cartCount !== undefined) {
+                            cartCountEl.innerText = data.cartCount;
+                        }
+                    } else {
+                        if (typeof window.showToast === 'function') window.showToast('⚠️ ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('Lỗi thêm vào giỏ hàng:', err);
+                    if (typeof window.showToast === 'function') window.showToast('⚠️ Lỗi kết nối, vui lòng thử lại.');
+                });
         }
 
         function submitBuyNow() {
             const form = document.getElementById('addToCartForm');
             const qty = document.getElementById('qty').value;
             document.getElementById('form-qty').value = qty;
-            form.action = '/cart/buy-now';
+            form.action = '/cart/add';
             form.submit();
         }
 
@@ -393,7 +432,7 @@
             }
         }
     </script>
-    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/script.js(v=3)}"></script>
     <script th:src="@{/js/cart.js}"></script>
 </body>
 

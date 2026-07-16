@@ -25,6 +25,16 @@
             th:style="${isLarge} ? 'width: 40px; height: 40px; background: var(--bg-surface); border: none; font-size: 18px; cursor: pointer; color: var(--text-primary);' : null">+</button>
     </div>
 
+    <!-- Price Input Fragment -->
+    <div th:fragment="priceInput(name, value, placeholder)" style="width: 100%;">
+        <input type="text" class="no-spinner currency-input" th:name="${name}"
+            th:value="${value != null ? #numbers.formatInteger(value, 0, 'POINT') : ''}" max="100000000" min="0"
+            th:placeholder="${placeholder}" oninput="formatCurrency(this)"
+            onkeypress="return event.charCode >= 48 && event.charCode <= 57" onwheel="this.blur()"
+            onkeydown="if(event.key === 'Enter') event.preventDefault();"
+            style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; -webkit-appearance: none; -moz-appearance: textfield; appearance: none; box-sizing: border-box;" />
+    </div>
+
     <!-- Remove Button Fragment -->
     <button th:fragment="removeBtn(itemId)" class="btn-remove" th:onclick="'removeItem(' + ${itemId} + ')'">
         <i class="fa-regular fa-trash-can"></i> Xóa

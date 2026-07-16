@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Khuyến mãi - LUXURY | PC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/promotions.css}">
 </head>
+
 <body>
     <!-- HEADER -->
     <div th:replace="~{layout/header :: header}"></div>
@@ -30,29 +33,35 @@
         <div class="promo-banners">
             <div class="promo-banner-card banner-red">
                 <div class="banner-content">
-                    <h2 style="font-size: 28px;">FLASH SALE<br><span style="font-size: 20px; font-weight: 500;">GIỜ VÀNG GIÁ SỐC</span></h2>
+                    <h2 style="font-size: 28px;">FLASH SALE<br><span style="font-size: 20px; font-weight: 500;">GIỜ VÀNG
+                            GIÁ SỐC</span></h2>
                     <div style="font-size: 24px; font-weight: 700; margin-bottom: 10px;">
                         Giảm đến <span style="font-size: 40px;">50%</span>
                     </div>
-                    <div style="background: #fff; color: #ef4444; font-size: 12px; font-weight: 700; padding: 4px 10px; display: inline-block; border-radius: 4px; margin-bottom: 20px;">
+                    <div
+                        style="background: #fff; color: #ef4444; font-size: 12px; font-weight: 700; padding: 4px 10px; display: inline-block; border-radius: 4px; margin-bottom: 20px;">
                         DUY NHẤT HÔM NAY
                     </div>
                     <br>
                     <a href="#flash-sale" class="btn-banner">Xem ngay <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
-                <img th:src="@{/images/case_purple.png}" class="banner-img" style="right: 50px; bottom: 0; height: 90%;">
+                <img th:src="@{/images/case_purple.png}" class="banner-img"
+                    style="right: 50px; bottom: 0; height: 90%;">
             </div>
 
             <div class="promo-banner-card banner-blue">
                 <div class="banner-content">
                     <h2 style="font-size: 22px; font-weight: 600; text-transform: uppercase;">Khuyến mãi hè 2025</h2>
-                    <div style="font-size: 28px; font-weight: 800; margin-bottom: 10px; line-height: 1.2;">Build PC cực chất<br>Nhận quà cực đã</div>
+                    <div style="font-size: 28px; font-weight: 800; margin-bottom: 10px; line-height: 1.2;">Build PC cực
+                        chất<br>Nhận quà cực đã</div>
                     <div style="font-size: 14px; margin-bottom: 20px;">
-                        Quà tặng lên đến<br><span style="font-size: 22px; font-weight: 700; color: #fbbf24;">2.000.000đ</span>
+                        Quà tặng lên đến<br><span
+                            style="font-size: 22px; font-weight: 700; color: #fbbf24;">2.000.000đ</span>
                     </div>
                     <a href="#vouchers" class="btn-banner">Xem chi tiết <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
-                <img th:src="@{/images/case_purple.png}" class="banner-img" style="right: 10px; height: 90%; bottom: 0;">
+                <img th:src="@{/images/case_purple.png}" class="banner-img"
+                    style="right: 10px; height: 90%; bottom: 0;">
             </div>
         </div>
 
@@ -82,37 +91,57 @@
         </div>
 
         <!-- Flash Sale Section -->
-        <div class="layout-2col" id="flash-sale" th:if="${flashSale != null and flashSaleItems != null and !flashSaleItems.isEmpty()}">
+        <div class="layout-2col" id="flash-sale"
+            th:if="${flashSale != null and flashSaleItems != null and !flashSaleItems.isEmpty()}">
             <div class="flash-sale-main">
                 <div class="section-header">
                     <div class="section-title">
                         <i class="fa-solid fa-bolt"></i>
                         <h2 style="margin: 0; font-size: 20px;" th:text="${flashSale.name}">FLASH SALE</h2>
-                        <p style="margin: 0; font-size: 13px; color: #666; margin-top: 5px;">Sản phẩm giảm giá sâu trong khung giờ vàng. Số lượng có hạn!</p>
+                        <p style="margin: 0; font-size: 13px; color: #666; margin-top: 5px;">Sản phẩm giảm giá sâu trong
+                            khung giờ vàng. Số lượng có hạn!</p>
                     </div>
                 </div>
 
                 <div class="flash-grid">
-                    <div class="flash-card" th:each="item : ${flashSaleItems}" th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|" style="cursor: pointer;">
-                        <div class="flash-badge">-<span th:text="${#numbers.formatDecimal((1 - item.salePrice * 1.0 / item.product.price) * 100, 0, 0)}">30</span>%</div>
-                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}" alt="Product">
+                    <div class="flash-card" th:each="item : ${flashSaleItems}"
+                        th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|" style="cursor: pointer;">
+                        <div class="flash-badge">-<span
+                                th:text="${#numbers.formatDecimal((1 - item.salePrice * 1.0 / item.product.price) * 100, 0, 0)}">30</span>%
+                        </div>
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}"
+                            alt="Product">
                         <h4 th:text="${item.product.name}">Product Name</h4>
-                        <div class="price-row" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
-                            <div class="old-price" style="text-decoration: line-through; color: #999; font-size: 13px;" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">4.590.000đ</div>
-                            <div class="new-price" style="color: #ef4444; font-size: 18px; font-weight: 700;" th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">2.990.000đ</div>
+                        <div class="price-row"
+                            style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
+                            <div class="old-price" style="text-decoration: line-through; color: #999; font-size: 13px;"
+                                th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                4.590.000đ</div>
+                            <div class="new-price" style="color: #ef4444; font-size: 18px; font-weight: 700;"
+                                th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                2.990.000đ</div>
                         </div>
-                        <div class="progress-bar-container" style="background: #eee; height: 16px; border-radius: 8px; position: relative; overflow: hidden; margin-bottom: 15px;">
-                            <div class="progress-fill" style="background: #ef4444; height: 100%; border-radius: 8px;" th:style="'width: ' + (${item.soldCount * 100.0 / item.saleQuantity}) + '%;'"></div>
-                            <div class="progress-text" style="position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 10px; color: #fff; font-weight: 600; line-height: 16px;" th:text="'Đã bán ' + ${item.soldCount} + '/' + ${item.saleQuantity}">Đã bán 32/50</div>
+                        <div class="progress-bar-container"
+                            style="background: #eee; height: 16px; border-radius: 8px; position: relative; overflow: hidden; margin-bottom: 15px;">
+                            <div class="progress-fill" style="background: #ef4444; height: 100%; border-radius: 8px;"
+                                th:style="'width: ' + (${item.soldCount * 100.0 / item.saleQuantity}) + '%;'"></div>
+                            <div class="progress-text"
+                                style="position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 10px; color: #fff; font-weight: 600; line-height: 16px;"
+                                th:text="'Đã bán ' + ${item.soldCount} + '/' + ${item.saleQuantity}">Đã bán 32/50</div>
                         </div>
-                        <button class="btn-add-cart" style="width: 100%; padding: 10px; background: #000; color: #fff; border: none; border-radius: 4px; font-weight: 600;"><i class="fa-solid fa-cart-shopping"></i> Mua ngay</button>
+                        <button class="btn-add-cart"
+                            style="width: 100%; padding: 10px; background: #000; color: #fff; border: none; border-radius: 4px; font-weight: 600;"><i
+                                class="fa-solid fa-cart-shopping"></i> Mua ngay</button>
                     </div>
                 </div>
             </div>
 
             <!-- Sidebar -->
-            <div class="sidebar-box" style="background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; align-self: start;">
-                <div class="sidebar-box-title" style="font-size: 16px; font-weight: 700; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">SẮP DIỄN RA</div>
+            <div class="sidebar-box"
+                style="background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; align-self: start;">
+                <div class="sidebar-box-title"
+                    style="font-size: 16px; font-weight: 700; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+                    SẮP DIỄN RA</div>
                 <div class="upcoming-list">
                     <p style="font-size: 13px; color: #666; text-align: center;">Chưa có sự kiện nào sắp diễn ra</p>
                 </div>
@@ -127,30 +156,46 @@
                         <i class="fa-solid fa-ticket" style="color: #f97316;"></i>
                         <h2 style="margin: 0; font-size: 20px;">KHUYẾN MÃI HOT</h2>
                         <div class="voucher-tabs" style="display: flex; gap: 15px; margin-top: 15px;">
-                            <div class="voucher-tab active" style="font-size: 13px; font-weight: 600; padding-bottom: 5px; border-bottom: 2px solid #000; cursor: pointer;">Tất cả</div>
+                            <div class="voucher-tab active"
+                                style="font-size: 13px; font-weight: 600; padding-bottom: 5px; border-bottom: 2px solid #000; cursor: pointer;">
+                                Tất cả</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="voucher-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-                    
-                    <div class="voucher-card" th:each="v : ${activeVouchers}" style="display: flex; background: #fff; border: 1px solid #eee; border-radius: 8px; overflow: hidden; height: 120px;">
-                        <div class="voucher-left" style="width: 30%; background: #fef2f2; border-right: 2px dashed #fecaca; display: flex; align-items: center; justify-content: center; padding: 15px;">
-                            <div class="voucher-logo" style="font-size: 18px; font-weight: 800; color: #ef4444; text-align: center; word-break: break-all;" th:text="${v.code}">PCSTORE</div>
+                <div class="voucher-grid"
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+
+                    <div class="voucher-card" th:each="v : ${activeVouchers}"
+                        style="display: flex; background: #fff; border: 1px solid #eee; border-radius: 8px; overflow: hidden; height: 120px;">
+                        <div class="voucher-left"
+                            style="width: 30%; background: #fef2f2; border-right: 2px dashed #fecaca; display: flex; align-items: center; justify-content: center; padding: 15px;">
+                            <div class="voucher-logo"
+                                style="font-size: 18px; font-weight: 800; color: #ef4444; text-align: center; word-break: break-all;"
+                                th:text="${v.code}">PCSTORE</div>
                         </div>
-                        <div class="voucher-right" style="width: 70%; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div class="voucher-right"
+                            style="width: 70%; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
                             <div>
-                                <div class="voucher-title" style="font-size: 16px; font-weight: 700;" th:text="${v.description}">Giảm giá</div>
-                                <div class="voucher-desc" style="font-size: 12px; color: #666; margin-top: 5px;" th:if="${v.minOrderAmount != null}" th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(v.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">Đơn tối thiểu 2M</div>
+                                <div class="voucher-title" style="font-size: 16px; font-weight: 700;"
+                                    th:text="${v.description}">Giảm giá</div>
+                                <div class="voucher-desc" style="font-size: 12px; color: #666; margin-top: 5px;"
+                                    th:if="${v.minOrderAmount != null}"
+                                    th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(v.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                    Đơn tối thiểu 2M</div>
                                 <div class="voucher-meta" style="font-size: 11px; color: #999; margin-top: 5px;">
-                                    HSD: <span th:text="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}">30/06/2025</span>
+                                    HSD: <span
+                                        th:text="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}">30/06/2025</span>
                                 </div>
                             </div>
-                            <button class="btn-copy" th:attr="onclick='saveVoucher(this, \'' + ${v.code} + '\')'" style="align-self: flex-end; background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Lưu mã</button>
+                            <button class="btn-copy" th:attr="onclick='saveVoucher(this, \'' + ${v.code} + '\')'"
+                                style="align-self: flex-end; background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Lưu
+                                mã</button>
                         </div>
                     </div>
 
-                    <div th:if="${activeVouchers == null or activeVouchers.isEmpty()}" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
+                    <div th:if="${activeVouchers == null or activeVouchers.isEmpty()}"
+                        style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
                         Hiện tại không có mã giảm giá nào. Vui lòng quay lại sau!
                     </div>
 
@@ -158,9 +203,13 @@
             </div>
 
             <!-- Terms -->
-            <div class="terms-box" style="background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 20px; align-self: start;">
-                <div class="sidebar-box-title" style="font-size: 14px; font-weight: 700; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">ĐIỀU KIỆN & HƯỚNG DẪN</div>
-                <ul class="terms-list" style="padding-left: 20px; font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 15px;">
+            <div class="terms-box"
+                style="background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 20px; align-self: start;">
+                <div class="sidebar-box-title"
+                    style="font-size: 14px; font-weight: 700; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+                    ĐIỀU KIỆN & HƯỚNG DẪN</div>
+                <ul class="terms-list"
+                    style="padding-left: 20px; font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 15px;">
                     <li>Chương trình Flash Sale có số lượng và thời gian giới hạn.</li>
                     <li>Mã giảm giá chỉ áp dụng 1 lần/đơn hàng.</li>
                     <li>Không áp dụng đồng thời nhiều mã giảm giá.</li>
@@ -172,21 +221,23 @@
 
     <!-- FOOTER -->
     <div th:replace="~{layout/footer :: footer}"></div>
-    <div id="toast" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;"></div>
+    <div id="toast"
+        style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;">
+    </div>
 
     <script th:src="@{/js/script.js}"></script>
     <script>
-        function toast(msg) { 
-            const el = document.getElementById('toast'); 
-            el.textContent = msg; 
-            el.style.display = 'block'; 
-            setTimeout(() => el.style.display = 'none', 3500); 
+        function toast(msg) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3500);
         }
 
         function saveVoucher(btn, code) {
             btn.disabled = true;
             btn.innerHTML = 'Đang lưu...';
-            
+
             fetch('/api/vouchers/save', {
                 method: 'POST',
                 headers: {
@@ -194,28 +245,28 @@
                 },
                 body: 'code=' + code
             })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    btn.innerHTML = 'Đã lưu';
-                    btn.style.background = '#10b981';
-                    toast('Đã lưu mã giảm giá thành công!');
-                } else {
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.innerHTML = 'Đã lưu';
+                        btn.style.background = '#10b981';
+                        toast('Đã lưu mã giảm giá thành công!');
+                    } else {
+                        btn.innerHTML = 'Lưu mã';
+                        btn.disabled = false;
+                        toast(data.message || 'Lỗi khi lưu mã');
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    }
+                })
+                .catch(err => {
                     btn.innerHTML = 'Lưu mã';
                     btn.disabled = false;
-                    toast(data.message || 'Lỗi khi lưu mã');
-                    if (data.redirect) {
-                        window.location.href = data.redirect;
-                    }
-                }
-            })
-            .catch(err => {
-                btn.innerHTML = 'Lưu mã';
-                btn.disabled = false;
-                toast('Lỗi kết nối. Vui lòng thử lại sau.');
-            });
+                    toast('Lỗi kết nối. Vui lòng thử lại sau.');
+                });
         }
     </script>
 </body>
-</html>
 
+</html>

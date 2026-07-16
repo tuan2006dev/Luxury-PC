@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,8 +32,18 @@
             --warning: #f59e0b;
         }
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html { font-size: 15px; scroll-behavior: smooth; }
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 15px;
+            scroll-behavior: smooth;
+        }
 
         body {
             background-color: var(--black) !important;
@@ -65,7 +76,8 @@
             position: relative;
             width: 100%;
             min-height: 320px;
-            margin-top: 74px; /* navbar height */
+            margin-top: 74px;
+            /* navbar height */
             background-image: url('/images/build-pc-hero-bg.png');
             background-size: cover;
             background-position: center;
@@ -79,11 +91,9 @@
         .builder-hero-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                to bottom,
-                rgba(0,0,0,0.15) 0%,
-                rgba(0,0,0,0.35) 100%
-            );
+            background: linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0.15) 0%,
+                    rgba(0, 0, 0, 0.35) 100%);
         }
 
         .builder-hero-content {
@@ -100,13 +110,13 @@
             color: #ffffff;
             letter-spacing: 0.02em;
             margin-bottom: 1rem;
-            text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
         }
 
         .builder-hero-content p {
             font-size: 1rem;
             color: rgba(245, 240, 232, 0.85);
-            text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
         }
 
         .section-label {
@@ -200,7 +210,7 @@
         .combo-card:hover {
             background: var(--dark);
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
 
         .combo-card:hover::before {
@@ -282,7 +292,7 @@
             overflow: hidden;
             text-align: center;
         }
-        
+
         .btn-primary:hover {
             background: var(--gold-light);
             color: var(--black);
@@ -534,7 +544,7 @@
             font-size: 1rem;
             transition: border-color var(--transition);
         }
-        
+
         .search-bar:focus {
             outline: none;
             border-color: var(--gold);
@@ -567,7 +577,7 @@
             height: 140px;
             object-fit: cover;
             margin-bottom: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .product-card h4 {
@@ -578,6 +588,7 @@
             flex-grow: 1;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -593,33 +604,40 @@
             .main-layout {
                 grid-template-columns: 1fr;
             }
+
             .summary-sidebar {
                 position: static;
             }
         }
-        
+
         @media (max-width: 768px) {
             .component-row {
                 grid-template-columns: 60px 1fr;
                 grid-template-areas: "icon info" "icon action";
                 gap: 1rem;
             }
+
             .component-icon {
                 grid-area: icon;
-                width: 60px; height: 60px; font-size: 1.5rem;
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
             }
+
             .component-info {
                 grid-area: info;
             }
+
             .component-row .btn-secondary {
                 grid-area: action;
                 justify-self: start;
             }
+
             header h1 {
                 font-size: 2rem;
             }
         }
-        
+
         /* ---- Button Fixes for this page ---- */
         .btn-primary {
             display: inline-block;
@@ -639,6 +657,7 @@
             transition: background 0.3s ease, transform 0.2s ease;
             z-index: 1;
         }
+
         .btn-primary::before {
             content: '';
             position: absolute;
@@ -648,8 +667,14 @@
             transition: transform 0.3s ease;
             z-index: -1;
         }
-        .btn-primary:hover { color: var(--black); }
-        .btn-primary:hover::before { transform: translateX(0); }
+
+        .btn-primary:hover {
+            color: var(--black);
+        }
+
+        .btn-primary:hover::before {
+            transform: translateX(0);
+        }
 
         .btn-secondary {
             display: inline-block;
@@ -666,6 +691,7 @@
             cursor: pointer;
             transition: border-color 0.3s ease, color 0.3s ease;
         }
+
         .btn-secondary:hover {
             border-color: var(--gold);
             color: var(--gold);
@@ -673,72 +699,72 @@
         }
     </style>
 </head>
+
 <body>
 
-<div th:replace="~{layout/header :: header}"></div>
-<div class="builder-hero">
-    <div class="builder-hero-overlay"></div>
-    <div class="builder-hero-content">
-        <h1><i class="fa-solid fa-screwdriver-wrench" style="color: var(--gold);"></i> Xây dựng cấu hình PC</h1>
-        <p>Chọn linh kiện để tạo nên cỗ máy trong mơ của bạn</p>
-    </div>
-</div>
-
-<div class="container">
-
-
-    <!-- Combo Section - FULL WIDTH -->
-    <div class="combo-section">
-        <h2 class="section-title">
-            <i class="fa-solid fa-crown" style="color: var(--gold);"></i>
-            <span th:text="'&#128081; ' + ${#lists.size(combos)} + ' Combo Ưu Đãi Đặc Biệt'">Combo Ưu Đãi</span>
-        </h2>
-        <div class="combo-grid">
-            <div th:each="combo : ${combos}"
-                 class="combo-card"
-                 th:onclick="'applyCombo(' + ${combo.id} + ')'"
-                 style="cursor: pointer;">
-
-                <!-- Badge -->
-                <div th:if="${combo.badge != null and !combo.badge.isEmpty()}"
-                     class="combo-badge"
-                     th:text="${combo.badge}"
-                     th:style="'background-color: ' + ${combo.badgeColor != null ? combo.badgeColor : '#c9a84c'} + '; color: #fff;'"></div>
-
-                <!-- Image -->
-                <img th:if="${combo.image != null and !combo.image.isEmpty()}"
-                     th:src="@{${combo.image.startsWith('/') ? combo.image : '/uploads/products/' + combo.image}}"
-                     th:alt="${combo.name}"
-                     style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(201,168,76,0.15);">
-
-                <h3 class="combo-title" th:text="${combo.name}">Tên Combo</h3>
-
-                <ul class="combo-items">
-                    <li th:each="detail : ${combo.details}">
-                        <i class="fa-solid fa-check"></i>
-                        <span th:text="${detail.product != null ? detail.product.name : 'Linh kiện'}">Linh kiện</span>
-                    </li>
-                </ul>
-
-                <div class="combo-price">
-                    <div class="new-price"
-                         th:text="${#numbers.formatDecimal(combo.price, 1, 'COMMA', 0, 'POINT') + 'đ'}">0đ</div>
-                    <button type="button" class="btn-primary" style="padding: 0.6rem 1.2rem;"
-                            th:onclick="'event.stopPropagation(); applyCombo(' + ${combo.id} + '); scrollToBuilder();'">Chọn</button>
-                </div>
-            </div>
+    <div th:replace="~{layout/header :: header}"></div>
+    <div class="builder-hero">
+        <div class="builder-hero-overlay"></div>
+        <div class="builder-hero-content">
+            <h1><i class="fa-solid fa-screwdriver-wrench" style="color: var(--gold);"></i> Xây dựng cấu hình PC</h1>
+            <p>Chọn linh kiện để tạo nên cỗ máy trong mơ của bạn</p>
         </div>
     </div>
 
-    <!-- 2-Column: Builder + Summary -->
-    <div class="main-layout" id="builder-section">
+    <div class="container">
 
-        <!-- LEFT: Component Picker -->
-        <div>
-            <h2 class="section-title"><i class="fa-solid fa-microchip"></i> Chọn Linh Kiện</h2>
-            <div class="builder-list">
-                <!-- CPU -->
-                <div class="component-row" id="row-cpu">
+
+        <!-- Combo Section - FULL WIDTH -->
+        <div class="combo-section">
+            <h2 class="section-title">
+                <i class="fa-solid fa-crown" style="color: var(--gold);"></i>
+                <span th:text="'&#128081; ' + ${#lists.size(combos)} + ' Combo Ưu Đãi Đặc Biệt'">Combo Ưu Đãi</span>
+            </h2>
+            <div class="combo-grid">
+                <div th:each="combo : ${combos}" class="combo-card" th:onclick="'applyCombo(' + ${combo.id} + ')'"
+                    style="cursor: pointer;">
+
+                    <!-- Badge -->
+                    <div th:if="${combo.badge != null and !combo.badge.isEmpty()}" class="combo-badge"
+                        th:text="${combo.badge}"
+                        th:style="'background-color: ' + ${combo.badgeColor != null ? combo.badgeColor : '#c9a84c'} + '; color: #fff;'">
+                    </div>
+
+                    <!-- Image -->
+                    <img th:if="${combo.image != null and !combo.image.isEmpty()}"
+                        th:src="@{${combo.image.startsWith('/') ? combo.image : '/uploads/products/' + combo.image}}"
+                        th:alt="${combo.name}"
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(201,168,76,0.15);">
+
+                    <h3 class="combo-title" th:text="${combo.name}">Tên Combo</h3>
+
+                    <ul class="combo-items">
+                        <li th:each="detail : ${combo.details}">
+                            <i class="fa-solid fa-check"></i>
+                            <span th:text="${detail.product != null ? detail.product.name : 'Linh kiện'}">Linh
+                                kiện</span>
+                        </li>
+                    </ul>
+
+                    <div class="combo-price">
+                        <div class="new-price"
+                            th:text="${#numbers.formatDecimal(combo.price, 1, 'COMMA', 0, 'POINT') + 'đ'}">0đ</div>
+                        <button type="button" class="btn-primary" style="padding: 0.6rem 1.2rem;"
+                            th:onclick="'event.stopPropagation(); applyCombo(' + ${combo.id} + '); scrollToBuilder();'">Chọn</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2-Column: Builder + Summary -->
+        <div class="main-layout" id="builder-section">
+
+            <!-- LEFT: Component Picker -->
+            <div>
+                <h2 class="section-title"><i class="fa-solid fa-microchip"></i> Chọn Linh Kiện</h2>
+                <div class="builder-list">
+                    <!-- CPU -->
+                    <div class="component-row" id="row-cpu">
                         <div class="component-icon"><i class="fa-solid fa-microchip"></i></div>
                         <div class="component-info">
                             <h3>Vi xử lý (CPU)</h3>
@@ -821,7 +847,7 @@
                         </div>
                         <button class="btn-secondary" onclick="openModal('storage')">Chọn</button>
                     </div>
-                    
+
                     <!-- PSU -->
                     <div class="component-row" id="row-psu">
                         <div class="component-icon"><i class="fa-solid fa-plug"></i></div>
@@ -855,7 +881,7 @@
                         </div>
                         <button class="btn-secondary" onclick="openModal('case')">Chọn</button>
                     </div>
-                    
+
                     <!-- Cooling -->
                     <div class="component-row" id="row-cooling">
                         <div class="component-icon"><i class="fa-solid fa-fan"></i></div>
@@ -879,41 +905,55 @@
             <div>
                 <div class="summary-sidebar">
                     <h2 class="summary-title">Tóm tắt cấu hình</h2>
-                    
-                    <div id="compatibility-alert" style="display: none; padding: 0.8rem; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem; border: 1px solid;">
+
+                    <div id="compatibility-alert"
+                        style="display: none; padding: 0.8rem; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem; border: 1px solid;">
                     </div>
 
                     <div class="summary-stats">
-                        <h3 style="font-size: 1rem; color: var(--gold); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <h3
+                            style="font-size: 1rem; color: var(--gold); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fa-solid fa-gamepad"></i> Hiệu năng Game
                         </h3>
                         <div style="position: relative; margin-bottom: 1rem;">
-                            <input type="text" id="steam-search" placeholder="Tìm kiếm game trên Steam..." autocomplete="off" style="width: 100%; padding: 0.6rem; background: var(--bg-dark); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; outline: none; font-family: inherit;">
-                            <div id="steam-search-results" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #1a1a1a; border: 1px solid var(--border-color); max-height: 250px; overflow-y: auto; z-index: 1000; border-radius: 4px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            <input type="text" id="steam-search" placeholder="Tìm kiếm game trên Steam..."
+                                autocomplete="off"
+                                style="width: 100%; padding: 0.6rem; background: var(--bg-dark); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; outline: none; font-family: inherit;">
+                            <div id="steam-search-results"
+                                style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #1a1a1a; border: 1px solid var(--border-color); max-height: 250px; overflow-y: auto; z-index: 1000; border-radius: 4px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                             </div>
                         </div>
                         <div id="game-performance-result" style="display: none; text-align: center;">
-                            <img id="game-cover" src="" alt="Game Cover" style="width: 100%; border-radius: 4px; margin-bottom: 0.8rem; border: 1px solid var(--border-color);">
+                            <img id="game-cover" src="" alt="Game Cover"
+                                style="width: 100%; border-radius: 4px; margin-bottom: 0.8rem; border: 1px solid var(--border-color);">
                             <h4 id="game-title" style="font-size: 0.95rem; margin-bottom: 0.8rem; color: #fff;"></h4>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem;">
                                 <span>FPS Ước tính:</span>
                                 <span id="est-fps" style="color: var(--gold); font-weight: bold;">0 FPS</span>
                             </div>
                             <div class="power-bar-container" style="height: 6px; margin-bottom: 0.5rem;">
-                                <div class="power-bar" id="fps-bar-fill" style="width: 0%; background: var(--gold);"></div>
+                                <div class="power-bar" id="fps-bar-fill" style="width: 0%; background: var(--gold);">
+                                </div>
                             </div>
-                            <div id="game-req-msg" style="font-size: 0.85rem; color: var(--text-muted); padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1); margin-bottom: 0.5rem;">
+                            <div id="game-req-msg"
+                                style="font-size: 0.85rem; color: var(--text-muted); padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1); margin-bottom: 0.5rem;">
                             </div>
-                            <details style="text-align: left; font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color);">
-                                <summary style="cursor: pointer; color: var(--gold); outline: none;">Xem chi tiết cấu hình yêu cầu</summary>
-                                <div id="game-req-details" style="margin-top: 0.5rem; color: #ccc; max-height: 150px; overflow-y: auto; line-height: 1.4;">
+                            <details
+                                style="text-align: left; font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color);">
+                                <summary style="cursor: pointer; color: var(--gold); outline: none;">Xem chi tiết cấu
+                                    hình yêu cầu</summary>
+                                <div id="game-req-details"
+                                    style="margin-top: 0.5rem; color: #ccc; max-height: 150px; overflow-y: auto; line-height: 1.4;">
                                 </div>
                             </details>
                         </div>
-                        <div id="game-performance-loading" style="display: none; text-align: center; padding: 1rem; color: var(--gold);">
+                        <div id="game-performance-loading"
+                            style="display: none; text-align: center; padding: 1rem; color: var(--gold);">
                             <i class="fa-solid fa-spinner fa-spin"></i> Đang phân tích dữ liệu Steam...
                         </div>
-                        <div id="game-performance-empty" style="font-size: 0.8rem; color: var(--text-muted); font-style: italic; text-align: center;">
+                        <div id="game-performance-empty"
+                            style="font-size: 0.8rem; color: var(--text-muted); font-style: italic; text-align: center;">
                             Vui lòng chọn Game và đủ Combo (CPU + VGA) để đo hiệu năng.
                         </div>
                     </div>
@@ -938,14 +978,17 @@
                         0đ
                     </div>
 
-                    <button class="btn-primary" style="width: 100%; margin-bottom: 1rem; font-weight: bold;" onclick="buyBuild()" id="btn-buy-build" disabled>
+                    <button class="btn-primary" style="width: 100%; margin-bottom: 1rem; font-weight: bold;"
+                        onclick="buyBuild()" id="btn-buy-build" disabled>
                         <i class="fa-solid fa-cart-shopping" style="margin-right: 8px;"></i> Thanh toán cấu hình này
                     </button>
 
-                    <button class="btn btn-primary" style="width: 100%; background: transparent; border: 1px solid var(--gold); color: var(--gold);" onclick="window.location.href='http://localhost:5173'">
+                    <button class="btn btn-primary"
+                        style="width: 100%; background: transparent; border: 1px solid var(--gold); color: var(--gold);"
+                        onclick="window.location.href='http://localhost:5173'">
                         <i class="fa-solid fa-cube" style="margin-right: 8px;"></i> Trải Nghiệm Build PC 3D
                     </button>
-                    
+
                     <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="resetBuild()">
                         <i class="fa-solid fa-rotate-left"></i> Làm mới
                     </button>
@@ -954,7 +997,7 @@
         </div><!-- /main-layout -->
     </div><!-- /container -->
 
-<div th:replace="~{layout/footer :: footer}"></div>
+    <div th:replace="~{layout/footer :: footer}"></div>
 
     <!-- Modal -->
     <div class="modal-overlay" id="productModal">
@@ -977,7 +1020,7 @@
         const productsData = /*[[${productsData}]]*/ {
             cpu: [], mainboard: [], ram: [], vga: [], storage: [], psu: [], case: [], cooling: []
         };
-        const combosData = /*[[${combosData}]]*/ [];
+        const combosData = /*[[${combosData}]]*/[];
 
         const currentBuild = { cpu: null, mainboard: null, ram: null, vga: null, storage: null, psu: null, case: null, cooling: null };
         let activeCategory = '';
@@ -1015,7 +1058,7 @@
         function renderProducts(products) {
             const grid = document.getElementById('modalProductGrid');
             grid.innerHTML = '';
-            if(!products || products.length === 0) {
+            if (!products || products.length === 0) {
                 grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">Không tìm thấy kết quả.</p>';
                 return;
             }
@@ -1034,7 +1077,7 @@
             });
         }
 
-        document.getElementById('searchInput').addEventListener('input', function(e) {
+        document.getElementById('searchInput').addEventListener('input', function (e) {
             const term = e.target.value.toLowerCase();
             const filtered = productsData[activeCategory].filter(p => p.name.toLowerCase().includes(term));
             renderProducts(filtered);
@@ -1122,7 +1165,7 @@
             });
 
             if (productIds.length < 7) {
-                if(typeof showToast === 'function') { showToast("Vui lòng chọn đầy đủ linh kiện (ít nhất 7 món) trước khi thanh toán!"); } else { alert("Vui lòng chọn đầy đủ linh kiện (ít nhất 7 món) trước khi thanh toán!"); }
+                if (typeof showToast === 'function') { showToast("Vui lòng chọn đầy đủ linh kiện (ít nhất 7 món) trước khi thanh toán!"); } else { alert("Vui lòng chọn đầy đủ linh kiện (ít nhất 7 món) trước khi thanh toán!"); }
                 return;
             }
 
@@ -1137,21 +1180,21 @@
                 },
                 body: JSON.stringify(productIds)
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = '/checkout';
-                } else {
-                    if(typeof showToast === 'function') { showToast("Có lỗi xảy ra: " + data.message); } else { alert("Có lỗi xảy ra: " + data.message); }
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/checkout';
+                    } else {
+                        if (typeof showToast === 'function') { showToast("Có lỗi xảy ra: " + data.message); } else { alert("Có lỗi xảy ra: " + data.message); }
+                        btn.innerHTML = '<i class="fa-solid fa-cart-shopping" style="margin-right: 8px;"></i> Thanh toán cấu hình này';
+                        btn.disabled = false;
+                    }
+                })
+                .catch(err => {
+                    if (typeof showToast === 'function') { showToast("Lỗi kết nối đến máy chủ."); } else { alert("Lỗi kết nối đến máy chủ."); }
                     btn.innerHTML = '<i class="fa-solid fa-cart-shopping" style="margin-right: 8px;"></i> Thanh toán cấu hình này';
                     btn.disabled = false;
-                }
-            })
-            .catch(err => {
-                if(typeof showToast === 'function') { showToast("Lỗi kết nối đến máy chủ."); } else { alert("Lỗi kết nối đến máy chủ."); }
-                btn.innerHTML = '<i class="fa-solid fa-cart-shopping" style="margin-right: 8px;"></i> Thanh toán cấu hình này';
-                btn.disabled = false;
-            });
+                });
         }
 
         function resetBuild() {
@@ -1166,7 +1209,7 @@
             let total = 0;
             let count = 0;
             let totalPower = 0;
-            
+
             Object.values(currentBuild).forEach(p => {
                 if (p) {
                     total += p.price;
@@ -1178,18 +1221,18 @@
             if (overridePrice > 0) {
                 total = overridePrice;
             }
-            
+
             const summaryTotal = document.getElementById('summary-total');
             summaryTotal.innerText = formatMoney(total);
             document.getElementById('summary-count').innerText = `${count}/8`;
             document.getElementById('summary-power').innerText = `${totalPower}W`;
-            
+
             const maxPower = 1000;
             let powerPct = (totalPower / maxPower) * 100;
             if (powerPct > 100) powerPct = 100;
             const barFill = document.getElementById('power-bar-fill');
             barFill.style.width = `${powerPct}%`;
-            
+
             if (powerPct > 80) barFill.style.background = '#ef4444';
             else if (powerPct > 50) barFill.style.background = '#f59e0b';
             else barFill.style.background = 'var(--gold)';
@@ -1210,26 +1253,26 @@
             const cpu = currentBuild.cpu ? currentBuild.cpu.name.toLowerCase() : '';
             const main = currentBuild.mainboard ? currentBuild.mainboard.name.toLowerCase() : '';
             const ram = currentBuild.ram ? currentBuild.ram.name.toLowerCase() : '';
-            
+
             let issues = [];
-            
+
             if (cpu && main) {
                 const isIntelCPU = cpu.includes('intel') || cpu.includes('i3') || cpu.includes('i5') || cpu.includes('i7') || cpu.includes('i9') || cpu.includes('ultra');
                 const isAMDCPU = cpu.includes('amd') || cpu.includes('ryzen');
-                
+
                 const isIntelMain = main.includes('h610') || main.includes('b760') || main.includes('z790') || main.includes('z890');
                 const isAMDMain = main.includes('b450') || main.includes('b650') || main.includes('x670') || main.includes('a620');
-                
+
                 if (isIntelCPU && isAMDMain) issues.push("CPU Intel không cắm được trên Mainboard AMD.");
                 if (isAMDCPU && isIntelMain) issues.push("CPU AMD không cắm được trên Mainboard Intel.");
             }
-            
+
             if (ram && main) {
                 const isDDR4 = ram.includes('ddr4');
                 const isDDR5 = ram.includes('ddr5');
                 const isMainDDR4 = main.includes('ddr4') || main.includes('h610') || main.includes('b450') || (main.includes('b760') && !main.includes('ddr5'));
                 const isMainDDR5 = main.includes('ddr5') || main.includes('z790') || main.includes('z890') || main.includes('x670') || main.includes('b650');
-                
+
                 if (isDDR4 && isMainDDR5 && !main.includes('ddr4')) issues.push("Mainboard DDR5 không hỗ trợ RAM DDR4.");
                 if (isDDR5 && isMainDDR4 && !main.includes('ddr5')) issues.push("Mainboard DDR4 không hỗ trợ RAM DDR5.");
             }
@@ -1255,11 +1298,11 @@
         let currentSelectedGame = null;
         let searchTimeout = null;
 
-        document.getElementById('steam-search').addEventListener('input', function(e) {
+        document.getElementById('steam-search').addEventListener('input', function (e) {
             clearTimeout(searchTimeout);
             const query = e.target.value.trim();
             const resultsBox = document.getElementById('steam-search-results');
-            
+
             if (query.length < 2) {
                 resultsBox.style.display = 'none';
                 return;
@@ -1277,7 +1320,7 @@
                             resultsBox.innerHTML = '<div style="padding: 0.8rem; color: var(--text-muted); text-align: center;">Không tìm thấy game</div>';
                             return;
                         }
-                        
+
                         data.items.slice(0, 8).forEach(item => {
                             const div = document.createElement('div');
                             div.style.padding = '0.5rem 0.8rem';
@@ -1286,10 +1329,10 @@
                             div.style.gap = '10px';
                             div.style.cursor = 'pointer';
                             div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-                            
+
                             div.onmouseover = () => div.style.backgroundColor = 'rgba(255,255,255,0.1)';
                             div.onmouseout = () => div.style.backgroundColor = 'transparent';
-                            
+
                             div.onclick = () => {
                                 document.getElementById('steam-search').value = item.name;
                                 resultsBox.style.display = 'none';
@@ -1310,7 +1353,7 @@
         });
 
         // Đóng dropdown khi click ra ngoài
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.id !== 'steam-search' && e.target.id !== 'steam-search-results') {
                 document.getElementById('steam-search-results').style.display = 'none';
             }
@@ -1331,16 +1374,16 @@
                         currentSelectedGame.header_image = appData.header_image;
                         currentSelectedGame.req_min = appData.pc_requirements ? appData.pc_requirements.minimum : '';
                         currentSelectedGame.req_rec = appData.pc_requirements ? appData.pc_requirements.recommended : '';
-                        
+
                         document.getElementById('game-cover').src = currentSelectedGame.header_image;
                         document.getElementById('game-title').innerText = currentSelectedGame.name;
-                        
+
                         let reqDetailsHTML = '';
                         if (currentSelectedGame.req_min) reqDetailsHTML += currentSelectedGame.req_min;
                         if (currentSelectedGame.req_rec) reqDetailsHTML += '<br><hr style="border-color: rgba(255,255,255,0.1); margin: 0.5rem 0;">' + currentSelectedGame.req_rec;
-                        
+
                         document.getElementById('game-req-details').innerHTML = reqDetailsHTML || 'Không có thông tin cấu hình từ nhà phát hành.';
-                        
+
                         calculateGamePerformance();
                     } else {
                         throw new Error("Game không có cấu hình rõ ràng");
@@ -1358,11 +1401,11 @@
 
             const cpu = currentBuild.cpu ? currentBuild.cpu.name.toLowerCase() : '';
             const vga = currentBuild.vga ? currentBuild.vga.name.toLowerCase() : '';
-            
+
             const loadingBox = document.getElementById('game-performance-loading');
             const emptyBox = document.getElementById('game-performance-empty');
             const resultBox = document.getElementById('game-performance-result');
-            
+
             loadingBox.style.display = 'none';
 
             if (!cpu || !vga) {
@@ -1371,7 +1414,7 @@
                 resultBox.style.display = 'none';
                 return;
             }
-            
+
             emptyBox.style.display = 'none';
             resultBox.style.display = 'block';
 
@@ -1394,7 +1437,7 @@
             // Phân tích mã HTML yêu cầu từ Steam (Parser)
             let reqMinStr = currentSelectedGame.req_min ? currentSelectedGame.req_min.toLowerCase() : '';
             let reqRecStr = currentSelectedGame.req_rec ? currentSelectedGame.req_rec.toLowerCase() : '';
-            
+
             // Hàm phân tích độ nặng của Game dựa trên Text cấu hình
             function parseTier(text) {
                 if (!text) return { cpu: 1, vga: 1 };
@@ -1404,7 +1447,7 @@
                 if (text.includes('i9') || text.includes('ryzen 9')) gCpu = 8;
                 else if (text.includes('i7') || text.includes('ryzen 7')) gCpu = 6;
                 else if (text.includes('i5') || text.includes('ryzen 5')) gCpu = 4;
-                
+
                 if (text.includes('4090') || text.includes('4080') || text.includes('3090') || text.includes('7900')) gVga = 9;
                 else if (text.includes('4070') || text.includes('3080') || text.includes('6800')) gVga = 7;
                 else if (text.includes('4060') || text.includes('3060') || text.includes('2070')) gVga = 5;
@@ -1422,23 +1465,23 @@
             // Nếu game không có cấu hình Recommended (ví dụ game quá cũ), lấy MinReq làm hệ quy chiếu
             const targetVga = (recReq.vga > 1) ? recReq.vga : (minReq.vga > 1 ? minReq.vga + 2 : 3);
             const targetCpu = (recReq.cpu > 1) ? recReq.cpu : (minReq.cpu > 1 ? minReq.cpu + 2 : 4);
-            
+
             // PC Tier so với yêu cầu
-            let vgaRatio = pcVgaTier / targetVga; 
+            let vgaRatio = pcVgaTier / targetVga;
             let cpuRatio = pcCpuTier / targetCpu;
-            
+
             // VGA quan trọng hơn CPU trong Game (Trọng số 70/30)
             let performanceScore = (vgaRatio * 0.7) + (cpuRatio * 0.3);
-            
+
             // Giả định: Điểm Performance Score = 1.0 (Đáp ứng đúng đề nghị) -> Chạy được ~60 FPS ở High.
             let estFps = performanceScore * 60;
-            
+
             // Nếu FPS vượt quá 144, giới hạn ngẫu nhiên quanh 144-300 tuỳ độ mạnh
             if (estFps > 144) {
                 estFps = 144 + ((performanceScore - 2.4) * 50);
             }
             if (estFps > 350) estFps = 350; // Cap
-            
+
             estFps = Math.round(estFps);
 
             let reqMsg = "";
@@ -1459,21 +1502,22 @@
             }
 
             document.getElementById('est-fps').innerText = estFps + " FPS";
-            
+
             let fpsPercent = Math.min((estFps / 240) * 100, 100); // 240fps = 100% bar
             const fpsBar = document.getElementById('fps-bar-fill');
             fpsBar.style.width = fpsPercent + "%";
-            
+
             document.getElementById('est-fps').style.color = color;
             fpsBar.style.backgroundColor = color;
             document.getElementById('game-req-msg').innerHTML = reqMsg;
         }
 
-        document.getElementById('productModal').addEventListener('click', function(e) {
+        document.getElementById('productModal').addEventListener('click', function (e) {
             if (e.target === this) closeModal();
         });
     </script>
     <script th:src="@{/js/cursor.js}"></script>
     <script th:src="@{/js/script.js(v=4)}"></script>
 </body>
+
 </html>

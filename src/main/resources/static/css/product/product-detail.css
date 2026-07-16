@@ -117,7 +117,7 @@
     .bar-track{flex:1;height:4px;background:var(--mid);position:relative;}
     .bar-fill{height:100%;background:var(--gold);}
     .review-card{background:var(--deep);border:1px solid rgba(201,168,76,.08);padding:1.2rem;margin-bottom:.8rem;}
-    .rv-header{display:flex;align-items:center;gap.8rem;justify-content:space-between;margin-bottom:.6rem;}
+    .rv-header{display:flex;align-items:center;gap: .8rem;justify-content:space-between;margin-bottom:.6rem;}
     .rv-name{font-size:.8rem;font-weight:600;color:var(--white);}
     .rv-date{font-size:.65rem;color:var(--muted);}
     .rv-stars{color:var(--gold);font-size:.75rem;}
@@ -135,7 +135,7 @@
     .rel-price{font-family:var(--serif);font-size:.95rem;color:var(--gold);}
 
     /* TOAST */
-    .toast{position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);border:1px solid rgba(201,168,76,.35);color:var(--cream);font-size:.8rem;padding:.9rem 2rem;z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
+    .toast{position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);border:1px solid rgba(201,168,76,.35);color:var(--cream);font-size:.8rem;padding:.9rem 2rem;z-index:99999;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
     @media(max-width:1024px){

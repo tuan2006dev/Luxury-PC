@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
@@ -7,40 +8,46 @@
     <title>Thanh toán QR</title>
     <link rel="stylesheet" th:href="@{/css/payment.css}" />
 </head>
+
 <body>
 
-<div class="payment-box">
-    <h2 data-translate="pay-header">Thanh toán đơn hàng</h2>
+    <div class="payment-box">
+        <h2 data-translate="pay-header">Thanh toán đơn hàng</h2>
 
-    <p class="amount">
-        <span th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')}"></span> <span data-translate="currency-vnd">VNĐ</span>
-    </p>
+        <p class="amount">
+            <span th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')}"></span> <span
+                data-translate="currency-vnd">VNĐ</span>
+        </p>
 
-    <img th:src="${qrUrl}" alt="QR thanh toán">
+        <img th:src="${qrUrl}" alt="QR thanh toán">
 
-    <div class="info">
-        <p><b data-translate="pay-label-order-code">Mã đơn</b>: <span th:text="${orderCode}"></span></p>
-        <p><b data-translate="pay-label-bank">Ngân hàng</b>: <span th:text="${bankDisplayName}">MB Bank</span></p>
-        <p><b data-translate="pay-label-account-no">Số tài khoản</b>: <span th:text="${accountNo}">9999999999</span></p>
-        <p><b data-translate="pay-label-account-name">Chủ tài khoản</b>: <span th:text="${accountName}">LUXURYPC</span></p>
-        <p><b data-translate="pay-label-transfer-content">Nội dung chuyển khoản</b>: <span th:text="${transferContent}"></span></p>
+        <div class="info">
+            <p><b data-translate="pay-label-order-code">Mã đơn</b>: <span th:text="${orderCode}"></span></p>
+            <p><b data-translate="pay-label-bank">Ngân hàng</b>: <span th:text="${bankDisplayName}">MB Bank</span></p>
+            <p><b data-translate="pay-label-account-no">Số tài khoản</b>: <span th:text="${accountNo}">9999999999</span>
+            </p>
+            <p><b data-translate="pay-label-account-name">Chủ tài khoản</b>: <span
+                    th:text="${accountName}">LUXURYPC</span></p>
+            <p><b data-translate="pay-label-transfer-content">Nội dung chuyển khoản</b>: <span
+                    th:text="${transferContent}"></span></p>
+        </div>
+
+        <p class="note" data-translate="pay-note">
+            Quét mã QR bằng app ngân hàng và chuyển đúng nội dung để hệ thống tự động đối soát đơn hàng.
+        </p>
+
+        <a href="/" class="btn" data-translate="pay-btn-home">Về trang chủ</a>
     </div>
 
-    <p class="note" data-translate="pay-note">
-        Quét mã QR bằng app ngân hàng và chuyển đúng nội dung để hệ thống tự động đối soát đơn hàng.
-    </p>
-
-    <a href="/" class="btn" data-translate="pay-btn-home">Về trang chủ</a>
-</div>
-
-<script th:src="@{/js/payment.js}"></script>
+    <script th:src="@{/js/payment.js}"></script>
 
 
-<!-- THEME TOGGLE -->
-<button class="theme-toggle-btn floating-theme-btn" id="theme-toggle" aria-label="Chuyển đổi giao diện Sáng/Tối">
-    <i class="fa-regular fa-moon"></i>
-</button>
-<script th:src="@{/js/theme.js}"></script>
+    <!-- THEME TOGGLE -->
+    <button class="theme-toggle-btn floating-theme-btn" id="theme-toggle" aria-label="Chuyển đổi giao diện Sáng/Tối">
+        <i class="fa-regular fa-moon"></i>
+    </button>
+    <script th:src="@{/js/theme.js}"></script>
 
 </body>
+
 </html>
