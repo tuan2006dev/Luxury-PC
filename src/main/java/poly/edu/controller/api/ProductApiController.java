@@ -96,7 +96,8 @@ public class ProductApiController {
 
     /**
      * API: Get categorized products for 3D PC Builder
-     * Fetches from Supabase database and parses them into Case, Mainboard, CPU, GPU, RAM, PSU categories.
+     * Fetches from the product database and parses them into Case, Mainboard, CPU, GPU, RAM, PSU categories.
+     * NOTE: This project now uses SQL Server instead of Supabase/PostgreSQL.
      */
     @GetMapping("/api/build/components")
     public Map<String, List<Map<String, Object>>> getBuildComponents() {

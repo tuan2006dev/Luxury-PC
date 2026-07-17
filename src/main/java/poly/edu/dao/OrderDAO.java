@@ -12,14 +12,14 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o ORDER BY o.createdAt DESC")
     List<Order> findAllOrderedByDate();
 
-    @Query(value = "SELECT TO_CHAR(created_at, 'YYYY-MM') as month, SUM(total_price) as revenue " +
+    @Query(value = "SELECT FORMAT(created_at, 'yyyy-MM') as month, SUM(total_price) as revenue " +
                    "FROM orders WHERE status = 'COMPLETED' " +
-                   "GROUP BY month ORDER BY month DESC", nativeQuery = true)
+                   "GROUP BY FORMAT(created_at, 'yyyy-MM') ORDER BY month DESC", nativeQuery = true)
     List<Map<String, Object>> getMonthlyRevenue();
 
-    @Query(value = "SELECT TO_CHAR(created_at, 'YYYY-MM-DD') as date, SUM(total_price) as revenue " +
+    @Query(value = "SELECT FORMAT(created_at, 'yyyy-MM-dd') as date, SUM(total_price) as revenue " +
                    "FROM orders WHERE status = 'COMPLETED' AND created_at >= :startDate " +
-                   "GROUP BY date ORDER BY date ASC", nativeQuery = true)
+                   "GROUP BY FORMAT(created_at, 'yyyy-MM-dd') ORDER BY date ASC", nativeQuery = true)
     List<Map<String, Object>> getDailyRevenue(@org.springframework.data.repository.query.Param("startDate") java.util.Date startDate);
 
     @Query(value = "SELECT status, COUNT(*) as count FROM orders WHERE created_at >= :startDate GROUP BY status", nativeQuery = true)

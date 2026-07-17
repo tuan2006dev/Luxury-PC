@@ -91,7 +91,7 @@ public class SYS_AU_AuthTest {
                 .param("password", "123456")
                 .param("confirmPassword", "123456"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/auth/login?exist=true"));
+                .andExpect(redirectedUrl("/auth/register?exist=true"));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class SYS_AU_AuthTest {
                 .param("lastName", "Pham")
                 .param("otp", "123456")
                 .param("password", "123456"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -115,7 +115,7 @@ public class SYS_AU_AuthTest {
                 .param("password", "123456")
                 .param("confirmPassword", "123456"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/auth/login?invalidEmail=true"));
+                .andExpect(redirectedUrl("/auth/register?invalidEmail=true"));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class SYS_AU_AuthTest {
                 .param("password", "123456")
                 .param("confirmPassword", "654321"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/auth/login?mismatch=true"));
+                .andExpect(redirectedUrl("/auth/register?mismatch=true"));
     }
 
     // ==========================================

@@ -47,6 +47,8 @@ public class HomeController {
     final NewsCategoryService newsCategoryService;
 
     final CategoryDAO categoryDAO;
+    
+    final poly.edu.dao.ReviewDAO reviewDAO;
 
     // hasValidImage removed for performance
 
@@ -162,14 +164,55 @@ public class HomeController {
             FlashSale sale = currentSale.get();
             List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId()).stream()
                 .filter(item -> item.getSoldCount() < item.getSaleQuantity())
+                .sorted((item1, item2) -> {
+                    List<poly.edu.entity.Review> rev1 = reviewDAO.findByProductIdOrderByCreatedAtDesc(item1.getProduct().getId());
+                    double r1 = rev1.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+                    
+                    List<poly.edu.entity.Review> rev2 = reviewDAO.findByProductIdOrderByCreatedAtDesc(item2.getProduct().getId());
+                    double r2 = rev2.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+                    
+                    if (Double.compare(r2, r1) != 0) {
+                        return Double.compare(r2, r1);
+                    }
+                    
+                    int sold1 = item1.getSoldCount() != null ? item1.getSoldCount() : 0;
+                    int sold2 = item2.getSoldCount() != null ? item2.getSoldCount() : 0;
+                    return Integer.compare(sold2, sold1);
+                })
                 .collect(Collectors.toList());
+
+            // Build rating and review counts maps
+            java.util.Map<Integer, Double> productRatings = new java.util.HashMap<>();
+            java.util.Map<Integer, Integer> productReviewCounts = new java.util.HashMap<>();
+            for (FlashSaleItem item : saleItems) {
+                List<poly.edu.entity.Review> revs = reviewDAO.findByProductIdOrderByCreatedAtDesc(item.getProduct().getId());
+                double avg = revs.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+                productRatings.put(item.getProduct().getId(), avg);
+                productReviewCounts.put(item.getProduct().getId(), revs.size());
+            }
+
             model.addAttribute("flashSale", sale);
             model.addAttribute("flashSaleItems", saleItems);
+            model.addAttribute("productRatings", productRatings);
+            model.addAttribute("productReviewCounts", productReviewCounts);
             model.addAttribute("flashSaleEndTime", sale.getEndTime().getTime());
         } else {
-            model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
+            model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts().stream().limit(5).collect(Collectors.toList()));
             model.addAttribute("flashSaleEndTime", 0);
         }
+
+        // Lấy Flash Sale sắp diễn ra tiếp theo
+        List<FlashSale> upcomingSales = flashSaleService.getUpcomingFlashSales();
+        if (upcomingSales != null && !upcomingSales.isEmpty()) {
+            FlashSale nextSale = upcomingSales.get(0);
+            List<FlashSaleItem> upcomingItems = flashSaleService.getItemsBySaleId(nextSale.getId());
+            model.addAttribute("upcomingSale", nextSale);
+            model.addAttribute("upcomingItems", upcomingItems);
+            model.addAttribute("upcomingStartTime", nextSale.getStartTime().getTime());
+        }
+
+        // Category từ database
+        model.addAttribute("categories", categoryDAO.findAll());
 
         // Voucher từ database
         model.addAttribute("activeVouchers", voucherService.getActiveVouchers());

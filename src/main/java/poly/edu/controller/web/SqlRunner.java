@@ -22,10 +22,14 @@ public class SqlRunner {
 
     @GetMapping("/run-sql")
     public String runSql() {
-        String url = "jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?user=postgres.fxwmcnagogiwczmyfmnu&password=trangwebpcuytin";
+        // Supabase/PostgreSQL connection is deprecated for this project.
+        // String url = "jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?user=postgres.fxwmcnagogiwczmyfmnu&password=trangwebpcuytin";
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=luxpcc;encrypt=false";
+        String user = "sa";
+        String password = "";
         try {
             String sql = new String(Files.readAllBytes(Paths.get("d:/code/LuxuryPC/init_db.sql")));
-            try (Connection conn = DriverManager.getConnection(url);
+            try (Connection conn = DriverManager.getConnection(url, user, password);
                  Statement stmt = conn.createStatement()) {
                 stmt.execute(sql);
             }

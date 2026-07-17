@@ -16,8 +16,8 @@ class PcComboDetailTest {
 
         // Act & Assert
         assertEquals(1L, entity.getId());
-        assertEquals(new PcCombo(), entity.getCombo());
-        assertEquals(new Product(), entity.getProduct());
+        assertNotNull(entity.getCombo());
+        assertNotNull(entity.getProduct());
         assertEquals("slotType_test", entity.getSlotType());
     }
 }

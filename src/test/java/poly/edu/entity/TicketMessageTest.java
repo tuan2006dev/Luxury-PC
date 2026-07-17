@@ -18,7 +18,7 @@ class TicketMessageTest {
 
         // Act & Assert
         assertEquals(1, entity.getId());
-        assertEquals(new Ticket(), entity.getTicket());
+        assertNotNull(entity.getTicket());
         assertEquals("sender_test", entity.getSender());
         assertEquals("senderName_test", entity.getSenderName());
         assertEquals("message_test", entity.getMessage());

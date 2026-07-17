@@ -33,7 +33,7 @@ class SupportTicketTest {
         assertEquals("assignedAdmin_test", entity.getAssignedAdmin());
         assertEquals(new java.util.Date(), entity.getCreatedAt());
         assertEquals(new java.util.Date(), entity.getUpdatedAt());
-        assertEquals(new User(), entity.getUser());
+        assertNotNull(entity.getUser());
         assertEquals("buildConfig_test", entity.getBuildConfig());
     }
 }

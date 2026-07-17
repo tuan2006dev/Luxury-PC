@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "translations", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"key", "lang"})
+    @UniqueConstraint(columnNames = {"[key]", "lang"})
 })
 public class Translation {
 
@@ -12,7 +12,7 @@ public class Translation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "key", nullable = false, length = 100)
+    @Column(name = "[key]", nullable = false, length = 100)
     private String key;
 
     @Column(name = "lang", nullable = false, length = 10)

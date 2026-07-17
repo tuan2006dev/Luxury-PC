@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import poly.edu.service.NewsCategoryService;
+import poly.edu.dao.CategoryDAO;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -44,6 +46,18 @@ public class HomeControllerTest {
 
     @MockBean
     private WishlistService wishlistService;
+
+    @MockBean
+    private NewsService newsService;
+
+    @MockBean
+    private NewsCategoryService newsCategoryService;
+
+    @MockBean
+    private CategoryDAO categoryDAO;
+
+    @MockBean
+    private poly.edu.dao.ReviewDAO reviewDAO;
 
     // Các MockBean cần thiết cho SecurityConfig
     @MockBean

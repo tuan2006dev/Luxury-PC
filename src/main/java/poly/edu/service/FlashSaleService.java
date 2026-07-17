@@ -222,4 +222,8 @@ public class FlashSaleService {
             flashSaleDAO.save(target);
         }
     }
+
+    public List<FlashSale> getUpcomingFlashSales() {
+        return flashSaleDAO.findUpcomingSales(new Date());
+    }
 }

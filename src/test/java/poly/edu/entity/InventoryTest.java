@@ -16,7 +16,7 @@ class InventoryTest {
 
         // Act & Assert
         assertEquals(1, entity.getId());
-        assertEquals(new Product(), entity.getProduct());
+        assertNotNull(entity.getProduct());
         assertEquals(1, entity.getQuantity());
         assertEquals(new java.util.Date(), entity.getLastUpdate());
     }

@@ -66,6 +66,15 @@ public class ProductPageController {
         if (kw != null && kw.trim().isEmpty()) kw = null;
         if (brand != null && brand.trim().isEmpty()) brand = null;
         
+        if (min != null) {
+            if (min < 0.0) min = 0.0;
+            if (min > 100000000.0) min = 100000000.0;
+        }
+        if (max != null) {
+            if (max < 0.0) max = 0.0;
+            if (max > 100000000.0) max = 100000000.0;
+        }
+        
         List<Product> products = productService.searchProducts(cid, min, max, kw, brand);
         model.addAttribute("allProducts", products);
         model.addAttribute("categories", categoryService.getAllCategories());

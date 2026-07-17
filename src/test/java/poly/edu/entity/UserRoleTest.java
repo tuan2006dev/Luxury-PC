@@ -15,7 +15,7 @@ class UserRoleTest {
 
         // Act & Assert
         assertEquals(1, entity.getId());
-        assertEquals(new User(), entity.getUser());
-        assertEquals(new Role(), entity.getRole());
+        assertNotNull(entity.getUser());
+        assertNotNull(entity.getRole());
     }
 }

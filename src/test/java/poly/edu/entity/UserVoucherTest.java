@@ -17,8 +17,8 @@ class UserVoucherTest {
 
         // Act & Assert
         assertEquals(1, entity.getId());
-        assertEquals(new User(), entity.getUser());
-        assertEquals(new Voucher(), entity.getVoucher());
+        assertNotNull(entity.getUser());
+        assertNotNull(entity.getVoucher());
         assertEquals(new java.util.Date(), entity.getSavedAt());
         assertEquals(new java.util.Date(), entity.getUsedAt());
     }

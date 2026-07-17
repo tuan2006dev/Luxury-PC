@@ -129,9 +129,8 @@ public class ProfileServiceTest {
     @Test
     void getCurrentUser_validUsername_returnUser() {
         // Given
-        UserDetails userDetails = mock(UserDetails.class);
+        org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User("testuser", "password", java.util.Collections.emptyList());
         when(authentication.getPrincipal()).thenReturn(userDetails);
-        when(userDetails.getUsername()).thenReturn("testuser");
         when(userRepository.findByEmail("testuser")).thenReturn(Optional.empty());
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(mockUser));
 

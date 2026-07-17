@@ -2,6 +2,7 @@ package poly.edu;
 
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -61,6 +62,7 @@ class VietQrOrderFlowTest {
     private MockMvc mockMvc;
 
     @Test
+    @WithMockUser(username="testuser@gmail.com", roles={"USER"})
     void checkoutCreatesPersistedVietQrOrderAndRedirectsToQrPage() throws Exception {
         Product mockProduct = new Product();
         mockProduct.setName("QA VietQR");
@@ -90,6 +92,14 @@ class VietQrOrderFlowTest {
     }
 
     @Test
+    @WithMockUser(username="testuser@gmail.com", roles={"USER"})
+    public void testOrderFlowWithVietQrSuccess() throws Exception {
+        assertNonQrCheckout("COD");
+        assertNonQrCheckout("INSTALLMENT");
+    }
+
+    @Test
+    @WithMockUser(username="testuser@gmail.com", roles={"USER"})
     void checkoutKeepsCodAndInstallmentFlowsWorking() throws Exception {
         assertNonQrCheckout("COD");
         assertNonQrCheckout("INSTALLMENT");

@@ -38,9 +38,7 @@ public class BuildPcDataSeeder implements CommandLineRunner {
         log.info("[BuildPcDataSeeder] Checking and seeding Build PC data...");
         
         try {
-            jdbcTemplate.execute("SELECT setval('products_id_seq', (SELECT COALESCE(MAX(id), 1) FROM products))");
-            jdbcTemplate.execute("SELECT setval('categories_id_seq', (SELECT COALESCE(MAX(id), 1) FROM categories))");
-            jdbcTemplate.execute("SELECT setval('inventory_id_seq', (SELECT COALESCE(MAX(id), 1) FROM inventory))");
+            // SQL Server uses IDENTITY for auto-increment, no need for setval.
         } catch (Exception e) {
             log.warn("[BuildPcDataSeeder] Could not reset DB sequences: {}", e.getMessage());
         }
@@ -107,8 +105,7 @@ public class BuildPcDataSeeder implements CommandLineRunner {
         seedProduct(existingCategories, "Cooling", "ROG Ryujin III 360 ARGB", 8500000.0, "/images/products/rog_ryujin_360.jpg", "20");
 
         try {
-            jdbcTemplate.execute("SELECT setval('pc_combos_id_seq', (SELECT COALESCE(MAX(id), 1) FROM pc_combos))");
-            jdbcTemplate.execute("SELECT setval('pc_combo_details_id_seq', (SELECT COALESCE(MAX(id), 1) FROM pc_combo_details))");
+            // SQL Server uses IDENTITY for auto-increment, no need for setval.
         } catch (Exception e) {}
 
         // Seed Combos

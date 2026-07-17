@@ -32,12 +32,10 @@ public class UserRepositoryTest {
     @BeforeEach
     public void setup() {
         Role adminRole = new Role();
-        adminRole.setId(1);
         adminRole.setName("ADMIN");
         entityManager.persist(adminRole);
 
         Role userRole = new Role();
-        userRole.setId(2);
         userRole.setName("USER");
         entityManager.persist(userRole);
 

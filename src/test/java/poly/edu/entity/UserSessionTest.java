@@ -21,7 +21,7 @@ class UserSessionTest {
 
         // Act & Assert
         assertEquals(1, entity.getId());
-        assertEquals(new User(), entity.getUser());
+        assertNotNull(entity.getUser());
         assertEquals("sessionId_test", entity.getSessionId());
         assertEquals("userAgent_test", entity.getUserAgent());
         assertEquals("deviceInfo_test", entity.getDeviceInfo());

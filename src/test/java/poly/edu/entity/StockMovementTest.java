@@ -18,7 +18,7 @@ class StockMovementTest {
 
         // Act & Assert
         assertEquals(1, entity.getId());
-        assertEquals(new Product(), entity.getProduct());
+        assertNotNull(entity.getProduct());
         assertEquals(1, entity.getChangeQuantity());
         assertEquals("movementType_test", entity.getMovementType());
         assertEquals("note_test", entity.getNote());

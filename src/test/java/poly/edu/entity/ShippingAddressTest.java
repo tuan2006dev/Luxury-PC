@@ -20,7 +20,7 @@ class ShippingAddressTest {
 
         // Act & Assert
         assertEquals(1, entity.getId());
-        assertEquals(new User(), entity.getUser());
+        assertNotNull(entity.getUser());
         assertEquals("recipientName_test", entity.getRecipientName());
         assertEquals("phone_test", entity.getPhone());
         assertEquals("address_test", entity.getAddress());

@@ -36,11 +36,11 @@ public interface NewsRepository extends JpaRepository<News, Integer> {
     Page<poly.edu.dto.NewsSummaryDto> searchPublishedNews(@Param("keyword") String keyword, Pageable pageable);
     
     // Top 5 Latest News
-    @Query("SELECT new poly.edu.dto.NewsSummaryDto(n.id, n.title, n.slug, n.summary, n.thumbnail, n.createdAt, n.viewCount, n.status, c.name, u.fullName) FROM News n LEFT JOIN n.category c LEFT JOIN n.author u WHERE n.status = :status ORDER BY n.createdAt DESC LIMIT 5")
+    @Query("SELECT new poly.edu.dto.NewsSummaryDto(n.id, n.title, n.slug, n.summary, n.thumbnail, n.createdAt, n.viewCount, n.status, c.name, u.fullName) FROM News n LEFT JOIN n.category c LEFT JOIN n.author u WHERE n.status = :status ORDER BY n.createdAt DESC FETCH FIRST 5 ROWS ONLY")
     List<poly.edu.dto.NewsSummaryDto> findTop5ByStatusOrderByCreatedAtDesc(@Param("status") NewsStatus status);
     
     // Top 5 Most Viewed News
-    @Query("SELECT new poly.edu.dto.NewsSummaryDto(n.id, n.title, n.slug, n.summary, n.thumbnail, n.createdAt, n.viewCount, n.status, c.name, u.fullName) FROM News n LEFT JOIN n.category c LEFT JOIN n.author u WHERE n.status = :status ORDER BY n.viewCount DESC LIMIT 5")
+    @Query("SELECT new poly.edu.dto.NewsSummaryDto(n.id, n.title, n.slug, n.summary, n.thumbnail, n.createdAt, n.viewCount, n.status, c.name, u.fullName) FROM News n LEFT JOIN n.category c LEFT JOIN n.author u WHERE n.status = :status ORDER BY n.viewCount DESC FETCH FIRST 5 ROWS ONLY")
     List<poly.edu.dto.NewsSummaryDto> findTop5ByStatusOrderByViewCountDesc(@Param("status") NewsStatus status);
     
     // Related news (Same category, excluding current)

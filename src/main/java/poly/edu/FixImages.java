@@ -8,9 +8,10 @@ import java.sql.Statement;
 
 public class FixImages {
     public static void main(String[] args) {
-        String url = "jdbc:postgresql://db.fxwmcnagogiwczmyfmnu.supabase.co:5432/postgres?sslmode=require";
-        String user = "postgres";
-        String password = "trangwebpcuytin";
+        // Supabase/PostgreSQL connection has been replaced with SQL Server for the main project.
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=luxpcc;encrypt=false";
+        String user = "sa";
+        String password = "";
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement();
@@ -49,7 +50,7 @@ public class FixImages {
                     count++;
                 }
                 pstmt.executeBatch();
-                System.out.println("SUCCESSFULLY UPDATED " + count + " PRODUCTS IN POSTGRESQL.");
+                System.out.println("SUCCESSFULLY UPDATED " + count + " PRODUCTS IN SQL SERVER.");
             }
         } catch (Exception e) {
             // SECURITY WARNING: Hardcoded credentials above must be moved to environment variables

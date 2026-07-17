@@ -37,7 +37,12 @@ public class BuildPcControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(buildPcController).build();
+        org.springframework.web.servlet.view.InternalResourceViewResolver viewResolver = new org.springframework.web.servlet.view.InternalResourceViewResolver();
+        viewResolver.setPrefix("/WEB-INF/views/");
+        viewResolver.setSuffix(".jsp");
+        mockMvc = MockMvcBuilders.standaloneSetup(buildPcController)
+            .setViewResolvers(viewResolver)
+            .build();
     }
 
     @Test

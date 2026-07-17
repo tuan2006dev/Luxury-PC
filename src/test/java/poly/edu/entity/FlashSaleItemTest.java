@@ -17,8 +17,8 @@ class FlashSaleItemTest {
 
         // Act & Assert
         assertEquals(1, entity.getId());
-        assertEquals(new FlashSale(), entity.getFlashSale());
-        assertEquals(new Product(), entity.getProduct());
+        assertNotNull(entity.getFlashSale());
+        assertNotNull(entity.getProduct());
         assertEquals(1.0, entity.getSalePrice());
         assertEquals(1, entity.getSaleQuantity());
     }

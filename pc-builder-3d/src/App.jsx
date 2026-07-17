@@ -559,7 +559,7 @@ function App() {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#040404', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
         <div style={{ width: '60px', height: '60px', border: '4px solid rgba(201, 168, 76, 0.1)', borderTop: '4px solid #c9a84c', borderRadius: '50%', animation: 'spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite', marginBottom: '1.5rem' }} />
         <h2 style={{ color: '#c9a84c', letterSpacing: '2px', fontSize: '1.5rem', fontWeight: 300 }}>LUXURY 3D BUILDER</h2>
-        <p style={{ color: '#888', fontSize: '0.85rem', marginTop: '0.5rem' }}>Đang tải linh kiện từ Supabase Database...</p>
+        <p style={{ color: '#888', fontSize: '0.85rem', marginTop: '0.5rem' }}>Đang tải linh kiện từ cơ sở dữ liệu SQL Server...</p>
         <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );

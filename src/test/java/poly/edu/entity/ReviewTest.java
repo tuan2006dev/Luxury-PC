@@ -14,8 +14,10 @@ class ReviewTest {
         entity.setStars(1);
         entity.setImage("image_test");
         entity.setVideo("video_test");
-        entity.setUser(new User());
-        entity.setProduct(new Product());
+        User testUser = new User();
+        Product testProduct = new Product();
+        entity.setUser(testUser);
+        entity.setProduct(testProduct);
 
         // Act & Assert
         assertEquals(1, entity.getId());
@@ -23,7 +25,7 @@ class ReviewTest {
         assertEquals(1, entity.getStars());
         assertEquals("image_test", entity.getImage());
         assertEquals("video_test", entity.getVideo());
-        assertEquals(new User(), entity.getUser());
-        assertEquals(new Product(), entity.getProduct());
+        assertEquals(testUser, entity.getUser());
+        assertEquals(testProduct, entity.getProduct());
     }
 }
