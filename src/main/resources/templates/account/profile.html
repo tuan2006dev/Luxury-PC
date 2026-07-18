@@ -1194,18 +1194,18 @@
               </div>
               <div style="padding:1rem; border-top:1px dashed #cbd5e1; text-align:center;">
                 <!-- Đã sử dụng -->
-                <span th:if="${uv.isUsed}" class="order-status"
+                <span th:if="${uv.status == 'CONSUMED'}" class="order-status"
                   style="background: rgba(255, 255, 255, 0.05); color: #64748b; border: 1px solid rgba(255, 255, 255, 0.1);"
                   data-translate="profile-voucher-status-used">Đã sử dụng</span>
 
                 <!-- Đã hết hạn hoặc ngừng hoạt động -->
                 <span
-                  th:if="${!uv.isUsed and ((uv.voucher.endDate != null and uv.voucher.endDate.before(#dates.createNow())) or !uv.voucher.active)}"
+                  th:if="${uv.status != 'CONSUMED' and ((uv.voucher.endDate != null and uv.voucher.endDate.before(#dates.createNow())) or !uv.voucher.active)}"
                   class="order-status status-canceled" data-translate="profile-voucher-status-expired">Đã hết hạn</span>
 
                 <!-- Sẵn sàng sử dụng -->
                 <span
-                  th:if="${!uv.isUsed and (uv.voucher.endDate == null or !uv.voucher.endDate.before(#dates.createNow())) and uv.voucher.active}"
+                  th:if="${uv.status != 'CONSUMED' and (uv.voucher.endDate == null or !uv.voucher.endDate.before(#dates.createNow())) and uv.voucher.active}"
                   class="order-status status-delivered" data-translate="profile-voucher-status-ready">Sẵn sàng sử
                   dụng</span>
               </div>
