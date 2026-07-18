@@ -92,7 +92,105 @@
                     <p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>
                 </div>
             </div>
-        </div>
+        <!-- SEARCH JS LOGIC -->
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const searchBtn = document.getElementById('nav-search-btn');
+                const searchOverlay = document.getElementById('search-overlay');
+                const searchClose = document.getElementById('search-close');
+                const searchInput = document.getElementById('search-input');
+                const searchClear = document.getElementById('search-clear');
+                const searchTags = document.querySelectorAll('.search-tag');
+
+                if (searchBtn && searchOverlay) {
+                    searchBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        searchOverlay.classList.add('active');
+                        setTimeout(() => searchInput.focus(), 100);
+                    });
+                }
+
+                if (searchClose && searchOverlay) {
+                    searchClose.addEventListener('click', () => {
+                        searchOverlay.classList.remove('active');
+                    });
+                }
+                
+                if (searchClear && searchInput) {
+                    searchClear.addEventListener('click', () => {
+                        searchInput.value = '';
+                        searchInput.focus();
+                    });
+                }
+
+                const performSearch = (query) => {
+                    if (query && query.trim() !== '') {
+                        window.location.href = '/products?search=' + encodeURIComponent(query.trim());
+                    }
+                };
+
+                const searchResultsContainer = document.getElementById('search-results');
+                let debounceTimer;
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const val = e.target.value.trim();
+                        clearTimeout(debounceTimer);
+                        
+                        if (!val) {
+                            searchResultsContainer.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
+                            return;
+                        }
+
+                        searchResultsContainer.innerHTML = '<div style="padding: 15px; text-align: center; color: #666;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tìm kiếm...</div>';
+
+                        debounceTimer = setTimeout(() => {
+                            fetch('/api/products/search?q=' + encodeURIComponent(val))
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data && data.length > 0) {
+                                        let html = '<div class="search-suggestions" style="display:flex; flex-direction:column; gap:0;">';
+                                        data.forEach(item => {
+                                            html += `
+                                                <a href="${item.productUrl}" style="display:flex; align-items:center; gap:12px; padding:12px; border-bottom:1px solid #eee; text-decoration:none; transition:0.2s;" onmouseover="this.style.backgroundColor='#f9f9f9'" onmouseout="this.style.backgroundColor='transparent'">
+                                                    <img src="${item.image}" alt="${item.name}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;">
+                                                    <div style="flex:1;">
+                                                        <div style="font-size:14px; font-weight:600; color:#000; margin-bottom:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${item.name}</div>
+                                                        <div style="font-size:14px; font-weight:700; color:#e53935;">${item.price}</div>
+                                                    </div>
+                                                </a>
+                                            `;
+                                        });
+                                        html += `
+                                            <a href="/products?search=${encodeURIComponent(val)}" style="display:block; text-align:center; padding:12px; font-size:13px; font-weight:600; color:#007bff; text-decoration:none;">Xem tất cả kết quả cho "${val}" <i class="fa-solid fa-arrow-right"></i></a>
+                                        </div>`;
+                                        searchResultsContainer.innerHTML = html;
+                                    } else {
+                                        searchResultsContainer.innerHTML = '<p class="search-hint" style="color:#e53935;">Không tìm thấy sản phẩm nào phù hợp.</p>';
+                                    }
+                                })
+                                .catch(err => {
+                                    searchResultsContainer.innerHTML = '<p class="search-hint">Lỗi kết nối. Vui lòng thử lại.</p>';
+                                });
+                        }, 400);
+                    });
+
+                    searchInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            performSearch(e.target.value);
+                        }
+                    });
+                }
+
+                if (searchTags) {
+                    searchTags.forEach(tag => {
+                        tag.addEventListener('click', (e) => {
+                            performSearch(e.target.dataset.query);
+                        });
+                    });
+                }
+            });
+        </script>
     </div>
 </body>
 
