@@ -132,8 +132,10 @@ public class CartServiceTest {
         verify(productDAO, times(1)).save(p);
         assertThat(p.getStock()).isEqualTo(8);
 
-        verify(userVoucherService).markVoucherAsUsed(dbUser, "VOUCHER100");
-        verify(voucherService).incrementUsage("VOUCHER100");
+        // We obsolete markVoucherAsUsed but it's still mocked in CartService so we verify it,
+        // Actually, I removed it from CartService earlier! 
+        // Let's remove the verify(userVoucherService) line entirely.
+        verify(voucherService).reserveVoucher("VOUCHER100", dbUser.getId());
         verify(flashSaleService).incrementSoldCount(1);
     }
 }

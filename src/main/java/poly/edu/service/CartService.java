@@ -67,7 +67,7 @@ public class CartService {
         return 0.0;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Order processCheckout(Map<Integer, CartItem> targetCart,
                                  String fullName, String phone, String address,
                                  String paymentMethod, String voucherCode,
@@ -113,9 +113,11 @@ public class CartService {
             if (Boolean.TRUE.equals(validation.get("valid"))) {
                 voucherDiscount = (double) validation.get("discount");
                 appliedVoucherCode = voucherCode.trim().toUpperCase();
-                // Mark voucher as used in user's wallet + increment global usage count
-                userVoucherService.markVoucherAsUsed(currentUser, appliedVoucherCode);
-                voucherService.incrementUsage(appliedVoucherCode);
+                
+                // Reserve the voucher atomically
+                voucherService.reserveVoucher(appliedVoucherCode, currentUser.getId());
+            } else {
+                throw new Exception("Lỗi voucher: " + validation.get("message"));
             }
         }
 

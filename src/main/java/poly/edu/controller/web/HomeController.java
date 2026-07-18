@@ -16,8 +16,8 @@ import poly.edu.service.ProductService;
 import poly.edu.service.VoucherService;
 import poly.edu.service.WishlistService;
 import poly.edu.service.NewsService;
+import poly.edu.service.ProfileService;
 import poly.edu.dao.CategoryDAO;
-
 import poly.edu.service.NewsCategoryService;
 import poly.edu.entity.NewsCategory;
 import org.springframework.data.domain.Page;
@@ -49,6 +49,10 @@ public class HomeController {
     final CategoryDAO categoryDAO;
     
     final poly.edu.dao.ReviewDAO reviewDAO;
+
+    final ProfileService profileService;
+
+    final poly.edu.dao.UserVoucherDAO userVoucherDAO;
 
     // hasValidImage removed for performance
 
@@ -157,7 +161,7 @@ public class HomeController {
     }
 
     @GetMapping("/promotions")
-    public String promotions(Model model) {
+    public String promotions(Model model, Authentication authentication) {
         // Flash Sale từ database
         Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
         if (currentSale.isPresent()) {
@@ -215,7 +219,23 @@ public class HomeController {
         model.addAttribute("categories", categoryDAO.findAll());
 
         // Voucher từ database
-        model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
+        List<poly.edu.entity.Voucher> allVouchers = voucherService.getActiveVouchers();
+        
+        if (authentication != null && authentication.isAuthenticated()) {
+            poly.edu.entity.User user = profileService.getCurrentUser(authentication);
+            if (user != null) {
+                List<poly.edu.entity.UserVoucher> savedVouchers = userVoucherDAO.findByUserOrderBySavedAtDesc(user);
+                List<String> savedCodes = savedVouchers.stream()
+                        .map(uv -> uv.getVoucher().getCode())
+                        .collect(Collectors.toList());
+                
+                allVouchers = allVouchers.stream()
+                        .filter(v -> !savedCodes.contains(v.getCode()))
+                        .collect(Collectors.toList());
+            }
+        }
+        
+        model.addAttribute("activeVouchers", allVouchers);
         return "promotions";
     }
 }

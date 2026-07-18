@@ -35,13 +35,15 @@ public class ProfileApiController {
     private final ProductDAO productDAO;
     private final EmailService emailService;
     private final poly.edu.service.ProfileService profileService;
+    private final poly.edu.service.VoucherService voucherService;
 
-    public ProfileApiController(UserRepository userRepository, OrderDAO orderDAO, ProductDAO productDAO, EmailService emailService, poly.edu.service.ProfileService profileService) {
+    public ProfileApiController(UserRepository userRepository, OrderDAO orderDAO, ProductDAO productDAO, EmailService emailService, poly.edu.service.ProfileService profileService, poly.edu.service.VoucherService voucherService) {
         this.userRepository = userRepository;
         this.orderDAO = orderDAO;
         this.productDAO = productDAO;
         this.emailService = emailService;
         this.profileService = profileService;
+        this.voucherService = voucherService;
     }
 
     private User resolveUser(Authentication authentication) {
@@ -214,6 +216,15 @@ public class ProfileApiController {
 
         // Gửi email thông báo cho Admin
         emailService.sendOrderCancellationEmailToAdmin(order);
+        
+        // Hoàn trả voucher nếu có
+        if (order.getVoucherCode() != null && !order.getVoucherCode().trim().isEmpty() && order.getUser() != null) {
+            try {
+                voucherService.restoreVoucher(order.getVoucherCode(), order.getUser().getId());
+            } catch (Exception e) {
+                log.error("Failed to restore voucher on order cancel", e);
+            }
+        }
 
         response.put("success", true);
         response.put("message", "Hủy đơn hàng thành công.");

@@ -21,8 +21,15 @@ public class UserVoucher {
     @JoinColumn(name = "voucher_id", nullable = false)
     private Voucher voucher;
 
-    @Column(name = "is_used", nullable = false)
-    private Boolean isUsed = false;
+    /**
+     * Trạng thái voucher của user: AVAILABLE, RESERVED, CONSUMED, EXPIRED, CANCELLED, REFUNDED
+     */
+    @Column(name = "status", nullable = false)
+    private String status = "AVAILABLE";
+
+    @Column(name = "reservation_expires_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date reservationExpiresAt;
 
     @Column(name = "saved_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -35,20 +42,21 @@ public class UserVoucher {
     public UserVoucher() {
     }
 
-    public UserVoucher(Integer id, User user, Voucher voucher, Boolean isUsed, Date savedAt, Date usedAt) {
+    public UserVoucher(Integer id, User user, Voucher voucher, String status, Date savedAt, Date usedAt, Date reservationExpiresAt) {
         this.id = id;
         this.user = user;
         this.voucher = voucher;
-        this.isUsed = isUsed;
+        this.status = status;
         this.savedAt = savedAt;
         this.usedAt = usedAt;
+        this.reservationExpiresAt = reservationExpiresAt;
     }
 
     @PrePersist
     protected void onCreate() {
         this.savedAt = new Date();
-        if (this.isUsed == null) {
-            this.isUsed = false;
+        if (this.status == null) {
+            this.status = "AVAILABLE";
         }
     }
 
@@ -76,12 +84,20 @@ public class UserVoucher {
         this.voucher = voucher;
     }
 
-    public Boolean getIsUsed() {
-        return isUsed;
+    public String getStatus() {
+        return status;
     }
 
-    public void setIsUsed(Boolean isUsed) {
-        this.isUsed = isUsed;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getReservationExpiresAt() {
+        return reservationExpiresAt;
+    }
+
+    public void setReservationExpiresAt(Date reservationExpiresAt) {
+        this.reservationExpiresAt = reservationExpiresAt;
     }
 
     public Date getSavedAt() {

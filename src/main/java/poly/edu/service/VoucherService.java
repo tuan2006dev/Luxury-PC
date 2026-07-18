@@ -2,6 +2,7 @@ package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.VoucherDAO;
@@ -12,6 +13,9 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class VoucherService {
+
+    @Value("${voucher.reservation-timeout:15}")
+    private int reservationTimeoutMinutes;
 
     private final VoucherDAO voucherDAO;
 
@@ -56,8 +60,8 @@ public class VoucherService {
 
         Voucher voucher = opt.get();
 
-        // Check if user has this voucher in their wallet and unused
-        Optional<poly.edu.entity.UserVoucher> userVoucherOpt = userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(user, code.trim().toUpperCase());
+        // Check if user has this voucher in their wallet and unused (AVAILABLE)
+        Optional<poly.edu.entity.UserVoucher> userVoucherOpt = userVoucherDAO.findByUserAndVoucherCodeAndStatus(user, code.trim().toUpperCase(), "AVAILABLE");
         if (userVoucherOpt.isEmpty()) {
             result.put("valid", false);
             result.put("message", "Bạn chưa lưu mã này hoặc mã đã được sử dụng!");
@@ -97,6 +101,9 @@ public class VoucherService {
         }
 
         double discount = voucher.calculateDiscount(cartTotal);
+        if (discount > cartTotal) {
+            discount = cartTotal; // Security: Prevent negative total
+        }
         result.put("valid", true);
         result.put("discount", discount);
         result.put("message", "Áp dụng thành công! Giảm " + String.format("%,.0f", discount) + "₫");
@@ -106,18 +113,50 @@ public class VoucherService {
     }
 
     /**
-     * Tăng số lần sử dụng voucher sau khi đặt hàng
+     * Tạm giữ voucher khi người dùng đặt hàng
      */
     @Transactional
-    public void incrementUsage(String code) {
-        Optional<Voucher> opt = voucherDAO.findByCode(code.trim().toUpperCase());
-        if (opt.isPresent()) {
-            Voucher v = opt.get();
-            v.setUsedCount(v.getUsedCount() + 1);
-            voucherDAO.save(v);
+    public void reserveVoucher(String code, Integer userId) {
+        String upperCode = code.trim().toUpperCase();
+        int updated = voucherDAO.incrementUsageAtomically(upperCode);
+        if (updated == 0) {
+            throw new RuntimeException("Voucher này đã hết lượt sử dụng (Out of stock).");
+        }
+        
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, reservationTimeoutMinutes);
+        Date expiresAt = cal.getTime();
+        
+        int uvUpdated = userVoucherDAO.reserveVoucherAtomically(userId, upperCode, expiresAt);
+        if (uvUpdated == 0) {
+            // Rollback global increment if user didn't actually have it available
+            voucherDAO.decrementUsageAtomically(upperCode);
+            throw new RuntimeException("Bạn không thể sử dụng mã này do lỗi hệ thống hoặc đã dùng rồi.");
         }
     }
 
+    /**
+     * Xác nhận sử dụng voucher (khi thanh toán thành công)
+     */
+    @Transactional
+    public void consumeVoucher(String code, Integer userId) {
+        String upperCode = code.trim().toUpperCase();
+        userVoucherDAO.consumeReservedVoucherAtomically(userId, upperCode);
+    }
+
+    /**
+     * Hoàn trả voucher (khi hủy đơn hoặc hết hạn thanh toán)
+     */
+    @Transactional
+    public void restoreVoucher(String code, Integer userId) {
+        String upperCode = code.trim().toUpperCase();
+        int restored = userVoucherDAO.restoreVoucherAtomically(userId, upperCode);
+        if (restored > 0) {
+            voucherDAO.decrementUsageAtomically(upperCode);
+        }
+    }
+
+    @org.springframework.cache.annotation.CacheEvict(value = "activeVouchers", allEntries = true)
     public Voucher saveVoucher(Voucher voucher) {
         if (voucher.getCode() != null) {
             voucher.setCode(voucher.getCode().trim().toUpperCase());
@@ -126,12 +165,14 @@ public class VoucherService {
     }
 
     @Transactional
+    @org.springframework.cache.annotation.CacheEvict(value = "activeVouchers", allEntries = true)
     public void deleteVoucher(Integer id) {
         userVoucherDAO.deleteByVoucherId(id);
         voucherDAO.deleteById(id);
     }
 
     @Transactional
+    @org.springframework.cache.annotation.CacheEvict(value = "activeVouchers", allEntries = true)
     public void toggleVoucher(Integer id) {
         Voucher v = voucherDAO.findById(id).orElse(null);
         if (v != null) {

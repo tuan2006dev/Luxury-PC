@@ -128,25 +128,29 @@
                     Flash Sale</h2>
                 <div class="flash-badge" style="margin:0;">🔥 HOT DEAL</div>
             </div>
-            <div class="flash-countdown" id="flash-countdown" style="display: flex; gap: 5px;">
-                <div class="countdown-block">
-                    <span class="countdown-num" id="fs-hours"
-                        style="background:#ef4444; padding: 4px 8px; border-radius: 4px; color:white; font-weight:bold;">00</span>
+            <div class="flash-countdown" id="flash-countdown" style="display: flex; gap: 8px; align-items: center;">
+                <div class="countdown-block" id="fs-days-block" style="display: none; flex-direction: column; align-items: center;">
+                    <span class="countdown-num" id="fs-days" style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                    <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Ngày</span>
                 </div>
-                <span style="font-weight:bold;">:</span>
-                <div class="countdown-block">
-                    <span class="countdown-num" id="fs-minutes"
-                        style="background:#ef4444; padding: 4px 8px; border-radius: 4px; color:white; font-weight:bold;">00</span>
+                <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
+                    <span class="countdown-num" id="fs-hours" style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                    <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Giờ</span>
                 </div>
-                <span style="font-weight:bold;">:</span>
-                <div class="countdown-block">
-                    <span class="countdown-num" id="fs-seconds"
-                        style="background:#ef4444; padding: 4px 8px; border-radius: 4px; color:white; font-weight:bold;">00</span>
+                <span style="font-weight:bold; color: #ef4444; margin-top: -14px;">:</span>
+                <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
+                    <span class="countdown-num" id="fs-minutes" style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                    <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Phút</span>
+                </div>
+                <span style="font-weight:bold; color: #ef4444; margin-top: -14px;">:</span>
+                <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
+                    <span class="countdown-num" id="fs-seconds" style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                    <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Giây</span>
                 </div>
             </div>
         </div>
-        <div class="grid-5-cols" th:if="${flashSaleItems != null}" style="margin-bottom: 50px;">
-            <div class="product-card" th:each="item, iterStat : ${flashSaleItems}" th:if="${iterStat.index < 5}"
+        <div class="grid-5-cols" th:if="${flashSaleItems != null}" style="display: flex; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 15px; scrollbar-width: thin; margin-bottom: 35px;">
+            <div class="product-card" th:each="item : ${flashSaleItems}" style="flex: 0 0 calc(20% - 16px); min-width: 220px;"
                 th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|">
                 <div class="flash-discount-badge"
                     style="position:absolute; top:10px; left:10px; background:#ef4444; color:white; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:bold; z-index:2;">
@@ -347,9 +351,49 @@
     </script>
     <script th:src="@{/js/script.js(v=3)}"></script>
     <script th:src="@{/js/cart.js}"></script>
-    <script>
+    <script th:inline="javascript">
         let newestExpanded = false;
         let featuredExpanded = false;
+
+        // Flash sale countdown timer
+        if (typeof flashSaleEndTime !== 'undefined' && flashSaleEndTime > 0) {
+            function updateFlashSaleTimer() {
+                const now = new Date().getTime();
+                const distance = flashSaleEndTime - now;
+                
+                if (distance < 0) {
+                    if (document.getElementById('fs-hours')) document.getElementById('fs-hours').innerText = "00";
+                    if (document.getElementById('fs-minutes')) document.getElementById('fs-minutes').innerText = "00";
+                    if (document.getElementById('fs-seconds')) document.getElementById('fs-seconds').innerText = "00";
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                const ds = document.getElementById('fs-days');
+                const hs = document.getElementById('fs-hours');
+                const ms = document.getElementById('fs-minutes');
+                const ss = document.getElementById('fs-seconds');
+                const dBlock = document.getElementById('fs-days-block');
+                
+                if (days > 0) {
+                    if(dBlock) dBlock.style.display = 'flex';
+                    if(ds) ds.innerText = days < 10 ? '0' + days : days;
+                } else {
+                    if(dBlock) dBlock.style.display = 'none';
+                }
+                
+                if(hs) hs.innerText = hours < 10 ? '0' + hours : hours;
+                if(ms) ms.innerText = minutes < 10 ? '0' + minutes : minutes;
+                if(ss) ss.innerText = seconds < 10 ? '0' + seconds : seconds;
+            }
+            
+            updateFlashSaleTimer();
+            setInterval(updateFlashSaleTimer, 1000);
+        }
 
         function filterProducts(category, element) {
             // Update active status on tabs

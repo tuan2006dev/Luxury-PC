@@ -79,24 +79,11 @@ public class UserVoucherService {
     }
     
     public List<UserVoucher> getMyUnusedVouchers(User user) {
-        return userVoucherDAO.findByUserAndIsUsedFalseOrderBySavedAtDesc(user);
+        return userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(user, "AVAILABLE");
     }
 
     @Transactional
     public void markVoucherAsUsed(User user, String voucherCode) {
-        String codeUpper = (voucherCode != null) ? voucherCode.trim().toUpperCase() : "";
-        Optional<UserVoucher> uvOpt = userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(user, codeUpper);
-        if (uvOpt.isPresent()) {
-            UserVoucher uv = uvOpt.get();
-            uv.setIsUsed(true);
-            uv.setUsedAt(new Date());
-            userVoucherDAO.save(uv);
-
-            // Also increment voucher usage
-            Voucher voucher = uv.getVoucher();
-            if (voucher.getUsedCount() == null) voucher.setUsedCount(0);
-            voucher.setUsedCount(voucher.getUsedCount() + 1);
-            voucherDAO.save(voucher);
-        }
+        // Obsolete. Use VoucherService reserve / consume methods.
     }
 }

@@ -20,6 +20,7 @@ public class AdminService {
     private final InventoryDAO inventoryDAO;
 
     private final StockMovementDAO stockMovementDAO;
+    private final VoucherService voucherService;
 
     public List<Order> getAllOrders() {
         return orderDAO.findAllOrderedByDate();
@@ -34,8 +35,21 @@ public class AdminService {
         Order order = getOrderById(orderId);
         if (order != null && Arrays.asList(
                 "PENDING", "PAID", "SHIPPING", "COMPLETED", "DA_HUY", "CANCELLED").contains(status)) {
+            
+            String oldStatus = order.getStatus();
             order.setStatus(status);
             orderDAO.save(order);
+            
+            // Voucher lifecycle management
+            if (order.getVoucherCode() != null && order.getUser() != null) {
+                if ("CANCELLED".equals(status) || "DA_HUY".equals(status)) {
+                    voucherService.restoreVoucher(order.getVoucherCode(), order.getUser().getId());
+                } else if ("PAID".equals(status) || "COMPLETED".equals(status) || "SHIPPING".equals(status)) {
+                    if ("PENDING".equals(oldStatus) || "CHO_XAC_NHAN_THANH_TOAN".equals(oldStatus)) {
+                        voucherService.consumeVoucher(order.getVoucherCode(), order.getUser().getId());
+                    }
+                }
+            }
         }
     }
 
@@ -47,6 +61,10 @@ public class AdminService {
                 && "CHO_XAC_NHAN_THANH_TOAN".equals(order.getStatus())) {
             order.setStatus("DA_THANH_TOAN");
             orderDAO.save(order);
+            
+            if (order.getVoucherCode() != null && order.getUser() != null) {
+                voucherService.consumeVoucher(order.getVoucherCode(), order.getUser().getId());
+            }
         }
     }
 

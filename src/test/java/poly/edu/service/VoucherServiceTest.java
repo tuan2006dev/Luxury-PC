@@ -67,7 +67,7 @@ public class VoucherServiceTest {
     @Test
     void validateVoucher_FailsIfUserDoesNotHaveIt() {
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
-        when(userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(user, "DISCOUNT50")).thenReturn(Optional.empty());
+        when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(eq(user), eq("DISCOUNT50"), eq("AVAILABLE"))).thenReturn(Optional.empty());
 
         Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, user);
         assertThat(res.get("valid")).isEqualTo(false);
@@ -78,7 +78,7 @@ public class VoucherServiceTest {
     void validateVoucher_FailsIfNotActive() {
         voucher.setActive(false);
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
-        when(userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(any(), any())).thenReturn(Optional.of(new UserVoucher()));
+        when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(any(), any(), eq("AVAILABLE"))).thenReturn(Optional.of(new UserVoucher()));
 
         Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, user);
         assertThat(res.get("valid")).isEqualTo(false);
@@ -89,7 +89,7 @@ public class VoucherServiceTest {
     void validateVoucher_FailsIfExpired() {
         voucher.setEndDate(new Date(System.currentTimeMillis() - 1000000));
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
-        when(userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(any(), any())).thenReturn(Optional.of(new UserVoucher()));
+        when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(any(), any(), eq("AVAILABLE"))).thenReturn(Optional.of(new UserVoucher()));
 
         Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, user);
         assertThat(res.get("valid")).isEqualTo(false);
@@ -99,7 +99,7 @@ public class VoucherServiceTest {
     @Test
     void validateVoucher_FailsIfMinOrderNotMet() {
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
-        when(userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(any(), any())).thenReturn(Optional.of(new UserVoucher()));
+        when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(any(), any(), eq("AVAILABLE"))).thenReturn(Optional.of(new UserVoucher()));
 
         Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 50.0, user);
         assertThat(res.get("valid")).isEqualTo(false);
@@ -109,7 +109,7 @@ public class VoucherServiceTest {
     @Test
     void validateVoucher_Success() {
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
-        when(userVoucherDAO.findByUserAndVoucherCodeAndIsUsedFalse(any(), any())).thenReturn(Optional.of(new UserVoucher()));
+        when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(any(), any(), eq("AVAILABLE"))).thenReturn(Optional.of(new UserVoucher()));
 
         Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, user);
         assertThat(res.get("valid")).isEqualTo(true);

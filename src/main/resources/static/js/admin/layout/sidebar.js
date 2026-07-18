@@ -188,7 +188,7 @@ let translations = {};
                 try {
                     translations = JSON.parse(cachedData);
                     setLanguage(savedLang);
-                    return; // Ngăn chặn tải lại để tránh flickering
+                    // Do not return here, let it fetch the latest translations from the server in the background
                 } catch (e) {
                     console.error("Lỗi đọc cache dịch admin:", e);
                 }
@@ -244,7 +244,13 @@ document.addEventListener("DOMContentLoaded", function() {
                             dateFormat: "Y-m-d\\TH:i",
                             altInput: true,
                             altFormat: "d/m/Y H:i",
-                            time_24hr: true
+                            time_24hr: true,
+                            plugins: [new confirmDatePlugin({
+                                confirmIcon: "<i class='fa-solid fa-check'></i> ", 
+                                confirmText: "Xác nhận",
+                                showAlways: true,
+                                theme: "light"
+                            })]
                         });
 
                         let altInput = fpInstance.altInput;

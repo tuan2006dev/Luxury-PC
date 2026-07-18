@@ -11,6 +11,11 @@
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/promotions.css}">
+    <style>
+        .flash-item-hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -32,7 +37,7 @@
         <!-- Banners -->
         <div class="promo-banners">
             <div class="promo-banner-card banner-red"
-                th:style="'background: #ba1a1a url(' + @{/images/flashsale/flashsalered.png} + ') no-repeat left center/cover; justify-content: flex-end; align-items: center; display: flex; gap: 20px; padding: 0 30px;'">
+                th:style="'background: #ba1a1a url(' + @{/images/flashsale/flashsalered.png} + ') no-repeat left center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px;'">
                 
                 <div class="banner-content" style="max-width: 40%; z-index: 2; text-align: left;">
                     <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 5px; line-height: 1.2;">
@@ -53,19 +58,23 @@
                 </div>
                 
                 <!-- Countdown timer on the right -->
-                <div class="banner-countdown" id="banner-countdown" th:if="${flashSaleEndTime != null}" style="background: rgba(0, 0, 0, 0.45); padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; backdrop-filter: blur(8px); z-index: 2; min-width: 150px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);">
+                <div class="banner-countdown" id="banner-countdown" th:if="${flashSaleEndTime != null}" style="background: rgba(0, 0, 0, 0.45); padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; backdrop-filter: blur(8px); z-index: 2; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); position: absolute; bottom: 20px; right: 20px;">
                     <div style="font-size: 10px; font-weight: 700; margin-bottom: 8px; color: #fecaca; text-transform: uppercase; letter-spacing: 1px;">Kết thúc trong</div>
                     <div style="display: flex; gap: 6px; justify-content: center;">
+                        <div id="days-block" style="display: none; flex-direction: column; align-items: center;">
+                            <div id="promo-days" style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">00</div>
+                            <span style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Ngày</span>
+                        </div>
                         <div style="display: flex; flex-direction: column; align-items: center;">
-                            <div id="promo-hours" style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; min-width: 32px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">00</div>
+                            <div id="promo-hours" style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">00</div>
                             <span style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Giờ</span>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: center;">
-                            <div id="promo-minutes" style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; min-width: 32px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">00</div>
+                            <div id="promo-minutes" style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">00</div>
                             <span style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Phút</span>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: center;">
-                            <div id="promo-seconds" style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; min-width: 32px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">00</div>
+                            <div id="promo-seconds" style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">00</div>
                             <span style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Giây</span>
                         </div>
                     </div>
@@ -73,7 +82,7 @@
             </div>
 
             <div class="promo-banner-card banner-blue"
-                th:style="'background: #0f3d99 url(' + @{/images/flashsale/flashsaleblue.png} + ') no-repeat left center/cover; justify-content: flex-end; align-items: center; display: flex; padding: 0 40px;'">
+                th:style="'background: #0f3d99 url(' + @{/images/flashsale/flashsaleblue.png} + ') no-repeat left center/cover; justify-content: flex-start; align-items: center; display: flex; padding: 0 50px;'">
                 <div class="banner-content" style="max-width: 50%; z-index: 2; text-align: left;">
                     <h2 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #93c5fd; margin-bottom: 6px; letter-spacing: 0.5px;">Khuyến mãi hè 2025</h2>
                     <div style="font-size: 22px; font-weight: 800; margin-bottom: 12px; line-height: 1.2; color: #fff;">
@@ -135,15 +144,37 @@
                         </div>
                         <p style="margin: 5px 0 0; font-size: 13px; color: #6b7280;">Sản phẩm giảm giá sâu trong khung giờ vàng, số lượng có hạn,...</p>
                     </div>
-                    <a href="#flash-sale" style="font-size: 13px; font-weight: 600; color: #3b82f6; text-decoration: none;">Xem tất cả Flash Sale <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="javascript:void(0)" id="toggle-flash-btn" th:if="${flashSaleItems != null and flashSaleItems.size() > 10}" onclick="toggleFlashSale()" style="font-size: 13px; font-weight: 600; color: #3b82f6; text-decoration: none;">Xem tất cả Flash Sale <i class="fa-solid fa-arrow-right"></i></a>
+                    <script>
+                        let fsExpanded = false;
+                        function toggleFlashSale() {
+                            fsExpanded = !fsExpanded;
+                            document.querySelectorAll('.flash-item-togglable').forEach(el => {
+                                if(fsExpanded) {
+                                    el.classList.remove('flash-item-hidden');
+                                    el.style.display = 'flex';
+                                } else {
+                                    el.classList.add('flash-item-hidden');
+                                    el.style.display = 'none';
+                                }
+                            });
+                            const btn = document.getElementById('toggle-flash-btn');
+                            if(fsExpanded) {
+                                btn.innerHTML = 'Thu gọn <i class="fa-solid fa-arrow-up"></i>';
+                            } else {
+                                btn.innerHTML = 'Xem tất cả Flash Sale <i class="fa-solid fa-arrow-right"></i>';
+                            }
+                        }
+                    </script>
                 </div>
 
                 <!-- If active sale items are present -->
                 <div class="flash-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;" th:if="${flashSaleItems != null and !flashSaleItems.isEmpty()}">
-                    <div class="flash-card" th:each="item : ${flashSaleItems}"
+                    <div class="flash-card" th:each="item, iterStat : ${flashSaleItems}"
+                        th:classappend="${iterStat.index >= 10} ? 'flash-item-hidden flash-item-togglable' : ''"
                         th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|"
                         th:attr="data-category=${item.product.category != null ? item.product.category.name : ''}"
-                        style="cursor: pointer; position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; transition: 0.2s; justify-content: space-between; min-height: 340px; height: auto;"
+                        th:style="${iterStat.index >= 10} ? 'display: none; cursor: pointer; position: relative; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; transition: 0.2s; justify-content: space-between; min-height: 340px; height: auto;' : 'cursor: pointer; position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; transition: 0.2s; justify-content: space-between; min-height: 340px; height: auto;'"
                         onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#e5e7eb'">
                         
                         <div style="position: relative; width: 100%; text-align: center; margin-bottom: 10px;">
@@ -389,76 +420,12 @@
                         </div>
                     </div>
 
-                    <!-- Fallback Mock Cards if activeVouchers is empty/null -->
+                    <!-- Fallback if activeVouchers is empty/null -->
                     <th:block th:if="${activeVouchers == null or activeVouchers.isEmpty()}">
-                        <!-- Mock 1 -->
-                        <div class="voucher-card" data-type="GENERAL" style="display: flex; flex-direction: column; background: #fff; border: 1.5px solid #fed7aa; border-radius: 12px; overflow: hidden; padding: 15px; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); height: 230px; position: relative; box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease; will-change: transform;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.06)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.03)';">
-                            <div style="border-top: 1.5px dashed #fed7aa; position: absolute; left: 0; right: 0; top: 69px; z-index: 1;"></div>
-                            
-                            <div style="margin-bottom: 25px; text-align: center; z-index: 2; position: relative;">
-                                <div style="background: #ea580c; border-radius: 6px; padding: 6px 0; color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 0.8px; box-shadow: 0 4px 6px rgba(234, 88, 12, 0.15);">
-                                    LUX10
-                                </div>
-                            </div>
-                            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; z-index: 2; margin-top: 10px;">
-                                <div>
-                                    <h4 style="margin: 0 0 4px; font-size: 13px; font-weight: 700; color: #111827;">Giảm 10% cho tất cả đơn hàng</h4>
-                                    <span style="font-size: 11px; color: #6b7280; display: block;">Đơn tối thiểu 0đ</span>
-                                </div>
-                                <div>
-                                    <div style="font-size: 10px; color: #9ca3af; margin-bottom: 12px; display: flex; flex-direction: column; gap: 2px;">
-                                        <span>HSD: <strong style="color: #4b5563;">31/07/2026</strong></span>
-                                        <span>Số lượt dùng: <strong style="color: #4b5563;">152/500</strong></span>
-                                    </div>
-                                    <button class="btn-copy" onclick="saveVoucher(this, 'LUX10')" style="width: 100%; background: #fff; color: #ea580c; border: 1px solid #ea580c; padding: 7px 0; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#ea580c'; this.style.color='#fff';" onmouseout="this.style.background='#fff'; this.style.color='#ea580c';">Lưu mã</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Mock 2 -->
-                        <div class="voucher-card" data-type="GENERAL" style="display: flex; flex-direction: column; background: #fff; border: 1.5px solid #fbcfe8; border-radius: 12px; overflow: hidden; padding: 15px; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); height: 230px; position: relative; box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease; will-change: transform;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.06)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.03)';">
-                            <div style="border-top: 1.5px dashed #fbcfe8; position: absolute; left: 0; right: 0; top: 69px; z-index: 1;"></div>
-                            
-                            <div style="margin-bottom: 25px; text-align: center; z-index: 2; position: relative;">
-                                <div style="background: #db2777; border-radius: 6px; padding: 6px 0; color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 0.8px; box-shadow: 0 4px 6px rgba(219, 39, 119, 0.15);">
-                                    LUX30
-                                </div>
-                            </div>
-                            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; z-index: 2; margin-top: 10px;">
-                                <div>
-                                    <h4 style="margin: 0; font-size: 13px; font-weight: 700; color: #111827;">Giảm giá 30%</h4>
-                                    <span style="font-size: 11px; color: #6b7280; display: block;">Đơn tối thiểu 0đ</span>
-                                </div>
-                                <div>
-                                    <div style="font-size: 10px; color: #9ca3af; margin-bottom: 12px; display: flex; flex-direction: column; gap: 2px;">
-                                        <span>HSD: <strong style="color: #4b5563;">11/08/2026</strong></span>
-                                        <span>Số lượt dùng: <strong style="color: #4b5563;">152/500</strong></span>
-                                    </div>
-                                    <button class="btn-copy" onclick="saveVoucher(this, 'LUX30')" style="width: 100%; background: #fff; color: #db2777; border: 1px solid #db2777; padding: 7px 0; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#db2777'; this.style.color='#fff';" onmouseout="this.style.background='#fff'; this.style.color='#db2777';">Lưu mã</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Mock 3 -->
-                        <div class="voucher-card" data-type="CATEGORY" style="display: flex; flex-direction: column; background: #fff; border: 1.5px solid #bfdbfe; border-radius: 12px; overflow: hidden; padding: 15px; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); height: 230px; position: relative; box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease; will-change: transform;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.06)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.03)';">
-                            <div style="border-top: 1.5px dashed #bfdbfe; position: absolute; left: 0; right: 0; top: 69px; z-index: 1;"></div>
-                            
-                            <div style="margin-bottom: 25px; text-align: center; z-index: 2; position: relative;">
-                                <div style="background: #2563eb; border-radius: 6px; padding: 6px 0; color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 0.8px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.15);">
-                                    LXR500
-                                </div>
-                            </div>
-                            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; z-index: 2; margin-top: 10px;">
-                                <div>
-                                    <h4 style="margin: 0; font-size: 13px; font-weight: 700; color: #111827;">Giảm 500k cho Mainboard</h4>
-                                    <span style="font-size: 11px; color: #6b7280; display: block;">Đơn tối thiểu 5,000,000đ</span>
-                                </div>
-                                <div>
-                                    <div style="font-size: 10px; color: #9ca3af; margin-bottom: 12px; display: flex; flex-direction: column; gap: 2px;">
-                                        <span>HSD: <strong style="color: #4b5563;">09/06/2028</strong></span>
-                                        <span>Số lượt dùng: <strong style="color: #4b5563;">152/500</strong></span>
-                                    </div>
-                                    <button class="btn-copy" onclick="saveVoucher(this, 'LXR500')" style="width: 100%; background: #fff; color: #2563eb; border: 1px solid #2563eb; padding: 7px 0; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#2563eb'; this.style.color='#fff';" onmouseout="this.style.background='#fff'; this.style.color='#2563eb';">Lưu mã</button>
-                                </div>
-                            </div>
+                        <div style="width: 100%; grid-column: 1 / -1; text-align: center; padding: 50px 20px; background: #fff; border-radius: 12px; border: 1px dashed #d1d5db; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-ticket-alt" style="font-size: 48px; color: #d1d5db; margin-bottom: 15px;"></i>
+                            <h3 style="font-size: 16px; color: #4b5563; margin: 0 0 8px; font-weight: 600;">Không có mã giảm giá nào mới</h3>
+                            <p style="font-size: 14px; color: #6b7280; margin: 0;">Bạn đã lưu tất cả các mã hiện có hoặc hệ thống đang chuẩn bị đợt khuyến mãi tiếp theo. Hãy kiểm tra ví voucher của bạn!</p>
                         </div>
                     </th:block>
                 </div>
@@ -598,7 +565,8 @@
                     return;
                 }
                 
-                var hours = Math.floor(distance / (1000 * 60 * 60));
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
                 
@@ -606,16 +574,27 @@
                 minutes = minutes < 10 ? '0' + minutes : minutes;
                 seconds = seconds < 10 ? '0' + seconds : seconds;
                 
+                var dEl = document.getElementById('promo-days');
                 var hEl = document.getElementById('promo-hours');
                 var mEl = document.getElementById('promo-minutes');
                 var sEl = document.getElementById('promo-seconds');
+                var dBlock = document.getElementById('days-block');
                 
+                if (dEl) dEl.innerText = days;
                 if (hEl) hEl.innerText = hours;
                 if (mEl) mEl.innerText = minutes;
                 if (sEl) sEl.innerText = seconds;
                 
+                if (dBlock) {
+                    if (days > 0) {
+                        dBlock.style.display = 'flex';
+                    } else {
+                        dBlock.style.display = 'none';
+                    }
+                }
+                
                 // Update all cards countdown text dynamically
-                var countdownText = hours + ':' + minutes + ':' + seconds;
+                var countdownText = (days > 0 ? days + ' ngày ' : '') + hours + ':' + minutes + ':' + seconds;
                 var cards = document.querySelectorAll('.card-countdown');
                 cards.forEach(function(c) {
                     c.innerText = countdownText;

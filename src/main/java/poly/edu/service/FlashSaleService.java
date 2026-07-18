@@ -36,34 +36,13 @@ public class FlashSaleService {
     }
 
     /**
-     * Job chạy ngầm mỗi phút để tự động bật/tắt flash sale
+     * Job chạy ngầm mỗi phút để tự động làm mới cache (clear cache) 
+     * nhằm cập nhật trạng thái flash sale tự động dựa trên thời gian thực mà không cần thao tác DB.
      */
     @org.springframework.scheduling.annotation.Scheduled(cron = "0 * * * * *")
-    @Transactional
     @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
     public void autoSyncFlashSaleStatus() {
-        Date now = new Date();
-        List<FlashSale> activeSales = flashSaleDAO.findCurrentActiveSale();
-        
-        if (activeSales != null && !activeSales.isEmpty()) {
-            FlashSale current = activeSales.get(0);
-            if (current.getEndTime() != null && current.getEndTime().before(now)) {
-                // Hết hạn -> Tắt
-                flashSaleDAO.deactivateAllSales();
-                
-                // Tìm chiến dịch tiếp theo
-                List<FlashSale> nextSales = flashSaleDAO.findValidSalesForTime(now);
-                if (nextSales != null && !nextSales.isEmpty()) {
-                    flashSaleDAO.activateSale(nextSales.get(0).getId());
-                }
-            }
-        } else {
-            // Tự động bật nếu có chiến dịch đang trong thời gian
-            List<FlashSale> nextSales = flashSaleDAO.findValidSalesForTime(now);
-            if (nextSales != null && !nextSales.isEmpty()) {
-                activateFlashSale(nextSales.get(0).getId());
-            }
-        }
+        // Chỉ cần evict cache để các truy vấn sau tự động lấy Flash Sale hiện hành hợp lệ nhất.
     }
 
     /**
@@ -198,13 +177,16 @@ public class FlashSaleService {
     }
 
     /**
-     * Kích hoạt chương trình Flash Sale được chọn và tắt tất cả chương trình khác
+     * Bật / tắt hiển thị chương trình Flash Sale
      */
     @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
     @Transactional
     public void activateFlashSale(Integer id) {
-        flashSaleDAO.deactivateAllSales();
-        flashSaleDAO.activateSale(id);
+        FlashSale target = flashSaleDAO.findById(id).orElse(null);
+        if (target != null) {
+            target.setActive(true);
+            flashSaleDAO.save(target);
+        }
     }
 
     @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
@@ -213,14 +195,8 @@ public class FlashSaleService {
         FlashSale target = flashSaleDAO.findById(id).orElse(null);
         if (target == null) return;
 
-        boolean targetNewState = !Boolean.TRUE.equals(target.getActive());
-        if (targetNewState) {
-            flashSaleDAO.deactivateAllSales();
-            flashSaleDAO.activateSale(id);
-        } else {
-            target.setActive(false);
-            flashSaleDAO.save(target);
-        }
+        target.setActive(!Boolean.TRUE.equals(target.getActive()));
+        flashSaleDAO.save(target);
     }
 
     public List<FlashSale> getUpcomingFlashSales() {

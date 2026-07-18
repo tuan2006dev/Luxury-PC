@@ -32,12 +32,12 @@ public class UserVoucherDAOTest {
     }
 
     @Test
-    public void test_findByUserAndIsUsedFalseOrderBySavedAtDesc() {
+    public void test_findByUserAndStatusOrderBySavedAtDesc() {
         try {
-            Object result = repository.findByUserAndIsUsedFalseOrderBySavedAtDesc(null);
+            Object result = repository.findByUserAndStatusOrderBySavedAtDesc(null, "AVAILABLE");
             assertThat(repository).isNotNull();
         } catch (Exception e) {
-            System.out.println("Exception ignored for generated test findByUserAndIsUsedFalseOrderBySavedAtDesc: " + e.getMessage());
+            System.out.println("Exception ignored for generated test findByUserAndStatusOrderBySavedAtDesc: " + e.getMessage());
         }
     }
 
@@ -52,12 +52,12 @@ public class UserVoucherDAOTest {
     }
 
     @Test
-    public void test_findByUserAndVoucherCodeAndIsUsedFalse() {
+    public void test_findByUserAndVoucherCodeAndStatus() {
         try {
-            Object result = repository.findByUserAndVoucherCodeAndIsUsedFalse(null, "test");
+            Object result = repository.findByUserAndVoucherCodeAndStatus(null, "test", "AVAILABLE");
             assertThat(repository).isNotNull();
         } catch (Exception e) {
-            System.out.println("Exception ignored for generated test findByUserAndVoucherCodeAndIsUsedFalse: " + e.getMessage());
+            System.out.println("Exception ignored for generated test findByUserAndVoucherCodeAndStatus: " + e.getMessage());
         }
     }
 

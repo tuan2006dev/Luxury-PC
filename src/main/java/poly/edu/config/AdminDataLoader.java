@@ -104,17 +104,22 @@ public class AdminDataLoader implements CommandLineRunner {
         }
 
         Role adminRole = roleDAO.findByName("ADMIN");
-        if (adminRole != null) {
-            boolean hasAdminRole = userRoleDAO.findByUserId(admin.getId()).stream()
-                    .anyMatch(ur -> "ADMIN".equals(ur.getRole().getName()));
-            if (!hasAdminRole) {
+        if (adminRole == null) {
+            adminRole = new Role();
+            adminRole.setName("ADMIN");
+            roleDAO.save(adminRole);
+            log.info("[DataLoader] Created ADMIN role");
+        }
+
+        boolean hasAdminRole = userRoleDAO.findByUserId(admin.getId()).stream()
+                .anyMatch(ur -> "ADMIN".equals(ur.getRole().getName()));
+        if (!hasAdminRole) {
                 UserRole userRole = new UserRole();
                 userRole.setUser(admin);
                 userRole.setRole(adminRole);
                 userRoleDAO.save(userRole);
                 log.info("[DataLoader] Assigned ADMIN role to: {}", TEST_ADMIN_EMAIL);
             }
-        }
 
         // Stable order codes make this seed idempotent across application restarts.
         seedSampleOrder(admin, products, "DEMO-VIETQR-WAITING", 17_200_000D,

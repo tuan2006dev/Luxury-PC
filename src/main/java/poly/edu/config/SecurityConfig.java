@@ -24,6 +24,8 @@ public class SecurityConfig {
 
         private final poly.edu.security.CustomAuthenticationSuccessHandler successHandler;
 
+        private final poly.edu.service.AuthService authService;
+
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
@@ -37,6 +39,7 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
+                                .userDetailsService(authService)
                                 .securityContext(context -> context
                                                 .securityContextRepository(securityContextRepository()))
                                 .authorizeHttpRequests(auth -> auth
@@ -53,7 +56,7 @@ public class SecurityConfig {
                                                                 "/build-pc/**", "/api/tickets/**",
                                                                 "/api/reviews/**", "/api/wishlist/**",
                                                                 "/api/address/**", "/api/translations/**",
-                                                                "/api/shipping/**",
+                                                                "/api/shipping/**", "/api/test-login-debug",
                                                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg",
                                                                 "/*.jpeg", "/*.svg", "/error", "/testdb",
                                                                 "/cart", "/cart/**",
