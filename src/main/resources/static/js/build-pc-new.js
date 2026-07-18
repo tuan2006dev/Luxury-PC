@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deleteBtn = document.querySelector('.btn-action-delete');
     if (deleteBtn) {
-        deleteBtn.addEventListener('click', clearAll);
+        deleteBtn.addEventListener('click', confirmClearAll);
     }
     
     const addToCartBtn = document.querySelector('.btn-add-cart-large');
@@ -331,80 +331,44 @@ function checkCompatibility() {
 
 
 function updatePerformanceScore() {
-    const cpu = currentBuild['cpu'];
-    const vga = currentBuild['vga'];
-    const ram = currentBuild['ram'];
+    let count = 0;
+    const categories = ['cpu', 'mainboard', 'ram', 'vga', 'ssd', 'psu', 'case', 'cooling'];
+    categories.forEach(cat => {
+        if (currentBuild[cat]) count++;
+    });
     
-    // Tier classification (1-10)
-    let cpuTier = 2;
-    if (cpu) {
-        const cName = cpu.name.toLowerCase();
-        if (cName.includes('i9') || cName.includes('ryzen 9') || cName.includes('ultra 9')) cpuTier = 9;
-        else if (cName.includes('i7') || cName.includes('ryzen 7') || cName.includes('ultra 7')) cpuTier = 7;
-        else if (cName.includes('i5') || cName.includes('ryzen 5') || cName.includes('ultra 5')) cpuTier = 5;
-        else if (cName.includes('i3') || cName.includes('ryzen 3')) cpuTier = 3;
-    }
+    let avgScore = (count / 8) * 10;
+    let scoreStr = avgScore % 1 === 0 ? avgScore.toString() : avgScore.toFixed(1);
 
-    let vgaTier = 2;
-    if (vga) {
-        const vName = vga.name.toLowerCase();
-        if (vName.includes('4090') || vName.includes('5090')) vgaTier = 10;
-        else if (vName.includes('4080') || vName.includes('7900') || vName.includes('5080') || vName.includes('4070 ti')) vgaTier = 8.5;
-        else if (vName.includes('4070') || vName.includes('7800') || vName.includes('3080')) vgaTier = 7;
-        else if (vName.includes('4060') || vName.includes('3060') || vName.includes('7600')) vgaTier = 5;
-        else if (vName.includes('1650') || vName.includes('1050')) vgaTier = 3;
-    }
-
-    let ramScore = ram ? 7 : 2; // Basic RAM score
-
-    if (!cpu || !vga) {
-        document.getElementById('main-perf-score').innerText = '?';
-        document.getElementById('main-perf-label').innerText = 'Chưa xác định';
-        document.getElementById('bar-gaming').style.width = '0%';
-        document.getElementById('val-gaming').innerText = '0/10';
-        document.getElementById('bar-graphic').style.width = '0%';
-        document.getElementById('val-graphic').innerText = '0/10';
-        document.getElementById('bar-work').style.width = '0%';
-        document.getElementById('val-work').innerText = '0/10';
-        document.getElementById('bar-multi').style.width = '0%';
-        document.getElementById('val-multi').innerText = '0/10';
-        return;
-    }
-
-    // Formulas based on explanations
-    let gamingScore = (vgaTier * 0.7) + (cpuTier * 0.3);
-    let graphicScore = (vgaTier * 0.5) + (cpuTier * 0.5);
-    let workScore = (cpuTier * 0.6) + (ramScore * 0.4);
-    let multiScore = (cpuTier * 0.5) + (ramScore * 0.5);
-
-    let avgScore = (gamingScore + graphicScore + workScore + multiScore) / 4;
-    avgScore = Math.min(avgScore + 1.5, 10); // Boost a bit for visual
+    document.getElementById('main-perf-score').innerText = scoreStr;
     
-    // Formatting to 1 decimal
-    gamingScore = Math.min(gamingScore + 1, 10).toFixed(1);
-    graphicScore = Math.min(graphicScore + 1, 10).toFixed(1);
-    workScore = Math.min(workScore + 1, 10).toFixed(1);
-    multiScore = Math.min(multiScore + 1, 10).toFixed(1);
-    avgScore = avgScore.toFixed(1);
-
-    document.getElementById('main-perf-score').innerText = avgScore;
-    let label = 'Rất Tốt';
-    if(avgScore < 5) label = 'Yếu';
-    else if(avgScore < 7) label = 'Khá';
-    else if(avgScore >= 9) label = 'Tuyệt Vời';
+    let label = 'Chưa xác định';
+    if(count > 0 && count < 4) label = 'Đang cấu hình...';
+    else if(count >= 4 && count < 8) label = 'Sắp hoàn thiện';
+    else if(count === 8) label = 'Hoàn chỉnh 100%';
     document.getElementById('main-perf-label').innerText = label;
 
-    document.getElementById('bar-gaming').style.width = (gamingScore * 10) + '%';
-    document.getElementById('val-gaming').innerText = gamingScore + '/10';
+    const circle = document.querySelector('.perf-circle');
+    if (circle) {
+        if (count === 0) {
+            circle.style.background = 'conic-gradient(#e5e7eb 0% 100%)';
+        } else {
+            const percent = (count / 8) * 100;
+            circle.style.background = `conic-gradient(#f59e0b 0% ${percent}%, #e5e7eb ${percent}% 100%)`;
+        }
+    }
+
+    document.getElementById('bar-gaming').style.width = (avgScore * 10) + '%';
+    document.getElementById('val-gaming').innerText = scoreStr + '/10';
     
-    document.getElementById('bar-graphic').style.width = (graphicScore * 10) + '%';
-    document.getElementById('val-graphic').innerText = graphicScore + '/10';
+    document.getElementById('bar-graphic').style.width = (avgScore * 10) + '%';
+    document.getElementById('val-graphic').innerText = scoreStr + '/10';
 
-    document.getElementById('bar-work').style.width = (workScore * 10) + '%';
-    document.getElementById('val-work').innerText = workScore + '/10';
+    document.getElementById('bar-work').style.width = (avgScore * 10) + '%';
+    document.getElementById('val-work').innerText = scoreStr + '/10';
 
-    document.getElementById('bar-multi').style.width = (multiScore * 10) + '%';
-    document.getElementById('val-multi').innerText = multiScore + '/10';
+    document.getElementById('bar-multi').style.width = (avgScore * 10) + '%';
+    document.getElementById('val-multi').innerText = scoreStr + '/10';
 
     // Recalculate FPS for tracked games
     recalcAllFps();
@@ -413,7 +377,48 @@ function updatePerformanceScore() {
 // ------------------------------------------------------------------
 // Steam API Logic
 
-let selectedGames = [];
+let selectedGames = [
+    {
+        id: "730",
+        name: "Counter-Strike 2",
+        tiny_image: "https://steamcdn-a.akamaihd.net/steam/apps/730/capsule_sm_120.jpg",
+        header_image: "https://steamcdn-a.akamaihd.net/steam/apps/730/header.jpg",
+        req_min: "Core i5 750",
+        req_rec: "Core i5 750"
+    },
+    {
+        id: "578080",
+        name: "PUBG: BATTLEGROUNDS",
+        tiny_image: "https://steamcdn-a.akamaihd.net/steam/apps/578080/capsule_sm_120.jpg",
+        header_image: "https://steamcdn-a.akamaihd.net/steam/apps/578080/header.jpg",
+        req_min: "Core i5-4430 / GTX 960",
+        req_rec: "Core i5-6600K / GTX 1060"
+    },
+    {
+        id: "271590",
+        name: "Grand Theft Auto V",
+        tiny_image: "https://steamcdn-a.akamaihd.net/steam/apps/271590/capsule_sm_120.jpg",
+        header_image: "https://steamcdn-a.akamaihd.net/steam/apps/271590/header.jpg",
+        req_min: "Core 2 Quad Q6600 / 9800 GT",
+        req_rec: "Core i5 3470 / GTX 660"
+    },
+    {
+        id: "1091500",
+        name: "Cyberpunk 2077",
+        tiny_image: "https://steamcdn-a.akamaihd.net/steam/apps/1091500/capsule_sm_120.jpg",
+        header_image: "https://steamcdn-a.akamaihd.net/steam/apps/1091500/header.jpg",
+        req_min: "Core i7-6700 / GTX 1060",
+        req_rec: "Core i7-12700 / RTX 2060"
+    },
+    {
+        id: "1172470",
+        name: "Apex Legends",
+        tiny_image: "https://steamcdn-a.akamaihd.net/steam/apps/1172470/capsule_sm_120.jpg",
+        header_image: "https://steamcdn-a.akamaihd.net/steam/apps/1172470/header.jpg",
+        req_min: "Core i3-6300 / GT 640",
+        req_rec: "Core i5-3570K / GTX 970"
+    }
+];
 let steamSearchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -481,6 +486,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
+    // Render default top games
+    renderFpsGames();
 });
 
 function addSteamGame(item) {
@@ -533,7 +541,7 @@ function renderFpsGames() {
         return;
     }
     
-    selectedGames.forEach(game => {
+    selectedGames.forEach((game, index) => {
         let estFps = calculateEstFps(game);
         let color = '#000';
         if(estFps === '?') { estFps = 'Thiếu linh kiện'; color = '#666'; }
@@ -541,13 +549,17 @@ function renderFpsGames() {
         else if (estFps < 120) color = '#eab308';
         else { estFps = estFps + '+ FPS'; color = '#10b981'; }
 
+        let rankNum = index + 1;
+        let rankColor = rankNum === 1 ? '#eab308' : (rankNum === 2 ? '#94a3b8' : (rankNum === 3 ? '#d97706' : '#94a3b8'));
+
         list.innerHTML += `
-            <div class="fps-item">
+            <div class="fps-item" style="display: flex; align-items: center; gap: 10px;">
+                <div style="font-size: 16px; font-weight: 800; color: ${rankColor}; min-width: 25px; text-align: center;">#${rankNum}</div>
                 <div class="fps-img" onclick="removeGame('${game.id}')" style="cursor:pointer; position:relative;" title="Nhấn để xóa">
                     <img src="${game.header_image || game.tiny_image}" alt="${game.name}">
                     <div style="position:absolute; inset:0; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; opacity:0; transition:0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0"><i class="fa-solid fa-xmark" style="color:#fff; font-size:20px;"></i></div>
                 </div>
-                <div class="fps-info">
+                <div class="fps-info" style="flex: 1;">
                     <div class="fps-name" style="color:#000; font-weight:600;">${game.name}</div>
                     <div class="fps-setting" style="color:#666;">High Setting</div>
                 </div>
@@ -758,49 +770,217 @@ function showBuildGuide() {
     });
 }
 
-function saveBuildLocal() {
+async function saveBuild() {
     const buildData = {};
     Object.keys(currentBuild).forEach(key => {
         if (currentBuild[key]) {
-            buildData[key] = currentBuild[key].id; // Save IDs only
+            buildData[key] = currentBuild[key].id;
         }
     });
     
     if (Object.keys(buildData).length === 0) {
-        Swal.fire('Lỗi', 'Cấu hình của bạn đang trống!', 'warning');
+        showToast('Lỗi: Cấu hình của bạn đang trống!');
         return;
     }
+
+    let savedBuilds = JSON.parse(localStorage.getItem('luxury_saved_builds') || '[]');
     
-    localStorage.setItem('luxury_saved_build', JSON.stringify(buildData));
+    const { value: buildName } = await Swal.fire({
+        title: 'Nhập tên cấu hình',
+        input: 'text',
+        inputLabel: 'Tên cấu hình (VD: PC Văn Phòng, PC Gaming...)',
+        inputPlaceholder: 'Nhập tên...',
+        showCancelButton: true,
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Bạn cần nhập tên cấu hình!'
+            }
+        }
+    });
+
+    if (!buildName) return; // User cancelled
+
+    const newBuild = {
+        name: buildName,
+        date: new Date().toLocaleDateString('vi-VN'),
+        data: buildData
+    };
+
+    if (savedBuilds.length >= 3) {
+        // Ask to replace
+        const inputOptions = {};
+        savedBuilds.forEach((b, index) => {
+            inputOptions[index] = `${b.name} (${b.date})`;
+        });
+
+        const { value: indexToReplace } = await Swal.fire({
+            title: 'Danh sách cấu hình đã đầy',
+            text: 'Bạn chỉ được lưu tối đa 3 cấu hình. Vui lòng chọn 1 cấu hình cũ để ghi đè:',
+            input: 'radio',
+            inputOptions: inputOptions,
+            inputValidator: (value) => {
+                if (!value && value !== 0 && value !== '0') {
+                    return 'Bạn phải chọn 1 cấu hình để ghi đè!'
+                }
+            },
+            showCancelButton: true
+        });
+
+        if (indexToReplace !== undefined && indexToReplace !== null) {
+            savedBuilds[indexToReplace] = newBuild;
+            localStorage.setItem('luxury_saved_builds', JSON.stringify(savedBuilds));
+            showToast('Đã ghi đè cấu hình thành công!');
+        }
+    } else {
+        savedBuilds.push(newBuild);
+        localStorage.setItem('luxury_saved_builds', JSON.stringify(savedBuilds));
+        showToast('Đã lưu cấu hình thành công!');
+    }
+}
+
+async function manualLoadBuild() {
+    let savedBuilds = JSON.parse(localStorage.getItem('luxury_saved_builds') || '[]');
     
+    if (savedBuilds.length === 0) {
+        // Fallback for old single save format migration
+        const oldSave = localStorage.getItem('luxury_saved_build');
+        if (oldSave) {
+            savedBuilds.push({
+                name: 'Cấu hình cũ',
+                date: new Date().toLocaleDateString('vi-VN'),
+                data: JSON.parse(oldSave)
+            });
+            localStorage.setItem('luxury_saved_builds', JSON.stringify(savedBuilds));
+            localStorage.removeItem('luxury_saved_build');
+        } else {
+            Swal.fire('Thông báo', 'Bạn chưa lưu cấu hình nào!', 'info');
+            return;
+        }
+    }
+
+    let htmlContent = '<div style="display:flex; flex-direction:column; gap:10px; text-align:left;">';
+    savedBuilds.forEach((b, index) => {
+        htmlContent += `
+            <div style="padding:15px; border:1px solid #ddd; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <strong style="font-size:16px;">${b.name}</strong><br>
+                    <small style="color:#666;">Lưu ngày: ${b.date}</small>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-primary btn-sm" style="padding:5px 15px;" onclick="Swal.close(); window.loadSelectedBuild(${index})">Tải</button>
+                    <button class="btn btn-danger btn-sm" style="padding:5px 15px;" onclick="Swal.close(); window.deleteSelectedBuild(${index})"><i class="fa-regular fa-trash-can"></i></button>
+                </div>
+            </div>
+        `;
+    });
+    htmlContent += '</div>';
+
     Swal.fire({
-        title: 'Đã lưu cấu hình!',
-        text: 'Cấu hình của bạn đã được lưu vào trình duyệt. Bạn có thể tải lại vào lần sau.',
-        icon: 'success',
-        timer: 3000,
-        showConfirmButton: false
+        title: 'Danh sách cấu hình đã lưu',
+        html: htmlContent,
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: 'Đóng'
     });
 }
 
-function loadSavedBuildLocal() {
-    const saved = localStorage.getItem('luxury_saved_build');
-    if (saved) {
+window.loadSelectedBuild = function(index) {
+    let savedBuilds = JSON.parse(localStorage.getItem('luxury_saved_builds') || '[]');
+    if (savedBuilds[index]) {
+        loadBuildFromIds(savedBuilds[index].data);
+        showToast(`Đã khôi phục: ${savedBuilds[index].name}`);
+    }
+};
+
+window.deleteSelectedBuild = function(index) {
+    let savedBuilds = JSON.parse(localStorage.getItem('luxury_saved_builds') || '[]');
+    if (savedBuilds[index]) {
         Swal.fire({
-            title: 'Phát hiện cấu hình cũ',
-            text: "Bạn có muốn tải lại cấu hình đang build dở lần trước không?",
-            icon: 'question',
+            title: 'Xác nhận xóa',
+            text: `Bạn có chắc muốn xóa cấu hình "${savedBuilds[index].name}"?`,
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Tải lại',
-            cancelButtonText: 'Bỏ qua'
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
         }).then((result) => {
             if (result.isConfirmed) {
-                const data = JSON.parse(saved);
-                loadBuildFromIds(data);
-            } else {
-                localStorage.removeItem('luxury_saved_build');
+                savedBuilds.splice(index, 1);
+                localStorage.setItem('luxury_saved_builds', JSON.stringify(savedBuilds));
+                showToast('Đã xóa cấu hình!');
+                setTimeout(() => manualLoadBuild(), 300); // Reopen the modal
             }
         });
     }
+};
+
+function confirmClearAll() {
+    document.getElementById('confirmClearModal').style.display = 'flex';
+}
+
+function closeConfirmClear() {
+    document.getElementById('confirmClearModal').style.display = 'none';
+}
+
+function executeClearAll() {
+    currentBuild = {};
+    localStorage.removeItem('luxury_saved_build');
+    
+    renderBuildComponents();
+    calculateTotals();
+    
+    // Reset specific UI elements if needed
+    const grid = document.getElementById('build-components-list');
+    if (grid) grid.innerHTML = '';
+    
+    closeConfirmClear();
+    showToast('Đã xóa tất cả linh kiện!');
+}
+
+function showBuildGuide() {
+    document.getElementById('guideModal').style.display = 'flex';
+}
+
+function closeBuildGuide() {
+    document.getElementById('guideModal').style.display = 'none';
+}
+
+function closeShareModal() {
+    document.getElementById('shareModal').style.display = 'none';
+}
+
+function copyShareUrl() {
+    const copyText = document.getElementById("shareUrlInput");
+    copyText.select();
+    document.execCommand("copy");
+    showToast('Đã copy link vào Clipboard!');
+}
+
+function openShareUrl() {
+    const url = document.getElementById("shareUrlInput").value;
+    if (url) window.open(url, '_blank');
+}
+
+function downloadQR() {
+    const qrImg = document.querySelector('#qrCodeContainer img');
+    const qrCanvas = document.querySelector('#qrCodeContainer canvas');
+    if (!qrImg && !qrCanvas) {
+        showToast('Không tìm thấy mã QR!');
+        return;
+    }
+    
+    let url;
+    if (qrCanvas) {
+        url = qrCanvas.toDataURL("image/png");
+    } else if (qrImg) {
+        url = qrImg.src;
+    }
+    
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "build-pc-qr.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 async function shareBuild() {
@@ -827,7 +1007,7 @@ async function shareBuild() {
     });
     
     if (!hasItems) {
-        Swal.fire('Lỗi', 'Cấu hình của bạn đang trống!', 'warning');
+        showToast('Lỗi: Cấu hình của bạn đang trống!');
         return;
     }
     
@@ -841,22 +1021,23 @@ async function shareBuild() {
         });
         const data = await res.json();
         if (data.success) {
+            Swal.close();
             const shareUrl = window.location.origin + '/build-pc?share=' + data.shareCode;
-            Swal.fire({
-                title: 'Đã tạo link chia sẻ!',
-                html: `
-                    <p style="margin-bottom: 10px;">Gửi link này cho bạn bè để họ xem cấu hình của bạn:</p>
-                    <input type="text" id="shareUrlInput" class="swal2-input" value="${shareUrl}" readonly style="width:100%;">
-                `,
-                icon: 'success',
-                confirmButtonText: 'Copy Link',
-                preConfirm: () => {
-                    const copyText = document.getElementById("shareUrlInput");
-                    copyText.select();
-                    document.execCommand("copy");
-                    Swal.fire('Đã copy!', 'Link đã được lưu vào Clipboard.', 'success');
-                }
+            document.getElementById('shareUrlInput').value = shareUrl;
+            
+            // Generate QR
+            const qrContainer = document.getElementById('qrCodeContainer');
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: shareUrl,
+                width: 150,
+                height: 150,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
             });
+            
+            document.getElementById('shareModal').style.display = 'flex';
         } else {
             Swal.fire('Lỗi', 'Không thể tạo link chia sẻ.', 'error');
         }
@@ -872,27 +1053,23 @@ async function loadBuildFromIds(idsMap) {
     
     try {
         let loadedCount = 0;
-        const promises = Object.keys(idsMap).map(async (key) => {
-            const id = idsMap[key];
-            if (id) {
-                try {
-                    const res = await fetch(`/api/products/${id}`);
-                    const product = await res.json();
-                    if (product) {
-                        currentBuild[key] = product;
-                        updateUI(key);
-                        loadedCount++;
-                    }
-                } catch(e) { console.error("Error loading product", id); }
+        
+        Object.keys(idsMap).forEach(category => {
+            const id = parseInt(idsMap[category]);
+            if (id && productsData[category]) {
+                const prod = productsData[category].find(p => p.id === id);
+                if (prod) {
+                    currentBuild[category] = prod;
+                    loadedCount++;
+                } else {
+                    console.error("Không tìm thấy sản phẩm có id", id, "trong danh mục", category);
+                }
             }
         });
         
-        await Promise.all(promises);
-        
-        updateTotalPrice();
-        checkCompatibility();
-        updatePerformanceScore();
-        updateSteamFPS();
+        // Cập nhật lại giao diện
+        renderBuildComponents();
+        calculateTotals();
         
         if (loadedCount > 0) {
             Swal.fire('Thành công!', 'Cấu hình đã được tải hoàn tất.', 'success');
@@ -900,6 +1077,7 @@ async function loadBuildFromIds(idsMap) {
             Swal.fire('Thông báo', 'Không tìm thấy linh kiện nào trong cấu hình này.', 'info');
         }
     } catch(e) {
+        console.error(e);
         Swal.fire('Lỗi', 'Có lỗi khi tải cấu hình.', 'error');
     }
 }
@@ -943,8 +1121,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const shareCode = urlParams.get('share');
         if (shareCode) {
             loadSharedBuild(shareCode);
-        } else {
-            loadSavedBuildLocal();
         }
     }, 1000);
 });

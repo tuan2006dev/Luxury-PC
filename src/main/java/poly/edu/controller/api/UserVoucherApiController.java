@@ -35,6 +35,7 @@ public class UserVoucherApiController {
             Map<String, Object> resp = new HashMap<>();
             resp.put("success", false);
             resp.put("message", "Vui lòng đăng nhập để lưu voucher!");
+            resp.put("redirect", "/auth/login");
             return ResponseEntity.status(401).body(resp);
         }
 
