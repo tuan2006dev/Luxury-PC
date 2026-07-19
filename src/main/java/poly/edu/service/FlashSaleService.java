@@ -13,8 +13,11 @@ import poly.edu.entity.Product;
 
 import java.util.*;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FlashSaleService {
 
     private final FlashSaleDAO flashSaleDAO;
@@ -34,13 +37,18 @@ public class FlashSaleService {
         }
         return Optional.empty();
     }
+    
+    @org.springframework.cache.annotation.Cacheable("currentActiveSales")
+    public List<FlashSale> getCurrentActiveSales() {
+        return flashSaleDAO.findCurrentActiveSale();
+    }
 
     /**
      * Job chạy ngầm mỗi phút để tự động làm mới cache (clear cache) 
      * nhằm cập nhật trạng thái flash sale tự động dựa trên thời gian thực mà không cần thao tác DB.
      */
     @org.springframework.scheduling.annotation.Scheduled(cron = "0 * * * * *")
-    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)
     public void autoSyncFlashSaleStatus() {
         // Chỉ cần evict cache để các truy vấn sau tự động lấy Flash Sale hiện hành hợp lệ nhất.
     }
@@ -70,12 +78,12 @@ public class FlashSaleService {
         return flashSaleItemDAO.findByFlashSaleIdWithProduct(saleId);
     }
 
-    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)
     public FlashSale saveFlashSale(FlashSale flashSale) {
         return flashSaleDAO.save(flashSale);
     }
 
-    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)
     @Transactional
     public void deleteFlashSale(Integer id) {
         List<FlashSaleItem> items = getItemsBySaleId(id);
@@ -85,7 +93,7 @@ public class FlashSaleService {
         flashSaleDAO.deleteById(id);
     }
 
-    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)
     @Transactional
     public FlashSaleItem addItemToSale(Integer saleId, Integer productId, Double salePrice, Integer saleQuantity) {
         FlashSale sale = flashSaleDAO.findById(saleId).orElse(null);
@@ -144,42 +152,43 @@ public class FlashSaleService {
     }
 
     /**
-     * Tăng số lượng đã bán trong flash sale
+     * Tăng số lượng đã bán trong flash sale một cách an toàn (Atomic)
      */
     @Transactional
     public void incrementSoldCount(Integer productId) {
-        Optional<FlashSale> current = getCurrentFlashSale();
-        if (current.isPresent()) {
-            Optional<FlashSaleItem> item = flashSaleItemDAO
-                    .findByFlashSaleIdAndProductId(current.get().getId(), productId);
-            if (item.isPresent()) {
-                FlashSaleItem fsi = item.get();
-                int currentSold = fsi.getSoldCount() != null ? fsi.getSoldCount() : 0;
-                fsi.setSoldCount(currentSold + 1);
-                flashSaleItemDAO.save(fsi);
-            }
-        }
+        incrementSoldCount(productId, 1);
     }
 
     @Transactional
     public void incrementSoldCount(Integer productId, Integer quantity) {
         Optional<FlashSale> current = getCurrentFlashSale();
         if (current.isPresent()) {
-            Optional<FlashSaleItem> item = flashSaleItemDAO
-                    .findByFlashSaleIdAndProductId(current.get().getId(), productId);
-            if (item.isPresent()) {
-                FlashSaleItem fsi = item.get();
-                int currentSold = fsi.getSoldCount() != null ? fsi.getSoldCount() : 0;
-                fsi.setSoldCount(currentSold + quantity);
-                flashSaleItemDAO.save(fsi);
+            int updatedRows = flashSaleItemDAO.incrementSoldCountAtomically(current.get().getId(), productId, quantity);
+            if (updatedRows == 0) {
+                log.error("[FlashSale] Giao dịch thất bại: Hết hàng hoặc sản phẩm {} không nằm trong Flash Sale {}", productId, current.get().getId());
+                throw new RuntimeException("Sản phẩm Flash Sale đã hết lượt mua với giá ưu đãi hoặc không tồn tại.");
+            } else {
+                log.info("[FlashSale] Tăng số lượng thành công: {} sản phẩm ID {} cho Flash Sale {}", quantity, productId, current.get().getId());
             }
+        }
+    }
+
+    /**
+     * Trả lại số lượng Flash sale (Khi hủy đơn hàng)
+     */
+    @Transactional
+    public void decrementSoldCount(Integer productId, Integer quantity) {
+        Optional<FlashSale> current = getCurrentFlashSale();
+        if (current.isPresent()) {
+            flashSaleItemDAO.decrementSoldCountAtomically(current.get().getId(), productId, quantity);
+            log.info("[FlashSale] Hoàn trả kho thành công: {} sản phẩm ID {} cho Flash Sale {}", quantity, productId, current.get().getId());
         }
     }
 
     /**
      * Bật / tắt hiển thị chương trình Flash Sale
      */
-    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)
     @Transactional
     public void activateFlashSale(Integer id) {
         FlashSale target = flashSaleDAO.findById(id).orElse(null);
@@ -189,7 +198,7 @@ public class FlashSaleService {
         }
     }
 
-    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)
     @Transactional
     public void toggleFlashSale(Integer id) {
         FlashSale target = flashSaleDAO.findById(id).orElse(null);

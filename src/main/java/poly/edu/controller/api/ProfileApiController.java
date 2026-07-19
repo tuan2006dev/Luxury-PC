@@ -36,14 +36,16 @@ public class ProfileApiController {
     private final EmailService emailService;
     private final poly.edu.service.ProfileService profileService;
     private final poly.edu.service.VoucherService voucherService;
+    private final poly.edu.service.FlashSaleService flashSaleService;
 
-    public ProfileApiController(UserRepository userRepository, OrderDAO orderDAO, ProductDAO productDAO, EmailService emailService, poly.edu.service.ProfileService profileService, poly.edu.service.VoucherService voucherService) {
+    public ProfileApiController(UserRepository userRepository, OrderDAO orderDAO, ProductDAO productDAO, EmailService emailService, poly.edu.service.ProfileService profileService, poly.edu.service.VoucherService voucherService, poly.edu.service.FlashSaleService flashSaleService) {
         this.userRepository = userRepository;
         this.orderDAO = orderDAO;
         this.productDAO = productDAO;
         this.emailService = emailService;
         this.profileService = profileService;
         this.voucherService = voucherService;
+        this.flashSaleService = flashSaleService;
     }
 
     private User resolveUser(Authentication authentication) {
@@ -210,6 +212,13 @@ public class ProfileApiController {
                     Integer newStock = (product.getStock() != null ? product.getStock() : 0) + item.getQuantity();
                     product.setStock(newStock);
                     productDAO.save(product);
+                    
+                    // Khôi phục số lượng flash sale nếu có
+                    try {
+                        flashSaleService.decrementSoldCount(product.getId(), item.getQuantity());
+                    } catch (Exception e) {
+                        log.error("Failed to restore flash sale quantity on order cancel", e);
+                    }
                 }
             }
         }

@@ -122,6 +122,111 @@
             </div>
         </div>
 
+
+
+        <!-- ============================================== -->
+        <!-- CÁC POPUP CỦA TRANG BUILD PC (CHUYỂN TỪ TRANG BUILD QUA) -->
+        <!-- ============================================== -->
+    <!-- Product Selection Modal -->
+    <div id="productModal" class="modal"
+        style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div class="modal-content"
+            style="background-color:#fff; border-radius:8px; width:90%; max-width:800px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden;">
+            <div class="modal-header"
+                style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                <h3 id="modalTitle" style="margin:0; font-size:18px; color:#000;">Chọn Linh Kiện</h3>
+                <button class="close-modal" onclick="closeModal()"
+                    style="background:none; border:none; font-size:24px; cursor:pointer; color:#666;">&times;</button>
+            </div>
+            <div class="modal-search" style="padding:15px 20px; background:#f9f9f9; border-bottom:1px solid #eee;">
+                <input type="text" id="modalSearch" placeholder="Tìm kiếm sản phẩm..."
+                    style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;"
+                    oninput="filterModalProducts()">
+            </div>
+            <div class="modal-body" id="modalProductList"
+                style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:15px;">
+                <!-- Product Items -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Build Guide Modal -->
+    <div id="guideModal" class="modal"
+        style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+        <div class="modal-content"
+            style="background-color:#fff; border-radius:12px; width:90%; max-width:600px; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div class="modal-header"
+                style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background: #f8fafc;">
+                <h3 style="margin:0; font-size:20px; color:#1e293b; font-weight:700;"><i class="fa-solid fa-book-open" style="color:#3b82f6; margin-right:8px;"></i> Hướng Dẫn Tự Build PC</h3>
+                <button onclick="closeBuildGuide()"
+                    style="background:none; border:none; font-size:24px; cursor:pointer; color:#64748b; transition:0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#64748b'">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:20px 25px; overflow-y:auto; flex:1; font-size:15px; color:#475569; line-height:1.6;">
+                <h4 style="color:#0f172a; margin-top:0;">Quy Trình Chuẩn (Gợi Ý)</h4>
+                <ol style="padding-left:20px; margin-bottom:20px;">
+                    <li style="margin-bottom:10px;"><strong>Bước 1: Chọn CPU (Bộ Vi Xử Lý)</strong> - Là trái tim của hệ thống. Quyết định sức mạnh tính toán tổng thể.</li>
+                    <li style="margin-bottom:10px;"><strong>Bước 2: Chọn Mainboard (Bo Mạch Chủ)</strong> - Khung xương kết nối mọi thứ. Phải có Socket tương thích với CPU đã chọn.</li>
+                    <li style="margin-bottom:10px;"><strong>Bước 3: Chọn RAM (Bộ Nhớ Trong)</strong> - DDR4 hoặc DDR5 tùy thuộc vào Mainboard. Dung lượng khuyên dùng từ 16GB trở lên.</li>
+                    <li style="margin-bottom:10px;"><strong>Bước 4: Chọn VGA (Card Đồ Họa)</strong> - Quan trọng nhất cho việc chơi Game và làm Đồ họa (Render).</li>
+                    <li style="margin-bottom:10px;"><strong>Bước 5: Chọn Lưu Trữ (SSD/HDD)</strong> - Nên có ít nhất 1 ổ SSD NVMe để cài Windows cho tốc độ khởi động nhanh.</li>
+                    <li style="margin-bottom:10px;"><strong>Bước 6: Chọn Nguồn (PSU)</strong> - Rất quan trọng! Công suất nguồn phải đủ lớn để gánh toàn bộ linh kiện, đặc biệt là VGA. Hệ thống sẽ tự động tính toán tổng công suất tiêu thụ cho bạn.</li>
+                    <li style="margin-bottom:10px;"><strong>Bước 7: Chọn Case & Tản Nhiệt</strong> - Tản nhiệt giúp CPU mát mẻ, Case giúp chứa mọi thứ và tăng tính thẩm mỹ.</li>
+                </ol>
+                <div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:15px; border-radius:4px; font-size:14px;">
+                    <i class="fa-solid fa-circle-info" style="color:#3b82f6;"></i> <strong>Mẹo:</strong> Hệ thống của chúng tôi có công cụ <em>Kiểm Tra Tương Thích</em> ở cột giữa để đảm bảo các linh kiện bạn chọn sẽ hoạt động hoàn hảo cùng nhau.
+                </div>
+            </div>
+            <div style="padding:15px 20px; border-top:1px solid #eee; text-align:right; background: #f8fafc;">
+                <button onclick="closeBuildGuide()" style="padding:10px 20px; background:#3b82f6; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">Đã Hiểu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal"
+        style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+        <div class="modal-content"
+            style="background-color:#fff; border-radius:12px; width:90%; max-width:450px; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div class="modal-header"
+                style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background: #f8fafc;">
+                <h3 style="margin:0; font-size:20px; color:#1e293b; font-weight:700;"><i class="fa-solid fa-share-nodes" style="color:#10b981; margin-right:8px;"></i> Chia Sẻ Cấu Hình</h3>
+                <button onclick="closeShareModal()"
+                    style="background:none; border:none; font-size:24px; cursor:pointer; color:#64748b; transition:0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#64748b'">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:30px 25px; text-align:center; display:flex; flex-direction:column; align-items:center;">
+                <div id="qrCodeContainer" style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:20px; display:inline-block;"></div>
+                <div style="width:100%; margin-bottom:15px; display:flex; gap:10px;">
+                    <input type="text" id="shareUrlInput" readonly style="flex:1; padding:10px 15px; border:1px solid #cbd5e1; border-radius:6px; background:#f8fafc; color:#475569; font-size:14px; outline:none;" />
+                    <button onclick="copyShareUrl()" style="padding:10px 15px; background:#10b981; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'"><i class="fa-regular fa-copy"></i> Copy</button>
+                </div>
+                <div style="display:flex; gap:10px; width:100%;">
+                    <button onclick="downloadQR()" style="flex:1; padding:10px; background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#e2e8f0'"><i class="fa-solid fa-download"></i> Tải mã QR</button>
+                    <button onclick="openShareUrl()" style="flex:1; padding:10px; background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#e2e8f0'"><i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Clear Modal -->
+    <div id="confirmClearModal" class="modal"
+        style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+        <div class="modal-content"
+            style="background-color:#fff; border-radius:12px; width:90%; max-width:400px; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div class="modal-body" style="padding:30px 25px 20px; text-align:center;">
+                <div style="width:60px; height:60px; border-radius:50%; background:#fee2e2; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 20px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 style="margin:0 0 10px; font-size:20px; color:#1e293b; font-weight:700;">Xóa tất cả linh kiện?</h3>
+                <p style="color:#64748b; font-size:15px; margin:0 0 20px; line-height:1.5;">Hành động này sẽ làm trống cấu hình hiện tại và không thể hoàn tác. Bạn có chắc chắn muốn tiếp tục?</p>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="closeConfirmClear()" style="flex:1; padding:12px; background:#f1f5f9; color:#475569; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#e2e8f0'">Hủy</button>
+                    <button onclick="executeClearAll()" style="flex:1; padding:12px; background:#ef4444; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#dc2626'">Đồng ý xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- ============================================== -->
         <!-- Script for custom confirm/alert popups -->
         <script th:src="@{/js/confirm-popup.js(v=2.2)}"></script>
 

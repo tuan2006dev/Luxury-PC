@@ -44,6 +44,29 @@ public class OrderService {
             }
         }
 
+        // 1b. Kiểm tra giới hạn lượt mua Flash Sale mỗi user
+        if (currentUser != null) {
+            java.util.Optional<poly.edu.entity.FlashSale> activeFlashSale = flashSaleService.getCurrentFlashSale();
+            if (activeFlashSale.isPresent()) {
+                poly.edu.entity.FlashSale fs = activeFlashSale.get();
+                if (fs.getMaxPerUser() != null && fs.getMaxPerUser() > 0) {
+                    long alreadyBought = orderItemDAO.countFlashSalePurchasesByUser(currentUser.getId(), fs.getId());
+                    // Tính số sản phẩm flash sale trong đơn hiện tại
+                    long inThisOrder = cart.values().stream()
+                        .filter(ci -> flashSaleService.getFlashSalePrice(ci.getId()) < ci.getPrice())
+                        .mapToLong(ci -> ci.getQuantity())
+                        .sum();
+                    if (alreadyBought + inThisOrder > fs.getMaxPerUser()) {
+                        throw new OutOfStockException(
+                            "Bạn chỉ được mua tối đa " + fs.getMaxPerUser() +
+                            " sản phẩm Flash Sale '" + fs.getName() +
+                            "'. Bạn đã mua " + alreadyBought + " sản phẩm trước đó."
+                        );
+                    }
+                }
+            }
+        }
+
         // 2. Create and save the order
         Order order = new Order();
         if (currentUser != null) {

@@ -96,7 +96,7 @@ public class FlashSaleItem {
      * Phần trăm giảm giá so với giá gốc
      */
     public int getDiscountPercent() {
-        if (product == null || product.getPrice() == null || product.getPrice() == 0) return 0;
+        if (product == null || product.getPrice() == null || product.getPrice() == 0 || salePrice == null) return 0;
         return (int) Math.round((1 - salePrice / product.getPrice()) * 100);
     }
 
@@ -104,7 +104,7 @@ public class FlashSaleItem {
      * Phần trăm đã bán
      */
     public int getSoldPercent() {
-        if (saleQuantity == null || saleQuantity == 0) return 0;
+        if (saleQuantity == null || saleQuantity == 0 || soldCount == null) return 0;
         return Math.min(100, (int) Math.round((double) soldCount / saleQuantity * 100));
     }
 

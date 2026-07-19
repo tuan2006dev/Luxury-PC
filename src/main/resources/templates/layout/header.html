@@ -17,7 +17,7 @@
                         class="fa-solid fa-bars"></i></button>
 
                 <!-- Left Nav -->
-                <nav class="main-nav" id="mobile-nav" style="flex: 1; justify-content: flex-start;">
+                <nav class="main-nav" id="mobile-nav" style="justify-content: flex-start;">
                     <button class="menu-close-btn" style="display: none;" id="mobile-menu-close"><i
                             class="fa-solid fa-xmark"></i></button>
                     <a th:href="@{/products}" id="nav-linh-kien">Sản Phẩm</a>
@@ -26,11 +26,11 @@
                 </nav>
 
                 <!-- Logo -->
-                <a th:href="@{/}" class="logo" style="flex: 0 0 auto; text-align: center;">LUXURY |
+                <a th:href="@{/}" class="logo" style="flex: 0 0 auto; text-align: center; margin: 0 15px;">LUXURY |
                     <strong>PC</strong></a>
 
                 <!-- Right Nav -->
-                <nav class="main-nav" style="flex: 1; justify-content: flex-end;">
+                <nav class="main-nav" style="justify-content: flex-end;">
                     <a th:href="@{/news}" id="nav-tin-tuc">Tin Tức</a>
                     <a th:href="@{/support}" id="nav-lien-he">Hỗ Trợ</a>
                     <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin</a>
@@ -45,7 +45,7 @@
                             style="width: 28px; height: 28px; border-radius: 50%; background: #c9a84c; color: #000; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;"
                             th:text="${(currentUser != null && currentUser.fullName != null && !currentUser.fullName.isEmpty()) ? currentUser.fullName.substring(0,1).toUpperCase() : #authentication.name.substring(0,1).toUpperCase()}">
                             U</div>
-                        <span
+                        <span style="max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; vertical-align: middle;"
                             th:text="${(currentUser != null && currentUser.fullName != null && !currentUser.fullName.isEmpty()) ? currentUser.fullName : #authentication.name}">Hồ
                             Sơ</span>
                     </a>

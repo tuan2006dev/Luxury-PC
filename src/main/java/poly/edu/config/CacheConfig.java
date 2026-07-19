@@ -22,6 +22,7 @@ public class CacheConfig {
             "latestReviews",
             "activeVouchers",
             "currentFlashSale",
+            "currentActiveSales",
             "flashSaleItems",
             "allCategories"
         );

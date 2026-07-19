@@ -74,8 +74,11 @@ public class BuildPcBasicController {
                     return map;
                 })
                 .collect(Collectors.toList());
-                
-            productsData.put(cat.toLowerCase(), catProducts);
+            String jsCat = cat.toLowerCase();
+            if (jsCat.equals("storage")) {
+                jsCat = "ssd";
+            }
+            productsData.put(jsCat, catProducts);
         }
         
         List<Map<String, Object>> combosData = combos.stream().map(c -> {

@@ -25,19 +25,17 @@
     color: var(--text-secondary);
 }
 
-/* Promo Banners */
 .promo-banners {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 30px;
+    display: block;
+    width: 100%;
+    margin: 0 auto 30px auto;
 }
 
 .promo-banner-card {
     border-radius: 12px;
     overflow: hidden;
     position: relative;
-    height: 280px;
+    height: 500px;
     color: #fff;
     display: flex;
     align-items: center;

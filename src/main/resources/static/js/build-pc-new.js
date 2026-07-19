@@ -247,8 +247,10 @@ function calculateTotals() {
     let total = 0;
     let count = 0;
     for (const prod of Object.values(currentBuild)) {
-        total += prod.price;
-        count++;
+        if (prod) {
+            total += prod.price;
+            count++;
+        }
     }
 
     // Update Overview UI
@@ -284,6 +286,9 @@ function checkCompatibility() {
     const cpu = currentBuild['cpu'];
     const main = currentBuild['mainboard'];
     const ram = currentBuild['ram'];
+    const vga = currentBuild['vga'];
+    const psu = currentBuild['psu'];
+    const pcCase = currentBuild['case'];
     
     let issues = [];
     
@@ -311,6 +316,7 @@ function checkCompatibility() {
                 <div class="compat-desc">${issues.join('<br>')}</div>
             `;
             alertBox.style.borderLeft = '4px solid #ef4444';
+            document.getElementById('compat-alert-text').style.display = 'none';
         } else if (cpu && main && ram) {
             alertBox.innerHTML = `
                 <div class="compat-icon"><i class="fa-solid fa-check"></i></div>
@@ -318,6 +324,7 @@ function checkCompatibility() {
                 <div class="compat-desc">Tất cả linh kiện đã được kiểm tra và tương thích với nhau.</div>
             `;
             alertBox.style.borderLeft = 'none';
+            document.getElementById('compat-alert-text').style.display = 'block';
         } else {
             alertBox.innerHTML = `
                 <div class="compat-icon" style="color: #666; background: #f0f0f0;"><i class="fa-solid fa-circle-info"></i></div>
@@ -325,7 +332,17 @@ function checkCompatibility() {
                 <div class="compat-desc">Vui lòng chọn CPU, Mainboard và RAM.</div>
             `;
             alertBox.style.borderLeft = '4px solid #ccc';
+            document.getElementById('compat-alert-text').style.display = 'none';
         }
+    }
+
+    // Update list dynamically
+    if (document.getElementById('compat-cpu-main')) {
+        document.getElementById('compat-cpu-main').querySelector('.status').innerHTML = (cpu && main && issues.length === 0) ? '<span style="color: #10b981; font-weight: 600;">Tương thích</span>' : (issues.length > 0 ? '<span style="color: #ef4444; font-weight: 600;">Lỗi</span>' : '<span style="color: #666; font-weight: 400;">Chưa đủ dữ liệu</span>');
+        document.getElementById('compat-ram-main').querySelector('.status').innerHTML = (ram && main) ? '<span style="color: #10b981; font-weight: 600;">Tương thích</span>' : '<span style="color: #666; font-weight: 400;">Chưa đủ dữ liệu</span>';
+        document.getElementById('compat-vga-main').querySelector('.status').innerHTML = (vga && main) ? '<span style="color: #10b981; font-weight: 600;">Tương thích</span>' : '<span style="color: #666; font-weight: 400;">Chưa đủ dữ liệu</span>';
+        document.getElementById('compat-psu').querySelector('.status').innerHTML = (psu) ? '<span style="color: #10b981; font-weight: 600;">Tương thích</span>' : '<span style="color: #666; font-weight: 400;">Chưa đủ dữ liệu</span>';
+        document.getElementById('compat-case').querySelector('.status').innerHTML = (pcCase) ? '<span style="color: #10b981; font-weight: 600;">Tương thích</span>' : '<span style="color: #666; font-weight: 400;">Chưa đủ dữ liệu</span>';
     }
 }
 
@@ -340,13 +357,16 @@ function updatePerformanceScore() {
     let avgScore = (count / 8) * 10;
     let scoreStr = avgScore % 1 === 0 ? avgScore.toString() : avgScore.toFixed(1);
 
+    let container = document.getElementById('main-perf-score-container');
+    if (container) container.style.display = 'flex';
     document.getElementById('main-perf-score').innerText = scoreStr;
-    
-    let label = 'Chưa xác định';
-    if(count > 0 && count < 4) label = 'Đang cấu hình...';
-    else if(count >= 4 && count < 8) label = 'Sắp hoàn thiện';
-    else if(count === 8) label = 'Hoàn chỉnh 100%';
-    document.getElementById('main-perf-label').innerText = label;
+
+    if (count > 0) {
+        document.getElementById('main-perf-label').style.display = 'none';
+    } else {
+        document.getElementById('main-perf-label').style.display = 'block';
+        document.getElementById('main-perf-label').innerText = 'Đang cấu hình...';
+    }
 
     const circle = document.querySelector('.perf-circle');
     if (circle) {
@@ -545,9 +565,9 @@ function renderFpsGames() {
         let estFps = calculateEstFps(game);
         let color = '#000';
         if(estFps === '?') { estFps = 'Thiếu linh kiện'; color = '#666'; }
-        else if (estFps < 60) color = '#ef4444';
-        else if (estFps < 120) color = '#eab308';
-        else { estFps = estFps + '+ FPS'; color = '#10b981'; }
+        else if (estFps < 60) { estFps = 'Dự kiến ~' + estFps + ' FPS'; color = '#ef4444'; }
+        else if (estFps < 120) { estFps = 'Dự kiến ~' + estFps + ' FPS'; color = '#eab308'; }
+        else { estFps = 'Dự kiến ' + estFps + '+ FPS'; color = '#10b981'; }
 
         let rankNum = index + 1;
         let rankColor = rankNum === 1 ? '#eab308' : (rankNum === 2 ? '#94a3b8' : (rankNum === 3 ? '#d97706' : '#94a3b8'));
@@ -866,8 +886,8 @@ async function manualLoadBuild() {
                     <strong style="font-size:16px;">${b.name}</strong><br>
                     <small style="color:#666;">Lưu ngày: ${b.date}</small>
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn btn-primary btn-sm" style="padding:5px 15px;" onclick="Swal.close(); window.loadSelectedBuild(${index})">Tải</button>
+                <div style="display:flex; gap:10px; flex-shrink: 0; align-items: center;">
+                    <button class="btn btn-primary btn-sm" style="padding:5px 15px; white-space:nowrap;" onclick="Swal.close(); window.loadSelectedBuild(${index})">Tải</button>
                     <button class="btn btn-danger btn-sm" style="padding:5px 15px;" onclick="Swal.close(); window.deleteSelectedBuild(${index})"><i class="fa-regular fa-trash-can"></i></button>
                 </div>
             </div>
@@ -1054,6 +1074,17 @@ async function loadBuildFromIds(idsMap) {
     try {
         let loadedCount = 0;
         
+        currentBuild = {
+            cpu: null,
+            mainboard: null,
+            ram: null,
+            vga: null,
+            ssd: null,
+            psu: null,
+            case: null,
+            cooling: null
+        };
+        
         Object.keys(idsMap).forEach(category => {
             const id = parseInt(idsMap[category]);
             if (id && productsData[category]) {
@@ -1070,11 +1101,30 @@ async function loadBuildFromIds(idsMap) {
         // Cập nhật lại giao diện
         renderBuildComponents();
         calculateTotals();
+        renderFpsGames();
         
         if (loadedCount > 0) {
-            Swal.fire('Thành công!', 'Cấu hình đã được tải hoàn tất.', 'success');
+            Swal.close();
+            setTimeout(() => {
+                Swal.fire({
+                    title: 'Thành công!', 
+                    text: 'Cấu hình đã được tải hoàn tất.', 
+                    icon: 'success',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK'
+                });
+            }, 300);
         } else {
-            Swal.fire('Thông báo', 'Không tìm thấy linh kiện nào trong cấu hình này.', 'info');
+            Swal.close();
+            setTimeout(() => {
+                Swal.fire({
+                    title: 'Thông báo', 
+                    text: 'Không tìm thấy linh kiện nào trong cấu hình này.', 
+                    icon: 'info',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK'
+                });
+            }, 300);
         }
     } catch(e) {
         console.error(e);

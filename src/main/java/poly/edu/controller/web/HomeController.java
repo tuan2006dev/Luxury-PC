@@ -205,15 +205,77 @@ public class HomeController {
             model.addAttribute("flashSaleEndTime", 0);
         }
 
-        // Lấy Flash Sale sắp diễn ra tiếp theo
+        // Lấy danh sách các Flash Sale sắp diễn ra
         List<FlashSale> upcomingSales = flashSaleService.getUpcomingFlashSales();
         if (upcomingSales != null && !upcomingSales.isEmpty()) {
-            FlashSale nextSale = upcomingSales.get(0);
-            List<FlashSaleItem> upcomingItems = flashSaleService.getItemsBySaleId(nextSale.getId());
-            model.addAttribute("upcomingSale", nextSale);
-            model.addAttribute("upcomingItems", upcomingItems);
-            model.addAttribute("upcomingStartTime", nextSale.getStartTime().getTime());
+            // Lấy 4 đợt gần nhất cho sidebar
+            List<FlashSale> top4UpcomingSales = upcomingSales.stream().limit(4).collect(Collectors.toList());
+            model.addAttribute("top4UpcomingSales", top4UpcomingSales);
+            model.addAttribute("allUpcomingSales", upcomingSales);
+            
+            // Map items cho mỗi đợt
+            java.util.Map<Integer, List<FlashSaleItem>> upcomingItemsMap = new java.util.HashMap<>();
+            for (FlashSale sale : upcomingSales) {
+                upcomingItemsMap.put(sale.getId(), flashSaleService.getItemsBySaleId(sale.getId()));
+            }
+            model.addAttribute("upcomingItemsMap", upcomingItemsMap);
         }
+
+        // Tạo danh sách Flash Sales cho Hero Banner Slider & Main Section
+        List<FlashSale> sliderSales = new java.util.ArrayList<>();
+        List<FlashSale> currentActiveSales = flashSaleService.getCurrentActiveSales();
+        if (currentActiveSales != null) {
+            sliderSales.addAll(currentActiveSales);
+        }
+        if (upcomingSales != null) {
+            sliderSales.addAll(upcomingSales);
+        }
+        // Giới hạn chỉ hiển thị tối đa 5 banner gần nhất
+        if (sliderSales.size() > 5) {
+            sliderSales = sliderSales.subList(0, 5);
+        }
+        model.addAttribute("sliderSales", sliderSales);
+
+        // Map items cho tất cả sliderSales
+        java.util.Map<Integer, List<FlashSaleItem>> sliderItemsMap = new java.util.HashMap<>();
+        for (FlashSale s : sliderSales) {
+            List<FlashSaleItem> items = flashSaleService.getItemsBySaleId(s.getId()).stream()
+                .filter(item -> item.getSoldCount() < item.getSaleQuantity())
+                .sorted((item1, item2) -> {
+                    List<poly.edu.entity.Review> rev1 = reviewDAO.findByProductIdOrderByCreatedAtDesc(item1.getProduct().getId());
+                    double r1 = rev1.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+                    
+                    List<poly.edu.entity.Review> rev2 = reviewDAO.findByProductIdOrderByCreatedAtDesc(item2.getProduct().getId());
+                    double r2 = rev2.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+                    
+                    if (Double.compare(r2, r1) != 0) {
+                        return Double.compare(r2, r1);
+                    }
+                    
+                    int sold1 = item1.getSoldCount() != null ? item1.getSoldCount() : 0;
+                    int sold2 = item2.getSoldCount() != null ? item2.getSoldCount() : 0;
+                    return Integer.compare(sold2, sold1);
+                })
+                .collect(Collectors.toList());
+            sliderItemsMap.put(s.getId(), items);
+            
+            // Build ratings & review counts if not already present
+            if (!model.containsAttribute("productRatings")) {
+                model.addAttribute("productRatings", new java.util.HashMap<Integer, Double>());
+                model.addAttribute("productReviewCounts", new java.util.HashMap<Integer, Integer>());
+            }
+            java.util.Map<Integer, Double> pRatings = (java.util.Map<Integer, Double>) model.getAttribute("productRatings");
+            java.util.Map<Integer, Integer> pReviewCounts = (java.util.Map<Integer, Integer>) model.getAttribute("productReviewCounts");
+            for (FlashSaleItem item : items) {
+                if (!pRatings.containsKey(item.getProduct().getId())) {
+                    List<poly.edu.entity.Review> revs = reviewDAO.findByProductIdOrderByCreatedAtDesc(item.getProduct().getId());
+                    double avg = revs.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+                    pRatings.put(item.getProduct().getId(), avg);
+                    pReviewCounts.put(item.getProduct().getId(), revs.size());
+                }
+            }
+        }
+        model.addAttribute("sliderItemsMap", sliderItemsMap);
 
         // Category từ database
         model.addAttribute("categories", categoryDAO.findAll());

@@ -41,8 +41,8 @@
         <div class="form-card">
             <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span>Thêm Sản Phẩm Vào Flash Sale</span></div>
             <form autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST">
-                <div class="form-row">
-                    <div class="form-group">
+                <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 3; min-width: 250px; margin-bottom: 0;">
                         <label>Sản Phẩm</label>
                         <select name="productId" required>
                             <option value="">-- Chọn sản phẩm --
@@ -53,16 +53,16 @@
                             </option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
                         <label>Giá Sale (₫)</label>
                         <input autocomplete="off" type="number" name="salePrice" required placeholder="VD: 15000000" min="0">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
                         <label>Số Lượng Sale</label>
                         <input autocomplete="off" type="number" name="saleQuantity" required placeholder="VD: 50"
                             value="50" min="0">
                     </div>
-                    <button type="submit" class="btn btn-gold" style="height:fit-content;"><i
+                    <button type="submit" class="btn btn-gold" style="height: 38px; white-space: nowrap;"><i
                             class="fa-solid fa-plus"></i> <span>Thêm</span></button>
                 </div>
             </form>

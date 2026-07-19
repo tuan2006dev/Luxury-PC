@@ -35,6 +35,10 @@ public class DatabaseUpdateConfig {
                         "IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saved_at' AND Object_ID = Object_ID(N'user_vouchers')) BEGIN ALTER TABLE user_vouchers ADD saved_at DATETIME2 END");
                 jdbcTemplate.execute(
                         "IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'used_at' AND Object_ID = Object_ID(N'user_vouchers')) BEGIN ALTER TABLE user_vouchers ADD used_at DATETIME2 END");
+
+                // Ensure columns exist for flash_sales
+                jdbcTemplate.execute(
+                        "IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'banner_image' AND Object_ID = Object_ID(N'flash_sales')) BEGIN ALTER TABLE flash_sales ADD banner_image VARCHAR(500) END");
                 
                 // Remove translation table
                 try {

@@ -109,6 +109,19 @@ public class CartService {
         double voucherDiscount = 0;
         String appliedVoucherCode = null;
         if (voucherCode != null && !voucherCode.trim().isEmpty() && currentUser != null) {
+            
+            // Kiểm tra giỏ hàng có chứa sản phẩm Flash Sale hay không
+            boolean hasFlashSaleItem = false;
+            for (CartItem item : targetCart.values()) {
+                if (flashSaleService.getActiveFlashSaleItem(item.getId()).isPresent()) {
+                    hasFlashSaleItem = true;
+                    break;
+                }
+            }
+            if (hasFlashSaleItem) {
+                throw new Exception("Không thể áp dụng Voucher khi giỏ hàng có sản phẩm Flash Sale.");
+            }
+
             Map<String, Object> validation = voucherService.validateVoucher(voucherCode, priceAfterVip, currentUser);
             if (Boolean.TRUE.equals(validation.get("valid"))) {
                 voucherDiscount = (double) validation.get("discount");

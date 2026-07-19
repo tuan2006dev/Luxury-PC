@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "flash_sales")
+@Table(name = "flash_sales", indexes = {
+    @Index(name = "idx_flashsale_active", columnList = "active"),
+    @Index(name = "idx_flashsale_time", columnList = "start_time, end_time")
+})
 public class FlashSale {
 
     @Id
@@ -23,6 +26,19 @@ public class FlashSale {
     private Date endTime;
 
     private Boolean active = true;
+
+    @Column(name = "banner_image")
+    private String bannerImage;
+
+    @Column(name = "description", length = 500)
+    private String description;
+
+    /**
+     * Giới hạn số lượng sản phẩm Flash Sale mỗi user được mua.
+     * null = không giới hạn
+     */
+    @Column(name = "max_per_user")
+    private Integer maxPerUser;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -96,6 +112,30 @@ public class FlashSale {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getBannerImage() {
+        return bannerImage;
+    }
+
+    public void setBannerImage(String bannerImage) {
+        this.bannerImage = bannerImage;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getMaxPerUser() {
+        return maxPerUser;
+    }
+
+    public void setMaxPerUser(Integer maxPerUser) {
+        this.maxPerUser = maxPerUser;
     }
 
     public List<FlashSaleItem> getItems() {

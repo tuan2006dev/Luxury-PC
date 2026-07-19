@@ -19,4 +19,12 @@ public interface FlashSaleItemDAO extends JpaRepository<FlashSaleItem, Integer> 
 
     @Query("SELECT fsi FROM FlashSaleItem fsi JOIN FETCH fsi.product WHERE fsi.flashSale.id = :saleId")
     List<FlashSaleItem> findByFlashSaleIdWithProduct(@Param("saleId") Integer saleId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("UPDATE FlashSaleItem f SET f.soldCount = COALESCE(f.soldCount, 0) + :qty WHERE f.flashSale.id = :saleId AND f.product.id = :productId AND (COALESCE(f.soldCount, 0) + :qty) <= f.saleQuantity")
+    int incrementSoldCountAtomically(@Param("saleId") Integer saleId, @Param("productId") Integer productId, @Param("qty") Integer qty);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("UPDATE FlashSaleItem f SET f.soldCount = COALESCE(f.soldCount, 0) - :qty WHERE f.flashSale.id = :saleId AND f.product.id = :productId AND (COALESCE(f.soldCount, 0) - :qty) >= 0")
+    int decrementSoldCountAtomically(@Param("saleId") Integer saleId, @Param("productId") Integer productId, @Param("qty") Integer qty);
 }

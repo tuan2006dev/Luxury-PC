@@ -22,6 +22,8 @@ public class AdminFlashSaleController {
     private final FlashSaleService flashSaleService;
 
     private final ProductDAO productDAO;
+    
+    private final poly.edu.service.UploadService uploadService;
 
     @GetMapping("")
     public String listFlashSales(Model model) {
@@ -36,6 +38,10 @@ public class AdminFlashSaleController {
             @RequestParam("startTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startTime,
             @RequestParam("endTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date endTime,
             @RequestParam(value = "active", required = false, defaultValue = "true") Boolean active,
+            @RequestParam(value = "bannerImageFile", required = false) org.springframework.web.multipart.MultipartFile bannerImageFile,
+            @RequestParam(value = "bannerImage", required = false) String bannerImageUrl,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "maxPerUser", required = false) Integer maxPerUser,
             RedirectAttributes ra) {
 
         if (startTime != null && endTime != null && endTime.before(startTime)) {
@@ -58,6 +64,16 @@ public class AdminFlashSaleController {
         sale.setStartTime(startTime);
         sale.setEndTime(endTime);
         sale.setActive(active);
+        sale.setDescription(description);
+        sale.setMaxPerUser(maxPerUser);
+
+        // Handle Banner Image
+        if (bannerImageFile != null && !bannerImageFile.isEmpty()) {
+            String fileName = uploadService.save(bannerImageFile, "flashsale");
+            sale.setBannerImage(fileName);
+        } else if (bannerImageUrl != null && !bannerImageUrl.trim().isEmpty()) {
+            sale.setBannerImage(bannerImageUrl);
+        }
 
         flashSaleService.saveFlashSale(sale);
         ra.addFlashAttribute("success", id != null ? "Cập nhật Flash Sale thành công!" : "Tạo Flash Sale thành công!");
