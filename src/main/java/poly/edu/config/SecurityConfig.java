@@ -44,9 +44,7 @@ public class SecurityConfig {
                                                 .securityContextRepository(securityContextRepository()))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/admin/users/**", "/admin/roles/**",
-                                                                "/admin/account/**", "/admin/account",
-                                                                "/admin/news/create", "/admin/news/edit/**",
-                                                                "/admin/news/save", "/admin/news/delete/**")
+                                                                "/admin/account/**", "/admin/account")
                                                 .hasRole("ADMIN")
                                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
                                                 .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp",
@@ -55,7 +53,7 @@ public class SecurityConfig {
                                                                 "/api/products", "/api/products/**", "/api/build/**",
                                                                 "/build-pc/**", "/api/tickets/**",
                                                                 "/api/reviews/**", "/api/wishlist/**",
-                                                                "/api/address/**", "/api/translations/**",
+                                                                "/api/address/**",
                                                                 "/api/shipping/**", "/api/test-login-debug",
                                                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg",
                                                                 "/*.jpeg", "/*.svg", "/error", "/testdb",

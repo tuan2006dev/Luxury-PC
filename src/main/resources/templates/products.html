@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-translate="products-page-title">Luxury PC | Sản Phẩm</title>
+    <title>Luxury PC | Sản Phẩm</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,8 +23,8 @@
     <!-- NAVIGATION -->
     <nav class="navbar scrolled" id="navbar">
         <div class="nav-left">
-            <a th:href="@{/}" class="nav-link" data-translate="product-breadcrumb-home">Trang Chủ</a>
-            <a href="/build-pc-basic" class="nav-link" data-translate="nav-build">Build PC Basic</a>
+            <a th:href="@{/}" class="nav-link">Trang Chủ</a>
+            <a href="/build-pc-basic" class="nav-link">Build PC Basic</a>
         </div>
         <div class="nav-logo">
             <a th:href="@{/}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap: 10px;">
@@ -36,7 +36,7 @@
             </a>
         </div>
         <div class="nav-right">
-            <a th:href="@{/auth/login}" class="nav-link" data-translate="nav-login">Đăng Nhập</a>
+            <a th:href="@{/auth/login}" class="nav-link">Đăng Nhập</a>
             <button class="nav-search-btn" id="nav-search-btn">⌕</button>
             <button class="nav-cart" id="nav-cart">
                 <span class="cart-icon">⊡</span>
@@ -51,8 +51,8 @@
     <!-- PRODUCTS -->
     <section class="products" id="products">
         <div class="section-header">
-            <span class="section-label" data-translate="cat-section-label">Danh Mục</span>
-            <h2 class="section-title" data-translate="products-header-title">Tất Cả Linh Kiện</h2>
+            <span class="section-label">Danh Mục</span>
+            <h2 class="section-title">Tất Cả Linh Kiện</h2>
         </div>
 
         <div class="products-grid" id="products-grid">
@@ -71,7 +71,7 @@
                     <div class="product-price-row">
                         <span class="product-price"
                             th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</span>
-                        <button class="btn-add-cart"><span data-translate="btn-add-cart-text">Thêm Vào
+                        <button class="btn-add-cart"><span>Thêm Vào
                                 Giỏ</span></button>
                     </div>
                 </div>

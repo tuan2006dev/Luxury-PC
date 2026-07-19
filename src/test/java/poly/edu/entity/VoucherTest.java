@@ -17,10 +17,11 @@ class VoucherTest {
         entity.setMinOrderAmount(1.0);
         entity.setMaxDiscountAmount(1.0);
         entity.setUsageLimit(1);
-        entity.setStartDate(new java.util.Date());
-        entity.setEndDate(new java.util.Date());
+        java.util.Date now = new java.util.Date();
+        entity.setStartDate(now);
+        entity.setEndDate(now);
         entity.setCategory(new Category());
-        entity.setCreatedAt(new java.util.Date());
+        entity.setCreatedAt(now);
 
         // Act & Assert
         assertEquals(1, entity.getId());
@@ -31,9 +32,9 @@ class VoucherTest {
         assertEquals(1.0, entity.getMinOrderAmount());
         assertEquals(1.0, entity.getMaxDiscountAmount());
         assertEquals(1, entity.getUsageLimit());
-        assertEquals(new java.util.Date(), entity.getStartDate());
-        assertEquals(new java.util.Date(), entity.getEndDate());
+        assertEquals(now, entity.getStartDate());
+        assertEquals(now, entity.getEndDate());
         assertNotNull(entity.getCategory());
-        assertEquals(new java.util.Date(), entity.getCreatedAt());
+        assertEquals(now, entity.getCreatedAt());
     }
 }

@@ -19,7 +19,7 @@
     <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1><span data-translate="admin-products-title-text">Quản Lý Sản Phẩm</span> (<span
+                <h1><span>Quản Lý Sản Phẩm</span> (<span
                         th:text="${products != null ? products.size() : 0}">0</span>)</h1>
             </div>
             <div class="user-info" style="display: flex; align-items: center;">
@@ -35,13 +35,13 @@
         <!-- Nút mở form tạo -->
         <div style="margin-bottom: 1.5rem;">
             <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()"><i class="fa-solid fa-plus"></i>
-                <span class="btn-text" data-translate="admin-products-btn-add">Thêm Sản Phẩm Mới</span></button>
+                <span class="btn-text">Thêm Sản Phẩm Mới</span></button>
         </div>
 
         <!-- Form Thêm / Sửa -->
         <div class="card add-form-container" id="productForm" th:classappend="${product.id != null ? 'active' : ''}">
             <div class="card-header">
-                <h2 th:data-translate="${product.id == null ? 'admin-products-title-add' : 'admin-products-title-edit'}"
+                <h2
                     th:text="${product.id == null ? 'Thêm Sản Phẩm Mới' : 'Cập Nhật Sản Phẩm'}">Thông Tin Sản Phẩm</h2>
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i
                         class="fa-solid fa-xmark"></i></button>
@@ -52,36 +52,34 @@
                 <input autocomplete="off" type="hidden" th:field="*{id}">
                 <div class="form-grid">
                     <div class="input-group full">
-                        <label><span data-translate="admin-products-label-name">Tên Sản Phẩm</span> *</label>
+                        <label><span>Tên Sản Phẩm</span> *</label>
                         <input autocomplete="off" type="text" th:field="*{name}" required
-                            placeholder="VD: Card Màn Hình ASUS ROG Strix GeForce RTX 4090"
-                            data-translate-placeholder="admin-products-placeholder-name">
+                            placeholder="VD: Card Màn Hình ASUS ROG Strix GeForce RTX 4090">
                     </div>
                     <div class="input-group">
-                        <label><span data-translate="admin-products-label-price">Giá Bán (VNĐ)</span> *</label>
+                        <label><span>Giá Bán (VNĐ)</span> *</label>
                         <input autocomplete="off" type="number" th:field="*{price}" required min="0"
-                            placeholder="VD: 54990000" data-translate-placeholder="admin-products-placeholder-price">
+                            placeholder="VD: 54990000">
                     </div>
                     <div class="input-group">
-                        <label><span data-translate="admin-products-label-category">Danh Mục</span> *</label>
+                        <label><span>Danh Mục</span> *</label>
                         <select th:field="*{category.id}" required>
-                            <option value="" data-translate="admin-products-option-select-cat">-- Chọn danh mục --
+                            <option value="">-- Chọn danh mục --
                             </option>
                             <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">VGA
                             </option>
                         </select>
                     </div>
                     <div class="input-group full">
-                        <label data-translate="admin-products-label-desc">Mô Tả Nhanh</label>
-                        <textarea th:field="*{description}" rows="3" placeholder="Mô tả kỹ thuật ..."
-                            data-translate-placeholder="admin-products-placeholder-desc"></textarea>
+                        <label>Mô Tả Nhanh</label>
+                        <textarea th:field="*{description}" rows="3" placeholder="Mô tả kỹ thuật ..."></textarea>
                     </div>
                     <div class="input-group">
-                        <label data-translate="admin-products-label-image">Tải Ảnh Lên</label>
+                        <label>Tải Ảnh Lên</label>
                         <div class="file-upload-wrapper">
                             <label class="file-upload-label">
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span class="file-name" data-translate="admin-products-file-choose">Chọn ảnh tải
+                                <span class="file-name">Chọn ảnh tải
                                     lên...</span>
                                 <input autocomplete="off" type="file" name="imageFile" accept="image/*"
                                     class="file-input-hidden" onchange="
@@ -101,11 +99,11 @@
                             placeholder="VD: https://example.com/hinh-anh.jpg">
                     </div>
                     <div class="input-group">
-                        <label data-translate="admin-products-label-stock">Số lượng kho</label>
+                        <label>Số lượng kho</label>
                         <input autocomplete="off" type="number" th:field="*{stock}" min="0">
                     </div>
                     <div class="input-group full" th:if="${product.image != null}">
-                        <label data-translate="admin-products-label-current-image">Ảnh hiện tại:</label>
+                        <label>Ảnh hiện tại:</label>
                         <div style="display:flex; align-items:center; gap:10px;">
                             <img th:src="@{${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}}"
                                 th:alt="${product.name}"
@@ -116,10 +114,9 @@
                     </div>
                 </div>
                 <div style="margin-top: 2rem; display: flex; gap: 10px;">
-                    <button type="submit" class="btn btn-gold" data-translate="admin-products-btn-save">Lưu Sản
+                    <button type="submit" class="btn btn-gold">Lưu Sản
                         Phẩm</button>
-                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/products'"
-                        data-translate="admin-products-btn-cancel">Hủy / Làm mới</button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/products'">Hủy / Làm mới</button>
                 </div>
             </form>
         </div>
@@ -129,11 +126,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th data-translate="admin-products-th-product">Sản Phẩm</th>
-                        <th data-translate="admin-products-th-category">Danh Mục</th>
-                        <th data-translate="admin-products-th-price">Giá Bán</th>
-                        <th data-translate="admin-products-th-stock">Kho</th>
-                        <th style="width: 100px;" data-translate="admin-products-th-actions">Thao Tác</th>
+                        <th>Sản Phẩm</th>
+                        <th>Danh Mục</th>
+                        <th>Giá Bán</th>
+                        <th>Kho</th>
+                        <th style="width: 100px;">Thao Tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -153,8 +150,7 @@
                                 <div class="product-cat" th:text="'ID: ' + ${p.id}">ID: 102</div>
                             </div>
                         </td>
-                        <td th:text="${p.category != null ? p.category.name : 'Chưa phân loại'}"
-                            th:data-translate="${p.category == null ? 'admin-products-no-cat' : null}">CPU</td>
+                        <td th:text="${p.category != null ? p.category.name : 'Chưa phân loại'}">CPU</td>
                         <td th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
                             style="color: var(--gold); font-weight: 600;">18.990.000₫</td>
                         <td th:text="${p.stock}">0</td>

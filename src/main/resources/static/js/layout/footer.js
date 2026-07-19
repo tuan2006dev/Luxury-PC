@@ -175,7 +175,7 @@ function toggleChatWindow() {
           } else {
               if (inputEl) {
                   inputEl.disabled = false;
-                  inputEl.placeholder = inputEl.getAttribute('data-translate-placeholder-original') || "Hỏi về linh kiện, budget, tương thích...";
+                  inputEl.placeholder = "Hỏi về linh kiện, budget, tương thích...";
               }
               if (sendBtn) sendBtn.disabled = false;
               quickBtns.forEach(btn => btn.disabled = false);
@@ -186,7 +186,7 @@ function toggleChatWindow() {
       document.addEventListener('DOMContentLoaded', () => {
           const aiInputEl = document.getElementById('chat-input-field');
           if (aiInputEl) {
-              aiInputEl.setAttribute('data-translate-placeholder-original', aiInputEl.placeholder);
+              
           }
           updateAiChatCooldown();
       });

@@ -17,9 +17,9 @@
     <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1 data-translate="admin-voucher-title"><i class="fa-solid fa-ticket"
+                <h1><i class="fa-solid fa-ticket"
                         style="color:var(--gold);margin-right:10px;"></i>Quản Lý Voucher</h1>
-                <p data-translate="admin-voucher-sub">Tạo và quản lý mã khuyến mãi cho khách hàng</p>
+                <p>Tạo và quản lý mã khuyến mãi cho khách hàng</p>
             </div>
         </div>
 
@@ -33,23 +33,22 @@
 
         <div class="table-card">
             <div class="table-h">
-                <span data-translate="admin-voucher-list"><i class="fa-solid fa-list"></i> Danh Sách Voucher</span>
-                <button class="btn btn-gold" onclick="openModal()"><i class="fa-solid fa-plus"></i> <span
-                        data-translate="admin-voucher-btn-create">Tạo Voucher</span></button>
+                <span><i class="fa-solid fa-list"></i> Danh Sách Voucher</span>
+                <button class="btn btn-gold" onclick="openModal()"><i class="fa-solid fa-plus"></i> <span>Tạo Voucher</span></button>
             </div>
 
             <table th:if="${vouchers != null and !vouchers.isEmpty()}">
                 <thead>
                     <tr>
-                        <th data-translate="admin-voucher-th-code">Mã</th>
-                        <th data-translate="admin-common-description">Mô Tả</th>
-                        <th data-translate="admin-voucher-th-type">Loại</th>
-                        <th data-translate="admin-voucher-th-value">Giá Trị</th>
-                        <th data-translate="admin-voucher-th-minorder">Đơn Tối Thiểu</th>
-                        <th data-translate="admin-voucher-th-usage">Sử Dụng</th>
-                        <th data-translate="admin-voucher-th-expiry">Thời Hạn</th>
-                        <th data-translate="admin-common-status">Trạng Thái</th>
-                        <th data-translate="admin-common-action">Hành Động</th>
+                        <th>Mã</th>
+                        <th>Mô Tả</th>
+                        <th>Loại</th>
+                        <th>Giá Trị</th>
+                        <th>Đơn Tối Thiểu</th>
+                        <th>Sử Dụng</th>
+                        <th>Thời Hạn</th>
+                        <th>Trạng Thái</th>
+                        <th>Hành Động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,10 +56,8 @@
                         <td style="font-weight:700;color:var(--gold);" th:text="${v.code}">LUXURY10</td>
                         <td th:text="${v.description}">Giảm 10%</td>
                         <td>
-                            <span class="badge badge-gold" th:if="${v.discountType.name() == 'PERCENTAGE'}"
-                                data-translate="admin-voucher-type-percent">Phần trăm</span>
-                            <span class="badge badge-gold" th:if="${v.discountType.name() == 'FIXED_AMOUNT'}"
-                                data-translate="admin-voucher-type-fixed">Cố định</span>
+                            <span class="badge badge-gold" th:if="${v.discountType.name() == 'PERCENTAGE'}">Phần trăm</span>
+                            <span class="badge badge-gold" th:if="${v.discountType.name() == 'FIXED_AMOUNT'}">Cố định</span>
                         </td>
                         <td>
                             <span th:if="${v.discountType.name() == 'PERCENTAGE'}"
@@ -81,14 +78,11 @@
                         <td style="font-size:.75rem;">
                             <span th:if="${v.endDate != null}"
                                 th:text="${#dates.format(v.endDate, 'dd/MM/yyyy HH:mm')}">31/12/2026</span>
-                            <span th:if="${v.endDate == null}" style="color:var(--muted);"
-                                data-translate="admin-voucher-expiry-infinite">Không giới hạn</span>
+                            <span th:if="${v.endDate == null}" style="color:var(--muted);">Không giới hạn</span>
                         </td>
                         <td>
-                            <span class="badge badge-green" th:if="${v.active}"
-                                data-translate="admin-common-active">Hoạt động</span>
-                            <span class="badge badge-red" th:if="${!v.active}"
-                                data-translate="admin-common-inactive">Tắt</span>
+                            <span class="badge badge-green" th:if="${v.active}">Hoạt động</span>
+                            <span class="badge badge-red" th:if="${!v.active}">Tắt</span>
                         </td>
                         <td>
                             <div class="actions-cell">
@@ -97,8 +91,7 @@
                                     style="display:inline;">
                                     <button type="submit" class="btn btn-sm"
                                         th:style="${v.active} ? 'background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);' : 'background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2);'"
-                                        th:text="${v.active} ? 'Tắt' : 'Bật'"
-                                        th:data-translate="${v.active} ? 'admin-voucher-btn-toggle-off' : 'admin-voucher-btn-toggle-on'">Tắt</button>
+                                        th:text="${v.active} ? 'Tắt' : 'Bật'">Tắt</button>
                                 </form>
                                 <button type="button" class="btn btn-sm btn-red" title="Xóa"
                                     th:onclick="'deleteVoucherApi(' + ${v.id} + ')'"><i
@@ -111,14 +104,14 @@
 
             <div th:if="${vouchers == null or vouchers.isEmpty()}" class="empty-state">
                 <i class="fa-solid fa-ticket"></i>
-                <p data-translate="admin-voucher-empty-state">Chưa có voucher nào. Nhấn "Tạo Voucher" để bắt đầu.</p>
+                <p>Chưa có voucher nào. Nhấn "Tạo Voucher" để bắt đầu.</p>
             </div>
         </div>
 
         <!-- Create/Edit Voucher Modal -->
         <div class="modal-overlay" id="voucherModal">
             <div class="modal">
-                <div class="modal-title" data-translate="admin-voucher-modal-create"><i class="fa-solid fa-ticket"
+                <div class="modal-title"><i class="fa-solid fa-ticket"
                         style="margin-right:8px;"></i>Tạo Voucher Mới</div>
                 <form novalidate autocomplete="off" th:action="@{/admin/vouchers/save}" method="POST">
                     <input autocomplete="off" th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}"
@@ -127,17 +120,16 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label data-translate="admin-voucher-label-code">Mã Voucher</label>
-                            <input autocomplete="off" type="text" name="code" id="voucherCode" required
-                                data-translate-placeholder="admin-voucher-placeholder-code" placeholder="VD: LUXURY10"
+                            <label>Mã Voucher</label>
+                            <input autocomplete="off" type="text" name="code" id="voucherCode" required placeholder="VD: LUXURY10"
                                 style="text-transform:uppercase;">
                         </div>
                         <div class="form-group">
-                            <label data-translate="admin-voucher-label-type">Loại Giảm Giá</label>
+                            <label>Loại Giảm Giá</label>
                             <select name="discountType" id="discountType" onchange="toggleMaxDiscount()">
-                                <option value="PERCENTAGE" data-translate="admin-voucher-opt-percent">Phần trăm (%)
+                                <option value="PERCENTAGE">Phần trăm (%)
                                 </option>
-                                <option value="FIXED_AMOUNT" data-translate="admin-voucher-opt-fixed">Số tiền cố định
+                                <option value="FIXED_AMOUNT">Số tiền cố định
                                     (₫)
                                 </option>
                             </select>
@@ -145,49 +137,47 @@
                     </div>
 
                     <div class="form-group">
-                        <label data-translate="admin-common-description">Mô Tả</label>
+                        <label>Mô Tả</label>
                         <input autocomplete="off" type="text" name="description" id="voucherDesc"
-                            data-translate-placeholder="admin-voucher-placeholder-desc"
                             placeholder="VD: Giảm 10% cho tất cả đơn hàng">
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label data-translate="admin-voucher-label-value">Giá Trị Giảm</label>
+                            <label>Giá Trị Giảm</label>
                             <input autocomplete="off" type="number" name="discountValue" id="discountValue" required
                                 min="0" step="0.01" placeholder="10">
                         </div>
                         <div class="form-group" id="maxDiscountGroup">
-                            <label data-translate="admin-voucher-label-max">Giảm Tối Đa (₫)</label>
+                            <label>Giảm Tối Đa (₫)</label>
                             <input autocomplete="off" type="number" name="maxDiscountAmount" id="maxDiscountAmount"
-                                min="0" data-translate-placeholder="admin-voucher-expiry-infinite"
+                                min="0"
                                 placeholder="Không giới hạn">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label data-translate="admin-voucher-label-minorder">Đơn Tối Thiểu (₫)</label>
+                            <label>Đơn Tối Thiểu (₫)</label>
                             <input autocomplete="off" type="number" name="minOrderAmount" id="minOrderAmount" min="0"
                                 placeholder="0">
                         </div>
                         <div class="form-group">
-                            <label data-translate="admin-voucher-label-limit">Giới Hạn Lượt Dùng</label>
-                            <input autocomplete="off" type="number" name="usageLimit" id="usageLimit" min="0"
-                                data-translate-placeholder="admin-voucher-expiry-infinite" placeholder="Không giới hạn">
+                            <label>Giới Hạn Lượt Dùng</label>
+                            <input autocomplete="off" type="number" name="usageLimit" id="usageLimit" min="0" placeholder="Không giới hạn">
                         </div>
                     </div>
 
-                    <div class="form-group"> <label data-translate="admin-voucher-label-end">Kết Thúc</label>
+                    <div class="form-group"> <label>Kết Thúc</label>
                         <div class="datetime-wrapper"> <input autocomplete="off" type="datetime-local" name="endDate"
                                 id="endDate"> <i class="fa-solid fa-calendar-days"></i> </div>
                     </div>
 
                     <div class="form-group">
-                        <label data-translate="admin-voucher-label-category">Áp Dụng Cho Danh Mục (để trống = tất
+                        <label>Áp Dụng Cho Danh Mục (để trống = tất
                             cả)</label>
                         <select name="categoryId" id="categoryId">
-                            <option value="" data-translate="admin-voucher-opt-all-products">Tất cả sản phẩm</option>
+                            <option value="">Tất cả sản phẩm</option>
                             <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">CPU
                             </option>
                         </select>
@@ -195,9 +185,8 @@
 
                     <div class="form-actions">
                         <button type="button" class="btn" style="background:var(--mid);color:var(--muted);"
-                            onclick="closeModal()" data-translate="admin-common-cancel">Hủy</button>
-                        <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span
-                                data-translate="admin-voucher-btn-save">Lưu Voucher</span></button>
+                            onclick="closeModal()">Hủy</button>
+                        <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span>Lưu Voucher</span></button>
                     </div>
                 </form>
             </div>

@@ -59,6 +59,12 @@ public class CartControllerTest {
     @MockBean
     private poly.edu.service.ProfileService profileService;
 
+    @MockBean
+    private poly.edu.dao.UserVoucherDAO userVoucherDAO;
+
+    @MockBean
+    private poly.edu.service.AuthService authService;
+
     private MockHttpSession session;
 
     @BeforeEach

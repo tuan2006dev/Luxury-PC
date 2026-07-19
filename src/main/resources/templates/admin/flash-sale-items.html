@@ -16,17 +16,15 @@
     <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
     <div class="main-content">
-        <a href="/admin/flash-sales" class="back-link"><i class="fa-solid fa-arrow-left"></i> <span
-                data-translate="admin-flashitems-back">Quay lại danh sách Flash Sale</span></a>
+        <a href="/admin/flash-sales" class="back-link"><i class="fa-solid fa-arrow-left"></i> <span>Quay lại danh sách Flash Sale</span></a>
 
         <div class="header">
             <div class="title">
-                <h1><i class="fa-solid fa-cubes" style="color:var(--gold);margin-right:10px;"></i><span
-                        data-translate="admin-flashitems-title">Sản Phẩm Flash Sale</span></h1>
-                <p><span data-translate="admin-flashitems-program">Chương trình</span>: <strong
+                <h1><i class="fa-solid fa-cubes" style="color:var(--gold);margin-right:10px;"></i><span>Sản Phẩm Flash Sale</span></h1>
+                <p><span>Chương trình</span>: <strong
                         th:text="${flashSale.name}" style="color:var(--gold);">Flash Sale</strong>
                     — <span th:text="${#dates.format(flashSale.startTime, 'dd/MM/yyyy HH:mm')}">01/04</span>
-                    <span data-translate="admin-flashitems-to">đến</span> <span
+                    <span>đến</span> <span
                         th:text="${#dates.format(flashSale.endTime, 'dd/MM/yyyy HH:mm')}">30/04</span>
                 </p>
             </div>
@@ -41,14 +39,13 @@
 
         <!-- Add product form -->
         <div class="form-card">
-            <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span
-                    data-translate="admin-flashitems-form-title">Thêm Sản Phẩm Vào Flash Sale</span></div>
+            <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span>Thêm Sản Phẩm Vào Flash Sale</span></div>
             <form autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST">
                 <div class="form-row">
                     <div class="form-group">
-                        <label data-translate="admin-flashitems-label-product">Sản Phẩm</label>
+                        <label>Sản Phẩm</label>
                         <select name="productId" required>
-                            <option value="" data-translate="admin-flashitems-option-select-product">-- Chọn sản phẩm --
+                            <option value="">-- Chọn sản phẩm --
                             </option>
                             <option th:each="p : ${products}" th:value="${p.id}"
                                 th:text="${p.name + ' — ' + #numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT') + '₫'}">
@@ -57,38 +54,36 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label data-translate="admin-flashitems-label-price">Giá Sale (₫)</label>
-                        <input autocomplete="off" type="number" name="salePrice" required placeholder="VD: 15000000"
-                            data-translate-placeholder="admin-flashitems-placeholder-price" min="0">
+                        <label>Giá Sale (₫)</label>
+                        <input autocomplete="off" type="number" name="salePrice" required placeholder="VD: 15000000" min="0">
                     </div>
                     <div class="form-group">
-                        <label data-translate="admin-flashitems-label-qty">Số Lượng Sale</label>
+                        <label>Số Lượng Sale</label>
                         <input autocomplete="off" type="number" name="saleQuantity" required placeholder="VD: 50"
-                            value="50" data-translate-placeholder="admin-flashitems-placeholder-qty" min="0">
+                            value="50" min="0">
                     </div>
                     <button type="submit" class="btn btn-gold" style="height:fit-content;"><i
-                            class="fa-solid fa-plus"></i> <span
-                            data-translate="admin-flashitems-btn-add">Thêm</span></button>
+                            class="fa-solid fa-plus"></i> <span>Thêm</span></button>
                 </div>
             </form>
         </div>
 
         <!-- Items table -->
         <div class="table-card">
-            <div class="table-h"><i class="fa-solid fa-list"></i> <span data-translate="admin-flashitems-list-title">Sản
+            <div class="table-h"><i class="fa-solid fa-list"></i> <span>Sản
                     Phẩm Trong Chương Trình</span> (<span th:text="${items.size()}">0</span>)</div>
 
             <div style="width: 100%; overflow-x: auto;">
                 <table th:if="${items != null and !items.isEmpty()}" style="min-width: 800px;">
                     <thead>
                         <tr>
-                            <th data-translate="admin-flashitems-th-product">Sản Phẩm</th>
-                            <th data-translate="admin-flashitems-th-original-price">Giá Gốc</th>
-                            <th data-translate="admin-flashitems-th-sale-price">Giá Sale</th>
-                            <th data-translate="admin-flashitems-th-discount">Giảm</th>
-                            <th data-translate="admin-flashitems-th-sold">Đã Bán</th>
-                            <th data-translate="admin-flashitems-th-progress">Tiến Trình</th>
-                            <th data-translate="admin-flashitems-th-actions">Hành Động</th>
+                            <th>Sản Phẩm</th>
+                            <th>Giá Gốc</th>
+                            <th>Giá Sale</th>
+                            <th>Giảm</th>
+                            <th>Đã Bán</th>
+                            <th>Tiến Trình</th>
+                            <th>Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,16 +105,14 @@
                                     <div class="progress-fill" th:style="'width:' + ${item.soldPercent} + '%'"></div>
                                 </div>
                                 <div style="font-size:.65rem;color:var(--muted);margin-top:3px;"><span
-                                        th:text="${item.soldPercent}">10</span>% <span
-                                        data-translate="admin-flashitems-text-sold">đã bán</span></div>
+                                        th:text="${item.soldPercent}">10</span>% <span>đã bán</span></div>
                             </td>
                             <td>
                                 <form novalidate autocomplete="off"
                                     th:action="@{/admin/flash-sales/{saleId}/items/remove/{itemId}(saleId=${flashSale.id},itemId=${item.id})}"
                                     method="POST"
                                     th:onsubmit="event.preventDefault(); window.confirmDelete(this, window.t('admin-flashitems-confirm-delete', 'Xóa sản phẩm này khỏi Flash Sale?'));">
-                                    <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i> <span
-                                            data-translate="admin-flashitems-btn-delete">Xóa</span></button>
+                                    <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i> <span>Xóa</span></button>
                                 </form>
                             </td>
                         </tr>
@@ -129,7 +122,7 @@
 
             <div th:if="${items == null or items.isEmpty()}" class="empty-state">
                 <i class="fa-solid fa-cubes"></i>
-                <p data-translate="admin-flashitems-empty">Chưa có sản phẩm nào trong chương trình này. Thêm sản phẩm ở
+                <p>Chưa có sản phẩm nào trong chương trình này. Thêm sản phẩm ở
                     form bên trên.</p>
             </div>
         </div>

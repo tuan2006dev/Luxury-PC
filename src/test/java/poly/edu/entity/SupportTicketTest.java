@@ -17,8 +17,9 @@ class SupportTicketTest {
         entity.setMessage("message_test");
         entity.setAdminReply("adminReply_test");
         entity.setAssignedAdmin("assignedAdmin_test");
-        entity.setCreatedAt(new java.util.Date());
-        entity.setUpdatedAt(new java.util.Date());
+        java.util.Date now = new java.util.Date();
+        entity.setCreatedAt(now);
+        entity.setUpdatedAt(now);
         entity.setUser(new User());
         entity.setBuildConfig("buildConfig_test");
 
@@ -31,8 +32,8 @@ class SupportTicketTest {
         assertEquals("message_test", entity.getMessage());
         assertEquals("adminReply_test", entity.getAdminReply());
         assertEquals("assignedAdmin_test", entity.getAssignedAdmin());
-        assertEquals(new java.util.Date(), entity.getCreatedAt());
-        assertEquals(new java.util.Date(), entity.getUpdatedAt());
+        assertEquals(now, entity.getCreatedAt());
+        assertEquals(now, entity.getUpdatedAt());
         assertNotNull(entity.getUser());
         assertEquals("buildConfig_test", entity.getBuildConfig());
     }

@@ -23,14 +23,14 @@
 
         <div style="margin-bottom: 1.5rem;">
             <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()" type="button"><i
-                    class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-account-btn-add">Thêm
+                    class="fa-solid fa-plus"></i> <span class="btn-text">Thêm
                     Staff Mới</span></button>
         </div>
 
         <div class="card add-form-container" id="userForm" th:classappend="${user.id != null ? 'active' : ''}">
 
             <div class="card-header">
-                <h2 data-translate="admin-account-form-title">Thêm / Cập nhật Staff</h2>
+                <h2>Thêm / Cập nhật Staff</h2>
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát" type="button"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
@@ -44,48 +44,45 @@
                 <div class="form-grid">
 
                     <div class="input-group">
-                        <label data-translate="admin-account-label-username">Username</label>
+                        <label>Username</label>
                         <input type="text" name="username" th:value="${user.username}" required>
                     </div>
 
                     <div class="input-group">
-                        <label data-translate="admin-account-label-email">Email</label>
+                        <label>Email</label>
                         <input type="email" name="email" th:value="${user.email}" required>
                     </div>
 
                     <div class="input-group">
-                        <label data-translate="admin-account-label-password">Password</label>
-                        <input type="password" name="password" placeholder="Nhập nếu muốn đổi"
-                            data-translate-placeholder="admin-account-password-placeholder">
+                        <label>Password</label>
+                        <input type="password" name="password" placeholder="Nhập nếu muốn đổi">
                     </div>
 
                     <div class="input-group">
-                        <label data-translate="admin-account-label-fullname">Họ tên</label>
+                        <label>Họ tên</label>
                         <input type="text" name="fullName" th:value="${user.fullName}">
                     </div>
 
                     <div class="input-group">
-                        <label data-translate="admin-account-label-phone">Số điện thoại</label>
+                        <label>Số điện thoại</label>
                         <input type="text" name="phone" th:value="${user.phone}">
                     </div>
 
                     <div class="input-group">
-                        <label data-translate="admin-account-label-address">Địa chỉ</label>
+                        <label>Địa chỉ</label>
                         <input type="text" name="address" th:value="${user.address}">
                     </div>
 
                     <div class="input-group">
-                        <label data-translate="admin-account-label-gender">Giới tính</label>
+                        <label>Giới tính</label>
 
                         <select name="gender">
 
-                            <option value="true" th:selected="${user.gender == true}"
-                                data-translate="admin-account-gender-male">
+                            <option value="true" th:selected="${user.gender == true}">
                                 Nam
                             </option>
 
-                            <option value="false" th:selected="${user.gender == false}"
-                                data-translate="admin-account-gender-female">
+                            <option value="false" th:selected="${user.gender == false}">
                                 Nữ
                             </option>
 
@@ -103,17 +100,15 @@
                     </div>
 
                     <div class="input-group">
-                        <label data-translate="admin-account-label-status">Trạng thái</label>
+                        <label>Trạng thái</label>
 
                         <select name="status">
 
-                            <option value="true" th:selected="${user.status}"
-                                data-translate="admin-account-status-active">
+                            <option value="true" th:selected="${user.status}">
                                 Hoạt động
                             </option>
 
-                            <option value="false" th:selected="${!user.status}"
-                                data-translate="admin-account-status-locked">
+                            <option value="false" th:selected="${!user.status}">
                                 Khóa
                             </option>
 
@@ -123,7 +118,7 @@
 
                 </div>
 
-                <button type="submit" data-translate="admin-account-btn-save">
+                <button type="submit">
                     Lưu Staff
                 </button>
 
@@ -133,7 +128,7 @@
 
         <div class="card">
 
-            <h2 data-translate="admin-account-list-title">Danh sách Staff</h2>
+            <h2>Danh sách Staff</h2>
 
             <table>
 
@@ -141,19 +136,19 @@
 
                     <tr>
 
-                        <th data-translate="admin-account-th-id">ID</th>
+                        <th>ID</th>
 
-                        <th data-translate="admin-account-th-username">Username</th>
+                        <th>Username</th>
 
-                        <th data-translate="admin-account-th-email">Email</th>
+                        <th>Email</th>
 
-                        <th data-translate="admin-account-th-fullname">Họ tên</th>
+                        <th>Họ tên</th>
 
-                        <th data-translate="admin-account-th-phone">SĐT</th>
+                        <th>SĐT</th>
 
-                        <th data-translate="admin-account-th-status">Trạng thái</th>
+                        <th>Trạng thái</th>
 
-                        <th data-translate="admin-account-th-actions">Hành động</th>
+                        <th>Hành động</th>
 
                     </tr>
 
@@ -174,10 +169,8 @@
                         <td th:text="${u.phone}"></td>
 
                         <td>
-                            <span th:if="${u.status}" class="badge active-badge"
-                                data-translate="admin-account-status-active">Hoạt động</span>
-                            <span th:if="${!u.status}" class="badge inactive-badge"
-                                data-translate="admin-account-status-locked-badge">Đã khoá</span>
+                            <span th:if="${u.status}" class="badge active-badge">Hoạt động</span>
+                            <span th:if="${!u.status}" class="badge inactive-badge">Đã khoá</span>
                         </td>
 
                         <td>
@@ -187,8 +180,7 @@
                                 th:data-fullname="${u.fullName != null ? u.fullName : ''}"
                                 th:data-phone="${u.phone != null ? u.phone : ''}"
                                 th:data-address="${u.address != null ? u.address : ''}" th:data-gender="${u.gender}"
-                                th:data-status="${u.status}" onclick="editUser(this)"
-                                data-translate="admin-account-btn-edit">
+                                th:data-status="${u.status}" onclick="editUser(this)">
                                 Sửa
                             </button>
 
@@ -196,14 +188,13 @@
                             <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}"
                                 th:if="${u.status == true}" method="post" style="display:inline;">
 
-                                <button type="submit" class="btn-action"
-                                    data-translate="admin-account-btn-lock">Khoá</button>
+                                <button type="submit" class="btn-action">Khoá</button>
                             </form>
 
                             <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}"
                                 th:if="${u.status == false}" method="post" style="display:inline;">
 
-                                <button type="submit" class="btn-action" data-translate="admin-account-btn-unlock">Mở
+                                <button type="submit" class="btn-action">Mở
                                     khoá</button>
                             </form>
 
@@ -212,8 +203,7 @@
                                 style="display:inline;">
 
                                 <button type="button" class="btn-action btn-danger"
-                                    onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá Staff này?'))"
-                                    data-translate="admin-account-btn-delete">Xoá</button>
+                                    onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá Staff này?'))">Xoá</button>
                             </form>
                         </td>
 

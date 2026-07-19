@@ -69,6 +69,12 @@ public class HomeControllerTest {
     @MockBean
     private ProfileService profileService;
 
+    @MockBean
+    private poly.edu.dao.UserVoucherDAO userVoucherDAO;
+
+    @MockBean
+    private poly.edu.service.AuthService authService;
+
     @BeforeEach
     void setUp() {
         // Giả lập dữ liệu trả về từ các Service để trang Home không bị lỗi NullPointer

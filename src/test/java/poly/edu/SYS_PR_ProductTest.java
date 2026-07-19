@@ -191,7 +191,7 @@ public class SYS_PR_ProductTest {
         // Loading skeleton is a frontend state, but we ensure the API can be called
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test

@@ -9,11 +9,11 @@ function updateToggleButtonState(isActive) {
     if (!btn) return;
 
     if (isActive) {
-        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text" data-translate="admin-products-btn-cancel">Cancel</span>';
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text">Cancel</span>';
         btn.classList.remove('btn-gold');
         btn.classList.add('btn-danger');
     } else {
-        btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-products-btn-add">Thêm Sản Phẩm Mới</span>';
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span class="btn-text">Thêm Sản Phẩm Mới</span>';
         btn.classList.remove('btn-danger');
         btn.classList.add('btn-gold');
     }
@@ -36,19 +36,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const name = document.querySelector('input[name="name"]').value.trim();
             if (!name) {
-                showValidationError(window.t('admin-products-val-name', 'Vui lòng nhập tên sản phẩm.'));
+                showValidationError('Vui lòng nhập tên sản phẩm.');
                 return;
             }
             
             const price = document.querySelector('input[name="price"]').value;
             if (!price || price === '') {
-                showValidationError(window.t('admin-products-val-price', 'Vui lòng nhập giá bán.'));
+                showValidationError('Vui lòng nhập giá bán.');
                 return;
             }
             
             const cat = document.querySelector('select[name="category.id"]').value;
             if (!cat) {
-                showValidationError(window.t('admin-products-val-cat', 'Vui lòng chọn danh mục sản phẩm.'));
+                showValidationError('Vui lòng chọn danh mục sản phẩm.');
                 return;
             }
             
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function showValidationError(message) {
     if (typeof Swal !== 'undefined') {
         Swal.fire({
-            title: window.t('admin-common-error', 'Lỗi!'),
+            title: 'Lỗi!',
             text: message,
             icon: 'warning',
             background: '#1a1a1a',
@@ -83,19 +83,19 @@ document.addEventListener('spa:load', () => {
             
             const name = document.querySelector('input[name="name"]').value.trim();
             if (!name) {
-                showValidationError(window.t('admin-products-val-name', 'Vui lòng nhập tên sản phẩm.'));
+                showValidationError('Vui lòng nhập tên sản phẩm.');
                 return;
             }
             
             const price = document.querySelector('input[name="price"]').value;
             if (!price || price === '') {
-                showValidationError(window.t('admin-products-val-price', 'Vui lòng nhập giá bán.'));
+                showValidationError('Vui lòng nhập giá bán.');
                 return;
             }
             
             const cat = document.querySelector('select[name="category.id"]').value;
             if (!cat) {
-                showValidationError(window.t('admin-products-val-cat', 'Vui lòng chọn danh mục sản phẩm.'));
+                showValidationError('Vui lòng chọn danh mục sản phẩm.');
                 return;
             }
             

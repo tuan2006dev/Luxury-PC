@@ -59,12 +59,12 @@ function updateToggleButtonState(isActive) {
     if (!btn) return;
 
     if (isActive) {
-        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text" data-translate="admin-common-cancel">Hủy</span>';
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text">Hủy</span>';
         btn.classList.remove('btn-gold');
         btn.classList.add('btn-danger');
         btn.style.padding = "0.6rem 1.2rem";
     } else {
-        btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-account-btn-add">Thêm User Mới</span>';
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span class="btn-text">Thêm User Mới</span>';
         btn.classList.remove('btn-danger');
         btn.classList.add('btn-gold');
     }

@@ -115,10 +115,6 @@ function toggleSidebarMenu(menuId, titleEl) {
                                 oldScript.parentNode.replaceChild(newScript, oldScript);
                             });
 
-                            // Re-apply language translations if present
-                            const savedLang = localStorage.getItem('lang') || 'vi';
-                            if (typeof setLanguage === 'function') setLanguage(savedLang);
-
                             // Trigger event for other components
                             document.dispatchEvent(new Event('spa:load'));
                         } else {
@@ -133,105 +129,7 @@ function toggleSidebarMenu(menuId, titleEl) {
             window.addEventListener('popstate', () => window.location.reload());
         });
 
-let translations = {};
-        const reportedKeys = new Set();
 
-        window.t = function(key, defaultValue) {
-            const lang = localStorage.getItem('lang') || 'vi';
-            return (translations[lang] && translations[lang][key]) || defaultValue;
-        };
-
-        function setLanguage(lang) {
-            localStorage.setItem('lang', lang);
-            
-            document.querySelectorAll('[data-translate]').forEach(el => {
-                const key = el.getAttribute('data-translate');
-                if (translations[lang] && translations[lang][key]) {
-                    const val = translations[lang][key];
-                    if (el.children.length === 0) {
-                        el.textContent = val;
-                    } else {
-                        let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
-                        if (textNode) {
-                            textNode.nodeValue = val;
-                        }
-                    }
-                } else {
-                    reportMissingKey(key, el.textContent.trim());
-                }
-            });
-
-            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-translate-placeholder');
-                if (translations[lang] && translations[lang][key]) {
-                    el.setAttribute('placeholder', translations[lang][key]);
-                }
-            });
-        }
-
-        function reportMissingKey(key, defaultValue) {
-            if (!key || !defaultValue || reportedKeys.has(key)) return;
-            reportedKeys.add(key);
-
-            fetch('/api/translations/missing', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key: key, defaultValue: defaultValue })
-            }).catch(err => console.warn("Lỗi gửi báo cáo dịch tự động (admin):", err));
-        }
-
-        async function loadTranslations() {
-            const savedLang = localStorage.getItem('lang') || 'vi';
-
-            const cachedData = localStorage.getItem('translations_cache');
-            if (cachedData) {
-                try {
-                    translations = JSON.parse(cachedData);
-                    setLanguage(savedLang);
-                    // Do not return here, let it fetch the latest translations from the server in the background
-                } catch (e) {
-                    console.error("Lỗi đọc cache dịch admin:", e);
-                }
-            }
-
-            try {
-                const response = await fetch('/api/translations');
-                const newData = await response.json();
-                
-                localStorage.setItem('translations_cache', JSON.stringify(newData));
-                translations = newData;
-                setLanguage(savedLang);
-            } catch (error) {
-                console.error("Lỗi khi tải bộ từ điển dịch thuật admin:", error);
-            }
-        }
-
-        function startTranslationObserver() {
-            const observer = new MutationObserver((mutations) => {
-                let hasNewTranslateElement = false;
-                mutations.forEach(mutation => {
-                    mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            if (node.hasAttribute('data-translate') || node.querySelector('[data-translate]')) {
-                                hasNewTranslateElement = true;
-                            }
-                        }
-                    });
-                });
-                if (hasNewTranslateElement) {
-                    const savedLang = localStorage.getItem('lang') || 'vi';
-                    setLanguage(savedLang);
-                }
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
-        }
-
-        function initTranslations() {
-            loadTranslations();
-            startTranslationObserver();
-        }
-
-        document.addEventListener('DOMContentLoaded', initTranslations);
 
 document.addEventListener("DOMContentLoaded", function() {
             function initFlatpickr() {
@@ -348,3 +246,5 @@ document.addEventListener('input', function(e) {
         }
     }
 });
+
+

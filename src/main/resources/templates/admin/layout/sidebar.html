@@ -5,22 +5,22 @@
     <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
     <nav>
         <a href="/admin/dashboard" class="nav-link" id="nav-dashboard">
-            <i class="fa-solid fa-chart-line"></i> <span data-translate="admin-sidebar-dashboard">Dashboard</span>
+            <i class="fa-solid fa-chart-line"></i> <span>Dashboard</span>
         </a>
 
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('productMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-box main-icon"></i> <span data-translate="admin-sidebar-manage-products">Quản
+                    <i class="fa-solid fa-box main-icon"></i> <span>Quản
                         Lý Sản Phẩm</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="productMenu">
-                <a href="/admin/products" id="nav-products" data-translate="admin-sidebar-products">Sản phẩm</a>
-                <a href="/admin/categories" id="nav-categories" data-translate="admin-sidebar-categories">Danh mục</a>
+                <a href="/admin/products" id="nav-products">Sản phẩm</a>
+                <a href="/admin/categories" id="nav-categories">Danh mục</a>
                 <a href="/admin/combos" id="nav-combos">Quản lý Combo</a>
-                <a href="/admin/flash-sales" id="nav-flash-sales" data-translate="admin-sidebar-flashsales">Flash
+                <a href="/admin/flash-sales" id="nav-flash-sales">Flash
                     Sale</a>
             </div>
         </div>
@@ -28,30 +28,29 @@
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('inventoryMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-warehouse main-icon"></i> <span
-                        data-translate="admin-sidebar-manage-inventory">Quản Lý Kho</span>
+                    <i class="fa-solid fa-warehouse main-icon"></i> <span>Quản Lý Kho</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="inventoryMenu">
-                <a href="/admin/inventory" id="nav-inventory" data-translate="admin-sidebar-inventory">Kho hàng</a>
-                <a href="/admin/orders" id="nav-orders" data-translate="admin-sidebar-orders">Đơn hàng</a>
+                <a href="/admin/inventory" id="nav-inventory">Kho hàng</a>
+                <a href="/admin/orders" id="nav-orders">Đơn hàng</a>
             </div>
         </div>
 
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('userMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-users main-icon"></i> <span data-translate="admin-sidebar-manage-users">Người
+                    <i class="fa-solid fa-users main-icon"></i> <span>Người
                         Dùng & Hỗ Trợ</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="userMenu">
-                <a href="/admin/account" id="nav-account" data-translate="admin-sidebar-users"
+                <a href="/admin/account" id="nav-account"
                     sec:authorize="hasRole('ADMIN')">Người dùng</a>
-                <a href="/admin/vouchers" id="nav-vouchers" data-translate="admin-sidebar-vouchers">Voucher</a>
-                <a href="/admin/tickets" id="nav-tickets" data-translate="admin-sidebar-tickets">Hỗ Trợ (Tickets)</a>
+                <a href="/admin/vouchers" id="nav-vouchers">Voucher</a>
+                <a href="/admin/tickets" id="nav-tickets">Hỗ Trợ (Tickets)</a>
             </div>
         </div>
 
@@ -71,7 +70,7 @@
         <form method="post" th:action="@{/logout}" style="margin-top:2rem;">
             <button type="submit" class="nav-link"
                 style="color:var(--red, #ef4444); background:none; border:none; width:100%; text-align:left; cursor:pointer;">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span data-translate="admin-sidebar-logout">Đăng
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Đăng
                     Xuất</span>
             </button>
         </form>

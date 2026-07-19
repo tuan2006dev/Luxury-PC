@@ -2,7 +2,7 @@ function openModal() {
     document.getElementById('flashSaleForm').reset();
     document.getElementById('fsId').value = '';
     const title = document.getElementById('modalTitle');
-    if (title) title.innerText = window.t ? window.t('admin-flashsales-modal-title', 'Tạo Flash Sale Mới') : 'Tạo Flash Sale Mới';
+    if (title) title.innerText = window.t ? 'Tạo Flash Sale Mới' : 'Tạo Flash Sale Mới';
     document.getElementById('flashSaleModal').classList.add('show');
 }
 
@@ -44,7 +44,7 @@ function editFlashSale(btn) {
 }
 
 function deleteFlashSaleApi(id) {
-    const confirmMsg = window.t ? window.t('admin-flashsales-confirm-delete', 'Xóa chương trình Flash Sale này?') : 'Xóa chương trình Flash Sale này?';
+    const confirmMsg = window.t ? 'Xóa chương trình Flash Sale này?' : 'Xóa chương trình Flash Sale này?';
     
     if (typeof Swal !== 'undefined') {
         Swal.fire({

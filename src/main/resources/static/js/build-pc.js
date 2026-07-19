@@ -861,7 +861,7 @@ function registerCursorEvents() {}
               <div class="pi-name">${item.name}</div>
               <div class="pi-spec">${item.desc}</div>
             </div>
-            <span class="compat-badge badge-ok">✓ ${window.t('build-pc-badge-ok', 'Ok')}</span>
+            <span class="compat-badge badge-ok">✓ ${'Ok'}</span>
             <div class="pi-price">${item.price.toLocaleString('vi-VN')}₫</div>
             <div class="pi-check">✓</div>
           </div>
@@ -874,7 +874,7 @@ function registerCursorEvents() {}
           <div class="slot-info">
             <div class="slot-type">${window.t('build-pc-slot-' + slotKey, slotData.title)}</div>
             <div class="slot-name ${!selectedItem ? 'sum-empty' : ''}" id="sel-${slotKey}-name" style="${!selectedItem ? 'color:var(--muted);font-style:italic;' : ''}">
-              ${selectedItem ? selectedItem.name : window.t('build-pc-not-selected', 'Chưa chọn')}
+              ${selectedItem ? selectedItem.name : 'Chưa chọn'}
             </div>
           </div>
           <div class="slot-price" id="sel-${slotKey}-price" style="${!selectedItem ? 'color:var(--muted);' : ''}">
@@ -883,7 +883,7 @@ function registerCursorEvents() {}
           <div class="slot-toggle">▾</div>
         </div>
         <div class="comp-picker">
-          <div class="picker-label">${window.t('build-pc-select-part', 'Chọn linh kiện')}</div>
+          <div class="picker-label">${'Chọn linh kiện'}</div>
           <div class="picker-list" id="parts-list-${slotKey}">
             ${itemsHtml}
           </div>
@@ -941,7 +941,7 @@ function registerCursorEvents() {}
           <div class="sum-item">
             <div>
               <div class="sum-type">${window.t('build-pc-slot-' + slotKey, MOCK_DB[slotKey].title)}</div>
-              <div class="sum-name sum-empty">${window.t('build-pc-not-selected', 'Chưa chọn')}</div>
+              <div class="sum-name sum-empty">${'Chưa chọn'}</div>
             </div>
             <div class="sum-price" style="color:var(--muted);">—</div>
           </div>
@@ -966,7 +966,7 @@ function registerCursorEvents() {}
     }
 
     document.getElementById('grand-total').textContent = totalPrice.toLocaleString('vi-VN') + '₫';
-    document.getElementById('part-count').innerHTML = `${count} <span data-translate="build-pc-sum-parts-selected">${window.t('build-pc-sum-parts-selected', 'linh kiện đã chọn')}</span>`;
+    document.getElementById('part-count').innerHTML = `${count} <span>${'linh kiện đã chọn'}</span>`;
 
     // Socket matching alert
     const cpu = buildState.cpu;
@@ -977,13 +977,13 @@ function registerCursorEvents() {}
     if (cpu && mb && cpu.socket !== mb.socket) {
       compatAlert.className = 'compat-alert warn';
       compatAlert.style.display = 'block';
-      compatMsg.innerHTML = `${window.t('build-pc-compat-socket-error', 'Lỗi Socket:')} CPU ${cpu.name} (${cpu.socket}) ${window.t('build-pc-compat-mismatch', 'không khớp với Mainboard')} ${mb.name} (${mb.socket})!`;
+      compatMsg.innerHTML = `${'Lỗi Socket:'} CPU ${cpu.name} (${cpu.socket}) ${'không khớp với Mainboard'} ${mb.name} (${mb.socket})!`;
       if (document.getElementById('slot-card-cpu')) document.getElementById('slot-card-cpu').classList.add('compat-error');
       if (document.getElementById('slot-card-mb')) document.getElementById('slot-card-mb').classList.add('compat-error');
     } else {
       compatAlert.className = 'compat-alert ok';
       compatAlert.style.display = 'flex';
-      compatMsg.textContent = window.t('build-pc-compat-ok', 'Tất cả linh kiện tương thích hoàn toàn');
+      compatMsg.textContent = 'Tất cả linh kiện tương thích hoàn toàn';
       if (cpu && document.getElementById('slot-card-cpu')) document.getElementById('slot-card-cpu').classList.remove('compat-error');
       if (mb && document.getElementById('slot-card-mb')) document.getElementById('slot-card-mb').classList.remove('compat-error');
     }
@@ -1064,26 +1064,26 @@ function registerCursorEvents() {}
 
     renderSlots();
     recalculateStats();
-    toast('↺ ' + window.t('build-pc-toast-reset', 'Đã reset cấu hình. Bắt đầu lại từ đầu.'));
+    toast('↺ ' + 'Đã reset cấu hình. Bắt đầu lại từ đầu.');
   }
 
   function addBuildToCart() {
     const count = Object.values(buildState).filter(v=>v).length;
     if (count < 4) {
-      toast('⚠️ ' + window.t('build-pc-toast-min-parts', 'Vui lòng chọn ít nhất: CPU, Mainboard, GPU và RAM.'));
+      toast('⚠️ ' + 'Vui lòng chọn ít nhất: CPU, Mainboard, GPU và RAM.');
       return;
     }
-    toast('✓ ' + window.t('build-pc-toast-add-cart', 'Đã thêm toàn bộ cấu hình vào giỏ hàng!'));
+    toast('✓ ' + 'Đã thêm toàn bộ cấu hình vào giỏ hàng!');
     setTimeout(()=>location.href='/checkout',1000);
   }
 
   function saveBuild() {
-    toast('💾 ' + window.t('build-pc-toast-save-build', 'Đã lưu cấu hình PC 3D vào tài khoản của bạn!'));
+    toast('💾 ' + 'Đã lưu cấu hình PC 3D vào tài khoản của bạn!');
   }
 
   function shareBuild() {
     navigator.clipboard?.writeText(window.location.href).catch(()=>{});
-    toast('🔗 ' + window.t('build-pc-toast-share-build', 'Đã sao chép liên kết cấu hình!'));
+    toast('🔗 ' + 'Đã sao chép liên kết cấu hình!');
   }
 
   // --- AI ADVISOR CHATBOT ENGINE ---

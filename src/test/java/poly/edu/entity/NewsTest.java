@@ -20,8 +20,9 @@ class NewsTest {
         entity.setMetaKeywords("metaKeywords_test");
         entity.setCategory(new NewsCategory());
         entity.setAuthor(new User());
-        entity.setCreatedAt(new java.util.Date());
-        entity.setUpdatedAt(new java.util.Date());
+        java.util.Date now = new java.util.Date();
+        entity.setCreatedAt(now);
+        entity.setUpdatedAt(now);
 
         // Act & Assert
         assertEquals(1, entity.getId());
@@ -35,7 +36,7 @@ class NewsTest {
         assertEquals("metaKeywords_test", entity.getMetaKeywords());
         assertNotNull(entity.getCategory());
         assertNotNull(entity.getAuthor());
-        assertEquals(new java.util.Date(), entity.getCreatedAt());
-        assertEquals(new java.util.Date(), entity.getUpdatedAt());
+        assertEquals(now, entity.getCreatedAt());
+        assertEquals(now, entity.getUpdatedAt());
     }
 }

@@ -14,7 +14,8 @@ class StockMovementTest {
         entity.setChangeQuantity(1);
         entity.setMovementType("movementType_test");
         entity.setNote("note_test");
-        entity.setCreatedAt(new java.util.Date());
+        java.util.Date now = new java.util.Date();
+        entity.setCreatedAt(now);
 
         // Act & Assert
         assertEquals(1, entity.getId());
@@ -22,6 +23,6 @@ class StockMovementTest {
         assertEquals(1, entity.getChangeQuantity());
         assertEquals("movementType_test", entity.getMovementType());
         assertEquals("note_test", entity.getNote());
-        assertEquals(new java.util.Date(), entity.getCreatedAt());
+        assertEquals(now, entity.getCreatedAt());
     }
 }

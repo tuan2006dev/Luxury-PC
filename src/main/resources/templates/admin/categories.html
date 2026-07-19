@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate="admin-categories-page-title">Quản Lý Danh Mục — Luxury PC</title>
+    <title>Quản Lý Danh Mục — Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/categories.css}" />
@@ -19,7 +19,7 @@
     <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1><span data-translate="admin-categories-title">Quản Lý Danh Mục</span> (<span
+                <h1><span>Quản Lý Danh Mục</span> (<span
                         th:text="${categories != null ? categories.size() : 0}">0</span>)</h1>
             </div>
             <div class="user-info" style="display: flex; align-items: center;">
@@ -34,12 +34,12 @@
 
         <div style="margin-bottom: 1.5rem;">
             <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()"><i class="fa-solid fa-plus"></i>
-                <span class="btn-text" data-translate="admin-categories-btn-add">Thêm Danh Mục Mới</span></button>
+                <span class="btn-text">Thêm Danh Mục Mới</span></button>
         </div>
 
         <div class="card add-form-container" id="categoryForm" th:classappend="${category.id != null ? 'active' : ''}">
             <div class="card-header">
-                <h2 th:data-translate="${category.id == null ? 'admin-categories-form-add' : 'admin-categories-form-edit'}"
+                <h2
                     th:text="${category.id == null ? 'Thêm Danh Mục' : 'Sửa Danh Mục'}">Thông Tin Danh Mục</h2>
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i
                         class="fa-solid fa-xmark"></i></button>
@@ -49,15 +49,13 @@
 
                 <input autocomplete="off" type="hidden" th:field="*{id}">
                 <div class="input-group">
-                    <label data-translate="admin-categories-label-name">Tên Danh Mục *</label>
-                    <input autocomplete="off" type="text" th:field="*{name}" required
-                        data-translate-placeholder="admin-categories-placeholder-name" placeholder="VD: Card Màn Hình">
+                    <label>Tên Danh Mục *</label>
+                    <input autocomplete="off" type="text" th:field="*{name}" required placeholder="VD: Card Màn Hình">
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn btn-gold" data-translate="admin-categories-btn-save">Lưu Danh
+                    <button type="submit" class="btn btn-gold">Lưu Danh
                         Mục</button>
-                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'"
-                        data-translate="admin-categories-btn-cancel">Hủy / Làm mới</button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'">Hủy / Làm mới</button>
                 </div>
             </form>
         </div>
@@ -66,9 +64,9 @@
             <table>
                 <thead>
                     <tr>
-                        <th data-translate="admin-categories-th-id">ID</th>
-                        <th data-translate="admin-categories-th-name">Tên Danh Mục</th>
-                        <th style="width: 100px;" data-translate="admin-categories-th-actions">Thao Tác</th>
+                        <th>ID</th>
+                        <th>Tên Danh Mục</th>
+                        <th style="width: 100px;">Thao Tác</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -140,24 +140,7 @@ function updateQty(id, delta) {
     }
 }
 
-let translations = {};
 
-function setLanguage(lang) {
-    localStorage.setItem('lang', lang);
-    document.querySelectorAll('[data-translate]').forEach(el => {
-        const key = el.getAttribute('data-translate');
-        if (translations[lang] && translations[lang][key]) {
-            const val = translations[lang][key];
-            if (el.children.length === 0) {
-                el.textContent = val;
-            } else {
-                let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
-                if (textNode) {
-                    textNode.nodeValue = val;
-                }
-            }
-        }
-    });
 }
 
 async function loadTranslations() {
@@ -184,7 +167,7 @@ async function loadTranslations() {
 
 function removeItem(id) {
     const lang = localStorage.getItem('lang') || 'vi';
-    const msg = (translations[lang] && translations[lang]['cart-confirm-delete']) || "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?";
+    const msg = "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?";
 
     window.showConfirm(msg).then(confirmed => {
         if (confirmed) {
@@ -197,7 +180,7 @@ function removeItem(id) {
                         setTimeout(() => {
                             row.remove();
                             updateGrandTotal();
-                            const successMsg = (translations[lang] && translations[lang]['cart-delete-success']) || "Đã xóa sản phẩm khỏi giỏ hàng thành công!";
+                            const successMsg = "Đã xóa sản phẩm khỏi giỏ hàng thành công!";
                             window.showAlert({ message: successMsg, isSuccess: true });
                         }, 300);
                     }
@@ -207,7 +190,6 @@ function removeItem(id) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadTranslations();
     const urlParams = new URLSearchParams(window.location.search);
     const errorMsg = urlParams.get('error');
     if (errorMsg) {
@@ -244,4 +226,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 })();
+
 

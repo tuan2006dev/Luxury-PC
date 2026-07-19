@@ -9,11 +9,11 @@ function updateToggleButtonState(isActive) {
     if (!btn) return;
 
     if (isActive) {
-        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text" data-translate="admin-categories-btn-cancel">Hủy</span>';
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text">Hủy</span>';
         btn.classList.remove('btn-gold');
         btn.classList.add('btn-danger');
     } else {
-        btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span class="btn-text" data-translate="admin-categories-btn-add">Thêm Danh Mục Mới</span>';
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span class="btn-text">Thêm Danh Mục Mới</span>';
         btn.classList.remove('btn-danger');
         btn.classList.add('btn-gold');
     }
