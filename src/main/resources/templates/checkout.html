@@ -7,7 +7,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.default.min.css" rel="stylesheet">
     <style>
+        .voucher-box .ts-wrapper {
+            flex: 1;
+            width: 100%;
+        }
+
+        .voucher-box .ts-control {
+            border: 1px solid var(--border) !important;
+            border-radius: 4px !important;
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+            box-shadow: none !important;
+            background: #ffffff !important;
+            min-height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .voucher-box .ts-control input {
+            font-size: 13px !important;
+        }
+
+        .voucher-box .ts-dropdown {
+            border-radius: 4px !important;
+            border-color: var(--border) !important;
+            font-size: 13px !important;
+            z-index: 100 !important;
+        }
+
         :root {
             --primary: #0056b3;
             --primary-hover: #004494;
@@ -563,9 +592,26 @@
                         </div>
 
                         <!-- Voucher -->
-                        <div class="voucher-box">
-                            <input type="text" class="voucher-input" id="voucherInput" placeholder="Nhập mã giảm giá">
-                            <button type="button" class="btn-apply" onclick="applyVoucher()">ÁP DỤNG</button>
+                        <div th:if="${hasFlashSaleItem}"
+                            style="font-size:12px; color:#b45309; background:#fffbeb; border:1px solid #fde68a; padding:8px 12px; border-radius:4px; margin-bottom:15px;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Giỏ hàng chứa sản phẩm Flash Sale (không áp
+                            dụng thêm Voucher).
+                        </div>
+                        <div class="voucher-box"
+                            th:style="${hasFlashSaleItem} ? 'opacity: 0.6; pointer-events: none;' : ''">
+                            <select class="voucher-input" id="voucherInput" th:disabled="${hasFlashSaleItem}">
+                                <option th:each="uv : ${userVouchers}" th:value="${uv.voucher.code}"
+                                    th:selected="${uv.voucher.code == voucherCode}"
+                                    th:text="${uv.voucher.code + ' - ' + (uv.voucher.description != null and !#strings.isEmpty(uv.voucher.description) ? uv.voucher.description : (uv.voucher.discountType != null and uv.voucher.discountType.name() == 'PERCENTAGE' ? 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ'))}">
+                                </option>
+                                <option th:if="${userVouchers == null or userVouchers.isEmpty()}"
+                                    th:each="v : ${activeVouchers}" th:value="${v.code}"
+                                    th:selected="${v.code == voucherCode}"
+                                    th:text="${v.code + ' - ' + (v.description != null and !#strings.isEmpty(v.description) ? v.description : (v.discountType != null and v.discountType.name() == 'PERCENTAGE' ? 'Giảm ' + #numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm ' + #numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ'))}">
+                                </option>
+                            </select>
+                            <button type="button" class="btn-apply" onclick="applyVoucher()"
+                                th:disabled="${hasFlashSaleItem}">ÁP DỤNG</button>
                         </div>
                         <div id="voucherMessage"
                             style="font-size:12px; margin-top:-15px; margin-bottom:15px; display:none;"></div>
@@ -618,31 +664,8 @@
             </div>
         </div>
 
-        <!-- Trust Footer -->
+
     </div>
-    <!-- Trust Footer -->
-    <!-- <div class="checkout-footer">
-        <div class="cf-item">
-            <i class="fa-solid fa-medal"></i>
-            <div>CAM KẾT CHÍNH HÃNG<br><span style="font-size:11px;color:var(--text-muted);">100% sản phẩm chính
-                    hãng</span></div>
-        </div>
-        <div class="cf-item">
-            <i class="fa-solid fa-rotate-left"></i>
-            <div>ĐỔI TRẢ DỄ DÀNG<br><span style="font-size:11px;color:var(--text-muted);">Đổi mới trong 7 ngày</span>
-            </div>
-        </div>
-        <div class="cf-item">
-            <i class="fa-solid fa-truck-fast"></i>
-            <div>GIAO HÀNG TOÀN QUỐC<br><span style="font-size:11px;color:var(--text-muted);">Nhận hàng và thanh
-                    toán</span></div>
-        </div>
-        <div class="cf-item">
-            <i class="fa-solid fa-headset"></i>
-            <div>HỖ TRỢ 24/7<br><span style="font-size:11px;color:var(--text-muted);">Hỗ trợ khách hàng mọi lúc</span>
-            </div>
-        </div>
-    </div> -->
     <div th:replace="~{layout/footer :: footer}"></div>
 
     <!-- Data passing -->
@@ -650,10 +673,12 @@
         const baseTotal = /*[[${totalPrice}]]*/ 0;
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
         // State
         let currentShipping = 30000;
         let currentDiscount = 0;
+        let voucherSelectInstance;
 
         // Number formatter
         const formatter = new Intl.NumberFormat('vi-VN');
@@ -666,10 +691,19 @@
             document.getElementById('finalTotalText').innerText = formatter.format(Math.max(0, finalTotal)) + 'đ';
         }
 
-        // Initialize Total
+        // Initialize Total & Tom Select
         document.addEventListener('DOMContentLoaded', () => {
             fetchShippingMethods('');
             loadProvinces();
+
+            const voucherEl = document.getElementById('voucherInput');
+            if (voucherEl) {
+                voucherSelectInstance = new TomSelect('#voucherInput', {
+                    create: true,
+                    placeholder: "Nhập hoặc chọn mã giảm giá",
+                    allowEmptyOption: false
+                });
+            }
         });
 
         // UI toggles
@@ -797,7 +831,8 @@
 
         // Voucher logic
         function applyVoucher() {
-            const code = document.getElementById('voucherInput').value.trim();
+            const rawVal = voucherSelectInstance ? voucherSelectInstance.getValue() : document.getElementById('voucherInput').value;
+            const code = (rawVal || '').trim();
             const msg = document.getElementById('voucherMessage');
             if (!code) {
                 msg.style.display = 'block';
@@ -810,15 +845,18 @@
                 .then(res => res.json())
                 .then(data => {
                     msg.style.display = 'block';
-                    if (data.success) {
+                    const isSuccess = data.success || data.valid;
+                    if (isSuccess) {
                         msg.style.color = 'var(--success)';
                         msg.innerText = data.message;
                         document.getElementById('voucherCodeHidden').value = code;
 
-                        if (data.newTotal !== undefined) {
-                            currentDiscount = baseTotal - data.newTotal;
-                            updateTotal();
+                        if (data.discount !== undefined) {
+                            currentDiscount = Number(data.discount);
+                        } else if (data.newTotal !== undefined) {
+                            currentDiscount = baseTotal - Number(data.newTotal);
                         }
+                        updateTotal();
                     } else {
                         msg.style.color = 'var(--danger)';
                         msg.innerText = data.message || 'Mã không hợp lệ';

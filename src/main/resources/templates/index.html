@@ -69,23 +69,30 @@
             <a th:href="@{/products}" class="section-view-all">Xem tất cả ></a>
         </div>
         <div class="category-cards">
-            <a class="category-card" th:href="${pcCid != null} ? @{/products(cid=${pcCid})} : @{/products(kw='PC')}" style="text-decoration: none;">
+            <a class="category-card" th:href="${pcCid != null} ? @{/products(cid=${pcCid})} : @{/products(kw='PC')}"
+                style="text-decoration: none;">
                 <img th:src="@{/images/ui-new/PC.png}" alt="PC">
                 <span>PC</span>
             </a>
-            <a class="category-card" th:href="${ramCid != null} ? @{/products(cid=${ramCid})} : @{/products(kw='RAM')}" style="text-decoration: none;">
+            <a class="category-card" th:href="${ramCid != null} ? @{/products(cid=${ramCid})} : @{/products(kw='RAM')}"
+                style="text-decoration: none;">
                 <img th:src="@{/images/ui-new/RAM.png}" alt="RAM">
                 <span>RAM</span>
             </a>
-            <a class="category-card" th:href="${vgaCid != null} ? @{/products(cid=${vgaCid})} : @{/products(kw='VGA')}" style="text-decoration: none;">
+            <a class="category-card" th:href="${vgaCid != null} ? @{/products(cid=${vgaCid})} : @{/products(kw='VGA')}"
+                style="text-decoration: none;">
                 <img th:src="@{/images/ui-new/VGA.png}" alt="VGA">
                 <span>VGA</span>
             </a>
-            <a class="category-card" th:href="${caseCid != null} ? @{/products(cid=${caseCid})} : @{/products(kw='Case')}" style="text-decoration: none;">
+            <a class="category-card"
+                th:href="${caseCid != null} ? @{/products(cid=${caseCid})} : @{/products(kw='Case')}"
+                style="text-decoration: none;">
                 <img th:src="@{/images/ui-new/CASE.png}" alt="CASE">
                 <span>CASE</span>
             </a>
-            <a class="category-card" th:href="${mainboardCid != null} ? @{/products(cid=${mainboardCid})} : @{/products(kw='Mainboard')}" style="text-decoration: none;">
+            <a class="category-card"
+                th:href="${mainboardCid != null} ? @{/products(cid=${mainboardCid})} : @{/products(kw='Mainboard')}"
+                style="text-decoration: none;">
                 <img th:src="@{/images/ui-new/Mainboard.png}" alt="Mainboard">
                 <span>Mainboard</span>
             </a>
@@ -129,75 +136,96 @@
                 <div class="flash-badge" style="margin:0;">🔥 HOT DEAL</div>
             </div>
             <div class="flash-countdown" id="flash-countdown" style="display: flex; gap: 8px; align-items: center;">
-                <div class="countdown-block" id="fs-days-block" style="display: none; flex-direction: column; align-items: center;">
-                    <span class="countdown-num" id="fs-days" style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                <div class="countdown-block" id="fs-days-block"
+                    style="display: none; flex-direction: column; align-items: center;">
+                    <span class="countdown-num" id="fs-days"
+                        style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
                     <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Ngày</span>
                 </div>
                 <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
-                    <span class="countdown-num" id="fs-hours" style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                    <span class="countdown-num" id="fs-hours"
+                        style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
                     <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Giờ</span>
                 </div>
                 <span style="font-weight:bold; color: #ef4444; margin-top: -14px;">:</span>
                 <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
-                    <span class="countdown-num" id="fs-minutes" style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                    <span class="countdown-num" id="fs-minutes"
+                        style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
                     <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Phút</span>
                 </div>
                 <span style="font-weight:bold; color: #ef4444; margin-top: -14px;">:</span>
                 <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
-                    <span class="countdown-num" id="fs-seconds" style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                    <span class="countdown-num" id="fs-seconds"
+                        style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
                     <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Giây</span>
                 </div>
             </div>
         </div>
-        <div class="grid-5-cols" th:if="${flashSaleItems != null}" style="display: flex; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 15px; scrollbar-width: thin; margin-bottom: 35px;">
-            <div class="product-card" th:each="item : ${flashSaleItems}" style="flex: 0 0 calc(20% - 16px); min-width: 220px;"
+        <!-- ===================================================== -->
+        <!--                     GHIM CARD                         -->
+        <!-- ===================================================== -->
+        <div class="grid-5-cols" th:if="${flashSaleItems != null}"
+            style="display: flex; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 15px; scrollbar-width: thin; margin-bottom: 35px;">
+            <div class="product-card" th:each="item : ${flashSaleItems}"
+                style="flex: 0 0 calc(20% - 16px); min-width: 220px; height: 390px; display: flex; flex-direction: column; box-sizing: border-box; cursor: pointer; position: relative;"
                 th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|">
                 <div class="flash-discount-badge"
                     style="position:absolute; top:10px; left:10px; background:#ef4444; color:white; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:bold; z-index:2;">
                     Flash Sale</div>
-                <div class="product-card-img" style="height: 140px;">
+                <div class="product-card-img" style="height: 140px; flex-shrink: 0;">
                     <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}"
                         th:alt="${item.product.name}"
                         onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                 </div>
-                <h4 class="product-card-title" style="font-size:14px;" th:text="${item.product.name}">Tên sản phẩm</h4>
+                <h4 class="product-card-title"
+                    style="font-size:14px; height: 40px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; margin-bottom: 4px;"
+                    th:text="${item.product.name}">Tên sản phẩm</h4>
                 <p class="product-spec"
-                    style="font-size: 12px; color: #666; margin: 5px 0 10px 0; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                    style="font-size: 12px; color: #666; height: 36px; margin: 0 0 8px 0; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
                     th:text="${item.product.description != null ? item.product.description : 'Sản phẩm cao cấp'}">
                     Description</p>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div class="promo-price-new"
-                            th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'"
-                            style="color:#ef4444;">12.990.000₫</div>
-                        <div class="promo-price-old"><span
-                                th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">15.000.000₫</span>
+                <div style="margin-top: auto; padding-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Row 1: Prices & Remaining stock -->
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                        <div>
+                            <div class="promo-price-new"
+                                th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'"
+                                style="color:#ef4444; font-weight: 700;">12.990.000₫</div>
+                            <div class="promo-price-old"><span
+                                    th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">15.000.000₫</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: #ef4444; font-weight: 500;">
+                            Còn lại: <span
+                                th:text="${T(java.lang.Math).min(item.saleQuantity - item.soldCount, item.product.stock)}">45</span>
                         </div>
                     </div>
+                    <!-- Row 2: Action buttons or Out of stock badge -->
                     <div th:if="${item.product.stock != null and item.product.stock <= 0}"
-                        style="text-align: center; color: red; font-weight: bold; font-size: 14px; padding: 5px 0; border: 1px solid red; border-radius: 4px; background-color: #fff5f5; width: 100%;">
+                        style="text-align: center; color: red; font-weight: bold; font-size: 12px; padding: 4px 8px; border: 1px solid red; border-radius: 4px; background-color: #fff5f5; width: 100%; box-sizing: border-box;">
                         Hết hàng</div>
-                    <div th:if="${item.product.stock == null or item.product.stock > 0}" style="display:flex; gap:5px;">
+                    <div th:if="${item.product.stock == null or item.product.stock > 0}"
+                        style="display:flex; justify-content:flex-end; gap:5px;">
                         <button class="btn-buy-small"
-                            style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 10px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px;"
+                            style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 10px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px; white-space: nowrap;"
                             th:onclick="'buyNow(' + ${item.product.id} + '); event.stopPropagation();'"
-                            title="Mua ngay">Mua ngay</button>
-                        <button class="btn-cart-small" style="position:static; width:30px; height:30px; font-size:14px;"
+                            title="Mua ngay">Mua
+                            ngay
+                        </button>
+                        <button class="btn-cart-small"
+                            style="position:static; width:30px; height:30px; font-size:14px; flex-shrink: 0;"
                             th:onclick="'addToCart(' + ${item.product.id} + ', 1); event.stopPropagation();'"><i
-                                class="fa-solid fa-cart-shopping"></i></button>
+                                class="fa-solid fa-cart-shopping"></i>
+                        </button>
                     </div>
-                </div>
-                <div style="font-size: 11px; color: #ef4444; margin-top: 8px; font-weight: 500;">
-                    Còn lại: <span
-                        th:text="${T(java.lang.Math).min(item.saleQuantity - item.soldCount, item.product.stock)}">45</span>
-                    sản phẩm
                 </div>
             </div>
         </div>
 
         <div class="section-header">
             <h2 class="section-title">Sản phẩm mới nhất</h2>
-            <a href="javascript:void(0)" onclick="toggleNewest(this)" class="section-view-all" id="view-all-newest" th:if="${allProducts != null and allProducts.size() > 10}">Xem tất cả ></a>
+            <a href="javascript:void(0)" onclick="toggleNewest(this)" class="section-view-all" id="view-all-newest"
+                th:if="${allProducts != null and allProducts.size() > 10}">Xem tất cả ></a>
         </div>
         <div class="filter-tabs">
             <span class="filter-tab">DANH MỤC</span>
@@ -224,7 +252,8 @@
                     <!-- Row 1: Price and Out of Stock Status -->
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div class="promo-price-new"
-                            th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">12.990.000₫</div>
+                            th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">12.990.000₫
+                        </div>
                         <div th:if="${p.stock != null and p.stock <= 0}"
                             style="text-align: center; color: red; font-weight: bold; font-size: 12px; padding: 4px 8px; border: 1px solid red; border-radius: 4px; background-color: #fff5f5; white-space: nowrap;">
                             Hết hàng</div>
@@ -256,7 +285,8 @@
                 <div class="dark-banner-info">
                     <h3>PC Gaming</h3>
                     <p>Khả năng xử lý cao</p>
-                    <a th:href="${gamingCid != null} ? @{/products(cid=${gamingCid})} : @{/products(kw='PC Gaming')}">Xem ngay →</a>
+                    <a th:href="${gamingCid != null} ? @{/products(cid=${gamingCid})} : @{/products(kw='PC Gaming')}">Xem
+                        ngay →</a>
                 </div>
             </div>
             <div class="dark-banner"
@@ -264,7 +294,9 @@
                 <div class="dark-banner-info">
                     <h3>PC Đồ hoạ</h3>
                     <p>Render, Edit 3D</p>
-                    <a th:href="${workstationCid != null} ? @{/products(cid=${workstationCid})} : @{/products(kw='PC Đồ hoạ')}">Xem ngay →</a>
+                    <a
+                        th:href="${workstationCid != null} ? @{/products(cid=${workstationCid})} : @{/products(kw='PC Đồ hoạ')}">Xem
+                        ngay →</a>
                 </div>
             </div>
             <div class="dark-banner"
@@ -272,7 +304,9 @@
                 <div class="dark-banner-info">
                     <h3>PC Văn phòng</h3>
                     <p>Làm việc, Học tập</p>
-                    <a th:href="${vanPhongCid != null} ? @{/products(cid=${vanPhongCid})} : @{/products(kw='PC Văn phòng')}">Xem ngay →</a>
+                    <a
+                        th:href="${vanPhongCid != null} ? @{/products(cid=${vanPhongCid})} : @{/products(kw='PC Văn phòng')}">Xem
+                        ngay →</a>
                 </div>
             </div>
             <div class="dark-banner"
@@ -280,7 +314,9 @@
                 <div class="dark-banner-info">
                     <h3>PC Streamer</h3>
                     <p>Live stream, Edit Video</p>
-                    <a th:href="${streamerCid != null} ? @{/products(cid=${streamerCid})} : @{/products(kw='PC Streamer')}">Xem ngay →</a>
+                    <a
+                        th:href="${streamerCid != null} ? @{/products(cid=${streamerCid})} : @{/products(kw='PC Streamer')}">Xem
+                        ngay →</a>
                 </div>
             </div>
         </div>
@@ -299,11 +335,14 @@
             <div class="brand-box" onclick="location.href='/products?brand=MSI'"><img src="/images/ui-new/msi.svg"
                     alt="MSI" style="max-height:35px; object-fit:contain;"></div>
             <div class="brand-box" onclick="location.href='/products?brand=GIGABYTE'"><img
-                    src="/images/ui-new/gigabyte.svg" alt="GIGABYTE" style="max-height:35px; object-fit:contain;"></div>
+                    src="/images/ui-new/gigabyte.svg" alt="GIGABYTE" style="max-height:35px; object-fit:contain;">
+            </div>
             <div class="brand-box" onclick="location.href='/products?brand=Corsair'"><img
-                    src="/images/ui-new/corsair.svg" alt="CORSAIR" style="max-height:35px; object-fit:contain;"></div>
+                    src="/images/ui-new/corsair.svg" alt="CORSAIR" style="max-height:35px; object-fit:contain;">
+            </div>
             <div class="brand-box" onclick="location.href='/products?brand=Kingston'"><img
-                    src="/images/ui-new/kingston.svg" alt="Kingston" style="max-height:35px; object-fit:contain;"></div>
+                    src="/images/ui-new/kingston.svg" alt="Kingston" style="max-height:35px; object-fit:contain;">
+            </div>
             <div class="brand-box" onclick="location.href='/products?brand=Cooler Master'"><img
                     src="/images/ui-new/coolermaster.svg" alt="Cooler Master"
                     style="max-height:35px; object-fit:contain;"></div>
@@ -313,11 +352,14 @@
         <div class="bottom-sections">
             <div class="news-list" th:if="${leftNews != null and !leftNews.isEmpty()}">
                 <div class="section-header">
-                    <h2 class="section-title" th:text="${leftCategory != null ? leftCategory.name : 'Tin tức mới'}">Tin tức mới</h2>
-                    <a th:href="@{/news(category=${leftCategory != null ? leftCategory.id : ''})}" class="section-view-all">Xem tất cả ></a>
+                    <h2 class="section-title" th:text="${leftCategory != null ? leftCategory.name : 'Tin tức mới'}">
+                        Tin
+                        tức mới</h2>
+                    <a th:href="@{/news(category=${leftCategory != null ? leftCategory.id : ''})}"
+                        class="section-view-all">Xem tất cả ></a>
                 </div>
-                <a class="news-item" th:each="n : ${leftNews}"
-                    th:href="@{/news/{slug}(slug=${n.slug})}" style="text-decoration: none;">
+                <a class="news-item" th:each="n : ${leftNews}" th:href="@{/news/{slug}(slug=${n.slug})}"
+                    style="text-decoration: none;">
                     <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
                         th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                     <h4 th:text="${n.title}">Tiêu đề tin tức</h4>
@@ -326,11 +368,14 @@
 
             <div class="populars-list" th:if="${rightNews != null and !rightNews.isEmpty()}">
                 <div class="section-header">
-                    <h2 class="section-title" th:text="${rightCategory != null ? rightCategory.name : 'Tin tức nổi bật'}">Tin tức nổi bật</h2>
-                    <a th:href="@{/news(category=${rightCategory != null ? rightCategory.id : ''})}" class="section-view-all">Xem tất cả ></a>
+                    <h2 class="section-title"
+                        th:text="${rightCategory != null ? rightCategory.name : 'Tin tức nổi bật'}">Tin tức nổi bật
+                    </h2>
+                    <a th:href="@{/news(category=${rightCategory != null ? rightCategory.id : ''})}"
+                        class="section-view-all">Xem tất cả ></a>
                 </div>
-                <a class="news-item" th:each="n : ${rightNews}"
-                    th:href="@{/news/{slug}(slug=${n.slug})}" style="text-decoration: none;">
+                <a class="news-item" th:each="n : ${rightNews}" th:href="@{/news/{slug}(slug=${n.slug})}"
+                    style="text-decoration: none;">
                     <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
                         th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                     <h4 th:text="${n.title}">Tiêu đề tin tức</h4>
@@ -360,37 +405,37 @@
             function updateFlashSaleTimer() {
                 const now = new Date().getTime();
                 const distance = flashSaleEndTime - now;
-                
+
                 if (distance < 0) {
                     if (document.getElementById('fs-hours')) document.getElementById('fs-hours').innerText = "00";
                     if (document.getElementById('fs-minutes')) document.getElementById('fs-minutes').innerText = "00";
                     if (document.getElementById('fs-seconds')) document.getElementById('fs-seconds').innerText = "00";
                     return;
                 }
-                
+
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                
+
                 const ds = document.getElementById('fs-days');
                 const hs = document.getElementById('fs-hours');
                 const ms = document.getElementById('fs-minutes');
                 const ss = document.getElementById('fs-seconds');
                 const dBlock = document.getElementById('fs-days-block');
-                
+
                 if (days > 0) {
-                    if(dBlock) dBlock.style.display = 'flex';
-                    if(ds) ds.innerText = days < 10 ? '0' + days : days;
+                    if (dBlock) dBlock.style.display = 'flex';
+                    if (ds) ds.innerText = days < 10 ? '0' + days : days;
                 } else {
-                    if(dBlock) dBlock.style.display = 'none';
+                    if (dBlock) dBlock.style.display = 'none';
                 }
-                
-                if(hs) hs.innerText = hours < 10 ? '0' + hours : hours;
-                if(ms) ms.innerText = minutes < 10 ? '0' + minutes : minutes;
-                if(ss) ss.innerText = seconds < 10 ? '0' + seconds : seconds;
+
+                if (hs) hs.innerText = hours < 10 ? '0' + hours : hours;
+                if (ms) ms.innerText = minutes < 10 ? '0' + minutes : minutes;
+                if (ss) ss.innerText = seconds < 10 ? '0' + seconds : seconds;
             }
-            
+
             updateFlashSaleTimer();
             setInterval(updateFlashSaleTimer, 1000);
         }

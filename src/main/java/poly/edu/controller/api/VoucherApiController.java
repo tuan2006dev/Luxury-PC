@@ -7,9 +7,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.CartItem;
 import poly.edu.entity.User;
+import poly.edu.service.FlashSaleService;
 import poly.edu.service.ProfileService;
 import poly.edu.service.VoucherService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -20,6 +22,8 @@ public class VoucherApiController {
     private final VoucherService voucherService;
 
     private final ProfileService profileService;
+
+    private final FlashSaleService flashSaleService;
 
     /**
      * AJAX endpoint: validate mã voucher
@@ -37,6 +41,21 @@ public class VoucherApiController {
 
         double cartTotal = 0;
         if (cart != null) {
+            boolean hasFlashSale = false;
+            for (CartItem item : cart.values()) {
+                if (flashSaleService.getActiveFlashSaleItem(item.getId()).isPresent()) {
+                    hasFlashSale = true;
+                    break;
+                }
+            }
+            if (hasFlashSale) {
+                Map<String, Object> err = new HashMap<>();
+                err.put("success", false);
+                err.put("valid", false);
+                err.put("message", "Không thể áp dụng Voucher khi giỏ hàng có sản phẩm Flash Sale.");
+                return err;
+            }
+
             cartTotal = cart.values().stream()
                     .mapToDouble(item -> item.getPrice() * item.getQuantity())
                     .sum();
