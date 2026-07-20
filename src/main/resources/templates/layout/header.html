@@ -2,12 +2,13 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" />
     <meta charset="UTF-8" />
 </head>
 
 <body>
     <div th:fragment="header">
+        <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" />
         <script th:src="@{/js/theme.js}"></script>
 
         <header class="header" id="navbar">
@@ -26,8 +27,14 @@
                 </nav>
 
                 <!-- Logo -->
-                <a th:href="@{/}" class="logo" style="flex: 0 0 auto; text-align: center; margin: 0 15px;">LUXURY |
-                    <strong>PC</strong></a>
+                <a th:href="@{/}" class="logo"
+                    style="flex: 0 0 auto; text-align: center; margin: 0 15px; display: inline-flex; align-items: center; gap: 10px; text-decoration: none;">
+                    <img th:src="@{/images/logo.svg}" alt="Luxury PC Logo"
+                        style="height: 46px; width: auto; display: block;" />
+                    <span
+                        style="font-size: 20px; font-weight: 400; letter-spacing: 1px; color: var(--text-primary);">LUXURY
+                        | <strong style="font-weight: 800; color: var(--primary);">PC</strong></span>
+                </a>
 
                 <!-- Right Nav -->
                 <nav class="main-nav" style="justify-content: flex-end;">
@@ -45,7 +52,8 @@
                             style="width: 28px; height: 28px; border-radius: 50%; background: #c9a84c; color: #000; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;"
                             th:text="${(currentUser != null && currentUser.fullName != null && !currentUser.fullName.isEmpty()) ? currentUser.fullName.substring(0,1).toUpperCase() : #authentication.name.substring(0,1).toUpperCase()}">
                             U</div>
-                        <span style="max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; vertical-align: middle;"
+                        <span
+                            style="max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; vertical-align: middle;"
                             th:text="${(currentUser != null && currentUser.fullName != null && !currentUser.fullName.isEmpty()) ? currentUser.fullName : #authentication.name}">Hồ
                             Sơ</span>
                     </a>
@@ -92,66 +100,66 @@
                     <p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>
                 </div>
             </div>
-        <!-- SEARCH JS LOGIC -->
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const searchBtn = document.getElementById('nav-search-btn');
-                const searchOverlay = document.getElementById('search-overlay');
-                const searchClose = document.getElementById('search-close');
-                const searchInput = document.getElementById('search-input');
-                const searchClear = document.getElementById('search-clear');
-                const searchTags = document.querySelectorAll('.search-tag');
+            <!-- SEARCH JS LOGIC -->
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const searchBtn = document.getElementById('nav-search-btn');
+                    const searchOverlay = document.getElementById('search-overlay');
+                    const searchClose = document.getElementById('search-close');
+                    const searchInput = document.getElementById('search-input');
+                    const searchClear = document.getElementById('search-clear');
+                    const searchTags = document.querySelectorAll('.search-tag');
 
-                if (searchBtn && searchOverlay) {
-                    searchBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        searchOverlay.classList.add('active');
-                        setTimeout(() => searchInput.focus(), 100);
-                    });
-                }
-
-                if (searchClose && searchOverlay) {
-                    searchClose.addEventListener('click', () => {
-                        searchOverlay.classList.remove('active');
-                    });
-                }
-                
-                if (searchClear && searchInput) {
-                    searchClear.addEventListener('click', () => {
-                        searchInput.value = '';
-                        searchInput.focus();
-                    });
-                }
-
-                const performSearch = (query) => {
-                    if (query && query.trim() !== '') {
-                        window.location.href = '/products?search=' + encodeURIComponent(query.trim());
+                    if (searchBtn && searchOverlay) {
+                        searchBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            searchOverlay.classList.add('active');
+                            setTimeout(() => searchInput.focus(), 100);
+                        });
                     }
-                };
 
-                const searchResultsContainer = document.getElementById('search-results');
-                let debounceTimer;
+                    if (searchClose && searchOverlay) {
+                        searchClose.addEventListener('click', () => {
+                            searchOverlay.classList.remove('active');
+                        });
+                    }
 
-                if (searchInput) {
-                    searchInput.addEventListener('input', (e) => {
-                        const val = e.target.value.trim();
-                        clearTimeout(debounceTimer);
-                        
-                        if (!val) {
-                            searchResultsContainer.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
-                            return;
+                    if (searchClear && searchInput) {
+                        searchClear.addEventListener('click', () => {
+                            searchInput.value = '';
+                            searchInput.focus();
+                        });
+                    }
+
+                    const performSearch = (query) => {
+                        if (query && query.trim() !== '') {
+                            window.location.href = '/products?search=' + encodeURIComponent(query.trim());
                         }
+                    };
 
-                        searchResultsContainer.innerHTML = '<div style="padding: 15px; text-align: center; color: #666;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tìm kiếm...</div>';
+                    const searchResultsContainer = document.getElementById('search-results');
+                    let debounceTimer;
 
-                        debounceTimer = setTimeout(() => {
-                            fetch('/api/products/search?q=' + encodeURIComponent(val))
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data && data.length > 0) {
-                                        let html = '<div class="search-suggestions" style="display:flex; flex-direction:column; gap:0;">';
-                                        data.forEach(item => {
-                                            html += `
+                    if (searchInput) {
+                        searchInput.addEventListener('input', (e) => {
+                            const val = e.target.value.trim();
+                            clearTimeout(debounceTimer);
+
+                            if (!val) {
+                                searchResultsContainer.innerHTML = '<p class="search-hint">Nhập từ khóa để tìm kiếm sản phẩm tại Luxury PC.</p>';
+                                return;
+                            }
+
+                            searchResultsContainer.innerHTML = '<div style="padding: 15px; text-align: center; color: #666;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tìm kiếm...</div>';
+
+                            debounceTimer = setTimeout(() => {
+                                fetch('/api/products/search?q=' + encodeURIComponent(val))
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data && data.length > 0) {
+                                            let html = '<div class="search-suggestions" style="display:flex; flex-direction:column; gap:0;">';
+                                            data.forEach(item => {
+                                                html += `
                                                 <a href="${item.productUrl}" style="display:flex; align-items:center; gap:12px; padding:12px; border-bottom:1px solid #eee; text-decoration:none; transition:0.2s;" onmouseover="this.style.backgroundColor='#f9f9f9'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <img src="${item.image}" alt="${item.name}" style="width:50px; height:50px; object-fit:contain; border-radius:4px;">
                                                     <div style="flex:1;">
@@ -160,38 +168,38 @@
                                                     </div>
                                                 </a>
                                             `;
-                                        });
-                                        html += `
+                                            });
+                                            html += `
                                             <a href="/products?search=${encodeURIComponent(val)}" style="display:block; text-align:center; padding:12px; font-size:13px; font-weight:600; color:#007bff; text-decoration:none;">Xem tất cả kết quả cho "${val}" <i class="fa-solid fa-arrow-right"></i></a>
                                         </div>`;
-                                        searchResultsContainer.innerHTML = html;
-                                    } else {
-                                        searchResultsContainer.innerHTML = '<p class="search-hint" style="color:#e53935;">Không tìm thấy sản phẩm nào phù hợp.</p>';
-                                    }
-                                })
-                                .catch(err => {
-                                    searchResultsContainer.innerHTML = '<p class="search-hint">Lỗi kết nối. Vui lòng thử lại.</p>';
-                                });
-                        }, 400);
-                    });
-
-                    searchInput.addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter') {
-                            performSearch(e.target.value);
-                        }
-                    });
-                }
-
-                if (searchTags) {
-                    searchTags.forEach(tag => {
-                        tag.addEventListener('click', (e) => {
-                            performSearch(e.target.dataset.query);
+                                            searchResultsContainer.innerHTML = html;
+                                        } else {
+                                            searchResultsContainer.innerHTML = '<p class="search-hint" style="color:#e53935;">Không tìm thấy sản phẩm nào phù hợp.</p>';
+                                        }
+                                    })
+                                    .catch(err => {
+                                        searchResultsContainer.innerHTML = '<p class="search-hint">Lỗi kết nối. Vui lòng thử lại.</p>';
+                                    });
+                            }, 400);
                         });
-                    });
-                }
-            });
-        </script>
-    </div>
+
+                        searchInput.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter') {
+                                performSearch(e.target.value);
+                            }
+                        });
+                    }
+
+                    if (searchTags) {
+                        searchTags.forEach(tag => {
+                            tag.addEventListener('click', (e) => {
+                                performSearch(e.target.dataset.query);
+                            });
+                        });
+                    }
+                });
+            </script>
+        </div>
 </body>
 
 </html>
