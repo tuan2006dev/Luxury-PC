@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/all-products.css}" />
@@ -148,15 +148,15 @@
                                 th:text="${p.description != null ? p.description : 'Sản phẩm cao cấp'}">Description</p>
 
                             <!-- Wrap price and action buttons in a flex container pushed to the bottom -->
-                            <div style="margin-top:auto; padding-top:10px; display:flex; flex-direction:column; gap:8px;">
+                            <div
+                                style="margin-top:auto; padding-top:10px; display:flex; flex-direction:column; gap:8px;">
                                 <div class="product-card-price" style="margin-bottom:0;"
                                     th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</div>
 
                                 <div th:if="${p.stock != null and p.stock <= 0}"
                                     style="text-align: center; color: red; font-weight: bold; font-size: 14px; padding: 5px 0; border: 1px solid red; border-radius: 4px; background-color: #fff5f5;">
                                     Hết hàng</div>
-                                <div th:if="${p.stock == null or p.stock > 0}"
-                                    style="display:flex; gap:5px;">
+                                <div th:if="${p.stock == null or p.stock > 0}" style="display:flex; gap:5px;">
                                     <button th:onclick="'buyNow(' + ${p.id} + '); event.stopPropagation();'"
                                         class="btn-buy-small"
                                         style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 10px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px; flex:1;"

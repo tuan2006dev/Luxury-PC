@@ -140,9 +140,6 @@ function updateQty(id, delta) {
     }
 }
 
-
-}
-
 async function loadTranslations() {
     const savedLang = localStorage.getItem('lang') || 'vi';
     const cachedData = localStorage.getItem('translations_cache');
@@ -166,23 +163,32 @@ async function loadTranslations() {
 }
 
 function removeItem(id) {
-    const lang = localStorage.getItem('lang') || 'vi';
     const msg = "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?";
 
-    window.showConfirm(msg).then(confirmed => {
+    const confirmPromise = typeof window.showConfirm === 'function'
+        ? window.showConfirm(msg)
+        : Promise.resolve(confirm(msg));
+
+    confirmPromise.then(confirmed => {
         if (confirmed) {
             fetch(`/cart/remove?id=${id}`, { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
                         const row = document.getElementById('row-' + id);
-                        row.style.transform = 'translateX(-20px)';
-                        row.style.opacity = '0';
-                        setTimeout(() => {
-                            row.remove();
+                        if (row) {
+                            row.style.transform = 'translateX(-20px)';
+                            row.style.opacity = '0';
+                            setTimeout(() => {
+                                row.remove();
+                                updateGrandTotal();
+                                const successMsg = "Đã xóa sản phẩm khỏi giỏ hàng thành công!";
+                                if (typeof window.showAlert === 'function') {
+                                    window.showAlert({ message: successMsg, isSuccess: true });
+                                }
+                            }, 300);
+                        } else {
                             updateGrandTotal();
-                            const successMsg = "Đã xóa sản phẩm khỏi giỏ hàng thành công!";
-                            window.showAlert({ message: successMsg, isSuccess: true });
-                        }, 300);
+                        }
                     }
                 });
         }

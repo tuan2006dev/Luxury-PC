@@ -13,6 +13,7 @@ import poly.edu.entity.*;
 import poly.edu.dao.*;
 import poly.edu.service.VoucherService;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,6 +28,10 @@ public class CartController {
     private final poly.edu.service.CartService cartService;
 
     private final poly.edu.service.FlashSaleService flashSaleService;
+
+    private final UserVoucherDAO userVoucherDAO;
+
+    private final UserDAO userDAO;
 
     /**
      * 1. THÊM SẢN PHẨM: Xử lý khi nhấn "THÊM VÀO GIỎ HÀNG"
@@ -392,6 +397,8 @@ public class CartController {
             model.addAttribute("discountAmt", 0.0);
             model.addAttribute("finalPrice", 0.0);
             model.addAttribute("activeVouchers", new java.util.ArrayList<>());
+            model.addAttribute("userVouchers", new java.util.ArrayList<>());
+            model.addAttribute("hasFlashSaleItem", false);
             return "checkout";
         }
 
@@ -445,17 +452,40 @@ public class CartController {
         double baseTotal = cartService.calculateTotal(targetCart.values());
         double discountRate = cartService.getDiscountRate(principal);
 
+        boolean hasFlashSaleItem = false;
+        for (CartItem item : targetCart.values()) {
+            if (flashSaleService.getActiveFlashSaleItem(item.getId()).isPresent()) {
+                hasFlashSaleItem = true;
+                break;
+            }
+        }
+
         model.addAttribute("cartItems", targetCart.values());
         model.addAttribute("totalPrice", baseTotal);
         model.addAttribute("discountAmt", baseTotal * discountRate);
         model.addAttribute("finalPrice", baseTotal - (baseTotal * discountRate));
         model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
+        model.addAttribute("hasFlashSaleItem", hasFlashSaleItem);
+
+        if (principal != null) {
+            String emailOrUsername = "";
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauthUser) {
+                emailOrUsername = (String) oauthUser.getAttributes().get("email");
+            } else if (principal instanceof org.springframework.security.core.userdetails.User u) {
+                emailOrUsername = u.getUsername();
+            }
+            User currentUser = userDAO.findByEmail(emailOrUsername);
+            if (currentUser == null) currentUser = userDAO.findByUsername(emailOrUsername);
+            if (currentUser != null) {
+                List<UserVoucher> userVouchers = userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(currentUser, "AVAILABLE");
+                model.addAttribute("userVouchers", userVouchers);
+            }
+        }
 
         return "checkout";
     }
 
     @PostMapping("/checkout/submit")
-    @Transactional
     public String submitCheckout(
             @RequestParam("fullName") String fullName,
             @RequestParam("phone") String phone,

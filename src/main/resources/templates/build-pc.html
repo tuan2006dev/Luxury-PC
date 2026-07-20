@@ -7,7 +7,7 @@
     <title>Build PC - LUXURY | PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/build-pc.css(v=11)}">
 </head>
@@ -27,8 +27,10 @@
             <div class="build-actions-top">
                 <button class="btn-action-top" onclick="showBuildGuide()"><i class="fa-solid fa-book-open"></i> Hướng
                     dẫn build PC</button>
-                <button class="btn-action-top" onclick="saveBuild()"><i class="fa-regular fa-bookmark"></i> Lưu cấu hình</button>
-                <button class="btn-action-top" onclick="manualLoadBuild()"><i class="fa-solid fa-download"></i> Tải cấu hình</button>
+                <button class="btn-action-top" onclick="saveBuild()"><i class="fa-regular fa-bookmark"></i> Lưu cấu
+                    hình</button>
+                <button class="btn-action-top" onclick="manualLoadBuild()"><i class="fa-solid fa-download"></i> Tải cấu
+                    hình</button>
                 <button class="btn-action-top" onclick="shareBuild()"><i class="fa-solid fa-share-nodes"></i> Chia sẻ
                     cấu hình</button>
                 <button class="btn-action-top btn-action-delete"><i class="fa-regular fa-trash-can"></i> Xóa tất
@@ -114,12 +116,19 @@
 
                     <div class="perf-score-container">
                         <div class="perf-circle">
-                            <div class="perf-circle-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-                                <div id="main-perf-score-container" style="display: none; align-items: baseline; justify-content: center; line-height: 1;">
-                                    <div class="perf-score" id="main-perf-score" style="font-size: 28px; font-weight: 800; color: #000;">?</div>
-                                    <div class="perf-max" id="main-perf-max" style="font-size: 14px; color: #94a3b8; font-weight: 600; margin-left: 2px;">/10</div>
+                            <div class="perf-circle-content"
+                                style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                                <div id="main-perf-score-container"
+                                    style="display: none; align-items: baseline; justify-content: center; line-height: 1;">
+                                    <div class="perf-score" id="main-perf-score"
+                                        style="font-size: 28px; font-weight: 800; color: #000;">?</div>
+                                    <div class="perf-max" id="main-perf-max"
+                                        style="font-size: 14px; color: #94a3b8; font-weight: 600; margin-left: 2px;">/10
+                                    </div>
                                 </div>
-                                <div class="perf-label" id="main-perf-label" style="margin-top: 5px; font-size: 13px; font-weight: 700; color: #f59e0b; text-transform: uppercase;">Đang cấu hình...</div>
+                                <div class="perf-label" id="main-perf-label"
+                                    style="margin-top: 5px; font-size: 13px; font-weight: 700; color: #f59e0b; text-transform: uppercase;">
+                                    Đang cấu hình...</div>
                             </div>
                         </div>
                     </div>
@@ -226,7 +235,7 @@
         const productsData = /*[[${productsData}]]*/ {};
         const combosData = /*[[${combosData}]]*/[];
     </script>
-    
+
     <!-- QRCode JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <!-- SweetAlert2 -->

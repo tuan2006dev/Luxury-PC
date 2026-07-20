@@ -66,7 +66,7 @@ public class SecurityConfig {
                                                 .anyRequest().authenticated())
 
                                 .formLogin(form -> form
-                                                .loginPage("/auth/login") 
+                                                .loginPage("/auth/login")
                                                 .loginProcessingUrl("/login")
                                                 .usernameParameter("username")
                                                 .passwordParameter("password")

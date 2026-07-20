@@ -46,6 +46,7 @@ public class VoucherService {
         Map<String, Object> result = new HashMap<>();
 
         if (user == null) {
+            result.put("success", false);
             result.put("valid", false);
             result.put("message", "Vui lòng đăng nhập để sử dụng mã!");
             return result;
@@ -53,6 +54,7 @@ public class VoucherService {
 
         Optional<Voucher> opt = voucherDAO.findByCode(code.trim().toUpperCase());
         if (opt.isEmpty()) {
+            result.put("success", false);
             result.put("valid", false);
             result.put("message", "Mã voucher không tồn tại");
             return result;
@@ -63,12 +65,14 @@ public class VoucherService {
         // Check if user has this voucher in their wallet and unused (AVAILABLE)
         Optional<poly.edu.entity.UserVoucher> userVoucherOpt = userVoucherDAO.findByUserAndVoucherCodeAndStatus(user, code.trim().toUpperCase(), "AVAILABLE");
         if (userVoucherOpt.isEmpty()) {
+            result.put("success", false);
             result.put("valid", false);
             result.put("message", "Bạn chưa lưu mã này hoặc mã đã được sử dụng!");
             return result;
         }
 
         if (!Boolean.TRUE.equals(voucher.getActive())) {
+            result.put("success", false);
             result.put("valid", false);
             result.put("message", "Mã voucher đã bị vô hiệu hóa");
             return result;
@@ -76,24 +80,28 @@ public class VoucherService {
 
         Date now = new Date();
         if (voucher.getStartDate() != null && now.before(voucher.getStartDate())) {
+            result.put("success", false);
             result.put("valid", false);
             result.put("message", "Mã voucher chưa đến thời hạn sử dụng");
             return result;
         }
 
         if (voucher.getEndDate() != null && now.after(voucher.getEndDate())) {
+            result.put("success", false);
             result.put("valid", false);
             result.put("message", "Mã voucher đã hết hạn");
             return result;
         }
 
         if (voucher.getUsageLimit() != null && voucher.getUsedCount() >= voucher.getUsageLimit()) {
+            result.put("success", false);
             result.put("valid", false);
             result.put("message", "Mã voucher đã hết lượt sử dụng");
             return result;
         }
 
         if (voucher.getMinOrderAmount() != null && cartTotal < voucher.getMinOrderAmount()) {
+            result.put("success", false);
             result.put("valid", false);
             result.put("message", "Đơn hàng tối thiểu " +
                     String.format("%,.0f", voucher.getMinOrderAmount()) + "₫ để sử dụng mã này");
@@ -104,8 +112,10 @@ public class VoucherService {
         if (discount > cartTotal) {
             discount = cartTotal; // Security: Prevent negative total
         }
+        result.put("success", true);
         result.put("valid", true);
         result.put("discount", discount);
+        result.put("newTotal", cartTotal - discount);
         result.put("message", "Áp dụng thành công! Giảm " + String.format("%,.0f", discount) + "₫");
         result.put("discountType", voucher.getDiscountType().name());
         result.put("discountValue", voucher.getDiscountValue());
