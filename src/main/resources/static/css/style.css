@@ -319,11 +319,9 @@ textarea {
 }
 
 .btn-cart-small {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 36px;
-    height: 36px;
+    position: static;
+    width: 34px;
+    height: 34px;
     border: 1px solid var(--accent-blue);
     background: transparent;
     border-radius: 4px;
@@ -2195,11 +2193,11 @@ textarea {
 }
 
 .btn-cart-small {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 36px;
-    height: 36px;
+    position: static;
+    bottom: auto;
+    right: auto;
+    width: 34px;
+    height: 34px;
     border: 1px solid var(--accent-blue);
     background: transparent;
     border-radius: 4px;
