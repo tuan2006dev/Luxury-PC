@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh toán QR</title>
     <link rel="stylesheet" th:href="@{/css/payment.css}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
 </head>
 
 <body>
@@ -25,10 +26,8 @@
             <p><b>Ngân hàng</b>: <span th:text="${bankDisplayName}">MB Bank</span></p>
             <p><b>Số tài khoản</b>: <span th:text="${accountNo}">9999999999</span>
             </p>
-            <p><b>Chủ tài khoản</b>: <span
-                    th:text="${accountName}">LUXURYPC</span></p>
-            <p><b>Nội dung chuyển khoản</b>: <span
-                    th:text="${transferContent}"></span></p>
+            <p><b>Chủ tài khoản</b>: <span th:text="${accountName}">LUXURYPC</span></p>
+            <p><b>Nội dung chuyển khoản</b>: <span th:text="${transferContent}"></span></p>
         </div>
 
         <p class="note">
