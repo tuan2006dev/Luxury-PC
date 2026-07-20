@@ -67,7 +67,7 @@
                     <div th:each="sale, iterStat : ${sliderSales}" class="promo-banner-card banner-red flash-slide"
                         th:with="bannerUrl=${sale.bannerImage != null and !sale.bannerImage.isEmpty() ? (sale.bannerImage.startsWith('http') ? sale.bannerImage : '/images/flashsale/' + sale.bannerImage) : '/images/flashsale/flashsalered.png'},
                                   isUpcoming=${sale.startTime.getTime() > #dates.createNow().getTime()}"
-                        th:style="'background: #ba1a1a url(' + @{${bannerUrl}} + ') no-repeat left center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px; flex: 0 0 100%; height: 100%; box-sizing: border-box; border-radius: 0;'">
+                        th:style="'background: #ba1a1a url(\'' + @{${bannerUrl}} + '\') no-repeat left center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px; flex: 0 0 100%; height: 100%; box-sizing: border-box; border-radius: 0;'">
 
                         <div class="banner-content" style="max-width: 40%; z-index: 2; text-align: left;">
                             <h2
@@ -228,6 +228,7 @@
                 <div class="flash-sale-main"
                     style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;"
                     th:each="sale, saleStat : ${sliderSales}"
+                    th:if="${saleStat.index < 3}"
                     th:with="isUpcoming=${sale.startTime.getTime() > #dates.createNow().getTime()}, items=${sliderItemsMap.get(sale.id)}">
 
                     <div
@@ -295,12 +296,15 @@
                                         Product Name</h4>
 
                                     <div style="display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px;">
-                                        <span style="text-decoration: line-through; color: #9ca3af; font-size: 11px;"
-                                            th:if="${item.product != null && item.product.price != null}"
+                                        <span style="font-size: 11px; text-decoration: line-through; color: #9ca3af;"
+                                            th:if="${item.product.price != null}"
                                             th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
                                         <span style="color: #ef4444; font-size: 14px; font-weight: 700;"
-                                            th:if="${item.salePrice != null}"
+                                            th:if="${item.salePrice != null && !isUpcoming}"
                                             th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                                        <span style="color: #ef4444; font-size: 14px; font-weight: 700;"
+                                            th:if="${item.salePrice != null && isUpcoming}"
+                                            th:text="${#strings.substring(item.salePrice, 0, 1)} + 'xx.xxxđ'">0đ</span>
                                     </div>
                                 </div>
 

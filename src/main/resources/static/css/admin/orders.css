@@ -260,7 +260,8 @@ button.update-btn {
         color: var(--muted);
         font-size: .75rem;
         line-height: 1.5;
-        overflow-wrap: anywhere;
+        white-space: normal;
+        overflow-wrap: break-word;
 }
 
 .note-label {

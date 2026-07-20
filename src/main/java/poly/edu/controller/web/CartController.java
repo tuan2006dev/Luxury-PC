@@ -464,7 +464,7 @@ public class CartController {
         model.addAttribute("totalPrice", baseTotal);
         model.addAttribute("discountAmt", baseTotal * discountRate);
         model.addAttribute("finalPrice", baseTotal - (baseTotal * discountRate));
-        model.addAttribute("activeVouchers", voucherService.getActiveVouchers());
+        List<Voucher> activeVouchers = new java.util.ArrayList<>(voucherService.getActiveVouchers());
         model.addAttribute("hasFlashSaleItem", hasFlashSaleItem);
 
         if (principal != null) {
@@ -479,8 +479,14 @@ public class CartController {
             if (currentUser != null) {
                 List<UserVoucher> userVouchers = userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(currentUser, "AVAILABLE");
                 model.addAttribute("userVouchers", userVouchers);
+
+                List<UserVoucher> consumed = userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(currentUser, "CONSUMED");
+                List<String> consumedCodes = consumed.stream().map(uv -> uv.getVoucher().getCode()).toList();
+                activeVouchers.removeIf(v -> consumedCodes.contains(v.getCode()));
             }
         }
+        
+        model.addAttribute("activeVouchers", activeVouchers);
 
         return "checkout";
     }
@@ -492,6 +498,8 @@ public class CartController {
             @RequestParam("address") String address,
             @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod,
             @RequestParam(value = "voucherCode", required = false) String voucherCode,
+            @RequestParam(value = "shippingFee", defaultValue = "0") Double shippingFee,
+            @RequestParam(value = "shippingMethodName", defaultValue = "") String shippingMethodName,
             @RequestParam(value = "checkoutType", defaultValue = "cart") String checkoutType,
             HttpSession session,
             RedirectAttributes redirectAttributes,
@@ -507,7 +515,7 @@ public class CartController {
         if (targetCart == null || targetCart.isEmpty()) return "redirect:/cart";
 
         try {
-            Order order = cartService.processCheckout(targetCart, fullName, phone, address, paymentMethod, voucherCode, principal);
+            Order order = cartService.processCheckout(targetCart, fullName, phone, address, paymentMethod, voucherCode, shippingFee, shippingMethodName, principal);
             
             if ("buynow".equals(checkoutType)) {
                 session.removeAttribute("buyNowCart");

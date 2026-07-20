@@ -71,6 +71,7 @@ public class CartService {
     public Order processCheckout(Map<Integer, CartItem> targetCart,
                                  String fullName, String phone, String address,
                                  String paymentMethod, String voucherCode,
+                                 Double shippingFee, String shippingMethodName,
                                  Object principal) throws Exception {
 
         // Validate fullName & phone
@@ -131,7 +132,7 @@ public class CartService {
             }
         }
 
-        double finalPrice = priceAfterVip - voucherDiscount;
+        double finalPrice = priceAfterVip + shippingFee - voucherDiscount;
 
         // 5. Create Order
         Order order = new Order();
@@ -146,6 +147,8 @@ public class CartService {
         order.setVoucherCode(appliedVoucherCode);
         order.setDiscountAmount(voucherDiscount);
         order.setPaymentMethod(paymentMethod.toUpperCase());
+        order.setShippingFee(shippingFee);
+        order.setShippingMethodName(shippingMethodName);
         order.setStatus("VIETQR".equalsIgnoreCase(paymentMethod)
                 ? "CHO_XAC_NHAN_THANH_TOAN"
                 : "PENDING");
@@ -153,8 +156,10 @@ public class CartService {
         
         order.setOrderCode("DH" + order.getId());
         orderDAO.save(order);
-
         // 6. Create Order Items & Update Stock
+        if (appliedVoucherCode != null && currentUser != null && !"VIETQR".equalsIgnoreCase(paymentMethod)) {
+            voucherService.consumeVoucher(appliedVoucherCode, currentUser.getId());
+        }
         for (CartItem item : targetCart.values()) {
             OrderItem oi = new OrderItem();
             oi.setOrder(order);

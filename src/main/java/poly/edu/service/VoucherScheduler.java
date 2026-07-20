@@ -26,6 +26,7 @@ public class VoucherScheduler {
      * Restores the global usage count and resets user voucher status to AVAILABLE.
      */
     @Scheduled(fixedRate = 60000)
+    @Transactional
     public void releaseExpiredVoucherReservations() {
         try {
             List<UserVoucher> expired = userVoucherDAO.findExpiredReservations();

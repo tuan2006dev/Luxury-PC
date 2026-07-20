@@ -59,7 +59,8 @@
                         <td>
                             <img th:if="${fs.bannerImage != null and !fs.bannerImage.isEmpty()}" 
                                  th:src="@{${fs.bannerImage.startsWith('http') ? fs.bannerImage : '/images/flashsale/' + fs.bannerImage}}" 
-                                 style="height: 40px; width: auto; object-fit: contain; border-radius: 4px;" alt="Banner">
+                                 onerror="this.src='/images/flashsale/flashsalered.png'"
+                                 style="height: 45px; width: 120px; object-fit: cover; border-radius: 4px;" alt="Banner">
                             <span th:if="${fs.bannerImage == null or fs.bannerImage.isEmpty()}" style="color:var(--muted);font-size:12px;">Chưa có</span>
                         </td>
                         <td style="font-weight:600;color:var(--white);" th:text="${fs.name}">Flash Sale Tháng 4</td>

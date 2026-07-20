@@ -80,7 +80,7 @@ public class ProfileController {
             model.addAttribute("currentSessionInfo", buildCurrentSessionInfo(request, session));
 
             // Ví Voucher
-            java.util.List<poly.edu.entity.UserVoucher> userVouchers = userVoucherService.getMyVouchers(user);
+            java.util.List<poly.edu.entity.UserVoucher> userVouchers = userVoucherService.getMyUnusedVouchers(user);
             model.addAttribute("vouchers", userVouchers);
             model.addAttribute("voucherCount", userVouchers != null ? userVouchers.size() : 0);
         } catch (Exception ex) {

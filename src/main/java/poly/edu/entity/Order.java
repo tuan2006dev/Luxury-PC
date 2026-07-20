@@ -41,6 +41,12 @@ public class Order {
     @Column(name = "discount_amount")
     private Double discountAmount;
 
+    @Column(name = "shipping_fee")
+    private Double shippingFee;
+
+    @Column(name = "shipping_method_name")
+    private String shippingMethodName;
+
     @Column(name = "admin_note", length = 1000)
     private String adminNote;
 
@@ -188,6 +194,22 @@ public class Order {
 
     public void setDiscountAmount(Double discountAmount) {
         this.discountAmount = discountAmount;
+    }
+
+    public Double getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(Double shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
+    public String getShippingMethodName() {
+        return shippingMethodName;
+    }
+
+    public void setShippingMethodName(String shippingMethodName) {
+        this.shippingMethodName = shippingMethodName;
     }
 
     public String getAdminNote() {

@@ -111,6 +111,12 @@ public class AdminFlashSaleController {
             return "redirect:/admin/flash-sales/" + id + "/items";
         }
 
+        poly.edu.entity.Product p = productDAO.findById(productId).orElse(null);
+        if (p != null && salePrice > p.getPrice()) {
+            ra.addFlashAttribute("error", "Giá SALE không được cao hơn giá gốc của sản phẩm!");
+            return "redirect:/admin/flash-sales/" + id + "/items";
+        }
+
         FlashSaleItem item = flashSaleService.addItemToSale(id, productId, salePrice, saleQuantity);
         if (item != null) {
             ra.addFlashAttribute("success", "Đã thêm sản phẩm vào Flash Sale!");

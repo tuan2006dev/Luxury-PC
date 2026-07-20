@@ -93,7 +93,7 @@ public class CartServiceTest {
         when(productDAO.findById(1)).thenReturn(Optional.of(p));
 
         Exception ex = assertThrows(Exception.class, () -> {
-            cartService.processCheckout(cart, "Name", "Phone", "Addr", "COD", null, principal);
+            cartService.processCheckout(cart, "Nguyễn Văn A", "0901234567", "Addr", "COD", null, 0.0, "Standard", principal);
         });
 
         assertThat(ex.getMessage()).contains("không đủ số lượng trong kho");
@@ -119,13 +119,14 @@ public class CartServiceTest {
         voucherResult.put("discount", 100.0);
         when(voucherService.validateVoucher(eq("VOUCHER100"), anyDouble(), any())).thenReturn(voucherResult);
 
-        Order result = cartService.processCheckout(cart, "Full Name", "1234", "Address", "COD", "VOUCHER100", principal);
+        Order result = cartService.processCheckout(cart, "Nguyễn Văn A", "0901234567", "Address", "COD", "VOUCHER100", 50.0, "Express", principal);
 
         assertThat(result).isNotNull();
-        assertThat(result.getFullName()).isEqualTo("Full Name");
+        assertThat(result.getFullName()).isEqualTo("Nguyễn Văn A");
         assertThat(result.getVoucherCode()).isEqualTo("VOUCHER100");
         assertThat(result.getDiscountAmount()).isEqualTo(100.0);
-        assertThat(result.getTotalPrice()).isEqualTo(1800.0);
+        assertThat(result.getShippingFee()).isEqualTo(50.0);
+        assertThat(result.getTotalPrice()).isEqualTo(1850.0);
 
         verify(orderDAO, times(2)).save(any(Order.class));
         verify(orderItemDAO, times(1)).save(any());
@@ -136,6 +137,7 @@ public class CartServiceTest {
         // Actually, I removed it from CartService earlier! 
         // Let's remove the verify(userVoucherService) line entirely.
         verify(voucherService).reserveVoucher("VOUCHER100", dbUser.getId());
-        verify(flashSaleService).incrementSoldCount(1);
+        verify(voucherService).consumeVoucher("VOUCHER100", dbUser.getId());
+        verify(flashSaleService).incrementSoldCount(1, 2);
     }
 }

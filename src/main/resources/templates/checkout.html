@@ -456,6 +456,8 @@
             <input type="hidden" name="checkoutType" th:value="${checkoutType}" />
             <input type="hidden" name="address" id="hiddenAddress" value="" />
             <input type="hidden" name="voucherCode" id="voucherCodeHidden" value="" />
+            <input type="hidden" name="shippingFee" id="hiddenShippingFee" value="0" />
+            <input type="hidden" name="shippingMethodName" id="hiddenShippingMethodName" value="" />
 
             <div class="checkout-grid">
                 <!-- Left Column -->
@@ -484,11 +486,16 @@
                                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                                     <label class="form-label" style="margin-bottom: 0;">Địa chỉ cụ thể
                                         <span>*</span></label>
-                                    <button type="button" id="btnGetLocation" onclick="getCurrentLocation()"
-                                        style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-                                        <i class="fa-solid fa-location-dot"></i> <span>Tự động định vị địa chỉ (GPS/Bản
-                                            đồ)</span>
-                                    </button>
+                                    <div style="display:flex; gap: 8px;">
+                                        <button type="button" id="btnClearLocation" onclick="clearLocation()"
+                                            style="display:none; background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; transition: all 0.2s;">
+                                            <i class="fa-solid fa-xmark"></i> <span>Hủy GPS</span>
+                                        </button>
+                                        <button type="button" id="btnGetLocation" onclick="getCurrentLocation()"
+                                            style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                                            <i class="fa-solid fa-location-dot"></i> <span>Tự động định vị (GPS/Bản đồ)</span>
+                                        </button>
+                                    </div>
                                 </div>
                                 <input type="text" class="form-control" id="addressLine" required
                                     placeholder="Số nhà, tên đường, phường/xã...">
@@ -686,6 +693,7 @@
     <script>
         // State
         let currentShipping = 30000;
+        let currentShippingMethodName = 'Giao Hàng Tiêu Chuẩn';
         let currentDiscount = 0;
         let voucherSelectInstance;
         let userLat = null;
@@ -718,7 +726,7 @@
         });
 
         // UI toggles
-        function selectShipping(el, fee) {
+        function selectShipping(el, fee, name) {
             document.querySelectorAll('input[name="shippingMethodDummy"]').forEach(r => {
                 r.checked = false;
                 r.closest('.radio-block').classList.remove('active');
@@ -726,6 +734,7 @@
             el.querySelector('input').checked = true;
             el.classList.add('active');
             currentShipping = fee;
+            if (name) currentShippingMethodName = name;
             updateTotal();
         }
 
@@ -751,6 +760,7 @@
                     </div>
                 `;
                 currentShipping = 0;
+                currentShippingMethodName = '';
                 document.getElementById('shippingFeeText').innerText = 'Chưa chọn địa chỉ';
                 updateTotal();
                 return;
@@ -773,11 +783,14 @@
                 container.innerHTML = '';
                 methods.forEach((m, index) => {
                     const isActive = index === 0;
-                    if (isActive) currentShipping = m.fee;
+                    if (isActive) {
+                        currentShipping = m.fee;
+                        currentShippingMethodName = m.name;
+                    }
 
                     const el = document.createElement('label');
                     el.className = `radio-block ${isActive ? 'active' : ''}`;
-                    el.onclick = function () { selectShipping(this, m.fee); };
+                    el.onclick = function () { selectShipping(this, m.fee, m.name); };
 
                     el.innerHTML = `
                         <div class="radio-content">
@@ -815,6 +828,8 @@
 
         document.getElementById('province').addEventListener('change', async function () {
             const val = this.value;
+            userLat = null;
+            userLon = null;
             fetchShippingMethods(val);
             const distSel = document.getElementById('district');
             const wardSel = document.getElementById('ward');
@@ -1023,6 +1038,46 @@
             statusMsg.style.color = '#0284c7';
             statusMsg.innerText = 'Đang xin quyền vị trí và tra cứu bản đồ...';
 
+            function onGpsSuccess() {
+                document.getElementById('province').disabled = true;
+                document.getElementById('province').removeAttribute('required');
+                document.getElementById('district').disabled = true;
+                document.getElementById('district').removeAttribute('required');
+                document.getElementById('ward').disabled = true;
+                document.getElementById('ward').removeAttribute('required');
+                
+                document.getElementById('btnClearLocation').style.display = 'flex';
+                document.getElementById('btnGetLocation').style.display = 'none';
+            }
+
+            window.clearLocation = function() {
+                userLat = null;
+                userLon = null;
+                addressInput.value = '';
+                
+                const pSel = document.getElementById('province');
+                const dSel = document.getElementById('district');
+                const wSel = document.getElementById('ward');
+                
+                pSel.disabled = false;
+                pSel.setAttribute('required', 'required');
+                
+                // If a province is already selected, leave district/ward enabled if they have data
+                if (pSel.value) {
+                    dSel.disabled = false;
+                    dSel.setAttribute('required', 'required');
+                    if (dSel.value) {
+                        wSel.disabled = false;
+                        wSel.setAttribute('required', 'required');
+                    }
+                }
+                
+                document.getElementById('btnClearLocation').style.display = 'none';
+                document.getElementById('btnGetLocation').style.display = 'flex';
+                statusMsg.innerText = '';
+                fetchShippingMethods(pSel.value);
+            }
+
             async function reverseGeocode(lat, lon) {
                 userLat = lat;
                 userLon = lon;
@@ -1037,12 +1092,8 @@
 
                         statusMsg.style.color = 'var(--success)';
                         statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã tự động định vị vị trí thành công!';
-
-                        autoMatchProvince(bdcData);
-                        const pSel = document.getElementById('province');
-                        const dSel = document.getElementById('district');
-                        const dName = (dSel.options[dSel.selectedIndex] && dSel.value) ? dSel.options[dSel.selectedIndex].text : '';
-                        fetchShippingMethods(pSel.value, dName, userLat, userLon);
+                        fetchShippingMethods('', '', userLat, userLon);
+                        onGpsSuccess();
                         return true;
                     }
                 } catch (e) {
@@ -1058,12 +1109,8 @@
 
                         statusMsg.style.color = 'var(--success)';
                         statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã tự động định vị vị trí thành công!';
-
-                        if (nomData.address) autoMatchProvince(nomData.address);
-                        const pSel = document.getElementById('province');
-                        const dSel = document.getElementById('district');
-                        const dName = (dSel.options[dSel.selectedIndex] && dSel.value) ? dSel.options[dSel.selectedIndex].text : '';
-                        fetchShippingMethods(pSel.value, dName, userLat, userLon);
+                        fetchShippingMethods('', '', userLat, userLon);
+                        onGpsSuccess();
                         return true;
                     }
                 } catch (e) {
@@ -1183,6 +1230,8 @@
             if (pName) fullAddress += `, ${pName}`;
 
             document.getElementById('hiddenAddress').value = fullAddress;
+            document.getElementById('hiddenShippingFee').value = currentShipping;
+            document.getElementById('hiddenShippingMethodName').value = currentShippingMethodName;
         }
     </script>
 </body>

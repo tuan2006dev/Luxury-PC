@@ -1061,8 +1061,12 @@
                       th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
                   </div>
                   <div class="item-mini">
-                    <span>Phí vận chuyển (Hỏa tốc)</span>
-                    <span style="color:#3b82f6;">0 ₫</span>
+                    <span th:text="${order.shippingMethodName != null ? order.shippingMethodName : 'Phí vận chuyển'}">Phí vận chuyển (Hỏa tốc)</span>
+                    <span style="color:#3b82f6;" th:text="${order.shippingFee != null ? #numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + '₫' : '0₫'}">0 ₫</span>
+                  </div>
+                  <div class="item-mini" th:if="${order.discountAmount != null and order.discountAmount > 0}">
+                    <span th:text="${'Voucher (' + order.voucherCode + ')'}">Voucher</span>
+                    <span style="color:var(--danger);" th:text="${'-' + #numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT') + '₫'}">-0₫</span>
                   </div>
                 </div>
                 <!-- Delivery & Payment Information -->
@@ -1943,14 +1947,14 @@
         document.querySelectorAll('.order-modal .review-stars button').forEach(btn => {
           btn.classList.remove('active');
         });
-        document.getElementById('star-desc').textContent = window.t('profile-review-star-select', 'Chọn số sao đánh giá');
+        document.getElementById('star-desc').textContent = 'Chọn số sao đánh giá';
 
         // Set input values
         document.getElementById('review-product-id').value = productId;
         document.getElementById('review-product-name').value = productName;
         document.getElementById('review-comment').value = '';
 
-        document.getElementById('modal-review-product-title').textContent = window.t('profile-review-modal-product-title', 'Đánh giá sản phẩm: ') + productName;
+        document.getElementById('modal-review-product-title').textContent = 'Đánh giá sản phẩm: ' + productName;
 
         // Show backdrop
         document.getElementById('order-modal-backdrop').classList.add('open');
@@ -1966,14 +1970,14 @@
           btn.classList.toggle('active', index < star);
         });
         const starDescs = [
-          window.t('profile-review-star-select', 'Chọn số sao đánh giá'),
-          '⭐ ' + window.t('profile-review-star-1', 'Rất Tệ'),
-          '⭐⭐ ' + window.t('profile-review-star-2', 'Tệ'),
-          '⭐⭐⭐ ' + window.t('profile-review-star-3', 'Bình Thường'),
-          '⭐⭐⭐⭐ ' + window.t('profile-review-star-4', 'Tốt'),
-          '⭐⭐⭐⭐⭐ ' + window.t('profile-review-star-5', 'Rất Tốt')
+          'Chọn số sao đánh giá',
+          '⭐ Rất Tệ',
+          '⭐⭐ Tệ',
+          '⭐⭐⭐ Bình Thường',
+          '⭐⭐⭐⭐ Tốt',
+          '⭐⭐⭐⭐⭐ Rất Tốt'
         ];
-        document.getElementById('star-desc').textContent = starDescs[star] || window.t('profile-review-star-select', 'Chọn số sao đánh giá');
+        document.getElementById('star-desc').textContent = starDescs[star] || 'Chọn số sao đánh giá';
       }
 
       function submitReview() {
@@ -2218,23 +2222,23 @@
           if (!container) return;
           if (!data.success || !data.data || data.data.length === 0) {
             addressCount = 0;
-            container.innerHTML = `<p style="grid-column:span 2;text-align:center;color:#64748b;padding:2rem;">${window.t('profile-address-empty', 'Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.')}</p>`;
+            container.innerHTML = `<p style="grid-column:span 2;text-align:center;color:#64748b;padding:2rem;">Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.</p>`;
             return;
           }
           addressCount = data.data.length;
           container.innerHTML = data.data.map(addr => `
           <div style="background:#f8fafc;border:1px solid ${addr.isDefault ? '#3b82f6' : '#e2e8f0'};padding:1.5rem;">
             <div style="font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:${addr.isDefault ? '#3b82f6' : '#64748b'};margin-bottom:.8rem;">
-              ${addr.isDefault ? window.t('profile-address-default', '📍 Địa chỉ mặc định') : window.t('profile-address-other', '📍 Địa chỉ khác')}
+              ${addr.isDefault ? '📍 Địa chỉ mặc định' : '📍 Địa chỉ khác'}
             </div>
             <div style="font-size:.9rem;color:#000;margin-bottom:.3rem;font-weight:500;">${addr.recipientName}</div>
             <div style="font-size:.8rem;color:#64748b;line-height:1.7;">
               ${addr.detailedAddress}<br>${addr.district}, ${addr.city}<br>📞 ${addr.phone}
             </div>
             <div style="display:flex;gap:.5rem;margin-top:1rem;">
-              <button class="btn-sec" onclick="editAddress(${addr.id})">${window.t('profile-address-btn-edit', 'Sửa')}</button>
-              <button class="btn-sec" onclick="deleteAddress(${addr.id})">${window.t('profile-address-btn-delete', 'Xóa')}</button>
-              ${!addr.isDefault ? `<button class="btn-sec" style="border-color:#3b82f6;color:#3b82f6;" onclick="setDefaultAddress(${addr.id})">${window.t('profile-address-set-default', 'Đặt mặc định')}</button>` : ''}
+              <button class="btn-sec" onclick="editAddress(${addr.id})">Sửa</button>
+              <button class="btn-sec" onclick="deleteAddress(${addr.id})">Xóa</button>
+              ${!addr.isDefault ? `<button class="btn-sec" style="border-color:#3b82f6;color:#3b82f6;" onclick="setDefaultAddress(${addr.id})">Đặt mặc định</button>` : ''}
             </div>
           </div>
         `).join('');
