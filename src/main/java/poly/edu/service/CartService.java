@@ -73,6 +73,15 @@ public class CartService {
                                  String paymentMethod, String voucherCode,
                                  Object principal) throws Exception {
 
+        // Validate fullName & phone
+        if (fullName == null || fullName.trim().split("\\s+").length < 2) {
+            throw new Exception("Họ và tên không hợp lệ. Vui lòng nhập đầy đủ cả Họ và Tên (ít nhất 2 từ, ví dụ: Nguyễn Văn A).");
+        }
+        String cleanPhone = phone != null ? phone.replaceAll("\\s+", "") : "";
+        if (!cleanPhone.matches("^(0[3578912])[0-9]{8}$")) {
+            throw new Exception("Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số (ví dụ: 0901234567).");
+        }
+
         // 1. Validate stock for all items
         for (CartItem item : targetCart.values()) {
             Optional<Product> pOpt = productDAO.findById(item.getId());
@@ -110,18 +119,6 @@ public class CartService {
         String appliedVoucherCode = null;
         if (voucherCode != null && !voucherCode.trim().isEmpty() && currentUser != null) {
             
-            // Kiểm tra giỏ hàng có chứa sản phẩm Flash Sale hay không
-            boolean hasFlashSaleItem = false;
-            for (CartItem item : targetCart.values()) {
-                if (flashSaleService.getActiveFlashSaleItem(item.getId()).isPresent()) {
-                    hasFlashSaleItem = true;
-                    break;
-                }
-            }
-            if (hasFlashSaleItem) {
-                throw new Exception("Không thể áp dụng Voucher khi giỏ hàng có sản phẩm Flash Sale.");
-            }
-
             Map<String, Object> validation = voucherService.validateVoucher(voucherCode, priceAfterVip, currentUser);
             if (Boolean.TRUE.equals(validation.get("valid"))) {
                 voucherDiscount = (double) validation.get("discount");
@@ -173,8 +170,8 @@ public class CartService {
                 p.setStock(p.getStock() - item.getQuantity());
                 productDAO.save(p);
 
-                // Cập nhật sold count cho flash sale
-                flashSaleService.incrementSoldCount(item.getId());
+                // Cập nhật sold count cho flash sale (nếu là sản phẩm Flash Sale)
+                flashSaleService.incrementSoldCount(item.getId(), item.getQuantity());
             }
         }
 

@@ -1,6 +1,8 @@
 // WebSocket connections for admin ticket chat
-let adminWsConnections = {}; // ticketId -> WebSocket instance
-let activeTicketId = null;
+var adminWsConnections = window.adminWsConnections || {}; // ticketId -> WebSocket instance
+var activeTicketId = window.activeTicketId || null;
+window.adminWsConnections = adminWsConnections;
+window.activeTicketId = activeTicketId;
 
 function toggleTicket(id) {
     const detail = document.getElementById('detail-' + id);
@@ -270,7 +272,8 @@ function updateTicketStatus(id, status) {
         .catch(err => console.error("Error updating status:", err));
 }
 
-let ticketToDelete = null;
+var ticketToDelete = window.ticketToDelete || null;
+window.ticketToDelete = ticketToDelete;
 
 function deleteTicket(id) {
     ticketToDelete = id;
@@ -283,9 +286,10 @@ function closeDeleteModal() {
     document.getElementById('delete-ticket-modal').classList.remove('show');
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initDeleteTicketModal() {
     const confirmBtn = document.getElementById('confirm-delete-btn');
-    if (confirmBtn) {
+    if (confirmBtn && !confirmBtn.dataset.listenerBound) {
+        confirmBtn.dataset.listenerBound = 'true';
         confirmBtn.addEventListener('click', function() {
             if (!ticketToDelete) return;
             const id = ticketToDelete;
@@ -309,7 +313,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }).catch(err => console.error("Error deleting ticket:", err));
         });
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDeleteTicketModal);
+} else {
+    initDeleteTicketModal();
+}
+document.addEventListener('spa:load', initDeleteTicketModal);
 
 function assignTicket(id) {
     return fetch('/admin/tickets/assign', {
@@ -371,9 +382,18 @@ function processTicket(id) {
     });
 }
 
-// Cleanup WebSocket connections when leaving page
-window.addEventListener('beforeunload', () => {
-    Object.keys(adminWsConnections).forEach(id => {
-        disconnectTicketWs(id);
-    });
+// Cleanup WebSocket connections when leaving page or navigating via SPA
+function cleanupTicketsWs() {
+    if (typeof adminWsConnections !== 'undefined' && adminWsConnections) {
+        Object.keys(adminWsConnections).forEach(id => {
+            disconnectTicketWs(id);
+        });
+    }
+}
+
+window.addEventListener('beforeunload', cleanupTicketsWs);
+document.addEventListener('spa:load', function() {
+    if (!window.location.pathname.startsWith('/admin/tickets')) {
+        cleanupTicketsWs();
+    }
 });
