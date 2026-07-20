@@ -163,12 +163,15 @@ public class FlashSaleService {
     public void incrementSoldCount(Integer productId, Integer quantity) {
         Optional<FlashSale> current = getCurrentFlashSale();
         if (current.isPresent()) {
-            int updatedRows = flashSaleItemDAO.incrementSoldCountAtomically(current.get().getId(), productId, quantity);
-            if (updatedRows == 0) {
-                log.error("[FlashSale] Giao dịch thất bại: Hết hàng hoặc sản phẩm {} không nằm trong Flash Sale {}", productId, current.get().getId());
-                throw new RuntimeException("Sản phẩm Flash Sale đã hết lượt mua với giá ưu đãi hoặc không tồn tại.");
-            } else {
-                log.info("[FlashSale] Tăng số lượng thành công: {} sản phẩm ID {} cho Flash Sale {}", quantity, productId, current.get().getId());
+            Optional<FlashSaleItem> itemOpt = flashSaleItemDAO.findByFlashSaleIdAndProductId(current.get().getId(), productId);
+            if (itemOpt.isPresent()) {
+                int updatedRows = flashSaleItemDAO.incrementSoldCountAtomically(current.get().getId(), productId, quantity);
+                if (updatedRows == 0) {
+                    log.error("[FlashSale] Giao dịch thất bại: Hết hàng hoặc sản phẩm {} vượt quá lượt mua Flash Sale {}", productId, current.get().getId());
+                    throw new RuntimeException("Sản phẩm Flash Sale đã hết lượt mua với giá ưu đãi hoặc không tồn tại.");
+                } else {
+                    log.info("[FlashSale] Tăng số lượng thành công: {} sản phẩm ID {} cho Flash Sale {}", quantity, productId, current.get().getId());
+                }
             }
         }
     }
@@ -180,8 +183,11 @@ public class FlashSaleService {
     public void decrementSoldCount(Integer productId, Integer quantity) {
         Optional<FlashSale> current = getCurrentFlashSale();
         if (current.isPresent()) {
-            flashSaleItemDAO.decrementSoldCountAtomically(current.get().getId(), productId, quantity);
-            log.info("[FlashSale] Hoàn trả kho thành công: {} sản phẩm ID {} cho Flash Sale {}", quantity, productId, current.get().getId());
+            Optional<FlashSaleItem> itemOpt = flashSaleItemDAO.findByFlashSaleIdAndProductId(current.get().getId(), productId);
+            if (itemOpt.isPresent()) {
+                flashSaleItemDAO.decrementSoldCountAtomically(current.get().getId(), productId, quantity);
+                log.info("[FlashSale] Hoàn trả kho thành công: {} sản phẩm ID {} cho Flash Sale {}", quantity, productId, current.get().getId());
+            }
         }
     }
 

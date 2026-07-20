@@ -38,25 +38,13 @@ public class VoucherApiController {
 
         @SuppressWarnings("unchecked")
         Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
+        @SuppressWarnings("unchecked")
+        Map<Integer, CartItem> buyNowCart = (Map<Integer, CartItem>) session.getAttribute("buyNowCart");
+        Map<Integer, CartItem> targetCart = (buyNowCart != null && !buyNowCart.isEmpty()) ? buyNowCart : cart;
 
         double cartTotal = 0;
-        if (cart != null) {
-            boolean hasFlashSale = false;
-            for (CartItem item : cart.values()) {
-                if (flashSaleService.getActiveFlashSaleItem(item.getId()).isPresent()) {
-                    hasFlashSale = true;
-                    break;
-                }
-            }
-            if (hasFlashSale) {
-                Map<String, Object> err = new HashMap<>();
-                err.put("success", false);
-                err.put("valid", false);
-                err.put("message", "Không thể áp dụng Voucher khi giỏ hàng có sản phẩm Flash Sale.");
-                return err;
-            }
-
-            cartTotal = cart.values().stream()
+        if (targetCart != null) {
+            cartTotal = targetCart.values().stream()
                     .mapToDouble(item -> item.getPrice() * item.getQuantity())
                     .sum();
         }

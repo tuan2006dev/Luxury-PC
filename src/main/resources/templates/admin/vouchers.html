@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Voucher — Luxury PC</title>
@@ -17,8 +17,7 @@
     <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1><i class="fa-solid fa-ticket"
-                        style="color:var(--gold);margin-right:10px;"></i>Quản Lý Voucher</h1>
+                <h1><i class="fa-solid fa-ticket" style="color:var(--gold);margin-right:10px;"></i>Quản Lý Voucher</h1>
                 <p>Tạo và quản lý mã khuyến mãi cho khách hàng</p>
             </div>
         </div>
@@ -34,7 +33,8 @@
         <div class="table-card">
             <div class="table-h">
                 <span><i class="fa-solid fa-list"></i> Danh Sách Voucher</span>
-                <button class="btn btn-gold" onclick="openModal()"><i class="fa-solid fa-plus"></i> <span>Tạo Voucher</span></button>
+                <button class="btn btn-gold" onclick="openModal()"><i class="fa-solid fa-plus"></i> <span>Tạo
+                        Voucher</span></button>
             </div>
 
             <table th:if="${vouchers != null and !vouchers.isEmpty()}">
@@ -56,8 +56,10 @@
                         <td style="font-weight:700;color:var(--gold);" th:text="${v.code}">LUXURY10</td>
                         <td th:text="${v.description}">Giảm 10%</td>
                         <td>
-                            <span class="badge badge-gold" th:if="${v.discountType.name() == 'PERCENTAGE'}">Phần trăm</span>
-                            <span class="badge badge-gold" th:if="${v.discountType.name() == 'FIXED_AMOUNT'}">Cố định</span>
+                            <span class="badge badge-gold" th:if="${v.discountType.name() == 'PERCENTAGE'}">Phần
+                                trăm</span>
+                            <span class="badge badge-gold" th:if="${v.discountType.name() == 'FIXED_AMOUNT'}">Cố
+                                định</span>
                         </td>
                         <td>
                             <span th:if="${v.discountType.name() == 'PERCENTAGE'}"
@@ -111,8 +113,8 @@
         <!-- Create/Edit Voucher Modal -->
         <div class="modal-overlay" id="voucherModal">
             <div class="modal">
-                <div class="modal-title"><i class="fa-solid fa-ticket"
-                        style="margin-right:8px;"></i>Tạo Voucher Mới</div>
+                <div class="modal-title"><i class="fa-solid fa-ticket" style="margin-right:8px;"></i>Tạo Voucher Mới
+                </div>
                 <form novalidate autocomplete="off" th:action="@{/admin/vouchers/save}" method="POST">
                     <input autocomplete="off" th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}"
                         th:value="${_csrf.token}" />
@@ -121,8 +123,8 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>Mã Voucher</label>
-                            <input autocomplete="off" type="text" name="code" id="voucherCode" required placeholder="VD: LUXURY10"
-                                style="text-transform:uppercase;">
+                            <input autocomplete="off" type="text" name="code" id="voucherCode" required
+                                placeholder="VD: LUXURY10" style="text-transform:uppercase;">
                         </div>
                         <div class="form-group">
                             <label>Loại Giảm Giá</label>
@@ -151,8 +153,7 @@
                         <div class="form-group" id="maxDiscountGroup">
                             <label>Giảm Tối Đa (₫)</label>
                             <input autocomplete="off" type="number" name="maxDiscountAmount" id="maxDiscountAmount"
-                                min="0"
-                                placeholder="Không giới hạn">
+                                min="0" placeholder="Không giới hạn">
                         </div>
                     </div>
 
@@ -164,7 +165,8 @@
                         </div>
                         <div class="form-group">
                             <label>Giới Hạn Lượt Dùng</label>
-                            <input autocomplete="off" type="number" name="usageLimit" id="usageLimit" min="0" placeholder="Không giới hạn">
+                            <input autocomplete="off" type="number" name="usageLimit" id="usageLimit" min="0"
+                                placeholder="Không giới hạn">
                         </div>
                     </div>
 
@@ -186,7 +188,8 @@
                     <div class="form-actions">
                         <button type="button" class="btn" style="background:var(--mid);color:var(--muted);"
                             onclick="closeModal()">Hủy</button>
-                        <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span>Lưu Voucher</span></button>
+                        <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span>Lưu
+                                Voucher</span></button>
                     </div>
                 </form>
             </div>
