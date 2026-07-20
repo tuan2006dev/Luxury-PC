@@ -349,7 +349,7 @@ public class CartController {
                 Product product = pOpt.get();
                 item.setImage(product.getImage());
                 item.setStock(product.getStock());
-                item.setPrice(flashSaleService.getFlashSalePrice(product.getId()));
+                item.setPrice(flashSaleService.getEffectivePrice(product.getId()));
             } else {
                 item.setStock(5);
             }
@@ -417,7 +417,7 @@ public class CartController {
                 Product product = pOpt.get();
                 item.setImage(product.getImage());
                 item.setStock(product.getStock());
-                item.setPrice(flashSaleService.getFlashSalePrice(product.getId()));
+                item.setPrice(flashSaleService.getEffectivePrice(product.getId()));
             } else {
                 item.setStock(5);
             }

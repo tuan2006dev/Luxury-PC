@@ -53,7 +53,7 @@ public class OrderService {
                     long alreadyBought = orderItemDAO.countFlashSalePurchasesByUser(currentUser.getId(), fs.getId());
                     // Tính số sản phẩm flash sale trong đơn hiện tại
                     long inThisOrder = cart.values().stream()
-                        .filter(ci -> flashSaleService.getFlashSalePrice(ci.getId()) < ci.getPrice())
+                        .filter(ci -> flashSaleService.getEffectivePrice(ci.getId()) < ci.getPrice())
                         .mapToLong(ci -> ci.getQuantity())
                         .sum();
                     if (alreadyBought + inThisOrder > fs.getMaxPerUser()) {
