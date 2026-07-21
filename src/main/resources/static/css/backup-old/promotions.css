@@ -19,7 +19,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: 
+  background:
     radial-gradient(ellipse 600px 400px at 20% 50%, rgba(201, 168, 76, 0.08), transparent),
     radial-gradient(ellipse 400px 300px at 80% 30%, rgba(220, 80, 60, 0.06), transparent),
     radial-gradient(ellipse 300px 300px at 50% 80%, rgba(201, 168, 76, 0.04), transparent);
@@ -63,8 +63,15 @@
 }
 
 @keyframes pulseBadge {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 80, 60, 0.3); }
-  50% { box-shadow: 0 0 20px 5px rgba(220, 80, 60, 0.15); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 80, 60, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 5px rgba(220, 80, 60, 0.15);
+  }
 }
 
 .promo-hero-title {
@@ -109,18 +116,62 @@
   animation: sparkleFloat 4s ease-in-out infinite;
 }
 
-.promo-sparkle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
-.promo-sparkle:nth-child(2) { left: 25%; top: 60%; animation-delay: 0.8s; }
-.promo-sparkle:nth-child(3) { left: 75%; top: 15%; animation-delay: 1.6s; }
-.promo-sparkle:nth-child(4) { left: 85%; top: 55%; animation-delay: 2.4s; }
-.promo-sparkle:nth-child(5) { left: 50%; top: 75%; animation-delay: 3.2s; }
-.promo-sparkle:nth-child(6) { left: 40%; top: 30%; animation-delay: 1s; }
+.promo-sparkle:nth-child(1) {
+  left: 10%;
+  top: 20%;
+  animation-delay: 0s;
+}
+
+.promo-sparkle:nth-child(2) {
+  left: 25%;
+  top: 60%;
+  animation-delay: 0.8s;
+}
+
+.promo-sparkle:nth-child(3) {
+  left: 75%;
+  top: 15%;
+  animation-delay: 1.6s;
+}
+
+.promo-sparkle:nth-child(4) {
+  left: 85%;
+  top: 55%;
+  animation-delay: 2.4s;
+}
+
+.promo-sparkle:nth-child(5) {
+  left: 50%;
+  top: 75%;
+  animation-delay: 3.2s;
+}
+
+.promo-sparkle:nth-child(6) {
+  left: 40%;
+  top: 30%;
+  animation-delay: 1s;
+}
 
 @keyframes sparkleFloat {
-  0% { opacity: 0; transform: translateY(20px) scale(0); }
-  30% { opacity: 0.8; transform: translateY(-10px) scale(1); }
-  70% { opacity: 0.6; transform: translateY(-30px) scale(0.8); }
-  100% { opacity: 0; transform: translateY(-50px) scale(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0);
+  }
+
+  30% {
+    opacity: 0.8;
+    transform: translateY(-10px) scale(1);
+  }
+
+  70% {
+    opacity: 0.6;
+    transform: translateY(-30px) scale(0.8);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-50px) scale(0);
+  }
 }
 
 
@@ -187,7 +238,9 @@
 }
 
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 
@@ -303,13 +356,11 @@
   bottom: 10px;
   right: 0;
   width: 1px;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(201, 168, 76, 0.25) 0,
-    rgba(201, 168, 76, 0.25) 4px,
-    transparent 4px,
-    transparent 8px
-  );
+  background-image: repeating-linear-gradient(to bottom,
+      rgba(201, 168, 76, 0.25) 0,
+      rgba(201, 168, 76, 0.25) 4px,
+      transparent 4px,
+      transparent 8px);
 }
 
 /* Scallop effect */
@@ -320,13 +371,11 @@
   top: -1px;
   bottom: -1px;
   width: 12px;
-  background: repeating-radial-gradient(
-    circle at right,
-    transparent 0,
-    transparent 5px,
-    var(--deep) 5px,
-    var(--deep) 12px
-  );
+  background: repeating-radial-gradient(circle at right,
+      transparent 0,
+      transparent 5px,
+      var(--deep) 5px,
+      var(--deep) 12px);
   z-index: 2;
 }
 
@@ -668,9 +717,17 @@
 }
 
 @keyframes shimmer {
-  0% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 .promo-deal-sold-text {
@@ -969,11 +1026,11 @@
   .shopee-voucher-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .promo-deals-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .voucher-center,
   .promo-deals,
   .promo-banners,
@@ -989,19 +1046,19 @@
   .promo-deals-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .promo-banner-slider {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .promo-banner-slider .promo-banner-card:nth-child(3) {
     grid-column: span 2;
   }
-  
+
   .promo-cat-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .promo-info-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1012,12 +1069,12 @@
     min-height: 300px;
     padding: 6rem 1.5rem 2rem;
   }
-  
+
   .promo-countdown-strip {
     padding: 0.8rem 1rem;
     gap: 1rem;
   }
-  
+
   .voucher-center,
   .promo-deals,
   .promo-banners,
@@ -1027,45 +1084,45 @@
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
-  
+
   .voucher-center-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .sv-left {
     width: 110px;
     min-height: 100px;
   }
-  
+
   .sv-discount {
     font-size: 1.5rem;
   }
-  
+
   .promo-deals-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .promo-banner-slider {
     grid-template-columns: 1fr;
   }
-  
+
   .promo-banner-slider .promo-banner-card:nth-child(3) {
     grid-column: span 1;
   }
-  
+
   .promo-cat-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .my-vouchers-list {
     grid-template-columns: 1fr;
   }
-  
+
   .my-vouchers-empty {
     grid-column: span 1;
   }
-  
+
   .promo-info-grid {
     grid-template-columns: 1fr;
   }
@@ -1075,7 +1132,7 @@
   .promo-deals-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .promo-cat-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1109,4 +1166,3 @@
   color: var(--text-muted);
   cursor: none;
 }
-

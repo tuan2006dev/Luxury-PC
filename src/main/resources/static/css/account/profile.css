@@ -146,13 +146,16 @@ img {
 .sidebar::-webkit-scrollbar {
   width: 4px;
 }
+
 .sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .sidebar::-webkit-scrollbar-thumb {
   background: rgba(201, 168, 76, 0.2);
   border-radius: 2px;
 }
+
 .sidebar::-webkit-scrollbar-thumb:hover {
   background: var(--gold);
 }
@@ -1267,7 +1270,7 @@ img {
 /* ===== LIGHT MODE FIX FOR PROFILE PAGE ===== */
 body.light-mode .navbar {
   background: rgba(244, 241, 234, 0.95) !important;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.05) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05) !important;
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }

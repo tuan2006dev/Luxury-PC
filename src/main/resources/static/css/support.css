@@ -10,13 +10,16 @@
     color: var(--text-secondary);
     margin-bottom: 30px;
 }
+
 .breadcrumb a {
     color: var(--text-secondary);
     text-decoration: none;
 }
+
 .breadcrumb a:hover {
     color: var(--accent-blue);
 }
+
 .breadcrumb span {
     color: var(--text-primary);
 }
@@ -26,6 +29,7 @@
     text-align: center;
     margin-bottom: 50px;
 }
+
 .support-subtitle {
     font-size: 14px;
     font-weight: 700;
@@ -33,12 +37,14 @@
     text-transform: uppercase;
     margin-bottom: 10px;
 }
+
 .support-title {
     font-size: 36px;
     font-weight: 700;
     color: #0f172a;
     margin-bottom: 15px;
 }
+
 .support-desc {
     font-size: 15px;
     color: var(--text-secondary);
@@ -58,6 +64,7 @@
 .support-section {
     margin-bottom: 40px;
 }
+
 .section-title {
     font-size: 18px;
     font-weight: 700;
@@ -74,12 +81,14 @@
     flex-direction: column;
     gap: 15px;
 }
+
 .faq-item {
     border: 1px solid var(--border-color);
     border-radius: 6px;
     overflow: hidden;
     background: white;
 }
+
 .faq-question {
     padding: 15px 20px;
     font-weight: 600;
@@ -91,9 +100,11 @@
     cursor: pointer;
     transition: 0.2s;
 }
+
 .faq-question:hover {
     color: var(--accent-blue);
 }
+
 .faq-answer {
     padding: 0 20px 20px 20px;
     font-size: 14px;
@@ -101,14 +112,17 @@
     line-height: 1.6;
     display: none;
 }
+
 .faq-item.active {
     border-color: #bfdbfe;
     background: #f0f7ff;
 }
+
 .faq-item.active .faq-question {
     color: var(--accent-blue);
     border-bottom: none;
 }
+
 .faq-item.active .faq-answer {
     display: block;
     color: #334155;
@@ -120,6 +134,7 @@
     flex-direction: column;
     gap: 15px;
 }
+
 .contact-card {
     display: flex;
     align-items: flex-start;
@@ -129,6 +144,7 @@
     border-radius: 8px;
     background: white;
 }
+
 .contact-icon {
     width: 48px;
     height: 48px;
@@ -141,18 +157,21 @@
     font-size: 20px;
     flex-shrink: 0;
 }
+
 .contact-info h3 {
     font-size: 15px;
     font-weight: 700;
     color: #0f172a;
     margin-bottom: 5px;
 }
+
 .contact-highlight {
     font-size: 15px;
     font-weight: 700;
     color: var(--accent-blue);
     margin-bottom: 5px;
 }
+
 .contact-time {
     font-size: 13px;
     color: var(--text-secondary);
@@ -166,15 +185,18 @@
     padding: 30px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
+
 .support-form-card h2 {
     font-size: 20px;
     font-weight: 700;
     color: #0f172a;
     margin-bottom: 25px;
 }
+
 .form-group {
     margin-bottom: 20px;
 }
+
 .form-group label {
     display: block;
     font-size: 12px;
@@ -182,21 +204,26 @@
     color: #475569;
     margin-bottom: 8px;
 }
+
 .form-group label span {
-    color: #ef4444; /* Red asterisk */
+    color: #ef4444;
+    /* Red asterisk */
 }
 
-.input-with-icon, .textarea-with-icon {
+.input-with-icon,
+.textarea-with-icon {
     position: relative;
     display: flex;
     align-items: center;
 }
+
 .input-with-icon i {
     position: absolute;
     left: 15px;
     color: #94a3b8;
     font-size: 16px;
 }
+
 .textarea-with-icon i {
     position: absolute;
     left: 15px;
@@ -204,6 +231,7 @@
     color: #94a3b8;
     font-size: 16px;
 }
+
 .input-with-icon input {
     width: 100%;
     padding: 12px 15px 12px 45px;
@@ -214,6 +242,7 @@
     outline: none;
     transition: 0.2s;
 }
+
 .textarea-with-icon textarea {
     width: 100%;
     padding: 12px 15px 12px 45px;
@@ -226,7 +255,9 @@
     height: 120px;
     resize: vertical;
 }
-.input-with-icon input:focus, .textarea-with-icon textarea:focus {
+
+.input-with-icon input:focus,
+.textarea-with-icon textarea:focus {
     border-color: var(--accent-blue);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
@@ -248,6 +279,7 @@
     transition: 0.2s;
     margin-top: 10px;
 }
+
 .btn-submit-support:hover {
     background: #1d4ed8;
 }
@@ -275,15 +307,18 @@
     border-radius: 8px;
     padding: 30px;
 }
+
 .trust-item {
     display: flex;
     align-items: center;
     gap: 15px;
 }
+
 .trust-icon {
     font-size: 28px;
     color: var(--accent-blue);
 }
+
 .trust-info h4 {
     font-size: 14px;
     font-weight: 700;
@@ -291,6 +326,7 @@
     margin-bottom: 4px;
     text-transform: uppercase;
 }
+
 .trust-info p {
     font-size: 13px;
     color: var(--text-secondary);
@@ -302,6 +338,7 @@
         grid-template-columns: 1fr;
     }
 }
+
 @media (max-width: 768px) {
     .trust-banner {
         flex-direction: column;

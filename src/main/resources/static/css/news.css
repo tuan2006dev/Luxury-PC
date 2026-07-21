@@ -216,7 +216,7 @@
     line-height: 1.8;
 }
 
-.article-content h2, 
+.article-content h2,
 .article-content h3 {
     color: #111111;
     margin-top: 40px;
@@ -260,12 +260,12 @@
     .news-header h1 {
         font-size: 30px;
     }
-    
+
     .article-container {
         padding: 30px 20px;
         margin: 20px auto;
     }
-    
+
     .article-title {
         font-size: 26px;
     }

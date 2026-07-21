@@ -4,59 +4,99 @@
 
 body.light-mode {
   /* Core Colors (Điều chỉnh để bớt chói) */
-  --black: #F4F1EA;         /* Background chính hơi dịu lại */
-  --deep: #FFFFFF;          /* Card Background */
-  --dark: #F8F6F0;          /* Section Background */
-  --mid: #F8F6F0;           /* Section Background Alt */
-  
-  --white: #222222;         /* Heading Text */
-  --cream: #555555;         /* Body Text */
-  --text-muted: #7A7A7A;    /* Text phụ */
-  
+  --black: #F4F1EA;
+  /* Background chính hơi dịu lại */
+  --deep: #FFFFFF;
+  /* Card Background */
+  --dark: #F8F6F0;
+  /* Section Background */
+  --mid: #F8F6F0;
+  /* Section Background Alt */
+
+  --white: #222222;
+  /* Heading Text */
+  --cream: #555555;
+  /* Body Text */
+  --text-muted: #7A7A7A;
+  /* Text phụ */
+
   --bg-primary: #F4F1EA;
   --bg-secondary: #F8F6F0;
   --bg-tertiary: #FFFFFF;
-  
-  --text-primary: #1A1A1A;  /* Đậm hơn chút để dễ đọc */
-  --text-secondary: #4A4A4A; /* Đậm hơn chút */
-  
-  --border-color: rgba(0, 0, 0, 0.12); /* Làm đậm đường kẻ */
+
+  --text-primary: #1A1A1A;
+  /* Đậm hơn chút để dễ đọc */
+  --text-secondary: #4A4A4A;
+  /* Đậm hơn chút */
+
+  --border-color: rgba(0, 0, 0, 0.12);
+  /* Làm đậm đường kẻ */
   --divider: rgba(0, 0, 0, 0.12);
-  
+
   --card-bg: #FFFFFF;
   --card-hover: #FCF8F3;
-  
+
   /* Gold Colors */
   --gold: #C9A34A;
   --gold-dark: #AA7D22;
   --gold-hover: #B88B2D;
   --gold-light: #E8D39A;
   --champagne-gold: #D8B86A;
-  
+
   /* Status Colors */
   --success: #4E8B4A;
   --warning: #C99A2B;
   --error: #C74B4B;
-  
+
   /* Shadows */
-  --shadow-light: rgba(0,0,0,0.06);
-  --shadow-card: rgba(0,0,0,0.06);
+  --shadow-light: rgba(0, 0, 0, 0.06);
+  --shadow-card: rgba(0, 0, 0, 0.06);
 }
 
 /* ============================================
    SPECIFIC SECTION BACKGROUNDS
    ============================================ */
 /* Áp dụng màu dịu mắt hơn */
-body.light-mode .hero { background-color: #F4F1EA; }
-body.light-mode .categories { background-color: #F8F6F0; }
-body.light-mode .products { background-color: #F4F1EA; }
-body.light-mode .vouchers-section { background-color: #F8F6F0; }
-body.light-mode .build-section { background-color: #F4F1EA; }
-body.light-mode .testimonials { background-color: #F8F6F0; }
-body.light-mode .newsletter { background-color: #F4F1EA; }
-body.light-mode .footer, body.light-mode footer { background-color: #F8F6F0; }
-body.light-mode .statement { background-color: #F8F6F0; }
-body.light-mode .flash-sale { background-color: #F4F1EA; }
+body.light-mode .hero {
+  background-color: #F4F1EA;
+}
+
+body.light-mode .categories {
+  background-color: #F8F6F0;
+}
+
+body.light-mode .products {
+  background-color: #F4F1EA;
+}
+
+body.light-mode .vouchers-section {
+  background-color: #F8F6F0;
+}
+
+body.light-mode .build-section {
+  background-color: #F4F1EA;
+}
+
+body.light-mode .testimonials {
+  background-color: #F8F6F0;
+}
+
+body.light-mode .newsletter {
+  background-color: #F4F1EA;
+}
+
+body.light-mode .footer,
+body.light-mode footer {
+  background-color: #F8F6F0;
+}
+
+body.light-mode .statement {
+  background-color: #F8F6F0;
+}
+
+body.light-mode .flash-sale {
+  background-color: #F4F1EA;
+}
 
 /* ============================================
    TYPOGRAPHY & SPACING
@@ -65,7 +105,9 @@ body.light-mode {
   line-height: 1.8;
 }
 
-body.light-mode h1, body.light-mode h2, body.light-mode h3 {
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3 {
   letter-spacing: 0.5px;
 }
 
@@ -84,7 +126,7 @@ body.light-mode .navbar {
 
 body.light-mode .navbar.scrolled {
   background: rgba(244, 241, 234, 0.95) !important;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.05) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05) !important;
   backdrop-filter: blur(20px);
 }
 
@@ -126,7 +168,7 @@ body.light-mode .logo-pc {
    GRADIENTS & COMPONENT OVERRIDES
    ============================================ */
 body.light-mode .hero-overlay {
-  background: linear-gradient(90deg, rgba(250,248,243,1) 0%, rgba(250,248,243,0.92) 35%, rgba(250,248,243,0.35) 70%, rgba(250,248,243,0) 100%) !important;
+  background: linear-gradient(90deg, rgba(250, 248, 243, 1) 0%, rgba(250, 248, 243, 0.92) 35%, rgba(250, 248, 243, 0.35) 70%, rgba(250, 248, 243, 0) 100%) !important;
 }
 
 body.light-mode .stats {
@@ -147,7 +189,7 @@ body.light-mode .voucher-card,
 body.light-mode .testimonial-card {
   background: #FDFBF8;
   border-color: #E7DED0;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
   transition: all 0.25s ease !important;
 }
 
@@ -157,11 +199,12 @@ body.light-mode .voucher-card:hover,
 body.light-mode .testimonial-card:hover {
   transform: translateY(-6px) !important;
   border-color: var(--gold) !important;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
 }
 
 body.light-mode .category-card .cat-num {
-  opacity: 0.3 !important; /* Tăng opacity 15% so với cũ */
+  opacity: 0.3 !important;
+  /* Tăng opacity 15% so với cũ */
 }
 
 body.light-mode .category-card:hover .cat-icon i {
@@ -184,7 +227,8 @@ body.light-mode .voucher-tag {
 
 body.light-mode .voucher-left::before,
 body.light-mode .voucher-left::after {
-  background-color: #F8F6F0 !important; /* Khớp với màu nền của section Khuyến Mãi */
+  background-color: #F8F6F0 !important;
+  /* Khớp với màu nền của section Khuyến Mãi */
 }
 
 /* Fix Auth Page Colors */
@@ -252,7 +296,7 @@ body.light-mode i:hover {
 body.light-mode .chatbot-fab {
   background: #1F1F1F !important;
   border: none !important;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
   border-radius: 30px !important;
   transition: all 0.25s ease !important;
 }
@@ -287,11 +331,11 @@ body.light-mode h1 em {
 body.light-mode .chatbot-window {
   background: rgba(255, 255, 255, 0.97) !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1), 0 0 40px rgba(201,168,76,0.1) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 0 40px rgba(201, 168, 76, 0.1) !important;
 }
 
 body.light-mode .chatbot-header {
-  background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.02)) !important;
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.1), rgba(201, 168, 76, 0.02)) !important;
   border-bottom-color: rgba(0, 0, 0, 0.08) !important;
 }
 
@@ -308,29 +352,29 @@ body.light-mode .chatbot-close {
 }
 
 body.light-mode .chatbot-mode-bar {
-  background: rgba(0,0,0,0.03) !important;
-  border-bottom-color: rgba(0,0,0,0.05) !important;
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 body.light-mode .chat-bubble.bot .chat-bubble-text {
   background: #F8F6F0 !important;
-  border-color: rgba(0,0,0,0.08) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
   color: #333 !important;
 }
 
 body.light-mode .chat-bubble.user .chat-bubble-text {
-  background: rgba(201,168,76,0.1) !important;
-  border-color: rgba(201,168,76,0.2) !important;
+  background: rgba(201, 168, 76, 0.1) !important;
+  border-color: rgba(201, 168, 76, 0.2) !important;
   color: #222 !important;
 }
 
 body.light-mode .chatbot-input-row {
-  border-top-color: rgba(0,0,0,0.08) !important;
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 body.light-mode .chatbot-input {
   background: #FFFFFF !important;
-  border-color: rgba(0,0,0,0.15) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
   color: #222 !important;
 }
 
@@ -343,13 +387,13 @@ body.light-mode .chatbot-input::placeholder {
 }
 
 body.light-mode .quick-btn {
-  background: rgba(201,168,76,0.05) !important;
-  border-color: rgba(201,168,76,0.3) !important;
+  background: rgba(201, 168, 76, 0.05) !important;
+  border-color: rgba(201, 168, 76, 0.3) !important;
   color: #555 !important;
 }
 
 body.light-mode .quick-btn:hover {
-  background: rgba(201,168,76,0.15) !important;
+  background: rgba(201, 168, 76, 0.15) !important;
   color: var(--gold-dark) !important;
 }
 
@@ -360,7 +404,7 @@ body.light-mode .product-wishlist {
   background: rgba(255, 255, 255, 0.95) !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
   color: #666 !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 body.light-mode .product-wishlist:hover {

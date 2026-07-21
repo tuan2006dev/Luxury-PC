@@ -1,45 +1,63 @@
 .security-banner {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: rgba(201, 168, 76, 0.08);
-      border: 1px solid rgba(201, 168, 76, 0.25);
-      border-radius: 8px;
-      padding: 1rem;
-      margin: 1.5rem 0;
-      text-align: left;
-    }
-    .security-banner-icon {
-      font-size: 1.8rem;
-      animation: pulse-glow 2s infinite ease-in-out;
-      user-select: none;
-    }
-    .security-banner-content h4 {
-      color: var(--gold);
-      margin: 0 0 0.2rem 0;
-      font-family: var(--serif);
-      font-size: 0.88rem;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .security-banner-content p {
-      color: var(--muted);
-      margin: 0;
-      font-family: var(--sans);
-      font-size: 0.78rem;
-      line-height: 1.45;
-      font-weight: 300;
-    }
-    @keyframes pulse-glow {
-      0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(201,168,76,0.3)); }
-      50% { transform: scale(1.08); filter: drop-shadow(0 0 10px rgba(201,168,76,0.6)); }
-      100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(201,168,76,0.3)); }
-    }
-    .fp-icon {
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .fp-title, .fp-sub {
-      text-align: center;
-    }
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.security-banner-icon {
+  font-size: 1.8rem;
+  animation: pulse-glow 2s infinite ease-in-out;
+  user-select: none;
+}
+
+.security-banner-content h4 {
+  color: var(--gold);
+  margin: 0 0 0.2rem 0;
+  font-family: var(--serif);
+  font-size: 0.88rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.security-banner-content p {
+  color: var(--muted);
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  font-weight: 300;
+}
+
+@keyframes pulse-glow {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px rgba(201, 168, 76, 0.3));
+  }
+
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.6));
+  }
+
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px rgba(201, 168, 76, 0.3));
+  }
+}
+
+.fp-icon {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fp-title,
+.fp-sub {
+  text-align: center;
+}

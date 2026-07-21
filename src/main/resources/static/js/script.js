@@ -129,23 +129,23 @@ window.showToast = function (msg, type = 'success') {
     if (el) {
         // Clear any active timeout to prevent previous toast call from hiding this one prematurely
         clearTimeout(toastTimeout);
-        
+
         // Remove classes first to reset the entry animation
         el.classList.remove('active', 'warning');
-        
+
         // Force reflow so the browser registers the class removal before adding them back
         void el.offsetWidth;
-        
+
         // Set new message text
         el.textContent = msg;
-        
+
         // Apply variant class
         if (type === 'warning') {
             el.classList.add('warning');
         }
-        
+
         el.classList.add('active');
-        
+
         // Hide after 3.5 seconds
         toastTimeout = setTimeout(() => {
             el.classList.remove('active', 'warning');
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         })
-        .catch(() => {}); // silent fail — cart IDs are optional optimization
+        .catch(() => { }); // silent fail — cart IDs are optional optimization
 });
 
 // Global addToCart function (AJAX → /api/cart/add returns JSON, shows toast, syncs header count)
@@ -287,19 +287,19 @@ window.buyNow = function (productId) {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '/cart/add';
-    
+
     const idInput = document.createElement('input');
     idInput.type = 'hidden';
     idInput.name = 'id';
     idInput.value = productId;
     form.appendChild(idInput);
-    
+
     const qtyInput = document.createElement('input');
     qtyInput.type = 'hidden';
     qtyInput.name = 'quantity';
     qtyInput.value = 1;
     form.appendChild(qtyInput);
-    
+
     document.body.appendChild(form);
     form.submit();
 };

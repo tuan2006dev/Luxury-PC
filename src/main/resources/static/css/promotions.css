@@ -60,7 +60,7 @@
     font-size: 32px;
     font-weight: 800;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .banner-content p {
@@ -82,7 +82,7 @@
 
 .btn-banner:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .banner-red .btn-banner {
@@ -152,7 +152,8 @@
     flex-shrink: 0;
 }
 
-.promo-cat-item:hover, .promo-cat-item.active {
+.promo-cat-item:hover,
+.promo-cat-item.active {
     border-color: var(--accent-blue);
     background: #eff6ff;
 }
@@ -264,7 +265,7 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(255,255,255,0.9);
+    background: rgba(255, 255, 255, 0.9);
     font-size: 11px;
     font-weight: 500;
     padding: 3px 8px;
@@ -340,7 +341,7 @@
     font-size: 10px;
     color: #fff;
     font-weight: 600;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .btn-add-cart {
@@ -487,7 +488,8 @@
     position: relative;
 }
 
-.voucher-card::before, .voucher-card::after {
+.voucher-card::before,
+.voucher-card::after {
     content: '';
     position: absolute;
     width: 16px;
@@ -592,31 +594,40 @@
 
 
 @media (max-width: 991px) {
-    .promo-banners, .layout-2col {
+
+    .promo-banners,
+    .layout-2col {
         grid-template-columns: 1fr;
     }
+
     .flash-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
     .voucher-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
 @media (max-width: 768px) {
     .flash-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .voucher-grid {
         grid-template-columns: 1fr;
     }
+
     .banner-content h2 {
         font-size: 24px !important;
     }
+
     .countdown-box {
         transform: scale(0.8);
         transform-origin: left;
     }
 }
+
 @media (max-width: 480px) {
     .flash-grid {
         grid-template-columns: 1fr;
