@@ -126,18 +126,22 @@ public class HomeController {
 
         // Flash Sale từ database
         Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
-        long t5 = System.nanoTime();
         if (currentSale.isPresent()) {
             FlashSale sale = currentSale.get();
             List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId()).stream()
                 .filter(item -> item.getSoldCount() < item.getSaleQuantity())
                 .collect(Collectors.toList());
-            model.addAttribute("flashSale", sale);
-            model.addAttribute("flashSaleItems", saleItems);
-            model.addAttribute("flashSaleEndTime", sale.getEndTime().getTime());
+            if (!saleItems.isEmpty()) {
+                model.addAttribute("flashSale", sale);
+                model.addAttribute("flashSaleItems", saleItems);
+                model.addAttribute("flashSaleEndTime", sale.getEndTime().getTime());
+            } else {
+                model.addAttribute("fallbackFlashSaleProducts", productService.getFlashSaleProducts());
+                model.addAttribute("flashSaleEndTime", 0);
+            }
         } else {
             // Fallback: vẫn hiển thị sản phẩm "sắp hết" nếu không có flash sale
-            model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts());
+            model.addAttribute("fallbackFlashSaleProducts", productService.getFlashSaleProducts());
             model.addAttribute("flashSaleEndTime", 0);
         }
         long t6 = System.nanoTime();
