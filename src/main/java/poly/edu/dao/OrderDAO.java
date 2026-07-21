@@ -49,4 +49,8 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
 
     @Query("SELECT o FROM Order o WHERE o.status = 'PENDING' AND o.createdAt < :threshold")
     List<Order> findExpiredPendingOrders(@org.springframework.data.repository.query.Param("threshold") java.util.Date threshold);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM Order o WHERE o.orderCode LIKE 'DEMO-%'")
+    void deleteDemoOrders();
 }

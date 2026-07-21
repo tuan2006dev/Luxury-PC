@@ -275,7 +275,7 @@ public class Order {
         if (paymentMethod == null) return "Chưa xác định";
         return switch (paymentMethod) {
             case "VIETQR" -> "VietQR";
-            case "COD" -> "Thanh toán khi nhận hàng (COD)";
+            case "COD" -> "COD";
             case "INSTALLMENT" -> "Trả góp";
             default -> paymentMethod;
         };

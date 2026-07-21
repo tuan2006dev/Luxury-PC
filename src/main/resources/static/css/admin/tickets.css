@@ -4,11 +4,11 @@
     --black: #f8fafc;
     --cream: #0f172a;
     --muted: #64748b;
-    --gold: #3b82f6;
-    --gold-l: #2563eb;
+    --gold: #0066CC;
+    --gold-l: #0284c7;
     --green: #16a34a;
     --red: #dc2626;
-    --blue: #3b82f6;
+    --blue: #0066CC;
 }
 
 /* ===== TICKET STATS ===== */
@@ -270,26 +270,26 @@
 
 .st-open {
     background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
+    color: #d97706;
     border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .st-progress {
-    background: rgba(59, 130, 246, 0.12);
-    color: #3b82f6;
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    background: rgba(0, 102, 204, 0.12);
+    color: #0066CC;
+    border: 1px solid rgba(0, 102, 204, 0.3);
 }
 
 .st-resolved {
     background: rgba(34, 197, 94, 0.12);
-    color: var(--green);
+    color: #16a34a;
     border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .st-closed {
-    background: rgba(136, 136, 136, 0.1);
-    color: #666;
-    border: 1px solid rgba(136, 136, 136, 0.2);
+    background: rgba(100, 116, 139, 0.12);
+    color: #64748b;
+    border: 1px solid rgba(100, 116, 139, 0.3);
 }
 
 .toggle-icon {
@@ -646,7 +646,7 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 9999;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     opacity: 0;
@@ -656,9 +656,10 @@
 }
 
 .custom-modal-overlay.show {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
 }
 
 .custom-modal {
