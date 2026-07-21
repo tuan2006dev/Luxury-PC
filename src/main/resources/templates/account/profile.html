@@ -7,6 +7,7 @@
   <meta name="_csrf" th:content="${_csrf?.token}" />
   <meta name="_csrf_header" th:content="${_csrf?.headerName}" />
   <title>Luxury PC — Hồ Sơ Cá Nhân</title>
+  <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
   <meta name="description" content="Quản lý tài khoản và hồ sơ cá nhân Luxury PC của bạn." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -711,7 +712,8 @@
                 <label class="form-label" style="color:#3b82f6;">Mã OTP Xác Minh
                   Email</label>
                 <div style="display:flex; gap:10px;">
-                  <input type="text" name="emailOtp" id="profile-email-otp" class="form-input" placeholder="Nhập mã OTP" maxlength="6" />
+                  <input type="text" name="emailOtp" id="profile-email-otp" class="form-input" placeholder="Nhập mã OTP"
+                    maxlength="6" />
                   <button type="button" class="btn-save" id="btn-send-email-otp"
                     style="white-space:nowrap; padding: 0.5rem 1rem;">Gửi
                     OTP</button>
@@ -740,7 +742,8 @@
             <button type="submit" class="btn-save">
               <span class="btn-save-inner">Lưu Thay Đổi</span>
             </button>
-            <button type="button" class="btn-edit" style="margin-left:.75rem;" onclick="toggleProfileEditForm(false)">Hủy</button>
+            <button type="button" class="btn-edit" style="margin-left:.75rem;"
+              onclick="toggleProfileEditForm(false)">Hủy</button>
           </form>
 
           <!-- Stats strip -->
@@ -1012,7 +1015,8 @@
                     <div class="tl-dot"
                       th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">
                       ★</div>
-                    <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn Thành</div>
+                    <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn
+                      Thành</div>
                   </div>
                 </div>
 
@@ -1037,7 +1041,8 @@
                     <div class="tl-dot"
                       th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">
                       ★</div>
-                    <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn Thành</div>
+                    <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn
+                      Thành</div>
                   </div>
                 </div>
                 <div class="item-mini-list">
@@ -1061,12 +1066,17 @@
                       th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
                   </div>
                   <div class="item-mini">
-                    <span th:text="${order.shippingMethodName != null ? order.shippingMethodName : 'Phí vận chuyển'}">Phí vận chuyển (Hỏa tốc)</span>
-                    <span style="color:#3b82f6;" th:text="${order.shippingFee != null ? #numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + '₫' : '0₫'}">0 ₫</span>
+                    <span
+                      th:text="${order.shippingMethodName != null ? order.shippingMethodName : 'Phí vận chuyển'}">Phí
+                      vận chuyển (Hỏa tốc)</span>
+                    <span style="color:#3b82f6;"
+                      th:text="${order.shippingFee != null ? #numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + '₫' : '0₫'}">0
+                      ₫</span>
                   </div>
                   <div class="item-mini" th:if="${order.discountAmount != null and order.discountAmount > 0}">
                     <span th:text="${'Voucher (' + order.voucherCode + ')'}">Voucher</span>
-                    <span style="color:var(--danger);" th:text="${'-' + #numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT') + '₫'}">-0₫</span>
+                    <span style="color:var(--danger);"
+                      th:text="${'-' + #numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT') + '₫'}">-0₫</span>
                   </div>
                 </div>
                 <!-- Delivery & Payment Information -->
@@ -1095,8 +1105,10 @@
                       <div style="color: #64748b; margin-bottom: 0.2rem;">
                         Phương thức thanh toán</div>
                       <div style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
-                        <span th:if="${order.paymentMethod == 'COD'}" style="color: #3b82f6;">💵 Thanh toán khi nhận hàng (COD)</span>
-                        <span th:if="${order.paymentMethod == 'INSTALLMENT'}" style="color: #60a5fa;">💳 Trả góp (Installment)</span>
+                        <span th:if="${order.paymentMethod == 'COD'}" style="color: #3b82f6;">💵 Thanh toán khi nhận
+                          hàng (COD)</span>
+                        <span th:if="${order.paymentMethod == 'INSTALLMENT'}" style="color: #60a5fa;">💳 Trả góp
+                          (Installment)</span>
                         <span th:if="${order.paymentMethod != 'COD' and order.paymentMethod != 'INSTALLMENT'}"
                           style="color: #3b82f6;">
                           <span th:text="${order.paymentMethod}" th:if="${order.paymentMethod != null}"></span>
@@ -1144,12 +1156,14 @@
               <div class="section-tag">Khuyến mãi</div>
               <div class="section-h">Ví Voucher Của Tôi</div>
             </div>
-            <button class="btn-edit" onclick="document.getElementById('input-voucher-code').focus()">+ <span>Lưu Mã</span></button>
+            <button class="btn-edit" onclick="document.getElementById('input-voucher-code').focus()">+ <span>Lưu
+                Mã</span></button>
           </div>
 
           <div
             style="background:#f8fafc;border:1px solid #e2e8f0;padding:1.5rem;margin-bottom:2rem; display:flex; gap:10px;">
-            <input type="text" id="input-voucher-code" class="form-input" style="flex:1" placeholder="Nhập mã voucher để lưu..." />
+            <input type="text" id="input-voucher-code" class="form-input" style="flex:1"
+              placeholder="Nhập mã voucher để lưu..." />
             <button class="btn-save" onclick="saveVoucherCode()">Lưu
               Mã</button>
           </div>
@@ -1158,8 +1172,8 @@
             <div class="wl-card" th:each="uv : ${vouchers}"
               style="display:flex; flex-direction:column; justify-content:space-between;">
               <div class="wl-info">
-                <div class="wl-cat">Voucher · <span th:if="${uv.voucher.discountType.name() == 'PERCENTAGE'}">Giảm %</span><span
-                    th:if="${uv.voucher.discountType.name() != 'PERCENTAGE'}">Giảm Tiền</span>
+                <div class="wl-cat">Voucher · <span th:if="${uv.voucher.discountType.name() == 'PERCENTAGE'}">Giảm
+                    %</span><span th:if="${uv.voucher.discountType.name() != 'PERCENTAGE'}">Giảm Tiền</span>
                 </div>
                 <div class="wl-name" style="font-size:1.3rem; letter-spacing:2px; font-weight:700;"
                   th:text="${uv.voucher.code}">CODE</div>
@@ -1177,7 +1191,8 @@
               <div style="padding:1rem; border-top:1px dashed #cbd5e1; text-align:center;">
                 <!-- Đã sử dụng -->
                 <span th:if="${uv.status == 'CONSUMED'}" class="order-status"
-                  style="background: rgba(255, 255, 255, 0.05); color: #64748b; border: 1px solid rgba(255, 255, 255, 0.1);">Đã sử dụng</span>
+                  style="background: rgba(255, 255, 255, 0.05); color: #64748b; border: 1px solid rgba(255, 255, 255, 0.1);">Đã
+                  sử dụng</span>
 
                 <!-- Đã hết hạn hoặc ngừng hoạt động -->
                 <span
@@ -1308,7 +1323,8 @@
                 <button type="submit" class="btn-save">
                   <span class="btn-save-inner">Cập Nhật Mật Khẩu</span>
                 </button>
-                <button type="button" class="btn-edit" style="margin-left:.75rem;" onclick="togglePasswordForm(false)">Hủy</button>
+                <button type="button" class="btn-edit" style="margin-left:.75rem;"
+                  onclick="togglePasswordForm(false)">Hủy</button>
               </div>
             </form>
 
@@ -1322,7 +1338,8 @@
                   th:text="${user != null && user.twoFactorEnabled == true ? '● Đã bật' : '● Chưa bật'}">● Chưa bật
                 </div>
               </div>
-              <button th:if="${user == null || user.twoFactorEnabled != true}" class="btn-sec" onclick="open2FAModal()">Bật 2FA</button>
+              <button th:if="${user == null || user.twoFactorEnabled != true}" class="btn-sec"
+                onclick="open2FAModal()">Bật 2FA</button>
               <button th:if="${user != null && user.twoFactorEnabled == true}" class="btn-sec"
                 style="border-color:var(--red); color:var(--red);" onclick="disable2FA()">Tắt 2FA</button>
             </div>
@@ -1330,7 +1347,8 @@
               <div class="sec-icon">📧</div>
               <div class="sec-info">
                 <div class="sec-title">Email xác minh</div>
-                <div class="sec-sub"><span th:text="${email}">thanh.minh@email.com</span> <span>đã được xác minh và liên kết với tài khoản.</span></div>
+                <div class="sec-sub"><span th:text="${email}">thanh.minh@email.com</span> <span>đã được xác minh và liên
+                    kết với tài khoản.</span></div>
                 <div class="sec-status-ok">● Đã xác minh</div>
               </div>
               <button class="btn-sec" onclick="openEmailDetailsModal()">Xem
@@ -1518,7 +1536,8 @@
         <div class="modal-head">
           <div>
             <div class="section-tag">Đánh giá sản phẩm</div>
-            <h3 id="modal-review-product-title" style="color:#000; margin-top:5px; font-size:1.1rem;">Đánh giá sản phẩm</h3>
+            <h3 id="modal-review-product-title" style="color:#000; margin-top:5px; font-size:1.1rem;">Đánh giá sản phẩm
+            </h3>
           </div>
         </div>
         <div class="modal-content" id="order-modal-content" style="padding-top: 15px;">
@@ -1539,7 +1558,8 @@
           </div>
 
           <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Bình luận / Nhận xét</label>
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Bình luận / Nhận
+              xét</label>
             <textarea id="review-comment" class="form-input" rows="4"
               placeholder="Nhập chia sẻ của bạn về sản phẩm này..."
               style="width: 100%; box-sizing: border-box; background: #fff; color: #000; border: 1px solid #cbd5e1; padding: 12px; border-radius: 4px; resize: none; font-family: inherit; font-size: 0.85rem; line-height: 1.5;"></textarea>
@@ -1549,7 +1569,8 @@
             <button type="button" class="btn-save" onclick="submitReview()" style="padding: 0.6rem 1.5rem;">
               <span class="btn-save-inner">Gửi Đánh Giá</span>
             </button>
-            <button type="button" class="btn-edit" onclick="closeOrderModal()" style="padding: 0.6rem 1.5rem;">Hủy</button>
+            <button type="button" class="btn-edit" onclick="closeOrderModal()"
+              style="padding: 0.6rem 1.5rem;">Hủy</button>
           </div>
         </div>
       </div>
@@ -1580,7 +1601,8 @@
             <button type="button" class="btn-save" onclick="verifyAndEnable2FA()" style="padding: 0.6rem 1.5rem;">
               <span class="btn-save-inner">Kích Hoạt</span>
             </button>
-            <button type="button" class="btn-edit" onclick="close2FAModal()" style="padding: 0.6rem 1.5rem;">Hủy</button>
+            <button type="button" class="btn-edit" onclick="close2FAModal()"
+              style="padding: 0.6rem 1.5rem;">Hủy</button>
           </div>
         </div>
       </div>

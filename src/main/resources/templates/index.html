@@ -408,17 +408,14 @@
                     style="max-height:35px; object-fit:contain;"></div>
         </div>
 
-        <!-- TIN TỨC & VÌ SAO CHỌN -->
+        <!-- TIN TỨC MỚI NHẤT & TIN TỨC NỔI BẬT -->
         <div class="bottom-sections">
-            <div class="news-list" th:if="${leftNews != null and !leftNews.isEmpty()}">
+            <div class="news-list" th:if="${newestNews != null and !newestNews.isEmpty()}">
                 <div class="section-header">
-                    <h2 class="section-title" th:text="${leftCategory != null ? leftCategory.name : 'Tin tức mới'}">
-                        Tin
-                        tức mới</h2>
-                    <a th:href="@{/news(category=${leftCategory != null ? leftCategory.id : ''})}"
-                        class="section-view-all">Xem tất cả ></a>
+                    <h2 class="section-title">Tin tức mới nhất</h2>
+                    <a th:href="@{/news}" class="section-view-all">Xem tất cả ></a>
                 </div>
-                <a class="news-item" th:each="n : ${leftNews}" th:href="@{/news/{slug}(slug=${n.slug})}"
+                <a class="news-item" th:each="n, iterStat : ${newestNews}" th:if="${iterStat.index < 5}" th:href="@{/news/{slug}(slug=${n.slug})}"
                     style="text-decoration: none;">
                     <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
                         th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
@@ -426,15 +423,12 @@
                 </a>
             </div>
 
-            <div class="populars-list" th:if="${rightNews != null and !rightNews.isEmpty()}">
+            <div class="populars-list" th:if="${featuredNews != null and !featuredNews.isEmpty()}">
                 <div class="section-header">
-                    <h2 class="section-title"
-                        th:text="${rightCategory != null ? rightCategory.name : 'Tin tức nổi bật'}">Tin tức nổi bật
-                    </h2>
-                    <a th:href="@{/news(category=${rightCategory != null ? rightCategory.id : ''})}"
-                        class="section-view-all">Xem tất cả ></a>
+                    <h2 class="section-title">Tin tức nổi bật</h2>
+                    <a th:href="@{/news}" class="section-view-all">Xem tất cả ></a>
                 </div>
-                <a class="news-item" th:each="n : ${rightNews}" th:href="@{/news/{slug}(slug=${n.slug})}"
+                <a class="news-item" th:each="n, iterStat : ${featuredNews}" th:if="${iterStat.index < 5}" th:href="@{/news/{slug}(slug=${n.slug})}"
                     style="text-decoration: none;">
                     <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
                         th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />

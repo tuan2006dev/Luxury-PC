@@ -39,8 +39,7 @@
 
         <div class="card add-form-container" id="categoryForm" th:classappend="${category.id != null ? 'active' : ''}">
             <div class="card-header">
-                <h2
-                    th:text="${category.id == null ? 'Thêm Danh Mục' : 'Sửa Danh Mục'}">Thông Tin Danh Mục</h2>
+                <h2 th:text="${category.id == null ? 'Thêm Danh Mục' : 'Sửa Danh Mục'}">Thông Tin Danh Mục</h2>
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
@@ -55,7 +54,8 @@
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" class="btn btn-gold">Lưu Danh
                         Mục</button>
-                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'">Hủy / Làm mới</button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'">Hủy / Làm
+                        mới</button>
                 </div>
             </form>
         </div>

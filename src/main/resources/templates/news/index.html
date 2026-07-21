@@ -1,72 +1,308 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tin Công Nghệ - LuxuryPC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
+
 <body>
     <div th:replace="~{layout/header :: header}"></div>
 
     <style>
-        .news-page { padding: 40px 0; background: #f8fafc; font-family: 'Outfit', sans-serif; }
-        .news-container { max-width: 1200px; margin: 0 auto; display: flex; gap: 30px; padding: 0 20px; }
-        .news-main { flex: 1; }
-        .news-sidebar { width: 320px; flex-shrink: 0; }
-        
+        .news-page {
+            padding: 40px 0;
+            background: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .news-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .news-main {
+            flex: 1;
+        }
+
+        .news-sidebar {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
         /* Grid Tin tức */
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
-        .news-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; }
-        .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        .news-thumb { width: 100%; height: 200px; object-fit: cover; }
-        .news-content-box { padding: 20px; display: flex; flex-direction: column; flex: 1; }
-        .news-category { font-size: 12px; font-weight: 600; color: #0ea5e9; text-transform: uppercase; margin-bottom: 8px; display: inline-block; }
-        .news-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-decoration: none;}
-        .news-title:hover { color: #0ea5e9; }
-        .news-summary { font-size: 14px; color: #64748b; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex: 1;}
-        .news-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: auto;}
-        .news-meta i { margin-right: 4px; }
-        
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .news-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-thumb {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-content-box {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .news-category {
+            font-size: 12px;
+            font-weight: 600;
+            color: #0ea5e9;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .news-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .news-title:hover {
+            color: #0ea5e9;
+        }
+
+        .news-summary {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 12px;
+            margin-top: auto;
+        }
+
+        .news-meta i {
+            margin-right: 4px;
+        }
+
         /* Sidebar */
-        .sidebar-widget { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .widget-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; position: relative; }
-        .widget-title::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 40px; height: 2px; background: #0ea5e9; }
-        
+        .sidebar-widget {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .widget-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            position: relative;
+        }
+
+        .widget-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 40px;
+            height: 2px;
+            background: #0ea5e9;
+        }
+
         /* Danh mục */
-        .category-list { list-style: none; padding: 0; margin: 0; }
-        .category-list li { margin-bottom: 8px; }
-        .category-list a { display: block; padding: 8px 12px; color: #475569; text-decoration: none; border-radius: 6px; transition: all 0.2s; }
-        .category-list a:hover, .category-list a.active { background: #f0f9ff; color: #0ea5e9; font-weight: 500; }
-        
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .category-list li {
+            margin-bottom: 8px;
+        }
+
+        .category-list a {
+            display: block;
+            padding: 8px 12px;
+            color: #475569;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .category-list a:hover,
+        .category-list a.active {
+            background: #f0f9ff;
+            color: #0ea5e9;
+            font-weight: 500;
+        }
+
         /* Bài viết nổi bật */
-        .top-post { display: flex; gap: 12px; margin-bottom: 16px; }
-        .top-post:last-child { margin-bottom: 0; }
-        .top-post-img { width: 80px; height: 60px; object-fit: cover; border-radius: 6px; }
-        .top-post-info { flex: 1; }
-        .top-post-title { font-size: 14px; font-weight: 600; color: #1e293b; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;}
-        .top-post-title:hover { color: #0ea5e9; }
-        .top-post-date { font-size: 12px; color: #94a3b8; margin-top: 4px; display: block; }
-        
+        .top-post {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .top-post:last-child {
+            margin-bottom: 0;
+        }
+
+        .top-post-img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .top-post-info {
+            flex: 1;
+        }
+
+        .top-post-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            text-decoration: none;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
+        }
+
+        .top-post-title:hover {
+            color: #0ea5e9;
+        }
+
+        .top-post-date {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+            display: block;
+        }
+
         /* Phân trang */
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 40px; }
-        .pagination a, .pagination span { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 500; text-decoration: none; color: #475569; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: 0.2s; }
-        .pagination a:hover { background: #f8fafc; color: #0ea5e9; }
-        .pagination .active { background: #0ea5e9; color: #fff; }
-        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 40px;
+        }
+
+        .pagination a,
+        .pagination span {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            color: #475569;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: 0.2s;
+        }
+
+        .pagination a:hover {
+            background: #f8fafc;
+            color: #0ea5e9;
+        }
+
+        .pagination .active {
+            background: #0ea5e9;
+            color: #fff;
+        }
+
         /* Search */
-        .news-search-form { display: flex; margin-bottom: 16px; }
-        .news-search-input { flex: 1; padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 8px 0 0 8px; font-family: inherit; font-size: 14px; outline: none; }
-        .news-search-input:focus { border-color: #0ea5e9; }
-        .news-search-btn { background: #0ea5e9; color: #fff; border: none; padding: 0 16px; border-radius: 0 8px 8px 0; cursor: pointer; transition: 0.2s; }
-        .news-search-btn:hover { background: #0284c7; }
-        
+        .news-search-form {
+            display: flex;
+            margin-bottom: 16px;
+        }
+
+        .news-search-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px 0 0 8px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .news-search-input:focus {
+            border-color: #0ea5e9;
+        }
+
+        .news-search-btn {
+            background: #0ea5e9;
+            color: #fff;
+            border: none;
+            padding: 0 16px;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .news-search-btn:hover {
+            background: #0284c7;
+        }
+
         @media (max-width: 991px) {
-            .news-container { flex-direction: column; }
-            .news-sidebar { width: 100%; }
+            .news-container {
+                flex-direction: column;
+            }
+
+            .news-sidebar {
+                width: 100%;
+            }
         }
     </style>
 
@@ -75,8 +311,9 @@
             <!-- Cột nội dung chính -->
             <div class="news-main">
                 <h1 style="font-size:28px; font-weight:700; color:#1e293b; margin-bottom:24px;">Tin Tức Công Nghệ</h1>
-                
-                <div th:if="${newsPage.empty}" style="background:#fff; padding:40px; text-align:center; border-radius:12px; color:#64748b;">
+
+                <div th:if="${newsPage.empty}"
+                    style="background:#fff; padding:40px; text-align:center; border-radius:12px; color:#64748b;">
                     <i class="fa-regular fa-folder-open" style="font-size:48px; margin-bottom:16px; color:#cbd5e1;"></i>
                     <p>Không tìm thấy bài viết nào.</p>
                 </div>
@@ -84,15 +321,21 @@
                 <div class="news-grid" th:unless="${newsPage.empty}">
                     <div class="news-card" th:each="n : ${newsPage.content}">
                         <a th:href="@{/news/{slug}(slug=${n.slug})}">
-                            <img class="news-thumb" th:src="${not #strings.isEmpty(n.thumbnail) ? (n.thumbnail.startsWith('http') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.jpg'}" onerror="this.onerror=null;this.src='/images/placeholder.jpg';" alt="Thumbnail">
+                            <img class="news-thumb"
+                                th:src="${not #strings.isEmpty(n.thumbnail) ? (n.thumbnail.startsWith('http') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.jpg'}"
+                                onerror="this.onerror=null;this.src='/images/placeholder.jpg';" alt="Thumbnail">
                         </a>
                         <div class="news-content-box">
-                            <span class="news-category" th:text="${n.categoryName != null ? n.categoryName : 'Chưa phân loại'}">Category</span>
-                            <a class="news-title" th:href="@{/news/{slug}(slug=${n.slug})}" th:text="${n.title}">Tiêu đề</a>
+                            <span class="news-category"
+                                th:text="${n.categoryName != null ? n.categoryName : 'Chưa phân loại'}">Category</span>
+                            <a class="news-title" th:href="@{/news/{slug}(slug=${n.slug})}" th:text="${n.title}">Tiêu
+                                đề</a>
                             <p class="news-summary" th:text="${n.summary}"></p>
                             <div class="news-meta">
-                                <span><i class="fa-regular fa-calendar"></i> <span th:text="${#dates.format(n.createdAt, 'dd/MM/yyyy')}"></span></span>
-                                <span><i class="fa-regular fa-eye"></i> <span th:text="${n.formattedViewCount}"></span></span>
+                                <span><i class="fa-regular fa-calendar"></i> <span
+                                        th:text="${#dates.format(n.createdAt, 'dd/MM/yyyy')}"></span></span>
+                                <span><i class="fa-regular fa-eye"></i> <span
+                                        th:text="${n.formattedViewCount}"></span></span>
                             </div>
                         </div>
                     </div>
@@ -100,13 +343,14 @@
 
                 <!-- Phân trang -->
                 <div class="pagination" th:if="${newsPage.totalPages > 1}">
-                    <a th:if="${newsPage.hasPrevious()}" th:href="@{/news(page=${newsPage.number - 1}, keyword=${keyword}, category=${currentCategoryId})}">&laquo;</a>
+                    <a th:if="${newsPage.hasPrevious()}"
+                        th:href="@{/news(page=${newsPage.number - 1}, keyword=${keyword}, category=${currentCategoryId})}">&laquo;</a>
                     <th:block th:each="i : ${#numbers.sequence(0, newsPage.totalPages - 1)}">
-                        <a th:href="@{/news(page=${i}, keyword=${keyword}, category=${currentCategoryId})}" 
-                           th:text="${i + 1}" 
-                           th:class="${newsPage.number == i ? 'active' : ''}">1</a>
+                        <a th:href="@{/news(page=${i}, keyword=${keyword}, category=${currentCategoryId})}"
+                            th:text="${i + 1}" th:class="${newsPage.number == i ? 'active' : ''}">1</a>
                     </th:block>
-                    <a th:if="${newsPage.hasNext()}" th:href="@{/news(page=${newsPage.number + 1}, keyword=${keyword}, category=${currentCategoryId})}">&raquo;</a>
+                    <a th:if="${newsPage.hasNext()}"
+                        th:href="@{/news(page=${newsPage.number + 1}, keyword=${keyword}, category=${currentCategoryId})}">&raquo;</a>
                 </div>
             </div>
 
@@ -116,7 +360,8 @@
                 <div class="sidebar-widget">
                     <h3 class="widget-title">Tìm kiếm</h3>
                     <form class="news-search-form" action="/news" method="get">
-                        <input type="text" name="keyword" class="news-search-input" th:value="${keyword}" placeholder="Tìm bài viết...">
+                        <input type="text" name="keyword" class="news-search-input" th:value="${keyword}"
+                            placeholder="Tìm bài viết...">
                         <button type="submit" class="news-search-btn"><i class="fa fa-search"></i></button>
                     </form>
                 </div>
@@ -126,12 +371,13 @@
                     <h3 class="widget-title">Chuyên mục</h3>
                     <ul class="category-list">
                         <li>
-                            <a th:href="@{/news}" th:class="${currentCategoryId == null ? 'active' : ''}">Tất cả tin tức</a>
+                            <a th:href="@{/news}" th:class="${currentCategoryId == null ? 'active' : ''}">Tất cả tin
+                                tức</a>
                         </li>
                         <li th:each="cat : ${categories}">
-                            <a th:href="@{/news(category=${cat.id})}" 
-                               th:class="${currentCategoryId == cat.id ? 'active' : ''}" 
-                               th:text="${cat.name}">Category</a>
+                            <a th:href="@{/news(category=${cat.id})}"
+                                th:class="${currentCategoryId == cat.id ? 'active' : ''}"
+                                th:text="${cat.name}">Category</a>
                         </li>
                     </ul>
                 </div>
@@ -141,11 +387,15 @@
                     <h3 class="widget-title">Xem nhiều nhất</h3>
                     <div class="top-post" th:each="tn : ${topViewed}">
                         <a th:href="@{/news/{slug}(slug=${tn.slug})}">
-                            <img class="top-post-img" th:src="${not #strings.isEmpty(tn.thumbnail) ? (tn.thumbnail.startsWith('http') ? tn.thumbnail : '/images/news/' + tn.thumbnail) : '/images/placeholder.jpg'}" onerror="this.onerror=null;this.src='/images/placeholder.jpg';" alt="Thumb">
+                            <img class="top-post-img"
+                                th:src="${not #strings.isEmpty(tn.thumbnail) ? (tn.thumbnail.startsWith('http') ? tn.thumbnail : '/images/news/' + tn.thumbnail) : '/images/placeholder.jpg'}"
+                                onerror="this.onerror=null;this.src='/images/placeholder.jpg';" alt="Thumb">
                         </a>
                         <div class="top-post-info">
-                            <a class="top-post-title" th:href="@{/news/{slug}(slug=${tn.slug})}" th:text="${tn.title}">Tiêu đề</a>
-                            <span class="top-post-date"><i class="fa-regular fa-calendar"></i> <span th:text="${#dates.format(tn.createdAt, 'dd/MM/yyyy')}"></span></span>
+                            <a class="top-post-title" th:href="@{/news/{slug}(slug=${tn.slug})}"
+                                th:text="${tn.title}">Tiêu đề</a>
+                            <span class="top-post-date"><i class="fa-regular fa-calendar"></i> <span
+                                    th:text="${#dates.format(tn.createdAt, 'dd/MM/yyyy')}"></span></span>
                         </div>
                     </div>
                 </div>
@@ -153,8 +403,9 @@
         </div>
     </div>
     <div th:replace="~{layout/footer :: footer}"></div>
-    
+
     <script th:src="@{/js/script.js}"></script>
     <script th:src="@{/js/cart.js}"></script>
 </body>
+
 </html>
