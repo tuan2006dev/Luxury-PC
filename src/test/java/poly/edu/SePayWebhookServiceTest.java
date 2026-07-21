@@ -77,6 +77,74 @@ class SePayWebhookServiceTest {
     }
 
     @Test
+    void sqlServer2601ForTransactionIdBecomesDuplicateException() {
+        allowNewTransaction();
+        SQLException sqlException = new SQLException(
+                "Cannot insert duplicate key row in object 'dbo.sepay_transactions' "
+                        + "with unique index 'uk_sepay_transactions_transaction_id'.",
+                "23000",
+                2601);
+        when(transactionRepository.saveAndFlush(any(SePayTransaction.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicate transaction", sqlException));
+
+        assertThrows(SePayDuplicateTransactionException.class, () -> service.process(
+                "signature", "timestamp", validPayload(1001L, "DH1", "DH1", "123456789", "in", 500_000L)));
+    }
+
+    @Test
+    void sqlServer2627ForTransactionIdBecomesDuplicateException() {
+        allowNewTransaction();
+        SQLException sqlException = new SQLException(
+                "Violation of UNIQUE KEY constraint 'uk_sepay_transactions_transaction_id'. "
+                        + "Cannot insert duplicate key in object 'dbo.sepay_transactions'.",
+                "23000",
+                2627);
+        when(transactionRepository.saveAndFlush(any(SePayTransaction.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicate transaction", sqlException));
+
+        assertThrows(SePayDuplicateTransactionException.class, () -> service.process(
+                "signature", "timestamp", validPayload(1001L, "DH1", "DH1", "123456789", "in", 500_000L)));
+    }
+
+    @Test
+    void sqlServer23000ForDifferentConstraintIsPropagated() {
+        allowNewTransaction();
+        SQLException sqlException = new SQLException(
+                "Violation of UNIQUE KEY constraint 'uk_sepay_transactions_order_code'. "
+                        + "Cannot insert duplicate key in object 'dbo.sepay_transactions'.",
+                "23000",
+                2627);
+        DataIntegrityViolationException expected =
+                new DataIntegrityViolationException(
+                        "could not execute insert into sepay_transactions (sepay_transaction_id, order_code)",
+                        sqlException);
+        when(transactionRepository.saveAndFlush(any(SePayTransaction.class))).thenThrow(expected);
+
+        DataIntegrityViolationException actual = assertThrows(DataIntegrityViolationException.class,
+                () -> service.process("signature", "timestamp",
+                        validPayload(1001L, "DH1", "DH1", "123456789", "in", 500_000L)));
+
+        assertSame(expected, actual);
+    }
+
+    @Test
+    void sqlServerDuplicateSQLExceptionIsFoundThroughMultipleCauses() {
+        allowNewTransaction();
+        SQLException sqlException = new SQLException(
+                "Cannot insert duplicate key row in object 'dbo.sepay_transactions' "
+                        + "with unique index 'uk_sepay_transactions_transaction_id'.",
+                "23000",
+                2601);
+        RuntimeException hibernateWrapper = new RuntimeException("hibernate wrapper", sqlException);
+        RuntimeException persistenceWrapper = new RuntimeException("persistence wrapper", hibernateWrapper);
+        when(transactionRepository.saveAndFlush(any(SePayTransaction.class)))
+                .thenThrow(new DataIntegrityViolationException("spring wrapper", persistenceWrapper));
+
+        assertThrows(SePayDuplicateTransactionException.class, () -> service.process(
+                "signature", "timestamp", validPayload(1001L, "DH1", "DH1", "123456789", "in", 500_000L)));
+    }
+
+    @Test
     void nonDuplicateIntegrityViolationIsPropagated() {
         allowNewTransaction();
         DataIntegrityViolationException expected = new DataIntegrityViolationException("not-null schema violation");

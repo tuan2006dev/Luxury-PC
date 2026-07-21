@@ -16,6 +16,10 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
@@ -221,20 +225,44 @@ public class SePayWebhookService {
     }
 
     private boolean isDuplicateTransactionIdViolation(DataIntegrityViolationException exception) {
-        Throwable current = exception;
-        while (current != null) {
+        Deque<Throwable> pending = new ArrayDeque<>();
+        Set<Throwable> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+        boolean duplicateKeyViolation = false;
+        boolean transactionIdConstraint = false;
+        pending.add(exception);
+
+        while (!pending.isEmpty()) {
+            Throwable current = pending.removeFirst();
+            if (!visited.add(current)) {
+                continue;
+            }
+
             if (current instanceof org.hibernate.exception.ConstraintViolationException constraintViolation
                     && isTransactionIdConstraint(constraintViolation.getConstraintName())) {
-                return true;
+                transactionIdConstraint = true;
             }
-            if (current instanceof SQLException sqlException
-                    && "23505".equals(sqlException.getSQLState())
-                    && isTransactionIdConstraint(sqlException.getMessage())) {
-                return true;
+            if (current instanceof SQLException sqlException) {
+                duplicateKeyViolation |= isSupportedDuplicateKeyViolation(sqlException);
+                transactionIdConstraint |= isTransactionIdConstraint(sqlException.getMessage());
+                if (sqlException.getNextException() != null) {
+                    pending.addLast(sqlException.getNextException());
+                }
             }
-            current = current.getCause();
+            if (current.getCause() != null) {
+                pending.addLast(current.getCause());
+            }
         }
-        return false;
+
+        return duplicateKeyViolation && transactionIdConstraint;
+    }
+
+    private boolean isSupportedDuplicateKeyViolation(SQLException exception) {
+        if ("23505".equals(exception.getSQLState())) {
+            return true;
+        }
+        int errorCode = exception.getErrorCode();
+        return "23000".equals(exception.getSQLState())
+                && (errorCode == 2601 || errorCode == 2627);
     }
 
     private boolean isTransactionIdConstraint(String value) {

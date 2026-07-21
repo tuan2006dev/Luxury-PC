@@ -143,7 +143,7 @@ class VietQrOrderFlowTest {
         assertEquals(
                 "https://img.vietqr.io/image/ICB-123456789-compact.png"
                         + "?amount=17200000&addInfo=SEVQR+DH" + order.getId()
-                        + "&accountName=SEPAY+TEST+ACCOUNT",
+                        + "&accountName=TEST+ACCOUNT",
                 model.get("qrUrl"));
     }
 
