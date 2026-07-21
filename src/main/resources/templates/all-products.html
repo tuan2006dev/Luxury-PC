@@ -27,17 +27,7 @@
         <p class="page-subtitle">Khám phá hàng ngàn linh kiện chính hãng từ các thương hiệu hàng đầu, đáp ứng mọi nhu
             cầu</p>
 
-        <!-- CATEGORIES GRID -->
-        <div class="categories-grid">
-            <div class="category-item" th:each="c : ${categories}"
-                th:onclick="|location.href='@{/products(cid=${c.id})}'|"
-                th:classappend="${c.id == selectedCid ? 'active' : ''}" style="cursor: pointer;">
-                <!-- Sử dụng tên danh mục (c.name) làm tên ảnh .png -->
-                <img th:src="@{'/images/ui-new/' + ${c.name} + '.png'}" th:alt="${c.name}"
-                    onerror="this.onerror=null; this.src='/images/ui-new/PC.png';">
-                <span th:text="${c.name}">Category</span>
-            </div>
-        </div>
+
 
         <div class="product-layout">
             <!-- CỘT TRÁI: SIDEBAR FILTER -->
