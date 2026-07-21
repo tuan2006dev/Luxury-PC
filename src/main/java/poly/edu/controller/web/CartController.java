@@ -100,6 +100,7 @@ public class CartController {
         }
 
         session.setAttribute("cart", cart);
+        syncDbCartIfLoggedIn(principal, cart);
         return "redirect:/cart";
     }
 
@@ -173,6 +174,7 @@ public class CartController {
         }
 
         session.setAttribute("cart", cart);
+        syncDbCartIfLoggedIn(principal, cart);
         result.put("success", true);
         result.put("message", "Đã thêm \"" + name + "\" vào giỏ hàng!");
         result.put("cartCount", cart.size());
@@ -245,7 +247,7 @@ public class CartController {
 
     @PostMapping("/api/cart/add-build")
     @ResponseBody
-    public java.util.Map<String, Object> addBuildToCart(@RequestBody java.util.List<Integer> productIds, HttpSession session) {
+    public java.util.Map<String, Object> addBuildToCart(@RequestBody java.util.List<Integer> productIds, HttpSession session, @AuthenticationPrincipal Object principal) {
         Map<Integer, CartItem> cart = getCartFromSession(session);
         java.util.Map<String, Object> response = new HashMap<>();
 
@@ -264,6 +266,7 @@ public class CartController {
                 }
             }
             session.setAttribute("cart", cart);
+            syncDbCartIfLoggedIn(principal, cart);
             response.put("success", true);
         } catch (Exception e) {
             response.put("success", false);
@@ -318,6 +321,7 @@ public class CartController {
                 cart.remove(id);
             }
             session.setAttribute("cart", cart);
+            syncDbCartIfLoggedIn(principal, cart);
         }
         response.put("success", true);
         return response;
@@ -328,11 +332,12 @@ public class CartController {
      */
     @PostMapping("/cart/remove")
     @ResponseBody
-    public String removeFromCart(@RequestParam("id") Integer id, HttpSession session) {
+    public String removeFromCart(@RequestParam("id") Integer id, HttpSession session, @AuthenticationPrincipal Object principal) {
         Map<Integer, CartItem> cart = getCartFromSession(session);
         if (cart.containsKey(id)) {
             cart.remove(id);
             session.setAttribute("cart", cart);
+            syncDbCartIfLoggedIn(principal, cart);
             return "success";
         }
         return "error";
@@ -344,6 +349,19 @@ public class CartController {
     @GetMapping("/cart")
     public String viewCart(Model model, HttpSession session, @AuthenticationPrincipal Object principal) {
         Map<Integer, CartItem> cart = getCartFromSession(session);
+
+        User currentUser = getUserFromPrincipal(principal);
+        if (currentUser != null) {
+            if (cart.isEmpty()) {
+                Map<Integer, CartItem> dbCart = cartService.loadCartFromDb(currentUser);
+                if (!dbCart.isEmpty()) {
+                    cart.putAll(dbCart);
+                    session.setAttribute("cart", cart);
+                }
+            } else {
+                cartService.saveCartToDb(currentUser, cart);
+            }
+        }
 
         java.util.Iterator<CartItem> iterator = cart.values().iterator();
         boolean cartChanged = false;
@@ -554,8 +572,18 @@ public class CartController {
      */
     @GetMapping("/api/cart")
     @ResponseBody
-    public Map<Integer, CartItem> getCartApi(HttpSession session) {
+    public Map<Integer, CartItem> getCartApi(HttpSession session, @AuthenticationPrincipal Object principal) {
         Map<Integer, CartItem> cart = getCartFromSession(session);
+
+        User currentUser = getUserFromPrincipal(principal);
+        if (currentUser != null && cart.isEmpty()) {
+            Map<Integer, CartItem> dbCart = cartService.loadCartFromDb(currentUser);
+            if (!dbCart.isEmpty()) {
+                cart.putAll(dbCart);
+                session.setAttribute("cart", cart);
+            }
+        }
+
         boolean cartChanged = false;
         java.util.Iterator<CartItem> iterator = cart.values().iterator();
         while (iterator.hasNext()) {
@@ -578,7 +606,45 @@ public class CartController {
         }
         if (cartChanged) {
             session.setAttribute("cart", cart);
+            syncDbCartIfLoggedIn(principal, cart);
         }
         return cart;
+    }
+
+    private User getUserFromPrincipal(Object principal) {
+        if (principal == null) return null;
+        if (principal instanceof User u) return u;
+
+        String emailOrUsername = null;
+        if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauthUser) {
+            Object emailObj = oauthUser.getAttribute("email");
+            if (emailObj != null) {
+                emailOrUsername = emailObj.toString();
+            } else {
+                emailOrUsername = oauthUser.getName();
+            }
+        } else if (principal instanceof org.springframework.security.core.userdetails.User u) {
+            emailOrUsername = u.getUsername();
+        } else if (principal instanceof org.springframework.security.core.Authentication auth) {
+            return getUserFromPrincipal(auth.getPrincipal());
+        } else {
+            emailOrUsername = principal.toString();
+        }
+
+        if (emailOrUsername == null || emailOrUsername.isBlank()) return null;
+        emailOrUsername = emailOrUsername.trim().toLowerCase();
+
+        User user = userDAO.findByEmail(emailOrUsername);
+        if (user == null) {
+            user = userDAO.findByUsername(emailOrUsername);
+        }
+        return user;
+    }
+
+    private void syncDbCartIfLoggedIn(Object principal, Map<Integer, CartItem> cart) {
+        User currentUser = getUserFromPrincipal(principal);
+        if (currentUser != null) {
+            cartService.saveCartToDb(currentUser, cart);
+        }
     }
 }

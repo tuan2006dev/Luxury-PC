@@ -223,7 +223,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => res.ok ? res.json() : null)
         .then(data => {
             if (data && typeof data === 'object') {
-                Object.keys(data).forEach(id => window.cartProductIds.add(String(id)));
+                const keys = Object.keys(data);
+                window.cartProductIds = new Set();
+                keys.forEach(id => window.cartProductIds.add(String(id)));
+                const cartCountEl = document.getElementById('cart-count');
+                if (cartCountEl) {
+                    cartCountEl.innerText = keys.length;
+                }
             }
         })
         .catch(() => {}); // silent fail — cart IDs are optional optimization

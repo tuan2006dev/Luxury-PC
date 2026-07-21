@@ -5,10 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import poly.edu.dao.CartDAO;
+import poly.edu.dao.CartItemDAO;
 import poly.edu.dao.OrderDAO;
 import poly.edu.dao.OrderItemDAO;
 import poly.edu.dao.ProductDAO;
+import poly.edu.entity.Cart;
 import poly.edu.entity.CartItem;
+import poly.edu.entity.CartItemEntity;
 import poly.edu.entity.Order;
 import poly.edu.entity.OrderItem;
 import poly.edu.entity.Product;
@@ -16,6 +21,8 @@ import poly.edu.entity.User;
 import poly.edu.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,18 +31,13 @@ import java.util.Optional;
 public class CartService {
 
     private final UserRepository userRepository;
-
     private final OrderDAO orderDAO;
-
     private final OrderItemDAO orderItemDAO;
-
     private final ProductDAO productDAO;
-
     private final VoucherService voucherService;
-
     private final FlashSaleService flashSaleService;
-
-    private final UserVoucherService userVoucherService;
+    private final CartDAO cartDAO;
+    private final CartItemDAO cartItemDAO;
 
     public double calculateTotal(Collection<CartItem> items) {
         if (items == null || items.isEmpty()) return 0.0;
@@ -156,6 +158,7 @@ public class CartService {
         
         order.setOrderCode("DH" + order.getId());
         orderDAO.save(order);
+
         // 6. Create Order Items & Update Stock
         if (appliedVoucherCode != null && currentUser != null && !"VIETQR".equalsIgnoreCase(paymentMethod)) {
             voucherService.consumeVoucher(appliedVoucherCode, currentUser.getId());
@@ -180,6 +183,99 @@ public class CartService {
             }
         }
 
+        if (currentUser != null) {
+            clearDbCart(currentUser);
+        }
+
         return order;
+    }
+
+    /**
+     * Tải giỏ hàng từ Database cho User
+     */
+    @Transactional(readOnly = true)
+    public Map<Integer, CartItem> loadCartFromDb(User user) {
+        Map<Integer, CartItem> cartMap = new HashMap<>();
+        if (user == null || user.getId() == null) return cartMap;
+
+        Optional<Cart> cartOpt = cartDAO.findByUserId(user.getId());
+        if (cartOpt.isPresent()) {
+            List<CartItemEntity> items = cartItemDAO.findByCartId(cartOpt.get().getId());
+            for (CartItemEntity entityItem : items) {
+                Product p = entityItem.getProduct();
+                if (p != null && (p.getStock() == null || p.getStock() > 0)) {
+                    double price = flashSaleService.getEffectivePrice(p.getId());
+                    CartItem item = new CartItem(p.getId(), p.getName(), price, entityItem.getQuantity());
+                    item.setImage(p.getImage());
+                    item.setStock(p.getStock());
+                    cartMap.put(p.getId(), item);
+                }
+            }
+        }
+        return cartMap;
+    }
+
+    /**
+     * Đồng bộ giỏ hàng Session xuống Database cho User
+     */
+    @Transactional
+    public void saveCartToDb(User user, Map<Integer, CartItem> sessionCart) {
+        if (user == null || user.getId() == null) return;
+
+        Cart cart = cartDAO.findByUserId(user.getId()).orElseGet(() -> {
+            Cart newCart = new Cart(user);
+            return cartDAO.save(newCart);
+        });
+
+        // Xóa các sản phẩm cũ trong DB cart rồi thêm lại
+        cartItemDAO.deleteByCartId(cart.getId());
+
+        if (sessionCart != null && !sessionCart.isEmpty()) {
+            for (CartItem item : sessionCart.values()) {
+                Optional<Product> pOpt = productDAO.findById(item.getId());
+                if (pOpt.isPresent()) {
+                    CartItemEntity entityItem = new CartItemEntity(cart, pOpt.get(), item.getQuantity());
+                    cartItemDAO.save(entityItem);
+                }
+            }
+        }
+    }
+
+    /**
+     * Gộp giỏ hàng khách vãng lai trong Session vào Giỏ hàng CSDL của User khi Đăng nhập
+     */
+    @Transactional
+    public Map<Integer, CartItem> mergeCartOnLogin(User user, Map<Integer, CartItem> sessionCart) {
+        Map<Integer, CartItem> dbCart = loadCartFromDb(user);
+
+        if (sessionCart != null && !sessionCart.isEmpty()) {
+            for (CartItem item : sessionCart.values()) {
+                if (dbCart.containsKey(item.getId())) {
+                    CartItem existing = dbCart.get(item.getId());
+                    int newQty = existing.getQuantity() + item.getQuantity();
+                    if (existing.getStock() != null && newQty > existing.getStock()) {
+                        newQty = existing.getStock();
+                    }
+                    existing.setQuantity(newQty);
+                } else {
+                    dbCart.put(item.getId(), item);
+                }
+            }
+        }
+
+        saveCartToDb(user, dbCart);
+        return dbCart;
+    }
+
+    /**
+     * Xóa sạch Giỏ hàng trong CSDL sau khi đặt hàng thành công
+     */
+    @Transactional
+    public void clearDbCart(User user) {
+        if (user == null || user.getId() == null) return;
+        Optional<Cart> cartOpt = cartDAO.findByUserId(user.getId());
+        if (cartOpt.isPresent()) {
+            cartItemDAO.deleteByCartId(cartOpt.get().getId());
+        }
     }
 }
