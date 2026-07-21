@@ -338,7 +338,7 @@
         <!-- CÁC DANH MỤC NỔI BẬT (DARK BANNERS) -->
         <div class="section-header" style="margin-top: 40px;">
             <h2 class="section-title">Build PC theo nhu cầu</h2>
-            <a th:href="@{/build-pc-basic}" class="section-view-all">Tự Build PC ></a>
+            <a th:href="@{/build-pc}" class="section-view-all">Tự Build PC ></a>
         </div>
         <div class="dark-banners">
             <div class="dark-banner"
@@ -346,8 +346,7 @@
                 <div class="dark-banner-info">
                     <h3>PC Gaming</h3>
                     <p>Khả năng xử lý cao</p>
-                    <a th:href="${gamingCid != null} ? @{/products(cid=${gamingCid})} : @{/products(kw='PC Gaming')}">Xem
-                        ngay →</a>
+                    <a th:href="@{/build-pc}">Xem ngay →</a>
                 </div>
             </div>
             <div class="dark-banner"
@@ -355,9 +354,7 @@
                 <div class="dark-banner-info">
                     <h3>PC Đồ hoạ</h3>
                     <p>Render, Edit 3D</p>
-                    <a
-                        th:href="${workstationCid != null} ? @{/products(cid=${workstationCid})} : @{/products(kw='PC Đồ hoạ')}">Xem
-                        ngay →</a>
+                    <a th:href="@{/build-pc}">Xem ngay →</a>
                 </div>
             </div>
             <div class="dark-banner"
@@ -365,9 +362,7 @@
                 <div class="dark-banner-info">
                     <h3>PC Văn phòng</h3>
                     <p>Làm việc, Học tập</p>
-                    <a
-                        th:href="${vanPhongCid != null} ? @{/products(cid=${vanPhongCid})} : @{/products(kw='PC Văn phòng')}">Xem
-                        ngay →</a>
+                    <a th:href="@{/build-pc}">Xem ngay →</a>
                 </div>
             </div>
             <div class="dark-banner"
@@ -375,9 +370,7 @@
                 <div class="dark-banner-info">
                     <h3>PC Streamer</h3>
                     <p>Live stream, Edit Video</p>
-                    <a
-                        th:href="${streamerCid != null} ? @{/products(cid=${streamerCid})} : @{/products(kw='PC Streamer')}">Xem
-                        ngay →</a>
+                    <a th:href="@{/build-pc}">Xem ngay →</a>
                 </div>
             </div>
         </div>
