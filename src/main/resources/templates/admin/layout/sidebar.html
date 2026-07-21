@@ -1,9 +1,17 @@
 <div class="sidebar" th:fragment="sidebar">
 
-    <link rel="stylesheet" th:href="@{/css/admin/layout/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/layout/sidebar.css(v=4.0)}" />
 
-    <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
-    <nav>
+    <!-- Sidebar Header with Logo and Collapse/Expand Toggle Button -->
+    <div class="sidebar-header">
+        <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
+        <button type="button" class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" title="Thu gọn / Mở rộng menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- Scrollable Navigation Area -->
+    <nav class="sidebar-nav">
         <a href="/admin/dashboard" class="nav-link" id="nav-dashboard">
             <i class="fa-solid fa-chart-line"></i> <span>Dashboard</span>
         </a>
@@ -11,8 +19,7 @@
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('productMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-box main-icon"></i> <span>Quản
-                        Lý Sản Phẩm</span>
+                    <i class="fa-solid fa-box main-icon"></i> <span>Quản Lý Sản Phẩm</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
@@ -20,8 +27,7 @@
                 <a href="/admin/products" id="nav-products">Sản phẩm</a>
                 <a href="/admin/categories" id="nav-categories">Danh mục</a>
                 <a href="/admin/combos" id="nav-combos">Quản lý Combo</a>
-                <a href="/admin/flash-sales" id="nav-flash-sales">Flash
-                    Sale</a>
+                <a href="/admin/flash-sales" id="nav-flash-sales">Flash Sale</a>
             </div>
         </div>
 
@@ -41,14 +47,12 @@
         <div class="menu-group">
             <div class="menu-title" onclick="toggleSidebarMenu('userMenu', this)">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-users main-icon"></i> <span>Người
-                        Dùng & Hỗ Trợ</span>
+                    <i class="fa-solid fa-users main-icon"></i> <span>Người Dùng & Hỗ Trợ</span>
                 </div>
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="userMenu">
-                <a href="/admin/account" id="nav-account"
-                    sec:authorize="hasRole('ADMIN')">Người dùng</a>
+                <a href="/admin/account" id="nav-account" sec:authorize="hasRole('ADMIN')">Người dùng</a>
                 <a href="/admin/vouchers" id="nav-vouchers">Voucher</a>
                 <a href="/admin/tickets" id="nav-tickets">Hỗ Trợ (Tickets)</a>
             </div>
@@ -66,19 +70,18 @@
                 <a href="/admin/news-categories" id="nav-news-categories">Danh mục tin tức</a>
             </div>
         </div>
-
-        <form method="post" th:action="@{/logout}" style="margin-top:2rem;">
-            <button type="submit" class="nav-link"
-                style="color:var(--red, #ef4444); background:none; border:none; width:100%; text-align:left; cursor:pointer;">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Đăng
-                    Xuất</span>
-            </button>
-        </form>
     </nav>
 
-    <script th:src="@{/js/admin/layout/sidebar.js?v=2.0}"></script>
+    <!-- Sidebar Pinned Footer: Logout Button -->
+    <div class="sidebar-footer">
+        <form method="post" th:action="@{/logout}">
+            <button type="submit" class="nav-link logout-btn" title="Đăng Xuất">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Đăng Xuất</span>
+            </button>
+        </form>
+    </div>
 
-    <!-- ADMIN GLOBAL TRANSLATION SCRIPT -->
+    <script th:src="@{/js/admin/layout/sidebar.js(v=4.0)}"></script>
 
     <!-- Custom Confirm Popup (Global) -->
     <script th:src="@{/js/confirm-popup.js}"></script>
@@ -91,8 +94,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
-
-
 
     <script th:src="@{/js/cursor.js}"></script>
     <style>

@@ -1,6 +1,7 @@
 package poly.edu.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.Lock;
@@ -47,4 +48,40 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
             @Param("kw") String kw,
             @Param("brand") String brand,
             org.springframework.data.domain.Pageable pageable);
+
+    @Modifying
+    @Query(value = "DELETE FROM cart_items WHERE product_id = :pid", nativeQuery = true)
+    void deleteCartItemsByProductId(@Param("pid") Integer pid);
+
+    @Modifying
+    @Query(value = "DELETE FROM wishlist_items WHERE product_id = :pid", nativeQuery = true)
+    void deleteWishlistItemsByProductId(@Param("pid") Integer pid);
+
+    @Modifying
+    @Query(value = "DELETE FROM flash_sale_items WHERE product_id = :pid", nativeQuery = true)
+    void deleteFlashSaleItemsByProductId(@Param("pid") Integer pid);
+
+    @Modifying
+    @Query(value = "DELETE FROM reviews WHERE product_id = :pid", nativeQuery = true)
+    void deleteReviewsByProductId(@Param("pid") Integer pid);
+
+    @Modifying
+    @Query(value = "DELETE FROM inventory WHERE product_id = :pid", nativeQuery = true)
+    void deleteInventoryByProductId(@Param("pid") Integer pid);
+
+    @Modifying
+    @Query(value = "DELETE FROM stock_movements WHERE product_id = :pid", nativeQuery = true)
+    void deleteStockMovementsByProductId(@Param("pid") Integer pid);
+
+    @Modifying
+    @Query(value = "DELETE FROM pc_combo_details WHERE product_id = :pid", nativeQuery = true)
+    void deleteComboDetailsByProductId(@Param("pid") Integer pid);
+
+    @Modifying
+    @Query(value = "UPDATE order_items SET product_id = NULL WHERE product_id = :pid", nativeQuery = true)
+    void nullifyOrderItemProductReferences(@Param("pid") Integer pid);
+
+    @Modifying
+    @Query(value = "UPDATE products SET category_id = NULL WHERE category_id = :cid", nativeQuery = true)
+    void nullifyCategoryReferences(@Param("cid") Integer cid);
 } // Chỉ có duy nhất một dấu đóng ngoặc ở cuối cùng này

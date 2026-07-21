@@ -5,7 +5,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.4</version> <relativePath/> 
+		<version>3.2.4</version>
+		<relativePath/> 
 	</parent>
 	<groupId>poly.edu</groupId>
 	<artifactId>LuxuryPC</artifactId>
@@ -20,65 +21,100 @@
 	</properties>
 
 	<dependencies>
+		<!-- ======================================================= -->
+		<!-- 🌐 1. Nhóm Thư viện Giao diện & Web                    -->
+		<!-- ======================================================= -->
+		<!-- Thư viện cốt lõi để xây dựng ứng dụng Web (REST API, Spring MVC). Đã nhúng sẵn Web Server Tomcat. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- Template Engine giúp Spring Boot đọc và dựng các file giao diện HTML (th:text, th:each, th:if...). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
+		<!-- Thư viện kiểm tra tính hợp lệ của dữ liệu đầu vào (ví dụ các annotation: @NotBlank, @Size, @Email...). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+
+
+		<!-- ======================================================= -->
+		<!-- 🔒 2. Nhóm Thư viện Bảo mật & Xác thực                 -->
+		<!-- ======================================================= -->
+		<!-- Bộ bảo mật chính của ứng dụng (Quản lý Đăng nhập, Phân quyền Role Admin/User, Mã hóa mật khẩu BCrypt...). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
+		<!-- Thư viện hỗ trợ tính năng Đăng nhập nhanh bằng Google / Facebook. -->
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-oauth2-client</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
+
+		<!-- Tích hợp Spring Security vào Thymeleaf để ẩn/hiện các phần trên giao diện theo quyền (Ví dụ: sec:authorize="hasRole('ADMIN')"). -->
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 		</dependency>
+
+
+		<!-- ======================================================= -->
+		<!-- 💾 3. Nhóm Thư viện Cơ sở dữ liệu (Database)          -->
+		<!-- ======================================================= -->
+		<!-- Thư viện kết nối và thao tác với Database thông qua ORM Hibernate (JpaRepository, @Entity, @Table...). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
+		<!-- Driver JDBC chính thức để Spring Boot kết nối và làm việc với hệ quản trị CSDL Microsoft SQL Server. -->
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>11.2.3.jre17</version>
+			<scope>runtime</scope>
+		</dependency>
+
+
+		<!-- ======================================================= -->
+		<!-- 📬 4. Nhóm Thư viện Tiện ích & Real-time              -->
+		<!-- ======================================================= -->
+		<!-- Gửi Email tự động (dùng cho gửi OTP Đăng ký, 2FA, Quên mật khẩu, Báo giá đơn hàng...). -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!-- Truyền nhận dữ liệu thời gian thực Real-time (dùng cho Khung chat tư vấn trực tiếp, thông báo realtime). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
+
+		<!-- Lập trình hướng khía cạnh (Aspect-Oriented Programming - dùng cho ghi Log hệ thống, đo thời gian xử lý...). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
-		<dependency>
-		    <groupId>com.microsoft.sqlserver</groupId>
-		    <artifactId>mssql-jdbc</artifactId>
-		    <version>11.2.3.jre17</version>
-		    <scope>runtime</scope>
-		</dependency>
-
+		<!-- Theo dõi sức khỏe hệ thống (Health check, RAM, CPU usage của server). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+
+
+		<!-- ======================================================= -->
+		<!-- ⚡ 5. Nhóm Tăng tốc & Hỗ trợ Lập trình (Dev Tools & Cache) -->
+		<!-- ======================================================= -->
+		<!-- Tự động sinh ra các hàm Getter, Setter, Constructor, ToString... giúp code Java cực kỳ gọn gàng. -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -86,35 +122,53 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Công cụ Hot-reload (tự động nạp lại thay đổi khi sửa code mà không cần khởi động lại toàn bộ Server). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Caffeine Cache for performance -->
+		<!-- Thư viện quản lý Cache bộ nhớ đệm của Spring Boot. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
+
+		<!-- Bộ nhớ đệm Cache hiệu năng cao Caffeine (lưu dữ liệu hay dùng vào RAM giúp ứng dụng tải cực nhanh). -->
 		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 			<version>3.1.8</version>
 		</dependency>
 
+
+		<!-- ======================================================= -->
+		<!-- 🧪 6. Nhóm Thư viện Kiểm thử (Testing)                 -->
+		<!-- ======================================================= -->
+		<!-- Thư viện chính dùng để viết code kiểm thử tự động (Unit Test / Integration Test). -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Hỗ trợ kiểm thử liên quan đến Spring Security. -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Cơ sở dữ liệu ảo chạy tạm trong RAM phục vụ riêng cho việc chạy Test tự động mà không đụng vào DB thật. -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Thư viện JUnit 5 để viết các hàm kiểm thử. -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
@@ -124,6 +178,10 @@
 
 	<build>
 		<plugins>
+			<!-- ======================================================= -->
+			<!-- ⚙️ 7. Các Plugin Đóng gói & Đo lường (Build Plugins)     -->
+			<!-- ======================================================= -->
+			<!-- Đóng gói dự án thành file .jar có thể chạy độc lập khi đưa lên Server thật. -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -137,6 +195,8 @@
 					<jvmArguments>-Djava.net.preferIPv6Addresses=true -Dfile.encoding=UTF-8</jvmArguments>
 				</configuration>
 			</plugin>
+
+			<!-- Quy định phiên bản Java biên dịch (Java 17). -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -152,6 +212,8 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+
+			<!-- Đo độ bao phủ mã nguồn của các bài Test (Code Coverage). -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -171,6 +233,8 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Đo kiểm thử đột biến (Mutation Testing) để đánh giá chất lượng các bài Test. -->
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
