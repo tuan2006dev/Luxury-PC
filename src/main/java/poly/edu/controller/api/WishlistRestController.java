@@ -67,7 +67,7 @@ public class WishlistRestController {
         }
     }
 
-    @DeleteMapping("/remove/{wishlistItemId}")
+    @RequestMapping(value = "/remove/{wishlistItemId}", method = {org.springframework.web.bind.annotation.RequestMethod.DELETE, org.springframework.web.bind.annotation.RequestMethod.POST})
     public ResponseEntity<Map<String, Object>> removeItem(
             @PathVariable Integer wishlistItemId,
             Authentication authentication) {
@@ -88,7 +88,7 @@ public class WishlistRestController {
         }
     }
 
-    @DeleteMapping("/remove-all")
+    @RequestMapping(value = "/remove-all", method = {org.springframework.web.bind.annotation.RequestMethod.DELETE, org.springframework.web.bind.annotation.RequestMethod.POST})
     public ResponseEntity<Map<String, Object>> removeAll(Authentication authentication) {
         if (!isAuthenticatedUser(authentication)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(unauthorized());

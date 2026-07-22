@@ -63,7 +63,8 @@ public class VoucherService {
         Voucher voucher = opt.get();
 
         // Check if user has this voucher in their wallet and unused (AVAILABLE)
-        Optional<poly.edu.entity.UserVoucher> userVoucherOpt = userVoucherDAO.findByUserAndVoucherCodeAndStatus(user, code.trim().toUpperCase(), "AVAILABLE");
+        Optional<poly.edu.entity.UserVoucher> userVoucherOpt = userVoucherDAO.findByUserAndVoucherCodeAndStatus(user,
+                code.trim().toUpperCase(), "AVAILABLE");
         if (userVoucherOpt.isEmpty()) {
             result.put("success", false);
             result.put("valid", false);
@@ -132,11 +133,11 @@ public class VoucherService {
         if (updated == 0) {
             throw new RuntimeException("Voucher này đã hết lượt sử dụng (Out of stock).");
         }
-        
+
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, reservationTimeoutMinutes);
         Date expiresAt = cal.getTime();
-        
+
         int uvUpdated = userVoucherDAO.reserveVoucherAtomically(userId, upperCode, expiresAt);
         if (uvUpdated == 0) {
             // Rollback global increment if user didn't actually have it available
@@ -158,12 +159,19 @@ public class VoucherService {
      * Hoàn trả voucher (khi hủy đơn hoặc hết hạn thanh toán)
      */
     @Transactional
+    @org.springframework.cache.annotation.CacheEvict(value = "activeVouchers", allEntries = true)
     public void restoreVoucher(String code, Integer userId) {
+        if (code == null || code.trim().isEmpty())
+            return;
         String upperCode = code.trim().toUpperCase();
-        int restored = userVoucherDAO.restoreVoucherAtomically(userId, upperCode);
-        if (restored > 0) {
-            voucherDAO.decrementUsageAtomically(upperCode);
+        if (userId != null) {
+            int restored = userVoucherDAO.restoreVoucherAtomically(userId, upperCode);
+            if (restored > 0) {
+                voucherDAO.decrementUsageAtomically(upperCode);
+                return;
+            }
         }
+        voucherDAO.decrementUsageAtomically(upperCode);
     }
 
     @org.springframework.cache.annotation.CacheEvict(value = "activeVouchers", allEntries = true)

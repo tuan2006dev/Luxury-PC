@@ -16,97 +16,159 @@ function toggleOrder(orderId) {
     }
 }
 
-function cancelOrder(btn) {
-    const orderId = btn.getAttribute('data-order-id');
-    if (!orderId) return;
+function cancelOrder(btn, idParam) {
+    let orderId = idParam;
+    if (!orderId && btn) {
+        orderId = (btn.getAttribute ? btn.getAttribute('data-order-id') : null) || btn.dataset?.orderId;
+    }
+    if (!orderId && window.event && window.event.target) {
+        const targetBtn = window.event.target.closest('[data-order-id]');
+        if (targetBtn) orderId = targetBtn.getAttribute('data-order-id');
+    }
 
-    showConfirm('Bạn có chắc chắn muốn hủy đơn hàng #' + orderId + ' không?').then(confirmed => {
-        if (!confirmed) return;
+    if (!orderId) {
+        console.error("cancelOrder error: Missing order ID");
+        return;
+    }
 
-        btn.disabled = true;
-        btn.textContent = 'Đang xử lý...';
+    const doCancel = function () {
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Đang xử lý...';
+        }
 
-        fetch('/api/orders/' + orderId + '/cancel', {
+        const headers = { 'Content-Type': 'application/json' };
+        const token = document.querySelector('meta[name="_csrf"]')?.content || document.querySelector('input[name="_csrf"]')?.value;
+        const headerName = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+        if (token) headers[headerName] = token;
+
+        fetch('/api/profile/orders/' + orderId + '/cancel', {
             method: 'POST',
-            headers: { [getCsrfHeader()]: getCsrfToken() }
+            headers: headers
         })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                toast('✓ Đã hủy đơn hàng thành công.');
-                setTimeout(() => location.reload(), 800);
+                if (typeof toast === 'function') toast(data.message || '✓ Đã hủy đơn hàng thành công.');
+                setTimeout(() => {
+                    if (typeof reloadProfileTab === 'function') {
+                        reloadProfileTab('orders');
+                    } else {
+                        window.location.href = '/profile?tab=orders';
+                    }
+                }, 800);
             } else {
-                toast('⚠️ ' + (data.message || 'Không thể hủy đơn hàng.'));
-                btn.disabled = false;
-                btn.textContent = '⚠️ Hủy Đơn Hàng';
+                if (typeof toast === 'function') toast('⚠️ ' + (data.message || 'Không thể hủy đơn hàng.'));
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '⚠️ Hủy Đơn Hàng';
+                }
             }
         })
         .catch(err => {
             console.error('Cancel order error:', err);
-            toast('⚠️ Lỗi kết nối khi hủy đơn hàng.');
-            btn.disabled = false;
-            btn.textContent = '⚠️ Hủy Đơn Hàng';
+            if (typeof toast === 'function') toast('⚠️ Lỗi kết nối khi hủy đơn hàng.');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '⚠️ Hủy Đơn Hàng';
+            }
         });
-    });
+    };
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Xác Nhận Hủy Đơn',
+            text: 'Bạn có chắc chắn muốn hủy đơn hàng #' + orderId + ' không? Voucher đã dùng (nếu có) sẽ được hoàn lại vào ví của bạn.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Hủy đơn hàng',
+            cancelButtonText: 'Bỏ qua'
+        }).then(result => {
+            if (result.isConfirmed) doCancel();
+        });
+    } else if (typeof window.showConfirm === 'function') {
+        window.showConfirm('Bạn có chắc chắn muốn hủy đơn hàng #' + orderId + ' không?').then(confirmed => {
+            if (confirmed) doCancel();
+        });
+    } else {
+        if (confirm('Bạn có chắc chắn muốn hủy đơn hàng #' + orderId + ' không?')) {
+            doCancel();
+        }
+    }
 }
 
 function openReviewModal(productId, productName) {
-    document.getElementById('review-product-id').value = productId;
-    document.getElementById('review-product-name').value = productName;
-    document.getElementById('review-pname-display').textContent = productName;
-    document.getElementById('review-comment').value = '';
+    const pIdInput = document.getElementById('review-product-id');
+    const pNameInput = document.getElementById('review-product-name');
+    const pNameDisplay = document.getElementById('review-pname-display');
+    const commentInput = document.getElementById('review-comment');
+    const backdrop = document.getElementById('review-modal-backdrop');
+
+    if (pIdInput) pIdInput.value = productId;
+    if (pNameInput) pNameInput.value = productName;
+    if (pNameDisplay) pNameDisplay.textContent = productName;
+    if (commentInput) commentInput.value = '';
     setStar(5);
-    document.getElementById('review-modal-backdrop').classList.add('open');
+    if (backdrop) backdrop.classList.add('open');
 }
 
-function closeOrderModal() {
-    document.getElementById('review-modal-backdrop').classList.remove('open');
+function closeReviewModal() {
+    const backdrop = document.getElementById('review-modal-backdrop');
+    if (backdrop) backdrop.classList.remove('open');
 }
 
-function setStar(star) {
-    orderModalState.stars = star;
-    const starDescs = ['', '⭐ Rất Tệ', '⭐⭐ Tạm Được', '⭐⭐⭐ Bình Thường', '⭐⭐⭐⭐ Hài Lòng', '⭐⭐⭐⭐⭐ Rất Tốt'];
-    document.querySelectorAll('.star-btn').forEach((btn, index) => {
-        btn.classList.toggle('active', index < star);
+function setStar(num) {
+    orderModalState.stars = num;
+    document.querySelectorAll('.star-rating-select i').forEach(star => {
+        const starNum = parseInt(star.getAttribute('data-star'));
+        if (starNum <= num) {
+            star.classList.remove('fa-regular');
+            star.classList.add('fa-solid', 'active');
+        } else {
+            star.classList.remove('fa-solid', 'active');
+            star.classList.add('fa-regular');
+        }
     });
-    const descEl = document.getElementById('star-desc');
-    if (descEl) descEl.textContent = starDescs[star] || 'Chọn số sao đánh giá';
 }
 
 function submitReview() {
-    if (orderModalState.stars === 0) { toast('❗ Vui lòng chọn số sao.'); return; }
-    const comment = document.getElementById('review-comment')?.value.trim() || '';
-    const productId = document.getElementById('review-product-id')?.value || '';
-    const productName = document.getElementById('review-product-name')?.value || '';
+    const productId = document.getElementById('review-product-id')?.value;
+    const comment = document.getElementById('review-comment')?.value;
+    const rating = orderModalState.stars || 5;
 
-    if (!productId || orderModalState.stars < 1 || orderModalState.stars > 5) {
-        toast('❗ Dữ liệu không hợp lệ.');
+    if (!productId) return;
+    if (!comment || !comment.trim()) {
+        if (typeof toast === 'function') toast('Vui lòng nhập nội dung đánh giá.');
         return;
     }
 
+    const headers = { 'Content-Type': 'application/json' };
+    const token = document.querySelector('meta[name="_csrf"]')?.content || document.querySelector('input[name="_csrf"]')?.value;
+    const headerName = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+    if (token) headers[headerName] = token;
+
     fetch('/api/reviews', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            [getCsrfHeader()]: getCsrfToken()
-        },
+        headers: headers,
         body: JSON.stringify({
             productId: parseInt(productId),
-            rating: orderModalState.stars,
-            comment: comment
+            rating: rating,
+            comment: comment.trim()
         })
     })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            toast(`✓ Đã lưu đánh giá ${orderModalState.stars} sao cho ${productName}`);
-            closeOrderModal();
+            if (typeof toast === 'function') toast('✓ Đã gửi đánh giá thành công!');
+            closeReviewModal();
         } else {
-            toast('⚠️ ' + (data.message || 'Không thể lưu đánh giá.'));
+            if (typeof toast === 'function') toast(data.message || 'Lỗi gửi đánh giá.');
         }
     })
     .catch(err => {
-        console.error('Review error:', err);
-        toast('⚠️ Không thể lưu đánh giá.');
+        console.error('Review submit error:', err);
+        if (typeof toast === 'function') toast('Đã xảy ra lỗi mạng.');
     });
 }

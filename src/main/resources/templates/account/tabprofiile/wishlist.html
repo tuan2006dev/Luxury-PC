@@ -8,14 +8,14 @@
       <div>
         <div class="section-h">Sản Phẩm Yêu Thích</div>
       </div>
-      <button class="btn-edit" onclick="removeAllWishlist()"
+      <button type="button" class="btn-edit" onclick="removeAllWishlist()"
         th:if="${wishlistItems != null and !wishlistItems.isEmpty()}">Xóa Tất Cả</button>
     </div>
 
     <div class="wishlist-grid" th:if="${wishlistItems != null and !wishlistItems.isEmpty()}">
       <div class="wl-card" th:each="wi : ${wishlistItems}">
-        <button class="wl-remove" title="Xóa khỏi yêu thích" th:data-wishlist-item-id="${wi.id}"
-          onclick="removeFromWishlist(this)">
+        <button type="button" class="wl-remove" title="Xóa khỏi yêu thích" th:data-wishlist-item-id="${wi.id}"
+          th:onclick="|removeFromWishlist(this, ${wi.id})|">
           <i class="fa-solid fa-xmark"></i>
         </button>
         <div class="wl-img">

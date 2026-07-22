@@ -165,7 +165,7 @@ public class ProfileApiController {
         }
     }
 
-    @org.springframework.web.bind.annotation.PostMapping("/orders/{id}/cancel")
+    @org.springframework.web.bind.annotation.RequestMapping(value = {"/orders/{id}/cancel", "/api/orders/{id}/cancel"}, method = {org.springframework.web.bind.annotation.RequestMethod.POST, org.springframework.web.bind.annotation.RequestMethod.GET})
     @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<Map<String, Object>> cancelOrder(
             Authentication authentication,
@@ -185,18 +185,18 @@ public class ProfileApiController {
         }
 
         Order order = orderDAO.findById(id).orElse(null);
-        if (order == null || !order.getUser().getId().equals(user.getId())) {
+        if (order == null || order.getUser() == null || !order.getUser().getId().equals(user.getId())) {
             response.put("success", false);
             response.put("message", "Đơn hàng không tồn tại hoặc không thuộc về bạn.");
             return ResponseEntity.status(404).body(response);
         }
 
         String status = order.getStatus();
-        String paymentMethod = order.getPaymentMethod();
-        boolean isCancelable = "PENDING".equals(status) || ("PAID".equals(status) && !"COD".equals(paymentMethod));
+        boolean isCancelable = !"COMPLETED".equals(status) && !"HOAN_THANH".equals(status)
+                && !"CANCELED".equals(status) && !"CANCELLED".equals(status) && !"DA_HUY".equals(status);
         if (!isCancelable) {
             response.put("success", false);
-            response.put("message", "Đơn hàng hiện tại không thể hủy.");
+            response.put("message", "Đơn hàng này không thể hủy (đã hoàn thành hoặc đã hủy trước đó).");
             return ResponseEntity.badRequest().body(response);
         }
 
