@@ -152,6 +152,46 @@ public class AdminService {
         return orderDAO.getMonthlyRevenue();
     }
 
+    private Object getMapValue(Map<String, Object> map, String... keys) {
+        if (map == null) return null;
+        for (String key : keys) {
+            if (map.containsKey(key) && map.get(key) != null) return map.get(key);
+            if (map.containsKey(key.toUpperCase()) && map.get(key.toUpperCase()) != null) return map.get(key.toUpperCase());
+            if (map.containsKey(key.toLowerCase()) && map.get(key.toLowerCase()) != null) return map.get(key.toLowerCase());
+        }
+        return null;
+    }
+
+    private String toStr(Object obj) {
+        if (obj == null) return null;
+        if (obj instanceof byte[] bytes) {
+            return new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
+        }
+        return obj.toString();
+    }
+
+    private Double toDouble(Object obj) {
+        if (obj == null) return 0.0;
+        try {
+            if (obj instanceof Number num) return num.doubleValue();
+            String str = toStr(obj);
+            return str != null ? Double.valueOf(str) : 0.0;
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+
+    private Long toLong(Object obj) {
+        if (obj == null) return 0L;
+        try {
+            if (obj instanceof Number num) return num.longValue();
+            String str = toStr(obj);
+            return str != null ? Long.valueOf(str) : 0L;
+        } catch (Exception e) {
+            return 0L;
+        }
+    }
+
     public DashboardDTO getDashboardStats(LocalDate start, LocalDate end) {
         ZoneId defaultZone = ZoneId.systemDefault();
         Date startDate = Date.from(start.atStartOfDay(defaultZone).toInstant());
@@ -174,10 +214,11 @@ public class AdminService {
         List<RevenueDTO> dailyRevenue = new ArrayList<>();
         if (rawDailyRevenue != null) {
             for (Map<String, Object> map : rawDailyRevenue) {
-                Object d = map.get("date");
-                Object r = map.get("revenue");
-                if (d != null) {
-                    dailyRevenue.add(new RevenueDTO(d.toString(), r != null ? Double.valueOf(r.toString()) : 0.0));
+                Object d = getMapValue(map, "date", "DATE");
+                Object r = getMapValue(map, "revenue", "REVENUE");
+                String dateStr = toStr(d);
+                if (dateStr != null && !dateStr.isBlank()) {
+                    dailyRevenue.add(new RevenueDTO(dateStr, toDouble(r)));
                 }
             }
         }
@@ -186,10 +227,11 @@ public class AdminService {
         List<OrderStatusDTO> orderStatus = new ArrayList<>();
         if (rawOrderStatus != null) {
             for (Map<String, Object> map : rawOrderStatus) {
-                Object s = map.get("status");
-                Object c = map.get("count");
-                if (s != null) {
-                    orderStatus.add(new OrderStatusDTO(s.toString(), c != null ? Long.valueOf(c.toString()) : 0L));
+                Object s = getMapValue(map, "status", "STATUS");
+                Object c = getMapValue(map, "count", "COUNT");
+                String statusStr = toStr(s);
+                if (statusStr != null && !statusStr.isBlank()) {
+                    orderStatus.add(new OrderStatusDTO(statusStr, toLong(c)));
                 }
             }
         }
@@ -198,10 +240,11 @@ public class AdminService {
         List<UserGrowthDTO> newUsers = new ArrayList<>();
         if (rawNewUsers != null) {
             for (Map<String, Object> map : rawNewUsers) {
-                Object d = map.get("date");
-                Object c = map.get("count");
-                if (d != null) {
-                    newUsers.add(new UserGrowthDTO(d.toString(), c != null ? Long.valueOf(c.toString()) : 0L));
+                Object d = getMapValue(map, "date", "DATE");
+                Object c = getMapValue(map, "count", "COUNT");
+                String dateStr = toStr(d);
+                if (dateStr != null && !dateStr.isBlank()) {
+                    newUsers.add(new UserGrowthDTO(dateStr, toLong(c)));
                 }
             }
         }

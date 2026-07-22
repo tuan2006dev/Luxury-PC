@@ -601,3 +601,19 @@ body {
   background: #fee2e2;
   color: #dc2626;
 }
+
+/* Global Modal & Popup Overlay Layer Rule: Ensure all popups cover sidebar */
+.modal-overlay,
+.custom-modal-overlay,
+.confirm-modal-overlay,
+.swal2-container,
+.modal-backdrop {
+  z-index: 99999 !important;
+}
+
+.modal-overlay .modal,
+.custom-modal-overlay .custom-modal,
+.confirm-modal-overlay .confirm-modal,
+.swal2-modal {
+  z-index: 100000 !important;
+}

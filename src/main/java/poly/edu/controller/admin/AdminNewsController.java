@@ -1,9 +1,10 @@
 package poly.edu.controller.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,20 +13,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import poly.edu.entity.AdminLog;
 import poly.edu.entity.News;
 import poly.edu.entity.NewsCategory;
 import poly.edu.entity.User;
+import poly.edu.repository.AdminLogRepository;
 import poly.edu.repository.NewsRepository;
 import poly.edu.service.NewsCategoryService;
 import poly.edu.service.NewsService;
-import poly.edu.service.UploadService;
 import poly.edu.service.ProfileService;
+import poly.edu.service.UploadService;
 
-import jakarta.validation.Valid;
-import org.springframework.validation.BindingResult;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,16 +42,12 @@ public class AdminNewsController {
     private static final Logger log = LoggerFactory.getLogger(AdminNewsController.class);
 
     private final NewsService newsService;
-    
-    private final NewsRepository newsRepository; // Needed for direct pagination/search for now
-
+    private final NewsRepository newsRepository;
     private final NewsCategoryService newsCategoryService;
-
     private final UploadService uploadService;
-
     private final ProfileService profileService;
-
     private final poly.edu.repository.UserRepository userRepository;
+    private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
     public String index(Model model, 
@@ -93,6 +91,7 @@ public class AdminNewsController {
     public String save(@Valid @ModelAttribute("news") News news, BindingResult bindingResult,
                        @RequestParam("thumbnailFile") MultipartFile thumbnailFile,
                        Authentication authentication,
+                       HttpServletRequest request,
                        RedirectAttributes redirectAttributes,
                        Model model) {
         
@@ -123,7 +122,8 @@ public class AdminNewsController {
         }
 
         try {
-            if (news.getId() == null) {
+            boolean isNew = (news.getId() == null);
+            if (isNew) {
                 User currentUser = null;
                 try {
                     currentUser = profileService.getCurrentUser(authentication);
@@ -155,6 +155,9 @@ public class AdminNewsController {
 
             news.setUpdatedAt(new Date());
             newsService.saveNews(news);
+
+            logAction(authentication, request, isNew ? "Đăng bài viết mới" : "Cập nhật bài viết", news.getTitle());
+
             redirectAttributes.addFlashAttribute("success", "Lưu bài viết thành công!");
         } catch (Exception e) {
             log.error("[AdminNews] Failed to save news article", e);
@@ -165,9 +168,19 @@ public class AdminNewsController {
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+    public String delete(
+            @PathVariable("id") Integer id,
+            Authentication authentication,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
+
         try {
+            Optional<News> newsOpt = newsService.getNewsById(id);
+            String title = newsOpt.isPresent() ? newsOpt.get().getTitle() : "Bài viết #" + id;
+
             newsService.deleteNews(id);
+            logAction(authentication, request, "Xóa bài viết", title);
+
             redirectAttributes.addFlashAttribute("success", "Xóa bài viết thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi xóa bài viết!");
@@ -202,6 +215,19 @@ public class AdminNewsController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    private void logAction(Authentication auth, HttpServletRequest request, String action, String targetUser) {
+        try {
+            String username = auth != null ? auth.getName() : "STAFF";
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            adminLogRepository.save(new AdminLog(username, action, ip, targetUser));
+        } catch (Exception e) {
+            // Ignore logging errors
         }
     }
 }

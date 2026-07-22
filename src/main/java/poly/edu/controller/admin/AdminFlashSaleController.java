@@ -1,17 +1,21 @@
 package poly.edu.controller.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import poly.edu.dao.ProductDAO;
+import poly.edu.entity.AdminLog;
 import poly.edu.entity.FlashSale;
 import poly.edu.entity.FlashSaleItem;
+import poly.edu.repository.AdminLogRepository;
 import poly.edu.service.FlashSaleService;
+import poly.edu.service.UploadService;
 
+import java.security.Principal;
 import java.util.Date;
 
 @Controller
@@ -20,10 +24,9 @@ import java.util.Date;
 public class AdminFlashSaleController {
 
     private final FlashSaleService flashSaleService;
-
     private final ProductDAO productDAO;
-    
-    private final poly.edu.service.UploadService uploadService;
+    private final UploadService uploadService;
+    private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
     public String listFlashSales(Model model) {
@@ -42,6 +45,8 @@ public class AdminFlashSaleController {
             @RequestParam(value = "bannerImage", required = false) String bannerImageUrl,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "maxPerUser", required = false) Integer maxPerUser,
+            Principal principal,
+            HttpServletRequest request,
             RedirectAttributes ra) {
 
         if (startTime != null && endTime != null && endTime.before(startTime)) {
@@ -76,13 +81,27 @@ public class AdminFlashSaleController {
         }
 
         flashSaleService.saveFlashSale(sale);
+
+        String actionStr = (id != null) ? "Cập nhật Flash Sale" : "Tạo Flash Sale Mới";
+        logAction(principal, request, actionStr, name);
+
         ra.addFlashAttribute("success", id != null ? "Cập nhật Flash Sale thành công!" : "Tạo Flash Sale thành công!");
         return "redirect:/admin/flash-sales";
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteFlashSale(@PathVariable("id") Integer id, RedirectAttributes ra) {
+    public String deleteFlashSale(
+            @PathVariable("id") Integer id,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes ra) {
+
+        FlashSale sale = flashSaleService.getById(id);
+        String targetName = sale != null ? sale.getName() : "FlashSale #" + id;
+
         flashSaleService.deleteFlashSale(id);
+        logAction(principal, request, "Xóa Flash Sale", targetName);
+
         ra.addFlashAttribute("success", "Đã xóa Flash Sale!");
         return "redirect:/admin/flash-sales";
     }
@@ -104,6 +123,8 @@ public class AdminFlashSaleController {
             @RequestParam(value = "productId", required = false) Integer productId,
             @RequestParam(value = "salePrice", required = false) Double salePrice,
             @RequestParam(value = "saleQuantity", required = false) Integer saleQuantity,
+            Principal principal,
+            HttpServletRequest request,
             RedirectAttributes ra) {
 
         if (productId == null || salePrice == null || saleQuantity == null) {
@@ -119,6 +140,8 @@ public class AdminFlashSaleController {
 
         FlashSaleItem item = flashSaleService.addItemToSale(id, productId, salePrice, saleQuantity);
         if (item != null) {
+            String pName = p != null ? p.getName() : "ProductID #" + productId;
+            logAction(principal, request, "Thêm SP vào Flash Sale", pName);
             ra.addFlashAttribute("success", "Đã thêm sản phẩm vào Flash Sale!");
         } else {
             ra.addFlashAttribute("error", "Không thể thêm sản phẩm!");
@@ -127,21 +150,53 @@ public class AdminFlashSaleController {
     }
 
     @PostMapping("/{saleId}/items/remove/{itemId}")
-    public String removeItem(@PathVariable("saleId") Integer saleId, @PathVariable("itemId") Integer itemId, RedirectAttributes ra) {
+    public String removeItem(
+            @PathVariable("saleId") Integer saleId,
+            @PathVariable("itemId") Integer itemId,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes ra) {
+
         flashSaleService.removeItemFromSale(itemId);
+        logAction(principal, request, "Xóa SP khỏi Flash Sale", "ItemID #" + itemId);
+
         ra.addFlashAttribute("success", "Đã xóa sản phẩm khỏi Flash Sale!");
         return "redirect:/admin/flash-sales/" + saleId + "/items";
     }
 
     @PostMapping("/activate/{id}")
-    public String activateFlashSale(@PathVariable("id") Integer id, RedirectAttributes ra) {
+    public String activateFlashSale(
+            @PathVariable("id") Integer id,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes ra) {
+
         flashSaleService.toggleFlashSale(id);
+        logAction(principal, request, "Bật/Tắt Flash Sale", "FlashSale #" + id);
+
         ra.addFlashAttribute("success", "Đã cập nhật trạng thái chương trình Flash Sale thành công!");
         return "redirect:/admin/flash-sales";
     }
 
     @PostMapping("/toggle/{id}")
-    public String toggleFlashSale(@PathVariable("id") Integer id, RedirectAttributes ra) {
-        return activateFlashSale(id, ra);
+    public String toggleFlashSale(
+            @PathVariable("id") Integer id,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes ra) {
+        return activateFlashSale(id, principal, request, ra);
+    }
+
+    private void logAction(Principal principal, HttpServletRequest request, String action, String targetUser) {
+        try {
+            String username = principal != null ? principal.getName() : "STAFF";
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            adminLogRepository.save(new AdminLog(username, action, ip, targetUser));
+        } catch (Exception e) {
+            // Ignore logging error to prevent blocking main flow
+        }
     }
 }

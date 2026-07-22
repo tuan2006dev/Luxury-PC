@@ -25,11 +25,20 @@ body.sidebar-collapsed .main-content {
 
 .table-card {
         background: #ffffff !important;
-        padding: 1.25rem 1.25rem 5rem 1.25rem !important;
+        padding: 1.25rem 1.25rem 8rem 1.25rem !important;
         border: 1px solid #e2e8f0 !important;
         border-radius: 10px !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
-        min-height: 500px !important;
+        min-height: 550px !important;
+        overflow: visible !important;
+}
+
+.table-wrapper {
+        width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        padding-bottom: 7rem !important;
+        margin-bottom: -6rem !important;
 }
 
 .table-h {
@@ -54,6 +63,7 @@ body.sidebar-collapsed .main-content {
 
 .admin-table {
         width: 100% !important;
+        min-width: 1250px !important;
         border-collapse: collapse !important;
         font-size: 0.82rem !important;
         table-layout: fixed !important;

@@ -22,9 +22,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Controller
 @RequestMapping("/admin/employees")
 @RequiredArgsConstructor
+@Transactional
 public class AdminEmployeeController {
 
     private final UserRepository userRepository;
@@ -36,7 +39,6 @@ public class AdminEmployeeController {
     @GetMapping
     public String index(
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String roleFilter,
             @RequestParam(required = false) Boolean statusFilter,
             Model model) {
 
@@ -53,15 +55,6 @@ public class AdminEmployeeController {
             ).collect(Collectors.toList());
         }
 
-        // Role filter
-        if (roleFilter != null && !roleFilter.isBlank() && !"ALL".equalsIgnoreCase(roleFilter)) {
-            employees = employees.stream().filter(u -> {
-                if (u.getUserRoles() == null) return false;
-                return u.getUserRoles().stream()
-                        .anyMatch(ur -> ur.getRole() != null && roleFilter.equalsIgnoreCase(ur.getRole().getName()));
-            }).collect(Collectors.toList());
-        }
-
         // Status filter
         if (statusFilter != null) {
             employees = employees.stream().filter(u ->
@@ -69,27 +62,21 @@ public class AdminEmployeeController {
             ).collect(Collectors.toList());
         }
 
-        long totalEmployees = userRepository.findAllEmployees().size();
-        long activeEmployees = userRepository.findAllEmployees().stream().filter(u -> Boolean.TRUE.equals(u.getStatus())).count();
-        long adminCount = userRepository.findAllEmployees().stream().filter(u ->
-                u.getUserRoles() != null && u.getUserRoles().stream().anyMatch(ur -> ur.getRole() != null && "ADMIN".equalsIgnoreCase(ur.getRole().getName()))
-        ).count();
-        long staffCount = userRepository.findAllEmployees().stream().filter(u ->
-                u.getUserRoles() != null && u.getUserRoles().stream().anyMatch(ur -> ur.getRole() != null && "STAFF".equalsIgnoreCase(ur.getRole().getName()))
-        ).count();
+        List<User> allStaff = userRepository.findAllEmployees();
+        long totalStaff = allStaff.size();
+        long activeStaff = allStaff.stream().filter(u -> Boolean.TRUE.equals(u.getStatus())).count();
+        long lockedStaff = allStaff.stream().filter(u -> Boolean.FALSE.equals(u.getStatus())).count();
 
         model.addAttribute("employees", employees);
-        model.addAttribute("employeeCount", totalEmployees);
-        model.addAttribute("activeCount", activeEmployees);
-        model.addAttribute("adminCount", adminCount);
-        model.addAttribute("staffCount", staffCount);
+        model.addAttribute("employeeCount", totalStaff);
+        model.addAttribute("activeCount", activeStaff);
+        model.addAttribute("lockedCount", lockedStaff);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("roleFilter", roleFilter);
         model.addAttribute("statusFilter", statusFilter);
         model.addAttribute("user", new User());
 
-        // Audit Logs (recent 10 logs)
-        model.addAttribute("recentLogs", adminLogRepository.findTop50ByOrderByCreatedAtDesc());
+        // Audit Logs (recent 50 logs for STAFF only)
+        model.addAttribute("recentLogs", adminLogRepository.findStaffLogsTop50());
 
         return "admin/employees";
     }
@@ -151,21 +138,21 @@ public class AdminEmployeeController {
             if (existingOpt.isPresent()) {
                 User existing = existingOpt.get();
 
+                existing.setFullName(user.getFullName());
+                existing.setPhone(user.getPhone());
+                existing.setAddress(user.getAddress());
+                existing.setGender(user.getGender());
+
                 // Preserve existing password if new one not provided
-                if (user.getPassword() == null || user.getPassword().isBlank()) {
-                    user.setPassword(existing.getPassword());
-                } else {
-                    user.setPassword(passwordEncoder.encode(user.getPassword()));
+                if (user.getPassword() != null && !user.getPassword().isBlank()) {
+                    existing.setPassword(passwordEncoder.encode(user.getPassword()));
                 }
 
-                // Preserve email & username if not changeable
-                user.setUsername(existing.getUsername());
-                user.setEmail(existing.getEmail());
-                user.setCreatedAt(existing.getCreatedAt());
-                user.setLastLogin(existing.getLastLogin());
-                if (user.getStatus() == null) user.setStatus(existing.getStatus());
+                if (user.getStatus() != null) {
+                    existing.setStatus(user.getStatus());
+                }
 
-                User savedUser = userRepository.save(user);
+                User savedUser = userRepository.save(existing);
 
                 // Update role
                 Role role = roleDAO.findByName(roleName);
@@ -178,7 +165,7 @@ public class AdminEmployeeController {
                 }
 
                 // Log action
-                adminLogRepository.save(new AdminLog(currentAdmin, "Sửa thông tin / Đổi quyền (Role: " + roleName + ")", clientIp, savedUser.getUsername()));
+                adminLogRepository.save(new AdminLog(currentAdmin, "Sửa thông tin nhân viên (Role: " + roleName + ")", clientIp, savedUser.getUsername()));
                 redirectAttributes.addFlashAttribute("successMessage", "Cập nhật nhân viên " + savedUser.getUsername() + " thành công!");
             }
         }

@@ -1,14 +1,17 @@
 package poly.edu.controller.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import poly.edu.entity.AdminLog;
 import poly.edu.entity.NewsCategory;
+import poly.edu.repository.AdminLogRepository;
 import poly.edu.service.NewsCategoryService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class AdminNewsCategoryController {
 
     private final NewsCategoryService newsCategoryService;
+    private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
     public String index(Model model) {
@@ -44,15 +48,23 @@ public class AdminNewsCategoryController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("category") NewsCategory category, RedirectAttributes redirectAttributes) {
+    public String save(
+            @ModelAttribute("category") NewsCategory category,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
+
         try {
-            if (category.getId() != null) {
+            boolean isNew = (category.getId() == null);
+            if (!isNew) {
                 Optional<NewsCategory> existing = newsCategoryService.getCategoryById(category.getId());
                 if (existing.isPresent()) {
                     category.setCreatedAt(existing.get().getCreatedAt());
                 }
             }
             newsCategoryService.saveCategory(category);
+            logAction(principal, request, isNew ? "Tạo danh mục tin tức" : "Cập nhật danh mục tin tức", category.getName());
+
             redirectAttributes.addFlashAttribute("success", "Lưu danh mục thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
@@ -61,7 +73,12 @@ public class AdminNewsCategoryController {
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+    public String delete(
+            @PathVariable("id") Integer id,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
+
         try {
             Optional<NewsCategory> cat = newsCategoryService.getCategoryById(id);
             if(cat.isPresent()) {
@@ -69,12 +86,28 @@ public class AdminNewsCategoryController {
                     redirectAttributes.addFlashAttribute("error", "Không thể xóa danh mục đang có bài viết!");
                     return "redirect:/admin/news-categories";
                 }
+                String name = cat.get().getName();
                 newsCategoryService.deleteCategory(id);
+                logAction(principal, request, "Xóa danh mục tin tức", name);
+
                 redirectAttributes.addFlashAttribute("success", "Xóa danh mục thành công!");
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Không thể xóa danh mục này!");
         }
         return "redirect:/admin/news-categories";
+    }
+
+    private void logAction(Principal principal, HttpServletRequest request, String action, String targetUser) {
+        try {
+            String username = principal != null ? principal.getName() : "STAFF";
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            adminLogRepository.save(new AdminLog(username, action, ip, targetUser));
+        } catch (Exception e) {
+            // Ignore logging errors
+        }
     }
 }

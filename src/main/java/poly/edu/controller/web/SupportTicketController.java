@@ -1,5 +1,6 @@
 package poly.edu.controller.web;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.SupportTicket;
 import poly.edu.entity.ChatMessage;
+import poly.edu.entity.AdminLog;
 import poly.edu.repository.SupportTicketRepository;
 import poly.edu.repository.UserRepository;
 import poly.edu.repository.ChatMessageRepository;
+import poly.edu.repository.AdminLogRepository;
 
 import java.util.*;
 
@@ -25,6 +28,8 @@ public class SupportTicketController {
     private final UserRepository userRepo;
 
     private final ChatMessageRepository chatMessageRepo;
+
+    private final AdminLogRepository adminLogRepository;
 
     // ========================
     // CUSTOMER: Submit ticket via API (from 3D builder modal)
@@ -189,7 +194,8 @@ public class SupportTicketController {
             @RequestParam Integer ticketId,
             @RequestParam String reply,
             @RequestParam String status,
-            Authentication auth) {
+            Authentication auth,
+            HttpServletRequest request) {
 
         ticketRepo.findById(ticketId).ifPresent(ticket -> {
             ticket.setAdminReply(reply);
@@ -204,6 +210,8 @@ public class SupportTicketController {
             adminMsg.setSenderName(auth != null ? auth.getName() : "Admin");
             adminMsg.setMessage(reply);
             chatMessageRepo.save(adminMsg);
+
+            logAction(auth, request, "Phản hồi Ticket (Trạng thái: " + status + ")", "Ticket #" + ticketId);
         });
         return "redirect:/admin/tickets";
     }
@@ -214,7 +222,9 @@ public class SupportTicketController {
     @PostMapping("/admin/tickets/status")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> updateStatus(
-            @RequestBody Map<String, String> body) {
+            @RequestBody Map<String, String> body,
+            Authentication auth,
+            HttpServletRequest request) {
 
         Integer id = Integer.parseInt(body.get("id"));
         String newStatus = body.get("status");
@@ -223,6 +233,7 @@ public class SupportTicketController {
         ticketRepo.findById(id).ifPresent(ticket -> {
             ticket.setStatus(newStatus);
             ticketRepo.save(ticket);
+            logAction(auth, request, "Cập nhật trạng thái Ticket: " + newStatus, "Ticket #" + id);
         });
         res.put("success", true);
         return ResponseEntity.ok(res);
@@ -233,11 +244,30 @@ public class SupportTicketController {
     // ========================
     @PostMapping("/admin/tickets/delete")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteTicket(@RequestBody Map<String, Integer> body) {
-        ticketRepo.deleteById(body.get("id"));
+    public ResponseEntity<Map<String, Object>> deleteTicket(
+            @RequestBody Map<String, Integer> body,
+            Authentication auth,
+            HttpServletRequest request) {
+
+        Integer id = body.get("id");
+        ticketRepo.deleteById(id);
+        logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+
         Map<String, Object> res = new HashMap<>();
         res.put("success", true);
         return ResponseEntity.ok(res);
     }
-}
 
+    private void logAction(Authentication auth, HttpServletRequest request, String action, String targetUser) {
+        try {
+            String username = auth != null ? auth.getName() : "STAFF";
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            adminLogRepository.save(new AdminLog(username, action, ip, targetUser));
+        } catch (Exception e) {
+            // Ignore logging errors
+        }
+    }
+}

@@ -1,22 +1,23 @@
 package poly.edu.controller.web;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import poly.edu.dao.PcComboDAO;
 import poly.edu.dao.PcComboDetailDAO;
 import poly.edu.dao.ProductDAO;
+import poly.edu.entity.AdminLog;
 import poly.edu.entity.PcCombo;
 import poly.edu.entity.PcComboDetail;
 import poly.edu.entity.Product;
-
-import org.springframework.web.multipart.MultipartFile;
+import poly.edu.repository.AdminLogRepository;
 import poly.edu.service.UploadService;
 
-import java.util.List;
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -25,12 +26,10 @@ import java.util.Optional;
 public class AdminComboController {
 
     private final PcComboDAO pcComboDAO;
-
     private final PcComboDetailDAO pcComboDetailDAO;
-
     private final ProductDAO productDAO;
-
     private final UploadService uploadService;
+    private final AdminLogRepository adminLogRepository;
 
     @GetMapping
     public String index(Model model) {
@@ -56,6 +55,8 @@ public class AdminComboController {
                        @RequestParam(value="caseId", required=false) Integer caseId,
                        @RequestParam(value="coolingId", required=false) Integer coolingId,
                        @RequestParam(value="imageFile", required=false) MultipartFile imageFile,
+                       Principal principal,
+                       HttpServletRequest request,
                        RedirectAttributes ra) {
         
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -68,6 +69,7 @@ public class AdminComboController {
             }
         }
 
+        boolean isNew = (combo.getId() == null);
         PcCombo savedCombo = pcComboDAO.save(combo);
 
         // Delete old details if any
@@ -83,6 +85,8 @@ public class AdminComboController {
         saveDetail(savedCombo, "psu", psuId);
         saveDetail(savedCombo, "case", caseId);
         saveDetail(savedCombo, "cooling", coolingId);
+
+        logAction(principal, request, isNew ? "Tạo Combo PC mới" : "Cập nhật Combo PC", combo.getName());
 
         ra.addFlashAttribute("message", "Đã lưu Combo thành công!");
         return "redirect:/admin/combos";
@@ -113,9 +117,32 @@ public class AdminComboController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id, RedirectAttributes ra) {
+    public String delete(
+            @PathVariable("id") Long id,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes ra) {
+
+        Optional<PcCombo> opt = pcComboDAO.findById(id);
+        String targetName = opt.isPresent() ? opt.get().getName() : "Combo #" + id;
+
         pcComboDAO.deleteById(id);
+        logAction(principal, request, "Xóa Combo PC", targetName);
+
         ra.addFlashAttribute("message", "Đã xóa Combo!");
         return "redirect:/admin/combos";
+    }
+
+    private void logAction(Principal principal, HttpServletRequest request, String action, String targetUser) {
+        try {
+            String username = principal != null ? principal.getName() : "STAFF";
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            adminLogRepository.save(new AdminLog(username, action, ip, targetUser));
+        } catch (Exception e) {
+            // Ignore logging errors
+        }
     }
 }

@@ -64,7 +64,9 @@ function toggleSidebarMenu(menuId, titleEl) {
             // Init on load
             updateSidebarActiveStatus(window.location.pathname);
 
-            // Custom SPA Router (PJAX)
+            // Custom SPA Router (PJAX) with AbortController & Style Leak Cleanup
+            let pjaxController = null;
+
             document.querySelectorAll('.sub-menu a, #nav-dashboard').forEach(link => {
                 link.addEventListener('click', async (e) => {
                     const url = link.getAttribute('href');
@@ -78,20 +80,29 @@ function toggleSidebarMenu(menuId, titleEl) {
                     
                     e.preventDefault();
 
+                    // Abort previous in-flight PJAX fetch to prevent race conditions
+                    if (pjaxController) {
+                        pjaxController.abort();
+                    }
+                    pjaxController = new AbortController();
+
                     const mainContent = document.querySelector('.main-content');
-                    if(mainContent) mainContent.style.opacity = '0.5';
+                    if (mainContent) mainContent.style.opacity = '0.5';
 
                     window.history.pushState({}, '', url);
                     updateSidebarActiveStatus(url);
 
                     try {
-                        const res = await fetch(url);
+                        const res = await fetch(url, { signal: pjaxController.signal });
                         const html = await res.text();
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
                         
                         const newContent = doc.querySelector('.main-content');
                         if (newContent) {
+                            // Clean up dynamic PJAX styles from previous page transitions to prevent style bloat
+                            document.head.querySelectorAll('[data-pjax-style="true"]').forEach(el => el.remove());
+
                             // Sync title
                             if (doc.title) document.title = doc.title;
 
@@ -108,14 +119,28 @@ function toggleSidebarMenu(menuId, titleEl) {
                                 }
                                 if (!exists) {
                                     const clone = newStyle.cloneNode(true);
+                                    clone.setAttribute('data-pjax-style', 'true');
                                     document.head.appendChild(clone);
-                                    oldStyles.push(clone);
                                 }
                             });
 
+                            // Destroy previous Chart instances if present
+                            if (typeof window.revenueChartInstance !== 'undefined' && window.revenueChartInstance) {
+                                try { window.revenueChartInstance.destroy(); } catch(e) {}
+                                window.revenueChartInstance = null;
+                            }
+                            if (typeof window.orderStatusChartInstance !== 'undefined' && window.orderStatusChartInstance) {
+                                try { window.orderStatusChartInstance.destroy(); } catch(e) {}
+                                window.orderStatusChartInstance = null;
+                            }
+                            if (typeof window.newUsersChartInstance !== 'undefined' && window.newUsersChartInstance) {
+                                try { window.newUsersChartInstance.destroy(); } catch(e) {}
+                                window.newUsersChartInstance = null;
+                            }
+
                             if (mainContent) mainContent.replaceWith(newContent);
                             
-                            // Execute new scripts
+                            // Execute new scripts safely
                             const scripts = newContent.querySelectorAll('script');
                             scripts.forEach(oldScript => {
                                 const newScript = document.createElement('script');
@@ -130,7 +155,12 @@ function toggleSidebarMenu(menuId, titleEl) {
                             window.location.href = url; // Fallback
                         }
                     } catch(err) {
-                        window.location.href = url; // Fallback
+                        if (err.name !== 'AbortError') {
+                            window.location.href = url; // Fallback on non-abort errors
+                        }
+                    } finally {
+                        const updatedMainContent = document.querySelector('.main-content');
+                        if (updatedMainContent) updatedMainContent.style.opacity = '1';
                     }
                 });
             });

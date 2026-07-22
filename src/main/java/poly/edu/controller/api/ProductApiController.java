@@ -1,12 +1,16 @@
 package poly.edu.controller.api;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import poly.edu.entity.AdminLog;
+import poly.edu.entity.FlashSale;
 import poly.edu.entity.Product;
-import poly.edu.service.ProductService;
+import poly.edu.repository.AdminLogRepository;
 import poly.edu.service.FlashSaleService;
+import poly.edu.service.ProductService;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,8 +20,8 @@ import java.util.stream.Collectors;
 public class ProductApiController {
 
     private final ProductService productService;
-
     private final FlashSaleService flashSaleService;
+    private final AdminLogRepository adminLogRepository;
 
     @GetMapping("/api/products")
     public List<Map<String, Object>> getProducts() {

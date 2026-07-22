@@ -12,22 +12,22 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o ORDER BY o.createdAt DESC")
     List<Order> findAllOrderedByDate();
 
-    @Query(value = "SELECT FORMAT(created_at, 'yyyy-MM') as month, SUM(total_price) as revenue " +
-                   "FROM orders WHERE status = 'COMPLETED' " +
-                   "GROUP BY FORMAT(created_at, 'yyyy-MM') ORDER BY month DESC", nativeQuery = true)
+    @Query(value = "SELECT CONVERT(VARCHAR(7), created_at, 120) as month, SUM(total_price) as revenue " +
+                   "FROM orders WHERE status NOT IN ('CANCELLED', 'DA_HUY', 'HUY', 'DA_HOAN_TIEN', 'THU_HOI') " +
+                   "GROUP BY CONVERT(VARCHAR(7), created_at, 120) ORDER BY month DESC", nativeQuery = true)
     List<Map<String, Object>> getMonthlyRevenue();
 
-    @Query(value = "SELECT FORMAT(created_at, 'yyyy-MM-dd') as date, SUM(total_price) as revenue " +
-                   "FROM orders WHERE status = 'COMPLETED' AND created_at >= :startDate " +
-                   "GROUP BY FORMAT(created_at, 'yyyy-MM-dd') ORDER BY date ASC", nativeQuery = true)
+    @Query(value = "SELECT CONVERT(VARCHAR(10), created_at, 120) as date, SUM(total_price) as revenue " +
+                   "FROM orders WHERE status NOT IN ('CANCELLED', 'DA_HUY', 'HUY', 'DA_HOAN_TIEN', 'THU_HOI') AND created_at >= :startDate " +
+                   "GROUP BY CONVERT(VARCHAR(10), created_at, 120) ORDER BY date ASC", nativeQuery = true)
     List<Map<String, Object>> getDailyRevenue(@org.springframework.data.repository.query.Param("startDate") java.util.Date startDate);
 
     @Query(value = "SELECT status, COUNT(*) as count FROM orders WHERE created_at >= :startDate GROUP BY status", nativeQuery = true)
     List<Map<String, Object>> getOrderStatusStats(@org.springframework.data.repository.query.Param("startDate") java.util.Date startDate);
 
-    @Query(value = "SELECT FORMAT(created_at, 'yyyy-MM-dd') as date, SUM(total_price) as revenue " +
-                   "FROM orders WHERE status IN ('COMPLETED', 'DA_THANH_TOAN', 'PAID') AND created_at >= :start AND created_at <= :end " +
-                   "GROUP BY FORMAT(created_at, 'yyyy-MM-dd') ORDER BY date ASC", nativeQuery = true)
+    @Query(value = "SELECT CONVERT(VARCHAR(10), created_at, 120) as date, SUM(total_price) as revenue " +
+                   "FROM orders WHERE status NOT IN ('CANCELLED', 'DA_HUY', 'HUY', 'DA_HOAN_TIEN', 'THU_HOI') AND created_at >= :start AND created_at <= :end " +
+                   "GROUP BY CONVERT(VARCHAR(10), created_at, 120) ORDER BY date ASC", nativeQuery = true)
     List<Map<String, Object>> getDailyRevenueBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
 
     @Query(value = "SELECT status, COUNT(*) as count FROM orders WHERE created_at >= :start AND created_at <= :end GROUP BY status", nativeQuery = true)
@@ -36,7 +36,7 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :start AND o.createdAt <= :end")
     Long countOrdersBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
 
-    @Query("SELECT COALESCE(SUM(o.totalPrice), 0.0) FROM Order o WHERE o.status IN ('COMPLETED', 'DA_THANH_TOAN', 'PAID') AND o.createdAt >= :start AND o.createdAt <= :end")
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0.0) FROM Order o WHERE o.status NOT IN ('CANCELLED', 'DA_HUY', 'HUY', 'DA_HOAN_TIEN', 'THU_HOI') AND o.createdAt >= :start AND o.createdAt <= :end")
     Double getRevenueBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('PENDING', 'CHO_XAC_NHAN_THANH_TOAN')")

@@ -1,16 +1,20 @@
 package poly.edu.controller.api;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import poly.edu.entity.AdminLog;
 import poly.edu.entity.CartItem;
 import poly.edu.entity.User;
+import poly.edu.entity.Voucher;
+import poly.edu.repository.AdminLogRepository;
 import poly.edu.service.FlashSaleService;
 import poly.edu.service.ProfileService;
 import poly.edu.service.VoucherService;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +28,8 @@ public class VoucherApiController {
     private final ProfileService profileService;
 
     private final FlashSaleService flashSaleService;
+
+    private final AdminLogRepository adminLogRepository;
 
     /**
      * AJAX endpoint: validate mã voucher
@@ -66,16 +72,41 @@ public class VoucherApiController {
      * POST /api/voucher/delete/{id}
      */
     @DeleteMapping("/delete/{id}")
-    public Map<String, Object> deleteVoucherApi(@PathVariable("id") Integer id) {
+    public Map<String, Object> deleteVoucherApi(
+            @PathVariable("id") Integer id,
+            Principal principal,
+            HttpServletRequest request) {
+
+        Voucher v = voucherService.getById(id);
+        String code = v != null ? v.getCode() : "Voucher #" + id;
+
         voucherService.deleteVoucher(id);
-        Map<String, Object> resp = new java.util.HashMap<>();
+        logAction(principal, request, "Xóa Voucher", code);
+
+        Map<String, Object> resp = new HashMap<>();
         resp.put("success", true);
         resp.put("message", "Đã xóa voucher thành công!");
         return resp;
     }
 
     @PostMapping("/delete/{id}")
-    public Map<String, Object> deleteVoucherApiPost(@PathVariable("id") Integer id) {
-        return deleteVoucherApi(id);
+    public Map<String, Object> deleteVoucherApiPost(
+            @PathVariable("id") Integer id,
+            Principal principal,
+            HttpServletRequest request) {
+        return deleteVoucherApi(id, principal, request);
+    }
+
+    private void logAction(Principal principal, HttpServletRequest request, String action, String targetUser) {
+        try {
+            String username = principal != null ? principal.getName() : "STAFF";
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            adminLogRepository.save(new AdminLog(username, action, ip, targetUser));
+        } catch (Exception e) {
+            // Ignore logging errors
+        }
     }
 }

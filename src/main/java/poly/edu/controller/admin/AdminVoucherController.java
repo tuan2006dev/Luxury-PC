@@ -1,16 +1,19 @@
 package poly.edu.controller.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import poly.edu.dao.CategoryDAO;
+import poly.edu.entity.AdminLog;
 import poly.edu.entity.Voucher;
+import poly.edu.repository.AdminLogRepository;
 import poly.edu.service.VoucherService;
 
+import java.security.Principal;
 import java.util.Date;
 
 @Controller
@@ -19,8 +22,8 @@ import java.util.Date;
 public class AdminVoucherController {
 
     private final VoucherService voucherService;
-
     private final CategoryDAO categoryDAO;
+    private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
     public String listVouchers(Model model) {
@@ -45,6 +48,8 @@ public class AdminVoucherController {
             @RequestParam(required = false, defaultValue = "GLOBAL") String voucherScope,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false, defaultValue = "true") Boolean active,
+            Principal principal,
+            HttpServletRequest request,
             RedirectAttributes ra) {
 
         Voucher voucher;
@@ -77,21 +82,57 @@ public class AdminVoucherController {
         }
 
         voucherService.saveVoucher(voucher);
+
+        logAction(principal, request, (id != null ? "Cập nhật Voucher" : "Tạo Voucher mới"), code);
+
         ra.addFlashAttribute("success", id != null ? "Cập nhật voucher thành công!" : "Tạo voucher thành công!");
         return "redirect:/admin/vouchers";
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteVoucher(@PathVariable Integer id, RedirectAttributes ra) {
+    public String deleteVoucher(
+            @PathVariable Integer id,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes ra) {
+
+        Voucher v = voucherService.getById(id);
+        String code = v != null ? v.getCode() : "Voucher #" + id;
+
         voucherService.deleteVoucher(id);
+        logAction(principal, request, "Xóa Voucher", code);
+
         ra.addFlashAttribute("success", "Đã xóa voucher!");
         return "redirect:/admin/vouchers";
     }
 
     @PostMapping("/toggle/{id}")
-    public String toggleVoucher(@PathVariable Integer id, RedirectAttributes ra) {
+    public String toggleVoucher(
+            @PathVariable Integer id,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes ra) {
+
+        Voucher v = voucherService.getById(id);
+        String code = v != null ? v.getCode() : "Voucher #" + id;
+
         voucherService.toggleVoucher(id);
+        logAction(principal, request, "Bật/Tắt Voucher", code);
+
         ra.addFlashAttribute("success", "Đã cập nhật trạng thái voucher!");
         return "redirect:/admin/vouchers";
+    }
+
+    private void logAction(Principal principal, HttpServletRequest request, String action, String targetUser) {
+        try {
+            String username = principal != null ? principal.getName() : "STAFF";
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            adminLogRepository.save(new AdminLog(username, action, ip, targetUser));
+        } catch (Exception e) {
+            // Ignore logging errors
+        }
     }
 }

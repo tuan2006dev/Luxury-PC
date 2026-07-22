@@ -8,7 +8,7 @@
     <title>Quản Lý Đơn Hàng — Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/orders.css(v=4.0)}" />
+    <link rel="stylesheet" th:href="@{/css/admin/orders.css(v=5.0)}" />
     <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
@@ -21,20 +21,20 @@
                 <h2>Quản Lý Đơn Hàng</h2>
                 <span><span th:text="${orders.size()}">0</span> <span>đơn hàng</span></span>
             </div>
-            <div style="width: 100%;">
+            <div class="table-wrapper">
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th style="width: 5%;">Mã Đơn</th>
-                            <th style="width: 16%;">Khách Hàng</th>
-                            <th style="width: 9%;">Ngày Đặt</th>
-                            <th style="width: 10%;">Tổng Tiền</th>
-                            <th style="width: 7%;">Thanh Toán</th>
-                            <th style="width: 8%;">Giao Hàng</th>
-                            <th style="width: 8%;">Voucher</th>
-                            <th style="width: 10%;">Trạng Thái</th>
-                            <th style="width: 18%;">Ghi Chú</th>
-                            <th style="width: 9%;">Hành Động</th>
+                            <th style="width: 90px;">Mã Đơn</th>
+                            <th style="width: 210px;">Khách Hàng</th>
+                            <th style="width: 110px;">Ngày Đặt</th>
+                            <th style="width: 130px;">Tổng Tiền</th>
+                            <th style="width: 110px;">Thanh Toán</th>
+                            <th style="width: 120px;">Giao Hàng</th>
+                            <th style="width: 110px;">Voucher</th>
+                            <th style="width: 130px;">Trạng Thái</th>
+                            <th style="width: 220px;">Ghi Chú</th>
+                            <th style="width: 120px;">Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -170,13 +170,29 @@
         </div>
     </div>
     <script>
+        function initActionMenuAccordion() {
+            document.querySelectorAll('.action-menu summary').forEach(summary => {
+                summary.onclick = function() {
+                    const currentDetails = this.closest('details');
+                    document.querySelectorAll('details.action-menu[open]').forEach(menu => {
+                        if (menu !== currentDetails) {
+                            menu.removeAttribute('open');
+                        }
+                    });
+                };
+            });
+        }
+
         document.addEventListener('click', function(e) {
-            document.querySelectorAll('.action-menu[open]').forEach(menu => {
+            document.querySelectorAll('details.action-menu[open]').forEach(menu => {
                 if (!menu.contains(e.target)) {
                     menu.removeAttribute('open');
                 }
             });
         });
+
+        initActionMenuAccordion();
+        document.addEventListener('spa:load', initActionMenuAccordion);
     </script>
 </body>
 

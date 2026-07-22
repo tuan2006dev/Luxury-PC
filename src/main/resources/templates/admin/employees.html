@@ -44,8 +44,8 @@
         <!-- Standard Admin Header -->
         <div class="header frame-in-up">
             <div class="title">
-                <h1 class="text-gradient">Quản Lý Nhân Viên</h1>
-                <p>Quản lý danh sách tài khoản Staff & Admin, phân quyền và nhật ký thao tác</p>
+                <h1 class="text-gradient">Quản Lý Nhân Viên (Staff)</h1>
+                <p>Quản lý danh sách tài khoản Nhân viên (Staff) và nhật ký thao tác</p>
             </div>
             <div class="user-info" style="display: flex; align-items: center;">
                 <i class="fa-solid fa-user-shield"></i>
@@ -65,11 +65,11 @@
             <span th:text="${errorMessage}"></span>
         </div>
 
-        <!-- KPI Stat Cards (4 Grid Columns matching Dashboard) -->
-        <div class="stats-grid">
+        <!-- KPI Stat Cards (3 Grid Columns matching Staff metrics) -->
+        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
             <div class="stat-card">
                 <i class="fa-solid fa-users-gear stat-icon"></i>
-                <div class="stat-label">Tổng Nhân Viên</div>
+                <div class="stat-label">Tổng Nhân Viên (Staff)</div>
                 <div class="stat-value" th:text="${employeeCount} ?: 0">0</div>
             </div>
             <div class="stat-card">
@@ -78,14 +78,9 @@
                 <div class="stat-value" th:text="${activeCount} ?: 0">0</div>
             </div>
             <div class="stat-card">
-                <i class="fa-solid fa-user-shield stat-icon" style="color: #3b82f6;"></i>
-                <div class="stat-label">Quản Trị Viên (Admin)</div>
-                <div class="stat-value" th:text="${adminCount} ?: 0">0</div>
-            </div>
-            <div class="stat-card">
-                <i class="fa-solid fa-id-card stat-icon" style="color: #f59e0b;"></i>
-                <div class="stat-label">Nhân Viên (Staff)</div>
-                <div class="stat-value" th:text="${staffCount} ?: 0">0</div>
+                <i class="fa-solid fa-user-lock stat-icon" style="color: #ef4444;"></i>
+                <div class="stat-label">Đã Khóa</div>
+                <div class="stat-value" th:text="${lockedCount} ?: 0">0</div>
             </div>
         </div>
 
@@ -98,12 +93,6 @@
 
                 <form method="get" th:action="@{/admin/employees}" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0;">
                     <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo Tên, Email, SĐT..." style="margin: 0 !important; height: 38px; background: var(--mid); border: 1px solid #cbd5e1; color: var(--white); padding: 0 12px; border-radius: 6px; font-size: 0.88rem; min-width: 220px; box-sizing: border-box; outline: none;">
-                    
-                    <select name="roleFilter" style="margin: 0 !important; height: 38px; background: var(--mid); border: 1px solid #cbd5e1; color: var(--white); padding: 0 12px; border-radius: 6px; font-size: 0.88rem; box-sizing: border-box; outline: none;">
-                        <option value="ALL" th:selected="${roleFilter == 'ALL' or roleFilter == null}">Tất cả Vai Trò</option>
-                        <option value="ADMIN" th:selected="${roleFilter == 'ADMIN'}">ADMIN</option>
-                        <option value="STAFF" th:selected="${roleFilter == 'STAFF'}">STAFF</option>
-                    </select>
 
                     <select name="statusFilter" style="margin: 0 !important; height: 38px; background: var(--mid); border: 1px solid #cbd5e1; color: var(--white); padding: 0 12px; border-radius: 6px; font-size: 0.88rem; box-sizing: border-box; outline: none;">
                         <option value="" th:selected="${statusFilter == null}">Tất cả Trạng Thái</option>
@@ -173,10 +162,10 @@
 
                     <div class="input-group">
                         <label>Vai Trò / Phân Quyền</label>
-                        <select name="roleName" id="empRole">
+                        <select name="roleName" id="empRole" disabled style="background: #f1f5f9; color: #64748b;">
                             <option value="STAFF" selected>Nhân viên (STAFF)</option>
-                            <option value="ADMIN">Quản trị viên (ADMIN)</option>
                         </select>
+                        <input type="hidden" name="roleName" value="STAFF">
                     </div>
 
                     <div class="input-group">
@@ -274,29 +263,70 @@
         </div>
 
         <!-- Audit Logs Card -->
-        <div class="card">
-            <h2><i class="fa-solid fa-clock-rotate-left" style="color: var(--gold); margin-right: 8px;"></i> Nhật Ký Thao Tác Quản Lý (Audit Logs)</h2>
-            <div style="width: 100%; overflow-x: auto;">
-                <table>
+        <div class="card" style="margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: #1e293b;">
+                    <i class="fa-solid fa-clock-rotate-left" style="color: var(--gold); margin-right: 8px;"></i>
+                    Nhật Ký Thao Tác Nhân Viên (Staff Audit Logs)
+                </h2>
+                <span class="badge" style="background: #f1f5f9; color: #64748b; font-weight: 600; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px;">
+                    <i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> 50 Nhật ký mới nhất
+                </span>
+            </div>
+            <div class="table-wrapper" style="width: 100%; overflow-x: auto;">
+                <table class="admin-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr>
-                            <th>Thời Gian</th>
-                            <th>Admin Thực Hiện</th>
-                            <th>Hành Động</th>
-                            <th>Đối Tượng Bị Tác Động</th>
-                            <th>Địa Chỉ IP</th>
+                        <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <th style="padding: 12px 16px; text-align: left; width: 70px;">#ID</th>
+                            <th style="padding: 12px 16px; text-align: left; width: 170px;">Thời Gian</th>
+                            <th style="padding: 12px 16px; text-align: left; width: 220px;">Nhân Viên Thực Hiện</th>
+                            <th style="padding: 12px 16px; text-align: left; width: 220px;">Hành Động</th>
+                            <th style="padding: 12px 16px; text-align: left;">Đối Tượng Bị Tác Động</th>
+                            <th style="padding: 12px 16px; text-align: center; width: 140px;">Địa Chỉ IP</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="log : ${recentLogs}">
-                            <td th:text="${#dates.format(log.createdAt, 'dd/MM/yyyy HH:mm:ss')}">22/07/2026 08:30:00</td>
-                            <td th:text="${log.adminUsername}" style="color: var(--gold); font-weight: 600;">admin</td>
-                            <td th:text="${log.action}">Tạo nhân viên mới</td>
-                            <td th:text="${log.targetUser}" style="font-weight: 500;">staff_user</td>
-                            <td th:text="${log.ipAddress}">127.0.0.1</td>
+                    <tbody style="font-size: 0.9rem;">
+                        <tr th:each="log : ${recentLogs}" style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;">
+                            <td style="padding: 12px 16px; font-weight: 700; color: #94a3b8;" th:text="${'#' + log.id}">#1</td>
+                            <td style="padding: 12px 16px; white-space: nowrap; color: #475569;">
+                                <i class="fa-regular fa-clock" style="color: #94a3b8; margin-right: 6px;"></i>
+                                <span th:text="${#dates.format(log.createdAt, 'dd/MM/yyyy HH:mm:ss')}">22/07/2026 08:30:00</span>
+                            </td>
+                            <td style="padding: 12px 16px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                                        <i class="fa-solid fa-user-gear"></i>
+                                    </div>
+                                    <span th:text="${log.adminUsername}" style="color: #0f172a; font-weight: 600;">staff_user</span>
+                                </div>
+                            </td>
+                            <td style="padding: 12px 16px;">
+                                <span th:if="${#strings.containsIgnoreCase(log.action, 'Xóa') or #strings.containsIgnoreCase(log.action, 'Hủy') or #strings.containsIgnoreCase(log.action, 'Khóa')}" 
+                                      style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span th:text="${log.action}">Xóa sản phẩm</span>
+                                </span>
+                                <span th:if="${#strings.containsIgnoreCase(log.action, 'Thêm') or #strings.containsIgnoreCase(log.action, 'Tạo')}" 
+                                      style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-plus-circle"></i>
+                                    <span th:text="${log.action}">Thêm mới</span>
+                                </span>
+                                <span th:if="${!#strings.containsIgnoreCase(log.action, 'Xóa') and !#strings.containsIgnoreCase(log.action, 'Hủy') and !#strings.containsIgnoreCase(log.action, 'Khóa') and !#strings.containsIgnoreCase(log.action, 'Thêm') and !#strings.containsIgnoreCase(log.action, 'Tạo')}" 
+                                      style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    <span th:text="${log.action}">Cập nhật</span>
+                                </span>
+                            </td>
+                            <td style="padding: 12px 16px; font-weight: 600; color: #1e293b;" th:text="${log.targetUser != null ? log.targetUser : 'N/A'}">Intel Core i5-14400F</td>
+                            <td style="padding: 12px 16px; text-align: center;">
+                                <span style="background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; font-family: monospace; font-size: 0.8rem; padding: 3px 8px; border-radius: 4px;" th:text="${log.ipAddress}">127.0.0.1</span>
+                            </td>
                         </tr>
                         <tr th:if="${recentLogs == null or recentLogs.empty}">
-                            <td colspan="5" style="text-align: center; color: var(--muted); padding: 1.5rem 0;">Chưa có nhật ký thao tác nào.</td>
+                            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 2rem 0;">
+                                <i class="fa-solid fa-inbox" style="font-size: 2rem; margin-bottom: 8px; color: #cbd5e1;"></i><br>
+                                <span>Chưa có nhật ký thao tác nào từ Nhân viên (Staff).</span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
