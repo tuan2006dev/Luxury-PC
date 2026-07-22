@@ -85,7 +85,7 @@
                     <!-- Khoảng giá -->
                     <div class="filter-section">
                         <h4>Khoảng giá</h4>
-                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 6px;">
                             <div
                                 th:replace="~{customnumber/components :: priceInput(name='min', value=${minPrice}, placeholder='Từ...')}">
                             </div>
@@ -93,6 +93,10 @@
                             <div
                                 th:replace="~{customnumber/components :: priceInput(name='max', value=${maxPrice}, placeholder='Đến...')}">
                             </div>
+                        </div>
+                        <div id="price-range-error"
+                            style="display: none; color: #ef4444; font-size: 11px; font-weight: 600; margin-bottom: 8px; line-height: 1.3;">
+                            <i class="fa-solid fa-circle-exclamation"></i> Giá "Từ" phải nhỏ hơn giá "Đến"
                         </div>
                     </div>
 
@@ -215,9 +219,58 @@
             } else {
                 input.value = "";
             }
+            validatePriceRange();
         }
 
+        function validatePriceRange() {
+            const minInput = document.querySelector('input[name="min"]');
+            const maxInput = document.querySelector('input[name="max"]');
+            const errorMsg = document.getElementById('price-range-error');
+
+            if (!minInput || !maxInput) return true;
+
+            let rawMin = minInput.value.replace(/\D/g, "");
+            let rawMax = maxInput.value.replace(/\D/g, "");
+
+            let minVal = rawMin ? parseInt(rawMin, 10) : null;
+            let maxVal = rawMax ? parseInt(rawMax, 10) : null;
+
+            if (minVal !== null && maxVal !== null && minVal >= maxVal) {
+                if (errorMsg) errorMsg.style.display = 'block';
+                minInput.style.borderColor = '#ef4444';
+                maxInput.style.borderColor = '#ef4444';
+                minInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.15)';
+                maxInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.15)';
+                return false;
+            } else {
+                if (errorMsg) errorMsg.style.display = 'none';
+                minInput.style.borderColor = '#ddd';
+                maxInput.style.borderColor = '#ddd';
+                minInput.style.boxShadow = 'none';
+                maxInput.style.boxShadow = 'none';
+                return true;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const minInput = document.querySelector('input[name="min"]');
+            const maxInput = document.querySelector('input[name="max"]');
+            if (minInput) {
+                minInput.addEventListener('input', validatePriceRange);
+                minInput.addEventListener('change', validatePriceRange);
+            }
+            if (maxInput) {
+                maxInput.addEventListener('input', validatePriceRange);
+                maxInput.addEventListener('change', validatePriceRange);
+            }
+            validatePriceRange();
+        });
+
         document.getElementById('filter-form').addEventListener('submit', function (e) {
+            if (!validatePriceRange()) {
+                e.preventDefault();
+                return false;
+            }
             this.querySelectorAll('.currency-input').forEach(input => {
                 if (input.value) {
                     input.value = input.value.replace(/\./g, '');

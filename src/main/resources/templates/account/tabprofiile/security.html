@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <!-- ============ TAB 5: BẢO MẬT ============ -->
+  <div th:fragment="security" class="profile-section" id="sec-security">
+    <div class="section-head">
+      <div>
+        <div class="section-h">Bảo Mật Tài Khoản</div>
+      </div>
+    </div>
+
+    <div class="security-list">
+      <!-- Đổi mật khẩu -->
+      <div class="sec-item">
+        <div class="sec-icon"><i class="fa-solid fa-key"></i></div>
+        <div class="sec-info">
+          <div class="sec-title">Mật khẩu tài khoản</div>
+          <div class="sec-sub">Thay đổi mật khẩu định kỳ để bảo vệ tài khoản tốt nhất.</div>
+        </div>
+        <button class="btn-sec"
+          onclick="document.getElementById('change-pw-form').style.display = document.getElementById('change-pw-form').style.display === 'none' ? 'block' : 'none'">Đổi
+          Mật Khẩu</button>
+      </div>
+
+      <!-- Panel đổi mật khẩu -->
+      <form id="change-pw-form" class="edit-profile-panel" style="display:none; margin-bottom:20px;"
+        onsubmit="changePassword(event)">
+        <div style="font-size:1rem; font-weight:600; margin-bottom:1rem;">Đổi Mật Khẩu</div>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu hiện tại</label>
+          <input type="password" id="old-password" class="form-input" required placeholder="••••••••" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu mới</label>
+          <input type="password" id="new-password" class="form-input" required placeholder="••••••••" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Xác nhận mật khẩu mới</label>
+          <input type="password" id="confirm-new-password" class="form-input" required placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn-save">Lưu Mật Khẩu Mới</button>
+      </form>
+
+      <!-- Xác thực 2 lớp (2FA) -->
+      <div class="sec-item">
+        <div class="sec-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+        <div class="sec-info">
+          <div class="sec-title">Xác thực 2 lớp (2FA)</div>
+          <div class="sec-sub">Tăng cường bảo mật với mã OTP được gửi qua Email khi đăng nhập.</div>
+          <div class="sec-status-ok" th:if="${user != null && user.twoFactorEnabled}">✓ Đã bật xác thực 2 lớp</div>
+          <div class="sec-status-warn" th:if="${user == null || !user.twoFactorEnabled}">⚠️ Chưa bật xác thực 2 lớp
+          </div>
+        </div>
+        <button class="btn-sec" th:if="${user == null || !user.twoFactorEnabled}" onclick="open2FAModal()">Bật
+          2FA</button>
+        <button class="btn-sec" style="border-color:#ef4444; color:#ef4444;"
+          th:if="${user != null && user.twoFactorEnabled}" onclick="disable2FA()">Tắt 2FA</button>
+      </div>
+
+      <!-- Thiết bị đăng nhập -->
+      <div class="sec-item">
+        <div class="sec-icon"><i class="fa-solid fa-laptop"></i></div>
+        <div class="sec-info">
+          <div class="sec-title">Thiết bị &amp; Phiên đăng nhập</div>
+          <div class="sec-sub">Quản lý các thiết bị đang đăng nhập tài khoản của bạn.</div>
+        </div>
+        <button class="btn-sec" onclick="openSessionsModal()">Quản Lý Thiết Bị</button>
+      </div>
+    </div>
+
+    <!-- Khu vực nguy hiểm -->
+    <div class="danger-zone">
+      <div class="danger-title">Xóa Tài Khoản</div>
+      <div class="danger-sub">Thao tác này sẽ khóa tài khoản và đăng xuất bạn khỏi hệ thống. Hãy cân nhắc kỹ trước khi
+        thực hiện.</div>
+      <button class="btn-danger" onclick="deleteAccount()">Xóa Tài Khoản</button>
+    </div>
+  </div>
+</body>
+
+</html>
