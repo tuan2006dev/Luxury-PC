@@ -135,6 +135,21 @@ body {
   overflow: hidden;
 }
 
+/* Master Layout Rule — applies to all admin pages */
+.main-content {
+  margin-left: 280px !important;
+  width: calc(100% - 280px) !important;
+  padding: 2rem !important;
+  box-sizing: border-box !important;
+  min-height: 100vh !important;
+  transition: margin-left 0.3s ease, width 0.3s ease !important;
+}
+
+body.sidebar-collapsed .main-content {
+  margin-left: 76px !important;
+  width: calc(100% - 76px) !important;
+}
+
 /* Header */
 .top-header {
   height: 70px;
@@ -525,7 +540,9 @@ body {
 
 .table-responsive {
   overflow-x: auto;
-  margin: -20px;
+  margin: 0;
+  border-radius: 8px;
+  border: 1px solid var(--admin-border);
 }
 
 .admin-table {
