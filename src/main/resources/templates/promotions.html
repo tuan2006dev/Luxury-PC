@@ -853,14 +853,14 @@
         // Slider Logic
         let currentFlashSlide = 0;
         const flashSlides = document.querySelectorAll('.flash-slide');
-        function moveFlashSlider(direction) {
+        window.moveFlashSlider = function(direction) {
             if (flashSlides.length === 0) return;
             currentFlashSlide += direction;
             if (currentFlashSlide >= flashSlides.length) currentFlashSlide = 0;
             if (currentFlashSlide < 0) currentFlashSlide = flashSlides.length - 1;
             const track = document.getElementById('flashSaleSliderTrack');
             if (track) track.style.transform = 'translateX(-' + (currentFlashSlide * 100) + '%)';
-        }
+        };
 
         // Auto slide
         if (flashSlides.length > 1) {
@@ -879,13 +879,8 @@
                         secs--;
                         el.setAttribute('data-seconds', secs);
 
-<<<<<<< HEAD
-                        var days = Math.floor(secs / (3600 * 24));
-                        var h = Math.floor((secs % (3600 * 24)) / 3600);
-=======
                         var d = Math.floor(secs / 86400);
                         var h = Math.floor((secs % 86400) / 3600);
->>>>>>> origin/main
                         var m = Math.floor((secs % 3600) / 60);
                         var s = secs % 60;
 
@@ -901,27 +896,6 @@
                         var sEl = el.querySelector('.upcoming-seconds');
                         var dBlock = el.querySelector('.upcoming-days-block');
 
-<<<<<<< HEAD
-                        if (hEl && mEl && sEl) {
-                            if (days > 0) {
-                                hEl.innerText = days;
-                                hEl.nextElementSibling.innerText = 'N'; // Colons might be hard to change perfectly but let's change text
-                                mEl.innerText = hStr;
-                                mEl.nextElementSibling.innerText = 'H';
-                                sEl.innerText = mStr;
-                            } else {
-                                hEl.innerText = hStr;
-                                mEl.innerText = mStr;
-                                sEl.innerText = sStr;
-                            }
-                        } else {
-                            // Sidebar simple text style
-                            if (days > 0) {
-                                el.innerText = 'Còn ' + days + ' ngày';
-                            } else {
-                                el.innerText = hStr + ':' + mStr + ':' + sStr;
-                            }
-=======
                         if (dEl && hEl && mEl && sEl) {
                             dEl.innerText = dStr;
                             hEl.innerText = hStr;
@@ -937,7 +911,6 @@
                         } else {
                             // Sidebar simple text style
                             el.innerText = (d > 0 ? d + 'd ' : '') + hStr + ':' + mStr + ':' + sStr;
->>>>>>> origin/main
                         }
                     } else if (secs === 0) {
                         var hEl = el.querySelector('.upcoming-hours');
