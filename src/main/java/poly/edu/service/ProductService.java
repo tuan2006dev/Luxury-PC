@@ -59,6 +59,14 @@ public class ProductService {
     @CacheEvict(value = {"featuredProducts", "flashSaleProducts", "topProducts"}, allEntries = true)
     @Transactional
     public void deleteProduct(Integer id) {
+        productDAO.deleteCartItemsByProductId(id);
+        productDAO.deleteWishlistItemsByProductId(id);
+        productDAO.deleteFlashSaleItemsByProductId(id);
+        productDAO.deleteReviewsByProductId(id);
+        productDAO.deleteInventoryByProductId(id);
+        productDAO.deleteStockMovementsByProductId(id);
+        productDAO.deleteComboDetailsByProductId(id);
+        productDAO.nullifyOrderItemProductReferences(id);
         productDAO.deleteById(id);
     }
 

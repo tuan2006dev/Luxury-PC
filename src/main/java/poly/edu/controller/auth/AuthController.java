@@ -16,7 +16,7 @@ import poly.edu.service.AuthService;
 public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
-
+                
     final AuthService authService;
 
     private final poly.edu.repository.UserRepository userRepo;

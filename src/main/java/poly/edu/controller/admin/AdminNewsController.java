@@ -190,7 +190,7 @@ public class AdminNewsController {
         if (slug.isEmpty()) slug = "bai-viet-" + System.currentTimeMillis();
         return slug;
     }
-    
+
     // Endpoint for TinyMCE Image Upload
     @PostMapping("/upload-image")
     @ResponseBody

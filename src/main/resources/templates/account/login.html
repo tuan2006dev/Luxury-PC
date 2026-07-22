@@ -11,6 +11,8 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css(v=2.0)}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v=2.0)}">
+    <!-- SweetAlert2 for Disabled Account Popup -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -30,16 +32,42 @@
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', function () {
                 /*<![CDATA[*/
-                const hasError = /*[[${param.error != null}]]*/ false;
+                const errorParam = /*[[${param.error != null ? param.error[0] : null}]]*/ null;
                 const passwordChanged = /*[[${param.passwordChanged != null}]]*/ false;
                 /*]]>*/
 
-                if (hasError) {
+                if (errorParam !== null) {
+                    const isDisabled = (errorParam === 'disabled' || errorParam === 'account_locked' || errorParam === 'locked');
+
                     const showFailurePopup = () => {
-                        if (typeof window.showAlert === 'function') {
-                            window.showAlert('Đăng nhập thất bại!', false);
+                        if (isDisabled) {
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Tài Khoản Đã Bị Vô Hiệu Hóa 🔒',
+                                    text: 'Tài khoản của bạn đã bị khóa bởi Quản trị viên. Vui lòng liên hệ bộ phận hỗ trợ khách hàng để biết thêm chi tiết!',
+                                    confirmButtonText: 'Đã hiểu',
+                                    confirmButtonColor: '#ef4444'
+                                });
+                            } else if (typeof window.showAlert === 'function') {
+                                window.showAlert('Tài khoản của bạn đã bị KHÓA bởi Quản trị viên!', false);
+                            } else {
+                                alert('Tài khoản của bạn đã bị KHÓA bởi Quản trị viên!');
+                            }
                         } else {
-                            alert('Đăng nhập thất bại!');
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Đăng Nhập Thất Bại',
+                                    text: 'Tên đăng nhập / Email hoặc mật khẩu không chính xác!',
+                                    confirmButtonText: 'Thử lại',
+                                    confirmButtonColor: '#0066CC'
+                                });
+                            } else if (typeof window.showAlert === 'function') {
+                                window.showAlert('Đăng nhập thất bại! Email hoặc mật khẩu không chính xác.', false);
+                            } else {
+                                alert('Đăng nhập thất bại!');
+                            }
                         }
                     };
 
@@ -50,7 +78,15 @@
                     }
                 } else if (passwordChanged) {
                     const showSuccessPopup = () => {
-                        if (typeof window.showAlert === 'function') {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành Công',
+                                text: 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại.',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#10b981'
+                            });
+                        } else if (typeof window.showAlert === 'function') {
                             window.showAlert('Đổi mật khẩu thành công. Vui lòng đăng nhập lại.', true);
                         } else {
                             alert('Đổi mật khẩu thành công. Vui lòng đăng nhập lại.');

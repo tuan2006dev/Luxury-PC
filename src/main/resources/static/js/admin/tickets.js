@@ -277,13 +277,21 @@ window.ticketToDelete = ticketToDelete;
 
 function deleteTicket(id) {
     ticketToDelete = id;
-    document.getElementById('delete-modal-title').innerText = 'Xóa ticket #' + id + '?';
-    document.getElementById('delete-ticket-modal').classList.add('show');
+    const modal = document.getElementById('delete-ticket-modal');
+    if (modal) {
+        document.getElementById('delete-modal-title').innerText = 'Xóa ticket #' + id + '?';
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+    }
 }
 
 function closeDeleteModal() {
     ticketToDelete = null;
-    document.getElementById('delete-ticket-modal').classList.remove('show');
+    const modal = document.getElementById('delete-ticket-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
 }
 
 function initDeleteTicketModal() {

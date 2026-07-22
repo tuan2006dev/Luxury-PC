@@ -1,3 +1,12 @@
+function toggleSidebarCollapse() {
+    const isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+    localStorage.setItem('sidebar-collapsed', isCollapsed ? 'true' : 'false');
+}
+
+if (localStorage.getItem('sidebar-collapsed') === 'true') {
+    document.body.classList.add('sidebar-collapsed');
+}
+
 function toggleSidebarMenu(menuId, titleEl) {
             const menu = document.getElementById(menuId);
             const isShowing = menu.classList.contains('show');
@@ -177,6 +186,13 @@ document.addEventListener("DOMContentLoaded", function() {
             initFlatpickr();
             document.addEventListener('spa:load', initFlatpickr);
         });
+
+// Global translation fallback
+if (typeof window.t === 'undefined') {
+    window.t = function(key, defaultText) {
+        return defaultText || key;
+    };
+}
 
 // Global Delete Confirmation using Custom Popup
         window.confirmDelete = function(formElement, message) {

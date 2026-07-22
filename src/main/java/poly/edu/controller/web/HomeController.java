@@ -71,6 +71,7 @@ public class HomeController {
         Integer mainboardCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("Mainboard")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
         Integer pcCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC") || c.getName().toLowerCase().contains("máy bộ")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
 
+        model.addAttribute("categories", categories);
         model.addAttribute("gamingCid", gamingCid);
         model.addAttribute("workstationCid", workstationCid);
         model.addAttribute("vanPhongCid", vanPhongCid);

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import poly.edu.entity.Category;
 import poly.edu.service.CategoryService;
 
@@ -35,9 +36,14 @@ public class AdminCategoryController {
         return "admin/categories";
     }
 
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
-        categoryService.deleteCategory(id);
+    @RequestMapping(value = "/delete/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    public String delete(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.deleteCategory(id);
+            redirectAttributes.addFlashAttribute("message", "Xóa danh mục thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa danh mục: " + e.getMessage());
+        }
         return "redirect:/admin/categories";
     }
 }
