@@ -53,7 +53,6 @@
         <div class="form-group">
           <label class="form-label">Giới tính</label>
           <select name="gender" class="form-select">
-            <option value="" th:selected="${user == null || user.gender == null}">Khác</option>
             <option value="true" th:selected="${user != null && user.gender == true}">Nam</option>
             <option value="false" th:selected="${user != null && user.gender == false}">Nữ</option>
           </select>

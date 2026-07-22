@@ -18,15 +18,16 @@
             <div class="order-h-date" th:text="${#calendars.format(order.createdAt, 'dd/MM/yyyy')}"></div>
           </div>
           <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px;">
-            <span th:if="${order.orderItems != null && order.orderItems.size() > 0}"
+            <span th:if="${order.orderItems != null && !order.orderItems.isEmpty() && order.orderItems[0].product != null}"
               th:text="${order.orderItems[0].product.name + ' × ' + order.orderItems[0].quantity + (order.orderItems.size() > 1 ? ' (...)' : '')}"></span>
-            <span th:if="${order.orderItems == null || order.orderItems.size() == 0}">Đơn hàng trống</span>
+            <span th:if="${order.orderItems == null || order.orderItems.isEmpty() || order.orderItems[0].product == null}"
+              th:text="${'Đơn hàng #' + order.id}"></span>
           </div>
-          <div class="order-total" th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 0, 'POINT')} + '₫'">
+          <div class="order-total" th:text="${#numbers.formatDecimal(order.totalPrice != null ? order.totalPrice : 0, 1, 'COMMA', 0, 'POINT')} + '₫'">
           </div>
           <div>
-            <span th:class="'order-status status-' + ${(order.status != null ? order.status : 'PENDING').toLowerCase()}"
-              th:text="${order.status == 'PENDING' ? 'Chờ xử lý' : (order.status == 'PAID' ? 'Đã thanh toán' : (order.status == 'COMPLETED' ? 'Hoàn thành' : (order.status == 'SHIPPING' ? 'Đang giao' : (order.status == 'CANCELED' || order.status == 'CANCELLED' ? 'Đã hủy' : (order.status != null ? order.status : 'Chờ xử lý')))))}">
+            <span th:class="'order-status status-' + ${(order.status == 'DA_THANH_TOAN' or order.status == 'PAID' ? 'paid' : (order.status == 'PENDING' ? 'pending' : (order.status == 'SHIPPING' ? 'shipping' : (order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'completed' : 'cancelled'))))}"
+              th:text="${order.statusDisplay != null ? order.statusDisplay : (order.status == 'PENDING' ? 'Chờ xử lý' : (order.status == 'PAID' or order.status == 'DA_THANH_TOAN' ? 'Đã thanh toán' : (order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'Hoàn thành' : (order.status == 'SHIPPING' ? 'Đang giao' : (order.status == 'CANCELED' or order.status == 'CANCELLED' or order.status == 'DA_HUY' ? 'Đã hủy' : (order.status != null ? order.status : 'Chờ xử lý'))))))}">
             </span>
           </div>
           <div><button class="order-detail-btn">Chi Tiết ▼</button></div>
@@ -40,15 +41,15 @@
               <div class="tl-label">Đã Đặt Hàng</div>
             </div>
             <div
-              th:class="${order.status == 'SHIPPING' or order.status == 'PAID' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+              th:class="${order.status == 'SHIPPING' or order.status == 'PAID' or order.status == 'DA_THANH_TOAN' or order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }">
               <div class="tl-dot">🚚</div>
               <div class="tl-label">Đang Giao Vận</div>
             </div>
-            <div th:class="${order.status == 'PAID' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+            <div th:class="${order.status == 'PAID' or order.status == 'DA_THANH_TOAN' or order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }">
               <div class="tl-dot">✔</div>
               <div class="tl-label">Đã Thanh Toán</div>
             </div>
-            <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+            <div th:class="${order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }">
               <div class="tl-dot">★</div>
               <div class="tl-label">Hoàn Thành</div>
             </div>
@@ -61,15 +62,15 @@
               <div class="tl-label">Đã Đặt Hàng</div>
             </div>
             <div
-              th:class="${order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+              th:class="${order.status == 'PAID' or order.status == 'DA_THANH_TOAN' or order.status == 'SHIPPING' or order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }">
               <div class="tl-dot">✔</div>
               <div class="tl-label">Đã Thanh Toán</div>
             </div>
-            <div th:class="${order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+            <div th:class="${order.status == 'SHIPPING' or order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }">
               <div class="tl-dot">🚚</div>
               <div class="tl-label">Đang Giao Vận</div>
             </div>
-            <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+            <div th:class="${order.status == 'COMPLETED' or order.status == 'HOAN_THANH' ? 'tl-step done' : 'tl-step' }">
               <div class="tl-dot">★</div>
               <div class="tl-label">Hoàn Thành</div>
             </div>
@@ -78,10 +79,12 @@
           <div class="item-mini-list">
             <div style="font-size:0.75rem; color:#3b82f6; margin-bottom: 15px; text-transform: uppercase;">Sản phẩm
               trong đơn hàng</div>
-            <div class="item-mini" th:each="oi : ${order.orderItems}">
+            
+            <!-- Trường hợp có sản phẩm chi tiết -->
+            <div class="item-mini" th:each="oi : ${order.orderItems}" th:if="${order.orderItems != null && !order.orderItems.isEmpty()}">
               <div style="flex: 1;">
-                <div th:text="${oi.quantity} + 'x ' + ${oi.product.name}" style="margin-bottom: 5px;"></div>
-                <button type="button" th:if="${order.status == 'COMPLETED'}" th:data-product-id="${oi.product.id}"
+                <div th:text="${(oi.quantity != null ? oi.quantity : 1) + 'x ' + (oi.product != null ? oi.product.name : 'Sản phẩm hệ thống')}" style="margin-bottom: 5px;"></div>
+                <button type="button" th:if="${(order.status == 'COMPLETED' or order.status == 'HOAN_THANH') && oi.product != null}" th:data-product-id="${oi.product.id}"
                   th:data-product-name="${oi.product.name}"
                   onclick="openReviewModal(this.getAttribute('data-product-id'), this.getAttribute('data-product-name'))"
                   style="display:inline-block; font-size:0.65rem; color:#3b82f6; background:transparent; border:1px solid rgba(201,168,76,0.5); padding:3px 8px; border-radius:3px; cursor:pointer;">
@@ -89,8 +92,18 @@
                 </button>
               </div>
               <span style="color:#3b82f6;"
-                th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 1, 'COMMA', 0, 'POINT')} + '₫'"></span>
+                th:text="${#numbers.formatDecimal((oi.price != null ? oi.price : 0) * (oi.quantity != null ? oi.quantity : 1), 1, 'COMMA', 0, 'POINT')} + '₫'"></span>
             </div>
+
+            <!-- Trường hợp đơn hàng test/cũ không có dòng order_items -->
+            <div class="item-mini" th:if="${order.orderItems == null or order.orderItems.isEmpty()}">
+              <div style="flex: 1;">
+                <div style="color: #64748b;">Chi tiết gói sản phẩm (Đơn hàng hệ thống)</div>
+              </div>
+              <span style="color:#3b82f6;"
+                th:text="${#numbers.formatDecimal(order.totalPrice != null ? order.totalPrice : 0, 1, 'COMMA', 0, 'POINT')} + '₫'"></span>
+            </div>
+
             <div class="item-mini">
               <span th:text="${order.shippingMethodName != null ? order.shippingMethodName : 'Phí vận chuyển'}"></span>
               <span style="color:#3b82f6;"
@@ -140,9 +153,9 @@
             </div>
           </div>
 
-          <div th:if="${order.status == 'PENDING' or (order.status == 'PAID' and order.paymentMethod != 'COD')}"
+          <div th:if="${order.status != 'COMPLETED' and order.status != 'HOAN_THANH' and order.status != 'CANCELED' and order.status != 'CANCELLED' and order.status != 'DA_HUY'}"
             style="margin-top: 15px; text-align: right;">
-            <button type="button" th:data-order-id="${order.id}" onclick="cancelOrder(this)"
+            <button type="button" th:data-order-id="${order.id}" th:onclick="|cancelOrder(this, ${order.id})|"
               style="font-size:0.75rem; color:#ef4444; background:transparent; border:1px solid #ef4444; padding:6px 15px; border-radius:4px; cursor:pointer;">
               ⚠️ <span>Hủy Đơn Hàng</span>
             </button>
@@ -150,8 +163,8 @@
         </div>
       </div>
 
-      <div th:if="${orders.size() == 0}">
-        <div style="text-align:center; padding: 2rem; color: #64748b;">Bạn chưa có đơn hàng nào.</div>
+      <div th:if="${orders == null or orders.isEmpty()}" style="text-align:center; padding:3rem 0; color:#64748b;">
+        Bạn chưa có đơn hàng nào.
       </div>
     </div>
   </div>
