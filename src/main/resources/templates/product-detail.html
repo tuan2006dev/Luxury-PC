@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
 
-    <link rel="stylesheet" th:href="@{/css/style.css(v=5)}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
 </head>
 
@@ -302,7 +302,8 @@
                         style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; width: 100%;">
                         <button class="btn-buy-small"
                             style="background: #000; color: #fff; border: none; border-radius: 6px; padding: 0 16px; font-size: 12px; font-weight: 700; cursor: pointer; height: 34px; display: flex; align-items: center; justify-content: center;"
-                            th:onclick="'buyNow(' + ${p.id} + '); event.stopPropagation();'" title="Mua ngay">Mua ngay</button>
+                            th:onclick="'buyNow(' + ${p.id} + '); event.stopPropagation();'" title="Mua ngay">Mua
+                            ngay</button>
                         <button class="btn-cart-small"
                             style="width: 34px; height: 34px; font-size: 15px; background: #fff; border: 1.5px solid #3b82f6; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #2563eb; flex-shrink: 0;"
                             th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'"
