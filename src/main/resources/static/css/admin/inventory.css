@@ -59,9 +59,10 @@
 }
 
 .main-content {
-        margin-left: 280px;
-        flex: 1;
-        padding: 3rem;
+        margin-left: 280px !important;
+        width: calc(100% - 280px) !important;
+        padding: 2rem !important;
+        box-sizing: border-box !important;
 }
 
 .table-card {
