@@ -652,6 +652,21 @@ CREATE TABLE flash_sale_items (
 GO
 
 -- ----------------------------
+-- Table structure for brands
+-- ----------------------------
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'brands') AND type IN ('U'))
+	DROP TABLE brands;
+GO
+CREATE TABLE brands (
+  id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  name NVARCHAR(255) NOT NULL,
+  logo NVARCHAR(500) NOT NULL,
+  link NVARCHAR(500),
+  display_order INT DEFAULT 0
+);
+GO
+
+-- ----------------------------
 -- Table structure for pc_combo_details
 -- ----------------------------
 IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_combo_details') AND type IN ('U'))
@@ -2250,4 +2265,19 @@ GETDATE(), 'build-pc-25-trieu', N'Tư vấn cấu hình PC Gaming tối ưu tron
 GETDATE(), 'ssd-pcie-gen5', N'So sánh SSD PCIe Gen5 và Gen4 trong thực tế.', 'ssdgen5.jpg', N'SSD PCIe Gen5 có thật sự đáng nâng cấp?', GETDATE(), (SELECT TOP 1 id FROM users), N'Đánh giá SSD PCIe Gen5.', 'SSD,NVMe,Gen5', N'SSD PCIe Gen5', 35, 5, 'PUBLISHED'),
 (N'<h2>5 mẹo giúp máy tính chơi game mượt hơn</h2><ul><li>Cập nhật Driver.</li><li>Nâng cấp SSD.</li><li>Nâng RAM.</li><li>Bật Game Mode.</li><li>Vệ sinh máy định kỳ.</li></ul>',
 GETDATE(), 'meo-toi-uu-pc-gaming', N'Hướng dẫn tối ưu hiệu năng máy tính để chơi game.', 'optimize.jpg', N'5 mẹo giúp máy tính chơi game mượt hơn', GETDATE(), (SELECT TOP 1 id FROM users), N'Mẹo tối ưu Windows và phần cứng.', 'FPS,Gaming,Windows,Tối ưu', N'Tối ưu PC Gaming', 52, 6, 'PUBLISHED');
+GO
+
+-- ----------------------------
+-- Records of brands
+-- ----------------------------
+INSERT INTO brands (name, logo, link, display_order)
+VALUES
+(N'Intel', N'/images/ui-new/intel.svg', N'/products?brand=Intel', 1),
+(N'AMD', N'/images/ui-new/amd.svg', N'/products?brand=AMD', 2),
+(N'ASUS', N'/images/ui-new/asus.svg', N'/products?brand=ASUS', 3),
+(N'MSI', N'/images/ui-new/msi.svg', N'/products?brand=MSI', 4),
+(N'GIGABYTE', N'/images/ui-new/gigabyte.svg', N'/products?brand=GIGABYTE', 5),
+(N'Corsair', N'/images/ui-new/corsair.svg', N'/products?brand=Corsair', 6),
+(N'Kingston', N'/images/ui-new/kingston.svg', N'/products?brand=Kingston', 7),
+(N'Cooler Master', N'/images/ui-new/coolermaster.svg', N'/products?brand=Cooler Master', 8);
 GO
