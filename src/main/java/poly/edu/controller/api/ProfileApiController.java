@@ -36,15 +36,17 @@ public class ProfileApiController {
     private final EmailService emailService;
     private final poly.edu.service.ProfileService profileService;
     private final poly.edu.service.VoucherService voucherService;
+    private final poly.edu.service.OrderService orderService;
     private final poly.edu.service.FlashSaleService flashSaleService;
 
-    public ProfileApiController(UserRepository userRepository, OrderDAO orderDAO, ProductDAO productDAO, EmailService emailService, poly.edu.service.ProfileService profileService, poly.edu.service.VoucherService voucherService, poly.edu.service.FlashSaleService flashSaleService) {
+    public ProfileApiController(UserRepository userRepository, OrderDAO orderDAO, ProductDAO productDAO, EmailService emailService, poly.edu.service.ProfileService profileService, poly.edu.service.VoucherService voucherService, poly.edu.service.OrderService orderService, poly.edu.service.FlashSaleService flashSaleService) {
         this.userRepository = userRepository;
         this.orderDAO = orderDAO;
         this.productDAO = productDAO;
         this.emailService = emailService;
         this.profileService = profileService;
         this.voucherService = voucherService;
+        this.orderService = orderService;
         this.flashSaleService = flashSaleService;
     }
 
@@ -120,45 +122,12 @@ public class ProfileApiController {
         }
 
         try {
-            // Tạo tên file duy nhất
-            String originalFilename = file.getOriginalFilename();
-            String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
-            String filename = "user_" + user.getId() + "_" + System.currentTimeMillis() + extension;
-
-            // Đường dẫn lưu trữ trong thư mục src
-            String srcUploadDir = "src/main/resources/static/uploads/avatars/";
-            java.io.File srcFolder = new java.io.File(srcUploadDir);
-            if (!srcFolder.exists()) {
-                srcFolder.mkdirs();
-            }
-            java.nio.file.Path srcPath = java.nio.file.Paths.get(srcUploadDir + filename);
-            java.nio.file.Files.copy(file.getInputStream(), srcPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-            // Copy vào thư mục target cho phép hiển thị ảnh ngay lập tức mà không cần build lại dự án
-            String targetUploadDir = "target/classes/static/uploads/avatars/";
-            java.io.File targetFolder = new java.io.File(targetUploadDir);
-            if (targetFolder.exists() || targetFolder.mkdirs()) {
-                java.nio.file.Path targetPath = java.nio.file.Paths.get(targetUploadDir + filename);
-                try {
-                    java.nio.file.Files.copy(srcPath, targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                } catch (Exception e) {
-                    // Bỏ qua lỗi copy sang target nếu có
-                }
-            }
-
-            // Cập nhật đường dẫn trong Database
-            String avatarPath = "/uploads/avatars/" + filename;
-            user.setAvatar(avatarPath);
-            userRepository.save(user);
-
+            profileService.uploadAvatar(file, user);
             response.put("success", true);
-            response.put("avatarPath", avatarPath);
+            response.put("avatarPath", user.getAvatar());
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
-            log.error("[ProfileApi] Error verifying email OTP for user", ex);
+            log.error("[ProfileApi] Error uploading avatar", ex);
             response.put("success", false);
             response.put("message", "Không thể lưu file lúc này: " + ex.getMessage());
             return ResponseEntity.status(500).body(response);
@@ -166,7 +135,6 @@ public class ProfileApiController {
     }
 
     @org.springframework.web.bind.annotation.PostMapping("/orders/{id}/cancel")
-    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<Map<String, Object>> cancelOrder(
             Authentication authentication,
             @org.springframework.web.bind.annotation.PathVariable("id") Integer id) {
@@ -184,60 +152,16 @@ public class ProfileApiController {
             return ResponseEntity.status(404).body(response);
         }
 
-        Order order = orderDAO.findById(id).orElse(null);
-        if (order == null || !order.getUser().getId().equals(user.getId())) {
+        try {
+            orderService.cancelOrderByUser(id, user.getId());
+            response.put("success", true);
+            response.put("message", "Hủy đơn hàng thành công.");
+            return ResponseEntity.ok(response);
+        } catch (IllegalStateException | IllegalArgumentException e) {
             response.put("success", false);
-            response.put("message", "Đơn hàng không tồn tại hoặc không thuộc về bạn.");
-            return ResponseEntity.status(404).body(response);
-        }
-
-        String status = order.getStatus();
-        String paymentMethod = order.getPaymentMethod();
-        boolean isCancelable = "PENDING".equals(status) || ("PAID".equals(status) && !"COD".equals(paymentMethod));
-        if (!isCancelable) {
-            response.put("success", false);
-            response.put("message", "Đơn hàng hiện tại không thể hủy.");
+            response.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
-
-        // Cập nhật trạng thái
-        order.setStatus("CANCELED");
-        orderDAO.save(order);
-
-        // Khôi phục số lượng tồn kho
-        if (order.getOrderItems() != null) {
-            for (OrderItem item : order.getOrderItems()) {
-                Product product = item.getProduct();
-                if (product != null) {
-                    Integer newStock = (product.getStock() != null ? product.getStock() : 0) + item.getQuantity();
-                    product.setStock(newStock);
-                    productDAO.save(product);
-                    
-                    // Khôi phục số lượng flash sale nếu có
-                    try {
-                        flashSaleService.decrementSoldCount(product.getId(), item.getQuantity());
-                    } catch (Exception e) {
-                        log.error("Failed to restore flash sale quantity on order cancel", e);
-                    }
-                }
-            }
-        }
-
-        // Gửi email thông báo cho Admin
-        emailService.sendOrderCancellationEmailToAdmin(order);
-        
-        // Hoàn trả voucher nếu có
-        if (order.getVoucherCode() != null && !order.getVoucherCode().trim().isEmpty() && order.getUser() != null) {
-            try {
-                voucherService.restoreVoucher(order.getVoucherCode(), order.getUser().getId());
-            } catch (Exception e) {
-                log.error("Failed to restore voucher on order cancel", e);
-            }
-        }
-
-        response.put("success", true);
-        response.put("message", "Hủy đơn hàng thành công.");
-        return ResponseEntity.ok(response);
     }
 
     @org.springframework.web.bind.annotation.PostMapping("/2fa/send-otp")

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import poly.edu.entity.Product;
 import poly.edu.service.CategoryService;
 import poly.edu.service.ProductService;
@@ -86,15 +85,9 @@ public class AdminProductController {
         return "admin/products";
     }
 
-    @RequestMapping(value = "/delete/{id}", method = {RequestMethod.GET, RequestMethod.POST})
-    public String delete(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        try {
-            productService.deleteProduct(id);
-            redirectAttributes.addFlashAttribute("message", "Xóa sản phẩm thành công!");
-        } catch (Exception e) {
-            log.error("[AdminProduct] Error deleting product id={}", id, e);
-            redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sản phẩm: " + e.getMessage());
-        }
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Integer id) {
+        productService.deleteProduct(id);
         return "redirect:/admin/products";
     }
 }

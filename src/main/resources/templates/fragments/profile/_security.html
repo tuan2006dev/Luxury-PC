@@ -1,0 +1,98 @@
+        <div th:fragment="securityTab" class="profile-section" id="sec-security">
+          <div class="section-head">
+            <div>
+              <div class="section-tag">Tài khoản</div>
+              <div class="section-h">Bảo Mật</div>
+            </div>
+          </div>
+          <div class="security-list">
+            <div class="sec-item">
+              <div class="sec-icon">🔑</div>
+              <div class="sec-info">
+                <div class="sec-title">Mật khẩu</div>
+                <div class="sec-sub">Cập nhật lần cuối: 12/01/2026 · Sử dụng
+                  mật khẩu mạnh với ít nhất 8 ký tự.</div>
+                <div class="sec-status-ok">● Cài đặt hoàn chỉnh</div>
+              </div>
+              <button class="btn-sec" id="btn-toggle-password-form" onclick="togglePasswordForm()">Đổi Mật Khẩu</button>
+            </div>
+
+            <!-- Password change form -->
+            <form id="password-change-panel" class="edit-profile-panel" th:action="@{/profile/password}" method="post"
+              novalidate
+              style="display:none;background:#f8fafc;border:1px solid #e2e8f0;padding:2rem;margin-bottom:1rem;margin-top:-0.5rem;">
+              <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+              <div
+                style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#3b82f6;margin-bottom:1.5rem;">
+                Đổi Mật Khẩu</div>
+              <div class="form-group">
+                <label class="form-label">Mật khẩu hiện tại</label>
+                <input type="password" name="currentPassword" class="form-input" placeholder="Nhập mật khẩu hiện tại"
+                  required />
+              </div>
+              <div class="form-2col">
+                <div class="form-group">
+                  <label class="form-label">Mật khẩu mới</label>
+                  <input type="password" name="newPassword" class="form-input" placeholder="Tối thiểu 8 ký tự"
+                    minlength="8" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Xác nhận mật khẩu
+                    mới</label>
+                  <input type="password" name="confirmPassword" class="form-input"
+                    placeholder="Xác nhận lại mật khẩu mới" minlength="8" required />
+                </div>
+              </div>
+              <div style="margin-top:1rem;">
+                <button type="submit" class="btn-save">
+                  <span class="btn-save-inner">Cập Nhật Mật Khẩu</span>
+                </button>
+                <button type="button" class="btn-edit" style="margin-left:.75rem;" onclick="togglePasswordForm(false)">Hủy</button>
+              </div>
+            </form>
+
+            <div class="sec-item">
+              <div class="sec-icon">📱</div>
+              <div class="sec-info">
+                <div class="sec-title">Xác thực 2 yếu tố (2FA)</div>
+                <div class="sec-sub">Bảo vệ tài khoản bằng mã xác thực OTP gửi
+                  qua hòm thư Email khi đăng nhập.</div>
+                <div th:class="${user != null && user.twoFactorEnabled == true ? 'sec-status-ok' : 'sec-status-warn'}"
+                  th:text="${user != null && user.twoFactorEnabled == true ? '● Đã bật' : '● Chưa bật'}">● Chưa bật
+                </div>
+              </div>
+              <button th:if="${user == null || user.twoFactorEnabled != true}" class="btn-sec" onclick="open2FAModal()">Bật 2FA</button>
+              <button th:if="${user != null && user.twoFactorEnabled == true}" class="btn-sec"
+                style="border-color:var(--red); color:var(--red);" onclick="disable2FA()">Tắt 2FA</button>
+            </div>
+            <div class="sec-item">
+              <div class="sec-icon">📧</div>
+              <div class="sec-info">
+                <div class="sec-title">Email xác minh</div>
+                <div class="sec-sub"><span th:text="${email}">thanh.minh@email.com</span> <span>đã được xác minh và liên kết với tài khoản.</span></div>
+                <div class="sec-status-ok">● Đã xác minh</div>
+              </div>
+              <button class="btn-sec" onclick="openEmailDetailsModal()">Xem
+                Chi Tiết</button>
+            </div>
+            <div class="sec-item">
+              <div class="sec-icon">🖥️</div>
+              <div class="sec-info">
+                <div class="sec-title">Phiên đăng nhập</div>
+                <div class="sec-sub" th:text="${currentSessionInfo}">Hiện tại: Chrome · Windows 11 · TP.HCM — Đăng nhập
+                  12/03/2026 16:45</div>
+                <div class="sec-status-ok">● Thiết bị hiện tại</div>
+              </div>
+              <button class="btn-sec" onclick="openSessionsModal()">Quản
+                Lý</button>
+            </div>
+          </div>
+          <div class="danger-zone">
+            <div class="danger-title">⚠️ Vùng nguy hiểm</div>
+            <div class="danger-sub">Xóa tài khoản sẽ xóa vĩnh viễn tất cả
+              dữ liệu của bạn bao gồm lịch sử đơn hàng, danh sách yêu thích và điểm tích lũy. Thao tác này không thể
+              hoàn tác.</div>
+            <button class="btn-danger" onclick="deleteAccount()">Xóa Tài
+              Khoản</button>
+          </div>
+        </div>

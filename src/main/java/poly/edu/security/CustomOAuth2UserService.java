@@ -33,20 +33,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(oauth2User, clientName);
 
-        // Save or update user in our database & return saved User
-        User dbUser = processOAuth2User(customOAuth2User, registrationId);
-
-        // Check if the user account is locked
-        if (dbUser != null && !Boolean.TRUE.equals(dbUser.getStatus())) {
-            throw new OAuth2AuthenticationException(
-                new org.springframework.security.oauth2.core.OAuth2Error("account_locked", "Tài khoản của bạn đã bị khóa.", null)
-            );
-        }
+        // Save or update user in our database
+        processOAuth2User(customOAuth2User, registrationId);
 
         return customOAuth2User;
     }
 
-    private User processOAuth2User(CustomOAuth2User oauth2User, String registrationId) {
+    private void processOAuth2User(CustomOAuth2User oauth2User, String registrationId) {
         String email = oauth2User.getEmail();
 
         // Fix ClassCastException by safely converting the attributes to String
@@ -72,7 +65,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             if (user.getAuthProvider() == null || !user.getAuthProvider().name().equalsIgnoreCase(registrationId)) {
                 user.setAuthProvider(User.AuthProvider.valueOf(registrationId.toUpperCase()));
                 user.setProviderId(providerId);
-                user = userRepository.save(user);
+                userRepository.save(user);
             }
         } else {
             // New user registration via OAuth2
@@ -93,20 +86,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String name = nameObj != null ? String.valueOf(nameObj) : baseUsername;
             user.setFullName(name);
 
+            // Set a dummy password to satisfy NOT NULL database constraints
+            // user.setPassword(java.util.UUID.randomUUID().toString());
+
             user.setAuthProvider(User.AuthProvider.valueOf(registrationId.toUpperCase()));
             user.setProviderId(providerId);
 
-            user = userRepository.save(user);
+            User savedUser = userRepository.save(user);
 
             // Assign default USER role
             poly.edu.entity.Role defaultRole = roleDAO.findByName("USER");
             if (defaultRole != null) {
                 poly.edu.entity.UserRole ur = new poly.edu.entity.UserRole();
-                ur.setUser(user);
+                ur.setUser(savedUser);
                 ur.setRole(defaultRole);
                 userRoleDAO.save(ur);
             }
         }
-        return user;
     }
 }

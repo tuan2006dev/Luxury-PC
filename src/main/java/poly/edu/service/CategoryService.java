@@ -6,15 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.CategoryDAO;
 import poly.edu.entity.Category;
-import poly.edu.dao.ProductDAO;
-
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
     final CategoryDAO categoryDAO;
-    final ProductDAO productDAO;
 
     public List<Category> getAllCategories() {
         return categoryDAO.findAll();
@@ -31,7 +28,6 @@ public class CategoryService {
 
     @Transactional
     public void deleteCategory(Integer id) {
-        productDAO.nullifyCategoryReferences(id);
         categoryDAO.deleteById(id);
     }
 }

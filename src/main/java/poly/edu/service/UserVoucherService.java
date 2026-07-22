@@ -75,9 +75,7 @@ public class UserVoucherService {
     }
 
     public List<UserVoucher> getMyVouchers(User user) {
-        return userVoucherDAO.findByUserOrderBySavedAtDesc(user).stream()
-                .filter(uv -> !"CONSUMED".equals(uv.getStatus()))
-                .collect(java.util.stream.Collectors.toList());
+        return userVoucherDAO.findByUserOrderBySavedAtDesc(user);
     }
     
     public List<UserVoucher> getMyUnusedVouchers(User user) {

@@ -21,14 +21,6 @@
 
     <div class="main-content">
 
-        <!-- Alert Banners -->
-        <div th:if="${message}" class="alert alert-success" style="background:#dcfce7; color:#15803d; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; border:1px solid #bbf7d0; display:flex; align-items:center; gap:0.5rem; font-weight:500;">
-            <i class="fa-solid fa-circle-check"></i> <span th:text="${message}"></span>
-        </div>
-        <div th:if="${error}" class="alert alert-danger" style="background:#fee2e2; color:#b91c1c; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; border:1px solid #fca5a5; display:flex; align-items:center; gap:0.5rem; font-weight:500;">
-            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${error}"></span>
-        </div>
-
         <div style="margin-bottom: 1.5rem;">
             <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()" type="button"><i
                     class="fa-solid fa-plus"></i> <span class="btn-text">Thêm
@@ -177,8 +169,8 @@
                         <td th:text="${u.phone}"></td>
 
                         <td>
-                            <span th:if="${u.status == null or u.status == true}" class="badge active-badge">Hoạt động</span>
-                            <span th:if="${u.status == false}" class="badge inactive-badge">Đã khoá</span>
+                            <span th:if="${u.status}" class="badge active-badge">Hoạt động</span>
+                            <span th:if="${!u.status}" class="badge inactive-badge">Đã khoá</span>
                         </td>
 
                         <td>
@@ -194,25 +186,24 @@
 
                             <!-- Lock/Unlock -->
                             <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}"
-                                th:if="${u.status == null or u.status == true}" method="post" style="display:inline;"
-                                onsubmit="return confirm('Bạn có chắc chắn muốn KHÓA tài khoản này?');">
+                                th:if="${u.status == true}" method="post" style="display:inline;">
 
-                                <button type="submit" class="btn-action" style="color:#eab308;">Khoá</button>
+                                <button type="submit" class="btn-action">Khoá</button>
                             </form>
 
                             <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}"
-                                th:if="${u.status == false}" method="post" style="display:inline;"
-                                onsubmit="return confirm('Bạn có chắc chắn muốn MỞ KHÓA tài khoản này?');">
+                                th:if="${u.status == false}" method="post" style="display:inline;">
 
-                                <button type="submit" class="btn-action" style="color:#22c55e;">Mở khoá</button>
+                                <button type="submit" class="btn-action">Mở
+                                    khoá</button>
                             </form>
 
                             <!-- Delete -->
                             <form novalidate th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post"
-                                style="display:inline;"
-                                onsubmit="return confirm('Bạn có chắc chắn muốn XÓA VĨNH VIỄN người dùng này?');">
+                                style="display:inline;">
 
-                                <button type="submit" class="btn-action btn-danger">Xoá</button>
+                                <button type="button" class="btn-action btn-danger"
+                                    onclick="window.confirmDelete(this.form, window.t('admin-account-confirm-delete', 'Xác nhận xoá Staff này?'))">Xoá</button>
                             </form>
                         </td>
 

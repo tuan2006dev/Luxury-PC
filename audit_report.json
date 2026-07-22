@@ -1,0 +1,12 @@
+{
+    "total_records": 215,
+    "valid_records": 215,
+    "invalid_records": 0,
+    "duplicates": 0,
+    "missing_images": 0,
+    "missing_specs": 0,
+    "missing_brand": 0,
+    "missing_category": 0,
+    "abnormal_prices": 1,
+    "missing_socket": 0
+}

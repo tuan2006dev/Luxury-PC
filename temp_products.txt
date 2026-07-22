@@ -1,0 +1,863 @@
+﻿
+fixed.sql:1341:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (257, N'Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz (TRAY) - CHÍNH HÃNG', 2500000, 'TDP: 65W', 'i9_14900k.jpg', 
+1, 99, '2026-06-27 12:52:50.064', NULL);
+fixed.sql:1342:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (277, 'Cooler Master Hyper 212 Spectrum V3 ARGB', 600000, 'TDP: 5W', 'corsair_rm850e.jpg', 8, 99, '2026-06-27 
+12:52:59.845', NULL);
+fixed.sql:1343:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (286, 'ROG Ryujin III 360 ARGB', 8500000, 'TDP: 20W', 'rog_ryujin_360.jpg', 8, 108, '2026-06-27 13:16:36.609', 
+NULL);
+fixed.sql:1344:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (279, 'Intel Core Ultra 9 285K', 16500000, 'TDP: 125W', 'i9_14900k.jpg', 1, 49, '2026-06-27 13:16:14.752', 
+NULL);
+fixed.sql:1345:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (256, 'Intel Core Ultra 7 265F (Tray)', 12000000, 'TDP: 125W', 'i9_14900k.jpg', 1, 97, '2026-06-27 
+12:52:49.647', NULL);
+fixed.sql:1346:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (260, 'GIGABYTE H610M-H V3 (DDR4)', 1800000, 'TDP: 30W', 'z790_dark_kingpin.jpg', 4, 99, '2026-06-27 
+12:52:51.326', NULL);
+fixed.sql:1347:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (278, 'Intel Core i9 14900K (Tray)', 14000000, 'TDP: 125W', 'i9_14900k.jpg', 1, 100, '2026-06-27 13:16:14.081', 
+NULL);
+fixed.sql:1348:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (11, 'Intel Core i5-12400F', 3500000, 'Budget King, 6 Cores', 'i9_14900k.jpg', 1, 96, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1349:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (258, 'Intel Core i7 14700F (Tray)', 9500000, 'TDP: 65W', 'i9_14900k.jpg', 1, 100, '2026-06-27 12:52:50.462', 
+NULL);
+fixed.sql:1350:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (280, 'ASUS ROG MAXIMUS Z790 HERO', 15000000, 'TDP: 60W', 'z790_dark_kingpin.jpg', 4, 100, '2026-06-27 
+13:16:16.445', NULL);
+fixed.sql:1351:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (281, 'ProArt Z790-CREATOR WIFI', 12000000, 'TDP: 55W', 'z790_dark_kingpin.jpg', 4, 100, '2026-06-27 
+13:16:16.974', NULL);
+fixed.sql:1352:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (282, 'Corsair Dominator Titanium 64GB', 6500000, 'TDP: 15W', 'corsair_rm850e.jpg', 3, 100, '2026-06-27 
+13:16:18.101', NULL);
+fixed.sql:1353:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (283, 'G.Skill Trident Z5 64GB DDR5', 5500000, 'TDP: 15W', 'galax_hof_32gb.jpg', 3, 100, '2026-06-27 
+13:16:18.602', NULL);
+fixed.sql:1354:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (284, 'ASUS ROG Strix RTX 5090 24GB', 65000000, 'TDP: 450W', 'asus_rog_rtx_4090.jpg', 9, 100, '2026-06-27 
+13:16:33.267', NULL);
+fixed.sql:1355:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (16, N'Vỏ máy tính Xigmatek QUANTUM 4AF', 800000, 'TDP: 0W', 'corsair_3500x_black.png', 12, 100, '2026-06-27 
+12:22:45.418', NULL);
+fixed.sql:1356:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (285, 'Samsung 990 PRO 2TB', 4500000, 'TDP: 15W', 'sabrent_rocket_4tb.jpg', 7, 100, '2026-06-27 13:16:34.196', 
+NULL);
+fixed.sql:1357:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (24, 'AMD Ryzen 5 3600', 2100000, 'Popular AM4 CPU', 'i9_14900k.jpg', 1, 150, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1358:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (259, 'GIGABYTE Z890 EAGLE WIFI7 (DDR5)', 7500000, 'TDP: 40W', 'z790_dark_kingpin.jpg', 4, 97, '2026-06-27 
+12:52:50.891', NULL);
+fixed.sql:1359:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (15, 'Intel Core i9-12900K', 9500000, '16 Cores, Previous Flagship', 'i9_14900k.jpg', 1, 13, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1360:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (9, 'Intel Core i7-13700F', 8900000, '16 Cores, No Integrated Graphics', 'i9_14900k.jpg', 1, 45, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1361:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (14, 'AMD Ryzen 3 4100', 1800000, 'Budget 4 Cores, AM4', 'i9_14900k.jpg', 1, 118, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1362:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (18, 'AMD Ryzen 5 8600G', 6200000, 'AI Engine, Radeon 760M', 'i9_14900k.jpg', 1, 34, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1363:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (25, 'Intel Core i5-10400F', 2200000, 'Stable and Cheap', 'i9_14900k.jpg', 1, 110, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1364:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (26, 'AMD Ryzen 9 3900X', 7500000, '12 Cores, Workstation', 'i9_14900k.jpg', 1, 8, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1365:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (27, 'Intel Pentium G7400', 1900000, 'Office work, 2 Cores', 'i9_14900k.jpg', 1, 200, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1366:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (28, 'AMD Athlon 3000G', 1200000, 'Ultra Budget Graphics', 'i9_14900k.jpg', 1, 180, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1367:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (22, 'AMD Ryzen 5 4500', 1950000, 'Super Budget 6 Cores', 'i9_14900k.jpg', 1, 92, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1368:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (33, 'RTX 4070 Ti Super', 24500000, 'Perfect for 2K Gaming', 'asus_rog_rtx_4090.jpg', 2, 25, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1369:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (36, 'AMD RX 7800 XT', 15200000, 'Best value 2K GPU', 'asus_rog_rtx_4090.jpg', 2, 30, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1370:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (38, 'AMD RX 6600', 5500000, 'Best budget 1080p', 'asus_rog_rtx_4090.jpg', 2, 100, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1371:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (160, 'BenQ SW271C', 42000000, 'Pro Color Photo', 'corsair_3500x_black.png', 6, 3, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1372:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (4, 'AMD Ryzen 7 7800X3D', 11500000, 'Best gaming CPU, 8 Cores, 3D V-Cache', 'i9_14900k.jpg', 1, 27, 
+'2026-04-06 13:46:29.076393', NULL);
+fixed.sql:1373:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (20, 'AMD Ryzen 7 7700', 7800000, '8 Cores, Low Power 65W', 'i9_14900k.jpg', 1, 28, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1374:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (21, 'Intel Core i5-11400F', 2800000, 'Old Gen Budget King', 'i9_14900k.jpg', 1, 50, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1375:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (3, 'Intel Core i7-14700Kkk', 10800000, '20 Cores, Hybrid Architecture', 'i9_14900k.jpg', 1, 0, NULL, NULL);
+fixed.sql:1376:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (29, 'Intel Core i7-10700K', 4800000, 'High Clock Legacy', 'i9_14900k.jpg', 1, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1377:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (30, 'AMD Ryzen 7 8700G', 9200000, 'Powerful APU, Radeon 780M', 'i9_14900k.jpg', 1, 33, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1378:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (31, 'NVIDIA RTX 4090 24GB', 55000000, 'Ultimate Gaming GPU', 'asus_rog_rtx_4090.jpg', 2, 10, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1379:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (32, 'RTX 4080 Super', 32000000, 'High-end 4K Gaming', 'asus_rog_rtx_4090.jpg', 2, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1380:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (34, 'AMD RX 7900 XTX', 28500000, 'AMD Flagship, 24GB', 'asus_rog_rtx_4090.jpg', 2, 12, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1381:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (261, 'GIGABYTE B760M GAMING PLUS WIFI DDR4', 3500000, 'TDP: 40W', 'z790_dark_kingpin.jpg', 4, 100, '2026-06-27 
+12:52:51.741', NULL);
+fixed.sql:1382:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (39, 'ASUS ROG RTX 4090', 62000000, 'Premium build cooling', 'asus_rog_rtx_4090.jpg', 2, 5, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1383:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (48, 'EVGA RTX 3080', 15000000, 'High performance legacy', 'asus_rog_rtx_4090.jpg', 2, 5, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1384:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (41, 'Gigabyte Eagle RTX 4060', 8200000, 'Triple Fan Budget', 'asus_rog_rtx_4090.jpg', 2, 60, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1385:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (42, 'RTX 4070 Super', 17800000, '12GB GDDR6X, Fast', 'asus_rog_rtx_4090.jpg', 2, 35, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1386:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (43, 'AMD RX 7600', 7900000, 'Budget RDNA 3', 'asus_rog_rtx_4090.jpg', 2, 50, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1387:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (44, 'RTX 3050 6GB', 5200000, 'Entry level RTX', 'asus_rog_rtx_4090.jpg', 2, 70, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1388:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (102, 'ProArt Z790-Creator', 13800000, 'For Creators', 'z790_dark_kingpin.jpg', 4, 10, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1389:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (45, 'Zotac RTX 4060', 7800000, 'Compact dual fan', 'asus_rog_rtx_4090.jpg', 2, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1390:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (46, 'Galax RTX 4070 Pink', 16900000, 'Pink Edition RGB', 'asus_rog_rtx_4090.jpg', 2, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1391:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (50, 'PowerColor RX 7800 XT', 14800000, 'Excellent cooling', 'asus_rog_rtx_4090.jpg', 2, 22, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1392:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (52, 'RX 6700 XT', 9500000, 'Great 1440p value', 'asus_rog_rtx_4090.jpg', 2, 40, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1393:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (53, 'Colorful RTX 4080', 31000000, 'LCD screen on GPU', 'asus_rog_rtx_4090.jpg', 2, 8, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1394:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (57, 'Intel Arc A750', 6500000, 'Budget King Intel', 'i9_14900k.jpg', 2, 40, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1395:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (59, 'Gigabyte RTX 4090', 59000000, 'Massive cooler', 'asus_rog_rtx_4090.jpg', 2, 4, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1396:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (63, 'Kingston Fury 16GB', 1250000, 'DDR4 3200MHz', 'sabrent_rocket_4tb.jpg', 3, 120, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1397:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (64, 'T-Force Delta 32GB', 3200000, 'DDR5 6000MHz White', 'corsair_3500x_black.png', 3, 45, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1398:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (69, 'Lexar Thor 32GB', 2100000, 'DDR4 3200MHz Budget', 'corsair_3500x_black.png', 3, 55, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1399:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (70, 'Fury Renegade 32GB', 4800000, 'DDR5 7200MHz', 'corsair_3500x_black.png', 3, 25, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1400:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (71, 'PNY XLR8 16GB', 1350000, 'DDR4 3200MHz RGB', 'corsair_3500x_black.png', 3, 60, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1401:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (72, 'Silicon Power 16GB', 950000, 'Value RAM 3200', 'corsair_3500x_black.png', 3, 150, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1402:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (74, 'Patriot Viper 16GB', 1450000, 'DDR4 4000MHz', 'corsair_3500x_black.png', 3, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1403:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (76, 'Thermaltake 16GB', 2200000, 'DDR4 3600MHz RGB', 'corsair_3500x_black.png', 3, 25, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1404:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (78, 'Apacer Panther 8GB', 750000, 'Budget Gaming RAM', 'corsair_3500x_black.png', 3, 100, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1405:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (79, 'GeIL Super Luce 16GB', 1300000, 'DDR4 3200MHz', 'corsair_3500x_black.png', 3, 50, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1406:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (40, 'MSI Gaming X RTX 4070', 18500000, 'Quiet and Cool', 'asus_rog_rtx_4090.jpg', 2, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1407:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (37, 'RTX 3060 12GB', 7800000, 'Popular Mid-range', 'asus_rog_rtx_4090.jpg', 2, 80, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1408:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (111, 'Z790 Dark Kingpin', 22000000, 'Limitless OC', 'z790_dark_kingpin.jpg', 4, 2, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1409:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (55, 'Radeon Pro W7800', 58000000, 'Professional Graphics', 'asus_rog_rtx_4090.jpg', 2, 3, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1410:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (62, 'G.Skill Trident Z5 32GB', 4200000, 'DDR5 6400MHz RGB', 'galax_hof_32gb.jpg', 3, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1411:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (262, 'RAM Kingmax Horizon 16GB DDR5 Bus 5600Mhz', 1200000, 'TDP: 10W', 'galax_hof_32gb.jpg', 3, 97, 
+'2026-06-27 12:52:52.239', NULL);
+fixed.sql:1412:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (84, 'Team Elite 16GB', 1600000, 'DDR5 4800 Basic', 'corsair_3500x_black.png', 3, 60, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1413:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (35, 'RTX 4060 Ti 8GB', 11500000, 'Efficient 1080p/2K', 'asus_rog_rtx_4090.jpg', 2, 43, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1414:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (5, 'Intel Core i5-13600K', 8200000, '14 Cores, Mid-range gaming', 'i9_14900k.jpg', 1, 54, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1415:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (6, 'AMD Ryzen 5 7600X', 5800000, '6 Cores, Zen 4 Architecture, AM5', 'i9_14900k.jpg', 1, 59, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1416:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (8, 'AMD Ryzen 9 7900X', 10500000, '12 Cores, 5.6GHz Boost', 'i9_14900k.jpg', 1, 18, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1417:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (2, 'AMD Ryzen 9 7950X3D', 17200000, '16 Cores, 128MB L3 Cache, AM5', 'i9_14900k.jpg', 1, 15, NULL, NULL);
+fixed.sql:1418:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (10, 'AMD Ryzen 7 5800X3D', 8500000, 'Legendary AM4 gaming CPU', 'i9_14900k.jpg', 1, 25, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1419:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (17, 'Intel Core i5-14400F', 5600000, '10 Cores, Efficient Gaming', 'i9_14900k.jpg', 1, 64, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1420:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (13, 'Intel Core i3-14100', 3800000, 'Entry level 14th Gen', 'i9_14900k.jpg', 1, 37, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1421:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (19, 'Intel Core i7-12700K', 7200000, '12 Cores, LGA 1700', 'i9_14900k.jpg', 1, 34, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1422:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (47, 'ASUS TUF RTX 3070 Ti', 12000000, 'Rugged build quality', 'asus_rog_rtx_4090.jpg', 2, 10, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1423:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (49, 'Sapphire RX 7900 GRE', 16500000, 'Golden Rabbit Edition', 'asus_rog_rtx_4090.jpg', 2, 18, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1424:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (51, 'GTX 1650', 3800000, 'No external power', 'asus_rog_rtx_4090.jpg', 2, 150, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1425:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (85, 'Crucial Pro 32GB', 3300000, '6000MHz Overclock', 'sabrent_rocket_4tb.jpg', 3, 45, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1426:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (86, 'Aorus RGB 16GB', 2400000, '3733MHz w/ Demo', 'corsair_3500x_black.png', 3, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1427:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (263, 'Ram KingSpec Heatsink Red 1x16GB DDR4 Bus 3200Mhz', 750000, 'TDP: 10W', 'galax_hof_32gb.jpg', 3, 100, 
+'2026-06-27 12:52:52.718', NULL);
+fixed.sql:1428:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (101, 'Z790 Taichi', 12500000, 'Gear design, E-ATX', 'z790_dark_kingpin.jpg', 4, 8, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1429:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (120, 'Valkyrie Z790', 9500000, 'Biostar Flagship', 'z790_dark_kingpin.jpg', 4, 7, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1430:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (121, 'Samsung 990 Pro 1T', 3200000, 'NVMe Gen4 7450MB/s', 'sabrent_rocket_4tb.jpg', 5, 60, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1431:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (135, 'Sabrent Rocket 4TB', 12500000, 'Huge capacity', 'sabrent_rocket_4tb.jpg', 5, 8, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1432:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (1, 'Intel Core i9-14900K', 15500000, '24 Cores, up to 6.0GHz, LGA 1700', 'i9_14900k.jpg', 1, 46, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1433:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (150, 'Crucial T705 2TB', 10500000, 'Fastest Gen5', 'sabrent_rocket_4tb.jpg', 5, 5, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1434:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (184, 'AMD Radeon RX 7900 XT GPU', 22834600, '20GB GDDR6, 80MB, 315W', 'asus_rog_rtx_4090.jpg', 2, 50, 
+'2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1435:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (91, 'ROG Maximus Z790 Hero', 16500000, 'Flagship Intel Board', 'z790_dark_kingpin.jpg', 4, 12, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1436:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (92, 'B760M Mortar WiFi', 4500000, 'Best Mid-range Intel', 'z790_dark_kingpin.jpg', 4, 45, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1437:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (95, 'B660M Pro RS', 3200000, 'Budget Intel 12/13', 'corsair_3500x_black.png', 4, 60, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1438:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (96, 'X670E Carbon WiFi', 11500000, 'High-end AM5', 'z790_dark_kingpin.jpg', 4, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1439:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (97, 'Prime H610M-K', 2100000, 'Office Intel Board', 'z790_dark_kingpin.jpg', 4, 100, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1440:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (100, 'Z790 GODLIKE', 35000000, 'Ultimate Overclock', 'z790_dark_kingpin.jpg', 4, 3, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1441:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (103, 'B650I Aorus Ultra', 7200000, 'ITX AM5 Board', 'z790_dark_kingpin.jpg', 4, 12, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1442:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (105, 'Crosshair X670E', 28000000, 'Best of AM5', 'z790_dark_kingpin.jpg', 4, 5, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1443:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (107, 'CVN B760M Frozen', 4200000, 'White Motherboard', 'z790_dark_kingpin.jpg', 4, 25, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1444:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (108, 'A520M S2H', 1650000, 'Budget AM4', 'corsair_3500x_black.png', 4, 90, '2026-04-06 13:46:29.076393', NULL);
+fixed.sql:1445:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (189, 'ASUS ROG Strix GeForce RTX 4090 OC Edition', 50774600, '24GB GDDR6X, 16384, PCIe 4.0', 
+'asus_rog_rtx_4090.jpg', 2, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1446:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (264, 'MSI GeForce RTX 5070 Ti 16GB Shadow 3X OC', 25000000, 'TDP: 250W', 'asus_rog_rtx_4090.jpg', 9, 99, 
+'2026-06-27 12:52:53.246', NULL);
+fixed.sql:1447:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (165, 'HP Z27k G3', 15500000, '4K Studio USB-C', 'corsair_3500x_black.png', 6, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1448:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (109, 'NZXT N7 Z790', 8500000, 'Clean Aesthetic', 'z790_dark_kingpin.jpg', 4, 18, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1449:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (110, 'A620M-HDV', 2800000, 'Cheap AM5 entry', 'corsair_3500x_black.png', 4, 55, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1450:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (112, 'X570S Tomahawk', 6500000, 'Silent AM4', 'corsair_3500x_black.png', 4, 20, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1451:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (113, 'A520M-Plus', 2400000, 'Durable AM4', 'corsair_3500x_black.png', 4, 45, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1452:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (114, 'Z790 UD', 5500000, 'Basic Z790', 'z790_dark_kingpin.jpg', 4, 35, '2026-04-06 13:46:29.076393', NULL);
+fixed.sql:1453:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (115, 'B550M Steel Legend', 3800000, 'Solid B550 AM4', 'corsair_3500x_black.png', 4, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1454:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (116, 'MSI B650 Gaming', 4900000, 'Budget AM5 WiFi', 'z790_dark_kingpin.jpg', 4, 50, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1455:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (266, 'MSI GeForce RTX 5060 Ventus 2X OC 8GB', 8500000, 'TDP: 150W', 'asus_rog_rtx_4090.jpg', 9, 100, 
+'2026-06-27 12:52:54.227', NULL);
+fixed.sql:1456:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (267, 'ZOTAC GeForce RTX 5060 Ti 8GB TWIN EDGE GDDR7', 11000000, 'TDP: 160W', 'asus_rog_rtx_4090.jpg', 9, 100, 
+'2026-06-27 12:52:54.716', NULL);
+fixed.sql:1457:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (269, N'Ổ Cứng SSD KingSpec NVMe 512GB (NE-512)', 800000, 'TDP: 10W', 'sabrent_rocket_4tb.jpg', 7, 100, 
+'2026-06-27 12:52:55.693', NULL);
+fixed.sql:1458:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (265, 'GIGABYTE GeForce RTX 5080 WINDFORCE OC SFF 16G', 35000000, 'TDP: 300W', 'asus_rog_rtx_4090.jpg', 9, 98, 
+'2026-06-27 12:52:53.742', NULL);
+fixed.sql:1459:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (268, N'Ổ cứng SSD Kingston NV3 1TB M.2 PCIe NVMe Gen4', 1800000, 'TDP: 10W', 'sabrent_rocket_4tb.jpg', 7, 97, 
+'2026-06-27 12:52:55.209', NULL);
+fixed.sql:1460:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (118, 'H610M S2H', 2250000, 'LGA 1700 Office', 'z790_dark_kingpin.jpg', 4, 110, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1461:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (119, 'X670E Steel Legend', 8900000, 'White AM5 High', 'z790_dark_kingpin.jpg', 4, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1462:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (122, 'Samsung 980 Pro 2T', 4500000, 'NVMe Gen4 7000MB/s', 'sabrent_rocket_4tb.jpg', 5, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1463:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (56, 'Intel Arc A770 16GB', 9200000, 'Intel High-end GPU', 'i9_14900k.jpg', 2, 25, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1464:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (58, 'ASUS Dual RTX 4070', 17500000, 'Clean white build', 'asus_rog_rtx_4090.jpg', 2, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1465:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (60, 'PNY RTX 4060', 7500000, 'Small and efficient', 'asus_rog_rtx_4090.jpg', 2, 55, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1466:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (61, 'Corsair Vengeance 32GB', 3500000, 'DDR5 6000MHz Black', 'galax_hof_32gb.jpg', 3, 50, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1467:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (65, 'ADATA XPG 16GB', 1800000, 'DDR5 5200MHz', 'corsair_3500x_black.png', 3, 70, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1468:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (66, 'Crucial 8GB', 650000, 'Standard office RAM', 'sabrent_rocket_4tb.jpg', 3, 200, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1469:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (67, 'Dominator Titanium 64GB', 9500000, 'DDR5 7200MHz', 'corsair_3500x_black.png', 3, 10, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1470:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (68, 'Ripjaws V 16GB', 1100000, 'DDR4 3600MHz', 'corsair_3500x_black.png', 3, 90, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1471:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (73, 'Mushkin Redline 32GB', 3400000, 'DDR5 5600MHz', 'corsair_3500x_black.png', 3, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1472:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (75, 'Samsung 32GB', 2800000, 'DDR5 4800MHz OEM', 'sabrent_rocket_4tb.jpg', 3, 30, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1473:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (123, 'WD SN850X 1TB', 2600000, 'Top gaming SSD', 'corsair_3500x_black.png', 5, 55, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1474:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (124, 'Crucial P3 Plus 1T', 1850000, 'Budget Gen4', 'sabrent_rocket_4tb.jpg', 5, 100, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1475:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (126, 'Samsung 870 EVO 1T', 2100000, 'Best SATA SSD', 'sabrent_rocket_4tb.jpg', 5, 80, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1476:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (127, 'P41 Platinum 2T', 5200000, 'Super Fast Gen4', 'corsair_3500x_black.png', 5, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1477:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (128, 'Lexar NM790 2T', 3800000, 'Value Gen4 7400', 'corsair_3500x_black.png', 5, 45, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1478:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (129, 'Crucial T700 1TB', 5800000, 'Gen5 11700MB/s', 'sabrent_rocket_4tb.jpg', 5, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1479:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (131, 'TeamGroup MP33 1T', 1400000, 'Budget NVMe', 'corsair_3500x_black.png', 5, 90, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1480:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (132, 'XPG S70 Blade 1T', 2200000, 'PS5 Gen4', 'corsair_3500x_black.png', 5, 65, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1481:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (133, 'SN580 1TB', 1700000, 'Reliable Gen4', 'corsair_3500x_black.png', 5, 75, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1482:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (134, 'FireCuda 530 2TB', 5900000, 'High endurance', 'corsair_3500x_black.png', 5, 18, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1483:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (139, 'MP600 Pro 2TB', 4800000, 'Optimized for PS5', 'corsair_3500x_black.png', 5, 22, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1484:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (143, 'Spatium M480 2TB', 4600000, 'High-end MSI SSD', 'corsair_3500x_black.png', 5, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1485:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (151, 'LG 27GR95QE', 22500000, '27" OLED 240Hz', 'corsair_3500x_black.png', 6, 12, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1486:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (152, 'Dell U2723QE', 14800000, '27" 4K IPS Black', 'corsair_3500x_black.png', 6, 25, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1487:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (153, 'VG249Q', 4200000, '24" 144Hz IPS', 'corsair_3500x_black.png', 6, 60, '2026-04-06 13:46:29.076393', NULL);
+fixed.sql:1488:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (156, 'AOC 24G2', 3900000, 'Popular 144Hz', 'corsair_3500x_black.png', 6, 80, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1489:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (157, 'ViewSonic VX2728', 4500000, '27" 165Hz IPS', 'corsair_3500x_black.png', 6, 50, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1490:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (161, 'Samsung M7', 8200000, '32" 4K Smart', 'sabrent_rocket_4tb.jpg', 6, 30, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1491:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (162, 'LG 24MP60G', 2900000, 'Budget 24" IPS', 'corsair_3500x_black.png', 6, 100, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1492:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (77, 'Zadak Spark 32GB', 3900000, 'DDR5 6000MHz', 'corsair_3500x_black.png', 3, 15, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1493:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (80, 'V-Color Prism 32GB', 3100000, 'DDR4 3600MHz RGB', 'corsair_3500x_black.png', 3, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1494:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (81, 'Kingston Fury 64GB', 6800000, 'DDR5 5600MHz Kit', 'sabrent_rocket_4tb.jpg', 3, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1495:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (82, 'Vengeance LPX 32GB', 2500000, 'DDR4 3200 Low Profile', 'galax_hof_32gb.jpg', 3, 80, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1496:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (83, 'Trident Z Neo 32GB', 3400000, 'Optimized for Ryzen', 'galax_hof_32gb.jpg', 3, 35, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1497:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (87, 'Lexar Ares 32GB', 3600000, 'DDR5 6400MHz', 'corsair_3500x_black.png', 3, 30, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1498:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (90, 'Oloy Blade 32GB', 3250000, 'DDR5 6000MHz Black', 'corsair_3500x_black.png', 3, 25, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1499:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (93, 'Z790 Aorus Elite', 7800000, 'High perf Z790', 'z790_dark_kingpin.jpg', 4, 30, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1500:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (94, 'TUF B650-Plus', 5800000, 'Standard AM5 Board', 'z790_dark_kingpin.jpg', 4, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1501:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (98, 'B450M DS3H', 1850000, 'Legendary AM4 Budget', 'corsair_3500x_black.png', 4, 80, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1502:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (99, 'ROG Strix B760-I', 5900000, 'ITX Intel Board', 'z790_dark_kingpin.jpg', 4, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1503:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (104, 'PRO H610M-E', 1950000, 'Cheap office build', 'z790_dark_kingpin.jpg', 4, 150, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1504:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (106, 'Biostar B760MZ', 3100000, 'Budget B760', 'z790_dark_kingpin.jpg', 4, 40, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1505:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (117, 'Prime Z790-P', 6200000, 'Mainstream Z790', 'z790_dark_kingpin.jpg', 4, 30, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1506:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (125, 'Kingston NV2 500G', 950000, 'Entry NVMe', 'sabrent_rocket_4tb.jpg', 5, 150, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1507:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (130, 'Aorus Gen5 2TB', 9500000, 'Gen5 w/ Heatsink', 'corsair_3500x_black.png', 5, 10, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1508:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (136, '970 EVO Plus 2TB', 3900000, 'Gen3 King', 'corsair_3500x_black.png', 5, 30, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1509:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (137, 'PNY CS2241 1TB', 1600000, 'Budget Gen4', 'corsair_3500x_black.png', 5, 50, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1510:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (271, 'Cooler Master MWE 650 - 80 Plus Bronze - V3 230V (650W)', 1500000, 'TDP: 0W', 'corsair_rm850e.jpg', 11, 
+100, '2026-06-27 12:52:56.68', NULL);
+fixed.sql:1511:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (272, N'Nguồn FSP HV PRO 650W - 80 Plus Bronze', 1400000, 'TDP: 0W', 'corsair_rm850e.jpg', 11, 100, '2026-06-27 
+12:52:57.17', NULL);
+fixed.sql:1512:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (273, 'Corsair CX650 - 80 Plus Bronze (650W)', 1600000, 'TDP: 0W', 'corsair_rm850e.jpg', 11, 100, '2026-06-27 
+12:52:57.668', NULL);
+fixed.sql:1513:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (274, 'Corsair 3500X TG Mid Tower Black', 2000000, 'TDP: 0W', 'corsair_rm850e.jpg', 12, 99, '2026-06-27 
+12:52:58.157', NULL);
+fixed.sql:1514:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (275, 'Corsair FRAME 4500X RS-R ARGB Panoramic Black', 3500000, 'TDP: 0W', 'galax_hof_32gb.jpg', 12, 98, 
+'2026-06-27 12:52:58.657', NULL);
+fixed.sql:1515:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (276, N'Tản nhiệt AIO Corsair NAUTILUS 360 ARGB Black', 2800000, 'TDP: 15W', 'corsair_rm850e.jpg', 8, 97, 
+'2026-06-27 12:52:59.35', NULL);
+fixed.sql:1516:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (270, 'Corsair RM850e ATX 3.1 - 80 Plus Gold - Full Modular (850W)', 3500000, 'TDP: 0W', 'corsair_rm850e.jpg', 
+11, 97, '2026-06-27 12:52:56.192', NULL);
+fixed.sql:1517:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (138, 'Silicon Power UD90 1650000', 1650000, 'Gen4 Value', 'corsair_3500x_black.png', 5, 60, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1518:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (140, 'KC3000 1TB', 2450000, 'Fast Gen4 OS', 'corsair_3500x_black.png', 5, 40, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1519:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (166, 'Nitro VG271U', 6500000, '27" 2K 144Hz', 'corsair_3500x_black.png', 6, 45, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1520:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (171, 'ProArt PA278QV', 8900000, 'Color Accurate', 'corsair_3500x_black.png', 6, 18, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1521:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (172, 'HKC ANT27TQC', 5500000, 'Budget 2K Curved', 'corsair_3500x_black.png', 6, 55, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1522:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (173, 'MSI G2412', 3500000, 'Budget 170Hz', 'corsair_3500x_black.png', 6, 90, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1523:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (180, 'Xiaomi Mi 34', 9500000, '34" 2K UltraWide', 'corsair_3500x_black.png', 6, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1524:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (141, 'Crucial MX500 1TB', 1800000, 'SATA storage', 'sabrent_rocket_4tb.jpg', 5, 85, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1525:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (142, 'SN350 480GB', 850000, 'Cheap upgrade', 'corsair_3500x_black.png', 5, 120, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1526:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (144, 'Transcend 250S 1T', 2100000, 'Gen4 with Cache', 'corsair_3500x_black.png', 5, 35, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1527:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (145, 'Viper VP4300 2TB', 5400000, 'Dual heatsinks', 'corsair_3500x_black.png', 5, 12, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1528:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (146, 'Lexar NM620 512G', 900000, 'Gen3 Budget', 'corsair_3500x_black.png', 5, 100, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1529:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (147, 'Netac N7000 2TB', 3600000, 'Gen4 7000MB/s', 'corsair_3500x_black.png', 5, 40, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1530:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (149, 'Adata SU650 240G', 450000, 'Cheapest SSD', 'corsair_3500x_black.png', 5, 200, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1531:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (154, 'Odyssey Neo G8', 28000000, '32" 4K 240Hz', 'samsung_990pro.jpg', 6, 8, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1532:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (155, 'Gigabyte M27Q', 7800000, '27" 2K 170Hz', 'corsair_3500x_black.png', 6, 35, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1533:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (158, 'MAG274QRF-QD', 10500000, '2K Quantum Dot', 'corsair_3500x_black.png', 6, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1534:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (159, 'AW3423DW', 32000000, '34" QD-OLED', 'samsung_990pro.jpg', 6, 5, '2026-04-06 13:46:29.076393', NULL);
+fixed.sql:1535:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (163, 'Swift PG42UQ', 38000000, '42" OLED 4K', 'samsung_990pro.jpg', 6, 4, '2026-04-06 13:46:29.076393', NULL);
+fixed.sql:1536:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (164, 'Gigabyte G24F 2', 4100000, '24" 180Hz OC', 'corsair_3500x_black.png', 6, 70, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1537:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (167, 'Dell S2721DGF', 9200000, 'Fast IPS 165Hz', 'corsair_3500x_black.png', 6, 22, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1538:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (168, 'LG DualUp', 16000000, 'Square 16:18', 'corsair_3500x_black.png', 6, 10, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1539:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (169, 'Odyssey G5', 7200000, '27" 2K Curved', 'samsung_990pro.jpg', 6, 40, '2026-04-06 13:46:29.076393', NULL);
+fixed.sql:1540:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (170, 'Legion Y25-30', 6800000, '24.5" 240Hz', 'corsair_3500x_black.png', 6, 25, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1541:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (175, 'LG 29WP500', 5200000, '29" UltraWide', 'corsair_3500x_black.png', 6, 35, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1542:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (176, 'Philips 242E1', 3100000, 'Budget 144Hz', 'corsair_3500x_black.png', 6, 80, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1543:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (177, 'AOC CU34G2X', 12500000, '34" UW 144Hz', 'corsair_3500x_black.png', 6, 15, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1544:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (178, 'Xeneon Flex', 45000000, 'Bendable OLED', 'samsung_990pro.jpg', 6, 2, '2026-04-06 13:46:29.076393', NULL);
+fixed.sql:1545:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (179, 'Zowie XL2546K', 13500000, 'Pro Esport 240Hz', 'corsair_3500x_black.png', 6, 20, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1546:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (181, 'Intel Arc A770 Limited Edition GPU', 8356600, '16GB GDDR6, 256-bit, 2100 MHz, 225W', 'i9_14900k.jpg', 2, 
+50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1547:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (183, 'Intel Arc A580 Graphics Card', 4546600, '8GB GDDR6, 256-bit, 1700 MHz, 185W', 'asus_rog_rtx_4090.jpg', 
+2, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1548:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (186, 'AMD Ryzen 5 5600X Desktop Processor', 3784600, '6, 12, AM4, 65W', 'i9_14900k.jpg', 1, 50, '2026-06-05 
+10:05:55.522526', NULL);
+fixed.sql:1549:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (188, 'ASUS ROG Strix X670E-E Gaming WiFi', 12674600, 'AM5, AMD X670E, PCIe 5.0, ATX', 'z790_dark_kingpin.jpg', 
+4, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1550:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (190, 'ASUS ROG Swift OLED PG32UCDM', 32994600, '32-inch, 3840x2160 (4K), 240Hz, QD-OLED', 
+'samsung_990pro.jpg', 6, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1551:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (192, 'ASUS ROG Thor 1200W Platinum II', 8102600, '1200W, 80 Plus Platinum, Full Modular, Real-time power 
+draw', 'corsair_3500x_black.png', 11, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1552:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (193, 'MSI MEG Z790 GODLIKE MAX', 30454600, 'LGA1700, Intel Z790, 7x M.2 slots, M-Vision Dashboard', 
+'z790_dark_kingpin.jpg', 4, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1553:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (195, 'MSI GeForce RTX 4080 SUPER 16G GAMING X SLIM', 26644600, '16GB GDDR6X, TRI FROZR 3, 2625 MHz', 
+'asus_rog_rtx_4090.jpg', 2, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1554:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (196, 'MSI MPG 271QRX QD-OLED', 20294600, '27-inch, 2560x1440 (2K), 360Hz, 0.03ms (GtG)', 
+'asus_rog_rtx_4090.jpg', 6, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1555:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (198, 'MSI MAG CORELIQUID I360', 3530600, '360mm, ARGB Fans, Infinite Mirror IPS Style Design', 
+'i9_14900k.jpg', 13, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1556:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (199, 'MSI SPATIUM M570 PCIe 5.0 NVMe M.2 HS', 7594600, '2TB, Up to 12400 MB/s, Up to 11800 MB/s', 
+'sabrent_rocket_4tb.jpg', 5, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1557:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (88, 'Netac Shadow 16GB', 1100000, 'Budget RGB RAM', 'corsair_3500x_black.png', 3, 100, NULL, NULL);
+fixed.sql:1558:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (200, 'Gigabyte Z790 AORUS XTREME X', 25374600, 'LGA1700, 24+1+2 Phases, Wi-Fi 7, PCIe 5.0 x16', 
+'z790_dark_kingpin.jpg', 4, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1559:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (202, 'Gigabyte M27Q Gaming Monitor', 7594600, '27-inch, Super Speed IPS, 2560x1440, 170Hz', 
+'samsung_990pro.jpg', 6, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1560:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (203, 'Gigabyte AORUS FO32U2P', 30454600, '32-inch, OLED (QD-OLED), 3840x2160, DP 2.1 UHBR20 supported', 
+'corsair_3500x_black.png', 6, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1561:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (209, 'Corsair iCUE LINK H150i LCD Liquid CPU Cooler', 7340600, '360mm, 3x QX120 RGB Fans, 2.1-inch IPS 
+Display, iCUE LINK Ecosystem', 'i9_14900k.jpg', 13, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1562:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (210, 'Corsair 5000D AIRFLOW Tempered Glass Mid-Tower', 4165600, 'Mid-Tower, Black, RapidRoute System, Up to 
+10x 120mm fans', 'corsair_rm850e.jpg', 12, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1563:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (212, 'Corsair RM1000x Shift Fully Modular ATX PSU', 5308600, '1000W, 80 PLUS Gold, Side-mounted modular 
+connections, ATX 3.0 & PCIe 5.0 ready', 'corsair_rm850e.jpg', 11, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1564:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (213, 'Corsair AX1600i Digital ATX Power Supply', 15468600, '1600W, 80 PLUS Titanium, Gallium Nitride (GaN) 
+FETs', 'corsair_rm850e.jpg', 11, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1565:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (215, 'Corsair Darkstar Wireless MMO Gaming Mouse', 4292600, '15 programmable buttons, MARKSMAN 26K DPI 
+Optical, SLIPSTREAM Wireless & Bluetooth', 'corsair_rm850e.jpg', 16, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1566:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (216, 'Corsair Virtuoso RGB Wireless XT Headset', 6832600, 'High-Density 50mm Neodymium, Spatial Dolby Atmos, 
+Broadcast-grade detachable mic', 'corsair_rm850e.jpg', 17, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1567:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (217, 'Logitech G Pro X Superlight 2 Wireless GamingMouse', 4038600, '60 grams, HERO 2 Sensor (32,000 DPI), 
+LIGHTFORCE Hybrid Switches, 4000Hz max polling', 'corsair_3500x_black.png', 16, 50, '2026-06-05 10:05:55.522526', 
+NULL);
+fixed.sql:1568:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (219, 'Logitech G915 TKL Wireless Mechanical Keyboard', 5816600, 'Tenkeyless (TKL), Low Profile GL 
+Tactile/Linear/Clicky, Up to 40 hours (100% brightness)', 'corsair_3500x_black.png', 15, 50, '2026-06-05 
+10:05:55.522526', NULL);
+fixed.sql:1569:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (220, 'Logitech G Pro X TKL LIGHTSPEED Gaming Keyboard', 5054600, 'Dual-shot PBT keycaps, LIGHTSPEED Wireless, 
+Bluetooth, USB, Dedicated volume roller and controls', 'corsair_3500x_black.png', 15, 50, '2026-06-05 
+10:05:55.522526', NULL);
+fixed.sql:1570:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (221, 'Logitech G Pro X 2 LIGHTSPEED Wireless Headset', 6324600, '50mm Graphene Drivers, LIGHTSPEED, Bluetooth, 
+3.5mm wired, Up to 50 hours battery life', 'corsair_3500x_black.png', 17, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1571:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (223, 'Logitech MX Keys S Wireless Keyboard', 2768600, 'Spherically-dished Perfect Stroke keys, Smart 
+illumination proximity sensor, Easy-Switch up to 3 devices', 'corsair_3500x_black.png', 15, 50, '2026-06-05 
+10:05:55.522526', NULL);
+fixed.sql:1572:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (224, 'Razer Viper V3 Pro Wireless Gaming Mouse', 4038600, '54 grams, Focus Pro 35K Optical Sensor Gen-2, True 
+8000Hz HyperPolling Wireless', 'corsair_3500x_black.png', 16, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1573:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (225, 'Razer DeathAdder V3 Pro Wireless Gaming Mouse', 3784600, '63 grams, Right-handed ergonomic design, Focus 
+Pro 30K Optical Sensor', 'corsair_3500x_black.png', 16, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1574:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (227, 'Razer BlackWidow V4 Pro Mechanical GamingKeyboard', 5816600, 'Razer Green Clicky / Yellow Linear 
+Switches, Per-key & 3-sided underglow RGB, 8 dedicated macro keys', 'corsair_3500x_black.png', 15, 50, '2026-06-05 
+10:05:55.522526', NULL);
+fixed.sql:1575:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (228, 'Razer BlackShark V2 Pro (2023 Edition) WirelessHeadset', 5054600, 'Razer HyperClear Super Wideband Mic, 
+TriForce Titanium 50mm Drivers, Up to 70 hours', 'corsair_3500x_black.png', 17, 50, '2026-06-05 10:05:55.522526', 
+NULL);
+fixed.sql:1576:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (232, 'Samsung Odyssey OLED G9 (G95SC) Gaming Monitor', 40614600, '49-inch Curved Ultra-wide, 5120x1440 (Dual 
+QHD), 240Hz, 0.03ms (GtG)', 'sabrent_rocket_4tb.jpg', 6, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1577:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (233, 'Samsung Odyssey Ark Gen 2 Mini-LED Monitor', 63474600, '55-inch 1000R Curved, 3840x2160 (4K), 165Hz, 
+Yes, rotates vertically', 'sabrent_rocket_4tb.jpg', 6, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1578:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (235, 'Kingston FURY Renegade DDR5 RGB 32GB (2x16GB) 7200MHz', 4292600, '32GB Kit, 7200 MT/s, CL38-44-44, 
+1.45V', 'galax_hof_32gb.jpg', 3, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1579:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (236, 'Kingston FURY Beast DDR5 32GB (2x16GB) 6000MHz', 3022600, '32GB Kit, 6000 MT/s, AMD EXPO / Intel XMP 3.0 
+certified', 'galax_hof_32gb.jpg', 3, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1580:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (237, 'Kingston KC3000 PCIe 4.0 NVMe M.2 SSD 2TB', 3911600, '2TB, Up to 7000 MB/s, Up to 7000 MB/s, Phison 
+E18', 'sabrent_rocket_4tb.jpg', 5, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1581:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (238, 'Kingston NV2 PCIe 4.0 NVMe M.2 SSD 1TB', 1625600, '1TB, Up to 3500 MB/s, Up to 2100 MB/s, M.2 2280', 
+'sabrent_rocket_4tb.jpg', 5, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1582:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (240, 'WD Red Pro NAS Internal Hard Drive 12TB', 7594600, '12TB, 7200 RPM, 256MB, SATA 6 Gb/s', 
+'corsair_3500x_black.png', 10, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1583:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (241, 'Seagate IronWolf Pro 16TB NAS HDD', 8356600, '16TB, 550TB/year, Rotational Vibration (RV) sensors', 
+'sabrent_rocket_4tb.jpg', 10, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1584:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (243, 'NZXT H9 Flow Dual-Chamber Mid-Tower', 4038600, 'Wrap-around tempered glass pane, 4x F120Q Airflow fans, 
+Up to 435mm', 'corsair_3500x_black.png', 12, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1585:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (244, 'NZXT Kraken Elite 360 RGB Liquid Cooler', 7594600, '360mm aluminum radiator, 2.36-inch wide-angle 
+TFT-LCD display, 640x640 pixels', 'rog_ryujin_360.jpg', 13, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1586:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (246, 'BenQ ZOWIE XL2566K 360Hz Esports Gaming Monitor', 15214600, '24.5-inch TN Panel, 360Hz, DyAc+ Technology 
+motion blur reduction', 'samsung_990pro.jpg', 6, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1587:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (205, 'Gigabyte UD1000GM PG5 (Rev 2.0)', 4038600, '1000W, PCIe Gen 5.0 (12VHPWR), 80 PLUS Gold', 
+'corsair_3500x_black.png', 11, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1588:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (206, 'Gigabyte AORUS C500 GLASS', 4546600, 'Mid Tower, 4mm Tempered Glass, Up to 420mm front', 
+'corsair_3500x_black.png', 12, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1589:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (229, 'Samsung 990 PRO PCIe 4.0 NVMe M.2 SSD 2TB', 4546600, '2TB, Up to 7450 MB/s, Up to 6900 MB/s, Samsung 
+Pascal Controller', 'sabrent_rocket_4tb.jpg', 5, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1590:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (185, 'AMD Radeon RX 7800 XT GPU', 12674600, '16GB GDDR6, 64MB, 263W', 'asus_rog_rtx_4090.jpg', 2, 50, 
+'2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1591:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (187, 'ASUS ROG Maximus Z790 Dark Hero', 17754600, 'LGA1700, Intel Z790, 4x DDR5 (Up to 192GB), ATX', 
+'z790_dark_kingpin.jpg', 4, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1592:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (191, 'ASUS ROG Ryujin III 360 ARGB', 8864600, '360mm, Asetek 8th Gen, 3.5-inch Full Color', 
+'rog_ryujin_360.jpg', 13, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1593:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (148, '870 QVO 4TB', 8500000, 'Massive SATA', 'corsair_3500x_black.png', 5, 31, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1594:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (174, 'Dell E2222H', 2200000, 'Office 22"', 'corsair_3500x_black.png', 6, 150, '2026-04-06 13:46:29.076393', 
+NULL);
+fixed.sql:1595:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (230, 'Samsung 990 EVO PCIe 4.0 x4 / 5.0 x2 M.2 SSD 1TB', 2260600, '1TB, Up to 5000 MB/s, Up to 4200 MB/s', 
+'sabrent_rocket_4tb.jpg', 5, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1596:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (207, 'Corsair Dominator Titanium RGB DDR5 32GB (2x16GB)6000MHz', 4673600, '32GB, 6000 MT/s, CL30, Intel XMP 
+3.0 / AMD EXPO', 'galax_hof_32gb.jpg', 3, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1597:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (194, 'MSI MAG B650 TOMAHAWK WIFI', 5562600, 'AM5, AMD B650, DDR5 7600+(OC), Realtek 2.5Gbps LAN', 
+'z790_dark_kingpin.jpg', 4, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1598:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (197, 'MSI MEG MAESTRO 700L PZ', 10642600, 'ATX Full Tower, Curved Tempered Glass, Back-connect (Project Zero) 
+support', 'corsair_3500x_black.png', 12, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1599:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (201, 'Gigabyte X670E AORUS MASTER', 11404600, 'AM5, AMD X670E, 4x M.2 PCIe 5.0, Intel 2.5GbE LAN', 
+'z790_dark_kingpin.jpg', 4, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1600:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (204, 'Gigabyte AORUS Gen5 12000 SSD 2TB', 8102600, 'PCIe 5.0 x4, NVMe 2.0, 12,400 MB/s, 11,800 MB/s', 
+'sabrent_rocket_4tb.jpg', 5, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1601:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (208, 'Corsair Vengeance RGB DDR5 64GB (2x32GB)5600MHz', 5562600, '64GB, 5600 MT/s, CL40', 
+'galax_hof_32gb.jpg', 3, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1602:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (211, 'Corsair iCUE LINK 6500X RGB Mid-Tower DualChamber', 5054600, 'Dual Chamber Layout, Reverse-connector 
+support, Front & Side Tempered Glass', 'corsair_rm850e.jpg', 12, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1603:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (214, 'Corsair K100 RGB Mechanical Gaming Keyboard', 6324600, 'Corsair OPX Optical-Mechanical, AXON 4000Hz 
+Hyper-polling, iCUE Control Wheel', 'corsair_rm850e.jpg', 15, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1604:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (218, 'Logitech G502 X LIGHTSPEED Wireless GamingMouse', 3530600, 'HERO 25K Sensor, 13 programmable controls, 
+Dual-mode infinite scroll', 'corsair_3500x_black.png', 16, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1605:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (222, 'Logitech MX Master 3S Wireless Mouse', 2514600, '8K DPI tracking on any surface, Quiet clicks 
+technology, MagSpeed Electromagnetic scrolling', 'corsair_3500x_black.png', 16, 50, '2026-06-05 10:05:55.522526', 
+NULL);
+fixed.sql:1606:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (226, 'Razer Huntsman V3 Pro TKL Mechanical Keyboard', 5562600, 'Razer Analog Optical Switches Gen-2, Rapid 
+Trigger mode with adjustable actuation (0.1- 4.0mm), Dual-purpose digital dial', 'corsair_3500x_black.png', 15, 50, 
+'2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1607:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (231, 'Samsung T7 Shield Portable SSD 2TB', 4292600, '2TB, USB 3.2 Gen 2 (10Gbps), IP65 water & dust resistant, 
+3-meter drop proof', 'sabrent_rocket_4tb.jpg', 5, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1608:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (234, 'Samsung Galaxy Buds3 Pro', 6324600, 'Hi-Fi 24-bit Ultra High Quality Audio, Adaptive Noise Cancelling 
+with Blade Lights, Stem style ergonomic fit', 'sabrent_rocket_4tb.jpg', 17, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1609:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (239, 'Kingston FURY Impact DDR5 SO-DIMM 32GB (2x16GB) 5600MHz', 3149600, 'Laptop Memory (SO-DIMM), 32GB Kit, 
+5600 MT/s', 'galax_hof_32gb.jpg', 3, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1610:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (242, 'Noctua NH-D15 chromax.black Dual-Tower Cooler', 3022600, '2x NF-A15 HS-PWM fans, Full black design, 
+Intel LGA1700/AM5 ready', 'rog_ryujin_360.jpg', 13, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1611:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (245, 'SteelSeries Arctis Nova Pro Wireless Headset', 8864600, 'Nova Pro Acoustic System, Active Noise 
+Cancellation with Transparency Mode, Dual Battery Infinity System', 'corsair_3500x_black.png', 17, 50, '2026-06-05 
+10:05:55.522526', NULL);
+fixed.sql:1612:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (248, 'Crucial Pro DDR5 48GB (2x24GB) 5600MHz Kit', 3784600, '48GB Kit, 5600 MT/s, Low-profile aluminum black 
+heatsink', 'galax_hof_32gb.jpg', 3, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1613:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (249, 'Fractal Design North Charcoal Black WoodMid-Tower', 3530600, 'Real walnut wood front panel struts, Mesh 
+or Tempered Glass available, 2x Aspect 14 PWM fans', 'corsair_3500x_black.png', 12, 50, '2026-06-05 10:05:55.522526', 
+NULL);
+fixed.sql:1614:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (250, 'Lian Li O11 Dynamic EVO RGB Black', 4292600, 'Dual-chamber adjustable ATX case, Two L-shaped diffuse LED 
+RGB strips, Reversible design architecture', 'corsair_3500x_black.png', 12, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1615:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (252, 'EVGA SuperNOVA 1000 G7 Gold Modular PSU', 4800600, '1000W, 80 PLUS Gold Certified, Ultra-compact 130mm 
+chassis size', 'asus_rog_rtx_4090.jpg', 11, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1616:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (253, 'DeepCool AK620 Digital Dual-Tower Air Cooler', 2006600, 'Real-time temperature and usage status top 
+screen, 2x FK120 fluid dynamic bearing fans, 6x 6mm copper heatpipes', 'rog_ryujin_360.jpg', 13, 50, '2026-06-05 
+10:05:55.522526', NULL);
+fixed.sql:1617:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (254, 'Thermalright Peerless Assassin 120 SE AirCooler', 990600, 'Dual tower heatsink design, 2x TL-C12C 120mm 
+PWM fans, 155mm standard height', 'rog_ryujin_360.jpg', 13, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1618:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (182, 'Intel Arc A750 Graphics Card', 6324600, '8GB GDDR6, 256-bit, 2050 MHz, 225W', 'asus_rog_rtx_4090.jpg', 
+2, 49, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1619:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (247, 'Sony WH-1000XM5 Wireless Noise CancelingHeadphones', 10134600, 'Integrated Processor V1 & HD Noise 
+CancelingProcessor QN1, 8 microphones for extreme voice pick up, Up to 30 hours total life', 
+'corsair_3500x_black.png', 17, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1620:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (251, 'Lian Li UNI FAN TL LCD 120 Triple Pack Black', 3784600, '120mm fans, Built-in 1.6-inch LCD screen on 
+center fan, Daisy-chain interlocking mechanism', 'rog_ryujin_360.jpg', 14, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1621:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (255, 'Be Quiet! Dark Power 13 1000W Titanium ATX 3.0PSU', 7340600, '1000W, 80 PLUS Titanium (up to 95.8%), 
+Frameless Silent Wings fan optimization', 'corsair_rm850e.jpg', 11, 50, '2026-06-05 10:05:55.522526', NULL);
+fixed.sql:1622:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (7, 'Intel Core i9-13900KS', 18500000, 'Special Edition, 6.0GHz', 'i9_14900k.jpg', 1, 0, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1623:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (12, 'AMD Ryzen 5 5600G', 3200000, 'Integrated Vega Graphics', 'i9_14900k.jpg', 1, 71, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1624:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (23, 'Intel Core i9-11900K', 6500000, 'Legacy Flagship LGA 1200', 'i9_14900k.jpg', 1, 9, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1625:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (54, 'Quadro RTX A4000', 22000000, 'Workstation GPU', 'asus_rog_rtx_4090.jpg', 2, 0, '2026-04-06 
+13:46:29.076393', NULL);
+fixed.sql:1626:INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) 
+VALUES (89, 'Galax HOF 32GB', 5500000, '8000MHz White OC', 'galax_hof_32gb.jpg', 3, 3, '2026-04-06 13:46:29.076393', 
+NULL);
+
+

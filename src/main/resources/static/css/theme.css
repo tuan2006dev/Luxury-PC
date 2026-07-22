@@ -3,26 +3,18 @@
 ============================================ */
 /* Base light theme colors */
 body.light-mode {
-  --black: #ffffff;
-  /* Main background becomes white */
-  --deep: #f8f9fa;
-  /* Deep sections become light gray */
-  --dark: #e9ecef;
-  /* Dark surfaces become medium-light gray */
-  --mid: #dee2e6;
-  /* Borders and mid elements */
-
-  --cream: #111111;
-  /* Main text color becomes very dark gray/black */
-  --white: #0a0a0a;
-  /* Inverted white text becomes black */
-  --text-muted: #555555;
-  /* Muted text becomes darker for readability */
-
-  --gold: #a67c00;
-  /* Gold color slightly darkened for better contrast on white */
-  --gold-light: #c9a84c;
-  --gold-dark: #664d00;
+  --black: #ffffff;      /* Main background becomes white */
+  --deep: #f8f9fa;       /* Deep sections become light gray */
+  --dark: #e9ecef;       /* Dark surfaces become medium-light gray */
+  --mid: #dee2e6;        /* Borders and mid elements */
+  
+  --cream: #111111;      /* Main text color becomes very dark gray/black */
+  --white: #0a0a0a;      /* Inverted white text becomes black */
+  --text-muted: #555555; /* Muted text becomes darker for readability */
+  
+  --gold: #a67c00;       /* Gold color slightly darkened for better contrast on white */
+  --gold-light: #c9a84c; 
+  --gold-dark: #664d00;  
 }
 
 /* Theme Toggle Button Styles */
@@ -57,7 +49,6 @@ body.light-mode {
 body.light-mode .theme-toggle-btn svg.sun-icon {
   display: none;
 }
-
 body:not(.light-mode) .theme-toggle-btn svg.moon-icon {
   display: none;
 }

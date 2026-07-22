@@ -70,7 +70,7 @@ public class ProductApiController {
     @GetMapping("/api/products/search")
     public List<Map<String, Object>> searchProductsAjax(@RequestParam("q") String q) {
         if (q == null || q.trim().isEmpty()) return new ArrayList<>();
-        List<Product> matches = productService.searchProducts(null, null, null, q, null);
+        List<Product> matches = productService.searchProducts(null, null, null, q, null, 0, 5, "newest").getContent();
         return matches.stream().limit(5).map(p -> {
             Map<String, Object> map = new HashMap<>();
             map.put("id", p.getId());

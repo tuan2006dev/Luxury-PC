@@ -872,7 +872,7 @@ function registerCursorEvents() {}
         <div class="slot-header" onclick="toggleSlot('${slotKey}')">
           <div class="slot-icon">${slotData.icon}</div>
           <div class="slot-info">
-            <div class="slot-type">${slotData.title}</div>
+            <div class="slot-type">${window.t('build-pc-slot-' + slotKey, slotData.title)}</div>
             <div class="slot-name ${!selectedItem ? 'sum-empty' : ''}" id="sel-${slotKey}-name" style="${!selectedItem ? 'color:var(--muted);font-style:italic;' : ''}">
               ${selectedItem ? selectedItem.name : 'Chưa chọn'}
             </div>
@@ -930,7 +930,7 @@ function registerCursorEvents() {}
         listContainer.innerHTML += `
           <div class="sum-item">
             <div>
-              <div class="sum-type">${MOCK_DB[slotKey].title}</div>
+              <div class="sum-type">${window.t('build-pc-slot-' + slotKey, MOCK_DB[slotKey].title)}</div>
               <div class="sum-name">${shortName}</div>
             </div>
             <div class="sum-price">${item.price.toLocaleString('vi-VN')}₫</div>
@@ -940,7 +940,7 @@ function registerCursorEvents() {}
         listContainer.innerHTML += `
           <div class="sum-item">
             <div>
-              <div class="sum-type">${MOCK_DB[slotKey].title}</div>
+              <div class="sum-type">${window.t('build-pc-slot-' + slotKey, MOCK_DB[slotKey].title)}</div>
               <div class="sum-name sum-empty">${'Chưa chọn'}</div>
             </div>
             <div class="sum-price" style="color:var(--muted);">—</div>

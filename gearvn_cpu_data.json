@@ -1,0 +1,192 @@
+[
+    {
+        "product": {
+            "name": "Bộ vi xử lý AMD Ryzen 5 5600X / 3.7GHz Boost 4.6GHz / 6 nhân 12 luồng / 32MB / AM4",
+            "price": 4690000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/3-7ghz-boost-4-6ghz-6-nhan-12-luong-1_064ea02033974b0fae49158951cc74dd_b68071833a2a4ca797c7c330d6cf8412_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "AMD"
+        },
+        "specs": {
+            "has_igpu": 0,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": "AM4",
+            "tdp_max": 65
+        },
+        "source_url": "https://gearvn.com/products/amd-ryzen-5-5600x-32mb-3-7ghz-boost-4-6ghz-6-nhan-12-luong"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý AMD Ryzen 5 5500 / 3.6GHz Boost 4.2GHz / 6 nhân 12 luồng / 16MB / AM4",
+            "price": 2690000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/20619238-a_ryzen5_sr1_3dpib_right_row_a5c9aa7c8c6642208ef8225f07fc38e0_fb65fa52e903447a9edf1a41eff5de10_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "AMD"
+        },
+        "specs": {
+            "has_igpu": 0,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": "AM4",
+            "tdp_max": 65
+        },
+        "source_url": "https://gearvn.com/products/amd-ryzen-5-5500"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý AMD Ryzen 7 9800X3D / 4.7GHz Boost 5.2GHz / 8 nhân 16 luồng / 104MB / AM5",
+            "price": 15690000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/242872903-d_ryzen_7_9800x3d_3dpib_fl_2b5b9679b1b14fd2a89511a1dfd4511b_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "AMD"
+        },
+        "specs": {
+            "has_igpu": 1,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": "AM5",
+            "tdp_max": 120
+        },
+        "source_url": "https://gearvn.com/products/bo-vi-xu-ly-amd-ryzen-7-9800x3d"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý Intel Core Ultra 9 285K / Turbo up to 5.7GHz / 24 Nhân 24 Luồng / 36MB / LGA 1851",
+            "price": 17990000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/n36733-001-arl-i9k-univ_b4cd53ec34294ed9bea8be6f28991d91_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "Intel"
+        },
+        "specs": {
+            "has_igpu": 1,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": null,
+            "tdp_max": 250
+        },
+        "source_url": "https://gearvn.com/products/bo-vi-xu-ly-intel-core-ultra-9-285k"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý Intel Core Ultra 7 265K / Turbo up to 5.5GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851",
+            "price": 10490000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/n43449-001-arl-7k-univ_4a4d7889cc5546f1912e6ab4ba40265e_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "Intel"
+        },
+        "specs": {
+            "has_igpu": 1,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": null,
+            "tdp_max": 250
+        },
+        "source_url": "https://gearvn.com/products/bo-vi-xu-ly-intel-core-ultra-7-265k"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý Intel Core Ultra 7 265KF / Turbo up to 5.5GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851",
+            "price": 9690000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/n43457-001-arl-7kf-univ_a83f5476627045c6bdfc7916fe50cc26_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "Intel"
+        },
+        "specs": {
+            "has_igpu": 0,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": null,
+            "tdp_max": 250
+        },
+        "source_url": "https://gearvn.com/products/bo-vi-xu-ly-intel-core-ultra-7-265kf"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý Intel Core Ultra 5 245K / Turbo up to 5.2GHz / 14 Nhân 14 Luồng / 24MB / LGA 1851",
+            "price": 6690000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/n43480-001-arl-5k-univ_26e6a0a4e9864d60a05b322f56ac0102_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "Intel"
+        },
+        "specs": {
+            "has_igpu": 1,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": null,
+            "tdp_max": 159
+        },
+        "source_url": "https://gearvn.com/products/bo-vi-xu-ly-intel-core-ultra-5-245k"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý Intel Core Ultra 5 245KF / Turbo up to 5.2GHz / 14 Nhân 14 Luồng / 24MB / LGA 1851",
+            "price": 6290000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/n43532-001-arl-5kf-univ_e25bf3b60e52436c8213c5368f5efbc8_master.jpg",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "Intel"
+        },
+        "specs": {
+            "has_igpu": 0,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": null,
+            "tdp_max": 159
+        },
+        "source_url": "https://gearvn.com/products/bo-vi-xu-ly-intel-core-ultra-5-245kf"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý AMD Ryzen 5 8400F / 4.2GHz Boost 4.7GHz / 6 nhân 12 luồng / 22MB / AM5",
+            "price": 4490000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/100-100001591box-1_42bbe74b631c4722b63db81c9914a7e4_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "AMD"
+        },
+        "specs": {
+            "has_igpu": 0,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": "AM5",
+            "tdp_max": 65
+        },
+        "source_url": "https://gearvn.com/products/bo-vi-xu-ly-amd-ryzen-5-8400f"
+    },
+    {
+        "product": {
+            "name": "Bộ vi xử lý Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz / 6 Nhân 12 Luồng / 18MB / LGA 1700  (TRAY)",
+            "price": 3890000,
+            "description": "",
+            "image": "https://product.hstatic.net/200000722513/product/thumb_linhkien_9067fd110a6346198bb56d6673942477_master.png",
+            "category_id": 1,
+            "stock": 10,
+            "brand": "Intel"
+        },
+        "specs": {
+            "has_igpu": 0,
+            "includes_stock_cooler": 0,
+            "ram_type_supported": null,
+            "socket": "LGA 1700",
+            "tdp_max": 117
+        },
+        "source_url": "https://gearvn.com/products/bo-vi-xu-ly-intel-core-i5-12400f-tray"
+    }
+]

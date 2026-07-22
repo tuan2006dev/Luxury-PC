@@ -71,15 +71,15 @@ public class SecurityConfig {
                                                 .usernameParameter("username")
                                                 .passwordParameter("password")
                                                 .successHandler(successHandler)
-                                                .failureHandler(authenticationFailureHandler())
+                                                .failureUrl("/auth/login?error=true")
                                                 .permitAll())
 
                                 .oauth2Login(oauth2 -> oauth2
                                                 .loginPage("/auth/login")
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .userService(oauth2UserService))
-                                                .successHandler(successHandler)
-                                                .failureHandler(authenticationFailureHandler()))
+                                                .defaultSuccessUrl("/", true)
+                                                .failureUrl("/auth/login?error=true"))
 
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
@@ -91,22 +91,6 @@ public class SecurityConfig {
                                                 .sessionRegistry(sessionRegistry()));
 
                 return http.build();
-        }
-
-        @Bean
-        public org.springframework.security.web.authentication.AuthenticationFailureHandler authenticationFailureHandler() {
-                return (request, response, exception) -> {
-                        String errorParam = "bad_credentials";
-                        Throwable cause = exception.getCause() != null ? exception.getCause() : exception;
-                        String msg = cause != null && cause.getMessage() != null ? cause.getMessage().toLowerCase() : "";
-
-                        if (exception instanceof org.springframework.security.authentication.DisabledException ||
-                            exception instanceof org.springframework.security.authentication.LockedException ||
-                            msg.contains("khóa") || msg.contains("vô hiệu hóa") || msg.contains("locked") || msg.contains("disabled")) {
-                                errorParam = "disabled";
-                        }
-                        response.sendRedirect("/auth/login?error=" + errorParam);
-                };
         }
 
         @Bean

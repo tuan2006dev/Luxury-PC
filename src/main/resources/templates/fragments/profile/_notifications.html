@@ -1,0 +1,45 @@
+<form th:fragment="notificationsTab" class="profile-section" id="sec-notifications" th:action="@{/profile/notifications}" method="post">
+          <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+          <div class="section-head">
+            <div>
+              <div class="section-tag">Cài đặt</div>
+              <div class="section-h">Thông Báo</div>
+            </div>
+            <button type="submit" class="btn-save">
+              <span class="btn-save-inner">Lưu</span>
+            </button>
+          </div>
+          <div style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#3b82f6;margin-bottom:1rem;">
+            Email & SMS</div>
+          <div class="notif-list">
+            <div class="notif-item">
+              <div class="notif-info">
+                <div class="notif-title">Cập nhật đơn hàng</div>
+                <div class="notif-sub">Nhận thông báo khi trạng thái đơn hàng thay đổi</div>
+              </div>
+              <label class="toggle"><input type="checkbox" name="orderUpdates" th:checked="${notificationSettings == null || notificationSettings['orderUpdates']}" /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="notif-item">
+              <div class="notif-info">
+                <div class="notif-title">Flash Sale & Khuyến mãi</div>
+                <div class="notif-sub">Nhận thông báo về các chương trình giảm giá đặc biệt</div>
+              </div>
+              <label class="toggle"><input type="checkbox" name="flashSale" th:checked="${notificationSettings == null || notificationSettings['flashSale']}" /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="notif-item">
+              <div class="notif-info">
+                <div class="notif-title">Sản phẩm mới</div>
+                <div class="notif-sub">Thông báo khi có linh kiện mới về kho</div>
+              </div>
+              <label class="toggle"><input type="checkbox" name="newProducts" th:checked="${notificationSettings != null && notificationSettings['newProducts']}" /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="notif-item">
+              <div class="notif-info">
+                <div class="notif-title">Bản tin hàng tuần</div>
+                <div class="notif-sub">Email tổng hợp xu hướng công nghệ & review mỗi thứ Hai</div>
+              </div>
+              <label class="toggle"><input type="checkbox" name="weeklyNewsletter" th:checked="${notificationSettings == null || notificationSettings['weeklyNewsletter']}" /><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </form>
+>

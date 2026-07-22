@@ -8,7 +8,7 @@
     <title>Quản Lý Đơn Hàng — Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/orders.css(v=4.0)}" />
+    <link rel="stylesheet" th:href="@{/css/admin/orders.css}" />
     <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
@@ -19,54 +19,42 @@
         <div class="table-card">
             <div class="table-h">
                 <h2>Quản Lý Đơn Hàng</h2>
-                <span><span th:text="${orders.size()}">0</span> <span>đơn hàng</span></span>
+                <span><span th:text="${orders.size()}">0</span> <span>đơn
+                        hàng</span></span>
             </div>
-            <div style="width: 100%;">
+            <div style="width: 100%; overflow-x: auto;">
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th style="width: 5%;">Mã Đơn</th>
-                            <th style="width: 16%;">Khách Hàng</th>
-                            <th style="width: 9%;">Ngày Đặt</th>
-                            <th style="width: 10%;">Tổng Tiền</th>
-                            <th style="width: 7%;">Thanh Toán</th>
-                            <th style="width: 8%;">Giao Hàng</th>
-                            <th style="width: 8%;">Voucher</th>
-                            <th style="width: 10%;">Trạng Thái</th>
-                            <th style="width: 18%;">Ghi Chú</th>
-                            <th style="width: 9%;">Hành Động</th>
+                            <th>Mã Đơn</th>
+                            <th>Khách Hàng</th>
+                            <th>Ngày Đặt</th>
+                            <th>Tổng Tiền</th>
+                            <th>Thanh Toán</th>
+                            <th>Voucher</th>
+                            <th>Trạng Thái</th>
+                            <th>Ghi Chú</th>
+                            <th>Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="o : ${orders}">
-                            <td style="font-weight: 700; color: #1e293b;"
+                            <td style="white-space: nowrap;"
                                 th:text="${o.orderCode != null ? o.orderCode : 'DH' + o.id}">DH101</td>
                             <td>
-                                <div th:text="${o.fullName}" style="font-weight: 600; color: #0f172a;">Guest</div>
-                                <div style="font-size:0.72rem; color:#64748b; word-break: break-all;"
+                                <div th:text="${o.fullName}" style="white-space: nowrap;">Guest</div>
+                                <div style="font-size:0.75rem; color:var(--muted); white-space: nowrap;"
                                     th:text="${o.email}">guest@mail.com</div>
                             </td>
-                            <td>
-                                <div th:text="${#dates.format(o.createdAt, 'dd/MM/yyyy')}">27/03/2026</div>
-                                <div style="font-size:0.72rem; color:#64748b;" th:text="${#dates.format(o.createdAt, 'HH:mm')}">16:50</div>
-                            </td>
+                            <td style="white-space: nowrap;"
+                                th:text="${#dates.format(o.createdAt, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
                             <td th:text="${#numbers.formatDecimal(o.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"
-                                style="color:#0066CC; font-weight: 700; white-space: nowrap;">45.000.000₫</td>
+                                style="color:var(--gold); white-space: nowrap;">45.000.000₫</td>
+                            <td style="white-space: nowrap;" th:text="${o.paymentMethodDisplay}">VietQR</td>
                             <td>
-                                <span class="pay-chip" th:classappend="${o.paymentMethod == 'VIETQR' ? 'vietqr' : 'cod'}"
-                                    th:text="${o.paymentMethodDisplay}">VietQR</span>
-                            </td>
-                            <td>
-                                <div th:text="${o.shippingMethodName != null ? o.shippingMethodName : '-'}" style="font-size:0.78rem;">Hỏa Tốc</div>
-                                <div th:if="${o.shippingFee != null and o.shippingFee > 0}"
-                                    style="font-size:0.72rem; color:#64748b"
-                                    th:text="${#numbers.formatDecimal(o.shippingFee, 0, 'COMMA', 0, 'POINT')} + '₫'">
-                                    50.000₫</div>
-                            </td>
-                            <td>
-                                <div th:text="${o.voucherCode != null ? o.voucherCode : '-'}" style="font-weight:600; font-size:0.78rem;">QA500K</div>
+                                <div th:text="${o.voucherCode != null ? o.voucherCode : '-'}">QA500K</div>
                                 <div th:if="${o.discountAmount != null and o.discountAmount > 0}"
-                                    style="font-size:0.72rem; color:#dc2626; font-weight:600;"
+                                    style="font-size:0.75rem; color:var(--gold)"
                                     th:text="'-' + ${#numbers.formatDecimal(o.discountAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">
                                     -500.000₫</div>
                             </td>
@@ -75,12 +63,14 @@
                                     th:text="${o.statusDisplay}">Chờ xử lý</span>
                             </td>
                             <td class="admin-note">
-                                <div th:if="${o.refundReason != null}" style="margin-bottom:.25rem;">
-                                    <span class="note-label">Khách:</span>
-                                    <span th:text="${o.refundReason}">Lý do</span>
+                                <div th:if="${o.refundReason != null}" style="margin-bottom:.6rem;">
+                                    <span class="note-label">Lý do
+                                        khách</span>
+                                    <span th:text="${o.refundReason}">Lý do hoàn trả</span>
                                 </div>
                                 <div th:if="${o.adminNote != null}">
-                                    <span class="note-label">Admin:</span>
+                                    <span class="note-label">Ghi chú
+                                        admin</span>
                                     <span th:text="${o.adminNote}">Ghi chú</span>
                                 </div>
                                 <span th:if="${o.refundReason == null and o.adminNote == null}">-</span>
@@ -90,14 +80,16 @@
                                     <summary>Thao tác</summary>
                                     <div class="action-panel">
                                         <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}"
-                                            class="admin-note">Đơn đã kết thúc xử lý.</span>
+                                            class="admin-note">Đơn đã kết thúc xử
+                                            lý.</span>
                                         <form novalidate autocomplete="off"
                                             th:if="${o.paymentMethod == 'VIETQR' and o.status == 'CHO_XAC_NHAN_THANH_TOAN'}"
                                             th:action="@{/admin/orders/confirm-payment}" method="post"
                                             class="action-form">
 
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
-                                            <button type="submit" class="update-btn">Xác Nhận Thanh Toán</button>
+                                            <button type="submit" class="update-btn">Xác Nhận Thanh
+                                                Toán</button>
                                         </form>
                                         <form novalidate autocomplete="off" th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}"
                                             th:action="@{/admin/orders/approve-refund}" method="post"
@@ -106,7 +98,8 @@
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <input autocomplete="off" type="text" name="note"
                                                 placeholder="Ghi chú duyệt yêu cầu">
-                                            <button type="submit" class="update-btn">Duyệt Yêu Cầu Hoàn Tiền</button>
+                                            <button type="submit" class="update-btn">Duyệt Yêu Cầu Hoàn
+                                                Tiền</button>
                                         </form>
                                         <form novalidate autocomplete="off" th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}"
                                             th:action="@{/admin/orders/reject-refund}" method="post"
@@ -125,7 +118,8 @@
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <input autocomplete="off" type="text" name="note"
                                                 placeholder="Lý do admin tạo hoàn tiền">
-                                            <button type="submit" class="update-btn">Tạo Yêu Cầu Hoàn Tiền</button>
+                                            <button type="submit" class="update-btn">Tạo Yêu Cầu Hoàn
+                                                Tiền</button>
                                         </form>
                                         <form novalidate autocomplete="off" th:if="${o.status == 'CHO_HOAN_TIEN'}"
                                             th:action="@{/admin/orders/confirm-refund}" method="post"
@@ -134,7 +128,8 @@
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <input autocomplete="off" type="text" name="note"
                                                 placeholder="Ghi chú xác nhận hoàn tiền">
-                                            <button type="submit" class="update-btn">Xác Nhận Đã Hoàn Tiền</button>
+                                            <button type="submit" class="update-btn">Xác Nhận Đã Hoàn
+                                                Tiền</button>
                                         </form>
                                         <form novalidate autocomplete="off"
                                             th:if="${o.status == 'DA_THANH_TOAN' or o.status == 'PAID' or o.status == 'SHIPPING' or o.status == 'COMPLETED' or o.status == 'HOAN_THANH' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN'}"
@@ -158,7 +153,8 @@
                                                 <option value="COMPLETED" th:selected="${o.status == 'COMPLETED'}">Hoàn thành</option>
                                                 <option value="DA_HUY" th:selected="${o.status == 'DA_HUY'}">Đã hủy</option>
                                             </select>
-                                            <button type="submit" class="update-btn">Cập Nhật Trạng Thái</button>
+                                            <button type="submit" class="update-btn">Cập Nhật Trạng
+                                                Thái</button>
                                         </form>
                                     </div>
                                 </details>
@@ -169,15 +165,6 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener('click', function(e) {
-            document.querySelectorAll('.action-menu[open]').forEach(menu => {
-                if (!menu.contains(e.target)) {
-                    menu.removeAttribute('open');
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>

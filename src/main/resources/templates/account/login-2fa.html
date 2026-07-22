@@ -7,10 +7,87 @@
     <title>Xác minh 2 lớp - LUXURY | PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/account/login-2fa.css}">
+    <style>
+        .fp-container {
+            max-width: 500px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 40px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .fp-icon {
+            font-size: 40px;
+            color: #000;
+            margin-bottom: 20px;
+        }
+
+        .fp-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .fp-sub {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn-black {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        .btn-black:hover {
+            background: #333;
+        }
+
+        .otp-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .security-banner {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+        }
+    </style>
 </head>
 
 <body>
@@ -43,13 +120,30 @@
                 </div>
             </div>
 
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function () {
+                    /*<![CDATA[*/
+                    const hasError = /*[[${param.error != null}]]*/ false;
+                    /*]]>*/
+                    if (hasError && typeof window.showAlert === 'function') {
+                        window.showAlert('Mã OTP không chính xác hoặc đã hết hạn! Vui lòng kiểm tra lại.', false);
+                    }
+                });
+            </script>
+
             <div class="otp-row">
-                <input type="text" class="otp-input" id="otp1" maxlength="1" inputmode="numeric" required>
-                <input type="text" class="otp-input" id="otp2" maxlength="1" inputmode="numeric" required>
-                <input type="text" class="otp-input" id="otp3" maxlength="1" inputmode="numeric" required>
-                <input type="text" class="otp-input" id="otp4" maxlength="1" inputmode="numeric" required>
-                <input type="text" class="otp-input" id="otp5" maxlength="1" inputmode="numeric" required>
-                <input type="text" class="otp-input" id="otp6" maxlength="1" inputmode="numeric" required>
+                <input type="text" class="otp-input" id="otp1" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'','otp2')" required>
+                <input type="text" class="otp-input" id="otp2" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp1','otp3')" onkeydown="otpBack(event,this,'otp1')" required>
+                <input type="text" class="otp-input" id="otp3" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp2','otp4')" onkeydown="otpBack(event,this,'otp2')" required>
+                <input type="text" class="otp-input" id="otp4" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp3','otp5')" onkeydown="otpBack(event,this,'otp3')" required>
+                <input type="text" class="otp-input" id="otp5" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp4','otp6')" onkeydown="otpBack(event,this,'otp4')" required>
+                <input type="text" class="otp-input" id="otp6" maxlength="1" inputmode="numeric"
+                    oninput="otpNext(this,'otp5','')" onkeydown="otpBack(event,this,'otp5')" required>
             </div>
 
             <!-- Hidden composite field to submit 6 digit code -->
@@ -71,8 +165,75 @@
         style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;">
     </div>
 
-    <script th:src="@{/js/account/login-2fa.js}"></script>
-    <script th:src="@{/js/script.js}"></script>
+    <script th:inline="javascript">
+        /* TOAST */
+        function toast(msg) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3500);
+        }
+
+        /* OTP HELPERS */
+        function otpNext(el, prevId, nextId) {
+            el.value = el.value.replace(/[^0-9]/g, '');
+            if (el.value && nextId) document.getElementById(nextId)?.focus();
+            updateFinalOtp();
+        }
+        function otpBack(e, el, prevId) {
+            if (e.key === 'Backspace' && !el.value && prevId) {
+                document.getElementById(prevId)?.focus();
+            }
+            setTimeout(updateFinalOtp, 10);
+        }
+        function updateFinalOtp() {
+            const val = ['otp1', 'otp2', 'otp3', 'otp4', 'otp5', 'otp6'].map(id => document.getElementById(id).value).join('');
+            document.getElementById('final-otp-value').value = val;
+        }
+
+        /* OTP TIMER */
+        let rem = 300;
+        const lbl = document.getElementById('otp-timer');
+        const timerInt = setInterval(() => {
+            const m = Math.floor(rem / 60).toString().padStart(2, '0');
+            const s = (rem % 60).toString().padStart(2, '0');
+            lbl.textContent = m + ':' + s;
+            if (--rem < 0) {
+                clearInterval(timerInt);
+                lbl.textContent = 'Hết hạn';
+                toast('Mã OTP đã hết hạn, vui lòng quay lại đăng nhập lại.');
+            }
+        }, 1000);
+
+        // Form submit listener
+        document.getElementById('2fa-login-form').addEventListener('submit', function (e) {
+            updateFinalOtp();
+            const finalVal = document.getElementById('final-otp-value').value;
+            if (finalVal.length < 6) {
+                e.preventDefault();
+                toast('Vui lòng nhập đủ 6 chữ số OTP.');
+            }
+        });
+
+        // Autofocus first field
+        document.getElementById('otp1')?.focus();
+
+        // Resend login 2FA OTP
+        function resend2faOtp() {
+            const btn = document.getElementById('btn-resend-otp');
+            btn.disabled = true;
+            toast('Đang gửi mã OTP mới đến email của bạn...');
+            fetch('/auth/login-2fa/resend', { method: 'POST' })
+                .then(r => r.text())
+                .then(res => {
+                    toast(res);
+                    rem = 300;
+                }).catch(e => {
+                    toast('Có lỗi xảy ra, vui lòng thử lại.');
+                    btn.disabled = false;
+                });
+        }
+    </script>
 </body>
 
 </html>

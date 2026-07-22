@@ -24,8 +24,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final EmailService emailService;
 
-    private final poly.edu.service.CartService cartService;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
@@ -33,14 +31,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         User user = userDAO.findByEmail(emailOrUsername);
         if (user == null) {
             user = userDAO.findByUsername(emailOrUsername);
-        }
-
-        if (user != null) {
-            HttpSession session = request.getSession();
-            @SuppressWarnings("unchecked")
-            java.util.Map<Integer, poly.edu.entity.CartItem> sessionCart = (java.util.Map<Integer, poly.edu.entity.CartItem>) session.getAttribute("cart");
-            java.util.Map<Integer, poly.edu.entity.CartItem> mergedCart = cartService.mergeCartOnLogin(user, sessionCart);
-            session.setAttribute("cart", mergedCart);
         }
 
         if (user != null && Boolean.TRUE.equals(user.getTwoFactorEnabled())) {

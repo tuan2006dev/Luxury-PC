@@ -51,6 +51,6 @@ public interface UserVoucherDAO extends JpaRepository<UserVoucher, Integer> {
     @Query("UPDATE UserVoucher uv SET uv.status = 'AVAILABLE', uv.reservationExpiresAt = NULL WHERE uv.user.id = :userId AND uv.voucher.code = :code AND (uv.status = 'RESERVED' OR uv.status = 'CONSUMED')")
     int restoreVoucherAtomically(@Param("userId") Integer userId, @Param("code") String code);
 
-    @Query("SELECT uv FROM UserVoucher uv JOIN FETCH uv.voucher JOIN FETCH uv.user WHERE uv.status = 'RESERVED' AND uv.reservationExpiresAt <= CURRENT_TIMESTAMP")
+    @Query("SELECT uv FROM UserVoucher uv WHERE uv.status = 'RESERVED' AND uv.reservationExpiresAt <= CURRENT_TIMESTAMP")
     List<UserVoucher> findExpiredReservations();
 }

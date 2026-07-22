@@ -1,0 +1,35 @@
+        <div th:fragment="wishlistTab" class="profile-section" id="sec-wishlist">
+          <div class="section-head">
+            <div>
+              <div class="section-tag">Bộ sưu tập</div>
+              <div class="section-h">Danh Sách Yêu Thích</div>
+            </div>
+            <button class="btn-edit" onclick="removeAllWishlist()">Xóa Tất
+              Cả</button>
+          </div>
+          <div class="wishlist-grid">
+            <div class="wl-card" th:each="wishitem : ${wishlistItems}">
+              <div class="wl-img">
+                <img
+                  th:src="@{${(wishitem.product.image != null && !wishitem.product.image.isEmpty()) ? (wishitem.product.image.startsWith('http') ? wishitem.product.image : '/images/products/' + wishitem.product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}}"
+                  th:alt="${wishitem.product.name}"
+                  onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';"
+                  style="width: 100%; height: 100%; object-fit: contain; padding: 10px;" />
+                <button type="button" class="wl-remove" title="Xóa" th:attr="data-wishlist-item-id=${wishitem.id}"
+                  onclick="removeFromWishlist(this)">✕</button>
+              </div>
+              <div class="wl-info">
+                <div class="wl-cat" th:if="${wishitem.product.category != null}"
+                  th:text="${wishitem.product.category.name}">Danh mục</div>
+                <div class="wl-cat" th:if="${wishitem.product.category == null}">Khác</div>
+                <div class="wl-name" th:text="${wishitem.product.name}">Tên sản phẩm</div>
+                <div class="wl-price"
+                  th:text="${#numbers.formatDecimal(wishitem.product.price, 1, 'COMMA', 0, 'POINT')} + '₫'">Giá</div>
+              </div>
+            </div>
+            <div th:if="${wishlistItems == null or wishlistItems.size() == 0}"
+              style="grid-column: span 3; text-align: center; color: #64748b; padding: 2rem;">
+              Bạn chưa có sản phẩm yêu thích nào. Hãy thêm từ trang sản phẩm!
+            </div>
+          </div>
+        </div>

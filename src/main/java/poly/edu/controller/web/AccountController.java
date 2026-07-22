@@ -135,59 +135,69 @@ public class AccountController {
 
 
 
-    private final poly.edu.service.ProfileService profileService;
-
     // ===============================
     // khóa user
     // ===============================
-    @RequestMapping(value = "/lock/{id}", method = {RequestMethod.GET, RequestMethod.POST})
-    @Transactional
-    public String lockUser(@PathVariable Integer id, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
-        Optional<User> userOptional = userRepository.findById(id);
+    @PostMapping("/lock/{id}")
+    public String lockUser(
+            @PathVariable Integer id
+    ){
+
+        Optional<User> userOptional =
+                userRepository.findById(id);
+
         if(userOptional.isPresent()){
-            User user = userOptional.get();
+
+            User user =
+                    userOptional.get();
+
             user.setStatus(false);
+
             userRepository.save(user);
-            ra.addFlashAttribute("message", "Đã khóa tài khoản " + user.getUsername());
-        } else {
-            ra.addFlashAttribute("error", "Không tìm thấy tài khoản.");
         }
+
         return "redirect:/admin/account";
     }
+
+
 
     // ===============================
     // mở khóa user
     // ===============================
-    @RequestMapping(value = "/unlock/{id}", method = {RequestMethod.GET, RequestMethod.POST})
-    @Transactional
-    public String unlockUser(@PathVariable Integer id, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
-        Optional<User> userOptional = userRepository.findById(id);
+    @PostMapping("/unlock/{id}")
+    public String unlockUser(
+            @PathVariable Integer id
+    ){
+
+        Optional<User> userOptional =
+                userRepository.findById(id);
+
         if(userOptional.isPresent()){
-            User user = userOptional.get();
+
+            User user =
+                    userOptional.get();
+
             user.setStatus(true);
+
             userRepository.save(user);
-            ra.addFlashAttribute("message", "Đã mở khóa tài khoản " + user.getUsername());
-        } else {
-            ra.addFlashAttribute("error", "Không tìm thấy tài khoản.");
         }
+
         return "redirect:/admin/account";
     }
+
+
 
     // ===============================
     // xóa user
     // ===============================
-    @RequestMapping(value = "/delete/{id}", method = {RequestMethod.GET, RequestMethod.POST})
-    @Transactional
-    public String deleteUser(@PathVariable Integer id, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if(userOptional.isPresent()){
-            try {
-                profileService.deleteUserFully(userOptional.get());
-                ra.addFlashAttribute("message", "Đã xóa người dùng thành công.");
-            } catch (Exception e) {
-                ra.addFlashAttribute("error", "Không thể xóa người dùng: " + e.getMessage());
-            }
-        }
+    @PostMapping("/delete/{id}")
+    public String deleteUser(
+            @PathVariable Integer id
+    ){
+
+        userRepository.deleteById(id);
+
         return "redirect:/admin/account";
     }
+
 }

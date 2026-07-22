@@ -62,7 +62,11 @@ public class ProductPageController {
             @RequestParam(name = "min", required = false) Double min,
             @RequestParam(name = "max", required = false) Double max,
             @RequestParam(name = "kw", required = false) String kw,
-            @RequestParam(name = "brand", required = false) String brand) {
+            @RequestParam(name = "brand", required = false) String brand,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "20") int size,
+            @RequestParam(name = "sort", defaultValue = "newest") String sort,
+            @RequestParam(name = "flashSale", required = false) Boolean flashSale) {
         if (kw != null && kw.trim().isEmpty()) kw = null;
         if (brand != null && brand.trim().isEmpty()) brand = null;
         
@@ -74,15 +78,34 @@ public class ProductPageController {
             if (max < 0.0) max = 0.0;
             if (max > 100000000.0) max = 100000000.0;
         }
-        if (min != null && max != null && min > max) {
-            Double temp = min;
-            min = max;
-            max = temp;
+        
+        // Lấy thông tin Flash Sale hiện hành
+        java.util.List<poly.edu.entity.FlashSaleItem> activeFlashSaleItems = flashSaleService.getCurrentFlashSaleItems();
+        java.util.Map<Integer, poly.edu.entity.FlashSaleItem> flashSaleMap = new java.util.HashMap<>();
+        java.util.List<Integer> activeFlashSaleIds = new java.util.ArrayList<>();
+        if (activeFlashSaleItems != null) {
+            for (poly.edu.entity.FlashSaleItem item : activeFlashSaleItems) {
+                if (item.isAvailable()) {
+                    flashSaleMap.put(item.getProduct().getId(), item);
+                    activeFlashSaleIds.add(item.getProduct().getId());
+                }
+            }
         }
         
-        List<Product> products = productService.searchProducts(cid, min, max, kw, brand);
-        model.addAttribute("allProducts", products);
+        org.springframework.data.domain.Page<Product> productPage;
+        if (Boolean.TRUE.equals(flashSale)) {
+            productPage = productService.searchProductsInFlashSale(activeFlashSaleIds, cid, min, max, kw, brand, Math.max(0, page - 1), size, sort);
+        } else {
+            productPage = productService.searchProducts(cid, min, max, kw, brand, Math.max(0, page - 1), size, sort);
+        }
+        
+        model.addAttribute("allProducts", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+        
         model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("brands", productService.getAllBrands());
         
         // Gửi lại các tham số lọc để giữ trạng thái trên UI
         model.addAttribute("selectedCid", cid);
@@ -90,6 +113,10 @@ public class ProductPageController {
         model.addAttribute("maxPrice", max);
         model.addAttribute("keywords", kw);
         model.addAttribute("selectedBrand", brand);
+        model.addAttribute("selectedSort", sort);
+        model.addAttribute("isFlashSale", flashSale);
+        model.addAttribute("flashSaleMap", flashSaleMap);
+
         addWishlistAttributes(model);
 
         return "all-products"; 

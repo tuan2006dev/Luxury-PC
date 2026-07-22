@@ -37,17 +37,7 @@ public class AdminDataLoader implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
     public void run(String... args) throws Exception {
-        // 0. Clean up DEMO test orders
-        try {
-            orderItemDAO.deleteDemoOrderItems();
-            orderDAO.deleteDemoOrders();
-            log.info("[DataLoader] Successfully cleaned up all DEMO test orders.");
-        } catch (Exception e) {
-            log.warn("[DataLoader] Failed to clean up DEMO orders: {}", e.getMessage());
-        }
-
         // 1. Initialize Inventory for all products
         List<Product> products = productDAO.findAll();
         for (Product p : products) {
@@ -130,5 +120,106 @@ public class AdminDataLoader implements CommandLineRunner {
                 userRoleDAO.save(userRole);
                 log.info("[DataLoader] Assigned ADMIN role to: {}", TEST_ADMIN_EMAIL);
             }
+
+        // Stable order codes make this seed idempotent across application restarts.
+        seedSampleOrder(admin, products, "DEMO-VIETQR-WAITING", 17_200_000D,
+                "VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 1, 0);
+        seedSampleOrder(admin, products, "DEMO-COD-PENDING", 8_500_000D,
+                "COD", "PENDING", 2, 1);
+        seedSampleOrder(admin, products, "DEMO-VIETQR-PAID", 25_900_000D,
+                "VIETQR", "DA_THANH_TOAN", 3, 2);
+        seedSampleOrder(admin, products, "DEMO-VIETQR-REFUND-REQUESTED", 18_600_000D,
+                "VIETQR", "YEU_CAU_HOAN_TIEN", 4, 3, null, null, null,
+                "Khách muốn trả hàng vì sản phẩm không phù hợp", "DA_THANH_TOAN");
+        seedSampleOrder(admin, products, "DEMO-CANCELLED", 6_900_000D,
+                "COD", "CANCELLED", 5, 3);
+        seedSampleOrder(admin, products, "DEMO-VOUCHER-COMPLETED", 12_500_000D,
+                "COD", "COMPLETED", 6, 4, "QA500K", 500_000D);
+        seedSampleOrder(admin, products, "DEMO-VIETQR-REFUND-WAITING", 19_900_000D,
+                "VIETQR", "CHO_HOAN_TIEN", 7, 0, null, null, "Admin đã duyệt yêu cầu hoàn tiền",
+                "Khách yêu cầu hoàn tiền", "DA_THANH_TOAN");
+        seedSampleOrder(admin, products, "DEMO-VIETQR-REFUNDED", 21_500_000D,
+                "VIETQR", "DA_HOAN_TIEN", 8, 1, null, null, "Đã hoàn tiền qua MB Bank",
+                "Khách yêu cầu hoàn tiền", "DA_THANH_TOAN");
+        seedSampleOrder(admin, products, "DEMO-VIETQR-RECALLED", 15_700_000D,
+                "VIETQR", "THU_HOI", 9, 2, null, null, "Thu hồi theo yêu cầu kiểm thử",
+                "Khách yêu cầu trả hàng", "DA_THANH_TOAN");
+    }
+
+    private void seedSampleOrder(User user, List<Product> products, String orderCode, Double totalPrice,
+                                 String paymentMethod, String status, int daysAgo, int productIndex) {
+        seedSampleOrder(user, products, orderCode, totalPrice, paymentMethod, status, daysAgo,
+                productIndex, null, null, null, null, null);
+    }
+
+    private void seedSampleOrder(User user, List<Product> products, String orderCode, Double totalPrice,
+                                 String paymentMethod, String status, int daysAgo, int productIndex,
+                                 String voucherCode, Double discountAmount) {
+        seedSampleOrder(user, products, orderCode, totalPrice, paymentMethod, status, daysAgo,
+                productIndex, voucherCode, discountAmount, null, null, null);
+    }
+
+    private void seedSampleOrder(User user, List<Product> products, String orderCode, Double totalPrice,
+                                 String paymentMethod, String status, int daysAgo, int productIndex,
+                                 String voucherCode, Double discountAmount, String adminNote) {
+        seedSampleOrder(user, products, orderCode, totalPrice, paymentMethod, status, daysAgo,
+                productIndex, voucherCode, discountAmount, adminNote, null, null);
+    }
+
+    private void seedSampleOrder(User user, List<Product> products, String orderCode, Double totalPrice,
+                                 String paymentMethod, String status, int daysAgo, int productIndex,
+                                 String voucherCode, Double discountAmount, String adminNote,
+                                 String refundReason, String refundPreviousStatus) {
+        Optional<Order> existingOrder = orderDAO.findByOrderCode(orderCode);
+        if (existingOrder.isPresent()) {
+            Order order = existingOrder.get();
+            boolean updated = false;
+            if (order.getAdminNote() == null && adminNote != null) {
+                order.setAdminNote(adminNote);
+                updated = true;
+            }
+            if (order.getRefundReason() == null && refundReason != null) {
+                order.setRefundReason(refundReason);
+                updated = true;
+            }
+            if (order.getRefundPreviousStatus() == null && refundPreviousStatus != null) {
+                order.setRefundPreviousStatus(refundPreviousStatus);
+                updated = true;
+            }
+            if (updated) {
+                orderDAO.save(order);
+            }
+            return;
+        }
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setOrderCode(orderCode);
+        order.setFullName(user.getFullName() != null ? user.getFullName() : "QA Admin");
+        order.setEmail(user.getEmail());
+        order.setPhone(user.getPhone() != null ? user.getPhone() : "0900000000");
+        order.setAddress(user.getAddress() != null ? user.getAddress() : "Địa chỉ kiểm thử");
+        order.setPaymentMethod(paymentMethod);
+        order.setStatus(status);
+        order.setTotalPrice(totalPrice);
+        order.setVoucherCode(voucherCode);
+        order.setDiscountAmount(discountAmount);
+        order.setAdminNote(adminNote);
+        order.setRefundReason(refundReason);
+        order.setRefundPreviousStatus(refundPreviousStatus);
+        order.setCreatedAt(new Date(System.currentTimeMillis() - (daysAgo * 86_400_000L)));
+        order = orderDAO.save(order);
+
+        if (!products.isEmpty()) {
+            Product product = products.get(Math.min(productIndex, products.size() - 1));
+            OrderItem item = new OrderItem();
+            item.setOrder(order);
+            item.setProduct(product);
+            item.setPrice(totalPrice);
+            item.setQuantity(1);
+            orderItemDAO.save(item);
+        }
+
+        log.info("[DataLoader] Seeded sample order: {}", orderCode);
     }
 }

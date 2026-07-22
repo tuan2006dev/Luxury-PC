@@ -1,4 +1,4 @@
--- ======================================================
+﻿-- ======================================================
 -- SQL Server Table Structures (CREATE TABLE)
 -- Ordered Topologically
 -- Date: 2026-07-19
@@ -648,21 +648,6 @@ CREATE TABLE flash_sale_items (
   sold_count INT,
   flash_sale_id INT,
   product_id INT
-);
-GO
-
--- ----------------------------
--- Table structure for brands
--- ----------------------------
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'brands') AND type IN ('U'))
-	DROP TABLE brands;
-GO
-CREATE TABLE brands (
-  id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-  name NVARCHAR(255) NOT NULL,
-  logo NVARCHAR(500) NOT NULL,
-  link NVARCHAR(500),
-  display_order INT DEFAULT 0
 );
 GO
 
@@ -1665,15 +1650,6 @@ INSERT INTO spring_session_attributes (session_primary_id, attribute_name, attri
 INSERT INTO spring_session_attributes (session_primary_id, attribute_name, attribute_bytes) VALUES ('82866743-8dff-44a6-a51b-9762bc0f05ca', 'cart', 0x30784143454430303035373337323030313136413631373636313245373537343639364332453438363137333638344436313730303530374441433143333136363044313033303030323436303030413643364636313634343636313633373436463732343930303039373436383732363537333638364636433634373837303346343030303030303030303030303037373038303030303030313030303030303030303738);
 GO
 
--- Thêm cột lưu phí vận chuyển của đơn hàng
-ALTER TABLE orders ADD shipping_fee FLOAT NOT NULL DEFAULT 0;
-
--- Thêm cột lưu tên phương thức vận chuyển (vd: Giao hàng hỏa tốc, Tiêu chuẩn)
-ALTER TABLE orders ADD shipping_method_name NVARCHAR(255);
-
-SELECT * FROM orders;
-GO
-
 -- Dumping data for table orders
 SET IDENTITY_INSERT orders ON;
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (26, NULL, 31000000, 'CHO_XAC_NHAN_THANH_TOAN', 'DH26', 'md', NULL, '0905338411', 'thon tan quang', NULL, 0, NULL, NULL, 0.00, NULL, 'VIETQR', NULL, NULL, NULL, NULL, NULL, '2026-07-07 11:21:45.734');
@@ -1692,7 +1668,21 @@ INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, ema
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (28, NULL, 1950000, 'PENDING', 'DH28', 'tuan nguyen', NULL, '0905338411', 'thon tan quang', NULL, 0, NULL, NULL, 0.00, NULL, 'COD', NULL, NULL, NULL, NULL, NULL, '2026-07-07 17:24:58.208');
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (29, NULL, 1950000, 'PENDING', 'DH29', 'tuan nguyen', NULL, '0905338411', 'thon tan quang', NULL, 0, NULL, NULL, 0.00, NULL, 'COD', NULL, NULL, NULL, NULL, NULL, '2026-07-07 18:17:37.769');
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (30, 7, 1950000, 'THU_HOI', 'DH30', 'tuan nguyen', 'tuannguyennasani@gmail.com', '0905338411', 'thon tan quang', NULL, 0, NULL, NULL, 0.00, NULL, 'COD', NULL, NULL, NULL, NULL, NULL, '2026-07-07 19:57:59.626');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (1, NULL, 17200000, 'CHO_XAC_NHAN_THANH_TOAN', 'DEMO-VIETQR-WAITING', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, NULL, NULL, NULL, 0.00, NULL, 'VIETQR', NULL, NULL, NULL, NULL, NULL, '2026-06-19 00:12:46.958');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (3, NULL, 25900000, 'DA_THANH_TOAN', 'DEMO-VIETQR-PAID', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, NULL, NULL, NULL, 0.00, NULL, 'VIETQR', NULL, NULL, NULL, NULL, NULL, '2026-06-17 00:12:47.866');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (6, NULL, 12500000, 'COMPLETED', 'DEMO-VOUCHER-COMPLETED', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, 500000, 'QA500K', NULL, 0.00, NULL, 'COD', NULL, NULL, NULL, NULL, NULL, '2026-06-14 00:12:49.207');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (5, NULL, 6900000, 'COMPLETED', 'DEMO-CANCELLED', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, NULL, NULL, NULL, 0.00, NULL, 'COD', NULL, NULL, NULL, NULL, NULL, '2026-06-15 00:12:48.753');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (4, NULL, 18600000, 'DA_HOAN_TIEN', 'DEMO-VIETQR-REFUND-REQUESTED', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, NULL, NULL, NULL, 0.00, NULL, 'VIETQR', N'OK | Đã hoàn', 'DA_THANH_TOAN', N'Khách muốn trả hàng vì sản phẩm không phù hợp', NULL, NULL, '2026-06-16 00:12:48.31');
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (31, 2, 190400000, 'PAID', 'DH31', 'tuan nguyen', 'tuan9bledinhchinh@gmail.com', '0905338411', N'thon tan quang, Phường Ngô Quyền, Thành phố Bắc Giang, Tỉnh Bắc Giang', NULL, 0, NULL, NULL, 0.00, NULL, 'COD', NULL, NULL, NULL, NULL, NULL, '2026-07-11 16:11:46.406');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (8, NULL, 21500000, 'DA_HOAN_TIEN', 'DEMO-VIETQR-REFUNDED', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, NULL, NULL, NULL, 0.00, NULL, 'VIETQR', N'Đã hoàn tiền qua MB Bank', 'DA_THANH_TOAN', N'Khách yêu cầu hoàn tiền', NULL, NULL, '2026-06-12 00:12:50.287');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (9, NULL, 15700000, 'THU_HOI', 'DEMO-VIETQR-RECALLED', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, NULL, NULL, NULL, 0.00, NULL, 'VIETQR', N'Thu hồi theo yêu cầu kiểm thử', 'DA_THANH_TOAN', N'Khách yêu cầu trả hàng', NULL, NULL, '2026-06-11 00:12:50.817');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (7, NULL, 19900000, 'THU_HOI', 'DEMO-VIETQR-REFUND-WAITING', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, NULL, NULL, NULL, 0.00, NULL, 'VIETQR', N'Admin đã duyệt yêu cầu hoàn tiền', 'DA_THANH_TOAN', N'Khách yêu cầu hoàn tiền', NULL, NULL, '2026-06-13 00:12:49.74');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (11, NULL, 150000000, 'COMPLETED', 'DEMO-MAR-1', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, 0, NULL, NULL, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-15 10:00:00');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (12, NULL, 220000000, 'COMPLETED', 'DEMO-MAR-2', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, 0, NULL, NULL, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-25 14:30:00');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (13, NULL, 185000000, 'COMPLETED', 'DEMO-APR-1', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, 0, NULL, NULL, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-10 09:15:00');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (14, NULL, 315000000, 'COMPLETED', 'DEMO-APR-2', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, 0, NULL, NULL, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-20 16:45:00');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (15, NULL, 280000000, 'COMPLETED', 'DEMO-MAY-1', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, 0, NULL, NULL, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-05 11:20:00');
+INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (16, NULL, 195000000, 'COMPLETED', 'DEMO-MAY-2', 'LuxuryPC Admin', 'nguyentruongq169@gmail.com', '0900000000', N'Địa chỉ kiểm thử', NULL, 0, NULL, NULL, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-18 13:10:00');
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (38, 3, 10000, 'CHO_XAC_NHAN_THANH_TOAN', 'DH38', N'Nguyễn Trường Quân', 'nguyentruongq169@gmail.com', '0867868825', N'Nhà 06, Thôn 13, Xã Vụ Bổn, Huyện Krông Pắk, Xã Nam Ka, Huyện Lắk, Tỉnh Đắk Lắk', NULL, 0, NULL, NULL, 0.00, NULL, 'VIETQR', NULL, NULL, NULL, NULL, NULL, '2026-07-14 19:05:37.372');
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (39, 3, 10000, 'CHO_XAC_NHAN_THANH_TOAN', 'DH39', N'Nguyễn Trường Quân', 'nguyentruongq169@gmail.com', '0867868825', N'Nhà 06, Thôn 13, Xã Vụ Bổn, Huyện Krông Pắk, Xã Ea Ning, Huyện Cư Kuin, Tỉnh Đắk Lắk', NULL, 0, NULL, NULL, 0.00, NULL, 'VIETQR', NULL, NULL, NULL, NULL, NULL, '2026-07-14 19:10:23.876');
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (40, 3, 10000, 'CHO_XAC_NHAN_THANH_TOAN', 'DH40', N'Nguyễn Trường Quân', 'nguyentruongq169@gmail.com', '0867868825', N'Nhà 06, Thôn 13, Xã Vụ Bổn, Huyện Krông Pắk, Xã Ea Ning, Huyện Cư Kuin, Tỉnh Đắk Lắk', NULL, 0, NULL, NULL, 0.00, NULL, 'VIETQR', NULL, NULL, NULL, NULL, NULL, '2026-07-14 19:53:25.074');
@@ -2199,85 +2189,1623 @@ INSERT INTO chat_messages (id, created_at, message, sender, sender_name, ticket_
 SET IDENTITY_INSERT chat_messages OFF;
 GO
 
--- ----------------------------
--- Table structure & sample data for news_categories
--- ----------------------------
-IF NOT EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'news_categories') AND type IN ('U'))
-BEGIN
-    CREATE TABLE news_categories (
-        id INT IDENTITY(1,1) PRIMARY KEY,
-        name NVARCHAR(100) NOT NULL,
-        slug NVARCHAR(100) NOT NULL UNIQUE,
-        description NVARCHAR(MAX),
-        status NVARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
-        created_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP
-    );
-END;
-GO
+-- ======================================================
+-- BATCH IMPORT FOR GEARVN DATA (Generated)
+-- ======================================================
+DECLARE @current_pid INT;
 
-SET IDENTITY_INSERT news_categories ON;
-IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 1) INSERT INTO news_categories (id, name, slug, status) VALUES (1, N'Card Đồ Họa', 'card-do-hoa', 'ACTIVE');
-IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 2) INSERT INTO news_categories (id, name, slug, status) VALUES (2, N'Bộ Vi Xử Lý (CPU)', 'bo-vi-xu-ly', 'ACTIVE');
-IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 3) INSERT INTO news_categories (id, name, slug, status) VALUES (3, N'Khuyến Mãi & Sự Kiện', 'khuyen-mai-su-kien', 'ACTIVE');
-IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 4) INSERT INTO news_categories (id, name, slug, status) VALUES (4, N'Tư Vấn Cấu Hình', 'tu-van-cau-hinh', 'ACTIVE');
-IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 5) INSERT INTO news_categories (id, name, slug, status) VALUES (5, N'Lưu Trữ (SSD/HDD)', 'luu-tru-ssd-hdd', 'ACTIVE');
-IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 6) INSERT INTO news_categories (id, name, slug, status) VALUES (6, N'Mẹo & Thủ Thuật', 'meo-thu-thuat', 'ACTIVE');
-SET IDENTITY_INSERT news_categories OFF;
-GO
+-- Product: Bộ vi xử lý AMD Ryzen 5 5600X / 3.7GHz Boost 4.6GHz / 6 nhân 12 luồng / 32MB / AM4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 5600X / 3.7GHz Boost 4.6GHz / 6 nhân 12 luồng / 32MB / AM4', 4690000, N'', N'https://product.hstatic.net/200000722513/product/3-7ghz-boost-4-6ghz-6-nhan-12-luong-1_064ea02033974b0fae49158951cc74dd_b68071833a2a4ca797c7c330d6cf8412_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'AM4', 65);
 
--- ----------------------------
--- Table structure & sample data for news
--- ----------------------------
-IF NOT EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'news') AND type IN ('U'))
-BEGIN
-    CREATE TABLE news (
-        id INT IDENTITY(1,1) PRIMARY KEY,
-        title NVARCHAR(255) NOT NULL,
-        slug NVARCHAR(255) NOT NULL UNIQUE,
-        content NVARCHAR(MAX) NOT NULL,
-        summary NVARCHAR(MAX) NOT NULL,
-        thumbnail NVARCHAR(255),
-        view_count BIGINT DEFAULT 0,
-        meta_title NVARCHAR(255),
-        meta_description NVARCHAR(MAX),
-        meta_keywords NVARCHAR(255),
-        status NVARCHAR(20) DEFAULT 'PUBLISHED',
-        category_id INT FOREIGN KEY REFERENCES news_categories(id),
-        author_id INT NOT NULL FOREIGN KEY REFERENCES users(id),
-        created_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP
-    );
-END;
-GO
+-- Product: Bộ vi xử lý AMD Ryzen 5 5500 / 3.6GHz Boost 4.2GHz / 6 nhân 12 luồng / 16MB / AM4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 5500 / 3.6GHz Boost 4.2GHz / 6 nhân 12 luồng / 16MB / AM4', 2690000, N'', N'https://product.hstatic.net/200000722513/product/20619238-a_ryzen5_sr1_3dpib_right_row_a5c9aa7c8c6642208ef8225f07fc38e0_fb65fa52e903447a9edf1a41eff5de10_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'AM4', 65);
 
-INSERT INTO news (content, created_at, slug, summary, thumbnail, title, updated_at, author_id, meta_description, meta_keywords, meta_title, view_count, category_id, status)
-VALUES
-(N'<h2>RTX 5060 chính thức ra mắt</h2><p>NVIDIA đã giới thiệu RTX 5060 với kiến trúc Blackwell, hỗ trợ DLSS 4 và Ray Tracing thế hệ mới.</p><ul><li>Hiệu năng tăng khoảng 30% so với RTX 4060</li><li>Chơi game 2K mượt mà</li><li>Tiêu thụ điện thấp hơn</li></ul>',
-GETDATE(), 'rtx-5060-ra-mat', N'NVIDIA RTX 5060 mang đến hiệu năng mạnh mẽ cho game thủ và người sáng tạo nội dung.', 'rtx5060.jpg', N'RTX 5060 chính thức ra mắt', GETDATE(), (SELECT TOP 1 id FROM users), N'Đánh giá RTX 5060 mới nhất.', 'RTX5060,NVIDIA,GPU,Gaming', N'RTX 5060 chính thức ra mắt', 120, 1, 'PUBLISHED'),
-(N'<h2>Top 5 CPU Gaming 2026</h2><p>Danh sách CPU đáng mua nhất dành cho game thủ.</p><ol><li>Ryzen 5 9600X</li><li>Ryzen 7 9800X3D</li><li>Core i5-15600K</li><li>Core i7-15700K</li><li>Ryzen 9 9950X</li></ol>',
-GETDATE(), 'top-cpu-gaming-2026', N'Những bộ vi xử lý tốt nhất dành cho game thủ năm 2026.', 'cpu2026.jpg', N'Top 5 CPU Gaming đáng mua năm 2026', GETDATE(), (SELECT TOP 1 id FROM users), N'Danh sách CPU Intel và AMD mạnh nhất.', 'CPU,Intel,AMD,Gaming', N'Top CPU Gaming 2026', 85, 2, 'PUBLISHED'),
-(N'<h2>Flash Sale cuối tuần</h2><p>Giảm giá đến 40% cho nhiều linh kiện PC.</p><p>Áp dụng cho VGA, RAM, SSD và Mainboard.</p>',
-GETDATE(), 'flash-sale-cuoi-tuan', N'Chương trình Flash Sale cuối tuần với hàng trăm ưu đãi hấp dẫn.', 'flashsale.jpg', N'Flash Sale cuối tuần giảm đến 40%', GETDATE(), (SELECT TOP 1 id FROM users), N'Khuyến mãi lớn cuối tuần.', 'Flash Sale,Khuyến mãi,Linh kiện', N'Flash Sale linh kiện PC', 240, 3, 'PUBLISHED'),
-(N'<h2>Build PC Gaming 25 triệu</h2><p>Cấu hình đề xuất:</p><ul><li>Ryzen 5 9600X</li><li>RTX 5060</li><li>RAM DDR5 32GB</li><li>SSD NVMe 1TB</li></ul>',
-GETDATE(), 'build-pc-25-trieu', N'Tư vấn cấu hình PC Gaming tối ưu trong tầm giá 25 triệu.', 'build25.jpg', N'Hướng dẫn Build PC Gaming 25 triệu', GETDATE(), (SELECT TOP 1 id FROM users), N'Cấu hình PC Gaming hiệu năng cao.', 'Build PC,Gaming,RTX5060', N'Build PC Gaming 25 triệu', 61, 4, 'PUBLISHED'),
-(N'<h2>SSD PCIe Gen5 có đáng mua?</h2><p>SSD Gen5 có tốc độ lên tới 14GB/s nhưng không phải ai cũng cần nâng cấp.</p>',
-GETDATE(), 'ssd-pcie-gen5', N'So sánh SSD PCIe Gen5 và Gen4 trong thực tế.', 'ssdgen5.jpg', N'SSD PCIe Gen5 có thật sự đáng nâng cấp?', GETDATE(), (SELECT TOP 1 id FROM users), N'Đánh giá SSD PCIe Gen5.', 'SSD,NVMe,Gen5', N'SSD PCIe Gen5', 35, 5, 'PUBLISHED'),
-(N'<h2>5 mẹo giúp máy tính chơi game mượt hơn</h2><ul><li>Cập nhật Driver.</li><li>Nâng cấp SSD.</li><li>Nâng RAM.</li><li>Bật Game Mode.</li><li>Vệ sinh máy định kỳ.</li></ul>',
-GETDATE(), 'meo-toi-uu-pc-gaming', N'Hướng dẫn tối ưu hiệu năng máy tính để chơi game.', 'optimize.jpg', N'5 mẹo giúp máy tính chơi game mượt hơn', GETDATE(), (SELECT TOP 1 id FROM users), N'Mẹo tối ưu Windows và phần cứng.', 'FPS,Gaming,Windows,Tối ưu', N'Tối ưu PC Gaming', 52, 6, 'PUBLISHED');
-GO
+-- Product: Bộ vi xử lý AMD Ryzen 7 9800X3D / 4.7GHz Boost 5.2GHz / 8 nhân 16 luồng / 104MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 7 9800X3D / 4.7GHz Boost 5.2GHz / 8 nhân 16 luồng / 104MB / AM5', 15690000, N'', N'https://product.hstatic.net/200000722513/product/242872903-d_ryzen_7_9800x3d_3dpib_fl_2b5b9679b1b14fd2a89511a1dfd4511b_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'AM4', 120);
 
--- ----------------------------
--- Records of brands
--- ----------------------------
-INSERT INTO brands (name, logo, link, display_order)
-VALUES
-(N'Intel', N'/images/ui-new/intel.svg', N'/products?brand=Intel', 1),
-(N'AMD', N'/images/ui-new/amd.svg', N'/products?brand=AMD', 2),
-(N'ASUS', N'/images/ui-new/asus.svg', N'/products?brand=ASUS', 3),
-(N'MSI', N'/images/ui-new/msi.svg', N'/products?brand=MSI', 4),
-(N'GIGABYTE', N'/images/ui-new/gigabyte.svg', N'/products?brand=GIGABYTE', 5),
-(N'Corsair', N'/images/ui-new/corsair.svg', N'/products?brand=Corsair', 6),
-(N'Kingston', N'/images/ui-new/kingston.svg', N'/products?brand=Kingston', 7),
-(N'Cooler Master', N'/images/ui-new/coolermaster.svg', N'/products?brand=Cooler Master', 8);
+-- Product: Bộ vi xử lý Intel Core Ultra 9 285K / Turbo up to 5.7GHz / 24 Nhân 24 Luồng / 36MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 9 285K / Turbo up to 5.7GHz / 24 Nhân 24 Luồng / 36MB / LGA 1851', 17990000, N'', N'https://product.hstatic.net/200000722513/product/n36733-001-arl-i9k-univ_b4cd53ec34294ed9bea8be6f28991d91_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 250);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 7 265K / Turbo up to 5.5GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 7 265K / Turbo up to 5.5GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851', 10490000, N'', N'https://product.hstatic.net/200000722513/product/n43449-001-arl-7k-univ_4a4d7889cc5546f1912e6ab4ba40265e_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 250);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 7 265KF / Turbo up to 5.5GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 7 265KF / Turbo up to 5.5GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851', 9690000, N'', N'https://product.hstatic.net/200000722513/product/n43457-001-arl-7kf-univ_a83f5476627045c6bdfc7916fe50cc26_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 250);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 5 245K / Turbo up to 5.2GHz / 14 Nhân 14 Luồng / 24MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 5 245K / Turbo up to 5.2GHz / 14 Nhân 14 Luồng / 24MB / LGA 1851', 6690000, N'', N'https://product.hstatic.net/200000722513/product/n43480-001-arl-5k-univ_26e6a0a4e9864d60a05b322f56ac0102_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 159);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 5 245KF / Turbo up to 5.2GHz / 14 Nhân 14 Luồng / 24MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 5 245KF / Turbo up to 5.2GHz / 14 Nhân 14 Luồng / 24MB / LGA 1851', 6290000, N'', N'https://product.hstatic.net/200000722513/product/n43532-001-arl-5kf-univ_e25bf3b60e52436c8213c5368f5efbc8_master.jpg', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 159);
+
+-- Product: Bộ vi xử lý AMD Ryzen 5 8400F / 4.2GHz Boost 4.7GHz / 6 nhân 12 luồng / 22MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 8400F / 4.2GHz Boost 4.7GHz / 6 nhân 12 luồng / 22MB / AM5', 4490000, N'', N'https://product.hstatic.net/200000722513/product/100-100001591box-1_42bbe74b631c4722b63db81c9914a7e4_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 65);
+
+-- Product: Bộ vi xử lý Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz / 6 Nhân 12 Luồng / 18MB / LGA 1700 (TRAY)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz / 6 Nhân 12 Luồng / 18MB / LGA 1700 (TRAY)', 3890000, N'', N'https://product.hstatic.net/200000722513/product/thumb_linhkien_9067fd110a6346198bb56d6673942477_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 117);
+
+-- Product: Bộ vi xử lý AMD Ryzen 5 5500GT / 3.6GHz Boost 4.4GHz / 6 nhân 12 luồng / 19MB / AM4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 5500GT / 3.6GHz Boost 4.4GHz / 6 nhân 12 luồng / 19MB / AM4', 3990000, N'', N'https://product.hstatic.net/200000722513/product/a_amdryzen5_wgraphics_3dpib_righ_c2564b6e8ec647b1827237adaf34ba4d_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 65);
+
+-- Product: Bộ vi xử lý AMD Ryzen 5 5600GT / 3.6GHz Boost 4.6GHz / 6 nhân 12 luồng / 19MB / AM4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 5600GT / 3.6GHz Boost 4.6GHz / 6 nhân 12 luồng / 19MB / AM4', 4490000, N'', N'https://product.hstatic.net/200000722513/product/u-ly-amd-ryzen-5-5600gt-3-6ghz-boost-4-6ghz-6-nhan-12-luong-19mb-am4-1_a3b93f80457b41dcaceba9e11e1dc21e_master.jpg', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 65);
+
+-- Product: Bộ vi xử lý AMD Ryzen 5 8600G / 4.3GHz Boost 5.0GHz / 6 nhân 12 luồng / 22MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 8600G / 4.3GHz Boost 5.0GHz / 6 nhân 12 luồng / 22MB / AM5', 6990000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-bo-vi-xu-ly-amd-ryzen-5-8600g-1_8d200390a2de4022b8b0d3131730a762_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 65);
+
+-- Product: Bộ vi xử lý AMD Ryzen 7 8700G / 4.2GHz Boost 5.1GHz / 8 nhân 16 luồng / 24MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 7 8700G / 4.2GHz Boost 5.1GHz / 8 nhân 16 luồng / 24MB / AM5', 9490000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-bo-vi-xu-ly-amd-ryzen-7-8700g-1_8dc602aee46e43a89d055cce370bf51f_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 65);
+
+-- Product: Bộ vi xử lý Intel Core i3 14100 / Turbo up to 4.7GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i3 14100 / Turbo up to 4.7GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700', 3890000, N'', N'https://product.hstatic.net/200000722513/product/n22751-001-rpl-i3-fhs-dva-bc-univ_png_2345817de4254e87a385f40bd0dbb480_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 110);
+
+-- Product: Bộ vi xử lý Intel Core i5 14400F / Turbo up to 4.7GHz / 10 Nhân 16 Luồng / 20MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 14400F / Turbo up to 4.7GHz / 10 Nhân 16 Luồng / 20MB / LGA 1700', 5690000, N'', N'https://product.hstatic.net/200000722513/product/n22561-001-i5f-_univ_2e1135c9919d46ce97e95d2e19cb74f3_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 148);
+
+-- Product: Bộ vi xử lý Intel Core i5 14400 / Turbo up to 4.7GHz / 10 Nhân 16 Luồng / 20MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 14400 / Turbo up to 4.7GHz / 10 Nhân 16 Luồng / 20MB / LGA 1700', 7690000, N'', N'https://product.hstatic.net/200000722513/product/n22635-001-rpl-i5-fhs-dva-bc-univ_png_75fcc375fc9541b2b86458c8890a4dba_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 148);
+
+-- Product: Bộ vi xử lý Intel Core i5 14500 / Turbo up to 5.0GHz / 14 Nhân 20 Luồng / 24MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 14500 / Turbo up to 5.0GHz / 14 Nhân 20 Luồng / 24MB / LGA 1700', 6690000, N'', N'https://product.hstatic.net/200000722513/product/n22635-001-rpl-i5-fhs-dva-bc-univ_png_413dec9963c14344a48ec62451a1edb3_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 154);
+
+-- Product: Bộ vi xử lý Intel Core i7 14700F / Turbo up to 5.4GHz / 20 Nhân 28 Luồng / 33MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i7 14700F / Turbo up to 5.4GHz / 20 Nhân 28 Luồng / 33MB / LGA 1700', 11290000, N'', N'https://product.hstatic.net/200000722513/product/n22459-001-rpl-i7f-fhs-dva-bc-univ_png_21fc4faaaca646ae9804e8bcc729ae57_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 219);
+
+-- Product: Bộ vi xử lý Intel Core i7 14700 / Turbo up to 5.4GHz / 20 Nhân 28 Luồng / 33MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i7 14700 / Turbo up to 5.4GHz / 20 Nhân 28 Luồng / 33MB / LGA 1700', 11990000, N'', N'https://product.hstatic.net/200000722513/product/n22488-001_db9abfdfc85b4585955cd1bf15aced2d_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 219);
+
+-- Product: Bộ vi xử lý Intel Core i3 14100F / Turbo up to 4.7GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i3 14100F / Turbo up to 4.7GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700', 3190000, N'', N'https://product.hstatic.net/200000722513/product/n22746-001-rpl-i3f-fhs-dva-bc-univ_png_b7e80ee4a06f4662b2aa7f3d6ec97364_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 110);
+
+-- Product: Bộ vi xử lý Intel Core i5 14600KF / Turbo up to 5.3GHz / 14 Nhân 20 Luồng / 24MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 14600KF / Turbo up to 5.3GHz / 14 Nhân 20 Luồng / 24MB / LGA 1700', 6190000, N'', N'https://product.hstatic.net/200000722513/product/n22498_png_5e7a710b9b4a40bf8c1b7d0edd860c66_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 181);
+
+-- Product: Bộ vi xử lý Intel Core i5 14600K / Turbo up to 5.3GHz / 14 Nhân 20 Luồng / 24MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 14600K / Turbo up to 5.3GHz / 14 Nhân 20 Luồng / 24MB / LGA 1700', 6690000, N'', N'https://product.hstatic.net/200000722513/product/n22490-001-rpl-i5k-univ_png_dd9c15cdc33d45e5963d0a5f73f47f1d_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 181);
+
+-- Product: Bộ vi xử lý Intel Core i7 14700KF / Turbo up to 5.6GHz / 20 Nhân 28 Luồng / 33MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i7 14700KF / Turbo up to 5.6GHz / 20 Nhân 28 Luồng / 33MB / LGA 1700', 11490000, N'', N'https://product.hstatic.net/200000722513/product/i7kf_3120825e0dbf418a939c18cdac94253b_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 253);
+
+-- Product: Bộ vi xử lý Intel Core i7 14700K / Turbo up to 5.6GHz / 20 Nhân 28 Luồng / 33MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i7 14700K / Turbo up to 5.6GHz / 20 Nhân 28 Luồng / 33MB / LGA 1700', 13990000, N'', N'https://product.hstatic.net/200000722513/product/i7k_a1416a616a0a45358557b5348014b46b_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 253);
+
+-- Product: Bộ vi xử lý Intel Core i9 14900KF / Turbo up to 6.0GHz / 24 Nhân 32 Luồng / 36MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i9 14900KF / Turbo up to 6.0GHz / 24 Nhân 32 Luồng / 36MB / LGA 1700', 16490000, N'', N'https://product.hstatic.net/200000722513/product/i9kf_0d8eca19326140198fc327f9ff699fb1_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 253);
+
+-- Product: Bộ vi xử lý Intel Core i9 14900K / Turbo up to 6.0GHz / 24 Nhân 32 Luồng / 36MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i9 14900K / Turbo up to 6.0GHz / 24 Nhân 32 Luồng / 36MB / LGA 1700', 15990000, N'', N'https://product.hstatic.net/200000722513/product/i9k_379efd950af74727a83b02c13817a3a7_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 253);
+
+-- Product: Bộ vi xử lý Intel Core i5 13400F / 2.5GHz Turbo 4.6GHz / 10 Nhân 16 Luồng / 20MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 13400F / 2.5GHz Turbo 4.6GHz / 10 Nhân 16 Luồng / 20MB / LGA 1700', 3690000, N'', N'https://product.hstatic.net/200000722513/product/13400f_4988446fd3b649d48605ab2a6586b28b_477f77739aa94fee90c99c709e47fcf4_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 148);
+
+-- Product: Bộ vi xử lý Intel Core i5 13400 / 2.5GHz Turbo 4.6GHz / 10 Nhân 16 Luồng / 20MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 13400 / 2.5GHz Turbo 4.6GHz / 10 Nhân 16 Luồng / 20MB / LGA 1700', 6690000, N'', N'https://product.hstatic.net/200000722513/product/13400_ce4e7f52df5045a7b0a4f2c689136488_493622b9e0ca41ce8f6cc0cf51cee012_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 148);
+
+-- Product: Bộ vi xử lý Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz / 6 Nhân 12 Luồng / 18MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz / 6 Nhân 12 Luồng / 18MB / LGA 1700', 4790000, N'', N'https://product.hstatic.net/200000722513/product/12400f_cadecfed12d84fcf836b65ae7179a9e0_abe30b4a782c4e5899a6f9e6eda7e797_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 117);
+
+-- Product: Bộ vi xử lý Intel Core i5 12400 / 2.5GHz Turbo 4.4GHz / 6 Nhân 12 Luồng / 18MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i5 12400 / 2.5GHz Turbo 4.4GHz / 6 Nhân 12 Luồng / 18MB / LGA 1700', 5690000, N'', N'https://product.hstatic.net/200000722513/product/12400_7150a7594d524982ba859a04ed952903_938a2a0ca05546eb940547a6d50e7bda_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 117);
+
+-- Product: Bộ vi xử lý Intel Core i3 13100F / 3.4GHz Turbo 4.5GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i3 13100F / 3.4GHz Turbo 4.5GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700', 3290000, N'', N'https://product.hstatic.net/200000722513/product/13100f_b27fcb29892e4ec29981a79190289db0_3647022852e94b4c8303d3572b81ba41_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 110);
+
+-- Product: Bộ vi xử lý Intel Core i3 12100F / 3.3GHz Turbo 4.3GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i3 12100F / 3.3GHz Turbo 4.3GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700', 3190000, N'', N'https://product.hstatic.net/200000722513/product/12100f_d81914f75c254dba985d80033b522662_c3458e8ae6a24c8881b4ae103f0b6a6d_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 89);
+
+-- Product: Bộ vi xử lý Intel Core i3 12100 / 3.3GHz Turbo 4.3GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core i3 12100 / 3.3GHz Turbo 4.3GHz / 4 Nhân 8 Luồng / 12MB / LGA 1700', 3390000, N'', N'https://product.hstatic.net/200000722513/product/i3_gen12_ed05d8beb7ac4245be9cd60ba2ef5570_b80e235ecd314f78b739113a85f5f1e6_master.png', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 89);
+
+-- Product: Bộ vi xử lý AMD Ryzen 9 7900X / 4.7GHz Boost 5.6GHz / 12 nhân 24 luồng / 76MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 9 7900X / 4.7GHz Boost 5.6GHz / 12 nhân 24 luồng / 76MB / AM5', 12290000, N'', N'https://product.hstatic.net/200000722513/product/ryzen_9_-_1_5157911128a742f3bde4732cf4abdfb2_806c446fab4b42b6b6c71b298e08f563_master.jpg', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 170);
+
+-- Product: Bộ vi xử lý AMD Ryzen 7 7800X3D / 4.2GHz Boost 5.0GHz / 8 nhân 16 luồng / 104MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 7 7800X3D / 4.2GHz Boost 5.0GHz / 8 nhân 16 luồng / 104MB / AM5', 11990000, N'', N'https://product.hstatic.net/200000722513/product/ryzen-7-7800x3d-600x600_30d6f05d43524a6c950830a366e4f4eb_2fb2daf9ef7d4faf92f0b1ed1612b1a0_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 120);
+
+-- Product: Bộ vi xử lý AMD Ryzen 7 7700X / 4.5GHz Boost 5.4GHz / 8 nhân 16 luồng / 40MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 7 7700X / 4.5GHz Boost 5.4GHz / 8 nhân 16 luồng / 40MB / AM5', 10990000, N'', N'https://product.hstatic.net/200000722513/product/ryzen_7_-_1_00957bbe7b8542308c897a90d439b1fd_e1c9a16c537d47bb9768828dddb332d0_master.jpg', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 105);
+
+-- Product: Bộ vi xử lý AMD Ryzen 5 7600X / 4.7GHz Boost 5.3GHz / 6 nhân 12 luồng / 38MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 7600X / 4.7GHz Boost 5.3GHz / 6 nhân 12 luồng / 38MB / AM5', 6490000, N'', N'https://product.hstatic.net/200000722513/product/ryzen_5_-_1_be51e69b02cf4ed78a758a6337e56a27_ae6fad038dff4fa985e2e4b86abc8d85_master.jpg', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 105);
+
+-- Product: Bộ vi xử lý AMD Ryzen 5 7600 / 3.8GHz Boost 5.1GHz / 6 nhân 12 luồng / 38MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 7600 / 3.8GHz Boost 5.1GHz / 6 nhân 12 luồng / 38MB / AM5', 5790000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-amd-ryzen-5-7600-1_fea6e6c8d31a452fb221d1d78261bc47_3169b43038fd4de98a0d0e32feca33a0_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 65);
+
+-- Product: Bộ vi xử lý AMD Ryzen 3 4300G / 3.8GHz Boost 4.0GHz / 4 nhân 8 luồng / 6MB / AM4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 3 4300G / 3.8GHz Boost 4.0GHz / 4 nhân 8 luồng / 6MB / AM4', 2490000, N'', N'https://product.hstatic.net/200000722513/product/-4300g-processor-with-radeon-graphics_f334518704cc40e19a7198cee54d14f7_781e7f3301cd49a9b6180ae3d1bf0a97_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 65);
+
+-- Product: Bộ vi xử lý AMD Ryzen 3 3200G / 3.6GHz Boost 4.0GHz / 4 nhân 4 luồng / 4MB / AM4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 3 3200G / 3.6GHz Boost 4.0GHz / 4 nhân 4 luồng / 4MB / AM4', 1990000, N'', N'https://product.hstatic.net/200000722513/product/ryzen_5_3200g_gearvn_e799782ec0cd4d46b675a04c2a399a45_e18d2021b0a844239691ebc57beb1c2a_master.jpg', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 65);
+
+-- Product: Bộ vi xử lý AMD Athlon 3000G / 3.5GHz / 2 nhân 4 luồng / 5MB / AM4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Athlon 3000G / 3.5GHz / 2 nhân 4 luồng / 5MB / AM4', 1390000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-amd-athlon-3000g_9a96ebfbbf3f43c7a61cdba59b00e5b5_fc7e2a8f09b24c55b154d39cf9ce96a7_master.jpg', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 35);
+
+-- Product: Bộ vi xử lý AMD Ryzen 7 9850X3D / 4.7GHz Boost 5.6GHz / 8 nhân 16 luồng / 104MB / AM5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 7 9850X3D / 4.7GHz Boost 5.6GHz / 8 nhân 16 luồng / 104MB / AM5', 15990000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-bo-vi-xu-ly-amd-ryzen9-9850x3d-1_517a4efa6cbd4aa5830e9e2387c4bf97_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 120);
+
+-- Product: Bộ vi xử lý AMD Ryzen 5 7500F / 3.7GHz Boost 5.0GHz / 6 nhân 12 luồng / 38MB / AM5 (Tray)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 5 7500F / 3.7GHz Boost 5.0GHz / 6 nhân 12 luồng / 38MB / AM5 (Tray)', 4790000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-bo-vi-xu-ly-amd-ryzen-5-7500f-tray-1_3fb95c47b67a41dfa1a5b291fc008df1_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 0, 0, N'LGA 1700', 65);
+
+-- Product: Bộ vi xử lý AMD Ryzen 7 9800X3D / 4.7GHz Boost 5.2GHz / 8 nhân 16 luồng / 104MB / AM5 (Tray)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý AMD Ryzen 7 9800X3D / 4.7GHz Boost 5.2GHz / 8 nhân 16 luồng / 104MB / AM5 (Tray)', 14790000, N'', N'https://cdn.hstatic.net/products/200000722513/bo-vi-xu-ly-amd-ryzen-7-9800x3d-tray-1_691bda07cba94f7fa8b50f9d594b554b_master.png', 1, 10, N'AMD', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 0, 0, N'LGA 1700', 120);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 5 225F / Turbo up to 4.9 GHz / 10 Nhân 10 Luồng / 20MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 5 225F / Turbo up to 4.9 GHz / 10 Nhân 10 Luồng / 20MB / LGA 1851', 6990000, N'', N'https://product.hstatic.net/200000722513/product/24game_intel_coreultra_nonk_box_image_5_67eafaaec7ea44f4af561f3ed43efa51_master.jpg', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 121);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 5 225 / Turbo up to 4.9 GHz / 10 Nhân 10 Luồng / 20MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 5 225 / Turbo up to 4.9 GHz / 10 Nhân 10 Luồng / 20MB / LGA 1851', 7490000, N'', N'https://product.hstatic.net/200000722513/product/24game_intel_coreultra_nonk_box_image_5_0ad275ed9f814c58b3bd64bd153341de_master.jpg', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1700', 121);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 5 235 / Turbo up to 5.0 GHz / 14 Nhân 14 Luồng / 24MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 5 235 / Turbo up to 5.0 GHz / 14 Nhân 14 Luồng / 24MB / LGA 1851', 7990000, N'', N'https://product.hstatic.net/200000722513/product/24game_intel_coreultra_nonk_box_image_5_4d7affe9976c4fa480f756f12885aa37_master.jpg', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 121);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 7 265F / Turbo up to 5.3GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 7 265F / Turbo up to 5.3GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851', 10490000, N'', N'https://product.hstatic.net/200000722513/product/24game_intel_coreultra_nonk_box_image_7_493896b8ff7f4c07aeddba47fe08b8b9_master.jpg', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 182);
+
+-- Product: Bộ vi xử lý Intel Core Ultra 7 265 / Turbo up to 5.3GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Bộ vi xử lý Intel Core Ultra 7 265 / Turbo up to 5.3GHz / 20 Nhân 20 Luồng / 30MB / LGA 1851', 10990000, N'', N'https://product.hstatic.net/200000722513/product/24game_intel_coreultra_nonk_box_image_7_e0e526ece38e4191a0a67de6b1ea7056_master.jpg', 1, 10, N'Intel', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 1, 0, N'LGA 1851', 182);
+
+-- Product: Máy bộ Acer Altos P130F7 (I5/RAM 8GB/SSD 512GB)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Máy bộ Acer Altos P130F7 (I5/RAM 8GB/SSD 512GB)', 11990000, N'', N'https://cdn.hstatic.net/products/200000722513/9_66f2dbd32b434349bde87279735d6f7c_master.jpg', 1, 10, N'ACER', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket) VALUES (@current_pid, 0, 0, N'LGA 1851');
+
+-- Product: PC GVN Homework Athlon
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'PC GVN Homework Athlon', 7190000, N'', N'https://product.hstatic.net/200000722513/product/_gvn7295_0583998cf254405d847193c7cb07c1e8_7bdd8243700a436eaee81719c239c218_master.jpg', 1, 10, N'GEARVN', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 0, 0, N'LGA 1851', 350);
+
+-- Product: PC GVN Homework R3
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'PC GVN Homework R3', 7630000, N'', N'https://product.hstatic.net/200000722513/product/_gvn7410_ec6ca353fcd24dcb9e0c6e3f428c0c0a_4ed5c8f2b7554c76894433077a66ac43_master.jpg', 1, 10, N'GEARVN', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 0, 0, N'LGA 1851', 350);
+
+-- Product: PC GVN Homework R5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'PC GVN Homework R5', 10390000, N'', N'https://product.hstatic.net/200000722513/product/_gvn7295_d3fbea4fe4204126a2d67689baaf043a_master.jpg', 1, 10, N'GEARVN', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 0, 0, N'LGA 1851', 350);
+
+-- Product: PC GVN Homework i5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'PC GVN Homework i5', 12990000, N'', N'https://cdn.hstatic.net/products/200000722513/homework2_15f1c6db7eb04ef7b6b889ee26aee130_master.jpg', 1, 10, N'GEARVN', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 0, 0, N'LGA 1700', 350);
+
+-- Product: Phần mềm Windows 11 Home Online DwnLd NR KW9-00664
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Phần mềm Windows 11 Home Online DwnLd NR KW9-00664', 3490000, N'', N'https://product.hstatic.net/200000722513/product/home_online_dwnld_nr_kw9-00664_gearvn_1af7af131f934c3f9b0b98de4cbea282_6ed5acc9d8bd4266806a53d43ba2863a_master.jpg', 1, 10, N'MICROSOFT', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket) VALUES (@current_pid, 0, 0, N'LGA 1851');
+
+-- Product: Phần mềm Windows 11 Pro Online DwnLd NR FQC-10572
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Phần mềm Windows 11 Pro Online DwnLd NR FQC-10572', 5150000, N'', N'https://product.hstatic.net/200000722513/product/_pro_online_dwnld_nr_fqc-10572_gearvn_dc5a004e0330424c816d20c0a5a31870_6f1e5c53e966459181ef80ade54457aa_master.jpg', 1, 10, N'KHÁC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket) VALUES (@current_pid, 0, 0, N'LGA 1851');
+
+-- Product: Máy chơi game MSI Claw A1M
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Máy chơi game MSI Claw A1M', 14990000, N'', N'https://product.hstatic.net/200000722513/product/may-choi-game-msi-claw-a1m-049vn_9e71b95c111446598e8ff8090302a175_39f190f469d248d585024b6203d40112_master.png', 1, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 0, 0, N'LGA 1851', 2);
+
+-- Product: Máy chơi Game cầm tay Lenovo Legion GO
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Máy chơi Game cầm tay Lenovo Legion GO', 22990000, N'', N'https://product.hstatic.net/200000722513/product/ame-lenovo-legion-go-8apu1-83e1004kvn_f1762ad226cf419695059a68d0b3e2f7_5dff1a71b14448019b7f55a506e103de_master.png', 1, 10, N'LENOVO', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO cpu_specs (product_id, has_igpu, includes_stock_cooler, socket, tdp_max) VALUES (@current_pid, 0, 0, N'LGA 1851', 30);
+
+-- Product: Card màn hình Zotac GEFORCE RTX 3050 TWIN EDGE OC 6GB GDDR6
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GEFORCE RTX 3050 TWIN EDGE OC 6GB GDDR6', 5990000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-zotac-geforce-rtx-3050-twin-edge-oc-6gb-gddr6-1_e9794c36546f467fad0798e2fa17619a_master.png', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 70, 0, 0);
+
+-- Product: Card màn hình Gigabyte GeForce RTX 5050 Gaming OC 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Gigabyte GeForce RTX 5050 Gaming OC 8GB', 8890000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-gigabyte-geforce-rtx-5050-gaming-oc-8gbs-__1__eb529ef60a1c4765991945f93c8a49a7_master.png', 2, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 40, 0, 0);
+
+-- Product: Card màn hình ZOTAC GAMING GeForce RTX 5070 SOLID OC (ZT-B50700J-10P)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ZOTAC GAMING GeForce RTX 5070 SOLID OC (ZT-B50700J-10P)', 19990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-zotac-gaming-geforce-rtx-5070-solid-oc-1_6d0aee3bfa19460a9bf2649cc47c3c92_master.jpg', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 5090 LIGHTNING Z 32GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5090 LIGHTNING Z 32GB', 199990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-msi-geforce-rtx-5090-lightning-z-32gb-1_5ec0c602c4754a249a0754748f4739cf_master.jpg', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 360, 1, 0);
+
+-- Product: Card màn hình Zotac GeForce RTX 5060 Ti 8GB Moon White OC
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GeForce RTX 5060 Ti 8GB Moon White OC', 13890000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-zotac-geforce-rtx-5060-ti-8gb-moon-white-oc-4_a9be9d0c165c45d4a6cf4384cfae2f49_master.jpg', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình SPARKLE Intel Arc B580 TWINSTAR OC 12GB GDDR6
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình SPARKLE Intel Arc B580 TWINSTAR OC 12GB GDDR6', 9690000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-sparkle-intel-arc-b580-twinstar-oc-12gb-gddr6-1_acd5165b13394983b3a4ed918d4f5485_master.jpg', 2, 10, N'SPARKLE', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình Zotac GeForce RTX 5060 Ti 16GB Twin Edge OC
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GeForce RTX 5060 Ti 16GB Twin Edge OC', 17990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-zotac-geforce-rtx-5060-ti-16gb-twin-edge-oc-1_dac94c44dd544e3294304c03379aa29a_master.jpg', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 1);
+
+-- Product: Card màn hình MSI GeForce RTX 5060 Ventus 2X OC V1 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5060 Ventus 2X OC V1 8GB', 10990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-msi-geforce-rtx-5060-ventus-2x-oc-v1-8gb-1_6c4e1e1337c54b82a76a7aac5ede144d_master.jpg', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình Zotac GeForce RTX 5070Ti Solid Core OC 16GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GeForce RTX 5070Ti Solid Core OC 16GB', 28990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-zotac-geforce-rtx-5070ti-solid-core-oc-16gb-1_65d4babb42794bdf9848ce2ed8e2fb44_master.jpg', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình Zotac GeForce RTX 5080 Solid Core OC 16GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GeForce RTX 5080 Solid Core OC 16GB', 37990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-zotac-geforce-rtx-5080-solid-core-oc-16gb-1_a40a16bb137e4cdfb14adcb651f410e3_master.jpg', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình Gigabyte GeForce RTX 5060 Windforce Max OC 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Gigabyte GeForce RTX 5060 Windforce Max OC 8GB', 10990000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-gigabyte-geforce-rtx-5060-windforce-max-oc-8gb-2_5b2a90610a9d45dcb488a85d9e718967_master.png', 2, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 40, 0, 1);
+
+-- Product: Card màn hình Zotac GEFORCE RTX 5060 Ti 8GB TWIN EDGE GDDR7
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GEFORCE RTX 5060 Ti 8GB TWIN EDGE GDDR7', 12490000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-zotac-geforce-rtx-5060-ti-8gb-twin-edge-gddr7-1_b24e7357a2d54145abde72422070d176_master.png', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 5, 0, 1);
+
+-- Product: Card màn hình Gigabyte GeForce RTX 5060 Eagle Ice OC 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Gigabyte GeForce RTX 5060 Eagle Ice OC 8GB', 9990000, N'', N'https://product.hstatic.net/200000722513/product/geforce_rtx__5060_eagle_oc_ice_8g-01_32d5abc5e32d461e9b8afba671e2b21a_master.png', 2, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình GIGABYTE GeForce RTX 4070 SUPER WINDFORCE OC 12G (GV-N407SWF3OC-12GD)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình GIGABYTE GeForce RTX 4070 SUPER WINDFORCE OC 12G (GV-N407SWF3OC-12GD)', 19490000, N'', N'https://product.hstatic.net/200000722513/product/geforce_rtx__4070_super_windforce_oc_12g-02_cb8fbfeb315e480b8cf8698fee120280_master.png', 2, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 50, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 5090 32G VENTUS 3X OC
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5090 32G VENTUS 3X OC', 124990000, N'', N'https://product.hstatic.net/200000722513/product/1024__1__1c871c9775d54ee98cf82ff7ad2fc2fc_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình GIGABYTE GeForce RTX 3060 WINDFORCE OC 12G V2 (GV-N3060WF2OC-12GD)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình GIGABYTE GeForce RTX 3060 WINDFORCE OC 12G V2 (GV-N3060WF2OC-12GD)', 9990000, N'', N'https://product.hstatic.net/200000722513/product/geforce_rtx__3060_windforce_oc_12g-07_6869382166b043c5be19ae59ce49e61a_master.png', 2, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 39, 0, 0);
+
+-- Product: Card màn hình ASUS Dual Radeon RX 6500 XT V2 OC Edition 4GB GDDR6 (DUAL-RX6500XT-O4G-V2)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS Dual Radeon RX 6500 XT V2 OC Edition 4GB GDDR6 (DUAL-RX6500XT-O4G-V2)', 3790000, N'', N'https://product.hstatic.net/200000722513/product/fwebp__12__615ffd30b3194e8384bb79f423cb7f41_master.png', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 40, 0, 0);
+
+-- Product: Card màn hình ASUS Dual GeForce RTX 4060 V2 OC Edition 8GB GDDR6 (DUAL-RTX4060-O8G-V2)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS Dual GeForce RTX 4060 V2 OC Edition 8GB GDDR6 (DUAL-RTX4060-O8G-V2)', 8490000, N'', N'https://product.hstatic.net/200000722513/product/fwebp_f763561886254dc9838eb6d71feaecf3_master.png', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 1, 0, 1);
+
+-- Product: Card màn hình ASUS Dual Radeon RX 7600 V2 OC Edition 8GB GDDR6 (DUAL-RX7600-O8G-V2)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS Dual Radeon RX 7600 V2 OC Edition 8GB GDDR6 (DUAL-RX7600-O8G-V2)', 7790000, N'', N'https://product.hstatic.net/200000722513/product/fwebp__6__cfffcef0dbca441ea89fe16191bf7368_master.png', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 49, 0, 1);
+
+-- Product: Card màn hình GIGABYTE AORUS GeForce RTX 4080 SUPER XTREME ICE 16G (GV-N408SAORUSX ICE-16GD)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình GIGABYTE AORUS GeForce RTX 4080 SUPER XTREME ICE 16G (GV-N408SAORUSX ICE-16GD)', 39990000, N'', N'https://product.hstatic.net/200000722513/product/aorus_geforce_rtx__4080_super_xtreme_ice_16g-02_73657b76adc1478f829ef65d5c50d996_master.png', 2, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 75, 0, 0);
+
+-- Product: Card màn hình ASUS Dual GeForce RTX 3050 6GB GDDR6 (DUAl-RTX3050-6G)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS Dual GeForce RTX 3050 6GB GDDR6 (DUAl-RTX3050-6G)', 4690000, N'', N'https://product.hstatic.net/200000722513/product/fwebp__6__1cce2c81d3374da0ae9116a36cc27d69_master.png', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 37, 0, 0);
+
+-- Product: Card màn hình ASUS Dual GeForce RTX 3050 OC Edition 6GB (DUAl-RTX3050-O6G)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS Dual GeForce RTX 3050 OC Edition 6GB (DUAl-RTX3050-O6G)', 4790000, N'', N'https://product.hstatic.net/200000722513/product/-man-hinh-asus-dual-geforce-rtx-3050-oc-edition-6gb-dual-rtx3050-o6g-5_32785b8f85e2429a84fcc27a80f82c1b_master.png', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 37, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 3050 VENTUS 2X 6G OC
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 3050 VENTUS 2X 6G OC', 4990000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-card-man-hinh-msi-geforce-rtx-3050-ventus-2x-6g-oc-1_0a3f8d13c887450cac4c18ca4bc85e26_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 42, 0, 0);
+
+-- Product: Card màn hình ASUS Dual GeForce GTX 1650 OC Edition 4GB GDDR6 EVO (DUAL-GTX1650-O4GD6-P-EVO)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS Dual GeForce GTX 1650 OC Edition 4GB GDDR6 EVO (DUAL-GTX1650-O4GD6-P-EVO)', 3690000, N'', N'https://product.hstatic.net/200000722513/product/l-geforce-gtx-1650-oc-edition-4gb-gddr6-evo-dual-gtx1650-o4gd6-p-evo-1_e3dd9060476046649389fada52aa1327_master.jpg', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 4060 VENTUS 2X WHITE 8G OC
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 4060 VENTUS 2X WHITE 8G OC', 8990000, N'', N'https://product.hstatic.net/200000722513/product/1024_fd1082e7b88a433fba74748967ff14ee_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 41, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 3050 VENTUS 2X XS 8G OC
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 3050 VENTUS 2X XS 8G OC', 5990000, N'', N'https://product.hstatic.net/200000722513/product/1024__1__ef5bef961ca247dfbbabf177dc43b783_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 42, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 4060 VENTUS 2X BLACK 8G OC
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 4060 VENTUS 2X BLACK 8G OC', 8490000, N'', N'https://product.hstatic.net/200000722513/product/rtx_4060_ventus_2x_black_8g_oc_c34ea8c824fb4afb9f1241cec761e799_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 41, 0, 1);
+
+-- Product: Card màn hình MSI GeForce RTX 3060 Ventus 2X OC 12G
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 3060 Ventus 2X OC 12G', 9990000, N'', N'https://product.hstatic.net/200000722513/product/1024_8cf8d2e8bf3b46eb9a15cb1d790b0130_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 42, 0, 1);
+
+-- Product: Card màn hình ASUS Dual GeForce RTX 3060 OC Edition 12GB V2 (DUAL-RTX3060-O12G-V2)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS Dual GeForce RTX 3060 OC Edition 12GB V2 (DUAL-RTX3060-O12G-V2)', 7890000, N'', N'https://product.hstatic.net/200000722513/product/dual-rtx3060-o12g-01_303eda4235a448c1b6993819a6009141_4ef40d3eba3444b09070dccc38fd681d_master.jpg', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 1);
+
+-- Product: MSI GeForce GTX 1650 SUPER GAMING X 4GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'MSI GeForce GTX 1650 SUPER GAMING X 4GB', 8590000, N'', N'https://product.hstatic.net/200000722513/product/msi-gtx-1650-super-gaming-x-4gb-1_7259676890764aed9abf256b4b9c9af2_5947378c42ab4dbd8bf2e234e7b6762d_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 44, 0, 0);
+
+-- Product: Card màn hình Leadtek NVIDIA RTX PRO 4000 Blackwell 24GB GDDR7
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Leadtek NVIDIA RTX PRO 4000 Blackwell 24GB GDDR7', 59990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-leadtek-nvidia-rtx-pro-4000-blackwell-24gb-gddr7-4_5f78b4bc1888417e8135c36832cba943_master.jpg', 2, 10, N'NVIDIA', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 5060 Ti Shadow 2X OC Plus 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5060 Ti Shadow 2X OC Plus 8GB', 12990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-msi-geforce-rtx-5060-ti-shadow-2x-oc-plus-8gb-1_7e43a2d2371949d0a0167953c3bba6ae_master.jpg', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 41, 0, 1);
+
+-- Product: Card màn hình Leadtek NVIDIA RTX PRO 5000 Blackwell 48GB GDDR7
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Leadtek NVIDIA RTX PRO 5000 Blackwell 48GB GDDR7', 216990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-leadtek-nvidia-rtx-pro-5000-blackwell-48gb-gddr7-2_9eaa0910b0fc4deeab8a2d233a2b8217_master.jpg', 2, 10, N'LEADTEK', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình ASUS ROG Astral EDITION 20 GeForce RTX 5090 32GB GDDR7
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS ROG Astral EDITION 20 GeForce RTX 5090 32GB GDDR7', 199990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-asus-rog-astral-edition-20-geforce-rtx-5090-32gb-gddr7-1_21f97caf493248a382efcfa72715413d_master.jpg', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình SPARKLE Intel Arc B580 TITAN Nox OC 12GB GDDR6
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình SPARKLE Intel Arc B580 TITAN Nox OC 12GB GDDR6', 9690000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-sparkle-intel-arc-b580-titan-nox-oc-12gb-gddr6-1_d06a21d85a46445f85652d657036c70b_master.png', 2, 10, N'SPARKLE', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 315, 0, 1);
+
+-- Product: Card màn hình SPARKLE Intel Arc B580 TITAN OC 12GB GDDR6
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình SPARKLE Intel Arc B580 TITAN OC 12GB GDDR6', 9690000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-sparkle-intel-arc-b580-titan-oc-12gb-gddr6-1_843826008dae4aefa1eb0aec3103fa11_master.png', 2, 10, N'SPARKLE', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 44, 0, 1);
+
+-- Product: Card màn hình Zotac GeForce RTX 5060 Ti 16GB Twin Edge
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GeForce RTX 5060 Ti 16GB Twin Edge', 14990000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-zotac-geforce-rtx-5060-ti-16gb-twin-edge-1_870d103b4f164bd9b476631e6f8ef82b_master.png', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 6, 0, 0);
+
+-- Product: Card màn hình Zotac GEFORCE RTX 5050 TWIN EDGE OC 8GB GDDR6
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GEFORCE RTX 5050 TWIN EDGE OC 8GB GDDR6', 8990000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-zotac-geforce-rtx-5050-twin-edge-oc-8gb-gddr6-1_2ee100bc3e28421db69856a4f3d85e12_master.png', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 5, 0, 1);
+
+-- Product: Card màn hình ZOTAC GAMING GeForce RTX 5070 AMP White Edition (ZT-B50700FQ-10P)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ZOTAC GAMING GeForce RTX 5070 AMP White Edition (ZT-B50700FQ-10P)', 18990000, N'', N'https://cdn.hstatic.net/products/200000722513/card-man-hinh-zotac-gaming-geforce-rtx-5070-amp-white-edition-1_2bd6477cf68d4096b047224db713b7a1_master.png', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 4, 1, 1);
+
+-- Product: Card màn hình GIGABYTE GeForce RTX 3050 WINDFORCE OC V2 8G (GV-N3050WF2OCV2-8GD)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình GIGABYTE GeForce RTX 3050 WINDFORCE OC V2 8G (GV-N3050WF2OCV2-8GD)', 8390000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-gigabyte-geforce-rtx-3050-windforce-oc-v2-8g-1_46f8826f266842bbb624e976c8d5b854_master.png', 2, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 39, 0, 1);
+
+-- Product: Card màn hình Gigabyte GeForce RTX 5060 Eagle OC 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Gigabyte GeForce RTX 5060 Eagle OC 8GB', 10890000, N'', N'https://product.hstatic.net/200000722513/product/geforce_rtx__5060_eagle_oc_8g-01_4cbdb294b6d84395a3466822f8068e0a_master.png', 2, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 5060 Ti Ventus 2X Plus 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5060 Ti Ventus 2X Plus 8GB', 12990000, N'', N'https://product.hstatic.net/200000722513/product/card_m_n_h_nh_msi_geforce_rtx_5060_ti_ventus_2x_plus_8gb-1_a3c693757a04401183bd4bf4b621eef8_master.jpeg', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 5060 Gaming Trio OC White 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5060 Gaming Trio OC White 8GB', 12990000, N'', N'https://product.hstatic.net/200000722513/product/card_m_n_h_nh_msi_geforce_rtx_5060_gaming_trio_oc_white_8gb-1_48341e2ebdba476091826341f50397d6_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 0, 1);
+
+-- Product: Card màn hình MSI GeForce RTX 5060 Gaming Trio OC 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5060 Gaming Trio OC 8GB', 12990000, N'', N'https://product.hstatic.net/200000722513/product/card_m_n_h_nh_msi_geforce_rtx_5060_gaming_trio_oc_8gb_07709bbb798d477b88704c694865676f_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 0, 0);
+
+-- Product: Card màn hình ASUS ROG Astral GeForce RTX 5080 16GB GDDR7 OC Edition (ROG-ASTRAL-RTX5080-O16G-GAMING) White Edition
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS ROG Astral GeForce RTX 5080 16GB GDDR7 OC Edition (ROG-ASTRAL-RTX5080-O16G-GAMING) White Edition', 53990000, N'', N'https://product.hstatic.net/200000722513/product/asus_rog_astral_geforce_rtx_5080_16gb_gddr7_oc_edition_-_01_5fb1fbd701fb469d8c8826ab3ea17a96_master.png', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 1, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 5060 Ventus 2X OC White 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5060 Ventus 2X OC White 8GB', 11490000, N'', N'https://product.hstatic.net/200000722513/product/card_m_n_h_nh_msi_geforce_rtx_5060_ventus_2x_oc_white_8gb_-_1_bfad2f9b1f304709a5cdd7f0946064a6_master.jpg', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 0, 0);
+
+-- Product: Card màn hình ASUS Dual GeForce RTX 5070 12GB GDDR7 OC Edition
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình ASUS Dual GeForce RTX 5070 12GB GDDR7 OC Edition', 19990000, N'', N'https://product.hstatic.net/200000722513/product/card_m_n_h_nh_asus_dual_geforce_rtx_5070_12gb_gddr7_oc_edition_-_1_10106113efc04c55ae65e9f833eb6805_master.png', 2, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 0, 0);
+
+-- Product: Card màn hình Zotac GeForce RTX 5060 Twin Edge OC 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình Zotac GeForce RTX 5060 Twin Edge OC 8GB', 9690000, N'', N'https://product.hstatic.net/200000722513/product/card_m_n_h_nh_zotac_geforce_rtx_5060_twin_edge_oc_8gb_-1_9a171dd9625e467b814fdb1e35b44445_master.jpg', 2, 10, N'ZOTAC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 0, 0);
+
+-- Product: Card màn hình MSI GeForce RTX 5060 Shadow 2X OC 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5060 Shadow 2X OC 8GB', 9890000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-msi-geforce-rtx-5060-shadow-2x-oc-8gb-1_3010534854914240b88e2d38363a58ac_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 0, 1);
+
+-- Product: Card màn hình MSI GeForce RTX 5060 Ventus 2X OC 8GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Card màn hình MSI GeForce RTX 5060 Ventus 2X OC 8GB', 10990000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-card-man-hinh-msi-geforce-rtx-5060-ventus-2x-oc-8gb-1_e9b39ab2208346618f66951c5bab8bf0_master.png', 2, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+INSERT INTO gpu_specs (product_id, length_mm, pcie12vhpwr_required, pcie8pin_required) VALUES (@current_pid, 240, 0, 1);
+
+-- Product: Ram Kingmax Blade X 1x16GB DDR4 Bus 3200Mhz
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Kingmax Blade X 1x16GB DDR4 Bus 3200Mhz', 2990000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-ram-kingmax-blade-x-1x16gb-ddr4-bus-3200mhz-1_41d9d047789d401cb325830846101c93_master.png', 3, 10, N'KINGMAX', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Corsair Vengeance RGB White 32GB (2x16GB) 6000 DDR5 (CMH32GX5M2E6000C36W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Corsair Vengeance RGB White 32GB (2x16GB) 6000 DDR5 (CMH32GX5M2E6000C36W)', 13990000, N'', N'https://product.hstatic.net/200000722513/product/32657-ram-ddr5-corsair-32gb-2x16_b2bb353c8b7b4c3a8b5e99a362f85e1a_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Laptop Adata Premier DDR4 8GB Bus 3200
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Laptop Adata Premier DDR4 8GB Bus 3200', 2190000, N'', N'https://cdn.hstatic.net/products/200000722513/ram-laptop-adata-premier-ddr4-8gb-bus-3200-1_a53db542a9cc48798f4921b37526e928_master.jpg', 3, 10, N'ADATA', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Laptop Crucial DDR4 16GB Bus 3200
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Laptop Crucial DDR4 16GB Bus 3200', 3390000, N'', N'https://cdn.hstatic.net/products/200000722513/ram-laptop-crucial-ddr4-16gb-bus-3200-1_01c99e238833424b845bcd4e94630a7b_master.jpg', 3, 10, N'CRUCIAL', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: RAM Corsair Dominator Titanium Black 96GB (2x48GB) RGB 6600 DDR5 (CMP96GX5M2B6600C32)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'RAM Corsair Dominator Titanium Black 96GB (2x48GB) RGB 6600 DDR5 (CMP96GX5M2B6600C32)', 39990000, N'', N'https://product.hstatic.net/200000722513/product/dominator_titanium_rgb_ddr5_blac_5a09a45f1f3446e6bfc52e29f82a8a7a_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Corsair Vengeance RGB 96GB (2x48GB) 5600 DDR5 Black (CMH96GX5M2B5600C40)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Corsair Vengeance RGB 96GB (2x48GB) 5600 DDR5 Black (CMH96GX5M2B5600C40)', 33990000, N'', N'https://product.hstatic.net/200000722513/product/vengeance_-rgb-96gb-_2x48gb_-ddr_a3f02accb53a485f9a0cd2d06a974f89_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: RAM Corsair Dominator Titanium White 64GB (2x32GB) RGB 6000 DDR5 (CMP64GX5M2B6000C30W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'RAM Corsair Dominator Titanium White 64GB (2x32GB) RGB 6000 DDR5 (CMP64GX5M2B6000C30W)', 21490000, N'', N'https://product.hstatic.net/200000722513/product/ram-pc-corsair-dominator-titaniu_c6edcc99228941b28575bd98c9d25a27_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: RAM Corsair Dominator Titanium Black 64GB (2x32GB) RGB 6000 DDR5 (CMP64GX5M2B6000C30)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'RAM Corsair Dominator Titanium Black 64GB (2x32GB) RGB 6000 DDR5 (CMP64GX5M2B6000C30)', 20490000, N'', N'https://product.hstatic.net/200000722513/product/dominator_titanium_rgb_ddr5_blac_fa0f0c02819e4313b6a595ecb2e029b0_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: RAM Corsair Dominator Titanium Black 64GB (2x32GB) RGB 6600 DDR5 (CMP64GX5M2X6600C32)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'RAM Corsair Dominator Titanium Black 64GB (2x32GB) RGB 6600 DDR5 (CMP64GX5M2X6600C32)', 27490000, N'', N'https://product.hstatic.net/200000722513/product/dominator_titanium_rgb_ddr5_blac_41dfe569b59a48deb0e1d6c5bd83056e_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: RAM Corsair Dominator Titanium White 64GB (2x32GB) RGB 6600 DDR5 (CMP64GX5M2X6600C32W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'RAM Corsair Dominator Titanium White 64GB (2x32GB) RGB 6600 DDR5 (CMP64GX5M2X6600C32W)', 20490000, N'', N'https://product.hstatic.net/200000722513/product/dominator_titanium_rgb_ddr5_whit_ada5b98eea53441486b7bbecf785b4ce_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram T-Group T-Force Delta 1x8GB 3600 RGB Black
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram T-Group T-Force Delta 1x8GB 3600 RGB Black', 1990000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-ram-t-group-t-force-delta-1x8gb-3600-rgb-black-2_9ca9681b38f648f5b19f2a3554da861b_master.jpg', 3, 10, N'TEAM GROUP', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram T-Group T-Force Delta 1x16GB 3600 RGB Black
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram T-Group T-Force Delta 1x16GB 3600 RGB Black', 3490000, N'', N'https://product.hstatic.net/200000722513/product/eamgroup-t-force-delta-black-rgb_a85b8197156b4de59371cde1710933c4_master.png', 3, 10, N'TEAM GROUP', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Corsair Vengeance RGB 32GB (2x16GB) 5600 DDR5 (CMH32GX5M2B5600C40K)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Corsair Vengeance RGB 32GB (2x16GB) 5600 DDR5 (CMH32GX5M2B5600C40K)', 13890000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-corsair-vengeance-rgb-ddr-5600-ddr5-6_e6d7b18ac5ef482c9459e38f10add37f_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Corsair Vengeance LPX 8GB (1x8GB) 3200 (CMK8GX4M1E3200C16)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Corsair Vengeance LPX 8GB (1x8GB) 3200 (CMK8GX4M1E3200C16)', 1690000, N'', N'https://product.hstatic.net/200000722513/product/gx4m1e3200c16-gallery-veng-lpx-blk-02_db321d7ece8f45659518b1217764a815_62d1f7fb318149a4bdff5aef8cf856ad_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: RAM Corsair Dominator Titanium Black 32GB (2x16GB) RGB 6000 DDR5 (CMP32GX5M2B6000C30)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'RAM Corsair Dominator Titanium Black 32GB (2x16GB) RGB 6000 DDR5 (CMP32GX5M2B6000C30)', 10990000, N'', N'https://product.hstatic.net/200000722513/product/dominator_titanium_rgb_black_render_04_e157efaf73884f1e83289408f1a1c27d_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: RAM Corsair Dominator Platinum 64GB (2x32GB) RGB 5600 DDR5 (CMT64GX5M2B5600C40)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'RAM Corsair Dominator Platinum 64GB (2x32GB) RGB 5600 DDR5 (CMT64GX5M2B5600C40)', 20990000, N'', N'https://product.hstatic.net/200000722513/product/-dominator-rgb-platinum-black-ddr5-01_8f962c81064143c68d9313ed53279f53_14dde4582eb34e9cb0505a1abcddc2f8_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Corsair Vengeance RGB 16GB (1x16GB) 6000 DDR5 (CMH16GX5M1E6000Z36) EXPO,XMP
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Corsair Vengeance RGB 16GB (1x16GB) 6000 DDR5 (CMH16GX5M1E6000Z36) EXPO,XMP', 7890000, N'', N'https://cdn.hstatic.net/products/200000722513/sair-vengeance-rgb-16gb-1x16gb-6000-ddr5-cmh16gx5m1e6000z36-expo-xmp-1_5ccd10088ed54d25a4fd96f0ed567765_master.jpg', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Laptop SSTC 8GB DDR4 3200MHz SODIMM S3200A-C22
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Laptop SSTC 8GB DDR4 3200MHz SODIMM S3200A-C22', 2490000, N'', N'https://cdn.hstatic.net/products/200000722513/ram-laptop-sstc-8gb-ddr4-3200mhz-sodimm-s3200a-c22-1_9e887a5a71c6468298daad60403256ed_master.jpg', 3, 10, N'SSTC', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Kingmax Horizon 16GB DDR5 Bus 5600Mhz
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Kingmax Horizon 16GB DDR5 Bus 5600Mhz', 5990000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-ram-kingmax-horizon-16gb-ddr5-bus-5600mhz-1_36cdc6a352144e399a494df3e04dca9c_master.png', 3, 10, N'KINGMAX', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: RAM Corsair Dominator Titanium White 96GB (2x48GB) RGB 6600 DDR5 (CMP96GX5M2B6600C32W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'RAM Corsair Dominator Titanium White 96GB (2x48GB) RGB 6600 DDR5 (CMP96GX5M2B6600C32W)', 38990000, N'', N'https://product.hstatic.net/200000722513/product/dominator_titanium_rgb_ddr5_whit__1__bc3e901d313b4e15a7619c368d8e216e_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram T-Group T-Force Delta 1x16GB 3600 RGB White
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram T-Group T-Force Delta 1x16GB 3600 RGB White', 3490000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-ram-t-group-t-force-delta-1x16gb-3600-rgb-white-4_3c93ce9bc46c4a29abfbac15c7ff6957_master.png', 3, 10, N'TEAM GROUP', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Kingston Fury 1x8GB 3200 Beast
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Kingston Fury 1x8GB 3200 Beast', 490000, N'', N'https://product.hstatic.net/200000722513/product/bease_non_rgb_1_a549750be9cc4e96bd52344f002d98e8_a38774fc6d1e43aebbf8a5c9442af9ad_master.png', 3, 10, N'Kingston', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram T-Group T-Force Delta 1x8GB 3200 RGB White
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram T-Group T-Force Delta 1x8GB 3200 RGB White', 2390000, N'', N'https://product.hstatic.net/200000722513/product/f748_de239228b8934ef7bbab782a6bb7771d_0ee010bf31a14b4e87e3c0f8a00f4555_4b0711df043645b2891db2806a28f29e_master.jpg', 3, 10, N'TEAM GROUP', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram T-Group T-Force Delta 1x8GB 3200 RGB Black
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram T-Group T-Force Delta 1x8GB 3200 RGB Black', 990000, N'', N'https://product.hstatic.net/200000722513/product/f1b8_9a41f0b66e26430580accff8ad7706ea_811b8f21341a4872969f36c91953dbf3_af10916a1f874197be61af4740918227_master.jpg', 3, 10, N'TEAM GROUP', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Patriot SLP 8GB (1x8GB) 3200 (PSP48G320081H1)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Patriot SLP 8GB (1x8GB) 3200 (PSP48G320081H1)', 1190000, N'', N'https://product.hstatic.net/200000722513/product/sl_a_web_76dc477ef8d943dea36226386acfbedb_fd8c2078c8684d9dbcc64ae7090492fa_master.jpg', 3, 10, N'PATRIOT', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Corsair Vengeance Pro RGB 16GB (2x8GB) 3200 White (CMW16GX4M2E3200C16W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Corsair Vengeance Pro RGB 16GB (2x8GB) 3200 White (CMW16GX4M2E3200C16W)', 1790000, N'', N'https://product.hstatic.net/200000722513/product/te-3_bd3e4fde39c84f13929cc874f3503ef0_33e700e3a1d6478aa3e52b409b22dfa6_815d9540cee74310b57566b750ab0ca0_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram G.Skill Trident Z 1x16GB RGB 3000 (F4-3000C16D-32GTZR)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram G.Skill Trident Z 1x16GB RGB 3000 (F4-3000C16D-32GTZR)', 2290000, N'', N'https://product.hstatic.net/200000722513/product/gtzr_6bba2a2a4f5e48b89a60db4d8ab8edde_ab1826f1cfc04b1bbb042a6f560935dd_ac62e83d19d14bf2a32c76641093976b_master.jpg', 3, 10, N'G.SKILL', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ram Corsair Dominator 32GB (2x16GB) RGB 3200 White (CMT32GX4M2E3200C16W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ram Corsair Dominator 32GB (2x16GB) RGB 3200 White (CMT32GX4M2E3200C16W)', 3590000, N'', N'https://product.hstatic.net/200000722513/product/te-1_ad8ce4513c9d4425afb929da1cf0c710_e87c46eae9584c8c860a53b8442e0dae_0a3fd71be6934fd8b1b777bd4cb4b22d_master.png', 3, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD Kingston NV3 500GB M.2 PCIe NVMe Gen4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD Kingston NV3 500GB M.2 PCIe NVMe Gen4', 3890000, N'', N'https://product.hstatic.net/200000722513/product/snv3s_500gb_pkg-lg_989b947a38a043e58b87ae7a31a6528a_master.png', 5, 10, N'Kingston', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD Kingston NV3 1TB M.2 PCIe NVMe Gen4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD Kingston NV3 1TB M.2 PCIe NVMe Gen4', 5790000, N'', N'https://product.hstatic.net/200000722513/product/snv3s_1000gb_pkg-lg_c8006de4edc5418ba1016953a9a041bf_master.png', 5, 10, N'Kingston', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD Kingston NV3 2TB M.2 PCIe NVMe Gen4
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD Kingston NV3 2TB M.2 PCIe NVMe Gen4', 10990000, N'', N'https://product.hstatic.net/200000722513/product/snv3s_2000gb_pkg-lg_a603785fc04542c5be21481462584107_master.png', 5, 10, N'Kingston', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Samsung 990 PRO 4TB M.2 PCIe Gen4 NVMe (MZ-V9P4T0BW)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Samsung 990 PRO 4TB M.2 PCIe Gen4 NVMe (MZ-V9P4T0BW)', 21990000, N'', N'https://product.hstatic.net/200000722513/product/vn-990pro-nvme-m2-ssd-mz-v9p4t0b__3__6be2da12adb145f0901041df2b0d723f_master.png', 5, 10, N'SAMSUNG', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD MSI SPATIUM M480 PRO PCIe 4.0 NVMe M.2 1TB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD MSI SPATIUM M480 PRO PCIe 4.0 NVMe M.2 1TB', 4990000, N'', N'https://product.hstatic.net/200000722513/product/71lv1cwfxpl._ac_uf1000_1000_ql80__f00d11081cf845a9be9b0936faf8fc27_master.jpg', 5, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng PNY SSD CS1031 M.2 2280 NVMe 500GB (M280CS1031-500-CL)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng PNY SSD CS1031 M.2 2280 NVMe 500GB (M280CS1031-500-CL)', 2190000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-o-cung-pny-ssd-cs1031-m-2-2280-nvme-500gb-1_ba002c1c03b140c881f0286453efb18d_master.png', 5, 10, N'PNY', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD Samsung 9100 PRO NVMe M.2 1TB Gen5
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD Samsung 9100 PRO NVMe M.2 1TB Gen5', 6990000, N'', N'https://product.hstatic.net/200000722513/product/vn-9100-pro-nvme-m2-ssd-mz-vap1t0bw-545216273_15c52dd5f45a465a81f99f0bf75577e2_master.png', 5, 10, N'SAMSUNG', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng Addlink S68 M.2 2280 NVMe Gen 3 256GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng Addlink S68 M.2 2280 NVMe Gen 3 256GB', 690000, N'', N'https://product.hstatic.net/200000722513/product/gvn_addlink_s68_1_54089af0c6d845c9a6cde56b573eb06b_master.png', 5, 10, N'KHÔNG THƯƠNG HIỆU', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD GIGABYTE AORUS Gen4 5000E SSD 500GB (AG450E500G-G)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD GIGABYTE AORUS Gen4 5000E SSD 500GB (AG450E500G-G)', 1690000, N'', N'https://product.hstatic.net/200000722513/product/aorus_gen4_5000e_ssd_500gb-01_6ef637a2a06e4d0cb8cd545c868aaf50_master.png', 5, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD Corsair MP600 CORE XT 1TB PCIe 4.0 Gen4 (CSSD-F1000GBMP600CXT)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD Corsair MP600 CORE XT 1TB PCIe 4.0 Gen4 (CSSD-F1000GBMP600CXT)', 2990000, N'', N'https://product.hstatic.net/200000722513/product/mp600_core_xt_21_b185c78c017944cfa72685e3898fc03e_master.png', 5, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD Corsair MP600 CORE XT 2TB PCIe 4.0 Gen4 (CSSD-F2000GBMP600CXT)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD Corsair MP600 CORE XT 2TB PCIe 4.0 Gen4 (CSSD-F2000GBMP600CXT)', 4990000, N'', N'https://product.hstatic.net/200000722513/product/20-236-988-01_7c79ecf51d3f4cee80a8cb4a081e6287_master.jpg', 5, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD MSI Spatium S270 960GB SATA3
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD MSI Spatium S270 960GB SATA3', 1190000, N'', N'https://product.hstatic.net/200000722513/product/1024__1__6bb4982da3284a85a388a00b58d3bc32_master.png', 5, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD TeamGroup CX2 2.5 inch SATA III 256GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD TeamGroup CX2 2.5 inch SATA III 256GB', 590000, N'', N'https://product.hstatic.net/200000722513/product/-ssd-teamgroup-cx2-256gb-2-5-sata-3-1_24f2ade29f3b47518618b4f02dabd99c_9c07344d76f644dba2a489eec759ee01_master.png', 5, 10, N'TEAM GROUP', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD KLEVV CRAS C710 256GB Gen3 (K256GM2SP0-C71)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD KLEVV CRAS C710 256GB Gen3 (K256GM2SP0-C71)', 490000, N'', N'https://product.hstatic.net/200000722513/product/e-gen3-x4-nvme-256gb-k256gm2sp0-c71-1_f4daea5320204244b944784401c11505_391984556d1744ed804ca42ef6fa0eae_master.png', 5, 10, N'KLEVV', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Gigabyte M.2 PCIe 256GB (GP-GSM2NE3256GNTD)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Gigabyte M.2 PCIe 256GB (GP-GSM2NE3256GNTD)', 790000, N'', N'https://product.hstatic.net/200000722513/product/3_2269d7b856544966897f2b2b65683270_73af0e9a6082465da59b76283fac67a8_master.png', 5, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Kingston A400 M.2 Sata3 240Gb
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Kingston A400 M.2 Sata3 240Gb', 390000, N'', N'https://product.hstatic.net/200000722513/product/ssd-kingston-a400-240gb-m-2-sata-3-1_76b4e03be344463986e9b5e89d08e0ed_2e97ae87b1f4476ea3942821a50dc677_master.jpg', 5, 10, N'Kingston', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Gigabyte SSD AORUS RGB M.2 NVMe 512GB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Gigabyte SSD AORUS RGB M.2 NVMe 512GB', 1190000, N'', N'https://product.hstatic.net/200000722513/product/aorus_rgb_ssd_gearvn01_3e4f777d02cf4a129f98e2533e4bda22_0c8fcc18dc8642b7b80f9b2888057af0_master.png', 5, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD Kingston KC2500 250GB PCIe Gen 3.0
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD Kingston KC2500 250GB PCIe Gen 3.0', 1290000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-o-cung-ssd-kingston-kc2500-1_a26054868aac4bf3b336230725abe7f3_bc31639fe6b447b798a4bec3d9a75f5f_master.jpg', 5, 10, N'Kingston', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Samsung 970 Evo Plus 250Gb PCIe NVMe M.2
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Samsung 970 Evo Plus 250Gb PCIe NVMe M.2', 1590000, N'', N'https://product.hstatic.net/200000722513/product/70-evo-plus-250gb-ssd-m.2-nvme-gearvn_ebf82e635e2e4ec685b5b1401bdcd2e3_46e1f62edef94e69a007175b0ef1fe38_master.jpg', 5, 10, N'SAMSUNG', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD Kingston KC2500 500GB PCIe Gen 3.0
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD Kingston KC2500 500GB PCIe Gen 3.0', 1890000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-o-cung-ssd-kingston-kc2500-2_dc5c2428864d415c903ad80a7a8125a5_e7a8f552b2e341f5ac5932343cc461bd_master.jpg', 5, 10, N'Kingston', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Samsung 970 Evo Plus 500Gb PCIe NVMe M.2
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Samsung 970 Evo Plus 500Gb PCIe NVMe M.2', 2190000, N'', N'https://product.hstatic.net/200000722513/product/970evo_500gb_plus_gearvn_ba48ea227ab34e799b731eedec5884ba_master.png', 5, 10, N'SAMSUNG', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: SSD GIGABYTE AORUS 500GB M.2 PCIe NVMe gen 4 (Bản không heatsink)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'SSD GIGABYTE AORUS 500GB M.2 PCIe NVMe gen 4 (Bản không heatsink)', 3690000, N'', N'https://product.hstatic.net/200000722513/product/aorus-m2-500gb_gigabyte_a4f1a17ae5834a77b9e70425f4b9ef5f_33f6c6772cf64c18b72d58bb260ceecb_master.jpg', 5, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ cứng SSD MSI SPATIUM M480 PCIe 4.0 NVMe M.2 1TB PLAY
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ cứng SSD MSI SPATIUM M480 PCIe 4.0 NVMe M.2 1TB PLAY', 4190000, N'', N'https://product.hstatic.net/200000722513/product/new_project__21__a550dd52eb014210a7463b222f710d38_3bee314e1bd54a48a8e90fea1cb512ea_master.png', 5, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: SSD GIGABYTE AORUS 1TB M.2 PCIe NVMe gen 4 (Bản không heatsink)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'SSD GIGABYTE AORUS 1TB M.2 PCIe NVMe gen 4 (Bản không heatsink)', 4890000, N'', N'https://product.hstatic.net/200000722513/product/igabyte-aorus-1tb-m-2-pcie-nvme-gen-4_6bd585814a7048c1a6d78c4b1831b9b1_f08ca6cc93654429931e9e1fecfcf0e6_master.jpg', 5, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Samsung 990 PRO 2TB M.2 PCIe Gen4 NVMe (MZ-V9P2T0BW)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Samsung 990 PRO 2TB M.2 PCIe Gen4 NVMe (MZ-V9P2T0BW)', 6490000, N'', N'https://product.hstatic.net/200000722513/product/-am_001_front_black-gallery-1600x1200_d5430da92de74a7c9d7b35a7ae9b3587_b2e724a266834268bead0b9ab068d99c_master.png', 5, 10, N'SAMSUNG', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Samsung 870 QVO 4TB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Samsung 870 QVO 4TB', 10990000, N'', N'https://product.hstatic.net/200000722513/product/om-products-ssd-samsung-860-qvo-4tb_3_d420e6ef97f046398599c649863a8e19_51fb14d9ddae4f2fae0e1727dd8cee98_master.jpg', 5, 10, N'SAMSUNG', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Gigabyte Aorus Gen5 10000 2TB (AG510K2TB)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Gigabyte Aorus Gen5 10000 2TB (AG510K2TB)', 11990000, N'', N'https://product.hstatic.net/200000722513/product/6917_e5cda722eb8165b304cc8c0ba03547e6_b2fd63d47aaf494daed95c4437cc004b_e952a45ad3474b7e80d1c132f385338c_master.jpg', 5, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Ổ Cứng SSD Samsung 870 QVO 8TB
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Ổ Cứng SSD Samsung 870 QVO 8TB', 20490000, N'', N'https://product.hstatic.net/200000722513/product/870_qvo_35b0cdd4216e4423ae5c59b69b113a64_ad3e1fe1e72948bbbb06470fc25cc3e3_master.jpg', 5, 10, N'SAMSUNG', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair CX650 - 80 Plus Bronze (650W) CP-9020278-NA
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair CX650 - 80 Plus Bronze (650W) CP-9020278-NA', 1390000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-nguon-may-tinh-corsair-cx650-80-plus-bronze-650w-1_5e2807b23e75486f9e93efc31604dcbc_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Cooler Master MWE GOLD 1050W V2 ATX3.1 - 80 Plus Gold - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Cooler Master MWE GOLD 1050W V2 ATX3.1 - 80 Plus Gold - Full Modular', 4490000, N'', N'https://product.hstatic.net/200000722513/product/pw-cm-mwe-1050-v2-gold-3-1_1_dd009afe855b415fb7605684c7272b33_master.jpg', 11, 10, N'COOLER MASTER', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn ASUS ROG THOR 1600T3 ATX 3.1, PCIe 5.0, 80 Plus Titanium, Full Modular (1600W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn ASUS ROG THOR 1600T3 ATX 3.1, PCIe 5.0, 80 Plus Titanium, Full Modular (1600W)', 24490000, N'', N'https://product.hstatic.net/200000722513/product/51350_0028_6205a2bf86d34a4284e37b71ed1ce725_master.jpg', 11, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn Máy Tính ASUS ROG THOR 1200 P3 1200W PLATINUM III ( PCIe Gen 5.0)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn Máy Tính ASUS ROG THOR 1200 P3 1200W PLATINUM III ( PCIe Gen 5.0)', 13990000, N'', N'https://cdn.hstatic.net/products/200000722513/nguon-may-tinh-asus-rog-thor-1200-p3-1200w-platinum-iii-pcie-gen-5-0-1_fc071ebf74f546a59bcb499be93f7a4e_master.jpg', 11, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Cooler Master V Platinum 1600 V2 - 1600W - 80 Plus Platinum - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Cooler Master V Platinum 1600 V2 - 1600W - 80 Plus Platinum - Full Modular', 7890000, N'', N'https://cdn.hstatic.net/products/200000722513/-coolermaster-v-platinum-1600-v2-1600w-80-plus-platinum-full-modular-1_b282385dec434843831bc0da47fa0555_master.png', 11, 10, N'COOLER MASTER', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Cooler Master MWE GOLD 1250W V2 ATX3.1 - 80 Plus Gold - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Cooler Master MWE GOLD 1250W V2 ATX3.1 - 80 Plus Gold - Full Modular', 5490000, N'', N'https://product.hstatic.net/200000722513/product/38463_mwe_gold_1250_v2_atx3_gallery_04_image_b04b28bb8fcd4891a622c093a5566d25_master.png', 11, 10, N'COOLER MASTER', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Cooler Master MWE 650 - 80 Plus Bronze - V3 230V (650W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Cooler Master MWE 650 - 80 Plus Bronze - V3 230V (650W)', 1390000, N'', N'https://product.hstatic.net/200000722513/product/smart_14ca4a1af49c40789c3caeb7939fe21c_master.png', 11, 10, N'COOLER MASTER', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Cooler Master MWE 750 - 80 Plus Bronze - V3 230V (750W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Cooler Master MWE 750 - 80 Plus Bronze - V3 230V (750W)', 1690000, N'', N'https://product.hstatic.net/200000722513/product/smart__1__14f9dfb8a0f94884826522f2ecd0b52b_master.png', 11, 10, N'COOLER MASTER', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Lian Li EDGE 1300W White L-Shape - 80 Plus Platinum - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Lian Li EDGE 1300W White L-Shape - 80 Plus Platinum - Full Modular', 5990000, N'', N'https://product.hstatic.net/200000722513/product/edge_002_a238d070593347c0b463372abe808467_master.jpg', 11, 10, N'LIAN LI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Lian Li EDGE 1300W Black L-Shape - 80 Plus Platinum - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Lian Li EDGE 1300W Black L-Shape - 80 Plus Platinum - Full Modular', 5490000, N'', N'https://product.hstatic.net/200000722513/product/edge_001_74f0ed8bfa0d4535b6c675cb21cce7cc_master.jpg', 11, 10, N'LIAN LI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính MSI MAG A1250GL PCIE5 - 80 Plus Gold - Full Modular (1250W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính MSI MAG A1250GL PCIE5 - 80 Plus Gold - Full Modular (1250W)', 5490000, N'', N'https://product.hstatic.net/200000722513/product/1024__5__10dc755f12ec4edea59e4aaedc53b52e_master.png', 11, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair CX750 - 80 Plus Bronze (750W) CP-9020279-NA
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair CX750 - 80 Plus Bronze (750W) CP-9020279-NA', 1690000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-nguon-may-tinh-corsair-cx750-80-plus-bronze-750w-1_63db1ac7931148b38da7aa600f5cf52c_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính FSP HV PRO 550W - 80 Plus Bronze (550W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính FSP HV PRO 550W - 80 Plus Bronze (550W)', 990000, N'', N'https://product.hstatic.net/200000722513/product/nguon_fsp_hv_pro_550w_-_10_e6bde4a463d241788c2580e22b496368_55fc9eed7ea141498c1947e136e85640_master.jpg', 11, 10, N'FSP', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Deepcool PF550 - 80 Plus (550W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Deepcool PF550 - 80 Plus (550W)', 990000, N'', N'https://product.hstatic.net/200000722513/product/09_9405bf20153a459bb28c8456998c979b_master.jpg', 11, 10, N'DEEPCOOL', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính MSI MAG A750BN PCIE5 - 80 Plus Bronze (750W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính MSI MAG A750BN PCIE5 - 80 Plus Bronze (750W)', 1690000, N'', N'https://product.hstatic.net/200000722513/product/468295cf2cd594cc57b1ceb5ab5d63_238e14b37a084966b8d461d6f5e06a36_grande_81c9081d27934bfab233a6775a92b6c9_master.png', 11, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính MSI MAG A850GL PCIE5 - 80 Plus Gold - Full Modular (850W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính MSI MAG A850GL PCIE5 - 80 Plus Gold - Full Modular (850W)', 2990000, N'', N'https://product.hstatic.net/200000722513/product/1024_0920b4ad0bce4347aec42163de5ee9d6_master.png', 11, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair RM850e ATX 3.0 - 80 Plus Gold - Full Modular (850W) (CP-9020263-NA)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair RM850e ATX 3.0 - 80 Plus Gold - Full Modular (850W) (CP-9020263-NA)', 3290000, N'', N'https://product.hstatic.net/200000722513/product/thiet_ke_chua_co_ten_5e29bb919cf649ebbd6498a0867046d2_c76be5919a434100b9999bb05ea3207b_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính FSP HV PRO 650W - 80 Plus Bronze (650W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính FSP HV PRO 650W - 80 Plus Bronze (650W)', 1190000, N'', N'https://product.hstatic.net/200000722513/product/nguon_fsp_hv_pro_650w_-_9_c83eecc17d7247cbb2a882ebaaf9041c_8ab94aaa9c25486cb3ebfe1c8476d5ef_master.png', 11, 10, N'FSP', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Jetek Elite 350W V2 (350W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Jetek Elite 350W V2 (350W)', 450000, N'', N'https://product.hstatic.net/200000722513/product/500-elite9-500x500_37e4605e6229461fb4e952dbabead0a4_6ff479d64f094efe8ef83e47208c8b61_master.jpeg', 11, 10, N'JETEK', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Jetek J400 (400W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Jetek J400 (400W)', 590000, N'', N'https://product.hstatic.net/200000722513/product/3455_abf653d5dea3e3c357057cf334f76333_1793945aeb614299a6f8b92833a221cf_8d5a416765a742efbd6dc8717fb1c2ec_master.jpg', 11, 10, N'JETEK', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính MSI MAG A650BN - 80 Plus Bronze (650W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính MSI MAG A650BN - 80 Plus Bronze (650W)', 1190000, N'', N'https://product.hstatic.net/200000722513/product/1_af69a1451abb4e0e90ef054fae764f35_5339e9f699bd4933b97a1079bc656e3d_master.jpg', 11, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Cooler Master V Platinum 1300 V2 - 1600W - 80 Plus Platinum - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Cooler Master V Platinum 1300 V2 - 1600W - 80 Plus Platinum - Full Modular', 6790000, N'', N'https://cdn.hstatic.net/products/200000722513/gearvn-nguon-may-tinh-cooler-master-v-platinum-1300-v2-1600w-1_0dabd6f51ac84182b2e1d052ee18b20d_master.png', 11, 10, N'COOLER MASTER', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính MSI MEG AI1600T PCIE5 - 80 Plus Titanium (1600W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính MSI MEG AI1600T PCIE5 - 80 Plus Titanium (1600W)', 13990000, N'', N'https://product.hstatic.net/200000722513/product/1024__13__1c85060d3858404088281432885050ed_master.png', 11, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair RM1200x SHIFT White ATX 3.1 - 80 Plus Gold - Full Modular (1200W) (CP-9020276-NA)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair RM1200x SHIFT White ATX 3.1 - 80 Plus Gold - Full Modular (1200W) (CP-9020276-NA)', 6150000, N'', N'https://product.hstatic.net/200000722513/product/cp-9020276_08_f82ddefd8e004e9ab71051c3944b46bb_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Cooler Master MWE GOLD 850W V2 ATX3.1 - 80 Plus Gold - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Cooler Master MWE GOLD 850W V2 ATX3.1 - 80 Plus Gold - Full Modular', 2990000, N'', N'https://product.hstatic.net/200000722513/product/smart__9__8cd55ba33679495abe84766b08a9b1ec_master.png', 11, 10, N'COOLER MASTER', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính MSI MAG A500N-H - Active PFC (500W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính MSI MAG A500N-H - Active PFC (500W)', 790000, N'', N'https://product.hstatic.net/200000722513/product/1024_8a2e537b989a42b8a9795ba6cb3be1da_master.png', 11, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính ASUS ROG Thor 1000P2 - 80 Plus Platinum - Full Modular (1000W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính ASUS ROG Thor 1000P2 - 80 Plus Platinum - Full Modular (1000W)', 8990000, N'', N'https://product.hstatic.net/200000722513/product/rog-thor-1000-p2-01_3621e432053b47b2933407ed2b0502f5_master.png', 11, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính ASUS ROG Thor 1600T GAMING- 80 Plus Titanium - Full Modular (1600W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính ASUS ROG Thor 1600T GAMING- 80 Plus Titanium - Full Modular (1600W)', 16990000, N'', N'https://product.hstatic.net/200000722513/product/rog-thor-1600t-01_f960ba6fff2c49bea4b9077156fbfa2b_master.png', 11, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Lian Li EDGE 1000W Black L-Shape - 80 Plus Platinum - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Lian Li EDGE 1000W Black L-Shape - 80 Plus Platinum - Full Modular', 4690000, N'', N'https://product.hstatic.net/200000722513/product/edge_007_9792d5a7a4214961b9757ceb1140e25a_master.jpg', 11, 10, N'LIAN LI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Lian Li EDGE 1000W White L-Shape - 80 Plus Platinum - Full Modular
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Lian Li EDGE 1000W White L-Shape - 80 Plus Platinum - Full Modular', 4990000, N'', N'https://product.hstatic.net/200000722513/product/edge_008_9aff82f275fc4739a66ecbb9a6076f1f_master.jpg', 11, 10, N'LIAN LI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Thermaltake TOUGHPOWER GT 850W SNOW - 80 Plus Gold - Full Modular (850W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Thermaltake TOUGHPOWER GT 850W SNOW - 80 Plus Gold - Full Modular (850W)', 2790000, N'', N'https://product.hstatic.net/200000722513/product/ps-tpt-0850fnfag-w_01_e41c904e4d9344169c8741a933512d55_master.png', 11, 10, N'THERMALTAKE', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Thermaltake TOUGHPOWER GT 850W - 80 Plus Gold - Full Modular (850W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Thermaltake TOUGHPOWER GT 850W - 80 Plus Gold - Full Modular (850W)', 2690000, N'', N'https://product.hstatic.net/200000722513/product/z5919110742405_dc7c9309ec55edfbb_e9dfb56fc1d24ea8823d4a18a49061f3_master.png', 11, 10, N'THERMALTAKE', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính GIGABYTE AORUS ELITE P1000W PCIe 5.0 - 80 Plus Platinum - Full Modular (1000W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính GIGABYTE AORUS ELITE P1000W PCIe 5.0 - 80 Plus Platinum - Full Modular (1000W)', 6490000, N'', N'https://product.hstatic.net/200000722513/product/aorus_elite_p1000w_80__platinum_modular_pcie_5.0-07_0ec8124d51f943d9a84e29232be026b7_master.png', 11, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính GIGABYTE P650SS ICE - 80 Plus Silver ( 650W )
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính GIGABYTE P650SS ICE - 80 Plus Silver ( 650W )', 1290000, N'', N'https://product.hstatic.net/200000722513/product/p650ss_ice-06_0a181d4033c2451c9ef00725bad28ae7_master.png', 11, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính GIGABYTE P550SS - 80 Plus Silver ( 550W )
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính GIGABYTE P550SS - 80 Plus Silver ( 550W )', 990000, N'', N'https://product.hstatic.net/200000722513/product/p550ss-07_c6a8b9b2cfcf482dbfcc4c69e80d4080_master.png', 11, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính GIGABYTE AORUS ELITE P1000W PCIe 5.0 ICE - 80 Plus Platinum - Full Modular (1000W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính GIGABYTE AORUS ELITE P1000W PCIe 5.0 ICE - 80 Plus Platinum - Full Modular (1000W)', 6590000, N'', N'https://product.hstatic.net/200000722513/product/aorus_elite_p1000w_80__platinum_modular_pcie_5.0_ice-07_402be92080d34a9da7740805043642b0_master.png', 11, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Deepcool PN850M - 80 Plus Gold - ATX 3.1 - Full Modular (850W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Deepcool PN850M - 80 Plus Gold - ATX 3.1 - Full Modular (850W)', 2890000, N'', N'https://product.hstatic.net/200000722513/product/06_b5ea2f53caa441ff84157adcabbd2a64_master.png', 11, 10, N'DEEPCOOL', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính ASUS Prime 850W - 80 Plus Gold - Full Modular ( 850W )
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính ASUS Prime 850W - 80 Plus Gold - Full Modular ( 850W )', 3490000, N'', N'https://product.hstatic.net/200000722513/product/ap-850g-01_ce1fbc32a4384e64bdd5badd98f851c3_master.jpg', 11, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair HX1200i - 80 Plus Platinum - Full Modular (1200W) (CP-9020281-NA)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair HX1200i - 80 Plus Platinum - Full Modular (1200W) (CP-9020281-NA)', 7590000, N'', N'https://product.hstatic.net/200000722513/product/n-nguon-may-tinh-corsair-hx1200i-80-plus-platinum-full-modular-1200w-3_facfdc8637dc42cf95e1752afa180a75_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính GIGABYTE UD850GM PG5 - 80 Plus Gold - Full Modular (850W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính GIGABYTE UD850GM PG5 - 80 Plus Gold - Full Modular (850W)', 2990000, N'', N'https://product.hstatic.net/200000722513/product/ud850gm_pg5-07_0adb9528a06f4b94b0fa2e2ea07f5351_master.png', 11, 10, N'Gigabyte', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính ASUS ROG Strix 1000W AURA White Edition - 80 Plus Gold - Full Modular (1000W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính ASUS ROG Strix 1000W AURA White Edition - 80 Plus Gold - Full Modular (1000W)', 6990000, N'', N'https://product.hstatic.net/200000722513/product/rog-strix-1000g-aura-gaming-white-edition-01_7408b041dc474168b94ae120e333e427_master.jpg', 11, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Thermaltake TOUGHPOWER GF A3 750W - 80 Plus Gold - Full Modular (750W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Thermaltake TOUGHPOWER GF A3 750W - 80 Plus Gold - Full Modular (750W)', 2690000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-nguon-may-tinh-thermaltake-toughpower-gf-a3-750w-4_c715c7d1eb2a49e7ada73d51484ec777_master.jpg', 11, 10, N'THERMALTAKE', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair HX1500i - 80 Plus Platinum - Full Modular (1500W) (CP-9020261-NA)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair HX1500i - 80 Plus Platinum - Full Modular (1500W) (CP-9020261-NA)', 9490000, N'', N'https://product.hstatic.net/200000722513/product/gearvn-nguon-corsair-hx1500i-full-modular-80-plus-platinum-5_941b6db02f2a4848ac2503a49d00472f_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair HX1000i - 80 Plus Platinum - Full Modular (1000W) (CP-9020259-NA)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair HX1000i - 80 Plus Platinum - Full Modular (1000W) (CP-9020259-NA)', 6490000, N'', N'https://product.hstatic.net/200000722513/product/hx1000i_powerful_f7743adb8226404ea57640df8b5f3d51_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính ASUS ROG Thor 1200P2 - 80 Plus Platinum - Full Modular (1200W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính ASUS ROG Thor 1200P2 - 80 Plus Platinum - Full Modular (1200W)', 9490000, N'', N'https://product.hstatic.net/200000722513/product/rog-thor-1200-p2-01_411ea85d61274fa78ec0b79f36577a48_master.png', 11, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính ASUS ROG Strix 1000W AURA Edition - 80 Plus Gold - Full Modular (1000W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính ASUS ROG Strix 1000W AURA Edition - 80 Plus Gold - Full Modular (1000W)', 5990000, N'', N'https://product.hstatic.net/200000722513/product/rog-strix-1000g-01_7aeb6a2c38714ec09a821131fa0e805c_master.jpg', 11, 10, N'ASUS', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair RM1000e ATX 3.0 - 80 Plus Gold - Full Modular (1000W) (CP-9020264-NA)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair RM1000e ATX 3.0 - 80 Plus Gold - Full Modular (1000W) (CP-9020264-NA)', 4590000, N'', N'https://product.hstatic.net/200000722513/product/thiet_ke_chua_co_ten_a532c354608f43eab3313b54626b3c70_5a71147440ae46bfad22d894f423d857_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính Corsair RM750e ATX 3.0 - 80 Plus Gold - Full Modular (750W) (CP-9020262-NA)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính Corsair RM750e ATX 3.0 - 80 Plus Gold - Full Modular (750W) (CP-9020262-NA)', 2890000, N'', N'https://product.hstatic.net/200000722513/product/earvn-nguon-may-tinh-corsair-rm750e-atx-3.0-80-plus-gold-full-modula-1_5cd29a9f71ef4d18b2dcc67481d01eb0_master.png', 11, 10, N'Corsair', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính MSI MAG A850GL PCIE5 WHITE - 80 Plus Gold - Full Modular (850W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính MSI MAG A850GL PCIE5 WHITE - 80 Plus Gold - Full Modular (850W)', 3290000, N'', N'https://product.hstatic.net/200000722513/product/1024_3fe25bf198084414bc5e042cf110a07d_master.png', 11, 10, N'MSI', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
+-- Product: Nguồn máy tính NZXT C750W - 80 Plus Bronze - Non Modular (750W)
+INSERT INTO products (name, price, description, image, category_id, stock, brand, created_at)
+VALUES (N'Nguồn máy tính NZXT C750W - 80 Plus Bronze - Non Modular (750W)', 1390000, N'', N'https://product.hstatic.net/200000722513/product/1693598157-c750w-bronze-psu-top_8ad3c808b8fc4a85b6d6dfebaf3b349d_master.png', 11, 10, N'NZXT', GETDATE());
+SET @current_pid = SCOPE_IDENTITY();
+INSERT INTO inventory (product_id, quantity, last_update)
+VALUES (@current_pid, 10, GETDATE());
+
 GO

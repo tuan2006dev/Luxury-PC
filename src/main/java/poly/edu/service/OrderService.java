@@ -126,4 +126,58 @@ public class OrderService {
 
         return savedOrder;
     }
+
+    private final EmailService emailService;
+    private final VoucherService voucherService;
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderService.class);
+
+    @Transactional
+    public void cancelOrderByUser(Integer orderId, Integer userId) {
+        Order order = orderDAO.findById(orderId).orElse(null);
+        if (order == null || !order.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("Đơn hàng không tồn tại hoặc không thuộc về bạn.");
+        }
+
+        String status = order.getStatus();
+        String paymentMethod = order.getPaymentMethod();
+        boolean isCancelable = "PENDING".equals(status) || ("PAID".equals(status) && !"COD".equals(paymentMethod));
+        if (!isCancelable) {
+            throw new IllegalStateException("Đơn hàng hiện tại không thể hủy.");
+        }
+
+        // Cập nhật trạng thái
+        order.setStatus("CANCELED");
+        orderDAO.save(order);
+
+        // Khôi phục số lượng tồn kho
+        if (order.getOrderItems() != null) {
+            for (OrderItem item : order.getOrderItems()) {
+                Product product = item.getProduct();
+                if (product != null) {
+                    Integer newStock = (product.getStock() != null ? product.getStock() : 0) + item.getQuantity();
+                    product.setStock(newStock);
+                    productDAO.save(product);
+                    
+                    // Khôi phục số lượng flash sale nếu có
+                    try {
+                        flashSaleService.decrementSoldCount(product.getId(), item.getQuantity());
+                    } catch (Exception e) {
+                        log.error("Failed to restore flash sale quantity on order cancel", e);
+                    }
+                }
+            }
+        }
+
+        // Gửi email thông báo cho Admin
+        emailService.sendOrderCancellationEmailToAdmin(order);
+
+        // Hoàn trả voucher nếu có
+        if (order.getVoucherCode() != null && !order.getVoucherCode().trim().isEmpty() && order.getUser() != null) {
+            try {
+                voucherService.restoreVoucher(order.getVoucherCode(), order.getUser().getId());
+            } catch (Exception e) {
+                log.error("Failed to restore voucher on order cancel", e);
+            }
+        }
+    }
 }

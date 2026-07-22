@@ -41,7 +41,7 @@
         <!-- Add product form -->
         <div class="form-card">
             <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span>Thêm Sản Phẩm Vào Flash Sale</span></div>
-            <form autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST" id="addFlashSaleItemForm" onsubmit="return validateFlashSaleItem(this)">
+            <form autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST">
                 <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
                     <div class="form-group" style="flex: 3; min-width: 250px; margin-bottom: 0;">
                         <label>Sản Phẩm</label>
@@ -49,7 +49,6 @@
                             <option value="">-- Chọn sản phẩm --
                             </option>
                             <option th:each="p : ${products}" th:value="${p.id}"
-                                th:data-price="${p.price}"
                                 th:text="${p.name + ' — ' + #numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT') + '₫'}">
                                 Product
                             </option>
@@ -113,7 +112,7 @@
                                 <form novalidate autocomplete="off"
                                     th:action="@{/admin/flash-sales/{saleId}/items/remove/{itemId}(saleId=${flashSale.id},itemId=${item.id})}"
                                     method="POST"
-                                    th:onsubmit="event.preventDefault(); window.confirmDelete(this, 'Xóa sản phẩm này khỏi Flash Sale?');">
+                                    th:onsubmit="event.preventDefault(); window.confirmDelete(this, window.t('admin-flashitems-confirm-delete', 'Xóa sản phẩm này khỏi Flash Sale?'));">
                                     <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i> <span>Xóa</span></button>
                                 </form>
                             </td>
@@ -129,28 +128,6 @@
             </div>
         </div>
     </div>
-    
-    <script th:src="@{/js/confirm-popup.js}"></script>
-    <script>
-        function validateFlashSaleItem(form) {
-            const select = form.querySelector('select[name="productId"]');
-            const salePriceInput = form.querySelector('input[name="salePrice"]');
-            
-            if (select && salePriceInput && select.selectedIndex >= 0) {
-                const selectedOption = select.options[select.selectedIndex];
-                const originalPrice = parseFloat(selectedOption.getAttribute('data-price'));
-                const salePrice = parseFloat(salePriceInput.value);
-                
-                if (!isNaN(originalPrice) && !isNaN(salePrice)) {
-                    if (salePrice > originalPrice) {
-                        alert('Giá SALE không được cao hơn giá gốc của sản phẩm (' + originalPrice.toLocaleString('vi-VN') + '₫)!');
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-    </script>
 </body>
 
 </html>

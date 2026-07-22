@@ -21,6 +21,10 @@ public class ProductService {
         return productDAO.findAll();
     }
 
+    public List<String> getAllBrands() {
+        return productDAO.findDistinctBrands();
+    }
+
     @Cacheable("topProducts")
     public List<Product> getTopProducts(int limit) {
         return productDAO.findTopProducts(org.springframework.data.domain.PageRequest.of(0, limit));
@@ -46,8 +50,35 @@ public class ProductService {
         return productDAO.findById(id).orElse(null);
     }
 
-    public List<Product> searchProducts(Integer cid, Double min, Double max, String kw, String brand) {
-        return productDAO.searchProducts(cid, min, max, kw, brand, org.springframework.data.domain.PageRequest.of(0, 100)); // Limit to top 100 for performance
+    public org.springframework.data.domain.Page<Product> searchProducts(Integer cid, Double min, Double max, String kw, String brand, int page, int size, String sortType) {
+        org.springframework.data.domain.Sort sortObj;
+        if (sortType == null) sortType = "newest";
+        switch (sortType) {
+            case "price_asc": sortObj = org.springframework.data.domain.Sort.by("price").ascending(); break;
+            case "price_desc": sortObj = org.springframework.data.domain.Sort.by("price").descending(); break;
+            case "name_asc": sortObj = org.springframework.data.domain.Sort.by("name").ascending(); break;
+            case "name_desc": sortObj = org.springframework.data.domain.Sort.by("name").descending(); break;
+            case "newest": 
+            default: sortObj = org.springframework.data.domain.Sort.by("createdAt").descending(); break;
+        }
+        return productDAO.searchProducts(cid, min, max, kw, brand, org.springframework.data.domain.PageRequest.of(page, size, sortObj)); 
+    }
+
+    public org.springframework.data.domain.Page<Product> searchProductsInFlashSale(List<Integer> flashSaleIds, Integer cid, Double min, Double max, String kw, String brand, int page, int size, String sortType) {
+        if (flashSaleIds == null || flashSaleIds.isEmpty()) {
+            return org.springframework.data.domain.Page.empty();
+        }
+        org.springframework.data.domain.Sort sortObj;
+        if (sortType == null) sortType = "newest";
+        switch (sortType) {
+            case "price_asc": sortObj = org.springframework.data.domain.Sort.by("price").ascending(); break;
+            case "price_desc": sortObj = org.springframework.data.domain.Sort.by("price").descending(); break;
+            case "name_asc": sortObj = org.springframework.data.domain.Sort.by("name").ascending(); break;
+            case "name_desc": sortObj = org.springframework.data.domain.Sort.by("name").descending(); break;
+            case "newest": 
+            default: sortObj = org.springframework.data.domain.Sort.by("createdAt").descending(); break;
+        }
+        return productDAO.searchProductsInFlashSale(flashSaleIds, cid, min, max, kw, brand, org.springframework.data.domain.PageRequest.of(page, size, sortObj)); 
     }
 
     @CacheEvict(value = {"featuredProducts", "flashSaleProducts", "topProducts"}, allEntries = true)
@@ -59,14 +90,6 @@ public class ProductService {
     @CacheEvict(value = {"featuredProducts", "flashSaleProducts", "topProducts"}, allEntries = true)
     @Transactional
     public void deleteProduct(Integer id) {
-        productDAO.deleteCartItemsByProductId(id);
-        productDAO.deleteWishlistItemsByProductId(id);
-        productDAO.deleteFlashSaleItemsByProductId(id);
-        productDAO.deleteReviewsByProductId(id);
-        productDAO.deleteInventoryByProductId(id);
-        productDAO.deleteStockMovementsByProductId(id);
-        productDAO.deleteComboDetailsByProductId(id);
-        productDAO.nullifyOrderItemProductReferences(id);
         productDAO.deleteById(id);
     }
 

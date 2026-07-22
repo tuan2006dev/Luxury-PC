@@ -1,7 +1,6 @@
 package poly.edu.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.Lock;
@@ -34,14 +33,21 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
     // Bạn đã xóa dấu } ở đây để gộp các hàm dưới vào trong Interface
     List<Product> findByCategoryIdAndImageIsNotNull(Integer categoryId);
 
-    @Query("SELECT p FROM Product p WHERE " +
+    @Query(value = "SELECT p FROM Product p WHERE " +
+            "(:cid IS NULL OR p.category.id = :cid) AND " +
+            "(:min IS NULL OR p.price >= :min) AND " +
+            "(:max IS NULL OR p.price <= :max) AND " +
+            "(:kw IS NULL OR p.name LIKE %:kw% OR p.description LIKE %:kw%) AND " +
+            "(:brand IS NULL OR p.brand = :brand OR LOWER(p.name) LIKE LOWER(CONCAT('%', :brand, '%'))) AND " +
+            "p.image IS NOT NULL",
+            countQuery = "SELECT COUNT(p) FROM Product p WHERE " +
             "(:cid IS NULL OR p.category.id = :cid) AND " +
             "(:min IS NULL OR p.price >= :min) AND " +
             "(:max IS NULL OR p.price <= :max) AND " +
             "(:kw IS NULL OR p.name LIKE %:kw% OR p.description LIKE %:kw%) AND " +
             "(:brand IS NULL OR p.brand = :brand OR LOWER(p.name) LIKE LOWER(CONCAT('%', :brand, '%'))) AND " +
             "p.image IS NOT NULL")
-    List<Product> searchProducts(
+    org.springframework.data.domain.Page<Product> searchProducts(
             @Param("cid") Integer cid,
             @Param("min") Double min,
             @Param("max") Double max,
@@ -49,39 +55,29 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
             @Param("brand") String brand,
             org.springframework.data.domain.Pageable pageable);
 
-    @Modifying
-    @Query(value = "DELETE FROM cart_items WHERE product_id = :pid", nativeQuery = true)
-    void deleteCartItemsByProductId(@Param("pid") Integer pid);
+    @Query(value = "SELECT p FROM Product p WHERE p.id IN :flashSaleIds AND " +
+            "(:cid IS NULL OR p.category.id = :cid) AND " +
+            "(:min IS NULL OR p.price >= :min) AND " +
+            "(:max IS NULL OR p.price <= :max) AND " +
+            "(:kw IS NULL OR p.name LIKE %:kw% OR p.description LIKE %:kw%) AND " +
+            "(:brand IS NULL OR p.brand = :brand OR LOWER(p.name) LIKE LOWER(CONCAT('%', :brand, '%'))) AND " +
+            "p.image IS NOT NULL",
+            countQuery = "SELECT COUNT(p) FROM Product p WHERE p.id IN :flashSaleIds AND " +
+            "(:cid IS NULL OR p.category.id = :cid) AND " +
+            "(:min IS NULL OR p.price >= :min) AND " +
+            "(:max IS NULL OR p.price <= :max) AND " +
+            "(:kw IS NULL OR p.name LIKE %:kw% OR p.description LIKE %:kw%) AND " +
+            "(:brand IS NULL OR p.brand = :brand OR LOWER(p.name) LIKE LOWER(CONCAT('%', :brand, '%'))) AND " +
+            "p.image IS NOT NULL")
+    org.springframework.data.domain.Page<Product> searchProductsInFlashSale(
+            @Param("flashSaleIds") List<Integer> flashSaleIds,
+            @Param("cid") Integer cid,
+            @Param("min") Double min,
+            @Param("max") Double max,
+            @Param("kw") String kw,
+            @Param("brand") String brand,
+            org.springframework.data.domain.Pageable pageable);
 
-    @Modifying
-    @Query(value = "DELETE FROM wishlist_items WHERE product_id = :pid", nativeQuery = true)
-    void deleteWishlistItemsByProductId(@Param("pid") Integer pid);
-
-    @Modifying
-    @Query(value = "DELETE FROM flash_sale_items WHERE product_id = :pid", nativeQuery = true)
-    void deleteFlashSaleItemsByProductId(@Param("pid") Integer pid);
-
-    @Modifying
-    @Query(value = "DELETE FROM reviews WHERE product_id = :pid", nativeQuery = true)
-    void deleteReviewsByProductId(@Param("pid") Integer pid);
-
-    @Modifying
-    @Query(value = "DELETE FROM inventory WHERE product_id = :pid", nativeQuery = true)
-    void deleteInventoryByProductId(@Param("pid") Integer pid);
-
-    @Modifying
-    @Query(value = "DELETE FROM stock_movements WHERE product_id = :pid", nativeQuery = true)
-    void deleteStockMovementsByProductId(@Param("pid") Integer pid);
-
-    @Modifying
-    @Query(value = "DELETE FROM pc_combo_details WHERE product_id = :pid", nativeQuery = true)
-    void deleteComboDetailsByProductId(@Param("pid") Integer pid);
-
-    @Modifying
-    @Query(value = "UPDATE order_items SET product_id = NULL WHERE product_id = :pid", nativeQuery = true)
-    void nullifyOrderItemProductReferences(@Param("pid") Integer pid);
-
-    @Modifying
-    @Query(value = "UPDATE products SET category_id = NULL WHERE category_id = :cid", nativeQuery = true)
-    void nullifyCategoryReferences(@Param("cid") Integer cid);
+    @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.brand IS NOT NULL AND p.brand != '' ORDER BY p.brand ASC")
+    List<String> findDistinctBrands();
 } // Chỉ có duy nhất một dấu đóng ngoặc ở cuối cùng này

@@ -128,18 +128,18 @@ public class ProductDAOTest {
 
     @Test
     public void testSearchProducts() {
-        List<Product> byBrand = productDAO.searchProducts(null, null, null, null, "Intel", PageRequest.of(0, 10));
-        assertThat(byBrand).hasSize(1);
-        assertThat(byBrand.get(0).getName()).isEqualTo("Intel Core i9");
+        org.springframework.data.domain.Page<Product> byBrand = productDAO.searchProducts(null, null, null, null, "Intel", PageRequest.of(0, 10));
+        assertThat(byBrand.getContent()).hasSize(1);
+        assertThat(byBrand.getContent().get(0).getName()).isEqualTo("Intel Core i9");
 
-        List<Product> byPriceAndCat = productDAO.searchProducts(gpuCategory.getId(), 1000.0, 2000.0, null, null, PageRequest.of(0, 10));
-        assertThat(byPriceAndCat).hasSize(1);
-        assertThat(byPriceAndCat.get(0).getName()).isEqualTo("NVIDIA RTX 4090");
+        org.springframework.data.domain.Page<Product> byPriceAndCat = productDAO.searchProducts(gpuCategory.getId(), 1000.0, 2000.0, null, null, PageRequest.of(0, 10));
+        assertThat(byPriceAndCat.getContent()).hasSize(1);
+        assertThat(byPriceAndCat.getContent().get(0).getName()).isEqualTo("NVIDIA RTX 4090");
 
-        List<Product> byKeyword = productDAO.searchProducts(null, null, null, "DDR5", null, PageRequest.of(0, 10));
-        assertThat(byKeyword).isEmpty(); // image is null for RAM
+        org.springframework.data.domain.Page<Product> byKeyword = productDAO.searchProducts(null, null, null, "DDR5", null, PageRequest.of(0, 10));
+        assertThat(byKeyword.getContent()).isEmpty(); // image is null for RAM
 
-        List<Product> byKeywordWithImage = productDAO.searchProducts(null, null, null, "High", null, PageRequest.of(0, 10));
-        assertThat(byKeywordWithImage).hasSize(2); 
+        org.springframework.data.domain.Page<Product> byKeywordWithImage = productDAO.searchProducts(null, null, null, "High", null, PageRequest.of(0, 10));
+        assertThat(byKeywordWithImage.getContent()).hasSize(2); 
     }
 }

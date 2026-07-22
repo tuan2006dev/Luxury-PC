@@ -7,10 +7,10 @@
     <title>Đăng ký - LUXURY | PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v=2.0)}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v=2.0)}">
 </head>
 
 <body>
@@ -19,19 +19,41 @@
 
     <div class="container" style="padding-top: 20px;">
         <!-- BREADCRUMB -->
-        <div class="breadcrumb" style="margin-bottom: 25px;">
-            <a th:href="@{/}">Trang chủ</a> &gt; <span>Đăng ký</span>
+        <div class="breadcrumb" style="margin-bottom: 20px;">
+            <a th:href="@{/}">Trang chủ</a> > <span>Đăng ký</span>
         </div>
 
+        <h1 class="page-title">ĐĂNG KÝ</h1>
+        <p class="page-subtitle">Tạo tài khoản mới để bắt đầu mua sắm cùng chúng tôi.</p>
+
+        <!-- Notification section -->
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                /*<![CDATA[*/
+                const hasExist = /*[[${param.exist != null}]]*/ false;
+                const hasMismatch = /*[[${param.mismatch != null}]]*/ false;
+                const hasInvalidOtp = /*[[${param.invalidOtp != null}]]*/ false;
+                const hasInvalidEmail = /*[[${param.invalidEmail != null}]]*/ false;
+                const hasPhoneExist = /*[[${param.phoneExist != null}]]*/ false;
+                /*]]>*/
+
+                if (typeof window.showAlert === 'function') {
+                    if (hasExist) window.showAlert('Email đã tồn tại trong hệ thống. Vui lòng đăng nhập!', false);
+                    else if (hasMismatch) window.showAlert('Mật khẩu xác nhận không khớp. Vui lòng thử lại.', false);
+                    else if (hasInvalidOtp) window.showAlert('Mã OTP không chính xác hoặc đã hết hạn!', false);
+                    else if (hasInvalidEmail) window.showAlert('Định dạng email không hợp lệ!', false);
+                    else if (hasPhoneExist) window.showAlert('Số điện thoại đã được sử dụng!', false);
+                }
+            });
+        </script>
+
         <!-- AUTH FORM LAYOUT -->
-        <div class="auth-layout" style="grid-template-columns: 1fr; max-width: 540px; margin: 0 auto 60px auto;">
+        <div class="auth-layout" style="grid-template-columns: 1fr; max-width: 600px; margin: 0 auto 60px auto;">
 
             <!-- CỘT ĐĂNG KÝ -->
             <div class="auth-box reset-form">
-                <h1 class="auth-box-title" style="font-size: 24px; margin-bottom: 6px;">ĐĂNG KÝ TÀI KHOẢN</h1>
-                <p class="auth-box-subtitle" style="margin-bottom: 24px;">Tạo tài khoản mới để bắt đầu mua sắm cùng
-                    chúng tôi</p>
-
+                <h2 class="auth-box-title">ĐĂNG KÝ</h2>
+                <p class="auth-box-subtitle">Tạo tài khoản mới để bắt đầu mua sắm cùng chúng tôi</p>
                 <form id="form-register" action="/api/register" method="POST" onsubmit="submitRegister(event)"
                     novalidate>
                     <div class="form-row">
@@ -54,18 +76,18 @@
                     <div
                         th:replace="~{custominput/components :: textInput(label='Nhập lại mật khẩu *', name='confirmPassword', type='password', placeholder='••••••••', required=true, id='reg-pw-confirm', value=null)}">
                     </div>
+                    <span id="pw-error"
+                        style="color: #ef4444; font-size: 13px; display: none; margin-top: -15px; margin-bottom: 20px;">Mật
+                        khẩu nhập lại không khớp!</span>
                     <div
-                        th:replace="~{custominput/components :: otpInput(label='Mã xác nhận (OTP) *', name='otp', placeholder='Nhập mã OTP', required=true, onClickSend='sendOTP()')}">
+                        th:replace="~{custominput/components :: otpInput(label='Mã xác nhận (otp) *', name='otp', placeholder='Nhập mã OTP', required=true, onClickSend='sendOTP()')}">
                     </div>
-
-                    <label class="checkbox-label terms" style="margin-top: 15px; margin-bottom: 20px;">
+                    <label class="checkbox-label terms">
                         <input type="checkbox" required> Tôi đồng ý với <a href="/products"
                             style="color: #666; text-decoration: underline;">Điều khoản dịch vụ</a> và <a
                             href="/products" style="color: #666; text-decoration: underline;">Chính sách bảo mật</a>
                     </label>
-
-                    <button type="submit" class="btn btn-primary" id="btn-register" style="width: 100%;">ĐĂNG
-                        KÝ</button>
+                    <button type="submit" class="btn btn-primary" id="btn-register">ĐĂNG KÝ</button>
 
                     <div style="text-align: center; margin-top: 20px; font-size: 14px;">
                         Đã có tài khoản? <a th:href="@{/auth/login}"
@@ -91,37 +113,19 @@
     <!-- FOOTER CONTAINER -->
     <div th:replace="~{layout/footer :: footer}"></div>
 
-    <!-- URL Notification Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const params = new URLSearchParams(window.location.search);
-            if (typeof window.showAlert === 'function') {
-                if (params.has('exist')) window.showAlert('Email đã tồn tại trong hệ thống. Vui lòng đăng nhập!', false);
-                else if (params.has('mismatch')) window.showAlert('Mật khẩu xác nhận không khớp. Vui lòng thử lại.', false);
-                else if (params.has('invalidOtp')) window.showAlert('Mã OTP không chính xác hoặc đã hết hạn!', false);
-                else if (params.has('invalidEmail')) window.showAlert('Định dạng email không hợp lệ!', false);
-                else if (params.has('phoneExist')) window.showAlert('Số điện thoại đã được sử dụng!', false);
-            }
-        });
-
         function sendOTP() {
             const emailInput = document.querySelector('input[name="email"]');
-            const email = emailInput ? emailInput.value.trim() : '';
+            const email = emailInput.value.trim();
             if (!email) {
-                if (typeof window.showAlert === 'function') {
-                    window.showAlert('Vui lòng nhập email trước khi gửi mã OTP!', false);
-                } else {
-                    alert('Vui lòng nhập email trước khi gửi mã OTP!');
-                }
-                if (emailInput) emailInput.focus();
+                window.showAlert('Vui lòng nhập email trước khi gửi mã OTP!', false);
+                emailInput.focus();
                 return;
             }
 
             const btn = document.querySelector('.btn-otp');
-            if (btn) {
-                btn.innerText = 'ĐANG GỬI...';
-                btn.disabled = true;
-            }
+            btn.innerText = 'ĐANG GỬI...';
+            btn.disabled = true;
 
             const formData = new URLSearchParams();
             formData.append('email', email);
@@ -134,48 +138,47 @@
                 .then(res => res.text())
                 .then(data => {
                     if (data === 'success') {
-                        if (typeof window.showAlert === 'function') {
-                            window.showAlert({
-                                message: 'Đã gửi mã xác nhận (OTP)',
-                                subMessage: 'Vui lòng kiểm tra email của bạn (kể cả trong thư rác).',
-                                isSuccess: true
-                            });
-                        }
+                        window.showAlert({
+                            message: 'Đã gửi mã xác nhận (OTP)',
+                            subMessage: 'Vui lòng kiểm tra email của bạn (kể cả trong thư rác).',
+                            isSuccess: true
+                        });
 
-                        // Countdown 60s
+                        // Countdown
                         let timeLeft = 60;
-                        if (btn) btn.innerText = `CHỜ ${timeLeft}S`;
+                        btn.innerText = `CHỜ ${timeLeft}S`;
                         const timer = setInterval(() => {
                             timeLeft--;
                             if (timeLeft <= 0) {
                                 clearInterval(timer);
-                                if (btn) {
-                                    btn.innerText = 'GỬI LẠI MÃ';
-                                    btn.disabled = false;
-                                }
+                                btn.innerText = 'GỬI LẠI MÃ';
+                                btn.disabled = false;
                             } else {
-                                if (btn) btn.innerText = `CHỜ ${timeLeft}S`;
+                                btn.innerText = `CHỜ ${timeLeft}S`;
                             }
                         }, 1000);
                     } else if (data === 'error_exist') {
-                        if (typeof window.showAlert === 'function') window.showAlert('Email này đã được đăng ký tài khoản!', false);
-                        if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
+                        window.showAlert('Email này đã được đăng ký tài khoản!', false);
+                        btn.innerText = 'GỬI MÃ';
+                        btn.disabled = false;
                     } else {
-                        if (typeof window.showAlert === 'function') window.showAlert('Không thể gửi OTP. Vui lòng thử lại sau.', false);
-                        if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
+                        window.showAlert('Không thể gửi OTP. Vui lòng thử lại sau.', false);
+                        btn.innerText = 'GỬI MÃ';
+                        btn.disabled = false;
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    if (typeof window.showAlert === 'function') window.showAlert('Đã xảy ra lỗi mạng. Vui lòng thử lại.', false);
-                    if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
+                    window.showAlert('Đã xảy ra lỗi mạng. Vui lòng thử lại.', false);
+                    btn.innerText = 'GỬI MÃ';
+                    btn.disabled = false;
                 });
         }
 
         function submitRegister(e) {
             e.preventDefault();
 
-            // Reset error states
+            // Reset previous invalid states and error text
             document.querySelectorAll('.error-message').forEach(el => {
                 el.style.display = 'none';
                 el.innerText = '';
@@ -183,6 +186,10 @@
             document.querySelectorAll('.reset-form input').forEach(el => {
                 el.classList.remove('is-invalid');
             });
+            const pwError = document.getElementById('pw-error');
+            if (pwError) {
+                pwError.style.display = 'none';
+            }
 
             const firstNameInput = document.querySelector('input[name="firstName"]');
             const lastNameInput = document.querySelector('input[name="lastName"]');
@@ -191,41 +198,39 @@
             const pwInput = document.getElementById('reg-pw');
             const pwConfirmInput = document.getElementById('reg-pw-confirm');
             const otpInput = document.querySelector('input[name="otp"]');
-            const termsCheckbox = document.querySelector('.terms input[type="checkbox"]');
+            const termsChecked = document.querySelector('.terms input[type="checkbox"]').checked;
 
             let isValid = true;
 
             const showFieldError = (input, msg) => {
-                if (!input) return;
                 input.classList.add('is-invalid');
-                const formGroup = input.closest('.form-group');
-                if (formGroup) {
-                    const errSpan = formGroup.querySelector('.error-message');
-                    if (errSpan) {
-                        errSpan.innerText = msg;
-                        errSpan.style.display = 'block';
-                    }
+                const errSpan = input.closest('.form-group').querySelector('.error-message');
+                if (errSpan) {
+                    errSpan.innerText = msg;
+                    errSpan.style.display = 'block';
                 }
                 isValid = false;
             };
 
-            if (!firstNameInput || !firstNameInput.value.trim()) { showFieldError(firstNameInput, 'Vui lòng nhập Họ!'); }
-            if (!lastNameInput || !lastNameInput.value.trim()) { showFieldError(lastNameInput, 'Vui lòng nhập Tên!'); }
-            if (!emailInput || !emailInput.value.trim()) { showFieldError(emailInput, 'Vui lòng nhập Email!'); }
-            if (!phoneInput || !phoneInput.value.trim()) { showFieldError(phoneInput, 'Vui lòng nhập Số điện thoại!'); }
-            if (!pwInput || !pwInput.value) { showFieldError(pwInput, 'Vui lòng nhập Mật khẩu!'); }
-            if (!pwConfirmInput || !pwConfirmInput.value) { showFieldError(pwConfirmInput, 'Vui lòng nhập lại Mật khẩu!'); }
+            if (!firstNameInput.value.trim()) { showFieldError(firstNameInput, 'Vui lòng nhập Họ!'); }
+            if (!lastNameInput.value.trim()) { showFieldError(lastNameInput, 'Vui lòng nhập Tên!'); }
+            if (!emailInput.value.trim()) { showFieldError(emailInput, 'Vui lòng nhập Email!'); }
+            if (!phoneInput.value.trim()) { showFieldError(phoneInput, 'Vui lòng nhập Số điện thoại!'); }
+            if (!pwInput.value) { showFieldError(pwInput, 'Vui lòng nhập Mật khẩu!'); }
+            if (!pwConfirmInput.value) { showFieldError(pwConfirmInput, 'Vui lòng nhập lại Mật khẩu!'); }
 
-            if (pwInput && pwConfirmInput && pwInput.value && pwConfirmInput.value && pwInput.value !== pwConfirmInput.value) {
-                showFieldError(pwConfirmInput, 'Mật khẩu nhập lại không khớp!');
+            if (pwInput.value && pwConfirmInput.value && pwInput.value !== pwConfirmInput.value) {
+                pwConfirmInput.classList.add('is-invalid');
+                if (pwError) {
+                    pwError.style.display = 'block';
+                }
+                isValid = false;
             }
 
-            if (!otpInput || !otpInput.value.trim()) { showFieldError(otpInput, 'Vui lòng nhập mã xác nhận (OTP)!'); }
+            if (!otpInput.value.trim()) { showFieldError(otpInput, 'Vui lòng nhập mã xác nhận (OTP)!'); }
 
-            if (isValid && termsCheckbox && !termsCheckbox.checked) {
-                if (typeof window.showAlert === 'function') {
-                    window.showAlert('Bạn cần đồng ý với Điều khoản dịch vụ và Chính sách bảo mật!', false);
-                }
+            if (isValid && !termsChecked) {
+                window.showAlert('Bạn cần đồng ý với Điều khoản dịch vụ và Chính sách bảo mật!', false);
                 isValid = false;
             }
 

@@ -1,0 +1,128 @@
+        <div th:fragment="infoTab" class="profile-section active" id="sec-info">
+          <div class="section-head">
+            <div>
+              <div class="section-tag">Tài khoản</div>
+              <div class="section-h">Thông Tin Cá Nhân</div>
+            </div>
+            <button type="button" class="btn-edit" id="profile-edit-toggle" aria-expanded="false"
+              onclick="toggleProfileEditForm()">Chỉnh Sửa</button>
+          </div>
+
+          <!-- Edit form -->
+          <form id="profile-edit-panel" class="edit-profile-panel" th:action="@{/profile/update}" method="post"
+            style="display:none; margin-bottom: 25px;">
+            <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+            <div class="form-error" data-error-for="form" style="display:none;color:#ff6b6b;margin-bottom:1rem;"></div>
+            <div style="font-size:1rem; font-weight:600; color:#000; margin-bottom:1.5rem;">
+              Cập Nhật Thông Tin</div>
+            <div class="form-2col">
+              <div class="form-group full">
+                <label class="form-label">Họ và Tên</label>
+                <input type="text" name="firstName" class="form-input" required maxlength="100"
+                  th:value="${user != null && user.fullName != null ? user.fullName : ''}"
+                  placeholder="Nhập đầy đủ họ và tên của bạn" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" id="profile-email" class="form-input" required maxlength="100"
+                  th:value="${email}" th:data-original-email="${email}" />
+              </div>
+              <div class="form-group" id="email-otp-group" style="display:none;">
+                <label class="form-label" style="color:#3b82f6;">Mã OTP Xác Minh
+                  Email</label>
+                <div style="display:flex; gap:10px;">
+                  <input type="text" name="emailOtp" id="profile-email-otp" class="form-input" placeholder="Nhập mã OTP" maxlength="6" />
+                  <button type="button" class="btn-save" id="btn-send-email-otp"
+                    style="white-space:nowrap; padding: 0.5rem 1rem;">Gửi
+                    OTP</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Số điện thoại</label>
+                <input type="tel" name="phone" class="form-input" pattern="^(0|\+84)(3|5|7|8|9)[0-9]{8}$"
+                  th:value="${user != null ? user.phone : ''}" placeholder="0901 234 567" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ngày sinh</label>
+                <input type="date" name="birthday" class="form-input"
+                  th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                  th:value="${user != null && user.birthday != null ? #dates.format(user.birthday, 'yyyy-MM-dd') : ''}" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Giới tính</label>
+                <select name="gender" class="form-select">
+                  <option value="" th:selected="${user == null || user.gender == null}">Khác</option>
+                  <option value="true" th:selected="${user != null && user.gender == true}">Nam</option>
+                  <option value="false" th:selected="${user != null && user.gender == false}">Nữ</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn-save">
+              <span class="btn-save-inner">Lưu Thay Đổi</span>
+            </button>
+            <button type="button" class="btn-edit" style="margin-left:.75rem;" onclick="toggleProfileEditForm(false)">Hủy</button>
+          </form>
+
+          <!-- Stats strip -->
+          <div class="stats-strip">
+            <div class="stat-cell">
+              <div class="stat-num" th:text="${totalOrders}">12</div>
+              <div class="stat-lbl">Đơn đã đặt</div>
+            </div>
+            <div class="stat-cell" th:title="${#numbers.formatDecimal(totalSpent, 1, 'COMMA', 0, 'POINT')} + '₫'">
+              <div class="stat-num"
+                th:text="${totalSpent >= 1000000 ? #numbers.formatDecimal(totalSpent / 1000000, 1, 'COMMA', 0, 'POINT') + 'M' : #numbers.formatDecimal(totalSpent, 1, 'COMMA', 0, 'POINT')}">
+                142M</div>
+              <div class="stat-lbl">Tổng chi tiêu</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num" th:text="${wishlistCount != null ? wishlistCount : 0}">0</div>
+              <div class="stat-lbl">Yêu thích</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num" th:text="${userRank != 'None' ? userRank : 'Mới'}">VIP</div>
+              <div class="stat-lbl">Hạng thành viên</div>
+            </div>
+          </div>
+
+          <!-- Info cards -->
+          <div class="info-grid">
+            <div class="info-card">
+              <label>Họ & Tên</label>
+              <div class="form-val" th:text="${name}">Nguyễn Thanh Minh</div>
+            </div>
+            <div class="info-card">
+              <label>Email</label>
+              <div class="form-val" th:text="${email}">thanh.minh@email.com</div>
+              <div class="ic-sub">✓ Đã xác minh</div>
+            </div>
+            <div class="info-card">
+              <label>Số điện thoại</label>
+              <div class="form-val" th:text="${user != null && user.phone != null ? user.phone : 'Chưa cập nhật'}">Chưa
+                cập nhật</div>
+              <div class="ic-sub" th:if="${user != null && user.phone != null && !user.phone.isEmpty()}">✓ Đã liên kết
+              </div>
+              <div class="ic-sub" th:if="${user == null || user.phone == null || user.phone.isEmpty()}"
+                style="color: #64748b;">✗ Chưa liên kết</div>
+            </div>
+            <div class="info-card">
+              <label>Ngày sinh</label>
+              <div class="form-val"
+                th:text="${user != null && user.birthday != null ? #dates.format(user.birthday, 'dd/MM/yyyy') : 'Chưa cập nhật'}">
+                15/08/1995</div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">Thành viên từ</div>
+              <div class="ic-value"
+                th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'MM/yyyy') : 'Chưa cập nhật'}">
+                Chưa cập nhật</div>
+
+            </div>
+            <div class="info-card">
+              <div class="ic-label">Hạng thành viên</div>
+              <div class="ic-value"
+                th:style="${userRank == 'Diamond' ? 'color:#0ea5e9; font-weight:600; ' : (userRank == 'Platinum' ? 'color:#94a3b8; font-weight:600;' : (userRank == 'Silver' ? 'color:#64748b; font-weight:600;' : 'color:#333; font-weight:600;'))}"
+                th:text="${userRank != 'None' ? '⭐ ' + userRank : 'Thành viên mới'}">⭐ VIP Gold</div>
+            </div>
+          </div>
+        </div>

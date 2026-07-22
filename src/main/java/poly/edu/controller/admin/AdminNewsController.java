@@ -49,8 +49,6 @@ public class AdminNewsController {
 
     private final ProfileService profileService;
 
-    private final poly.edu.repository.UserRepository userRepository;
-
     @GetMapping("")
     public String index(Model model, 
                         @RequestParam(name = "keyword", defaultValue = "") String keyword,
@@ -95,27 +93,6 @@ public class AdminNewsController {
                        Authentication authentication,
                        RedirectAttributes redirectAttributes,
                        Model model) {
-        
-        // Auto-generate slug if left blank
-        if (news.getSlug() == null || news.getSlug().trim().isEmpty()) {
-            news.setSlug(generateSlug(news.getTitle()));
-        }
-
-        // Auto-generate summary if left blank
-        if (news.getSummary() == null || news.getSummary().trim().isEmpty()) {
-            if (news.getContent() != null && !news.getContent().trim().isEmpty()) {
-                String plainText = news.getContent().replaceAll("<[^>]*>", "").trim();
-                news.setSummary(plainText.length() > 200 ? plainText.substring(0, 200) + "..." : plainText);
-            } else {
-                news.setSummary(news.getTitle());
-            }
-        }
-
-        // Handle category null id
-        if (news.getCategory() != null && news.getCategory().getId() == null) {
-            news.setCategory(null);
-        }
-
         if (bindingResult.hasErrors()) {
             List<NewsCategory> categories = newsCategoryService.getActiveCategories();
             model.addAttribute("categories", categories);
@@ -124,15 +101,7 @@ public class AdminNewsController {
 
         try {
             if (news.getId() == null) {
-                User currentUser = null;
-                try {
-                    currentUser = profileService.getCurrentUser(authentication);
-                } catch (Exception ex) {
-                    log.warn("[AdminNews] Could not resolve current user from authentication: {}", ex.getMessage());
-                }
-                if (currentUser == null) {
-                    currentUser = userRepository.findAll().stream().findFirst().orElse(null);
-                }
+                User currentUser = profileService.getCurrentUser(authentication);
                 news.setAuthor(currentUser);
                 news.setCreatedAt(new Date());
             } else {
@@ -174,23 +143,7 @@ public class AdminNewsController {
         }
         return "redirect:/admin/news";
     }
-
-    private String generateSlug(String title) {
-        if (title == null || title.trim().isEmpty()) return "bai-viet-" + System.currentTimeMillis();
-        String slug = title.toLowerCase().trim();
-        slug = slug.replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a");
-        slug = slug.replaceAll("[èéẹẻẽêềếệểễ]", "e");
-        slug = slug.replaceAll("[ìíịỉĩ]", "i");
-        slug = slug.replaceAll("[òóọỏõôồốộổỗơờớợởỡ]", "o");
-        slug = slug.replaceAll("[ùúụủũưừứựửữ]", "u");
-        slug = slug.replaceAll("[ỳýỵỷỹ]", "y");
-        slug = slug.replaceAll("đ", "d");
-        slug = slug.replaceAll("[^a-z0-9\\s-]", "");
-        slug = slug.replaceAll("[\\s-]+", "-");
-        if (slug.isEmpty()) slug = "bai-viet-" + System.currentTimeMillis();
-        return slug;
-    }
-
+    
     // Endpoint for TinyMCE Image Upload
     @PostMapping("/upload-image")
     @ResponseBody

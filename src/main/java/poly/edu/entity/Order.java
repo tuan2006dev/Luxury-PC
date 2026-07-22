@@ -41,12 +41,6 @@ public class Order {
     @Column(name = "discount_amount")
     private Double discountAmount;
 
-    @Column(name = "shipping_fee")
-    private Double shippingFee;
-
-    @Column(name = "shipping_method_name")
-    private String shippingMethodName;
-
     @Column(name = "admin_note", length = 1000)
     private String adminNote;
 
@@ -196,22 +190,6 @@ public class Order {
         this.discountAmount = discountAmount;
     }
 
-    public Double getShippingFee() {
-        return shippingFee;
-    }
-
-    public void setShippingFee(Double shippingFee) {
-        this.shippingFee = shippingFee;
-    }
-
-    public String getShippingMethodName() {
-        return shippingMethodName;
-    }
-
-    public void setShippingMethodName(String shippingMethodName) {
-        this.shippingMethodName = shippingMethodName;
-    }
-
     public String getAdminNote() {
         return adminNote;
     }
@@ -275,7 +253,7 @@ public class Order {
         if (paymentMethod == null) return "Chưa xác định";
         return switch (paymentMethod) {
             case "VIETQR" -> "VietQR";
-            case "COD" -> "COD";
+            case "COD" -> "Thanh toán khi nhận hàng (COD)";
             case "INSTALLMENT" -> "Trả góp";
             default -> paymentMethod;
         };

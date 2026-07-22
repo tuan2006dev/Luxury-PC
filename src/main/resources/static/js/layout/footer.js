@@ -1,28 +1,61 @@
-function showConfirm(msg, callback, title = "Xác nhận") {
-    if (typeof window.showConfirm === 'function') {
-        window.showConfirm(msg, title).then(confirmed => {
-            if (confirmed && typeof callback === 'function') {
-                callback();
+let confirmCallback = null;
+            function showConfirm(msg, callback, title="Xác nhận") {
+                const overlay = document.getElementById('global-confirm-overlay');
+                const modal = overlay.querySelector('.confirm-modal');
+                document.getElementById('confirm-msg').innerText = msg;
+                document.getElementById('confirm-title').innerText = title;
+                confirmCallback = callback;
+                
+                overlay.style.display = 'flex';
+                // Trigger reflow
+                void overlay.offsetWidth;
+                overlay.style.opacity = '1';
+                modal.style.transform = 'translateY(0)';
             }
-        });
-    } else if (typeof callback === 'function') {
-        if (confirm(msg)) callback();
-    }
-}
 
-function closeConfirm() {
-    if (typeof window.closeConfirmModal === 'function') {
-        window.closeConfirmModal();
-    }
-}
+            function closeConfirm() {
+                const overlay = document.getElementById('global-confirm-overlay');
+                const modal = overlay.querySelector('.confirm-modal');
+                overlay.style.opacity = '0';
+                modal.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 300);
+            }
 
-function showAlert(msg, title = "Thông báo") {
-    if (typeof window.showAlertModal === 'function') {
-        window.showAlertModal(title, msg);
-    } else {
-        alert(msg);
-    }
-}
+            document.addEventListener('DOMContentLoaded', () => {
+                const cancelBtn = document.getElementById('confirm-cancel-btn');
+                const okBtn = document.getElementById('confirm-ok-btn');
+                if(cancelBtn) cancelBtn.addEventListener('click', closeConfirm);
+                if(okBtn) okBtn.addEventListener('click', () => {
+                    closeConfirm();
+                    if(confirmCallback) confirmCallback();
+                });
+            });
+
+            function showAlert(msg, title="Thông báo") {
+                const overlay = document.getElementById('global-confirm-overlay');
+                const modal = overlay.querySelector('.confirm-modal');
+                document.getElementById('confirm-msg').innerText = msg;
+                document.getElementById('confirm-title').innerText = title;
+                document.getElementById('confirm-cancel-btn').style.display = 'none';
+                document.getElementById('confirm-icon').className = 'fa-solid fa-check-circle';
+                confirmCallback = null;
+                
+                overlay.style.display = 'flex';
+                void overlay.offsetWidth;
+                overlay.style.opacity = '1';
+                modal.style.transform = 'translateY(0)';
+
+                const oldOkClick = document.getElementById('confirm-ok-btn').onclick;
+                document.getElementById('confirm-ok-btn').onclick = () => {
+                    closeConfirm();
+                    setTimeout(() => {
+                        document.getElementById('confirm-cancel-btn').style.display = 'block';
+                        document.getElementById('confirm-icon').className = 'fa-solid fa-circle-exclamation';
+                    }, 300);
+                };
+            }
 
 function toggleChatWindow() {
         const windowEl = document.getElementById('ai-chat-window');

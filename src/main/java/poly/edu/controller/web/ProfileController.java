@@ -49,60 +49,30 @@ public class ProfileController {
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
             return "redirect:/auth/login";
         }
+        
         try {
-            User user = profileService.getCurrentUser(authentication);
-            model.addAttribute("user", user);
-            model.addAttribute("profile", profileService.getCurrentProfile(authentication));
+            java.util.Map<String, Object> profileData = profileService.getFullProfileData(authentication);
+            model.addAllAttributes(profileData);
+            
+            User user = (User) profileData.get("user");
+            model.addAttribute("profile", user);
             model.addAttribute("name",
                     user.getFullName() != null && !user.getFullName().isEmpty() ? user.getFullName() : user.getUsername());
             model.addAttribute("email", user.getEmail());
             model.addAttribute("avatarInitial", getAvatarInitial(user));
 
-            Double totalSpent = orderDAO.getTotalSpentByUser(user.getId());
-            if (totalSpent == null) {
-                totalSpent = 0.0;
-            }
-
-            Long totalOrders = orderDAO.countByUser_Id(user.getId());
-            if (totalOrders == null) {
-                totalOrders = 0L;
-            }
-
-            model.addAttribute("totalSpent", totalSpent);
-            model.addAttribute("totalOrders", totalOrders);
-            model.addAttribute("userRank", getRank(totalSpent));
-            model.addAttribute("rankClass", getRankClass(totalSpent));
-            model.addAttribute("orders", orderDAO.findByUser_IdOrderByCreatedAtDesc(user.getId()));
-            model.addAttribute("wishlistItems", wishlistService.getWishlistItems(authentication));
-            model.addAttribute("wishlistCount", wishlistService.getWishlistCount(authentication));
-            model.addAttribute("addresses", profileService.getCurrentUserAddresses(authentication));
-            model.addAttribute("notificationSettings", profileService.getCurrentUserNotificationSettings(authentication));
-            model.addAttribute("currentSessionInfo", buildCurrentSessionInfo(request, session));
-
-            // Ví Voucher
-            java.util.List<poly.edu.entity.UserVoucher> userVouchers = userVoucherService.getMyUnusedVouchers(user);
-            model.addAttribute("vouchers", userVouchers);
+            java.util.List<?> userVouchers = (java.util.List<?>) profileData.get("vouchers");
             model.addAttribute("voucherCount", userVouchers != null ? userVouchers.size() : 0);
-        } catch (Exception ex) {
-            String fallbackName = authentication != null ? authentication.getName() : "";
-            model.addAttribute("name", fallbackName);
-            model.addAttribute("email", fallbackName);
-            model.addAttribute("avatarInitial", "U");
-            model.addAttribute("profile", null);
-            model.addAttribute("totalSpent", 0.0);
-            model.addAttribute("totalOrders", 0L);
-            model.addAttribute("userRank", "None");
-            model.addAttribute("rankClass", "rank-none");
-            model.addAttribute("orders", new java.util.ArrayList<>());
-            model.addAttribute("wishlistItems", new java.util.ArrayList<>());
-            model.addAttribute("wishlistCount", 0L);
-            model.addAttribute("addresses", new java.util.ArrayList<>());
-            model.addAttribute("notificationSettings", null);
-            model.addAttribute("currentSessionInfo", "Không xác định");
-            model.addAttribute("vouchers", new java.util.ArrayList<>());
-            model.addAttribute("voucherCount", 0);
-        }
+            
+            java.util.List<?> wishlistItems = (java.util.List<?>) profileData.get("wishlistItems");
+            model.addAttribute("wishlistCount", wishlistItems != null ? wishlistItems.size() : 0);
 
+            model.addAttribute("currentSessionInfo", poly.edu.util.RequestInfoUtils.buildSessionInfo(request, session));
+        } catch (Exception ex) {
+            log.error("Error loading profile", ex);
+            return "redirect:/error";
+        }
+        
         return "account/profile";
     }
 
@@ -459,77 +429,5 @@ public class ProfileController {
         return null;
     }
 
-    private String buildCurrentSessionInfo(HttpServletRequest request, HttpSession session) {
-        String userAgent = request != null ? request.getHeader("User-Agent") : "";
-        String browser = detectBrowser(userAgent);
-        String os = detectOS(userAgent);
-        String location = detectLocation(request);
-        String loginAt = formatSessionStart(session);
-        return browser + " · " + os + " · " + location + " — Đăng nhập " + loginAt;
-    }
 
-    private String detectBrowser(String userAgent) {
-        if (userAgent == null) return "Trình duyệt khác";
-        String ua = userAgent.toLowerCase();
-        if (ua.contains("edg/")) return "Edge";
-        if (ua.contains("chrome/")) return "Chrome";
-        if (ua.contains("firefox/")) return "Firefox";
-        if (ua.contains("safari/") && !ua.contains("chrome/")) return "Safari";
-        return "Trình duyệt khác";
-    }
-
-    private String detectOS(String userAgent) {
-        if (userAgent == null) return "Hệ điều hành khác";
-        String ua = userAgent.toLowerCase();
-        if (ua.contains("windows")) return "Windows";
-        if (ua.contains("mac os")) return "macOS";
-        if (ua.contains("android")) return "Android";
-        if (ua.contains("iphone") || ua.contains("ipad") || ua.contains("ios")) return "iOS";
-        if (ua.contains("linux")) return "Linux";
-        return "Hệ điều hành khác";
-    }
-
-    private String detectLocation(HttpServletRequest request) {
-        if (request == null) return "Không xác định";
-        String forwardedFor = request.getHeader("X-Forwarded-For");
-        String ip = (forwardedFor != null && !forwardedFor.isBlank()) ? forwardedFor.split(",")[0].trim() : request.getRemoteAddr();
-        if (ip == null || ip.isBlank()) return "Không xác định";
-        if ("127.0.0.1".equals(ip) || "::1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
-            return "Localhost";
-        }
-        return ip;
-    }
-
-    private String formatSessionStart(HttpSession session) {
-        if (session == null) return "không rõ";
-        java.time.Instant instant = java.time.Instant.ofEpochMilli(session.getCreationTime());
-        java.time.ZonedDateTime zonedDateTime = instant.atZone(java.time.ZoneId.systemDefault());
-        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(zonedDateTime);
-    }
-
-    private String getRank(Double totalSpent) {
-        if (totalSpent >= 200_000_000) {
-            return "Diamond";
-        }
-        if (totalSpent >= 50_000_000) {
-            return "Platinum";
-        }
-        if (totalSpent >= 10_000_000) {
-            return "Silver";
-        }
-        return "None";
-    }
-
-    private String getRankClass(Double totalSpent) {
-        if (totalSpent >= 200_000_000) {
-            return "rank-diamond";
-        }
-        if (totalSpent >= 50_000_000) {
-            return "rank-platinum";
-        }
-        if (totalSpent >= 10_000_000) {
-            return "rank-silver";
-        }
-        return "rank-none";
-    }
 }

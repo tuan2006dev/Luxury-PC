@@ -19,16 +19,19 @@ public class News implements Serializable {
     @Column(nullable = false, length = 255)
     private String title;
 
+    @NotBlank(message = "Slug không được để trống")
     @Size(max = 255, message = "Slug không quá 255 ký tự")
     @Column(nullable = false, unique = true, length = 255)
     private String slug;
 
+    @NotBlank(message = "Nội dung không được để trống")
     @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(length = 255)
     private String thumbnail;
 
+    @NotBlank(message = "Tóm tắt không được để trống")
     @Column(columnDefinition = "TEXT")
     private String summary;
 

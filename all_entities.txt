@@ -1,0 +1,3143 @@
+﻿package poly.edu.entity;
+
+import java.io.Serializable;
+
+public class CartItem implements Serializable {
+    private Integer id;
+    private String name;
+    private Double price;
+    private Integer quantity;
+    private String image;
+    private Integer stock;
+
+    // 1. Constructor KHÃ”NG tham sá»‘ (Báº¯t buá»™c Ä‘á»ƒ trÃ¡nh lá»—i 'is not applicable')
+    public CartItem() {
+    }
+
+    // 2. Constructor 4 tham sá»‘
+    public CartItem(Integer id, String name, Double price, Integer quantity) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    // 3. CÃ¡c Getter vÃ  Setter chuáº©n
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
+
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
+
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
+
+    /**
+     * PhÆ°Æ¡ng thá»©c bá»• trá»£ tÃ­nh tá»•ng tiá»n cho tá»«ng dÃ²ng sáº£n pháº©m
+     * GiÃºp hiá»ƒn thá»‹ dá»¯ liá»‡u á»Ÿ trang Checkout mÆ°á»£t mÃ  hÆ¡n
+     */
+    public Double getAmount() {
+        if (this.price == null || this.quantity == null) {
+            return 0.0;
+        }
+        return this.price * this.quantity;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "categories")
+public class Category implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @NotBlank(message = "TÃªn danh má»¥c khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
+    @Column(unique = true)
+    private String name;
+
+    public Category() {
+    }
+
+    public Category(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "chat_messages")
+public class ChatMessage {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private Integer ticketId;
+
+    // CUSTOMER or ADMIN
+    private String sender;
+
+    private String senderName;
+
+    @Column(columnDefinition = "TEXT")
+    private String message;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
+
+    // Getters & Setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(Integer ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.List;
+
+@Entity
+@Table(name = "flash_sales", indexes = {
+    @Index(name = "idx_flashsale_active", columnList = "active"),
+    @Index(name = "idx_flashsale_time", columnList = "start_time, end_time")
+})
+public class FlashSale {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String name;
+
+    @Column(name = "start_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startTime;
+
+    @Column(name = "end_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endTime;
+
+    private Boolean active = true;
+
+    @Column(name = "banner_image")
+    private String bannerImage;
+
+    @Column(name = "description", length = 500)
+    private String description;
+
+    /**
+     * Giá»›i háº¡n sá»‘ lÆ°á»£ng sáº£n pháº©m Flash Sale má»—i user Ä‘Æ°á»£c mua.
+     * null = khÃ´ng giá»›i háº¡n
+     */
+    @Column(name = "max_per_user")
+    private Integer maxPerUser;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @OneToMany(mappedBy = "flashSale", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FlashSaleItem> items;
+
+    public FlashSale() {
+    }
+
+    public FlashSale(Integer id, String name, Date startTime, Date endTime, Boolean active, Date createdAt, List<FlashSaleItem> items) {
+        this.id = id;
+        this.name = name;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.active = active;
+        this.createdAt = createdAt;
+        this.items = items;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        if (this.active == null) this.active = true;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getBannerImage() {
+        return bannerImage;
+    }
+
+    public void setBannerImage(String bannerImage) {
+        this.bannerImage = bannerImage;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getMaxPerUser() {
+        return maxPerUser;
+    }
+
+    public void setMaxPerUser(Integer maxPerUser) {
+        this.maxPerUser = maxPerUser;
+    }
+
+    public List<FlashSaleItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<FlashSaleItem> items) {
+        this.items = items;
+    }
+
+    /**
+     * Kiá»ƒm tra flash sale cÃ³ Ä‘ang diá»…n ra khÃ´ng
+     */
+    public boolean isRunning() {
+        Date now = new Date();
+        return Boolean.TRUE.equals(active)
+                && startTime != null && endTime != null
+                && !now.before(startTime) && !now.after(endTime);
+    }
+
+    /**
+     * Tráº¡ng thÃ¡i hiá»ƒn thá»‹: UPCOMING, RUNNING, ENDED
+     */
+    public String getStatus() {
+        Date now = new Date();
+        if (!Boolean.TRUE.equals(active)) return "DISABLED";
+        if (startTime != null && now.before(startTime)) return "UPCOMING";
+        if (endTime != null && now.after(endTime)) return "ENDED";
+        return "RUNNING";
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "flash_sale_items")
+public class FlashSaleItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "flash_sale_id")
+    private FlashSale flashSale;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(name = "sale_price")
+    private Double salePrice;
+
+    @Column(name = "sale_quantity")
+    private Integer saleQuantity;
+
+    @Column(name = "sold_count")
+    private Integer soldCount = 0;
+
+    public FlashSaleItem() {
+    }
+
+    public FlashSaleItem(Integer id, FlashSale flashSale, Product product, Double salePrice, Integer saleQuantity, Integer soldCount) {
+        this.id = id;
+        this.flashSale = flashSale;
+        this.product = product;
+        this.salePrice = salePrice;
+        this.saleQuantity = saleQuantity;
+        this.soldCount = soldCount;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.soldCount == null) this.soldCount = 0;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public FlashSale getFlashSale() {
+        return flashSale;
+    }
+
+    public void setFlashSale(FlashSale flashSale) {
+        this.flashSale = flashSale;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Double getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(Double salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public Integer getSaleQuantity() {
+        return saleQuantity;
+    }
+
+    public void setSaleQuantity(Integer saleQuantity) {
+        this.saleQuantity = saleQuantity;
+    }
+
+    public Integer getSoldCount() {
+        return soldCount;
+    }
+
+    public void setSoldCount(Integer soldCount) {
+        this.soldCount = soldCount;
+    }
+
+    /**
+     * Pháº§n trÄƒm giáº£m giÃ¡ so vá»›i giÃ¡ gá»‘c
+     */
+    public int getDiscountPercent() {
+        if (product == null || product.getPrice() == null || product.getPrice() == 0 || salePrice == null) return 0;
+        return (int) Math.round((1 - salePrice / product.getPrice()) * 100);
+    }
+
+    /**
+     * Pháº§n trÄƒm Ä‘Ã£ bÃ¡n
+     */
+    public int getSoldPercent() {
+        if (saleQuantity == null || saleQuantity == 0 || soldCount == null) return 0;
+        return Math.min(100, (int) Math.round((double) soldCount / saleQuantity * 100));
+    }
+
+    /**
+     * CÃ²n hÃ ng sale khÃ´ng
+     */
+    public boolean isAvailable() {
+        if (saleQuantity == null || soldCount == null) return false;
+        return soldCount < saleQuantity;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "inventory")
+public class Inventory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @OneToOne
+    @JoinColumn(name = "product_id", unique = true)
+    private Product product;
+
+    private Integer quantity;
+
+    @Column(name = "last_update")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdate;
+
+    public Inventory() {
+    }
+
+    public Inventory(Integer id, Product product, Integer quantity, Date lastUpdate) {
+        this.id = id;
+        this.product = product;
+        this.quantity = quantity;
+        this.lastUpdate = lastUpdate;
+    }
+
+    @PrePersist
+    @PreUpdate
+    protected void onUpdate() {
+        this.lastUpdate = new Date();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Date;
+
+@Entity
+@Table(name = "news")
+public class News implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @NotBlank(message = "TiÃªu Ä‘á» khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
+    @Size(max = 255, message = "TiÃªu Ä‘á» khÃ´ng quÃ¡ 255 kÃ½ tá»±")
+    @Column(nullable = false, length = 255)
+    private String title;
+
+    @NotBlank(message = "Slug khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
+    @Size(max = 255, message = "Slug khÃ´ng quÃ¡ 255 kÃ½ tá»±")
+    @Column(nullable = false, unique = true, length = 255)
+    private String slug;
+
+    @NotBlank(message = "Ná»™i dung khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
+    @Column(length = 255)
+    private String thumbnail;
+
+    @NotBlank(message = "TÃ³m táº¯t khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
+    @Column(columnDefinition = "TEXT")
+    private String summary;
+
+    @Column(name = "view_count", columnDefinition = "BIGINT DEFAULT 0")
+    private Long viewCount = 0L;
+
+    @Column(name = "meta_title", length = 255)
+    private String metaTitle;
+
+    @Column(name = "meta_description", columnDefinition = "TEXT")
+    private String metaDescription;
+
+    @Column(name = "meta_keywords", length = 255)
+    private String metaKeywords;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private NewsStatus status = NewsStatus.DRAFT;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private NewsCategory category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", updatable = false)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    public News() {
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
+
+    // Getters and Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getSlug() { return slug; }
+    public void setSlug(String slug) { this.slug = slug; }
+
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+
+    public String getThumbnail() { return thumbnail; }
+    public void setThumbnail(String thumbnail) { this.thumbnail = thumbnail; }
+
+    public String getSummary() { return summary; }
+    public void setSummary(String summary) { this.summary = summary; }
+
+    public Long getViewCount() { return viewCount; }
+    public void setViewCount(Long viewCount) { this.viewCount = viewCount; }
+
+    public String getMetaTitle() { return metaTitle; }
+    public void setMetaTitle(String metaTitle) { this.metaTitle = metaTitle; }
+
+    public String getMetaDescription() { return metaDescription; }
+    public void setMetaDescription(String metaDescription) { this.metaDescription = metaDescription; }
+
+    public String getMetaKeywords() { return metaKeywords; }
+    public void setMetaKeywords(String metaKeywords) { this.metaKeywords = metaKeywords; }
+
+    public NewsStatus getStatus() { return status; }
+    public void setStatus(NewsStatus status) { this.status = status; }
+
+    public NewsCategory getCategory() { return category; }
+    public void setCategory(NewsCategory category) { this.category = category; }
+
+    public User getAuthor() { return author; }
+    public void setAuthor(User author) { this.author = author; }
+
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    public Date getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getFormattedViewCount() {
+        if (viewCount == null) return "0";
+        if (viewCount >= 1000000) {
+            return String.format("%.1fM", viewCount / 1000000.0).replace(".0", "");
+        } else if (viewCount >= 1000) {
+            return String.format("%.1fK", viewCount / 1000.0).replace(".0", "");
+        }
+        return String.valueOf(viewCount);
+    }
+
+    public int getReadingTime() {
+        if (content == null || content.isEmpty()) return 1;
+        int wordCount = content.split("\\s+").length;
+        return Math.max(1, wordCount / 200);
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+@Entity
+@Table(name = "news_categories")
+public class NewsCategory implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(nullable = false, unique = true, length = 100)
+    private String slug;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(nullable = false, length = 20)
+    private String status = "ACTIVE"; // ACTIVE or INACTIVE
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<News> newsList;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", updatable = false)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    public NewsCategory() {
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
+
+    // Getters and Setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<News> getNewsList() {
+        return newsList;
+    }
+
+    public void setNewsList(List<News> newsList) {
+        this.newsList = newsList;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+}
+package poly.edu.entity;
+
+public enum NewsStatus {
+    DRAFT,
+    PUBLISHED,
+    ARCHIVED
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.List;
+
+@Entity
+@Table(name = "orders")
+public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    private String email;
+    private String phone;
+    private String address;
+    private String city;
+
+    @Column(name = "total_price")
+    private Double totalPrice;
+
+    @Column(name = "order_code", unique = true)
+    private String orderCode;
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
+    private String status;
+
+    @Column(name = "voucher_code")
+    private String voucherCode;
+
+    @Column(name = "discount_amount")
+    private Double discountAmount;
+
+    @Column(name = "admin_note", length = 1000)
+    private String adminNote;
+
+    @Column(name = "refund_reason", length = 1000)
+    private String refundReason;
+
+    @Column(name = "refund_previous_status")
+    private String refundPreviousStatus;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
+
+    public Order() {
+    }
+
+    public Order(Integer id, User user, String fullName, String email, String phone, String address, String city, Double totalPrice, String status, String voucherCode, Double discountAmount, Date createdAt, List<OrderItem> orderItems) {
+        this.id = id;
+        this.user = user;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.city = city;
+        this.totalPrice = totalPrice;
+        this.status = status;
+        this.voucherCode = voucherCode;
+        this.discountAmount = discountAmount;
+        this.createdAt = createdAt;
+        this.orderItems = orderItems;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+        if (this.status == null) {
+            this.status = "PENDING";
+        }
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getVoucherCode() {
+        return voucherCode;
+    }
+
+    public void setVoucherCode(String voucherCode) {
+        this.voucherCode = voucherCode;
+    }
+
+    public Double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(Double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public String getAdminNote() {
+        return adminNote;
+    }
+
+    public void setAdminNote(String adminNote) {
+        this.adminNote = adminNote;
+    }
+
+    public String getRefundReason() {
+        return refundReason;
+    }
+
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
+    }
+
+    public String getRefundPreviousStatus() {
+        return refundPreviousStatus;
+    }
+
+    public void setRefundPreviousStatus(String refundPreviousStatus) {
+        this.refundPreviousStatus = refundPreviousStatus;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    @Transient
+    public String getStatusDisplay() {
+        if (status == null) return "ChÆ°a xÃ¡c Ä‘á»‹nh";
+        return switch (status) {
+            case "CHO_XAC_NHAN_THANH_TOAN" -> "Chá» xÃ¡c nháº­n thanh toÃ¡n";
+            case "DA_THANH_TOAN", "PAID" -> "ÄÃ£ thanh toÃ¡n";
+            case "YEU_CAU_HOAN_TIEN" -> "ÄÃ£ yÃªu cáº§u hoÃ n tráº£";
+            case "CHO_HOAN_TIEN" -> "Chá» hoÃ n tiá»n";
+            case "DA_HOAN_TIEN" -> "ÄÃ£ hoÃ n tiá»n";
+            case "THU_HOI" -> "ÄÃ£ thu há»“i";
+            case "PENDING" -> "Chá» xá»­ lÃ½";
+            case "DA_HUY", "CANCELLED", "CANCELED" -> "ÄÃ£ há»§y";
+            case "SHIPPING" -> "Äang giao váº­n";
+            case "COMPLETED", "HOAN_THANH" -> "HoÃ n thÃ nh";
+            default -> status;
+        };
+    }
+
+    @Transient
+    public String getPaymentMethodDisplay() {
+        if (paymentMethod == null) return "ChÆ°a xÃ¡c Ä‘á»‹nh";
+        return switch (paymentMethod) {
+            case "VIETQR" -> "VietQR";
+            case "COD" -> "Thanh toÃ¡n khi nháº­n hÃ ng (COD)";
+            case "INSTALLMENT" -> "Tráº£ gÃ³p";
+            default -> paymentMethod;
+        };
+    }
+
+    @Transient
+    public String getTransferContent() {
+        return "VIETQR".equals(paymentMethod) && orderCode != null
+                ? "THANH TOAN " + orderCode
+                : null;
+    }
+
+    @Transient
+    public boolean isCustomerRefundEligible() {
+        return "DA_THANH_TOAN".equals(status)
+                || "PAID".equals(status)
+                || "COMPLETED".equals(status)
+                || "HOAN_THANH".equals(status);
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "order_items")
+public class OrderItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    private Double price;
+    private Integer quantity;
+
+    public OrderItem() {
+    }
+
+    public OrderItem(Integer id, Order order, Product product, Double price, Integer quantity) {
+        this.id = id;
+        this.order = order;
+        this.product = product;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "password_resets")
+public class PasswordReset {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "email", nullable = false, length = 100)
+    private String email;
+
+    @Column(name = "token", nullable = false, length = 255)
+    private String token;
+
+    @Column(name = "expiry")
+    private LocalDateTime expiry;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public LocalDateTime getExpiry() {
+        return expiry;
+    }
+
+    public void setExpiry(LocalDateTime expiry) {
+        this.expiry = expiry;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "pc_combos")
+public class PcCombo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    
+    private String description;
+    
+    private String image;
+    
+    private String badge; // e.g. HOT, PREMIUM, SALE, ULTIMATE
+    
+    private String badgeColor; // e.g. #a855f7
+    
+    private Double price;
+
+    @OneToMany(mappedBy = "combo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PcComboDetail> details;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getBadge() {
+        return badge;
+    }
+
+    public void setBadge(String badge) {
+        this.badge = badge;
+    }
+
+    public String getBadgeColor() {
+        return badgeColor;
+    }
+
+    public void setBadgeColor(String badgeColor) {
+        this.badgeColor = badgeColor;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public List<PcComboDetail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<PcComboDetail> details) {
+        this.details = details;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "pc_combo_details")
+public class PcComboDetail {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "combo_id")
+    private PcCombo combo;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    private String slotType; // e.g. cpu, mainboard, ram, vga, storage, psu, case, cooling
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public PcCombo getCombo() {
+        return combo;
+    }
+
+    public void setCombo(PcCombo combo) {
+        this.combo = combo;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public String getSlotType() {
+        return slotType;
+    }
+
+    public void setSlotType(String slotType) {
+        this.slotType = slotType;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import java.io.Serializable;
+import java.util.Date;
+
+@Entity
+@Table(name = "products")
+public class Product implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @NotBlank(message = "TÃªn sáº£n pháº©m khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
+    private String name;
+
+    @NotNull(message = "GiÃ¡ sáº£n pháº©m khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
+    @Positive(message = "GiÃ¡ sáº£n pháº©m pháº£i lá»›n hÆ¡n 0")
+    private Double price;
+    private String description;
+    private String image;
+    private Integer stock;
+    
+    @Column(name = "brand", length = 100)
+    private String brand;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    public Product() {
+    }
+
+    public Product(Integer id, String name, Double price, String description, String image, Integer stock, String brand, Category category, Date createdAt) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.image = image;
+        this.stock = stock;
+        this.brand = brand;
+        this.category = category;
+        this.createdAt = createdAt;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "reviews")
+public class Review implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String content;
+    private Integer stars; // 1 to 5
+    private String image;
+    private String video;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    // ===== Getter & Setter =====
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Integer getStars() {
+        return stars;
+    }
+
+    public void setStars(Integer stars) {
+        this.stars = stars;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "roles")
+public class Role implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String name;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "role")
+    List<UserRole> userRoles;
+
+    public Role() {
+    }
+
+    public Role(Integer id, String name, List<UserRole> userRoles) {
+        this.id = id;
+        this.name = name;
+        this.userRoles = userRoles;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(List<UserRole> userRoles) {
+        this.userRoles = userRoles;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+@Entity
+@Table(name = "shared_builds")
+public class SharedBuild implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "share_code", length = 15)
+    private String shareCode;
+
+    private String name;
+
+    @Column(name = "case_id", length = 50)
+    private String caseId;
+
+    @Column(name = "mainboard_id", length = 50)
+    private String mainboardId;
+
+    @Column(name = "cpu_id", length = 50)
+    private String cpuId;
+
+    @Column(name = "cooler_id", length = 50)
+    private String coolerId;
+
+    @Column(name = "ram_id", length = 50)
+    private String ramId;
+
+    @Column(name = "storage_id", length = 50)
+    private String storageId;
+
+    @Column(name = "gpu_id", length = 50)
+    private String gpuId;
+
+    @Column(name = "psu_id", length = 50)
+    private String psuId;
+
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt = new Date();
+
+    public SharedBuild() {
+    }
+
+    public String getShareCode() {
+        return shareCode;
+    }
+
+    public void setShareCode(String shareCode) {
+        this.shareCode = shareCode;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(String caseId) {
+        this.caseId = caseId;
+    }
+
+    public String getMainboardId() {
+        return mainboardId;
+    }
+
+    public void setMainboardId(String mainboardId) {
+        this.mainboardId = mainboardId;
+    }
+
+    public String getCpuId() {
+        return cpuId;
+    }
+
+    public void setCpuId(String cpuId) {
+        this.cpuId = cpuId;
+    }
+
+    public String getCoolerId() {
+        return coolerId;
+    }
+
+    public void setCoolerId(String coolerId) {
+        this.coolerId = coolerId;
+    }
+
+    public String getRamId() {
+        return ramId;
+    }
+
+    public void setRamId(String ramId) {
+        this.ramId = ramId;
+    }
+
+    public String getStorageId() {
+        return storageId;
+    }
+
+    public void setStorageId(String storageId) {
+        this.storageId = storageId;
+    }
+
+    public String getGpuId() {
+        return gpuId;
+    }
+
+    public void setGpuId(String gpuId) {
+        this.gpuId = gpuId;
+    }
+
+    public String getPsuId() {
+        return psuId;
+    }
+
+    public void setPsuId(String psuId) {
+        this.psuId = psuId;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "shipping_addresses")
+public class ShippingAddress {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(name = "recipient_name", nullable = false)
+    private String recipientName;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(nullable = false, length = 500)
+    private String address;
+
+    @Column(length = 120)
+    private String district;
+
+    @Column(length = 120)
+    private String city;
+
+    @Column(name = "is_default", nullable = false)
+    private boolean defaultShipping;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getRecipientName() {
+        return recipientName;
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public boolean isDefault() {
+        return defaultShipping;
+    }
+
+    public void setDefault(boolean defaultShipping) {
+        this.defaultShipping = defaultShipping;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "stock_movements")
+public class StockMovement {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(name = "change_quantity")
+    private Integer changeQuantity;
+
+    @Column(name = "movement_type")
+    private String movementType; // IMPORT, EXPORT
+
+    private String note;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    public StockMovement() {
+    }
+
+    public StockMovement(Integer id, Product product, Integer changeQuantity, String movementType, String note, Date createdAt) {
+        this.id = id;
+        this.product = product;
+        this.changeQuantity = changeQuantity;
+        this.movementType = movementType;
+        this.note = note;
+        this.createdAt = createdAt;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Integer getChangeQuantity() {
+        return changeQuantity;
+    }
+
+    public void setChangeQuantity(Integer changeQuantity) {
+        this.changeQuantity = changeQuantity;
+    }
+
+    public String getMovementType() {
+        return movementType;
+    }
+
+    public void setMovementType(String movementType) {
+        this.movementType = movementType;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "support_tickets")
+public class SupportTicket {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String customerName;
+    private String customerEmail;
+    private String customerPhone;
+
+    @Column(length = 1000)
+    private String subject;
+
+    @Column(columnDefinition = "TEXT")
+    private String message;
+
+    // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+    private String status = "OPEN";
+
+    // GENERAL, BUILD_PC, ORDER, TECHNICAL, PRICE
+    private String category = "GENERAL";
+
+    @Column(columnDefinition = "TEXT")
+    private String adminReply;
+
+    private String assignedAdmin;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    // Optional: linked to a registered user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    // Build config snapshot (JSON string from 3D builder)
+    @Column(columnDefinition = "TEXT")
+    private String buildConfig;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = new Date();
+    }
+
+    // Getters & Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getCustomerEmail() { return customerEmail; }
+    public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+
+    public String getCustomerPhone() { return customerPhone; }
+    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
+
+    public String getSubject() { return subject; }
+    public void setSubject(String subject) { this.subject = subject; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+
+    public String getAdminReply() { return adminReply; }
+    public void setAdminReply(String adminReply) { this.adminReply = adminReply; }
+
+    public String getAssignedAdmin() { return assignedAdmin; }
+    public void setAssignedAdmin(String assignedAdmin) { this.assignedAdmin = assignedAdmin; }
+
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    public Date getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public String getBuildConfig() { return buildConfig; }
+    public void setBuildConfig(String buildConfig) { this.buildConfig = buildConfig; }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "tickets")
+public class Ticket {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "customer_name", nullable = false)
+    private String customerName;
+
+    @Column(name = "customer_email")
+    private String customerEmail;
+
+    @Column(name = "customer_phone")
+    private String customerPhone;
+
+    @Column(nullable = false)
+    private String subject;
+
+    @Column(columnDefinition = "TEXT")
+    private String message;
+
+    private String category = "GENERAL";
+
+    private String status = "OPEN";
+
+    @Column(name = "assigned_admin")
+    private String assignedAdmin;
+
+    @Column(name = "build_config", columnDefinition = "TEXT")
+    private String buildConfig;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    public Ticket() {}
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        if (this.status == null) {
+            this.status = "OPEN";
+        }
+        if (this.category == null) {
+            this.category = "GENERAL";
+        }
+    }
+
+    // ===== GETTERS AND SETTERS =====
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getAssignedAdmin() {
+        return assignedAdmin;
+    }
+
+    public void setAssignedAdmin(String assignedAdmin) {
+        this.assignedAdmin = assignedAdmin;
+    }
+
+    public String getBuildConfig() {
+        return buildConfig;
+    }
+
+    public void setBuildConfig(String buildConfig) {
+        this.buildConfig = buildConfig;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "ticket_messages")
+public class TicketMessage {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id", nullable = false)
+    private Ticket ticket;
+
+    @Column(nullable = false)
+    private String sender; // CUSTOMER or ADMIN
+
+    @Column(name = "sender_name")
+    private String senderName;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String message;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    public TicketMessage() {}
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
+
+    // ===== GETTERS AND SETTERS =====
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.List;
+
+@Entity
+@Table(name="users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String username;
+    private String email;
+    private String password;
+    private String fullName;
+    private String phone;
+    private String address;
+    private String avatar;
+    private Boolean gender; // true: Male, false: Female
+    private Date birthday;
+    private Boolean status = true;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserRole> userRoles;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    public enum AuthProvider {
+        LOCAL, GOOGLE, FACEBOOK
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider")
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    @Column(name = "provider_id")
+    private String providerId;
+
+    @Column(name = "notify_order_updates")
+    private Boolean notifyOrderUpdates = true;
+
+    @Column(name = "notify_flash_sale")
+    private Boolean notifyFlashSale = true;
+
+    @Column(name = "notify_new_products")
+    private Boolean notifyNewProducts = false;
+
+    @Column(name = "notify_weekly_newsletter")
+    private Boolean notifyWeeklyNewsletter = true;
+
+    @Column(name = "two_factor_enabled")
+    private Boolean twoFactorEnabled = false;
+
+    public User() {}
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
+
+    // ===== GETTER & SETTER =====
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public Boolean getGender() {
+        return gender;
+    }
+
+    public void setGender(Boolean gender) {
+        this.gender = gender;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public List<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(List<UserRole> userRoles) {
+        this.userRoles = userRoles;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
+
+    public Boolean getNotifyOrderUpdates() {
+        return notifyOrderUpdates;
+    }
+
+    public void setNotifyOrderUpdates(Boolean notifyOrderUpdates) {
+        this.notifyOrderUpdates = notifyOrderUpdates;
+    }
+
+    public Boolean getNotifyFlashSale() {
+        return notifyFlashSale;
+    }
+
+    public void setNotifyFlashSale(Boolean notifyFlashSale) {
+        this.notifyFlashSale = notifyFlashSale;
+    }
+
+    public Boolean getNotifyNewProducts() {
+        return notifyNewProducts;
+    }
+
+    public void setNotifyNewProducts(Boolean notifyNewProducts) {
+        this.notifyNewProducts = notifyNewProducts;
+    }
+
+    public Boolean getNotifyWeeklyNewsletter() {
+        return notifyWeeklyNewsletter;
+    }
+
+    public void setNotifyWeeklyNewsletter(Boolean notifyWeeklyNewsletter) {
+        this.notifyWeeklyNewsletter = notifyWeeklyNewsletter;
+    }
+
+    public Boolean getTwoFactorEnabled() {
+        return twoFactorEnabled != null && twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(Boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "user_roles", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "role_id"})
+})
+public class UserRole implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    public UserRole() {
+    }
+
+    public UserRole(Integer id, User user, Role role) {
+        this.id = id;
+        this.user = user;
+        this.role = role;
+    }
+
+    // Getter & Setter
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "user_sessions")
+public class UserSession {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "session_id", nullable = false, unique = true)
+    private String sessionId;
+
+    @Column(name = "user_agent", length = 500)
+    private String userAgent;
+
+    @Column(name = "device_info")
+    private String deviceInfo;
+
+    @Column(name = "ip_address", length = 50)
+    private String ipAddress;
+
+    @Column(name = "location", length = 100)
+    private String location;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "login_time")
+    private Date loginTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_activity")
+    private Date lastActivity;
+
+    @Column(name = "is_expired")
+    private Boolean isExpired = false;
+
+    public UserSession() {}
+
+    @PrePersist
+    protected void onCreate() {
+        this.loginTime = new Date();
+        this.lastActivity = new Date();
+    }
+
+    // ===== GETTERS & SETTERS =====
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public String getDeviceInfo() {
+        return deviceInfo;
+    }
+
+    public void setDeviceInfo(String deviceInfo) {
+        this.deviceInfo = deviceInfo;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Date getLoginTime() {
+        return loginTime;
+    }
+
+    public void setLoginTime(Date loginTime) {
+        this.loginTime = loginTime;
+    }
+
+    public Date getLastActivity() {
+        return lastActivity;
+    }
+
+    public void setLastActivity(Date lastActivity) {
+        this.lastActivity = lastActivity;
+    }
+
+    public Boolean getIsExpired() {
+        return isExpired != null && isExpired;
+    }
+
+    public void setIsExpired(Boolean expired) {
+        isExpired = expired;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "user_vouchers", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "voucher_id"})
+})
+public class UserVoucher {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voucher_id", nullable = false)
+    private Voucher voucher;
+
+    /**
+     * Tráº¡ng thÃ¡i voucher cá»§a user: AVAILABLE, RESERVED, CONSUMED, EXPIRED, CANCELLED, REFUNDED
+     */
+    @Column(name = "status", nullable = false)
+    private String status = "AVAILABLE";
+
+    @Column(name = "reservation_expires_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date reservationExpiresAt;
+
+    @Column(name = "saved_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date savedAt;
+
+    @Column(name = "used_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date usedAt;
+
+    public UserVoucher() {
+    }
+
+    public UserVoucher(Integer id, User user, Voucher voucher, String status, Date savedAt, Date usedAt, Date reservationExpiresAt) {
+        this.id = id;
+        this.user = user;
+        this.voucher = voucher;
+        this.status = status;
+        this.savedAt = savedAt;
+        this.usedAt = usedAt;
+        this.reservationExpiresAt = reservationExpiresAt;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.savedAt = new Date();
+        if (this.status == null) {
+            this.status = "AVAILABLE";
+        }
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Voucher getVoucher() {
+        return voucher;
+    }
+
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getReservationExpiresAt() {
+        return reservationExpiresAt;
+    }
+
+    public void setReservationExpiresAt(Date reservationExpiresAt) {
+        this.reservationExpiresAt = reservationExpiresAt;
+    }
+
+    public Date getSavedAt() {
+        return savedAt;
+    }
+
+    public void setSavedAt(Date savedAt) {
+        this.savedAt = savedAt;
+    }
+
+    public Date getUsedAt() {
+        return usedAt;
+    }
+
+    public void setUsedAt(Date usedAt) {
+        this.usedAt = usedAt;
+    }
+}
+package poly.edu.entity;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "vouchers")
+public class Voucher {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(unique = true, nullable = false)
+    private String code;
+
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_type")
+    private DiscountType discountType;
+
+    @Column(name = "discount_value")
+    private Double discountValue;
+
+    @Column(name = "min_order_amount")
+    private Double minOrderAmount;
+
+    @Column(name = "max_discount_amount")
+    private Double maxDiscountAmount;
+
+    @Column(name = "usage_limit")
+    private Integer usageLimit;
+
+    @Column(name = "used_count")
+    private Integer usedCount = 0;
+
+    @Column(name = "start_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startDate;
+
+    @Column(name = "end_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endDate;
+
+    private Boolean active = true;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    public Voucher() {
+    }
+
+    public Voucher(Integer id, String code, String description, DiscountType discountType, Double discountValue, Double minOrderAmount, Double maxDiscountAmount, Integer usageLimit, Integer usedCount, Date startDate, Date endDate, Boolean active, Category category, Date createdAt) {
+        this.id = id;
+        this.code = code;
+        this.description = description;
+        this.discountType = discountType;
+        this.discountValue = discountValue;
+        this.minOrderAmount = minOrderAmount;
+        this.maxDiscountAmount = maxDiscountAmount;
+        this.usageLimit = usageLimit;
+        this.usedCount = usedCount;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.active = active;
+        this.category = category;
+        this.createdAt = createdAt;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        if (this.usedCount == null) this.usedCount = 0;
+        if (this.active == null) this.active = true;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public DiscountType getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(DiscountType discountType) {
+        this.discountType = discountType;
+    }
+
+    public Double getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(Double discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    public Double getMinOrderAmount() {
+        return minOrderAmount;
+    }
+
+    public void setMinOrderAmount(Double minOrderAmount) {
+        this.minOrderAmount = minOrderAmount;
+    }
+
+    public Double getMaxDiscountAmount() {
+        return maxDiscountAmount;
+    }
+
+    public void setMaxDiscountAmount(Double maxDiscountAmount) {
+        this.maxDiscountAmount = maxDiscountAmount;
+    }
+
+    public Integer getUsageLimit() {
+        return usageLimit;
+    }
+
+    public void setUsageLimit(Integer usageLimit) {
+        this.usageLimit = usageLimit;
+    }
+
+    public Integer getUsedCount() {
+        return usedCount;
+    }
+
+    public void setUsedCount(Integer usedCount) {
+        this.usedCount = usedCount;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public enum DiscountType {
+        PERCENTAGE,
+        FIXED_AMOUNT
+    }
+
+    /**
+     * Kiá»ƒm tra voucher cÃ³ Ä‘ang trong thá»i háº¡n hiá»‡u lá»±c khÃ´ng
+     */
+    public boolean isValid() {
+        Date now = new Date();
+        if (!Boolean.TRUE.equals(active)) return false;
+        if (startDate != null && now.before(startDate)) return false;
+        if (endDate != null && now.after(endDate)) return false;
+        if (usageLimit != null && usedCount >= usageLimit) return false;
+        return true;
+    }
+
+    /**
+     * TÃ­nh sá»‘ tiá»n giáº£m cho Ä‘Æ¡n hÃ ng
+     */
+    public double calculateDiscount(double orderTotal) {
+        if (!isValid()) return 0;
+        if (minOrderAmount != null && orderTotal < minOrderAmount) return 0;
+
+        double discount;
+        if (discountType == DiscountType.PERCENTAGE) {
+            discount = orderTotal * (discountValue / 100.0);
+            if (maxDiscountAmount != null && discount > maxDiscountAmount) {
+                discount = maxDiscountAmount;
+            }
+        } else {
+            discount = discountValue;
+        }
+        return Math.min(discount, orderTotal);
+    }
+}
+package poly.edu.entity;
+
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
+@Entity
+@Table(name = "wishlist_items", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_wishlist_user_product", columnNames = { "user_id", "product_id" })
+})
+public class WishlistItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = new Date();
+        }
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+}
