@@ -38,12 +38,12 @@
         <div class="promo-banners">
             <!-- Flash Sale Slider -->
             <div class="flash-sale-slider-container"
-                style="position: relative; width: 100%; border-radius: 12px; overflow: hidden; display: flex; flex: 1; height: 340px;">
+                style="position: relative; width: 100%; border-radius: 12px; overflow: hidden; display: flex; flex: 1; aspect-ratio: 2.5 / 1; max-height: 420px; min-height: 260px; height: auto;">
                 <div class="flash-sale-slider-track" id="flashSaleSliderTrack"
-                    style="display: flex; width: 100%; transition: transform 0.5s ease-in-out;">
+                    style="display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out;">
                     <!-- Fallback if sliderSales is empty -->
                     <div th:if="${sliderSales == null or sliderSales.isEmpty()}" class="promo-banner-card banner-red"
-                        style="background: #ba1a1a url('/images/flashsale/flashsalered.png') no-repeat left center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px; flex: 0 0 100%; height: 100%; box-sizing: border-box; border-radius: 0;">
+                        style="background: #111827 url('/images/flashsale/flashsalered.png') no-repeat center center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px; flex: 0 0 100%; height: 100%; box-sizing: border-box; border-radius: 0;">
                         <div class="banner-content" style="max-width: 40%; z-index: 2; text-align: left;">
                             <h2
                                 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 5px; line-height: 1.2;">
@@ -67,63 +67,64 @@
                     <div th:each="sale, iterStat : ${sliderSales}" class="promo-banner-card banner-red flash-slide"
                         th:with="bannerUrl=${sale.bannerImage != null and !sale.bannerImage.isEmpty() ? (sale.bannerImage.startsWith('http') ? sale.bannerImage : '/images/flashsale/' + sale.bannerImage) : '/images/flashsale/flashsalered.png'},
                                   isUpcoming=${sale.startTime.getTime() > #dates.createNow().getTime()}"
-                        th:style="'background: #ba1a1a url(\'' + @{${bannerUrl}} + '\') no-repeat left center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px; flex: 0 0 100%; height: 100%; box-sizing: border-box; border-radius: 0;'">
+                        th:style="'background: #111827 url(\'' + @{${bannerUrl}} + '\') no-repeat center center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px; flex: 0 0 100%; height: 100%; box-sizing: border-box; border-radius: 0;'">
 
-                        <div class="banner-content" style="max-width: 40%; z-index: 2; text-align: left;">
+                        <div class="banner-content"
+                            style="max-width: 210px; width: fit-content; z-index: 3; text-align: left; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); margin-left: 20px;">
                             <h2
-                                style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 5px; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                                style="font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.25; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
                                 <span style="color: #facc15;" th:text="${sale.name}">FLASH SALE</span><br>
-                                <span style="font-size: 18px; color: #fff;"
+                                <span style="font-size: 13px; color: #e2e8f0; font-weight: 600;"
                                     th:text="${isUpcoming ? 'SẮP DIỄN RA' : 'ĐANG DIỄN RA'}">GIỜ VÀNG GIÁ SỐC</span>
                             </h2>
-                            <div style="background: #facc15; color: #000; font-size: 10px; font-weight: 700; padding: 3px 10px; display: inline-block; border-radius: 20px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;"
+                            <div style="background: #facc15; color: #0f172a; font-size: 10px; font-weight: 700; padding: 4px 10px; display: table; border-radius: 20px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);"
                                 th:text="${isUpcoming ? 'Từ ' + #dates.format(sale.startTime, 'dd/MM HH:mm') : 'DUY NHẤT HÔM NAY'}">
                                 DUY NHẤT HÔM NAY
                             </div>
                             <!-- Description -->
                             <div th:if="${sale.description != null and !sale.description.isEmpty()}"
-                                style="font-size: 12px; color: rgba(255,255,255,0.85); margin-bottom: 10px; line-height: 1.5; max-width: 280px; text-shadow: 0 1px 2px rgba(0,0,0,0.4);"
-                                th:text="${sale.description}">Sản phẩm giảm giá sâu trong khung giờ vàng, số lượng có
-                                hạn,...</div>
-                            <br th:if="${sale.description == null or sale.description.isEmpty()}">
-                            <a href="#flash-sale" class="btn-banner"
-                                style="background: #fff; color: #dc2626; padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Xem
-                                ngay <i class="fa-solid fa-arrow-right"></i></a>
+                                style="font-size: 10px; color: rgba(255,255,255,0.85); margin-bottom: 8px; line-height: 1.4; max-width: 180px;"
+                                th:text="${sale.description}">Sản phẩm giảm giá sâu trong khung giờ vàng...</div>
+                            <div style="margin-top: 4px; display: block;">
+                                <a href="#flash-sale" class="btn-banner"
+                                    style="background: linear-gradient(135deg, #ffffff, #f1f5f9); color: #dc2626; padding: 6px 16px; border-radius: 25px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">Xem
+                                    ngay <i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
                         </div>
 
                         <!-- Countdown timer: active sale (kết thúc trong) -->
                         <div th:if="${not isUpcoming}" class="banner-countdown"
                             th:attr="data-endtime=${sale.endTime.getTime()}"
-                            style="background: rgba(0, 0, 0, 0.45); padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; backdrop-filter: blur(8px); z-index: 2; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); position: absolute; bottom: 20px; right: 20px;">
+                            style="background: rgba(15, 23, 42, 0.75); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 3; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); position: absolute; bottom: 20px; right: 20px;">
                             <div
                                 style="font-size: 10px; font-weight: 700; margin-bottom: 8px; color: #fecaca; text-transform: uppercase; letter-spacing: 1px;">
                                 Kết thúc trong</div>
-                            <div style="display: flex; gap: 6px; justify-content: center;">
+                            <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
                                 <div class="days-block-item"
-                                    style="display: none; flex-direction: column; align-items: center;">
+                                    style="display: flex; flex-direction: column; align-items: center;">
                                     <div class="promo-days-item"
-                                        style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">
+                                        style="background: #fff; color: #000; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
                                         00</div>
                                     <span
                                         style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Ngày</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; align-items: center;">
                                     <div class="promo-hours-item"
-                                        style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">
+                                        style="background: #fff; color: #000; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
                                         00</div>
                                     <span
                                         style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Giờ</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; align-items: center;">
                                     <div class="promo-minutes-item"
-                                        style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">
+                                        style="background: #fff; color: #000; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
                                         00</div>
                                     <span
                                         style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Phút</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; align-items: center;">
                                     <div class="promo-seconds-item"
-                                        style="background: #fff; color: #000; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">
+                                        style="background: #fff; color: #000; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
                                         00</div>
                                     <span
                                         style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Giây</span>
@@ -134,28 +135,35 @@
                         <!-- Countdown timer: upcoming sale (bắt đầu sau) -->
                         <div th:if="${isUpcoming}" class="banner-countdown upcoming-timer"
                             th:attr="data-seconds=${(sale.startTime.time - #dates.createNow().getTime()) / 1000}"
-                            style="background: rgba(0,0,0,0.45); padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); text-align: center; backdrop-filter: blur(8px); z-index: 2; box-shadow: 0 8px 32px rgba(0,0,0,0.2); position: absolute; bottom: 20px; right: 20px;">
+                            style="background: rgba(15, 23, 42, 0.75); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); text-align: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 3; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: absolute; bottom: 20px; right: 20px;">
                             <div
                                 style="font-size: 10px; font-weight: 700; margin-bottom: 8px; color: #fde68a; text-transform: uppercase; letter-spacing: 1px;">
                                 Bắt đầu sau</div>
-                            <div style="display: flex; gap: 6px; justify-content: center;">
+                            <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                <div class="upcoming-days-block" style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="upcoming-days"
+                                        style="background: #fff; color: #dc2626; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fde68a; margin-top: 4px;">Ngày</span>
+                                </div>
                                 <div style="display: flex; flex-direction: column; align-items: center;">
                                     <div class="upcoming-hours"
-                                        style="background: #fff; color: #dc2626; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">
+                                        style="background: #fff; color: #dc2626; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
                                         00</div>
                                     <span
                                         style="font-size: 9px; font-weight: 600; color: #fde68a; margin-top: 4px;">Giờ</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; align-items: center;">
                                     <div class="upcoming-minutes"
-                                        style="background: #fff; color: #dc2626; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">
+                                        style="background: #fff; color: #dc2626; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
                                         00</div>
                                     <span
                                         style="font-size: 9px; font-weight: 600; color: #fde68a; margin-top: 4px;">Phút</span>
                                 </div>
                                 <div style="display: flex; flex-direction: column; align-items: center;">
                                     <div class="upcoming-seconds"
-                                        style="background: #fff; color: #dc2626; font-size: 18px; font-weight: 800; padding: 5px 8px; border-radius: 6px; width: 42px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box;">
+                                        style="background: #fff; color: #dc2626; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
                                         00</div>
                                     <span
                                         style="font-size: 9px; font-weight: 600; color: #fde68a; margin-top: 4px;">Giây</span>
@@ -227,8 +235,7 @@
                 th:if="${sliderSales != null and !sliderSales.isEmpty()}">
                 <div class="flash-sale-main"
                     style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;"
-                    th:each="sale, saleStat : ${sliderSales}"
-                    th:if="${saleStat.index < 3}"
+                    th:each="sale, saleStat : ${sliderSales}" th:if="${saleStat.index < 3}"
                     th:with="isUpcoming=${sale.startTime.getTime() > #dates.createNow().getTime()}, items=${sliderItemsMap.get(sale.id)}">
 
                     <div
@@ -722,7 +729,7 @@
             const el = document.getElementById('toast');
             el.textContent = msg;
             el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 3500);
+            setTimeout(() => el.style.display = 'none', 5000);
         }
 
         function openRulesModal() {
@@ -862,30 +869,43 @@
                         secs--;
                         el.setAttribute('data-seconds', secs);
 
-                        var h = Math.floor(secs / 3600);
+                        var d = Math.floor(secs / 86400);
+                        var h = Math.floor((secs % 86400) / 3600);
                         var m = Math.floor((secs % 3600) / 60);
                         var s = secs % 60;
 
+                        var dStr = d < 10 ? '0' + d : '' + d;
                         var hStr = h < 10 ? '0' + h : '' + h;
                         var mStr = m < 10 ? '0' + m : '' + m;
                         var sStr = s < 10 ? '0' + s : '' + s;
 
                         // If the element has child boxes (banner style), update those
+                        var dEl = el.querySelector('.upcoming-days');
                         var hEl = el.querySelector('.upcoming-hours');
                         var mEl = el.querySelector('.upcoming-minutes');
                         var sEl = el.querySelector('.upcoming-seconds');
+                        var dBlock = el.querySelector('.upcoming-days-block');
 
-                        if (hEl && mEl && sEl) {
+                        if (dEl && hEl && mEl && sEl) {
+                            dEl.innerText = dStr;
                             hEl.innerText = hStr;
+                            mEl.innerText = mStr;
+                            sEl.innerText = sStr;
+                            if (dBlock) {
+                                dBlock.style.display = d > 0 ? 'flex' : 'none';
+                            }
+                        } else if (hEl && mEl && sEl) {
+                            hEl.innerText = (d > 0 ? (d * 24 + h) : hStr);
                             mEl.innerText = mStr;
                             sEl.innerText = sStr;
                         } else {
                             // Sidebar simple text style
-                            el.innerText = hStr + ':' + mStr + ':' + sStr;
+                            el.innerText = (d > 0 ? d + 'd ' : '') + hStr + ':' + mStr + ':' + sStr;
                         }
                     } else if (secs === 0) {
                         var hEl = el.querySelector('.upcoming-hours');
                         if (hEl) {
+                            if (el.querySelector('.upcoming-days')) el.querySelector('.upcoming-days').innerText = '00';
                             el.querySelector('.upcoming-hours').innerText = '00';
                             el.querySelector('.upcoming-minutes').innerText = '00';
                             el.querySelector('.upcoming-seconds').innerText = '00';
