@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <!-- ===== SIDEBAR FRAGMENT ===== -->
+  <aside th:fragment="sidebar" class="sidebar">
+    <div class="sb-avatar-wrap">
+      <div class="avatar-ring">
+        <div class="avatar-inner">
+          <img th:if="${user != null && user.avatar != null && !user.avatar.isEmpty()}" th:src="@{${user.avatar}}"
+            referrerpolicy="no-referrer" alt="Avatar" style="width:100%; height:100%; object-fit:cover;"
+            id="avatar-img-view" />
+          <span th:if="${user == null || user.avatar == null || user.avatar.isEmpty()}"
+            th:text="${(user != null && user.fullName != null && !user.fullName.isEmpty()) ? user.fullName.substring(0,1).toUpperCase() : (user != null ? user.username.substring(0,1).toUpperCase() : 'U')}"
+            id="avatar-initial-view">U</span>
+        </div>
+        <button class="avatar-edit" title="Đổi ảnh" onclick="document.getElementById('avatar-file-input').click()">
+          <i class="fa-solid fa-camera"></i>
+        </button>
+        <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" />
+      </div>
+      <div class="sb-name" th:text="${user != null && user.fullName != null ? user.fullName : name}"></div>
+      <div class="sb-email" th:text="${email}"></div>
+      <div class="sb-badge" th:text="${userRank != 'None' ? 'Thành viên ' + userRank : 'Thành viên mới'}"></div>
+    </div>
+
+    <nav class="sb-menu">
+      <a class="sb-item active" onclick="setTab('info', event)" href="#"><i class="fa-regular fa-user"></i> Thông Tin Cá
+        Nhân</a>
+      <a class="sb-item" onclick="setTab('orders', event)" href="#"><i class="fa-solid fa-box"></i> Đơn Hàng Của Tôi</a>
+      <a class="sb-item" onclick="setTab('vouchers', event)" href="#"><i class="fa-solid fa-ticket"></i> Ví Voucher</a>
+      <a class="sb-item" onclick="setTab('wishlist', event)" href="#"><i class="fa-regular fa-heart"></i> Yêu Thích</a>
+
+      <div class="sb-divider"></div>
+
+      <a class="sb-item" onclick="setTab('security', event)" href="#"><i class="fa-solid fa-shield-halved"></i> Bảo
+        Mật</a>
+      <a class="sb-item" onclick="setTab('notifications', event)" href="#"><i class="fa-regular fa-bell"></i> Thông
+        Báo</a>
+      <a class="sb-item" onclick="setTab('address', event)" href="#"><i class="fa-solid fa-location-dot"></i> Địa Chỉ
+        Giao Hàng</a>
+
+      <div class="sb-divider"></div>
+
+      <form th:action="@{/logout}" method="POST">
+        <button type="submit" class="btn-logout-sb">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+        </button>
+      </form>
+    </nav>
+  </aside>
+</body>
+
+</html>

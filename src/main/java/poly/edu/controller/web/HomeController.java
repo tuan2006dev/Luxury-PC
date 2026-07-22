@@ -54,10 +54,14 @@ public class HomeController {
 
     final poly.edu.dao.UserVoucherDAO userVoucherDAO;
 
+    final poly.edu.dao.BrandDAO brandDAO;
+
     // hasValidImage removed for performance
 
     @GetMapping("/")
     public String index(Model model) {
+        model.addAttribute("brands", brandDAO.findAllByOrderByDisplayOrderAsc());
+
         // Query Category IDs for Build PC banners and components
         List<poly.edu.entity.Category> categories = categoryDAO.findAll();
         Integer gamingCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Gaming") || c.getName().toLowerCase().contains("gaming")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);

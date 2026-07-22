@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <!-- ============ TAB 6: THÔNG BÁO ============ -->
+  <div th:fragment="notifications" class="profile-section" id="sec-notifications">
+    <div class="section-head">
+      <div>
+        <div class="section-h">Cài Đặt Thông Báo</div>
+      </div>
+    </div>
+
+    <div class="notif-list">
+      <div class="notif-item">
+        <div>
+          <div class="notif-title">Cập nhật đơn hàng</div>
+          <div class="notif-sub">Nhận email khi đơn hàng thay đổi trạng thái.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-order"
+            th:checked="${notifSettings != null ? notifSettings.orderUpdates : true}"
+            onchange="updateNotifSetting('order', this.checked)" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="notif-item">
+        <div>
+          <div class="notif-title">Khuyến mãi Flash Sale</div>
+          <div class="notif-sub">Thông báo các chương trình Flash Sale giờ vàng giá sốc.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-sale" th:checked="${notifSettings != null ? notifSettings.flashSale : true}"
+            onchange="updateNotifSetting('sale', this.checked)" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="notif-item">
+        <div>
+          <div class="notif-title">Sản phẩm mới &amp; Cập nhật</div>
+          <div class="notif-sub">Thông báo về linh kiện PC mới về kho.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-product"
+            th:checked="${notifSettings != null ? notifSettings.newProducts : false}"
+            onchange="updateNotifSetting('product', this.checked)" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="notif-item">
+        <div>
+          <div class="notif-title">Bản tin hàng tuần</div>
+          <div class="notif-sub">Tổng hợp tin tức công nghệ và tư vấn cấu hình PC.</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-news"
+            th:checked="${notifSettings != null ? notifSettings.weeklyNewsletter : false}"
+            onchange="updateNotifSetting('news', this.checked)" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

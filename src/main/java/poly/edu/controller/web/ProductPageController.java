@@ -74,6 +74,11 @@ public class ProductPageController {
             if (max < 0.0) max = 0.0;
             if (max > 100000000.0) max = 100000000.0;
         }
+        if (min != null && max != null && min > max) {
+            Double temp = min;
+            min = max;
+            max = temp;
+        }
         
         List<Product> products = productService.searchProducts(cid, min, max, kw, brand);
         model.addAttribute("allProducts", products);

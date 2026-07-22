@@ -362,26 +362,10 @@
             <h2 class="section-title">Các thương hiệu</h2>
         </div>
         <div class="brands-row">
-            <div class="brand-box" onclick="location.href='/products?brand=Intel'"><img src="/images/ui-new/intel.svg"
-                    alt="Intel" style="max-height:35px; object-fit:contain;"></div>
-            <div class="brand-box" onclick="location.href='/products?brand=AMD'"><img src="/images/ui-new/amd.svg"
-                    alt="AMD" style="max-height:35px; object-fit:contain;"></div>
-            <div class="brand-box" onclick="location.href='/products?brand=ASUS'"><img src="/images/ui-new/asus.svg"
-                    alt="ASUS" style="max-height:35px; object-fit:contain;"></div>
-            <div class="brand-box" onclick="location.href='/products?brand=MSI'"><img src="/images/ui-new/msi.svg"
-                    alt="MSI" style="max-height:35px; object-fit:contain;"></div>
-            <div class="brand-box" onclick="location.href='/products?brand=GIGABYTE'"><img
-                    src="/images/ui-new/gigabyte.svg" alt="GIGABYTE" style="max-height:35px; object-fit:contain;">
+            <div th:each="b : ${brands}" class="brand-box"
+                th:onclick="'location.href=\'' + @{${b.link != null and !b.link.isEmpty() ? b.link : '/products?brand=' + b.name}} + '\''">
+                <img th:src="@{${b.logo}}" th:alt="${b.name}" style="max-height:35px; object-fit:contain;">
             </div>
-            <div class="brand-box" onclick="location.href='/products?brand=Corsair'"><img
-                    src="/images/ui-new/corsair.svg" alt="CORSAIR" style="max-height:35px; object-fit:contain;">
-            </div>
-            <div class="brand-box" onclick="location.href='/products?brand=Kingston'"><img
-                    src="/images/ui-new/kingston.svg" alt="Kingston" style="max-height:35px; object-fit:contain;">
-            </div>
-            <div class="brand-box" onclick="location.href='/products?brand=Cooler Master'"><img
-                    src="/images/ui-new/coolermaster.svg" alt="Cooler Master"
-                    style="max-height:35px; object-fit:contain;"></div>
         </div>
 
         <!-- TIN TỨC MỚI NHẤT & TIN TỨC NỔI BẬT -->
