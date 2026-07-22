@@ -33,6 +33,7 @@ public class VoucherApiController {
     @PostMapping("/validate")
     public Map<String, Object> validateVoucher(
             @RequestParam String code,
+            @RequestParam(required = false, defaultValue = "0") Double shippingFee,
             HttpSession session,
             Authentication authentication) {
 
@@ -56,7 +57,7 @@ public class VoucherApiController {
             user = profileService.getCurrentUser(authentication);
         }
 
-        return voucherService.validateVoucher(code, cartTotal, user);
+        return voucherService.validateVoucher(code, cartTotal, shippingFee, targetCart != null ? targetCart.values() : null, user);
     }
 
     /**

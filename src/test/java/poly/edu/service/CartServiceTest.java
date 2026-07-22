@@ -117,7 +117,7 @@ public class CartServiceTest {
         Map<String, Object> voucherResult = new HashMap<>();
         voucherResult.put("valid", true);
         voucherResult.put("discount", 100.0);
-        when(voucherService.validateVoucher(eq("VOUCHER100"), anyDouble(), any())).thenReturn(voucherResult);
+        when(voucherService.validateVoucher(eq("VOUCHER100"), anyDouble(), anyDouble(), any(), any())).thenReturn(voucherResult);
 
         Order result = cartService.processCheckout(cart, "Nguyễn Văn A", "0901234567", "Address", "COD", "VOUCHER100", 50.0, "Express", principal);
 

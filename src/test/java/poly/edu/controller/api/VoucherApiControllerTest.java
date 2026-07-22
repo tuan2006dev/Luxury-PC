@@ -54,7 +54,7 @@ public class VoucherApiControllerTest {
         validationResponse.put("valid", false);
         validationResponse.put("message", "Vui lòng đăng nhập để sử dụng mã!");
 
-        when(voucherService.validateVoucher(eq("TEST10"), eq(0.0), isNull())).thenReturn(validationResponse);
+        when(voucherService.validateVoucher(eq("TEST10"), eq(0.0), anyDouble(), any(), isNull())).thenReturn(validationResponse);
 
         mockMvc.perform(post("/api/voucher/validate")
                 .param("code", "TEST10")
@@ -82,7 +82,7 @@ public class VoucherApiControllerTest {
         mockUser.setId(1);
         when(profileService.getCurrentUser(auth)).thenReturn(mockUser);
 
-        when(voucherService.validateVoucher(eq("TEST10"), eq(2000.0), eq(mockUser))).thenReturn(validationResponse);
+        when(voucherService.validateVoucher(eq("TEST10"), eq(2000.0), anyDouble(), any(), eq(mockUser))).thenReturn(validationResponse);
 
         mockMvc.perform(post("/api/voucher/validate")
                 .param("code", "TEST10")

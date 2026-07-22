@@ -614,23 +614,20 @@
                             <span style="color: var(--danger); font-weight:500;" id="discountText">-0đ</span>
                         </div>
 
-                        <!-- Voucher -->
-                        <div class="voucher-box">
-                            <select class="voucher-input" id="voucherInput">
-                                <option th:each="uv : ${userVouchers}" th:value="${uv.voucher.code}"
-                                    th:selected="${uv.voucher.code == voucherCode}"
-                                    th:text="${uv.voucher.code + ' - ' + (uv.voucher.description != null and !#strings.isEmpty(uv.voucher.description) ? uv.voucher.description : (uv.voucher.discountType != null and uv.voucher.discountType.name() == 'PERCENTAGE' ? 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ'))}">
-                                </option>
-                                <option th:if="${userVouchers == null or userVouchers.isEmpty()}"
-                                    th:each="v : ${activeVouchers}" th:value="${v.code}"
-                                    th:selected="${v.code == voucherCode}"
-                                    th:text="${v.code + ' - ' + (v.description != null and !#strings.isEmpty(v.description) ? v.description : (v.discountType != null and v.discountType.name() == 'PERCENTAGE' ? 'Giảm ' + #numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm ' + #numbers.formatDecimal(v.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ'))}">
-                                </option>
-                            </select>
-                            <button type="button" class="btn-apply" onclick="applyVoucher()">ÁP DỤNG</button>
+                        <!-- Voucher Button -->
+                        <div class="voucher-box" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 1px dashed var(--primary); border-radius: 8px; cursor: pointer; background: #f8fafc; margin-bottom: 5px; transition: all 0.2s;" onclick="openVoucherModal()" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fa-solid fa-ticket" style="color: var(--primary); font-size: 20px;"></i>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 600; font-size: 14px; color: var(--text-main);" id="selectedVoucherText">Chọn hoặc nhập mã khuyến mãi</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
                         </div>
-                        <div id="voucherMessage"
-                            style="font-size:12px; margin-top:-15px; margin-bottom:15px; display:none;"></div>
+                        <div id="voucherMessage" style="font-size:13px; margin-bottom:15px; display:none; text-align: right; font-weight: 500;"></div>
+                        
+                        <!-- Input ẩn để lưu mã -->
+                        <input type="hidden" id="voucherInput" name="voucherCode" th:value="${voucherCode}" />
 
                         <!-- Total -->
                         <div class="summary-row total">
@@ -682,6 +679,69 @@
 
 
     </div>
+
+    <!-- Voucher Modal -->
+    <div id="voucherModal" class="modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
+        <div class="modal-content" style="background-color: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; margin: 0 15px;">
+            <span class="close" onclick="closeVoucherModal()" style="position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #64748b; line-height: 1;">&times;</span>
+            <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 700; color: #0f172a;"><i class="fa-solid fa-ticket" style="color: var(--primary); margin-right: 8px;"></i> LUXURY PC VOUCHER</h3>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="manualVoucherCode" placeholder="Nhập mã voucher..." style="flex: 1; padding: 12px 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; outline: none; text-transform: uppercase;" />
+                <button type="button" onclick="applyManualVoucher()" style="padding: 0 20px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">ÁP DỤNG</button>
+            </div>
+
+            <div style="max-height: 400px; overflow-y: auto; padding-right: 5px;" class="custom-scrollbar">
+                <p th:if="${userVouchers == null or userVouchers.isEmpty()}" style="text-align: center; color: #64748b; margin: 30px 0; font-size: 14px;">Bạn chưa lưu mã giảm giá nào.</p>
+                
+                <th:block th:if="${userVouchers != null and !userVouchers.isEmpty()}">
+                    <!-- FREESHIP VOUCHERS -->
+                    <div th:if="${#lists.size(userVouchers.?[voucher.voucherScope != null and voucher.voucherScope.name() == 'FREESHIP']) > 0}">
+                        <h4 style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 12px; margin-top: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-truck-fast" style="color: #059669;"></i> Miễn phí vận chuyển
+                        </h4>
+                        <div th:each="uv : ${userVouchers}" th:if="${uv.voucher.voucherScope != null and uv.voucher.voucherScope.name() == 'FREESHIP'}" class="voucher-item" th:data-code="${uv.voucher.code}" onclick="selectVoucher(this.getAttribute('data-code'))" style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='#059669'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                            <div style="width: 110px; background: #059669; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 15px; border-right: 2px dashed rgba(255,255,255,0.5);">
+                                <i class="fa-solid fa-truck-fast" style="font-size: 28px; margin-bottom: 8px;"></i>
+                                <span style="font-size: 11px; font-weight: 600; text-align: center;">Freeship</span>
+                            </div>
+                            <div style="padding: 12px 15px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative;">
+                                <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 4px; text-transform: uppercase;" th:text="${uv.voucher.code}"></div>
+                                <div style="font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600;" th:text="${uv.voucher.discountValue == null ? 'Miễn phí vận chuyển' : (uv.voucher.discountType != null and uv.voucher.discountType?.name() == 'PERCENTAGE' ? 'Giảm phí vận chuyển ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm phí vận chuyển ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ')}"></div>
+                                <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" th:text="${uv.voucher.description != null ? uv.voucher.description : ''}"></div>
+                                <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;" th:if="${uv.voucher.minOrderAmount != null and uv.voucher.minOrderAmount > 0}" th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(uv.voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
+                                <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: auto;">
+                                    <span style="font-size: 11px; color: #ef4444; font-weight: 500;" th:if="${uv.voucher.endDate != null}" th:text="'HSD: ' + ${#dates.format(uv.voucher.endDate, 'dd/MM/yyyy')}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- DISCOUNT VOUCHERS -->
+                    <div th:if="${#lists.size(userVouchers.?[voucher.voucherScope == null or voucher.voucherScope.name() != 'FREESHIP']) > 0}">
+                        <h4 style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 12px; margin-top: 15px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-tags" style="color: var(--primary);"></i> Mã giảm giá / Hoàn tiền
+                        </h4>
+                        <div th:each="uv : ${userVouchers}" th:if="${uv.voucher.voucherScope == null or uv.voucher.voucherScope.name() != 'FREESHIP'}" class="voucher-item" th:data-code="${uv.voucher.code}" onclick="selectVoucher(this.getAttribute('data-code'))" style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                            <div style="width: 110px; background: var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 15px; border-right: 2px dashed rgba(255,255,255,0.5);">
+                                <i class="fa-solid fa-gift" style="font-size: 28px; margin-bottom: 8px;"></i>
+                                <span style="font-size: 11px; font-weight: 600; text-align: center;" th:text="${uv.voucher.voucherScope != null ? (uv.voucher.voucherScope?.name() == 'CATEGORY' ? 'Danh mục' : 'Toàn sàn') : 'Giảm giá'}"></span>
+                            </div>
+                            <div style="padding: 12px 15px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative;">
+                                <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 4px; text-transform: uppercase;" th:text="${uv.voucher.code}"></div>
+                                <div style="font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600;" th:text="${uv.voucher.discountValue == null ? 'Khuyến mãi' : (uv.voucher.discountType != null and uv.voucher.discountType?.name() == 'PERCENTAGE' ? 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ')}"></div>
+                                <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" th:text="${uv.voucher.description != null ? uv.voucher.description : ''}"></div>
+                                <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;" th:if="${uv.voucher.minOrderAmount != null and uv.voucher.minOrderAmount > 0}" th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(uv.voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
+                                <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: auto;">
+                                    <span style="font-size: 11px; color: #ef4444; font-weight: 500;" th:if="${uv.voucher.endDate != null}" th:text="'HSD: ' + ${#dates.format(uv.voucher.endDate, 'dd/MM/yyyy')}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </div>
     <div th:replace="~{layout/footer :: footer}"></div>
 
     <!-- Data passing -->
@@ -710,22 +770,38 @@
             document.getElementById('finalTotalText').innerText = formatter.format(Math.max(0, finalTotal)) + 'đ';
         }
 
-        // Initialize Total & Tom Select
+        // Initialize Total
         document.addEventListener('DOMContentLoaded', () => {
             fetchShippingMethods('');
             loadProvinces();
-
-            const voucherEl = document.getElementById('voucherInput');
-            if (voucherEl) {
-                voucherSelectInstance = new TomSelect('#voucherInput', {
-                    create: true,
-                    placeholder: "Nhập hoặc chọn mã giảm giá",
-                    allowEmptyOption: false
-                });
-            }
         });
 
-        // UI toggles
+        // Voucher Modal Logic
+        function openVoucherModal() {
+            document.getElementById('voucherModal').style.display = 'flex';
+        }
+
+        function closeVoucherModal() {
+            document.getElementById('voucherModal').style.display = 'none';
+        }
+        
+        function selectVoucher(code) {
+            document.getElementById('voucherInput').value = code;
+            document.getElementById('selectedVoucherText').innerText = code;
+            document.getElementById('selectedVoucherText').style.color = 'var(--primary)';
+            closeVoucherModal();
+            applyVoucher();
+        }
+        
+        function applyManualVoucher() {
+            const code = document.getElementById('manualVoucherCode').value.trim();
+            if(code) {
+                selectVoucher(code.toUpperCase());
+            } else {
+                alert('Vui lòng nhập mã giảm giá!');
+            }
+        }
+
         function selectShipping(el, fee, name) {
             document.querySelectorAll('input[name="shippingMethodDummy"]').forEach(r => {
                 r.checked = false;
@@ -736,6 +812,12 @@
             currentShipping = fee;
             if (name) currentShippingMethodName = name;
             updateTotal();
+            
+            // Nếu đang có voucher thì áp dụng lại để tính lại Freeship
+            const code = document.getElementById('voucherInput').value.trim();
+            if (code) {
+                applyVoucher();
+            }
         }
 
         function selectPayment(el) {
@@ -884,17 +966,17 @@
 
         // Voucher logic
         function applyVoucher() {
-            const rawVal = voucherSelectInstance ? voucherSelectInstance.getValue() : document.getElementById('voucherInput').value;
-            const code = (rawVal || '').trim();
+            const code = document.getElementById('voucherInput').value.trim();
             const msg = document.getElementById('voucherMessage');
             if (!code) {
                 msg.style.display = 'block';
                 msg.style.color = 'var(--danger)';
-                msg.innerText = 'Vui lòng nhập mã giảm giá';
+                msg.innerText = 'Vui lòng chọn hoặc nhập mã giảm giá';
                 return;
             }
 
-            fetch('/api/voucher/validate?code=' + encodeURIComponent(code), { method: 'POST' })
+            const fee = currentShipping || 0;
+            fetch('/api/voucher/validate?code=' + encodeURIComponent(code) + '&shippingFee=' + fee, { method: 'POST' })
                 .then(res => res.json())
                 .then(data => {
                     msg.style.display = 'block';
@@ -1082,25 +1164,7 @@
                 userLat = lat;
                 userLon = lon;
 
-                // Primary: BigDataCloud Reverse Geocoding API (Fast, Free, No CORS block)
-                try {
-                    const bdcRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`);
-                    const bdcData = await bdcRes.json();
-                    if (bdcData && (bdcData.locality || bdcData.city || bdcData.principalSubdivision)) {
-                        const parts = [bdcData.locality, bdcData.city, bdcData.principalSubdivision].filter(Boolean);
-                        addressInput.value = parts.join(', ');
-
-                        statusMsg.style.color = 'var(--success)';
-                        statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã tự động định vị vị trí thành công!';
-                        fetchShippingMethods('', '', userLat, userLon);
-                        onGpsSuccess();
-                        return true;
-                    }
-                } catch (e) {
-                    console.warn('BigDataCloud reverse geocode failed:', e);
-                }
-
-                // Fallback: OpenStreetMap Nominatim
+                // Primary: OpenStreetMap Nominatim (Provides detailed street address)
                 try {
                     const nomRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=vi`);
                     const nomData = await nomRes.json();
@@ -1115,6 +1179,24 @@
                     }
                 } catch (e) {
                     console.warn('Nominatim reverse geocode failed:', e);
+                }
+
+                // Fallback: BigDataCloud Reverse Geocoding API (Fast, Free, No CORS block but only City level)
+                try {
+                    const bdcRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`);
+                    const bdcData = await bdcRes.json();
+                    if (bdcData && (bdcData.locality || bdcData.city || bdcData.principalSubdivision)) {
+                        const parts = [bdcData.locality, bdcData.city, bdcData.principalSubdivision].filter(Boolean);
+                        addressInput.value = parts.join(', ');
+
+                        statusMsg.style.color = 'var(--success)';
+                        statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã tự động định vị vị trí thành công (Cấp độ Thành phố)!';
+                        fetchShippingMethods('', '', userLat, userLon);
+                        onGpsSuccess();
+                        return true;
+                    }
+                } catch (e) {
+                    console.warn('BigDataCloud reverse geocode failed:', e);
                 }
 
                 statusMsg.style.color = 'var(--danger)';

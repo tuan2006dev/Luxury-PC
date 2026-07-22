@@ -11,7 +11,7 @@ public interface VoucherDAO extends JpaRepository<Voucher, Integer> {
 
     Optional<Voucher> findByCode(String code);
 
-    @Query("SELECT v FROM Voucher v WHERE v.active = true AND (v.endDate IS NULL OR v.endDate > CURRENT_TIMESTAMP) ORDER BY v.createdAt DESC")
+    @Query("SELECT v FROM Voucher v WHERE v.active = true AND (v.endDate IS NULL OR v.endDate > CURRENT_TIMESTAMP) AND (v.usageLimit IS NULL OR v.usedCount < v.usageLimit) ORDER BY v.createdAt DESC")
     List<Voucher> findActiveVouchers();
 
     List<Voucher> findAllByOrderByCreatedAtDesc();

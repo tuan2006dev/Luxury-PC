@@ -9,11 +9,17 @@ function openModal() {
     document.getElementById('minOrderAmount').value = '';
     document.getElementById('usageLimit').value = '';
     document.getElementById('endDate').value = '';
+    document.getElementById('voucherScope').value = 'GLOBAL';
     document.getElementById('categoryId').value = '';
     toggleMaxDiscount();
+    toggleCategorySelect();
 }
 function closeModal() {
     document.getElementById('voucherModal').classList.remove('show');
+}
+function toggleCategorySelect() {
+    var scope = document.getElementById('voucherScope').value;
+    document.getElementById('categoryGroup').style.display = scope === 'CATEGORY' ? 'block' : 'none';
 }
 function toggleMaxDiscount() {
     var type = document.getElementById('discountType').value;

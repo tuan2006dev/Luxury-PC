@@ -55,6 +55,13 @@ public class User {
     @Column(name = "two_factor_enabled")
     private Boolean twoFactorEnabled = false;
 
+    @Column(name = "force_change_password")
+    private Boolean forceChangePassword = false;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_login")
+    private Date lastLogin;
+
     public User() {}
 
     @PrePersist
@@ -222,5 +229,21 @@ public class User {
 
     public void setTwoFactorEnabled(Boolean twoFactorEnabled) {
         this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    public Boolean getForceChangePassword() {
+        return forceChangePassword != null && forceChangePassword;
+    }
+
+    public void setForceChangePassword(Boolean forceChangePassword) {
+        this.forceChangePassword = forceChangePassword;
+    }
+
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }

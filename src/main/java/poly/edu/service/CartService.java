@@ -122,7 +122,7 @@ public class CartService {
         String appliedVoucherCode = null;
         if (voucherCode != null && !voucherCode.trim().isEmpty() && currentUser != null) {
             
-            Map<String, Object> validation = voucherService.validateVoucher(voucherCode, priceAfterVip, currentUser);
+            Map<String, Object> validation = voucherService.validateVoucher(voucherCode, priceAfterVip, shippingFee, targetCart.values(), currentUser);
             if (Boolean.TRUE.equals(validation.get("valid"))) {
                 voucherDiscount = (double) validation.get("discount");
                 appliedVoucherCode = voucherCode.trim().toUpperCase();

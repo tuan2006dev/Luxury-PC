@@ -304,7 +304,8 @@
                                             th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
                                         <span style="color: #ef4444; font-size: 14px; font-weight: 700;"
                                             th:if="${item.salePrice != null && isUpcoming}"
-                                            th:text="${#strings.substring(item.salePrice, 0, 1)} + 'xx.xxxđ'">0đ</span>
+                                            th:with="formattedPrice=${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')}"
+                                            th:text="${formattedPrice.substring(0, 1) + formattedPrice.substring(1).replaceAll('[0-9]', 'x')} + 'đ'">0đ</span>
                                     </div>
                                 </div>
 
@@ -555,7 +556,7 @@
                         th:with="textColor=${status.index % 4 == 0 ? '#ea580c' : (status.index % 4 == 1 ? '#db2777' : (status.index % 4 == 2 ? '#2563eb' : '#16a34a'))},
                                  borderColor=${status.index % 4 == 0 ? '#fed7aa' : (status.index % 4 == 1 ? '#fbcfe8' : (status.index % 4 == 2 ? '#bfdbfe' : '#bbf7d0'))},
                                  shadowColor=${status.index % 4 == 0 ? 'rgba(234, 88, 12, 0.15)' : (status.index % 4 == 1 ? 'rgba(219, 39, 119, 0.15)' : (status.index % 4 == 2 ? 'rgba(37, 99, 235, 0.15)' : 'rgba(22, 163, 74, 0.15)'))}"
-                        style="display: flex; flex-direction: column; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; overflow: hidden; padding: 15px; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); height: 230px; position: relative; box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease; will-change: transform;"
+                        style="display: flex; flex-direction: column; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; overflow: hidden; padding: 15px; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); min-height: 230px; height: 100%; position: relative; box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease; will-change: transform;"
                         onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.06)';"
                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.03)';"
                         th:styleappend="'border-color: ' + ${borderColor}">
@@ -576,6 +577,9 @@
                         <div
                             style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; z-index: 2; margin-top: 5px;">
                             <div>
+                                <span th:if="${v.voucherScope != null}" 
+                                      th:text="${v.voucherScope.name() == 'FREESHIP' ? 'Miễn phí vận chuyển' : (v.voucherScope.name() == 'CATEGORY' ? (v.category != null ? v.category.name : 'Danh mục') : 'Toàn sàn')}"
+                                      style="font-size: 10px; padding: 3px 6px; border-radius: 4px; background-color: #f3f4f6; color: #4b5563; font-weight: 600; display: inline-block; margin-bottom: 6px;">Toàn sàn</span>
                                 <h4 style="margin: 0 0 4px; font-size: 13px; font-weight: 700; color: #111827;"
                                     th:text="${v.description}">Giảm 10%</h4>
                                 <span style="font-size: 11px; color: #6b7280; display: block;"
@@ -817,11 +821,16 @@
                             var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                            hours = hours < 10 ? '0' + hours : hours;
-                            minutes = minutes < 10 ? '0' + minutes : minutes;
-                            seconds = seconds < 10 ? '0' + seconds : seconds;
-                            var prefixText = (days === 0 && parseInt(hours) === 0 && parseInt(minutes) < 10) ? 'Sắp kết thúc ' : '';
-                            timerEl.innerText = prefixText + (days > 0 ? days + ' ngày ' : '') + hours + ':' + minutes + ':' + seconds;
+                            
+                            if (days > 0) {
+                                timerEl.innerText = 'Còn ' + days + ' ngày';
+                            } else {
+                                hours = hours < 10 ? '0' + hours : hours;
+                                minutes = minutes < 10 ? '0' + minutes : minutes;
+                                seconds = seconds < 10 ? '0' + seconds : seconds;
+                                var prefixText = (parseInt(hours) === 0 && parseInt(minutes) < 10) ? 'Sắp kết thúc ' : '';
+                                timerEl.innerText = prefixText + hours + ':' + minutes + ':' + seconds;
+                            }
                         } else {
                             timerEl.innerText = 'Đã kết thúc';
                         }
@@ -862,7 +871,8 @@
                         secs--;
                         el.setAttribute('data-seconds', secs);
 
-                        var h = Math.floor(secs / 3600);
+                        var days = Math.floor(secs / (3600 * 24));
+                        var h = Math.floor((secs % (3600 * 24)) / 3600);
                         var m = Math.floor((secs % 3600) / 60);
                         var s = secs % 60;
 
@@ -876,12 +886,24 @@
                         var sEl = el.querySelector('.upcoming-seconds');
 
                         if (hEl && mEl && sEl) {
-                            hEl.innerText = hStr;
-                            mEl.innerText = mStr;
-                            sEl.innerText = sStr;
+                            if (days > 0) {
+                                hEl.innerText = days;
+                                hEl.nextElementSibling.innerText = 'N'; // Colons might be hard to change perfectly but let's change text
+                                mEl.innerText = hStr;
+                                mEl.nextElementSibling.innerText = 'H';
+                                sEl.innerText = mStr;
+                            } else {
+                                hEl.innerText = hStr;
+                                mEl.innerText = mStr;
+                                sEl.innerText = sStr;
+                            }
                         } else {
                             // Sidebar simple text style
-                            el.innerText = hStr + ':' + mStr + ':' + sStr;
+                            if (days > 0) {
+                                el.innerText = 'Còn ' + days + ' ngày';
+                            } else {
+                                el.innerText = hStr + ':' + mStr + ':' + sStr;
+                            }
                         }
                     } else if (secs === 0) {
                         var hEl = el.querySelector('.upcoming-hours');

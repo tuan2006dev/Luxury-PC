@@ -26,4 +26,30 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "SELECT FORMAT(created_at, 'yyyy-MM-dd') as date, COUNT(*) as count FROM users WHERE created_at >= :startDate GROUP BY FORMAT(created_at, 'yyyy-MM-dd') ORDER BY date ASC", nativeQuery = true)
     List<java.util.Map<String, Object>> getNewUsersByDate(@org.springframework.data.repository.query.Param("startDate") java.util.Date startDate);
 
+    @Query("SELECT COUNT(u) FROM User u WHERE u.createdAt >= :start AND u.createdAt <= :end")
+    Long countCustomersBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
+
+    @Query(value = "SELECT FORMAT(created_at, 'yyyy-MM-dd') as date, COUNT(*) as count FROM users WHERE created_at >= :start AND created_at <= :end GROUP BY FORMAT(created_at, 'yyyy-MM-dd') ORDER BY date ASC", nativeQuery = true)
+    List<java.util.Map<String, Object>> getNewUsersBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
+
+    @Query("""
+        SELECT DISTINCT u 
+        FROM User u
+        LEFT JOIN FETCH u.userRoles ur
+        LEFT JOIN FETCH ur.role r
+        WHERE r.name IN ('ADMIN', 'STAFF')
+        ORDER BY u.id DESC
+        """)
+    List<User> findAllEmployees();
+
+    @Query("""
+        SELECT DISTINCT u 
+        FROM User u
+        LEFT JOIN FETCH u.userRoles ur
+        LEFT JOIN FETCH ur.role r
+        WHERE r.name = 'USER'
+        ORDER BY u.id DESC
+        """)
+    List<User> findAllCustomers();
+
 }

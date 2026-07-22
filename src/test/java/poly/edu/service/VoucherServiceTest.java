@@ -51,7 +51,7 @@ public class VoucherServiceTest {
 
     @Test
     void validateVoucher_FailsIfUserNull() {
-        Map<String, Object> res = voucherService.validateVoucher("CODE", 100.0, null);
+        Map<String, Object> res = voucherService.validateVoucher("CODE", 100.0, 0.0, null, null);
         assertThat(res.get("valid")).isEqualTo(false);
         assertThat(res.get("message")).isEqualTo("Vui lòng đăng nhập để sử dụng mã!");
     }
@@ -59,7 +59,7 @@ public class VoucherServiceTest {
     @Test
     void validateVoucher_FailsIfNotFound() {
         when(voucherDAO.findByCode(anyString())).thenReturn(Optional.empty());
-        Map<String, Object> res = voucherService.validateVoucher("CODE", 100.0, user);
+        Map<String, Object> res = voucherService.validateVoucher("CODE", 100.0, 0.0, null, user);
         assertThat(res.get("valid")).isEqualTo(false);
         assertThat(res.get("message")).isEqualTo("Mã voucher không tồn tại");
     }
@@ -69,7 +69,7 @@ public class VoucherServiceTest {
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
         when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(eq(user), eq("DISCOUNT50"), eq("AVAILABLE"))).thenReturn(Optional.empty());
 
-        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, user);
+        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, 0.0, null, user);
         assertThat(res.get("valid")).isEqualTo(false);
         assertThat(res.get("message").toString()).contains("chưa lưu mã này");
     }
@@ -80,7 +80,7 @@ public class VoucherServiceTest {
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
         when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(any(), any(), eq("AVAILABLE"))).thenReturn(Optional.of(new UserVoucher()));
 
-        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, user);
+        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, 0.0, null, user);
         assertThat(res.get("valid")).isEqualTo(false);
         assertThat(res.get("message").toString()).contains("bị vô hiệu hóa");
     }
@@ -91,7 +91,7 @@ public class VoucherServiceTest {
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
         when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(any(), any(), eq("AVAILABLE"))).thenReturn(Optional.of(new UserVoucher()));
 
-        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, user);
+        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, 0.0, null, user);
         assertThat(res.get("valid")).isEqualTo(false);
         assertThat(res.get("message").toString()).contains("đã hết hạn");
     }
@@ -101,7 +101,7 @@ public class VoucherServiceTest {
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
         when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(any(), any(), eq("AVAILABLE"))).thenReturn(Optional.of(new UserVoucher()));
 
-        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 50.0, user);
+        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 50.0, 0.0, null, user);
         assertThat(res.get("valid")).isEqualTo(false);
         assertThat(res.get("message").toString()).contains("Đơn hàng tối thiểu");
     }
@@ -111,7 +111,7 @@ public class VoucherServiceTest {
         when(voucherDAO.findByCode("DISCOUNT50")).thenReturn(Optional.of(voucher));
         when(userVoucherDAO.findByUserAndVoucherCodeAndStatus(any(), any(), eq("AVAILABLE"))).thenReturn(Optional.of(new UserVoucher()));
 
-        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, user);
+        Map<String, Object> res = voucherService.validateVoucher("DISCOUNT50", 150.0, 0.0, null, user);
         assertThat(res.get("valid")).isEqualTo(true);
         assertThat(res.get("discount")).isEqualTo(50.0);
     }

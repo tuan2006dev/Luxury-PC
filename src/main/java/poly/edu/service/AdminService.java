@@ -7,7 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.*;
 import poly.edu.entity.*;
 import poly.edu.repository.UserRepository;
+import poly.edu.dto.dashboard.*;
 import java.util.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
@@ -146,6 +150,68 @@ public class AdminService {
 
     public List<Map<String, Object>> getMonthlyRevenue() {
         return orderDAO.getMonthlyRevenue();
+    }
+
+    public DashboardDTO getDashboardStats(LocalDate start, LocalDate end) {
+        ZoneId defaultZone = ZoneId.systemDefault();
+        Date startDate = Date.from(start.atStartOfDay(defaultZone).toInstant());
+        Date endDate = Date.from(end.atTime(LocalTime.MAX).atZone(defaultZone).toInstant());
+
+        Double revenue = orderDAO.getRevenueBetween(startDate, endDate);
+        if (revenue == null) revenue = 0.0;
+        Long ordersCount = orderDAO.countOrdersBetween(startDate, endDate);
+        if (ordersCount == null) ordersCount = 0L;
+        Long customersCount = userRepository.countCustomersBetween(startDate, endDate);
+        if (customersCount == null) customersCount = 0L;
+
+        SummaryDTO summary = SummaryDTO.builder()
+                .revenue(revenue)
+                .orders(ordersCount)
+                .customers(customersCount)
+                .build();
+
+        List<Map<String, Object>> rawDailyRevenue = orderDAO.getDailyRevenueBetween(startDate, endDate);
+        List<RevenueDTO> dailyRevenue = new ArrayList<>();
+        if (rawDailyRevenue != null) {
+            for (Map<String, Object> map : rawDailyRevenue) {
+                Object d = map.get("date");
+                Object r = map.get("revenue");
+                if (d != null) {
+                    dailyRevenue.add(new RevenueDTO(d.toString(), r != null ? Double.valueOf(r.toString()) : 0.0));
+                }
+            }
+        }
+
+        List<Map<String, Object>> rawOrderStatus = orderDAO.getOrderStatusBetween(startDate, endDate);
+        List<OrderStatusDTO> orderStatus = new ArrayList<>();
+        if (rawOrderStatus != null) {
+            for (Map<String, Object> map : rawOrderStatus) {
+                Object s = map.get("status");
+                Object c = map.get("count");
+                if (s != null) {
+                    orderStatus.add(new OrderStatusDTO(s.toString(), c != null ? Long.valueOf(c.toString()) : 0L));
+                }
+            }
+        }
+
+        List<Map<String, Object>> rawNewUsers = userRepository.getNewUsersBetween(startDate, endDate);
+        List<UserGrowthDTO> newUsers = new ArrayList<>();
+        if (rawNewUsers != null) {
+            for (Map<String, Object> map : rawNewUsers) {
+                Object d = map.get("date");
+                Object c = map.get("count");
+                if (d != null) {
+                    newUsers.add(new UserGrowthDTO(d.toString(), c != null ? Long.valueOf(c.toString()) : 0L));
+                }
+            }
+        }
+
+        return DashboardDTO.builder()
+                .summary(summary)
+                .dailyRevenue(dailyRevenue)
+                .orderStatus(orderStatus)
+                .newUsers(newUsers)
+                .build();
     }
 
     public List<Map<String, Object>> getDailyRevenue(int days) {

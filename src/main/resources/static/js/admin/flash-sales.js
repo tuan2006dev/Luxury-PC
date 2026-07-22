@@ -6,7 +6,7 @@ function openModal() {
     const fileInput = document.getElementById('fsBannerFile');
     if (fileInput) fileInput.value = '';
     const preview = document.getElementById('bannerPreviewImg');
-    if (preview) preview.src = '/images/flashsale/flashsalered.png';
+    if (preview) preview.src = '/images/placeholder.png';
     const title = document.getElementById('modalTitle');
     if (title) title.innerText = window.t ? 'Tạo Flash Sale Mới' : 'Tạo Flash Sale Mới';
     
@@ -34,7 +34,7 @@ function previewBannerUrl(url) {
             preview.src = '/images/flashsale/' + url;
         }
     } else {
-        preview.src = '/images/flashsale/flashsalered.png';
+        preview.src = '/images/placeholder.png';
     }
 }
 

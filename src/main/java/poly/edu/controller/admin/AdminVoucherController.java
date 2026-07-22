@@ -42,6 +42,7 @@ public class AdminVoucherController {
             @RequestParam(required = false) Integer usageLimit,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date endDate,
+            @RequestParam(required = false, defaultValue = "GLOBAL") String voucherScope,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false, defaultValue = "true") Boolean active,
             RedirectAttributes ra) {
@@ -66,6 +67,7 @@ public class AdminVoucherController {
         voucher.setUsageLimit(usageLimit);
         voucher.setStartDate(startDate);
         voucher.setEndDate(endDate);
+        voucher.setVoucherScope(Voucher.VoucherScope.valueOf(voucherScope));
         voucher.setActive(active);
 
         if (categoryId != null) {

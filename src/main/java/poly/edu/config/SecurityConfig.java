@@ -44,12 +44,13 @@ public class SecurityConfig {
                                                 .securityContextRepository(securityContextRepository()))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/admin/users/**", "/admin/roles/**",
-                                                                "/admin/account/**", "/admin/account")
+                                                                "/admin/account/**", "/admin/account",
+                                                                "/admin/employees/**", "/admin/employees")
                                                 .hasRole("ADMIN")
                                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
                                                 .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp",
                                                                 "/api/forgot-password/**",
-                                                                "/api/voucher/**", "/api/cart", "/api/cart/add",
+                                                                "/api/voucher/**", "/api/user-voucher/**", "/api/cart", "/api/cart/add",
                                                                 "/api/products", "/api/products/**", "/api/build/**",
                                                                 "/build-pc/**", "/api/tickets/**",
                                                                 "/api/reviews/**", "/api/wishlist/**",

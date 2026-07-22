@@ -1,0 +1,68 @@
+        <div th:fragment="addressesTab" class="profile-section" id="sec-address">
+          <div class="section-head">
+            <div>
+              <div class="section-tag">Giao hàng</div>
+              <div class="section-h">Địa Chỉ Giao Hàng</div>
+            </div>
+            <button class="btn-edit" onclick="openAddressForm()">+ Thêm Địa
+              Chỉ</button>
+          </div>
+
+          <!-- Saved address cards -->
+          <div id="address-list-container"
+            style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:2rem;">
+          </div>
+
+          <!-- Add/Edit address form -->
+          <div id="address-form-container"
+            style="background:#f8fafc;border:1px solid #e2e8f0;padding:2rem; display:none;">
+            <div id="address-form-title"
+              style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#3b82f6;margin-bottom:1.5rem;">
+              Thêm / Chỉnh Sửa Địa Chỉ</div>
+            <input type="hidden" id="address-id-edit" />
+            <div class="form-2col">
+              <div class="form-group">
+                <label class="form-label">Họ và tên</label>
+                <input type="text" id="address-name" class="form-input" placeholder="Người nhận" required />
+                <div class="form-error" id="address-name-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Số điện thoại</label>
+                <input type="tel" id="address-phone" class="form-input" placeholder="Ví dụ: 0901234567"
+                  pattern="^0(3|5|7|8|9)[0-9]{8}$" required />
+                <div class="form-error" id="address-phone-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+                </div>
+              </div>
+              <div class="form-group full">
+                <label>Địa chỉ chi tiết</label>
+                <input type="text" id="address-detail" class="form-input" placeholder="Số nhà, đường phố..." required />
+                <div class="form-error" id="address-detail-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tỉnh / Thành phố</label>
+                <input type="text" id="address-city" class="form-input" placeholder="TP. Hồ Chí Minh" required />
+                <div class="form-error" id="address-city-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Quận / Huyện</label>
+                <input type="text" id="address-district" class="form-input" placeholder="Quận 1" required />
+                <div class="form-error" id="address-district-error"
+                  style="display:none;color:#ff6b6b;font-size:0.75rem;">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mã bưu điện</label>
+                <input type="text" id="address-postal" class="form-input" placeholder="700000" />
+              </div>
+            </div>
+            <div style="display:flex;gap:1rem;">
+              <button type="button" class="btn-save" onclick="saveAddress()">
+                <span class="btn-save-inner">Lưu Địa Chỉ</span>
+              </button>
+              <button type="button" class="btn-edit" onclick="closeAddressForm()">Hủy</button>
+            </div>
+          </div>
+        </div>

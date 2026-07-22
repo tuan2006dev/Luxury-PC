@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.VoucherDAO;
 import poly.edu.entity.Voucher;
+import poly.edu.dao.ProductDAO;
+import poly.edu.entity.Product;
+import poly.edu.entity.CartItem;
 
 import java.util.*;
 
@@ -20,6 +23,8 @@ public class VoucherService {
     private final VoucherDAO voucherDAO;
 
     private final poly.edu.dao.UserVoucherDAO userVoucherDAO;
+    
+    private final ProductDAO productDAO;
 
     public List<Voucher> getAllVouchers() {
         return voucherDAO.findAllByOrderByCreatedAtDesc();
@@ -42,7 +47,7 @@ public class VoucherService {
      * Validate voucher: trả về Map chứa kết quả
      * {valid: true/false, message: "...", discount: số tiền giảm}
      */
-    public Map<String, Object> validateVoucher(String code, double cartTotal, poly.edu.entity.User user) {
+    public Map<String, Object> validateVoucher(String code, double cartTotal, double shippingFee, Collection<poly.edu.entity.CartItem> cartItems, poly.edu.entity.User user) {
         Map<String, Object> result = new HashMap<>();
 
         if (user == null) {
@@ -100,6 +105,38 @@ public class VoucherService {
             return result;
         }
 
+        // Xử lý logic VoucherScope
+        double baseAmount = cartTotal; // Mặc định giảm trên tổng đơn
+        if (voucher.getVoucherScope() == Voucher.VoucherScope.FREESHIP) {
+            baseAmount = shippingFee;
+        } else if (voucher.getVoucherScope() == Voucher.VoucherScope.CATEGORY) {
+            if (voucher.getCategory() == null) {
+                result.put("success", false);
+                result.put("valid", false);
+                result.put("message", "Voucher danh mục bị lỗi cấu hình.");
+                return result;
+            }
+            double categoryTotal = 0;
+            if (cartItems != null) {
+                for (CartItem item : cartItems) {
+                    Optional<Product> pOpt = productDAO.findById(item.getId());
+                    if (pOpt.isPresent()) {
+                        Product p = pOpt.get();
+                        if (p.getCategory() != null && p.getCategory().getId().equals(voucher.getCategory().getId())) {
+                            categoryTotal += (item.getPrice() * item.getQuantity());
+                        }
+                    }
+                }
+            }
+            if (categoryTotal == 0) {
+                result.put("success", false);
+                result.put("valid", false);
+                result.put("message", "Giỏ hàng không có sản phẩm thuộc danh mục " + voucher.getCategory().getName() + " để áp dụng mã này.");
+                return result;
+            }
+            baseAmount = categoryTotal;
+        }
+
         if (voucher.getMinOrderAmount() != null && cartTotal < voucher.getMinOrderAmount()) {
             result.put("success", false);
             result.put("valid", false);
@@ -108,15 +145,23 @@ public class VoucherService {
             return result;
         }
 
-        double discount = voucher.calculateDiscount(cartTotal);
-        if (discount > cartTotal) {
-            discount = cartTotal; // Security: Prevent negative total
+        double discount = voucher.calculateDiscount(baseAmount);
+        if (discount > baseAmount) {
+            discount = baseAmount; // Security: Prevent negative total
         }
         result.put("success", true);
         result.put("valid", true);
         result.put("discount", discount);
         result.put("newTotal", cartTotal - discount);
-        result.put("message", "Áp dụng thành công! Giảm " + String.format("%,.0f", discount) + "₫");
+        
+        String msg = "Áp dụng thành công! Giảm " + String.format("%,.0f", discount) + "₫";
+        if (voucher.getVoucherScope() == Voucher.VoucherScope.CATEGORY && voucher.getCategory() != null) {
+            msg += " (Cho danh mục " + voucher.getCategory().getName() + ")";
+        } else if (voucher.getVoucherScope() == Voucher.VoucherScope.FREESHIP) {
+            msg += " (Phí vận chuyển)";
+        }
+        
+        result.put("message", msg);
         result.put("discountType", voucher.getDiscountType().name());
         result.put("discountValue", voucher.getDiscountValue());
         return result;

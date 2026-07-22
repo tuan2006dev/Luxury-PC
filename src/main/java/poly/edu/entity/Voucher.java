@@ -20,6 +20,10 @@ public class Voucher {
     @Column(name = "discount_type")
     private DiscountType discountType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "voucher_scope")
+    private VoucherScope voucherScope = VoucherScope.GLOBAL;
+
     @Column(name = "discount_value")
     private Double discountValue;
 
@@ -112,6 +116,14 @@ public class Voucher {
         this.discountType = discountType;
     }
 
+    public VoucherScope getVoucherScope() {
+        return voucherScope;
+    }
+
+    public void setVoucherScope(VoucherScope voucherScope) {
+        this.voucherScope = voucherScope;
+    }
+
     public Double getDiscountValue() {
         return discountValue;
     }
@@ -197,6 +209,12 @@ public class Voucher {
         FIXED_AMOUNT
     }
 
+    public enum VoucherScope {
+        GLOBAL,     // Áp dụng cho toàn bộ đơn hàng
+        FREESHIP,   // Áp dụng cho phí vận chuyển
+        CATEGORY    // Áp dụng cho 1 danh mục (cần category_id)
+    }
+
     /**
      * Kiểm tra voucher có đang trong thời hạn hiệu lực không
      */
@@ -212,19 +230,18 @@ public class Voucher {
     /**
      * Tính số tiền giảm cho đơn hàng
      */
-    public double calculateDiscount(double orderTotal) {
+    public double calculateDiscount(double baseAmount) {
         if (!isValid()) return 0;
-        if (minOrderAmount != null && orderTotal < minOrderAmount) return 0;
 
         double discount;
         if (discountType == DiscountType.PERCENTAGE) {
-            discount = orderTotal * (discountValue / 100.0);
+            discount = baseAmount * (discountValue / 100.0);
             if (maxDiscountAmount != null && discount > maxDiscountAmount) {
                 discount = maxDiscountAmount;
             }
         } else {
             discount = discountValue;
         }
-        return Math.min(discount, orderTotal);
+        return Math.min(discount, baseAmount);
     }
 }

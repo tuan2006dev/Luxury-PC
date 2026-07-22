@@ -25,6 +25,20 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @Query(value = "SELECT status, COUNT(*) as count FROM orders WHERE created_at >= :startDate GROUP BY status", nativeQuery = true)
     List<Map<String, Object>> getOrderStatusStats(@org.springframework.data.repository.query.Param("startDate") java.util.Date startDate);
 
+    @Query(value = "SELECT FORMAT(created_at, 'yyyy-MM-dd') as date, SUM(total_price) as revenue " +
+                   "FROM orders WHERE status IN ('COMPLETED', 'DA_THANH_TOAN', 'PAID') AND created_at >= :start AND created_at <= :end " +
+                   "GROUP BY FORMAT(created_at, 'yyyy-MM-dd') ORDER BY date ASC", nativeQuery = true)
+    List<Map<String, Object>> getDailyRevenueBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
+
+    @Query(value = "SELECT status, COUNT(*) as count FROM orders WHERE created_at >= :start AND created_at <= :end GROUP BY status", nativeQuery = true)
+    List<Map<String, Object>> getOrderStatusBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :start AND o.createdAt <= :end")
+    Long countOrdersBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
+
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0.0) FROM Order o WHERE o.status IN ('COMPLETED', 'DA_THANH_TOAN', 'PAID') AND o.createdAt >= :start AND o.createdAt <= :end")
+    Double getRevenueBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start, @org.springframework.data.repository.query.Param("end") java.util.Date end);
+
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('PENDING', 'CHO_XAC_NHAN_THANH_TOAN')")
     long countPendingOrders();
 

@@ -77,11 +77,14 @@ public class UserVoucherService {
     public List<UserVoucher> getMyVouchers(User user) {
         return userVoucherDAO.findByUserOrderBySavedAtDesc(user).stream()
                 .filter(uv -> !"CONSUMED".equals(uv.getStatus()))
+                .filter(uv -> uv.getVoucher().isValid())
                 .collect(java.util.stream.Collectors.toList());
     }
     
     public List<UserVoucher> getMyUnusedVouchers(User user) {
-        return userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(user, "AVAILABLE");
+        return userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(user, "AVAILABLE").stream()
+                .filter(uv -> uv.getVoucher().isValid())
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Transactional
