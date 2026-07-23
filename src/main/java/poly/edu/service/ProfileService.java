@@ -248,6 +248,71 @@ public class ProfileService {
         userRepository.delete(user);
     }
 
+    @Transactional(readOnly = true)
+    public Map<String, Object> getFullProfileData(Authentication authentication) {
+        Map<String, Object> data = new HashMap<>();
+        User user = getCurrentUser(authentication);
+        
+        Double totalSpent = orderDAO.getTotalSpentByUser(user.getId());
+        totalSpent = (totalSpent == null) ? 0.0 : totalSpent;
+        
+        data.put("user", user);
+        data.put("totalSpent", totalSpent);
+        data.put("totalOrders", orderDAO.countByUser_Id(user.getId()));
+        data.put("userRank", getRank(totalSpent));
+        data.put("rankClass", getRankClass(totalSpent));
+        
+        data.put("orders", orderDAO.findByUser_IdOrderByCreatedAtDesc(user.getId()));
+        data.put("wishlistItems", wishlistItemRepository.findByUser_IdOrderByCreatedAtDesc(user.getId()));
+        data.put("addresses", getCurrentUserAddresses(authentication));
+        data.put("notificationSettings", getCurrentUserNotificationSettings(authentication));
+        data.put("vouchers", userVoucherDAO.findByUserOrderBySavedAtDesc(user));
+        
+        return data;
+    }
+
+    private String getRank(Double totalSpent) {
+        if (totalSpent >= 200_000_000) return "Diamond";
+        if (totalSpent >= 50_000_000) return "Platinum";
+        if (totalSpent >= 10_000_000) return "Silver";
+        return "None";
+    }
+
+    private String getRankClass(Double totalSpent) {
+        if (totalSpent >= 200_000_000) return "rank-diamond";
+        if (totalSpent >= 50_000_000) return "rank-platinum";
+        if (totalSpent >= 10_000_000) return "rank-silver";
+        return "rank-none";
+    }
+
+    @Transactional
+    public void uploadAvatar(org.springframework.web.multipart.MultipartFile file, User user) throws java.io.IOException {
+        String srcUploadDir = "src/main/resources/static/uploads/avatars/";
+        String targetUploadDir = "target/classes/static/uploads/avatars/";
+
+        java.io.File srcDir = new java.io.File(srcUploadDir);
+        if (!srcDir.exists()) srcDir.mkdirs();
+
+        java.io.File targetDir = new java.io.File(targetUploadDir);
+        if (!targetDir.exists()) targetDir.mkdirs();
+
+        String originalFilename = file.getOriginalFilename();
+        String extension = "";
+        if (originalFilename != null && originalFilename.lastIndexOf(".") > 0) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+        String newFilename = "user_" + user.getId() + "_" + System.currentTimeMillis() + extension;
+
+        java.nio.file.Path srcPath = java.nio.file.Paths.get(srcUploadDir + newFilename).toAbsolutePath();
+        file.transferTo(srcPath.toFile());
+
+        java.nio.file.Path targetPath = java.nio.file.Paths.get(targetUploadDir + newFilename);
+        java.nio.file.Files.copy(srcPath, targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+        user.setAvatar("/uploads/avatars/" + newFilename);
+        userRepository.save(user);
+    }
+
     private String resolveIdentifier(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
