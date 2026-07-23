@@ -13,11 +13,25 @@
         --white: #0f172a;
 }
 
+html, body {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+}
+
 .main-content {
-        margin-left: 280px !important;
-        width: calc(100% - 280px) !important;
-        padding: 2rem !important;
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        padding: 1.25rem !important;
         box-sizing: border-box !important;
+        transition: all 0.3s ease !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
 }
 
 body.sidebar-collapsed .main-content {
@@ -27,20 +41,52 @@ body.sidebar-collapsed .main-content {
 
 .table-card {
         background: #ffffff !important;
-        padding: 1.25rem 1.25rem 8rem 1.25rem !important;
+        padding: 1.25rem !important;
         border: 1px solid #e2e8f0 !important;
         border-radius: 10px !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
-        min-height: 550px !important;
-        overflow: visible !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 !important;
+        min-height: 0 !important;
+        box-sizing: border-box !important;
+}
+
+.table-h {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 1rem !important;
+        flex-shrink: 0 !important;
 }
 
 .table-wrapper {
         width: 100% !important;
-        overflow-x: auto !important;
-        overflow-y: visible !important;
-        padding-bottom: 7rem !important;
-        margin-bottom: -6rem !important;
+        flex: 1 !important;
+        min-height: 0 !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        padding-right: 4px !important;
+        padding-bottom: 4rem !important;
+}
+
+.table-wrapper::-webkit-scrollbar {
+        width: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #0066CC;
 }
 
 .table-h {
@@ -48,6 +94,7 @@ body.sidebar-collapsed .main-content {
         justify-content: space-between !important;
         align-items: center !important;
         margin-bottom: 1.25rem !important;
+        flex-shrink: 0 !important;
 }
 
 .table-h h2 {
@@ -65,9 +112,9 @@ body.sidebar-collapsed .main-content {
 
 .admin-table {
         width: 100% !important;
-        min-width: 1250px !important;
+        min-width: 0 !important;
         border-collapse: collapse !important;
-        font-size: 0.82rem !important;
+        font-size: 0.8rem !important;
         table-layout: fixed !important;
 }
 
@@ -78,10 +125,14 @@ body.sidebar-collapsed .main-content {
         font-size: 0.72rem !important;
         text-transform: uppercase !important;
         letter-spacing: 0.05em !important;
-        padding: 0.65rem 0.4rem !important;
+        padding: 0.75rem 0.4rem !important;
         border-bottom: 2px solid #e2e8f0 !important;
         text-align: left !important;
         white-space: nowrap !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 10 !important;
+        box-shadow: 0 1px 0 #e2e8f0 !important;
 }
 
 .admin-table tr {
@@ -121,25 +172,32 @@ body.sidebar-collapsed .main-content {
         white-space: nowrap !important;
 }
 
-.badge-pending, .badge-cho_xac_nhan_thanh_toan, .badge-cho_hoan_tien {
+.badge-pending,
+.badge-cho_xac_nhan_thanh_toan,
+.badge-cho_hoan_tien {
         background: #fef3c7 !important;
         color: #d97706 !important;
         border: 1px solid #fde68a !important;
 }
 
-.badge-completed, .badge-da_thanh_toan, .badge-hoan_thanh {
+.badge-completed,
+.badge-da_thanh_toan,
+.badge-hoan_thanh {
         background: #dcfce7 !important;
         color: #16a34a !important;
         border: 1px solid #bbf7d0 !important;
 }
 
-.badge-shipping, .badge-da_hoan_tien {
+.badge-shipping,
+.badge-da_hoan_tien {
         background: #e0f2fe !important;
         color: #0284c7 !important;
         border: 1px solid #bae6fd !important;
 }
 
-.badge-cancelled, .badge-thu_hoi, .badge-da_huy {
+.badge-cancelled,
+.badge-thu_hoi,
+.badge-da_huy {
         background: #fee2e2 !important;
         color: #dc2626 !important;
         border: 1px solid #fca5a5 !important;
