@@ -46,33 +46,33 @@ function cancelOrder(btn, idParam) {
             method: 'POST',
             headers: headers
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                if (typeof toast === 'function') toast(data.message || '✓ Đã hủy đơn hàng thành công.');
-                setTimeout(() => {
-                    if (typeof reloadProfileTab === 'function') {
-                        reloadProfileTab('orders');
-                    } else {
-                        window.location.href = '/profile?tab=orders';
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof toast === 'function') toast(data.message || '✓ Đã hủy đơn hàng thành công.');
+                    setTimeout(() => {
+                        if (typeof reloadProfileTab === 'function') {
+                            reloadProfileTab('orders');
+                        } else {
+                            window.location.href = '/profile?tab=orders';
+                        }
+                    }, 800);
+                } else {
+                    if (typeof toast === 'function') toast('⚠️ ' + (data.message || 'Không thể hủy đơn hàng.'));
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = '⚠️ Hủy Đơn Hàng';
                     }
-                }, 800);
-            } else {
-                if (typeof toast === 'function') toast('⚠️ ' + (data.message || 'Không thể hủy đơn hàng.'));
+                }
+            })
+            .catch(err => {
+                console.error('Cancel order error:', err);
+                if (typeof toast === 'function') toast('⚠️ Lỗi kết nối khi hủy đơn hàng.');
                 if (btn) {
                     btn.disabled = false;
                     btn.textContent = '⚠️ Hủy Đơn Hàng';
                 }
-            }
-        })
-        .catch(err => {
-            console.error('Cancel order error:', err);
-            if (typeof toast === 'function') toast('⚠️ Lỗi kết nối khi hủy đơn hàng.');
-            if (btn) {
-                btn.disabled = false;
-                btn.textContent = '⚠️ Hủy Đơn Hàng';
-            }
-        });
+            });
     };
 
     if (typeof Swal !== 'undefined') {
@@ -158,17 +158,17 @@ function submitReview() {
             comment: comment.trim()
         })
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            if (typeof toast === 'function') toast('✓ Đã gửi đánh giá thành công!');
-            closeReviewModal();
-        } else {
-            if (typeof toast === 'function') toast(data.message || 'Lỗi gửi đánh giá.');
-        }
-    })
-    .catch(err => {
-        console.error('Review submit error:', err);
-        if (typeof toast === 'function') toast('Đã xảy ra lỗi mạng.');
-    });
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                if (typeof toast === 'function') toast('✓ Đã gửi đánh giá thành công!');
+                closeReviewModal();
+            } else {
+                if (typeof toast === 'function') toast(data.message || 'Lỗi gửi đánh giá.');
+            }
+        })
+        .catch(err => {
+            console.error('Review submit error:', err);
+            if (typeof toast === 'function') toast('Đã xảy ra lỗi mạng.');
+        });
 }

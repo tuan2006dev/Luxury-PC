@@ -19,8 +19,8 @@
     <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1><span>Quản Lý Sản Phẩm</span> (<span
-                        th:text="${products != null ? products.size() : 0}">0</span>)</h1>
+                <h1><span>Quản Lý Sản Phẩm</span> (<span th:text="${products != null ? products.size() : 0}">0</span>)
+                </h1>
             </div>
             <div class="user-info" style="display: flex; align-items: center;">
                 <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
@@ -53,8 +53,7 @@
         <!-- Form Thêm / Sửa -->
         <div class="card add-form-container" id="productForm" th:classappend="${product.id != null ? 'active' : ''}">
             <div class="card-header">
-                <h2
-                    th:text="${product.id == null ? 'Thêm Sản Phẩm Mới' : 'Cập Nhật Sản Phẩm'}">Thông Tin Sản Phẩm</h2>
+                <h2 th:text="${product.id == null ? 'Thêm Sản Phẩm Mới' : 'Cập Nhật Sản Phẩm'}">Thông Tin Sản Phẩm</h2>
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
@@ -128,7 +127,8 @@
                 <div style="margin-top: 2rem; display: flex; gap: 10px;">
                     <button type="submit" class="btn btn-gold">Lưu Sản
                         Phẩm</button>
-                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/products'">Hủy / Làm mới</button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/products'">Hủy / Làm
+                        mới</button>
                 </div>
             </form>
         </div>

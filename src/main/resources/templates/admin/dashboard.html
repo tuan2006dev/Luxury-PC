@@ -219,25 +219,31 @@
                             </div>
                         </div>
 
-                        <canvas id="revenueChart" height="120"></canvas>
-                        <div id="revenueNoData" class="no-data-notice" style="display: none;">Không có dữ liệu doanh thu trong khoảng thời gian này</div>
+                        <div style="flex: 1; min-height: 0; position: relative; width: 100%;">
+                            <canvas id="revenueChart"></canvas>
+                            <div id="revenueNoData" class="no-data-notice" style="display: none;">Không có dữ liệu doanh thu trong khoảng thời gian này</div>
+                        </div>
                     </div>
 
                     <!-- Chart 2: Order Status Doughnut Chart -->
                     <div class="chart-container" style="position: relative;">
                         <div class="table-h"><i class="fa-solid fa-chart-pie"></i> <span>Phân Bố Trạng Thái Đơn Hàng</span></div>
-                        <canvas id="orderStatusChart" height="250"></canvas>
-                        <div id="orderStatusNoData" class="no-data-notice" style="display: none;">Không có đơn hàng trong khoảng thời gian này</div>
+                        <div style="flex: 1; min-height: 0; position: relative; width: 100%; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="orderStatusChart"></canvas>
+                            <div id="orderStatusNoData" class="no-data-notice" style="display: none;">Không có đơn hàng trong khoảng thời gian này</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Tab 2: Users -->
             <div id="tab-users" class="tab-pane">
-                <div class="chart-container" style="margin-bottom: 3rem; position: relative;">
+                <div class="chart-container" style="height: 100%; position: relative;">
                     <div class="table-h"><i class="fa-solid fa-users"></i> <span>Người Dùng Đăng Ký Mới Theo Ngày</span></div>
-                    <canvas id="newUsersChart" height="80"></canvas>
-                    <div id="newUsersNoData" class="no-data-notice" style="display: none;">Không có người dùng mới trong khoảng thời gian này</div>
+                    <div style="flex: 1; min-height: 0; position: relative; width: 100%;">
+                        <canvas id="newUsersChart"></canvas>
+                        <div id="newUsersNoData" class="no-data-notice" style="display: none;">Không có người dùng mới trong khoảng thời gian này</div>
+                    </div>
                 </div>
             </div>
 
@@ -454,6 +460,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
                             scales: {
                                 y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b' } },
@@ -496,6 +503,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             cutout: '70%',
                             plugins: {
                                 legend: { position: 'right', labels: { color: '#475569', boxWidth: 12, padding: 12 } },
@@ -536,6 +544,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
                             scales: {
                                 y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b', stepSize: 1 } },

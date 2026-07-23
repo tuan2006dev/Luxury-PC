@@ -8,7 +8,7 @@
     <title>Quản Lý Đơn Hàng — Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/orders.css(v=5.0)}" />
+    <link rel="stylesheet" th:href="@{/css/admin/orders.css}" />
     <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
@@ -25,16 +25,16 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th style="width: 90px;">Mã Đơn</th>
-                            <th style="width: 210px;">Khách Hàng</th>
-                            <th style="width: 110px;">Ngày Đặt</th>
-                            <th style="width: 130px;">Tổng Tiền</th>
-                            <th style="width: 110px;">Thanh Toán</th>
-                            <th style="width: 120px;">Giao Hàng</th>
-                            <th style="width: 110px;">Voucher</th>
-                            <th style="width: 130px;">Trạng Thái</th>
-                            <th style="width: 220px;">Ghi Chú</th>
-                            <th style="width: 120px;">Hành Động</th>
+                            <th style="width: 5%;">Mã Đơn</th>
+                            <th style="width: 20%;">Khách Hàng</th>
+                            <th style="width: 8%;">Ngày Đặt</th>
+                            <th style="width: 9%;">Tổng Tiền</th>
+                            <th style="width: 8%;">Thanh Toán</th>
+                            <th style="width: 8%;">Giao Hàng</th>
+                            <th style="width: 7%;">Voucher</th>
+                            <th style="width: 10%;">Trạng Thái</th>
+                            <th style="width: 16%;">Ghi Chú</th>
+                            <th style="width: 9%; text-align: center;">Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,23 +48,27 @@
                             </td>
                             <td>
                                 <div th:text="${#dates.format(o.createdAt, 'dd/MM/yyyy')}">27/03/2026</div>
-                                <div style="font-size:0.72rem; color:#64748b;" th:text="${#dates.format(o.createdAt, 'HH:mm')}">16:50</div>
+                                <div style="font-size:0.72rem; color:#64748b;"
+                                    th:text="${#dates.format(o.createdAt, 'HH:mm')}">16:50</div>
                             </td>
                             <td th:text="${#numbers.formatDecimal(o.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"
                                 style="color:#0066CC; font-weight: 700; white-space: nowrap;">45.000.000₫</td>
                             <td>
-                                <span class="pay-chip" th:classappend="${o.paymentMethod == 'VIETQR' ? 'vietqr' : 'cod'}"
+                                <span class="pay-chip"
+                                    th:classappend="${o.paymentMethod == 'VIETQR' ? 'vietqr' : 'cod'}"
                                     th:text="${o.paymentMethodDisplay}">VietQR</span>
                             </td>
                             <td>
-                                <div th:text="${o.shippingMethodName != null ? o.shippingMethodName : '-'}" style="font-size:0.78rem;">Hỏa Tốc</div>
+                                <div th:text="${o.shippingMethodName != null ? o.shippingMethodName : '-'}"
+                                    style="font-size:0.78rem;">Hỏa Tốc</div>
                                 <div th:if="${o.shippingFee != null and o.shippingFee > 0}"
                                     style="font-size:0.72rem; color:#64748b"
                                     th:text="${#numbers.formatDecimal(o.shippingFee, 0, 'COMMA', 0, 'POINT')} + '₫'">
                                     50.000₫</div>
                             </td>
                             <td>
-                                <div th:text="${o.voucherCode != null ? o.voucherCode : '-'}" style="font-weight:600; font-size:0.78rem;">QA500K</div>
+                                <div th:text="${o.voucherCode != null ? o.voucherCode : '-'}"
+                                    style="font-weight:600; font-size:0.78rem;">QA500K</div>
                                 <div th:if="${o.discountAmount != null and o.discountAmount > 0}"
                                     style="font-size:0.72rem; color:#dc2626; font-weight:600;"
                                     th:text="'-' + ${#numbers.formatDecimal(o.discountAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">
@@ -152,11 +156,16 @@
 
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <select name="status">
-                                                <option value="PENDING" th:selected="${o.status == 'PENDING'}">Chờ xử lý</option>
-                                                <option value="PAID" th:selected="${o.status == 'PAID'}">Đã thanh toán</option>
-                                                <option value="SHIPPING" th:selected="${o.status == 'SHIPPING'}">Đang giao</option>
-                                                <option value="COMPLETED" th:selected="${o.status == 'COMPLETED'}">Hoàn thành</option>
-                                                <option value="DA_HUY" th:selected="${o.status == 'DA_HUY'}">Đã hủy</option>
+                                                <option value="PENDING" th:selected="${o.status == 'PENDING'}">Chờ xử lý
+                                                </option>
+                                                <option value="PAID" th:selected="${o.status == 'PAID'}">Đã thanh toán
+                                                </option>
+                                                <option value="SHIPPING" th:selected="${o.status == 'SHIPPING'}">Đang
+                                                    giao</option>
+                                                <option value="COMPLETED" th:selected="${o.status == 'COMPLETED'}">Hoàn
+                                                    thành</option>
+                                                <option value="DA_HUY" th:selected="${o.status == 'DA_HUY'}">Đã hủy
+                                                </option>
                                             </select>
                                             <button type="submit" class="update-btn">Cập Nhật Trạng Thái</button>
                                         </form>
@@ -172,7 +181,7 @@
     <script>
         function initActionMenuAccordion() {
             document.querySelectorAll('.action-menu summary').forEach(summary => {
-                summary.onclick = function() {
+                summary.onclick = function () {
                     const currentDetails = this.closest('details');
                     document.querySelectorAll('details.action-menu[open]').forEach(menu => {
                         if (menu !== currentDetails) {
@@ -183,7 +192,7 @@
             });
         }
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             document.querySelectorAll('details.action-menu[open]').forEach(menu => {
                 if (!menu.contains(e.target)) {
                     menu.removeAttribute('open');
