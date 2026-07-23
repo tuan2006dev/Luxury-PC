@@ -28,30 +28,30 @@ function initProductFormState() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initProductFormState();
-    
+
     const form = document.getElementById('productFormElement');
     if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const name = document.querySelector('input[name="name"]').value.trim();
             if (!name) {
                 showValidationError('Vui lòng nhập tên sản phẩm.');
                 return;
             }
-            
+
             const price = document.querySelector('input[name="price"]').value;
             if (!price || price === '') {
                 showValidationError('Vui lòng nhập giá bán.');
                 return;
             }
-            
+
             const cat = document.querySelector('select[name="category.id"]').value;
             if (!cat) {
                 showValidationError('Vui lòng chọn danh mục sản phẩm.');
                 return;
             }
-            
+
             form.submit();
         });
     }
@@ -74,31 +74,31 @@ function showValidationError(message) {
 
 document.addEventListener('spa:load', () => {
     initProductFormState();
-    
+
     const form = document.getElementById('productFormElement');
     if (form && !form.dataset.hasValidation) {
         form.dataset.hasValidation = 'true';
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const name = document.querySelector('input[name="name"]').value.trim();
             if (!name) {
                 showValidationError('Vui lòng nhập tên sản phẩm.');
                 return;
             }
-            
+
             const price = document.querySelector('input[name="price"]').value;
             if (!price || price === '') {
                 showValidationError('Vui lòng nhập giá bán.');
                 return;
             }
-            
+
             const cat = document.querySelector('select[name="category.id"]').value;
             if (!cat) {
                 showValidationError('Vui lòng chọn danh mục sản phẩm.');
                 return;
             }
-            
+
             form.submit();
         });
     }
@@ -112,37 +112,37 @@ function editProduct(btn) {
     const brand = btn.getAttribute('data-brand');
     const desc = btn.getAttribute('data-desc');
     const stock = btn.getAttribute('data-stock');
-    
+
     document.getElementById('id').value = id || '';
     document.getElementById('name').value = name || '';
     document.getElementById('price').value = price || '';
-    
+
     const catSelect = document.querySelector('select[name="category.id"]');
     if (catSelect) catSelect.value = cat || '';
-    
+
     const brandInput = document.getElementById('brand');
     if (brandInput) brandInput.value = brand || '';
-    
+
     const descEl = document.getElementById('description');
     if (descEl) descEl.value = desc || '';
     document.getElementById('stock').value = stock || '0';
-    
+
     const imageInput = document.getElementById('image');
     if (imageInput) imageInput.value = btn.getAttribute('data-image') || '';
     const imageUrlInput = document.getElementById('imageUrl');
     if (imageUrlInput) imageUrlInput.value = btn.getAttribute('data-image') || '';
-    
+
     // Update header
     const h2 = document.querySelector('.card-header h2');
     if (h2) h2.innerText = 'Cập Nhật Sản Phẩm';
-    
+
     // Show form
     const form = document.getElementById('productForm');
     if (form && !form.classList.contains('active')) {
         form.classList.add('active');
         updateToggleButtonState(true);
     }
-    
+
     // Smooth scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
