@@ -16,6 +16,7 @@ public class CategoryService {
     final CategoryDAO categoryDAO;
     final ProductDAO productDAO;
 
+    @org.springframework.cache.annotation.Cacheable("allCategories")
     public List<Category> getAllCategories() {
         return categoryDAO.findAll();
     }

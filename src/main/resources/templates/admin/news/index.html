@@ -208,7 +208,7 @@
             <tbody>
                 <tr th:each="n : ${newsPage.content}">
                     <td>
-                        <img th:if="${n.thumbnail != null}" th:src="@{/images/news/{file}(file=${n.thumbnail})}"
+                        <img th:if="${n.thumbnail != null}" th:src="@{${n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail}}"
                             alt="Thumb" />
                         <span th:unless="${n.thumbnail != null}">-</span>
                     </td>
@@ -234,7 +234,7 @@
                             <a th:href="@{/admin/news/edit/{id}(id=${n.id})}" class="btn btn-warning"><i
                                     class="fa fa-edit"></i></a>
                             <form th:action="@{/admin/news/delete/{id}(id=${n.id})}" method="post"
-                                onsubmit="return confirm('Xóa bài viết này?');" style="margin:0;">
+                                onsubmit="return window.confirmSubmit(event, 'Xóa bài viết này?');" style="margin:0;">
                                 <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                             </form>
                         </div>
@@ -248,16 +248,19 @@
 
         <!-- Pagination -->
         <div class="pagination" th:if="${newsPage.totalPages > 1}">
-            <a th:if="${newsPage.hasPrevious()}"
-                th:href="@{/admin/news(page=${newsPage.number - 1}, keyword=${keyword})}">&laquo;</a>
-            <th:block th:each="i : ${#numbers.sequence(0, newsPage.totalPages - 1)}">
-                <a th:href="@{/admin/news(page=${i}, keyword=${keyword})}" th:text="${i + 1}"
-                    th:class="${newsPage.number == i ? 'active' : ''}">1</a>
-            </th:block>
-            <a th:if="${newsPage.hasNext()}"
-                th:href="@{/admin/news(page=${newsPage.number + 1}, keyword=${keyword})}">&raquo;</a>
+            <a th:href="@{/admin/news(page=${newsPage.number - 1}, categoryId=${categoryId}, status=${status}, keyword=${keyword})}"
+                th:classappend="${newsPage.first} ? 'disabled' : ''">&laquo; Prev</a>
+
+            <span th:each="i : ${#numbers.sequence(0, newsPage.totalPages - 1)}">
+                <a th:href="@{/admin/news(page=${i}, categoryId=${categoryId}, status=${status}, keyword=${keyword})}"
+                    th:text="${i + 1}" th:classappend="${i == newsPage.number} ? 'active' : ''">1</a>
+            </span>
+
+            <a th:href="@{/admin/news(page=${newsPage.number + 1}, categoryId=${categoryId}, status=${status}, keyword=${keyword})}"
+                th:classappend="${newsPage.last} ? 'disabled' : ''">Next &raquo;</a>
         </div>
     </div>
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 
 </html>

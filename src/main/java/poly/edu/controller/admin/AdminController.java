@@ -10,6 +10,7 @@ import poly.edu.repository.AdminLogRepository;
 import poly.edu.repository.SupportTicketRepository;
 import poly.edu.repository.UserRepository;
 import poly.edu.service.AdminService;
+import poly.edu.entity.Inventory;
 
 import java.security.Principal;
 import java.util.List;
@@ -148,8 +149,13 @@ public class AdminController {
     }
 
     @GetMapping("/inventory")
-    public String manageInventory(Model model) {
-        model.addAttribute("inventory", adminService.getFullInventory());
+    public String manageInventory(Model model,
+                                  @RequestParam(value = "keyword", required = false) String keyword,
+                                  @RequestParam(value = "page", defaultValue = "0") int page) {
+        org.springframework.data.domain.Page<Inventory> inventoryPage = adminService.getInventoryPage(keyword, page, 10);
+        model.addAttribute("inventory", inventoryPage.getContent());
+        model.addAttribute("inventoryPage", inventoryPage);
+        model.addAttribute("keyword", keyword);
         return "admin/inventory";
     }
 

@@ -229,30 +229,19 @@
                             </div>
 
                             <!-- Quick Delete -->
-                            <button class="delete-btn" th:attr="onclick='deleteTicket(' + ${ticket.id} + ')'">
-                                <i class="fa-solid fa-trash"></i> <span>Xóa
-                                    ticket</span>
-                            </button>
+                            <form th:action="@{/admin/tickets/delete/{id}(id=${ticket.id})}" method="post" onsubmit="return window.confirmSubmit(event, 'Xác nhận xoá ticket này?');" style="margin:0;">
+                                <button type="submit" class="delete-btn">
+                                    <i class="fa-solid fa-trash"></i> <span>Xóa ticket</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <script th:src="@{/js/admin/tickets.js(v=5.0)}"></script>
-        <!-- Custom Delete Ticket Modal -->
-        <div id="delete-ticket-modal" class="custom-modal-overlay" style="display: none;">
-            <div class="custom-modal">
-                <div class="custom-modal-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
-                <h3 id="delete-modal-title">Xóa ticket?</h3>
-                <p>Hành động này không thể hoàn tác. Toàn bộ nội dung trò
-                    chuyện sẽ bị mất.</p>
-                <div class="custom-modal-actions">
-                    <button class="custom-modal-btn cancel" onclick="closeDeleteModal()">Hủy</button>
-                    <button class="custom-modal-btn confirm" id="confirm-delete-btn">Xóa ngay</button>
-                </div>
-            </div>
-        </div>
     </div>
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 
 </html>

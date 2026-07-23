@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="searchBar(actionUrl, keyword)" class="search-bar-container" style="margin-bottom: 1.5rem;">
+        <form th:action="${actionUrl}" method="get" style="display: flex; gap: 10px; max-width: 500px;">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm theo tên hoặc mã..." class="form-control" style="flex: 1; padding: 10px 15px; border: 1px solid var(--border); border-radius: 6px; outline: none;">
+            <button type="submit" class="btn btn-gold" style="white-space: nowrap;"><i class="fa-solid fa-magnifying-glass"></i> Tìm Kiếm</button>
+            <a th:href="${actionUrl}" th:if="${keyword != null and !keyword.isEmpty()}" class="btn btn-outline" style="white-space: nowrap;" title="Xóa tìm kiếm"><i class="fa-solid fa-xmark"></i></a>
+        </form>
+    </div>
+</body>
+</html>

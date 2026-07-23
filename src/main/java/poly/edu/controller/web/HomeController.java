@@ -17,7 +17,8 @@ import poly.edu.service.VoucherService;
 import poly.edu.service.WishlistService;
 import poly.edu.service.NewsService;
 import poly.edu.service.ProfileService;
-import poly.edu.dao.CategoryDAO;
+import poly.edu.service.BrandService;
+import poly.edu.service.CategoryService;
 import poly.edu.service.NewsCategoryService;
 import poly.edu.entity.NewsCategory;
 import org.springframework.data.domain.Page;
@@ -46,7 +47,7 @@ public class HomeController {
 
     final NewsCategoryService newsCategoryService;
 
-    final CategoryDAO categoryDAO;
+    final CategoryService categoryService;
     
     final poly.edu.dao.ReviewDAO reviewDAO;
 
@@ -54,16 +55,16 @@ public class HomeController {
 
     final poly.edu.dao.UserVoucherDAO userVoucherDAO;
 
-    final poly.edu.dao.BrandDAO brandDAO;
+    final BrandService brandService;
 
     // hasValidImage removed for performance
 
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("brands", brandDAO.findAllByOrderByDisplayOrderAsc());
+        model.addAttribute("brands", brandService.getAllBrands());
 
         // Query Category IDs for Build PC banners and components
-        List<poly.edu.entity.Category> categories = categoryDAO.findAll();
+        List<poly.edu.entity.Category> categories = categoryService.getAllCategories();
         Integer gamingCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Gaming") || c.getName().toLowerCase().contains("gaming")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
         Integer workstationCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Workstation") || c.getName().toLowerCase().contains("đồ hoạ") || c.getName().toLowerCase().contains("đồ họa") || c.getName().toLowerCase().contains("workstation")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
         Integer vanPhongCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Văn phòng") || c.getName().toLowerCase().contains("văn phòng") || c.getName().toLowerCase().contains("office")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
@@ -262,7 +263,7 @@ public class HomeController {
         model.addAttribute("sliderItemsMap", sliderItemsMap);
 
         // Category từ database
-        model.addAttribute("categories", categoryDAO.findAll());
+        model.addAttribute("categories", categoryService.getAllCategories());
 
         // Voucher từ database
         List<poly.edu.entity.Voucher> allVouchers = voucherService.getActiveVouchers();

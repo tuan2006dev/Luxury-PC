@@ -34,6 +34,11 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
     // Bạn đã xóa dấu } ở đây để gộp các hàm dưới vào trong Interface
     List<Product> findByCategoryIdAndImageIsNotNull(Integer categoryId);
 
+    org.springframework.data.domain.Page<Product> findByNameContainingIgnoreCase(String name, org.springframework.data.domain.Pageable pageable);
+
+    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category", countQuery = "SELECT COUNT(p) FROM Product p")
+    org.springframework.data.domain.Page<Product> findAllWithCategory(org.springframework.data.domain.Pageable pageable);
+
     @Query("SELECT p FROM Product p WHERE " +
             "(:cid IS NULL OR p.category.id = :cid) AND " +
             "(:min IS NULL OR p.price >= :min) AND " +

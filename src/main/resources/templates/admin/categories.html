@@ -89,7 +89,7 @@
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
                                 <a th:href="@{/admin/categories/delete/{id}(id=${c.id})}" class="icon-btn icon-btn-del"
-                                    title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');"><i
+                                    title="Xóa" onclick="return window.confirmNavigate(event, 'Bạn có chắc chắn muốn xóa danh mục này?', this.href);"><i
                                         class="fa-solid fa-trash"></i></a>
                             </div>
                         </td>
@@ -99,6 +99,7 @@
         </div>
         <script th:src="@{/js/admin/categories.js}"></script>
     </div>
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 
 </html>

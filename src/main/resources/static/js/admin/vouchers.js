@@ -55,27 +55,11 @@ document.getElementById('discountValue').addEventListener('input', function() {
 function deleteVoucherApi(id) {
     const confirmMsg = 'Xóa voucher này?';
     
-    if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            title: confirmMsg,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
-            background: '#1a1a1a',
-            color: '#f5f0e8',
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#c9a84c'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                performDelete(id);
-            }
-        });
-    } else {
-        if (confirm(confirmMsg)) {
+    window.showConfirm(confirmMsg).then((confirmed) => {
+        if (confirmed) {
             performDelete(id);
         }
-    }
+    });
 
     function performDelete(id) {
         fetch('/api/voucher/delete/' + id, {
@@ -84,17 +68,9 @@ function deleteVoucherApi(id) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        title: 'Đã xóa!',
-                        text: data.message || 'Xóa voucher thành công.',
-                        icon: 'success',
-                        background: '#1a1a1a',
-                        color: '#f5f0e8',
-                        confirmButtonColor: '#c9a84c'
-                    }).then(() => {
-                        location.reload();
-                    });
+                if (window.showSuccessModal) {
+                    window.showSuccessModal('Đã xóa!', data.message || 'Xóa voucher thành công.');
+                    setTimeout(() => location.reload(), 1500);
                 } else {
                     alert(data.message || 'Xóa voucher thành công.');
                     location.reload();

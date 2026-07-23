@@ -272,63 +272,7 @@ function updateTicketStatus(id, status) {
         .catch(err => console.error("Error updating status:", err));
 }
 
-var ticketToDelete = window.ticketToDelete || null;
-window.ticketToDelete = ticketToDelete;
 
-function deleteTicket(id) {
-    ticketToDelete = id;
-    const modal = document.getElementById('delete-ticket-modal');
-    if (modal) {
-        document.getElementById('delete-modal-title').innerText = 'Xóa ticket #' + id + '?';
-        modal.style.display = 'flex';
-        modal.classList.add('show');
-    }
-}
-
-function closeDeleteModal() {
-    ticketToDelete = null;
-    const modal = document.getElementById('delete-ticket-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        modal.style.display = 'none';
-    }
-}
-
-function initDeleteTicketModal() {
-    const confirmBtn = document.getElementById('confirm-delete-btn');
-    if (confirmBtn && !confirmBtn.dataset.listenerBound) {
-        confirmBtn.dataset.listenerBound = 'true';
-        confirmBtn.addEventListener('click', function() {
-            if (!ticketToDelete) return;
-            const id = ticketToDelete;
-            closeDeleteModal();
-
-            fetch('/admin/tickets/delete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id })
-            }).then(r => r.json()).then(data => {
-                if (data.success) {
-                    disconnectTicketWs(id);
-                    const row = document.querySelector('[data-id="' + id + '"]');
-                    if (row) {
-                        row.style.opacity = '0';
-                        row.style.transform = 'translateX(-20px)';
-                        row.style.transition = '0.4s';
-                        setTimeout(() => row.remove(), 400);
-                    }
-                }
-            }).catch(err => console.error("Error deleting ticket:", err));
-        });
-    }
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDeleteTicketModal);
-} else {
-    initDeleteTicketModal();
-}
-document.addEventListener('spa:load', initDeleteTicketModal);
 
 function assignTicket(id) {
     return fetch('/admin/tickets/assign', {

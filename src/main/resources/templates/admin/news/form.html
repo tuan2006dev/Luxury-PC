@@ -184,7 +184,7 @@
                             <small style="color: #64748b; display:block; margin-top:5px;">Chọn ảnh mới để thay thế ảnh cũ (nếu có)</small>
                             
                             <!-- Ảnh preview hoặc ảnh cũ -->
-                            <img id="preview" th:src="${news.thumbnail != null} ? @{/images/news/{file}(file=${news.thumbnail})} : '#'" 
+                            <img id="preview" th:src="${news.thumbnail != null} ? @{${news.thumbnail.startsWith('http') || news.thumbnail.startsWith('/') ? news.thumbnail : '/images/news/' + news.thumbnail}} : '#'" 
                                  class="img-preview" th:style="${news.thumbnail != null} ? 'display:block;' : ''" />
                         </div>
                     </div>

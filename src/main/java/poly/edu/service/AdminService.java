@@ -297,6 +297,14 @@ public class AdminService {
         return inventoryDAO.findAllWithProductAndCategory();
     }
 
+    public org.springframework.data.domain.Page<Inventory> getInventoryPage(String keyword, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return inventoryDAO.searchWithProductAndCategory(keyword.trim(), pageable);
+        }
+        return inventoryDAO.findAllWithProductAndCategory(pageable);
+    }
+
     @Transactional
     public void adjustStock(Integer productId, Integer quantity, String type, String note) {
         Product product = productDAO.findById(productId).orElse(null);

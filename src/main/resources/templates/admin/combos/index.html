@@ -90,11 +90,13 @@
                             </td>
                             <td th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
                             <td style="text-align: center;">
-                                <a th:href="@{/admin/combos/edit/{id}(id=${c.id})}" class="icon-btn icon-btn-edit"
-                                    title="Sửa"><i class="fa-solid fa-pen"></i></a>
-                                <a th:href="@{/admin/combos/delete/{id}(id=${c.id})}" class="icon-btn icon-btn-del"
-                                    title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa Combo này?');"><i
-                                        class="fa-solid fa-trash"></i></a>
+                                <div class="action-btns" style="justify-content: center;">
+                                    <a th:href="@{/admin/combos/edit/{id}(id=${c.id})}" class="icon-btn icon-btn-edit"
+                                        title="Sửa"><i class="fa-solid fa-pen"></i></a>
+                                    <a th:href="@{/admin/combos/delete/{id}(id=${c.id})}" class="icon-btn icon-btn-del"
+                                        title="Xóa" onclick="return window.confirmNavigate(event, 'Bạn có chắc chắn muốn xóa Combo này?', this.href);"><i
+                                            class="fa-solid fa-trash"></i></a>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -106,6 +108,7 @@
     <div class="cursor-glow"></div>
     <script th:src="@{/js/cursor.js}"></script>
 
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 
 </html>

@@ -21,6 +21,14 @@ public class ProductService {
         return productDAO.findAll();
     }
 
+    public org.springframework.data.domain.Page<Product> getProductsPage(String keyword, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return productDAO.findByNameContainingIgnoreCase(keyword.trim(), pageable);
+        }
+        return productDAO.findAllWithCategory(pageable);
+    }
+
     @Cacheable("topProducts")
     public List<Product> getTopProducts(int limit) {
         return productDAO.findTopProducts(org.springframework.data.domain.PageRequest.of(0, limit));
@@ -66,8 +74,12 @@ public class ProductService {
         productDAO.deleteInventoryByProductId(id);
         productDAO.deleteStockMovementsByProductId(id);
         productDAO.deleteComboDetailsByProductId(id);
-        productDAO.nullifyOrderItemProductReferences(id);
-        productDAO.deleteById(id);
+        
+        try {
+            productDAO.deleteById(id);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new RuntimeException("Sản phẩm đã được mua trong đơn hàng và không thể xóa để bảo toàn dữ liệu lịch sử!");
+        }
     }
 
 }

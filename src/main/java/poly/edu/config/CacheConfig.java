@@ -24,10 +24,11 @@ public class CacheConfig {
             "currentFlashSale",
             "currentActiveSales",
             "flashSaleItems",
-            "allCategories"
+            "allCategories",
+            "allBrands"
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()
-            .expireAfterWrite(60, TimeUnit.SECONDS) // Cache 60 giây
+            .expireAfterWrite(300, TimeUnit.SECONDS) // Cache 300 giây (5 phút)
             .maximumSize(100)
         );
         return cacheManager;

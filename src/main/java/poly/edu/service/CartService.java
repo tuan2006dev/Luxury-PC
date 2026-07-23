@@ -86,10 +86,14 @@ public class CartService {
         }
 
         // 1. Validate stock for all items
+        java.util.List<Integer> checkoutProductIds = new java.util.ArrayList<>(targetCart.keySet());
+        java.util.List<Product> checkoutProducts = productDAO.findAllById(checkoutProductIds);
+        java.util.Map<Integer, Product> checkoutProductMap = checkoutProducts.stream()
+            .collect(java.util.stream.Collectors.toMap(Product::getId, p -> p));
+
         for (CartItem item : targetCart.values()) {
-            Optional<Product> pOpt = productDAO.findById(item.getId());
-            if (pOpt.isPresent()) {
-                Product p = pOpt.get();
+            Product p = checkoutProductMap.get(item.getId());
+            if (p != null) {
                 if (p.getStock() == null || p.getStock() < item.getQuantity()) {
                     throw new Exception("Sản phẩm " + p.getName() + " không đủ số lượng trong kho.");
                 }
@@ -231,12 +235,21 @@ public class CartService {
         cartItemDAO.deleteByCartId(cart.getId());
 
         if (sessionCart != null && !sessionCart.isEmpty()) {
+            java.util.List<Integer> productIds = new java.util.ArrayList<>(sessionCart.keySet());
+            java.util.List<Product> products = productDAO.findAllById(productIds);
+            java.util.Map<Integer, Product> productMap = products.stream()
+                .collect(java.util.stream.Collectors.toMap(Product::getId, p -> p));
+
+            java.util.List<CartItemEntity> entitiesToSave = new java.util.ArrayList<>();
             for (CartItem item : sessionCart.values()) {
-                Optional<Product> pOpt = productDAO.findById(item.getId());
-                if (pOpt.isPresent()) {
-                    CartItemEntity entityItem = new CartItemEntity(cart, pOpt.get(), item.getQuantity());
-                    cartItemDAO.save(entityItem);
+                Product p = productMap.get(item.getId());
+                if (p != null) {
+                    CartItemEntity entityItem = new CartItemEntity(cart, p, item.getQuantity());
+                    entitiesToSave.add(entityItem);
                 }
+            }
+            if (!entitiesToSave.isEmpty()) {
+                cartItemDAO.saveAll(entitiesToSave);
             }
         }
     }

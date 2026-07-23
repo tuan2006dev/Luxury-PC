@@ -105,28 +105,11 @@ function editFlashSale(btn) {
 
 function deleteFlashSaleApi(id) {
     const confirmMsg = 'Xóa chương trình Flash Sale này?';
-    
-    if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            title: confirmMsg,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
-            background: '#1a1a1a',
-            color: '#f5f0e8',
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#c9a84c'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                performDelete(id);
-            }
-        });
-    } else {
-        if (confirm(confirmMsg)) {
+    window.showConfirm(confirmMsg).then((confirmed) => {
+        if (confirmed) {
             performDelete(id);
         }
-    }
+    });
 
     function performDelete(id) {
         fetch('/api/flash-sales/delete/' + id, {
@@ -135,17 +118,9 @@ function deleteFlashSaleApi(id) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        title: 'Đã xóa!',
-                        text: data.message || 'Xóa chương trình thành công.',
-                        icon: 'success',
-                        background: '#1a1a1a',
-                        color: '#f5f0e8',
-                        confirmButtonColor: '#c9a84c'
-                    }).then(() => {
-                        location.reload();
-                    });
+                if (window.showSuccessModal) {
+                    window.showSuccessModal('Đã xóa!', data.message || 'Xóa chương trình thành công.');
+                    setTimeout(() => location.reload(), 1500);
                 } else {
                     alert(data.message || 'Xóa chương trình thành công.');
                     location.reload();

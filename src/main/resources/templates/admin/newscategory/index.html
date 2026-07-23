@@ -170,7 +170,7 @@
                             <a th:href="@{/admin/news-categories/edit/{id}(id=${cat.id})}" class="btn btn-warning"><i
                                     class="fa fa-edit"></i></a>
                             <form th:action="@{/admin/news-categories/delete/{id}(id=${cat.id})}" method="post"
-                                onsubmit="return confirm('Xóa danh mục này?');" style="margin:0;">
+                                onsubmit="return window.confirmSubmit(event, 'Xóa danh mục này?');" style="margin:0;">
                                 <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                             </form>
                         </div>
@@ -182,6 +182,7 @@
             </tbody>
         </table>
     </div>
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 
 </html>

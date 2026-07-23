@@ -32,12 +32,13 @@ public class AdminProductController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String list(Model model) {
-        java.util.List<Product> prods = productService.getAllProducts();
-        for(Product p : prods) {
-            log.debug("[AdminProduct] id={}, image={}", p.getId(), p.getImage());
-        }
-        model.addAttribute("products", prods);
+    public String list(Model model, 
+                       @RequestParam(value = "keyword", required = false) String keyword,
+                       @RequestParam(value = "page", defaultValue = "0") int page) {
+        org.springframework.data.domain.Page<Product> productPage = productService.getProductsPage(keyword, page, 10);
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("productPage", productPage);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("product", new Product());
         return "admin/products";

@@ -195,14 +195,14 @@
                             <!-- Lock/Unlock -->
                             <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}"
                                 th:if="${u.status == null or u.status == true}" method="post" style="display:inline;"
-                                onsubmit="return confirm('Bạn có chắc chắn muốn KHÓA tài khoản này?');">
+                                onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn KHÓA tài khoản này?');">
 
                                 <button type="submit" class="btn-action" style="color:#eab308;">Khoá</button>
                             </form>
 
                             <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}"
                                 th:if="${u.status == false}" method="post" style="display:inline;"
-                                onsubmit="return confirm('Bạn có chắc chắn muốn MỞ KHÓA tài khoản này?');">
+                                onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn MỞ KHÓA tài khoản này?');">
 
                                 <button type="submit" class="btn-action" style="color:#22c55e;">Mở khoá</button>
                             </form>
@@ -210,7 +210,7 @@
                             <!-- Delete -->
                             <form novalidate th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post"
                                 style="display:inline;"
-                                onsubmit="return confirm('Bạn có chắc chắn muốn XÓA VĨNH VIỄN người dùng này?');">
+                                onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn XÓA VĨNH VIỄN người dùng này?');">
 
                                 <button type="submit" class="btn-action btn-danger">Xoá</button>
                             </form>
@@ -226,6 +226,7 @@
 
         <script th:src="@{/js/admin/account.js}"></script>
     </div>
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 
 </html>

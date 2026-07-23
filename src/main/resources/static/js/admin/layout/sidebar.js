@@ -97,16 +97,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const newContent = doc.querySelector('.main-content');
                 if (newContent) {
-                    // Clean up dynamic PJAX styles from previous page transitions
-                    document.head.querySelectorAll('[data-pjax-style="true"]').forEach(el => el.remove());
-
                     // Sync title
                     if (doc.title) document.title = doc.title;
 
-                    // Sync styles and links from head
+                    // Sync styles and links from head (Full Synchronization)
                     const newStyles = Array.from(doc.head.querySelectorAll('link[rel="stylesheet"], style'));
                     const oldStyles = Array.from(document.head.querySelectorAll('link[rel="stylesheet"], style'));
 
+                    // Remove old styles that are not in new HTML
+                    oldStyles.forEach(oldStyle => {
+                        let exists = false;
+                        if (oldStyle.tagName === 'LINK') {
+                            exists = newStyles.some(newS => newS.tagName === 'LINK' && newS.href === oldStyle.href);
+                        } else if (oldStyle.tagName === 'STYLE') {
+                            exists = newStyles.some(newS => newS.tagName === 'STYLE' && newS.innerHTML.trim() === oldStyle.innerHTML.trim());
+                        }
+                        if (!exists && oldStyle.id !== 'sweetalert2-cdn') {
+                            oldStyle.remove();
+                        }
+                    });
+
+                    // Add new styles that are not in old HTML
                     newStyles.forEach(newStyle => {
                         let exists = false;
                         if (newStyle.tagName === 'LINK') {
@@ -116,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         if (!exists) {
                             const clone = newStyle.cloneNode(true);
-                            clone.setAttribute('data-pjax-style', 'true');
                             document.head.appendChild(clone);
                         }
                     });

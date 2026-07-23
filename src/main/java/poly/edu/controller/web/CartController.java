@@ -509,6 +509,9 @@ public class CartController {
         return "checkout";
     }
 
+    @org.springframework.beans.factory.annotation.Value("${shipping.national.fee:32000}")
+    private int nationalShippingFee;
+
     @PostMapping("/checkout/submit")
     public String submitCheckout(
             @RequestParam("fullName") String fullName,
@@ -522,6 +525,22 @@ public class CartController {
             HttpSession session,
             RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal Object principal) {
+
+        // Backend Validation: Chặn bypass phí vận chuyển
+        boolean isExpressOrStore = shippingMethodName.toLowerCase().contains("hỏa tốc") || shippingMethodName.toLowerCase().contains("cửa hàng");
+        String addrLower = address.toLowerCase();
+        boolean isAddressHCM = addrLower.contains("hồ chí minh") || addrLower.contains("hcm") || addrLower.contains("ho chi minh");
+
+        if (isExpressOrStore && !isAddressHCM) {
+            // Chặn đơn hàng: Nếu chọn Hỏa Tốc hoặc Cửa Hàng mà địa chỉ không ở TP.HCM
+            redirectAttributes.addAttribute("error", "Địa chỉ giao hàng không hợp lệ cho phương thức vận chuyển đã chọn. Vui lòng không giả mạo vị trí.");
+            return "redirect:/cart";
+        }
+
+        if (!isExpressOrStore && shippingFee < nationalShippingFee && shippingFee > 0) {
+            redirectAttributes.addAttribute("error", "Phí giao hàng không hợp lệ. Vui lòng tải lại trang.");
+            return "redirect:/cart";
+        }
 
         Map<Integer, CartItem> targetCart;
         if ("buynow".equals(checkoutType)) {
@@ -585,23 +604,32 @@ public class CartController {
         }
 
         boolean cartChanged = false;
-        java.util.Iterator<CartItem> iterator = cart.values().iterator();
-        while (iterator.hasNext()) {
-            CartItem item = iterator.next();
-            Optional<Product> pOpt = productDAO.findById(item.getId());
-            if (pOpt.isPresent()) {
-                item.setStock(pOpt.get().getStock());
-                item.setImage(pOpt.get().getImage());
-            } else {
-                item.setStock(5);
-            }
-            
-            if (item.getStock() <= 0) {
-                iterator.remove();
-                cartChanged = true;
-            } else if (item.getQuantity() > item.getStock()) {
-                item.setQuantity(item.getStock());
-                cartChanged = true;
+        
+        if (!cart.isEmpty()) {
+            java.util.List<Integer> productIds = new java.util.ArrayList<>(cart.keySet());
+            java.util.List<Product> products = productDAO.findAllById(productIds);
+            java.util.Map<Integer, Product> productMap = products.stream()
+                .collect(java.util.stream.Collectors.toMap(Product::getId, p -> p));
+
+            java.util.Iterator<CartItem> iterator = cart.values().iterator();
+            while (iterator.hasNext()) {
+                CartItem item = iterator.next();
+                Product p = productMap.get(item.getId());
+                
+                if (p != null) {
+                    item.setStock(p.getStock());
+                    item.setImage(p.getImage());
+                } else {
+                    item.setStock(5);
+                }
+                
+                if (item.getStock() <= 0) {
+                    iterator.remove();
+                    cartChanged = true;
+                } else if (item.getQuantity() > item.getStock()) {
+                    item.setQuantity(item.getStock());
+                    cartChanged = true;
+                }
             }
         }
         if (cartChanged) {
