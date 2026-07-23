@@ -4,10 +4,10 @@
 -- Date: 2026-07-19
 -- ======================================================
 
-CREATE  DATABASE LUXURYPC;
+CREATE  DATABASE newlux;
 GO
 
-USE LUXURYPC;
+USE newlux;
 GO
 
 -- --------------------------------------------------
