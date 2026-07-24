@@ -879,7 +879,26 @@
 
             container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--primary);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tính phí vận chuyển từ 1011 Tân Kỳ Tân Quý...</div>';
 
-            let url = `/api/shipping/calculate?provinceCode=${provinceCode || ''}`;
+            let totalWeight = 0;
+            document.querySelectorAll('.order-name').forEach(el => {
+                let name = el.innerText.toLowerCase();
+                let qtyEl = el.nextElementSibling;
+                let qtyStr = qtyEl ? qtyEl.innerText.replace('x', '').trim() : "1";
+                let qty = parseInt(qtyStr) || 1;
+                
+                let itemWeight = 2.5; // Mặc định hạng vừa (Mainboard, VGA, Nguồn, Laptop...)
+                
+                if (name.includes("ram") || name.includes("cpu") || name.includes("ryzen") || name.includes("intel core") || name.includes("ssd") || name.includes("hdd") || name.includes("chuột") || name.includes("phím") || name.includes("tai nghe") || name.includes("usb") || name.includes("cáp") || name.includes("fan") || name.includes("tản nhiệt")) {
+                    itemWeight = 0.5;
+                } else if (name.includes("màn hình") || name.includes("monitor") || name.includes("case") || name.includes("vỏ") || name.includes("ghế") || name.includes("bàn") || name.includes("tower")) {
+                    itemWeight = 8.0;
+                } else if (name.includes("pc") || name.includes("combo") || name.includes("bộ")) {
+                    itemWeight = 15.0;
+                }
+                totalWeight += itemWeight * qty;
+            });
+
+            let url = `/api/shipping/calculate?provinceCode=${provinceCode || ''}&weight=${totalWeight}`;
             if (districtName) url += `&districtName=${encodeURIComponent(districtName)}`;
             if (lat && lng) {
                 url += `&lat=${lat}&lng=${lng}`;

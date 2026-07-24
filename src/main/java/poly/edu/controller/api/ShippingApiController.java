@@ -31,7 +31,8 @@ public class ShippingApiController {
             @RequestParam(required = false) String provinceCode,
             @RequestParam(required = false) String districtName,
             @RequestParam(required = false) Double lat,
-            @RequestParam(required = false) Double lng) {
+            @RequestParam(required = false) Double lng,
+            @RequestParam(required = false, defaultValue = "1.0") Double weight) {
 
         List<Map<String, Object>> methods = new ArrayList<>();
         boolean isHCM = hcmProvinceCode.equals(provinceCode);
@@ -66,8 +67,11 @@ public class ShippingApiController {
         }
 
         // Xử lý Giao hàng tiêu chuẩn (Standard) cho mọi trường hợp
-        int standardFee = getShippingFeeByProvinceCode(provinceCode);
+        int standardFee = calculateStandardFee(provinceCode, districtName, weight);
         String standardDesc = isHCM ? "Thời gian giao hàng 1-2 ngày" : "Thời gian giao hàng 2-5 ngày";
+        if (weight > 1.0) {
+            standardDesc += String.format(" (Đã gồm phụ phí %s kg)", Math.round((weight - 1) * 10) / 10.0);
+        }
         methods.add(createMethod("STANDARD", "Giao hàng tiêu chuẩn", standardDesc, standardFee, "fa-solid fa-truck-fast"));
 
         // Nhận tại cửa hàng (Store)
@@ -77,31 +81,57 @@ public class ShippingApiController {
         return ResponseEntity.ok(methods);
     }
 
-    private int getShippingFeeByProvinceCode(String provinceCode) {
+    private int calculateStandardFee(String provinceCode, String districtName, double weight) {
         if (provinceCode == null || provinceCode.isEmpty()) {
             return nationalShippingFee; // default
         }
 
         try {
             int code = Integer.parseInt(provinceCode);
-            // Zone 1: Vùng lân cận HCM (Tây Ninh, Bình Dương, Đồng Nai, Bà Rịa - Vũng Tàu, Long An)
-            if (code == 72 || code == 74 || code == 75 || code == 77 || code == 80) {
-                return 30000;
-            }
-            // Zone 4: Miền Bắc (mã từ 1 đến 37)
-            if (code >= 1 && code <= 37) {
-                return 60000;
-            }
-            // Zone 3: Miền Trung / Tây Nguyên (mã từ 38 đến 68)
-            if (code >= 38 && code <= 68) {
-                return 50000;
-            }
-            // HCM
+            int baseFee = 0;
+            int surchargePerKg = 0;
+
+            // HCM (Code 79)
             if (code == 79) {
-                return 20000; // Phí tiêu chuẩn nội thành HCM (khi khách không chọn hỏa tốc)
+                if (districtName != null && (districtName.toLowerCase().contains("củ chi") || 
+                    districtName.toLowerCase().contains("nhà bè") || 
+                    districtName.toLowerCase().contains("cần giờ") || 
+                    districtName.toLowerCase().contains("hóc môn") || 
+                    districtName.toLowerCase().contains("bình chánh"))) {
+                    baseFee = 25000; // Zone 1
+                } else {
+                    baseFee = 20000; // Zone 0
+                }
+                surchargePerKg = 3000;
             }
-            // Zone 2: Miền Nam & Mekong Delta (các mã còn lại)
-            return 40000;
+            // Zone 2: Vùng lân cận HCM (Tây Ninh, Bình Dương, Đồng Nai, Bà Rịa - Vũng Tàu, Long An)
+            else if (code == 72 || code == 74 || code == 75 || code == 77 || code == 80) {
+                baseFee = 30000;
+                surchargePerKg = 5000;
+            }
+            // Zone 5: Miền Bắc (mã từ 1 đến 37)
+            else if (code >= 1 && code <= 37) {
+                baseFee = 55000;
+                surchargePerKg = 12000;
+            }
+            // Zone 4: Miền Trung / Tây Nguyên (mã từ 38 đến 68)
+            else if (code >= 38 && code <= 68) {
+                baseFee = 45000;
+                surchargePerKg = 8000;
+            }
+            // Zone 3: Miền Nam & Mekong Delta (các mã còn lại)
+            else {
+                baseFee = 35000;
+                surchargePerKg = 5000;
+            }
+
+            // Tính phụ phí nếu cân nặng > 1kg
+            double extraWeight = weight - 1.0;
+            if (extraWeight > 0) {
+                int extraFee = (int) Math.ceil(extraWeight) * surchargePerKg;
+                return baseFee + extraFee;
+            }
+            return baseFee;
         } catch (NumberFormatException e) {
             return nationalShippingFee;
         }
