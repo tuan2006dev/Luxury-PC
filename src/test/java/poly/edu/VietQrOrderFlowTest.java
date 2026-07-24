@@ -37,7 +37,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "sepay.bank.account-number=123456789",
+        "sepay.bank.account-name=TEST ACCOUNT"
+})
 @WithMockUser(username = "sepay-fixture@example.test", roles = "USER")
 @ActiveProfiles("test")
 @Transactional
