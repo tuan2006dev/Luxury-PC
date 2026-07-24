@@ -16,8 +16,8 @@ import java.util.Map;
 public class ShippingApiController {
 
     // Địa điểm kho cửa hàng: 1011 Tân Kỳ Tân Quý, TP. Hồ Chí Minh
-    private static final double STORE_LAT = 21.02767;
-    private static final double STORE_LNG = 105.8367126;
+    private static final double STORE_LAT = 10.8035;
+    private static final double STORE_LNG = 106.6015;
     private static final int RATE_PER_KM = 5000; // 5.000đ / km
 
     @org.springframework.beans.factory.annotation.Value("${shipping.hcm.code:79}")
@@ -34,38 +34,77 @@ public class ShippingApiController {
             @RequestParam(required = false) Double lng) {
 
         List<Map<String, Object>> methods = new ArrayList<>();
-
-        // Nếu ở TP.HCM (dựa theo provinceCode hoặc nếu có lat/lng gần kho)
         boolean isHCM = hcmProvinceCode.equals(provinceCode);
+        boolean addedExpress = false;
 
+        // Xử lý Giao hỏa tốc (Express)
         if (lat != null && lng != null) {
             double distanceKm = calculateHaversineDistance(STORE_LAT, STORE_LNG, lat, lng) * 1.3;
             distanceKm = Math.round(distanceKm * 10.0) / 10.0;
-            if (distanceKm < 1.0) distanceKm = 1.0;
+            if (distanceKm < 1.0)
+                distanceKm = 1.0;
 
-            int fee = (int) Math.round(distanceKm * RATE_PER_KM / 1000.0) * 1000;
-            if (fee < 15000) fee = 15000;
+            // Giới hạn giao hỏa tốc: chỉ cho phép nếu khoảng cách <= 30km
+            if (distanceKm <= 30.0) {
+                int fee = (int) Math.round(distanceKm * RATE_PER_KM / 1000.0) * 1000;
+                if (fee < 15000)
+                    fee = 15000;
 
-            String desc = String.format("Khoảng cách ~ %.1f km (Từ kho 1011 Tân Kỳ Tân Quý) • 5.000đ/km", distanceKm);
-            methods.add(createMethod("EXPRESS", "Giao hỏa tốc 2H", desc, fee, "fa-solid fa-bolt"));
+                String desc = String.format("Khoảng cách ~ %.1f km (Từ kho 1011 Tân Kỳ Tân Quý) • 5.000đ/km", distanceKm);
+                methods.add(createMethod("EXPRESS", "Giao hỏa tốc 2H", desc, fee, "fa-solid fa-bolt"));
+                addedExpress = true;
+            }
         } else if (isHCM) {
             double estimatedKm = estimateDistrictDistance(districtName);
             int fee = (int) Math.round(estimatedKm * RATE_PER_KM / 1000.0) * 1000;
-            if (fee < 15000) fee = 15000;
+            if (fee < 15000)
+                fee = 15000;
 
             String desc = String.format("Giao hỏa tốc 2H từ 1011 Tân Kỳ Tân Quý (~ %.1f km • 5.000đ/km)", estimatedKm);
             methods.add(createMethod("EXPRESS", "Giao hỏa tốc 2H", desc, fee, "fa-solid fa-bolt"));
+            addedExpress = true;
         }
 
-        if (!isHCM && (lat == null || lng == null)) {
-            // Không phải TP.HCM -> Giao hàng toàn quốc
-            methods.add(createMethod("STANDARD", "Giao hàng toàn quốc", "Thời gian giao hàng 2-5 ngày", nationalShippingFee, "fa-solid fa-truck-fast"));
-        }
+        // Xử lý Giao hàng tiêu chuẩn (Standard) cho mọi trường hợp
+        int standardFee = getShippingFeeByProvinceCode(provinceCode);
+        String standardDesc = isHCM ? "Thời gian giao hàng 1-2 ngày" : "Thời gian giao hàng 2-5 ngày";
+        methods.add(createMethod("STANDARD", "Giao hàng tiêu chuẩn", standardDesc, standardFee, "fa-solid fa-truck-fast"));
 
-        // Nhận tại cửa hàng (Miễn phí)
-        methods.add(createMethod("STORE", "Nhận tại cửa hàng", "Đến nhận trực tiếp tại 1011 Tân Kỳ Tân Quý, TP.HCM", 0, "fa-solid fa-store"));
+        // Nhận tại cửa hàng (Store)
+        methods.add(createMethod("STORE", "Nhận tại cửa hàng", "Đến nhận trực tiếp tại 1011 Tân Kỳ Tân Quý, TP.HCM", 0,
+                "fa-solid fa-store"));
 
         return ResponseEntity.ok(methods);
+    }
+
+    private int getShippingFeeByProvinceCode(String provinceCode) {
+        if (provinceCode == null || provinceCode.isEmpty()) {
+            return nationalShippingFee; // default
+        }
+
+        try {
+            int code = Integer.parseInt(provinceCode);
+            // Zone 1: Vùng lân cận HCM (Tây Ninh, Bình Dương, Đồng Nai, Bà Rịa - Vũng Tàu, Long An)
+            if (code == 72 || code == 74 || code == 75 || code == 77 || code == 80) {
+                return 30000;
+            }
+            // Zone 4: Miền Bắc (mã từ 1 đến 37)
+            if (code >= 1 && code <= 37) {
+                return 60000;
+            }
+            // Zone 3: Miền Trung / Tây Nguyên (mã từ 38 đến 68)
+            if (code >= 38 && code <= 68) {
+                return 50000;
+            }
+            // HCM
+            if (code == 79) {
+                return 20000; // Phí tiêu chuẩn nội thành HCM (khi khách không chọn hỏa tốc)
+            }
+            // Zone 2: Miền Nam & Mekong Delta (các mã còn lại)
+            return 40000;
+        } catch (NumberFormatException e) {
+            return nationalShippingFee;
+        }
     }
 
     private double calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2) {

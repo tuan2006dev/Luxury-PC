@@ -16,9 +16,15 @@
           <!-- Add/Edit address form -->
           <div id="address-form-container"
             style="background:#f8fafc;border:1px solid #e2e8f0;padding:2rem; display:none;">
-            <div id="address-form-title"
-              style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#3b82f6;margin-bottom:1.5rem;">
-              Thêm / Chỉnh Sửa Địa Chỉ</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+              <div id="address-form-title"
+                style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#3b82f6;">
+                Thêm / Chỉnh Sửa Địa Chỉ</div>
+              <button type="button" id="btn-profile-gps" onclick="getProfileLocation()"
+                style="background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; border-radius: 4px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                <i class="fa-solid fa-location-crosshairs"></i> <span id="btn-profile-gps-text">Định vị GPS</span>
+              </button>
+            </div>
             <input type="hidden" id="address-id-edit" />
             <div class="form-2col">
               <div class="form-group">
@@ -52,10 +58,6 @@
                 <div class="form-error" id="address-district-error"
                   style="display:none;color:#ff6b6b;font-size:0.75rem;">
                 </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Mã bưu điện</label>
-                <input type="text" id="address-postal" class="form-input" placeholder="700000" />
               </div>
             </div>
             <div style="display:flex;gap:1rem;">

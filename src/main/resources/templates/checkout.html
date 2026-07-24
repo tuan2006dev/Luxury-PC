@@ -474,7 +474,13 @@
                 <div>
                     <!-- Shipping Info -->
                     <div class="checkout-section">
-                        <div class="section-title">1. THÔNG TIN GIAO HÀNG</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                            <div class="section-title" style="margin-bottom:0;">1. THÔNG TIN GIAO HÀNG</div>
+                            <button type="button" th:if="${#authentication.name != 'anonymousUser'}" onclick="openAddressBookModal()" 
+                                style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 4px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                                <i class="fa-solid fa-address-book"></i> <span>Sổ địa chỉ</span>
+                            </button>
+                        </div>
 
                         <div class="form-grid">
                             <div class="form-group">
@@ -499,11 +505,11 @@
                                     <div style="display:flex; gap: 8px;">
                                         <button type="button" id="btnClearLocation" onclick="clearLocation()"
                                             style="display:none; background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; transition: all 0.2s;">
-                                            <i class="fa-solid fa-xmark"></i> <span>Hủy GPS</span>
+                                            <i class="fa-solid fa-xmark"></i> <span>Hủy chọn (Nhập tay)</span>
                                         </button>
                                         <button type="button" id="btnGetLocation" onclick="getCurrentLocation()"
                                             style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-                                            <i class="fa-solid fa-location-dot"></i> <span>Tự động định vị (GPS/Bản đồ)</span>
+                                            <i class="fa-solid fa-location-dot"></i> <span>Định vị (GPS)</span>
                                         </button>
                                     </div>
                                 </div>
@@ -512,19 +518,19 @@
                                 <small id="locationStatus"
                                     style="font-size: 12px; margin-top: 4px; display: none;"></small>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="province-group">
                                 <label class="form-label">Tỉnh / Thành phố <span>*</span></label>
                                 <select class="form-control" id="province" required>
                                     <option value="">Chọn Tỉnh / Thành phố</option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="district-group">
                                 <label class="form-label">Quận / Huyện <span>*</span></label>
                                 <select class="form-control" id="district" required disabled>
                                     <option value="">Chọn Quận / Huyện</option>
                                 </select>
                             </div>
-                            <div class="form-group full">
+                            <div class="form-group full" id="ward-group">
                                 <label class="form-label">Phường / Xã <span>*</span></label>
                                 <select class="form-control" id="ward" required disabled>
                                     <option value="">Chọn Phường / Xã</option>
@@ -637,7 +643,7 @@
                         <div id="voucherMessage" style="font-size:13px; margin-bottom:15px; display:none; text-align: right; font-weight: 500;"></div>
                         
                         <!-- Input ẩn để lưu mã -->
-                        <input type="hidden" id="voucherInput" name="voucherCode" th:value="${voucherCode}" />
+                        <input type="hidden" id="voucherInput" th:value="${voucherCode}" />
 
                         <!-- Total -->
                         <div class="summary-row total">
@@ -690,8 +696,21 @@
 
     </div>
 
+    <!-- Address Book Modal -->
+    <div id="addressBookModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:#fff; width: 90%; max-width: 600px; border-radius: 8px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; max-height: 80vh; display: flex; flex-direction: column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+                <h3 style="margin:0; font-size:18px;">Chọn Địa Chỉ Giao Hàng</h3>
+                <button type="button" onclick="closeAddressBookModal()" style="background:none; border:none; font-size:20px; cursor:pointer; color:#64748b;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="addressBookList" style="flex-grow: 1; overflow-y: auto; padding-right: 8px; display: flex; flex-direction: column; gap: 12px;">
+                <div style="text-align:center; padding: 20px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách địa chỉ...</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Voucher Modal -->
-    <div id="voucherModal" class="modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
+    <div id="voucherModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
         <div class="modal-content" style="background-color: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; margin: 0 15px;">
             <span class="close" onclick="closeVoucherModal()" style="position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #64748b; line-height: 1;">&times;</span>
             <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 700; color: #0f172a;"><i class="fa-solid fa-ticket" style="color: var(--primary); margin-right: 8px;"></i> LUXURY PC VOUCHER</h3>
@@ -922,6 +941,14 @@
             const val = this.value;
             userLat = null;
             userLon = null;
+            
+            // Ẩn nút GPS nếu người dùng đã tự chọn Tỉnh/Thành phố
+            if (val) {
+                document.getElementById('btnGetLocation').style.display = 'none';
+            } else {
+                document.getElementById('btnGetLocation').style.display = 'flex';
+            }
+
             fetchShippingMethods(val);
             const distSel = document.getElementById('district');
             const wardSel = document.getElementById('ward');
@@ -1129,6 +1156,60 @@
             }
         });
 
+        function onGpsSuccess() {
+            document.getElementById('province').disabled = true;
+            document.getElementById('province').removeAttribute('required');
+            document.getElementById('district').disabled = true;
+            document.getElementById('district').removeAttribute('required');
+            document.getElementById('ward').disabled = true;
+            document.getElementById('ward').removeAttribute('required');
+            
+            document.getElementById('province-group').style.display = 'none';
+            document.getElementById('district-group').style.display = 'none';
+            document.getElementById('ward-group').style.display = 'none';
+            
+            document.getElementById('addressLine').readOnly = true;
+            document.getElementById('addressLine').style.backgroundColor = '#f1f5f9';
+            
+            document.getElementById('btnClearLocation').style.display = 'flex';
+            document.getElementById('btnGetLocation').style.display = 'none';
+        }
+
+        window.clearLocation = function() {
+            userLat = null;
+            userLon = null;
+            const addressInput = document.getElementById('addressLine');
+            addressInput.value = '';
+            addressInput.readOnly = false;
+            addressInput.style.backgroundColor = '';
+            
+            document.getElementById('province-group').style.display = 'block';
+            document.getElementById('district-group').style.display = 'block';
+            document.getElementById('ward-group').style.display = 'block';
+            
+            const pSel = document.getElementById('province');
+            const dSel = document.getElementById('district');
+            const wSel = document.getElementById('ward');
+            
+            pSel.disabled = false;
+            pSel.setAttribute('required', 'required');
+            
+            // If a province is already selected, leave district/ward enabled if they have data
+            if (pSel.value) {
+                dSel.disabled = false;
+                dSel.setAttribute('required', 'required');
+                if (dSel.value) {
+                    wSel.disabled = false;
+                    wSel.setAttribute('required', 'required');
+                }
+            }
+            
+            document.getElementById('btnClearLocation').style.display = 'none';
+            document.getElementById('btnGetLocation').style.display = 'flex';
+            document.getElementById('locationStatus').innerText = '';
+            fetchShippingMethods(pSel.value);
+        }
+
         // Robust GPS & IP Geolocation with BigDataCloud & Nominatim Fallback
         async function getCurrentLocation() {
             const btn = document.getElementById('btnGetLocation');
@@ -1140,51 +1221,6 @@
             statusMsg.style.display = 'block';
             statusMsg.style.color = '#0284c7';
             statusMsg.innerText = 'Đang xin quyền vị trí và tra cứu bản đồ...';
-
-            function onGpsSuccess() {
-                document.getElementById('province').disabled = true;
-                document.getElementById('province').removeAttribute('required');
-                document.getElementById('district').disabled = true;
-                document.getElementById('district').removeAttribute('required');
-                document.getElementById('ward').disabled = true;
-                document.getElementById('ward').removeAttribute('required');
-                
-                document.getElementById('addressLine').readOnly = true;
-                document.getElementById('addressLine').style.backgroundColor = '#f1f5f9';
-                
-                document.getElementById('btnClearLocation').style.display = 'flex';
-                document.getElementById('btnGetLocation').style.display = 'none';
-            }
-
-            window.clearLocation = function() {
-                userLat = null;
-                userLon = null;
-                addressInput.value = '';
-                addressInput.readOnly = false;
-                addressInput.style.backgroundColor = '';
-                
-                const pSel = document.getElementById('province');
-                const dSel = document.getElementById('district');
-                const wSel = document.getElementById('ward');
-                
-                pSel.disabled = false;
-                pSel.setAttribute('required', 'required');
-                
-                // If a province is already selected, leave district/ward enabled if they have data
-                if (pSel.value) {
-                    dSel.disabled = false;
-                    dSel.setAttribute('required', 'required');
-                    if (dSel.value) {
-                        wSel.disabled = false;
-                        wSel.setAttribute('required', 'required');
-                    }
-                }
-                
-                document.getElementById('btnClearLocation').style.display = 'none';
-                document.getElementById('btnGetLocation').style.display = 'flex';
-                statusMsg.innerText = '';
-                fetchShippingMethods(pSel.value);
-            }
 
             async function reverseGeocode(lat, lon) {
                 userLat = lat;
@@ -1300,6 +1336,148 @@
                 }
             }
         }
+
+        // --- ADDRESS BOOK LOGIC ---
+        function openAddressBookModal() {
+            document.getElementById('addressBookModal').style.display = 'flex';
+            const listContainer = document.getElementById('addressBookList');
+            listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách địa chỉ...</div>';
+            
+            fetch('/api/address')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.data && data.data.length > 0) {
+                        listContainer.innerHTML = data.data.map(addr => `
+                            <div style="border: 1px solid var(--border); padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${addr.recipientName} <span style="font-weight: normal; color: #64748b;">| ${addr.phone}</span></div>
+                                    <div style="font-size: 13px; color: #475569;">${addr.detailedAddress}</div>
+                                    <div style="font-size: 13px; color: #475569;">${addr.district ? addr.district + ', ' : ''}${addr.city}</div>
+                                </div>
+                                <button type="button" onclick="selectAddressFromBook('${encodeURIComponent(JSON.stringify(addr))}')" style="background: var(--primary); color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: 500;">Chọn</button>
+                            </div>
+                        `).join('');
+                    } else {
+                        listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:#64748b;">Bạn chưa lưu địa chỉ nào trong sổ địa chỉ.</div>';
+                    }
+                })
+                .catch(err => {
+                    listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--danger);">Lỗi tải danh sách địa chỉ.</div>';
+                });
+        }
+
+        function closeAddressBookModal() {
+            document.getElementById('addressBookModal').style.display = 'none';
+        }
+
+        function selectAddressFromBook(addrJsonEnc) {
+            const addr = JSON.parse(decodeURIComponent(addrJsonEnc));
+            document.getElementById('fullName').value = addr.recipientName || '';
+            document.getElementById('phone').value = addr.phone || '';
+
+            closeAddressBookModal();
+            
+            // Xóa GPS mode nếu đang có
+            if (document.getElementById('btnGetLocation').style.display === 'none' && !document.getElementById('province').value) {
+                 if (typeof window.clearLocation === 'function') {
+                      window.clearLocation();
+                 }
+            }
+            
+            // Thay vì chỉ hiển thị detail, ta hiển thị chuỗi đầy đủ và ẩn các form dropdown (giống GPS)
+            let fullAddress = addr.detailedAddress || '';
+            if (addr.district && !fullAddress.includes(addr.district)) {
+                fullAddress += ', ' + addr.district;
+            }
+            if (addr.city && !fullAddress.includes(addr.city)) {
+                fullAddress += ', ' + addr.city;
+            }
+            document.getElementById('addressLine').value = fullAddress;
+            
+            // Gọi hàm onGpsSuccess để ẩn các form Tỉnh/Huyện/Xã đi
+            if (typeof onGpsSuccess === 'function') {
+                onGpsSuccess();
+            } else {
+                // Fallback nếu hàm nằm trong scope khác
+                document.getElementById('province-group').style.display = 'none';
+                document.getElementById('district-group').style.display = 'none';
+                document.getElementById('ward-group').style.display = 'none';
+                document.getElementById('addressLine').readOnly = true;
+                document.getElementById('addressLine').style.backgroundColor = '#f1f5f9';
+                document.getElementById('btnClearLocation').style.display = 'flex';
+                document.getElementById('btnGetLocation').style.display = 'none';
+                
+                document.getElementById('province').disabled = true;
+                document.getElementById('province').removeAttribute('required');
+                document.getElementById('district').disabled = true;
+                document.getElementById('district').removeAttribute('required');
+                document.getElementById('ward').disabled = true;
+                document.getElementById('ward').removeAttribute('required');
+            }
+
+            // Hàm chuẩn hóa chuỗi để so sánh
+            const normalize = (str) => {
+                if (!str) return '';
+                return str.toLowerCase()
+                          .replace(/tỉnh|thành phố|tp\.?|quận|huyện|thị xã|phường|xã/gi, '')
+                          .replace(/\s+/g, ' ')
+                          .trim();
+            };
+
+            const pSel = document.getElementById('province');
+            let targetCity = normalize(addr.city);
+            let targetDist = normalize(addr.district);
+            
+            // Xử lý đặc biệt cho Thủ Đức (Nhiều api/user coi Thủ Đức là Thành phố/Tỉnh)
+            if (targetCity.includes('thủ đức')) {
+                targetCity = 'hồ chí minh';
+                targetDist = 'thủ đức';
+            }
+
+            let matchedProvince = false;
+            for (let i = 0; i < pSel.options.length; i++) {
+                const optText = normalize(pSel.options[i].text);
+                if (targetCity && optText && (optText === targetCity || optText.includes(targetCity) || targetCity.includes(optText))) {
+                    pSel.selectedIndex = i;
+                    matchedProvince = true;
+                    
+                    // Trigger change to load districts
+                    pSel.dispatchEvent(new Event('change'));
+                    
+                    // Chờ API tải quận/huyện xong rồi chọn
+                    setTimeout(() => {
+                        const dSel = document.getElementById('district');
+                        for (let j = 0; j < dSel.options.length; j++) {
+                             const dOptText = normalize(dSel.options[j].text);
+                             if (targetDist && dOptText && (dOptText === targetDist || dOptText.includes(targetDist) || targetDist.includes(dOptText))) {
+                                 dSel.selectedIndex = j;
+                                 dSel.dispatchEvent(new Event('change'));
+                                 break;
+                             }
+                        }
+                    }, 800); // Tăng delay lên 800ms cho chắc chắn
+                    break;
+                }
+            }
+            
+            // Nếu không tìm thấy bằng city, thử tìm bằng district (Trường hợp user nhập ngược)
+            if (!matchedProvince && targetDist) {
+                for (let i = 0; i < pSel.options.length; i++) {
+                    const optText = normalize(pSel.options[i].text);
+                    if (optText && (optText === targetDist || optText.includes(targetDist) || targetDist.includes(optText))) {
+                        pSel.selectedIndex = i;
+                        matchedProvince = true;
+                        pSel.dispatchEvent(new Event('change'));
+                        break;
+                    }
+                }
+            }
+            
+            if (!matchedProvince && (addr.city || addr.district)) {
+                 alert('Đã tải thông tin, nhưng hệ thống không nhận dạng được Tỉnh/Thành phố (Do tên không khớp). Vui lòng chọn thủ công.');
+            }
+        }
+
 
         // Prepare submit
         function prepareSubmit(e) {

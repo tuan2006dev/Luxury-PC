@@ -261,8 +261,12 @@
                       th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
                   </div>
                   <div class="item-mini">
-                    <span>Phí vận chuyển (Hỏa tốc)</span>
-                    <span style="color:#3b82f6;">0 ₫</span>
+                    <span th:text="'Phí vận chuyển ' + (${order.shippingMethodName != null and order.shippingMethodName != ''} ? '(' + ${order.shippingMethodName} + ')' : '')">Phí vận chuyển</span>
+                    <span style="color:#3b82f6;" th:text="${order.shippingFee != null and order.shippingFee > 0 ? #numbers.formatDecimal(order.shippingFee, 1, 'COMMA', 0, 'POINT') + '₫' : 'Miễn phí'}">0 ₫</span>
+                  </div>
+                  <div class="item-mini" th:if="${order.voucherCode != null and order.voucherCode != ''}">
+                    <span th:text="'Voucher áp dụng (' + ${order.voucherCode} + ')'">Voucher áp dụng</span>
+                    <span style="color:#ef4444;" th:text="'-' + ${#numbers.formatDecimal(order.discountAmount != null ? order.discountAmount : 0, 1, 'COMMA', 0, 'POINT')} + '₫'">-0 ₫</span>
                   </div>
                 </div>
                 <!-- Delivery & Payment Information -->
