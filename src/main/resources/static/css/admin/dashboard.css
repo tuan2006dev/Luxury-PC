@@ -12,7 +12,8 @@
 }
 
 /* Locked Single Viewport - No Page Scroll */
-html, body {
+html,
+body {
 	height: 100vh !important;
 	max-height: 100vh !important;
 	overflow: hidden !important;
@@ -54,20 +55,6 @@ html, body {
 	color: var(--muted);
 	font-size: 0.8rem !important;
 	margin-top: 0.25rem !important;
-}
-
-.user-info {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	background: var(--admin-card-bg);
-	padding: 6px 16px;
-	border-radius: 20px;
-	border: 1px solid var(--admin-border);
-}
-
-.user-info i {
-	color: var(--admin-primary);
 }
 
 /* Stats Grid */

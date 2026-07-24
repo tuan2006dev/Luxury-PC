@@ -50,10 +50,10 @@ public class AdminNewsController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String index(Model model, 
-                        @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                        @RequestParam(name = "page", defaultValue = "0") int page) {
-        
+    public String index(Model model,
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "page", defaultValue = "0") int page) {
+
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<poly.edu.dto.NewsSummaryDto> newsPage;
         if (keyword.isEmpty()) {
@@ -61,7 +61,7 @@ public class AdminNewsController {
         } else {
             newsPage = newsRepository.searchAllNewsSummary(keyword, pageable);
         }
-        
+
         model.addAttribute("newsPage", newsPage);
         model.addAttribute("keyword", keyword);
         return "admin/news/index";
@@ -89,12 +89,12 @@ public class AdminNewsController {
 
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("news") News news, BindingResult bindingResult,
-                       @RequestParam("thumbnailFile") MultipartFile thumbnailFile,
-                       Authentication authentication,
-                       HttpServletRequest request,
-                       RedirectAttributes redirectAttributes,
-                       Model model) {
-        
+            @RequestParam("thumbnailFile") MultipartFile thumbnailFile,
+            Authentication authentication,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
         // Auto-generate slug if left blank
         if (news.getSlug() == null || news.getSlug().trim().isEmpty()) {
             news.setSlug(generateSlug(news.getTitle()));
@@ -189,7 +189,8 @@ public class AdminNewsController {
     }
 
     private String generateSlug(String title) {
-        if (title == null || title.trim().isEmpty()) return "bai-viet-" + System.currentTimeMillis();
+        if (title == null || title.trim().isEmpty())
+            return "bai-viet-" + System.currentTimeMillis();
         String slug = title.toLowerCase().trim();
         slug = slug.replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a");
         slug = slug.replaceAll("[èéẹẻẽêềếệểễ]", "e");
@@ -200,7 +201,8 @@ public class AdminNewsController {
         slug = slug.replaceAll("đ", "d");
         slug = slug.replaceAll("[^a-z0-9\\s-]", "");
         slug = slug.replaceAll("[\\s-]+", "-");
-        if (slug.isEmpty()) slug = "bai-viet-" + System.currentTimeMillis();
+        if (slug.isEmpty())
+            slug = "bai-viet-" + System.currentTimeMillis();
         return slug;
     }
 

@@ -149,13 +149,8 @@ public class AdminController {
     }
 
     @GetMapping("/inventory")
-    public String manageInventory(Model model,
-                                  @RequestParam(value = "keyword", required = false) String keyword,
-                                  @RequestParam(value = "page", defaultValue = "0") int page) {
-        org.springframework.data.domain.Page<Inventory> inventoryPage = adminService.getInventoryPage(keyword, page, 10);
-        model.addAttribute("inventory", inventoryPage.getContent());
-        model.addAttribute("inventoryPage", inventoryPage);
-        model.addAttribute("keyword", keyword);
+    public String manageInventory(Model model) {
+        model.addAttribute("inventory", adminService.getFullInventory());
         return "admin/inventory";
     }
 

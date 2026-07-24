@@ -20,12 +20,24 @@
     <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
     <div class="main-content">
+        <div class="header"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
+            <div class="title">
+                <h1 style="font-size: 1.6rem; margin: 0; color: #0f172a;"><i class="fa-solid fa-users-gear"
+                        style="color:var(--gold);margin-right:10px;"></i><span>Quản Lý Tài Khoản</span></h1>
+                <p style="color: var(--muted); font-size: 0.85rem; margin: 4px 0 0 0;">Quản lý và cấp quyền tài khoản
+                    người dùng, nhân viên</p>
+            </div>
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
+        </div>
 
         <!-- Alert Banners -->
-        <div th:if="${message}" class="alert alert-success" style="background:#dcfce7; color:#15803d; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; border:1px solid #bbf7d0; display:flex; align-items:center; gap:0.5rem; font-weight:500;">
+        <div th:if="${message}" class="alert alert-success"
+            style="background:#dcfce7; color:#15803d; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; border:1px solid #bbf7d0; display:flex; align-items:center; gap:0.5rem; font-weight:500;">
             <i class="fa-solid fa-circle-check"></i> <span th:text="${message}"></span>
         </div>
-        <div th:if="${error}" class="alert alert-danger" style="background:#fee2e2; color:#b91c1c; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; border:1px solid #fca5a5; display:flex; align-items:center; gap:0.5rem; font-weight:500;">
+        <div th:if="${error}" class="alert alert-danger"
+            style="background:#fee2e2; color:#b91c1c; padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; border:1px solid #fca5a5; display:flex; align-items:center; gap:0.5rem; font-weight:500;">
             <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${error}"></span>
         </div>
 
@@ -138,89 +150,67 @@
 
             <h2>Danh sách Staff</h2>
 
-            <table>
+            <div class="table-wrapper" style="width: 100%; max-height: 50vh; overflow-x: hidden; overflow-y: auto;">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">ID</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Username</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Email</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Họ tên</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">SĐT</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Trạng thái</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${users}">
+                            <td th:text="${u.id}"></td>
+                            <td th:text="${u.username}"></td>
+                            <td th:text="${u.email}"></td>
+                            <td th:text="${u.fullName}"></td>
+                            <td th:text="${u.phone}"></td>
+                            <td>
+                                <span th:if="${u.status == null or u.status == true}" class="badge active-badge">Hoạt
+                                    động</span>
+                                <span th:if="${u.status == false}" class="badge inactive-badge">Đã khoá</span>
+                            </td>
+                            <td>
+                                <!-- Edit -->
+                                <button type="button" class="btn-action" th:data-id="${u.id}"
+                                    th:data-username="${u.username}" th:data-email="${u.email}"
+                                    th:data-fullname="${u.fullName != null ? u.fullName : ''}"
+                                    th:data-phone="${u.phone != null ? u.phone : ''}"
+                                    th:data-address="${u.address != null ? u.address : ''}" th:data-gender="${u.gender}"
+                                    th:data-status="${u.status}" onclick="editUser(this)">
+                                    Sửa
+                                </button>
 
-                <thead>
+                                <!-- Lock/Unlock -->
+                                <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}"
+                                    th:if="${u.status == null or u.status == true}" method="post"
+                                    style="display:inline;"
+                                    onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn KHÓA tài khoản này?');">
+                                    <button type="submit" class="btn-action" style="color:#eab308;">Khoá</button>
+                                </form>
 
-                    <tr>
+                                <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}"
+                                    th:if="${u.status == false}" method="post" style="display:inline;"
+                                    onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn MỞ KHÓA tài khoản này?');">
+                                    <button type="submit" class="btn-action" style="color:#22c55e;">Mở khoá</button>
+                                </form>
 
-                        <th>ID</th>
-
-                        <th>Username</th>
-
-                        <th>Email</th>
-
-                        <th>Họ tên</th>
-
-                        <th>SĐT</th>
-
-                        <th>Trạng thái</th>
-
-                        <th>Hành động</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    <tr th:each="u : ${users}">
-
-                        <td th:text="${u.id}"></td>
-
-                        <td th:text="${u.username}"></td>
-
-                        <td th:text="${u.email}"></td>
-
-                        <td th:text="${u.fullName}"></td>
-
-                        <td th:text="${u.phone}"></td>
-
-                        <td>
-                            <span th:if="${u.status == null or u.status == true}" class="badge active-badge">Hoạt động</span>
-                            <span th:if="${u.status == false}" class="badge inactive-badge">Đã khoá</span>
-                        </td>
-
-                        <td>
-                            <!-- Edit -->
-                            <button type="button" class="btn-action" th:data-id="${u.id}"
-                                th:data-username="${u.username}" th:data-email="${u.email}"
-                                th:data-fullname="${u.fullName != null ? u.fullName : ''}"
-                                th:data-phone="${u.phone != null ? u.phone : ''}"
-                                th:data-address="${u.address != null ? u.address : ''}" th:data-gender="${u.gender}"
-                                th:data-status="${u.status}" onclick="editUser(this)">
-                                Sửa
-                            </button>
-
-                            <!-- Lock/Unlock -->
-                            <form novalidate th:action="@{/admin/account/lock/{id}(id=${u.id})}"
-                                th:if="${u.status == null or u.status == true}" method="post" style="display:inline;"
-                                onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn KHÓA tài khoản này?');">
-
-                                <button type="submit" class="btn-action" style="color:#eab308;">Khoá</button>
-                            </form>
-
-                            <form novalidate th:action="@{/admin/account/unlock/{id}(id=${u.id})}"
-                                th:if="${u.status == false}" method="post" style="display:inline;"
-                                onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn MỞ KHÓA tài khoản này?');">
-
-                                <button type="submit" class="btn-action" style="color:#22c55e;">Mở khoá</button>
-                            </form>
-
-                            <!-- Delete -->
-                            <form novalidate th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post"
-                                style="display:inline;"
-                                onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn XÓA VĨNH VIỄN người dùng này?');">
-
-                                <button type="submit" class="btn-action btn-danger">Xoá</button>
-                            </form>
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
+                                <!-- Delete -->
+                                <form novalidate th:action="@{/admin/account/delete/{id}(id=${u.id})}" method="post"
+                                    style="display:inline;"
+                                    onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn XÓA VĨNH VIỄN người dùng này?');">
+                                    <button type="submit" class="btn-action btn-danger">Xoá</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 

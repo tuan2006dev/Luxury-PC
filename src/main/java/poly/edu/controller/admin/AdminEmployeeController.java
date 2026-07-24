@@ -47,19 +47,17 @@ public class AdminEmployeeController {
         // Search filter
         if (keyword != null && !keyword.isBlank()) {
             String kw = keyword.toLowerCase().trim();
-            employees = employees.stream().filter(u ->
-                    (u.getUsername() != null && u.getUsername().toLowerCase().contains(kw)) ||
-                    (u.getFullName() != null && u.getFullName().toLowerCase().contains(kw)) ||
-                    (u.getEmail() != null && u.getEmail().toLowerCase().contains(kw)) ||
-                    (u.getPhone() != null && u.getPhone().contains(kw))
-            ).collect(Collectors.toList());
+            employees = employees.stream()
+                    .filter(u -> (u.getUsername() != null && u.getUsername().toLowerCase().contains(kw)) ||
+                            (u.getFullName() != null && u.getFullName().toLowerCase().contains(kw)) ||
+                            (u.getEmail() != null && u.getEmail().toLowerCase().contains(kw)) ||
+                            (u.getPhone() != null && u.getPhone().contains(kw)))
+                    .collect(Collectors.toList());
         }
 
         // Status filter
         if (statusFilter != null) {
-            employees = employees.stream().filter(u ->
-                    statusFilter.equals(u.getStatus())
-            ).collect(Collectors.toList());
+            employees = employees.stream().filter(u -> statusFilter.equals(u.getStatus())).collect(Collectors.toList());
         }
 
         List<User> allStaff = userRepository.findAllEmployees();
@@ -97,12 +95,14 @@ public class AdminEmployeeController {
         if (isNew) {
             // Check username duplicate
             if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Tên đăng nhập '" + user.getUsername() + "' đã tồn tại!");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Tên đăng nhập '" + user.getUsername() + "' đã tồn tại!");
                 return "redirect:/admin/employees";
             }
             // Check email duplicate
             if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Email '" + user.getEmail() + "' đã được sử dụng!");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Email '" + user.getEmail() + "' đã được sử dụng!");
                 return "redirect:/admin/employees";
             }
 
@@ -110,12 +110,14 @@ public class AdminEmployeeController {
             String rawPassword = user.getPassword();
             if (rawPassword == null || rawPassword.isBlank()) {
                 rawPassword = generateRandomPassword();
-                redirectAttributes.addFlashAttribute("successMessage", "Đã tạo nhân viên mới! Mật khẩu khởi tạo: " + rawPassword);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Đã tạo nhân viên mới! Mật khẩu khởi tạo: " + rawPassword);
             } else {
                 redirectAttributes.addFlashAttribute("successMessage", "Đã tạo thành công nhân viên mới!");
             }
             user.setPassword(passwordEncoder.encode(rawPassword));
-            if (user.getStatus() == null) user.setStatus(true);
+            if (user.getStatus() == null)
+                user.setStatus(true);
             user.setForceChangePassword(false);
 
             User savedUser = userRepository.save(user);
@@ -130,7 +132,8 @@ public class AdminEmployeeController {
             }
 
             // Log action
-            adminLogRepository.save(new AdminLog(currentAdmin, "Tạo nhân viên (Role: " + roleName + ")", clientIp, savedUser.getUsername()));
+            adminLogRepository.save(new AdminLog(currentAdmin, "Tạo nhân viên (Role: " + roleName + ")", clientIp,
+                    savedUser.getUsername()));
 
         } else {
             // Updating existing employee
@@ -165,8 +168,10 @@ public class AdminEmployeeController {
                 }
 
                 // Log action
-                adminLogRepository.save(new AdminLog(currentAdmin, "Sửa thông tin nhân viên (Role: " + roleName + ")", clientIp, savedUser.getUsername()));
-                redirectAttributes.addFlashAttribute("successMessage", "Cập nhật nhân viên " + savedUser.getUsername() + " thành công!");
+                adminLogRepository.save(new AdminLog(currentAdmin, "Sửa thông tin nhân viên (Role: " + roleName + ")",
+                        clientIp, savedUser.getUsername()));
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Cập nhật nhân viên " + savedUser.getUsername() + " thành công!");
             }
         }
 

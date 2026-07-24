@@ -132,18 +132,13 @@
         <!-- Clean Standard Header -->
         <div class="header frame-in-up">
             <div class="title">
-                <h1 class="text-gradient" style="font-size: 1.8rem; font-weight: 600; color: #0f172a; margin: 0;">Bảng Điều Khiển</h1>
-                <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">Tổng quan chỉ số kinh doanh & hoạt động của Luxury PC</p>
+                <h1 class="text-gradient" style="font-size: 1.8rem; font-weight: 600; color: #0f172a; margin: 0;">Bảng
+                    Điều Khiển</h1>
+                <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">Tổng quan chỉ số kinh doanh & hoạt động
+                    của Luxury PC</p>
             </div>
 
-            <div class="user-info" style="display: flex; align-items: center; padding: 6px 16px; border-radius: 20px; background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-                <i class="fa-solid fa-user-shield" style="color: #3b82f6;"></i>
-                <span th:text="${#authentication.name}" style="margin-left: 8px; font-weight: 500;">Admin</span>
-                <span sec:authorize="hasRole('ADMIN')"
-                    style="background-color: #0056b3; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 8px; font-weight: 600;">ADMIN</span>
-                <span sec:authorize="hasRole('STAFF')"
-                    style="background-color: #10b981; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 8px; font-weight: 600;">STAFF</span>
-            </div>
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
         </div>
 
         <!-- Summary KPI Cards -->
@@ -186,11 +181,13 @@
                 <div class="charts-grid">
                     <!-- Chart 1: Revenue Line Chart with Filter Controls inside Table-H Header -->
                     <div class="chart-container" style="position: relative;">
-                        <div class="table-h" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div class="table-h"
+                            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <i class="fa-solid fa-chart-area"></i>
                                 <span>Biểu Đồ Doanh Thu Theo Ngày</span>
-                                <span id="statsLoader" style="display: none; color: #3b82f6; font-size: 0.8rem; margin-left: 6px;">
+                                <span id="statsLoader"
+                                    style="display: none; color: #3b82f6; font-size: 0.8rem; margin-left: 6px;">
                                     <i class="fa-solid fa-spinner fa-spin"></i>
                                 </span>
                             </div>
@@ -198,20 +195,29 @@
                             <!-- Integrated Date Filter Widget inside Chart Card Header -->
                             <div style="display: flex; align-items: center; gap: 6px; position: relative;">
                                 <div class="preset-group">
-                                    <button type="button" class="btn-preset" data-range="today" onclick="handlePresetClick('today', this)">Hôm nay</button>
-                                    <button type="button" class="btn-preset" data-range="yesterday" onclick="handlePresetClick('yesterday', this)">Hôm qua</button>
-                                    <button type="button" class="btn-preset" data-range="7d" onclick="handlePresetClick('7d', this)">7 ngày</button>
-                                    <button type="button" class="btn-preset active" data-range="30d" onclick="handlePresetClick('30d', this)">30 ngày</button>
-                                    <button type="button" class="btn-preset" data-range="thisMonth" onclick="handlePresetClick('thisMonth', this)">Tháng này</button>
-                                    <button type="button" class="btn-preset" data-range="lastMonth" onclick="handlePresetClick('lastMonth', this)">Tháng trước</button>
-                                    <button type="button" class="btn-preset" id="customToggleBtn" onclick="toggleCustomRange(this)">Tùy chọn</button>
+                                    <button type="button" class="btn-preset" data-range="today"
+                                        onclick="handlePresetClick('today', this)">Hôm nay</button>
+                                    <button type="button" class="btn-preset" data-range="yesterday"
+                                        onclick="handlePresetClick('yesterday', this)">Hôm qua</button>
+                                    <button type="button" class="btn-preset" data-range="7d"
+                                        onclick="handlePresetClick('7d', this)">7 ngày</button>
+                                    <button type="button" class="btn-preset active" data-range="30d"
+                                        onclick="handlePresetClick('30d', this)">30 ngày</button>
+                                    <button type="button" class="btn-preset" data-range="thisMonth"
+                                        onclick="handlePresetClick('thisMonth', this)">Tháng này</button>
+                                    <button type="button" class="btn-preset" data-range="lastMonth"
+                                        onclick="handlePresetClick('lastMonth', this)">Tháng trước</button>
+                                    <button type="button" class="btn-preset" id="customToggleBtn"
+                                        onclick="toggleCustomRange(this)">Tùy chọn</button>
                                 </div>
 
                                 <!-- Custom Range Popover -->
                                 <div id="customRangeBox" class="custom-range-popover">
-                                    <input type="text" id="startDateInput" class="date-input-field" placeholder="Từ ngày">
+                                    <input type="text" id="startDateInput" class="date-input-field"
+                                        placeholder="Từ ngày">
                                     <span style="color: #94a3b8; font-size: 0.8rem;">-</span>
-                                    <input type="text" id="endDateInput" class="date-input-field" placeholder="Đến ngày">
+                                    <input type="text" id="endDateInput" class="date-input-field"
+                                        placeholder="Đến ngày">
                                     <button type="button" class="btn-apply" onclick="applyCustomFilter()">
                                         <i class="fa-solid fa-check"></i> Áp dụng
                                     </button>
@@ -221,16 +227,20 @@
 
                         <div style="flex: 1; min-height: 0; position: relative; width: 100%;">
                             <canvas id="revenueChart"></canvas>
-                            <div id="revenueNoData" class="no-data-notice" style="display: none;">Không có dữ liệu doanh thu trong khoảng thời gian này</div>
+                            <div id="revenueNoData" class="no-data-notice" style="display: none;">Không có dữ liệu doanh
+                                thu trong khoảng thời gian này</div>
                         </div>
                     </div>
 
                     <!-- Chart 2: Order Status Doughnut Chart -->
                     <div class="chart-container" style="position: relative;">
-                        <div class="table-h"><i class="fa-solid fa-chart-pie"></i> <span>Phân Bố Trạng Thái Đơn Hàng</span></div>
-                        <div style="flex: 1; min-height: 0; position: relative; width: 100%; display: flex; align-items: center; justify-content: center;">
+                        <div class="table-h"><i class="fa-solid fa-chart-pie"></i> <span>Phân Bố Trạng Thái Đơn
+                                Hàng</span></div>
+                        <div
+                            style="flex: 1; min-height: 0; position: relative; width: 100%; display: flex; align-items: center; justify-content: center;">
                             <canvas id="orderStatusChart"></canvas>
-                            <div id="orderStatusNoData" class="no-data-notice" style="display: none;">Không có đơn hàng trong khoảng thời gian này</div>
+                            <div id="orderStatusNoData" class="no-data-notice" style="display: none;">Không có đơn hàng
+                                trong khoảng thời gian này</div>
                         </div>
                     </div>
                 </div>
@@ -239,10 +249,12 @@
             <!-- Tab 2: Users -->
             <div id="tab-users" class="tab-pane">
                 <div class="chart-container" style="height: 100%; position: relative;">
-                    <div class="table-h"><i class="fa-solid fa-users"></i> <span>Người Dùng Đăng Ký Mới Theo Ngày</span></div>
+                    <div class="table-h"><i class="fa-solid fa-users"></i> <span>Người Dùng Đăng Ký Mới Theo Ngày</span>
+                    </div>
                     <div style="flex: 1; min-height: 0; position: relative; width: 100%;">
                         <canvas id="newUsersChart"></canvas>
-                        <div id="newUsersNoData" class="no-data-notice" style="display: none;">Không có người dùng mới trong khoảng thời gian này</div>
+                        <div id="newUsersNoData" class="no-data-notice" style="display: none;">Không có người dùng mới
+                            trong khoảng thời gian này</div>
                     </div>
                 </div>
             </div>
@@ -256,17 +268,23 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">Tên Linh Kiện</th>
-                                        <th style="text-align: right; position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">Đã Bán</th>
+                                        <th
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Tên Linh Kiện</th>
+                                        <th
+                                            style="text-align: right; position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Đã Bán</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr th:each="p : ${topProducts}">
                                         <td th:text="${p.name}">RTX 4090 Global</td>
-                                        <td th:text="${p.totalQty}" style="text-align: right; font-weight: bold; color: var(--gold);">15</td>
+                                        <td th:text="${p.totalQty}"
+                                            style="text-align: right; font-weight: bold; color: var(--gold);">15</td>
                                     </tr>
                                     <tr th:if="${topProducts == null or topProducts.empty}">
-                                        <td colspan="2" style="text-align: center; color: #888; padding: 1.5rem 0;">Chưa có dữ liệu sản phẩm.</td>
+                                        <td colspan="2" style="text-align: center; color: #888; padding: 1.5rem 0;">Chưa
+                                            có dữ liệu sản phẩm.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -274,14 +292,21 @@
                     </div>
 
                     <div class="table-card">
-                        <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> <span>Cảnh Báo Kho Hàng (Sắp Hết)</span></div>
+                        <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> <span>Cảnh Báo Kho Hàng (Sắp
+                                Hết)</span></div>
                         <div class="table-responsive">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">Tên Sản Phẩm</th>
-                                        <th style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">Tồn Kho</th>
-                                        <th style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">Trạng Thái</th>
+                                        <th
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Tên Sản Phẩm</th>
+                                        <th
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Tồn Kho</th>
+                                        <th
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Trạng Thái</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -291,8 +316,10 @@
                                         <td><span class="badge badge-red">Chỉ còn ít</span></td>
                                     </tr>
                                     <tr th:if="${lowStock == null or lowStock.empty}">
-                                        <td colspan="3" style="text-align: center; color: var(--green); padding: 2rem 0;">
-                                            <i class="fa-solid fa-check-circle" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                                        <td colspan="3"
+                                            style="text-align: center; color: var(--green); padding: 2rem 0;">
+                                            <i class="fa-solid fa-check-circle"
+                                                style="font-size: 2rem; margin-bottom: 10px;"></i><br>
                                             <span>Tất cả sản phẩm đều đủ hàng.</span>
                                         </td>
                                     </tr>
@@ -344,7 +371,7 @@
                 'DA_HUY': '#6b7280'
             };
 
-            window.handlePresetClick = function(range, btn) {
+            window.handlePresetClick = function (range, btn) {
                 document.querySelectorAll('.btn-preset').forEach(el => el.classList.remove('active'));
                 btn.classList.add('active');
                 document.getElementById('customRangeBox').style.display = 'none';
@@ -352,7 +379,7 @@
                 window.loadDashboardStats({ range: range });
             };
 
-            window.toggleCustomRange = function(btn) {
+            window.toggleCustomRange = function (btn) {
                 document.querySelectorAll('.btn-preset').forEach(el => el.classList.remove('active'));
                 btn.classList.add('active');
 
@@ -360,7 +387,7 @@
                 box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
             };
 
-            window.applyCustomFilter = function() {
+            window.applyCustomFilter = function () {
                 const start = document.getElementById('startDateInput').value;
                 const end = document.getElementById('endDateInput').value;
 
@@ -555,7 +582,7 @@
                 }
             }
 
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 if (typeof flatpickr !== 'undefined') {
                     flatpickr("#startDateInput", { dateFormat: "Y-m-d" });
                     flatpickr("#endDateInput", { dateFormat: "Y-m-d" });
@@ -566,4 +593,5 @@
         </script>
     </div>
 </body>
+
 </html>

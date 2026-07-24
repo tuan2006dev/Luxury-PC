@@ -18,15 +18,13 @@
             </button>
         </div>
 
-        <div class="admin-profile"
-            th:with="shortName=${#strings.contains(#authentication.name, '@') ? #strings.substringBefore(#authentication.name, '@') : #authentication.name}">
-            <img th:src="@{'https://ui-avatars.com/api/?name=' + ${shortName} + '&background=0D8ABC&color=fff'}"
-                alt="Admin" class="admin-avatar">
-            <div class="admin-info">
-                <span class="admin-name" th:text="${shortName}">Admin</span>
-                <span class="admin-role">Quản trị viên</span>
-            </div>
-            <i class="fa-solid fa-angle-down" style="color: var(--admin-text-muted); margin-left: 5px;"></i>
+        <div class="user-info" th:fragment="adminProfile">
+            <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
+            <span th:text="${#authentication.name}" style="font-weight: 500;">Admin</span>
+            <span sec:authorize="hasRole('ADMIN')"
+                style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">ADMIN</span>
+            <span sec:authorize="hasRole('STAFF')"
+                style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">STAFF</span>
         </div>
     </div>
 </header>
