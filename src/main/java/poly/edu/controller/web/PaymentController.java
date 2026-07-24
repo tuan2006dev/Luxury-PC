@@ -2,29 +2,37 @@ package poly.edu.controller.web;
 
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.security.access.AccessDeniedException;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import poly.edu.config.SePayProperties;
 import poly.edu.dao.OrderDAO;
-import poly.edu.entity.Order;
 
+import poly.edu.entity.Order;
+import poly.edu.entity.User;
+import poly.edu.service.SePayPaymentSession;
+import poly.edu.service.ProfileService;
+
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
+
 
 @Controller
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private static final String BANK_ID = "MB";
-    private static final String BANK_DISPLAY_NAME = "MB Bank";
-    private static final String ACCOUNT_NO = "9999999999";
-    private static final String ACCOUNT_NAME = "LUXURYPC";
-    private static final long FALLBACK_AMOUNT = 150_000L;
-
     private final OrderDAO orderDAO;
+    private final ProfileService profileService;
+    private final SePayProperties sePayProperties;
+    private final SePayPaymentSession sePayPaymentSession;
 
     @GetMapping("/payment/vietqr")
     public String vietQrPayment(
@@ -32,34 +40,36 @@ public class PaymentController {
             @RequestParam(value = "orderCode", required = false) String requestedOrderCode,
             Model model,
             HttpSession session) {
-        Object sessionAmount = session.getAttribute("vietQrAmount");
-        Object sessionOrderCode = session.getAttribute("vietQrOrderCode");
-
-        long amount = requestedAmount != null && requestedAmount > 0
-                ? requestedAmount
-                : sessionAmount instanceof Number
-                ? ((Number) sessionAmount).longValue()
-                : FALLBACK_AMOUNT;
-        String orderCode = requestedOrderCode != null && !requestedOrderCode.isBlank()
-                ? requestedOrderCode
-                : sessionOrderCode instanceof String
-                ? (String) sessionOrderCode
-                : "DH" + System.currentTimeMillis();
-        String paymentStatus = "Chờ xác nhận thanh toán";
-
-        Optional<Order> order = orderDAO.findByOrderCode(orderCode);
-        if (order.isPresent()) {
-            amount = Math.round(order.get().getTotalPrice());
-            paymentStatus = order.get().getStatusDisplay();
+        if (requestedOrderCode == null || requestedOrderCode.isBlank()) {
+            throw new AccessDeniedException("Missing VietQR order");
         }
-        String transferContent = "THANH TOAN " + orderCode;
 
+        Order order = orderDAO.findByOrderCode(requestedOrderCode)
+                .orElseThrow(() -> new AccessDeniedException("Unknown VietQR order"));
+        User currentUser = currentUser();
+        if (currentUser == null || order.getUser() == null
+                || !currentUser.getId().equals(order.getUser().getId())) {
+            throw new AccessDeniedException("VietQR order does not belong to the current user");
+        }
+
+        if (!"VIETQR".equals(order.getPaymentMethod())) {
+            throw new AccessDeniedException("Order is not a VietQR payment");
+        }
+        if (!"CHO_XAC_NHAN_THANH_TOAN".equals(order.getStatus())) {
+            throw new AccessDeniedException("VietQR order is not awaiting payment");
+        }
+        if (!sePayProperties.hasBankConfiguration()) {
+            throw new IllegalStateException("SePay bank configuration is missing");
+        }
+
+        long amount = exactOrderAmount(order);
+        String orderCode = order.getOrderCode();
+        String transferContent = "SEVQR " + sePayProperties.getPaymentCode().getPrefix() + order.getId();
         String encodedInfo = URLEncoder.encode(transferContent, StandardCharsets.UTF_8);
-        String encodedName = URLEncoder.encode(ACCOUNT_NAME, StandardCharsets.UTF_8);
-
+        String encodedName = URLEncoder.encode(sePayProperties.getBank().getAccountName(), StandardCharsets.UTF_8);
         String qrUrl = "https://img.vietqr.io/image/"
-                + BANK_ID + "-"
-                + ACCOUNT_NO + "-"
+                + sePayProperties.getBank().getId() + "-"
+                + sePayProperties.getBank().getAccountNumber() + "-"
                 + "compact.png"
                 + "?amount=" + amount
                 + "&addInfo=" + encodedInfo
@@ -68,13 +78,34 @@ public class PaymentController {
         model.addAttribute("amount", amount);
         model.addAttribute("orderCode", orderCode);
         model.addAttribute("transferContent", transferContent);
-        model.addAttribute("bankId", BANK_ID);
-        model.addAttribute("bankDisplayName", BANK_DISPLAY_NAME);
-        model.addAttribute("accountNo", ACCOUNT_NO);
-        model.addAttribute("accountName", ACCOUNT_NAME);
+        model.addAttribute("bankId", sePayProperties.getBank().getId());
+        model.addAttribute("bankDisplayName", sePayProperties.getBank().getDisplayName());
+        model.addAttribute("accountNo", sePayProperties.getBank().getAccountNumber());
+        model.addAttribute("accountName", sePayProperties.getBank().getAccountName());
         model.addAttribute("qrUrl", qrUrl);
-        model.addAttribute("paymentStatus", paymentStatus);
+        model.addAttribute("paymentStatus", order.getStatusDisplay());
+        model.addAttribute("paymentToken", sePayPaymentSession.issueToken(session, orderCode));
 
         return "payment-vietqr";
+    }
+
+    private long exactOrderAmount(Order order) {
+        Double totalPrice = order.getTotalPrice();
+        if (totalPrice == null || !Double.isFinite(totalPrice) || totalPrice <= 0) {
+            throw new IllegalStateException("Order total is invalid");
+        }
+        try {
+            return BigDecimal.valueOf(totalPrice).longValueExact();
+        } catch (ArithmeticException exception) {
+            throw new IllegalStateException("Order total is not an exact VND amount", exception);
+        }
+    }
+
+    private User currentUser() {
+        try {
+            return profileService.getCurrentUser(SecurityContextHolder.getContext().getAuthentication());
+        } catch (IllegalStateException exception) {
+            return null;
+        }
     }
 }

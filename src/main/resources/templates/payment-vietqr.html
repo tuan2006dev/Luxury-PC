@@ -16,7 +16,8 @@
     <!-- HEADER -->
     <div th:replace="~{layout/header :: header}"></div>
 
-    <div class="container" style="max-width: 1200px; margin-top: 20px;">
+    <div class="container" style="max-width: 1200px; margin-top: 20px;"
+        th:attr="data-payment-status-url=@{/api/payments/vietqr/status},data-order-code=${orderCode},data-payment-token=${paymentToken}">
 
         <!-- BREADCRUMB -->
         <div class="breadcrumb" style="margin-bottom: 15px;">
@@ -115,12 +116,16 @@
                                 <div>
                                     <div class="bank-info-item"
                                         style="font-size: 13px; color: #666; margin-bottom: 5px;">Trạng thái</div>
-                                    <div class="bank-info-val"
+                                    <div id="payment-status" class="bank-info-val"
                                         style="font-size: 16px; font-weight: 700; color: #f59e0b;"
                                         th:text="${paymentStatus}">Chờ xác nhận thanh toán</div>
                                 </div>
                             </div>
                         </div>
+
+                        <p id="payment-success-message" hidden style="margin-top: 16px; color: #22c55e;">
+                            Thanh to&#225;n &#273;&#227; &#273;&#432;&#7907;c x&#225;c nh&#7853;n. <a th:href="@{/profile#orders}">Xem &#273;&#417;n h&#224;ng</a>.
+                        </p>
 
                         <div class="qr-alert"
                             style="background: #e0f2fe; color: #0369a1; padding: 12px 15px; border-radius: 6px; font-size: 13px; margin-top: 25px; display: flex; align-items: center; gap: 10px;">
