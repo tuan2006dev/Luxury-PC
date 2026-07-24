@@ -280,7 +280,12 @@ function assignTicket(id) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: id })
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok && res.status !== 409) {
+            throw new Error('Network response was not ok');
+        }
+        return res.json();
+    })
     .then(data => {
         if (data.success) {
             // Update assigned admin name
@@ -314,9 +319,28 @@ function assignTicket(id) {
                 }
             }
             return data;
+        } else {
+            // Check for HTTP 409 error message
+            if (typeof showToast === 'function') {
+                showToast(data.message || 'Lỗi khi nhận ticket.', 'error');
+            } else {
+                alert(data.message || 'Lỗi khi nhận ticket.');
+            }
+            // Reload page to reflect that someone else took the ticket
+            setTimeout(() => {
+                if (typeof handleLinkClick === 'function') {
+                    handleLinkClick(new MouseEvent('click'), '/admin/tickets');
+                } else {
+                    window.location.reload();
+                }
+            }, 1500);
+            return Promise.reject(new Error(data.message));
         }
     })
-    .catch(err => console.error("Error assigning ticket:", err));
+    .catch(err => {
+        console.error("Error assigning ticket:", err);
+        throw err;
+    });
 }
 
 function processTicket(id) {

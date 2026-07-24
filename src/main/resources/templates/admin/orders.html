@@ -21,8 +21,8 @@
                 <h2>Quản Lý Đơn Hàng</h2>
                 <span><span th:text="${orders.size()}">0</span> <span>đơn hàng</span></span>
             </div>
-            <div class="table-wrapper">
-                <table class="admin-table">
+            <div class="table-wrapper" style="overflow-x: auto !important;">
+                <table class="admin-table" style="min-width: 1200px !important;">
                     <thead>
                         <tr>
                             <th style="width: 5%;">Mã Đơn</th>
@@ -78,14 +78,14 @@
                                 <span th:class="'badge badge-' + ${o.status.toLowerCase()}"
                                     th:text="${o.statusDisplay}">Chờ xử lý</span>
                             </td>
-                            <td class="admin-note">
-                                <div th:if="${o.refundReason != null}" style="margin-bottom:.25rem;">
+                            <td class="admin-note" style="white-space: normal !important; word-break: break-word; overflow: hidden;">
+                                <div th:if="${o.refundReason != null}" style="margin-bottom:.25rem; white-space: normal !important;">
                                     <span class="note-label">Khách:</span>
-                                    <span th:text="${o.refundReason}">Lý do</span>
+                                    <span th:text="${o.refundReason}" style="white-space: normal !important;">Lý do</span>
                                 </div>
-                                <div th:if="${o.adminNote != null}">
+                                <div th:if="${o.adminNote != null}" style="white-space: normal !important;">
                                     <span class="note-label">Admin:</span>
-                                    <span th:text="${o.adminNote}">Ghi chú</span>
+                                    <span th:text="${o.adminNote}" style="white-space: normal !important;">Ghi chú</span>
                                 </div>
                                 <span th:if="${o.refundReason == null and o.adminNote == null}">-</span>
                             </td>

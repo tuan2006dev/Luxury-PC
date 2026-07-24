@@ -266,7 +266,11 @@ public class ProfileService {
         data.put("wishlistItems", wishlistItemRepository.findByUser_IdOrderByCreatedAtDesc(user.getId()));
         data.put("addresses", getCurrentUserAddresses(authentication));
         data.put("notificationSettings", getCurrentUserNotificationSettings(authentication));
-        data.put("vouchers", userVoucherDAO.findByUserOrderBySavedAtDesc(user));
+        java.util.List<poly.edu.entity.UserVoucher> allVouchers = userVoucherDAO.findByUserOrderBySavedAtDesc(user);
+        java.util.List<poly.edu.entity.UserVoucher> validVouchers = allVouchers.stream()
+            .filter(uv -> uv.getVoucher() != null && uv.getVoucher().isValid())
+            .collect(java.util.stream.Collectors.toList());
+        data.put("vouchers", validVouchers);
         
         return data;
     }

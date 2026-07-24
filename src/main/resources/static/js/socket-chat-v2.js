@@ -289,7 +289,69 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+        .socket-chat-waiting-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+            background: #fffbe6;
+            border-bottom: 1px solid #fef3c7;
+        }
+        .socket-chat-waiting-state.active {
+            display: flex;
+        }
+        .socket-chat-waiting-title {
+            font-size: 0.9rem;
+            color: #d97706;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .socket-chat-waiting-subtitle {
+            font-size: 0.8rem;
+            color: #92400e;
+        }
+        .socket-chat-timer {
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 8px;
+            color: #b45309;
+        }
+        .socket-chat-quick-replies {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            padding: 15px 20px;
+            background: #F9F9F9;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .socket-chat-quick-replies.active {
+            display: flex;
+        }
+        .quick-reply-btn {
+            background: #ffffff;
+            border: 1px solid #0066CC;
+            color: #0066CC;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .quick-reply-btn:hover {
+            background: #0066CC;
+            color: #ffffff;
+        }
+        .quick-reply-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-color: #cbd5e1;
+        }
 
     `;
 
@@ -329,6 +391,19 @@
                 <button class="socket-chat-setup-btn" id="socketChatStartBtn">Bắt Đầu Chat</button>
             </div>
 
+            <div class="socket-chat-waiting-state" id="socketChatWaitingState">
+                <div class="socket-chat-waiting-title">🟡 Đang tìm nhân viên hỗ trợ...</div>
+                <div class="socket-chat-waiting-subtitle" id="socketChatWaitingSubtitle">Vui lòng chờ trong giây lát.</div>
+                <div class="socket-chat-timer" id="socketChatTimer">00:00</div>
+            </div>
+
+            <div class="socket-chat-quick-replies" id="socketChatQuickReplies">
+                <button class="quick-reply-btn">Tư vấn cấu hình PC</button>
+                <button class="quick-reply-btn">Hỏi về chính sách bảo hành</button>
+                <button class="quick-reply-btn">Trợ giúp giao hàng, vận chuyển</button>
+                <button class="quick-reply-btn">Báo lỗi / Hỗ trợ kỹ thuật</button>
+            </div>
+
             <div class="socket-chat-messages" id="socketChatMessages" style="display: none;">
                 <!-- Messages will appear here -->
             </div>
@@ -361,6 +436,13 @@
     const ticketLabel = document.getElementById('socketChatTicketLabel');
     const newChatBtn = document.getElementById('socketChatNewBtn');
     const closeTicketBtn = document.getElementById('socketChatCloseTicketBtn');
+    
+    // Waiting UI elements
+    const waitingStateDiv = document.getElementById('socketChatWaitingState');
+    const waitingSubtitle = document.getElementById('socketChatWaitingSubtitle');
+    const waitingTimer = document.getElementById('socketChatTimer');
+    const quickRepliesDiv = document.getElementById('socketChatQuickReplies');
+    const quickReplyBtns = document.querySelectorAll('.quick-reply-btn');
 
     let ws = null;
     let username = localStorage.getItem('socket_chat_username') || '';
@@ -468,6 +550,39 @@
         if (e.key === 'Enter') startChat();
     });
 
+    let waitingInterval = null;
+    let waitingSeconds = 0;
+
+    function startWaitingTimer() {
+        waitingSeconds = 0;
+        waitingStateDiv.classList.add('active');
+        quickRepliesDiv.classList.add('active');
+        messagesDiv.style.display = 'none';
+        
+        waitingTimer.textContent = '00:00';
+        
+        if (waitingInterval) clearInterval(waitingInterval);
+        waitingInterval = setInterval(() => {
+            waitingSeconds++;
+            const m = Math.floor(waitingSeconds / 60).toString().padStart(2, '0');
+            const s = (waitingSeconds % 60).toString().padStart(2, '0');
+            waitingTimer.textContent = `${m}:${s}`;
+            
+            if (waitingSeconds >= 60) {
+                waitingSubtitle.innerHTML = 'Hiện tại tất cả nhân viên đang bận.<br>Chúng tôi sẽ hỗ trợ bạn sớm nhất.';
+                waitingTimer.style.display = 'none';
+                clearInterval(waitingInterval);
+            }
+        }, 1000);
+    }
+    
+    function stopWaitingTimer() {
+        if (waitingInterval) clearInterval(waitingInterval);
+        waitingStateDiv.classList.remove('active');
+        quickRepliesDiv.classList.remove('active');
+        messagesDiv.style.display = 'flex';
+    }
+
     async function startChat() {
         const name = nameInput.value.trim();
         if (!name) {
@@ -499,8 +614,14 @@
 
         // Switch to chat view
         setupDiv.style.display = 'none';
-        messagesDiv.style.display = 'flex';
         inputArea.style.display = 'flex';
+        
+        if (currentTicketId && ticketSystemAvailable) {
+            // New ticket always starts as OPEN and waiting
+            startWaitingTimer();
+        } else {
+            messagesDiv.style.display = 'flex';
+        }
         
         if (currentTicketId) {
             ticketBar.style.display = 'flex';
@@ -594,17 +715,21 @@
         
         ws.onopen = () => {
             statusDot.classList.add('connected');
-            appendSystemMessage('Đã kết nối! Nhân viên hỗ trợ sẽ phản hồi bạn trong giây lát.');
+            if (!waitingStateDiv.classList.contains('active')) {
+                appendSystemMessage('Đã kết nối! Nhân viên hỗ trợ sẽ phản hồi bạn trong giây lát.');
+            }
         };
         
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
                 
-                // Skip system/join messages  
+                // Handle system messages (e.g., ADMIN_JOINED)
                 if (data.type === 'SYSTEM') {
-                    // Only show system messages that aren't join notifications
-                    if (data.content && !data.content.includes('đã tham gia')) {
+                    if (data.event === 'ADMIN_JOINED') {
+                        stopWaitingTimer();
+                        appendSystemMessage(data.content || `Nhân viên ${data.adminName || 'hỗ trợ'} đã tham gia cuộc trò chuyện.`);
+                    } else if (data.content && !data.content.includes('đã tham gia')) {
                         appendSystemMessage(data.content);
                     }
                     return;
@@ -779,6 +904,49 @@
         msgInput.value = '';
         msgInput.focus();
     }
+    
+    // Quick Reply Buttons Logic
+    quickReplyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const text = btn.textContent;
+            
+            // Disable all quick replies to prevent spam
+            quickReplyBtns.forEach(b => b.disabled = true);
+            
+            // Send as normal message
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                appendSystemMessage('Đang kết nối lại...');
+                connectWebSocket();
+            } else {
+                const msgPayload = {
+                    ticketId: currentTicketId,
+                    sender: 'CUSTOMER',
+                    senderName: username,
+                    content: text,
+                    type: 'CHAT'
+                };
+                ws.send(JSON.stringify(msgPayload));
+                
+                if (currentTicketId && ticketSystemAvailable) {
+                    fetch(`/api/tickets/${currentTicketId}/messages`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sender: 'CUSTOMER',
+                            senderName: username,
+                            message: text
+                        })
+                    }).catch(() => {});
+                }
+                
+                appendMessage(username, text, true);
+                triggerIndexChatBotReply(text);
+                
+                // Keep the waiting timer, just hide the quick replies
+                quickRepliesDiv.style.display = 'none';
+            }
+        });
+    });
 
     function appendMessage(sender, content, isOutgoing, timestamp) {
         const msgEl = document.createElement('div');

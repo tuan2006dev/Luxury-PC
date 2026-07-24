@@ -72,20 +72,7 @@
             </div>
             
             <!-- Phân trang -->
-            <div class="pagination-container" th:if="${inventoryPage.totalPages > 1}" style="display: flex; justify-content: center; align-items: center; padding: 20px 0; gap: 10px;">
-                <a th:if="${!inventoryPage.first}" th:href="@{/admin/inventory(keyword=${keyword}, sort=${sort}, page=${inventoryPage.number - 1})}" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text-main);"><i class="fa-solid fa-angle-left"></i></a>
-                
-                <span style="font-size: 14px; font-weight: 500;">Trang</span>
-                <select onchange="window.location.href=this.value" style="padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 14px; cursor: pointer; outline: none;">
-                    <option th:each="pageNum : ${#numbers.sequence(0, inventoryPage.totalPages - 1)}" 
-                            th:value="@{/admin/inventory(keyword=${keyword}, sort=${sort}, page=${pageNum})}" 
-                            th:text="${pageNum + 1}" 
-                            th:selected="${pageNum == inventoryPage.number}"></option>
-                </select>
-                <span style="font-size: 14px; font-weight: 500; color: #64748b;">/ [[${inventoryPage.totalPages}]]</span>
-
-                <a th:if="${!inventoryPage.last}" th:href="@{/admin/inventory(keyword=${keyword}, sort=${sort}, page=${inventoryPage.number + 1})}" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text-main);"><i class="fa-solid fa-angle-right"></i></a>
-            </div>
+            <div th:replace="~{admin/layout/pagination :: pagination(pageObj=${inventoryPage})}"></div>
         </div>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>

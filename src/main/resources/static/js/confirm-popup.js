@@ -48,9 +48,15 @@ window.showConfirmPopup = window.showConfirm;
 // <a href="/admin/products/delete/1" onclick="return confirmNavigate(event, 'Bạn có muốn xóa?', this.href)">Xóa</a>
 // =======================================================================
 window.confirmNavigate = function (event, message, url) {
-    event.preventDefault(); // Chặn việc trình duyệt tự động nhảy sang link mới
-    const trigger = event.currentTarget;
-    trigger.style.pointerEvents = 'none'; // Khóa nút không cho bấm 2 lần liên tục
+    if (event) event.preventDefault(); // Chặn việc trình duyệt tự động nhảy sang link mới
+    
+    // Lấy thẻ <a> an toàn để tránh lỗi event.currentTarget = null
+    const trigger = (event && event.currentTarget) ? event.currentTarget : 
+                    (event && event.target ? event.target.closest('a') : null);
+                    
+    if (trigger && trigger.style) {
+        trigger.style.pointerEvents = 'none'; // Khóa nút không cho bấm 2 lần liên tục
+    }
     
     // Gọi popup xác nhận lên
     window.showConfirm(message).then(ok => {
@@ -59,7 +65,9 @@ window.confirmNavigate = function (event, message, url) {
             window.location.href = url;
         } else {
             // Bấm hủy thì mở khóa nút lại như cũ
-            trigger.style.pointerEvents = '';
+            if (trigger && trigger.style) {
+                trigger.style.pointerEvents = '';
+            }
         }
     });
     return false; // Bắt buộc return false để an toàn chặn sự kiện mặc định
@@ -75,18 +83,21 @@ window.confirmNavigate = function (event, message, url) {
 // </form>
 // =======================================================================
 window.confirmSubmit = function (event, message) {
-    event.preventDefault(); // Chặn việc Form tự động Submit (tải lại trang)
-    const form = event.target;
+    if (event) event.preventDefault(); // Chặn việc Form tự động Submit (tải lại trang)
+    
+    // Lấy thẻ form một cách an toàn
+    const form = (event && event.target && event.target.tagName === 'FORM') ? event.target : 
+                 (event && event.target ? event.target.closest('form') : null);
     
     // Tạm thời vô hiệu hóa nút Submit bên trong form để chống spam click
-    const submitBtn = form.querySelector('[type="submit"]');
+    const submitBtn = form ? form.querySelector('[type="submit"]') : null;
     if (submitBtn) submitBtn.disabled = true;
     
     // Gọi popup xác nhận lên
     window.showConfirm(message).then(ok => {
         if (ok) {
             // Bấm Xác Nhận -> Chủ động submit form
-            form.submit();
+            if (form) form.submit();
         } else if (submitBtn) {
             // Bấm Hủy -> Mở khóa nút submit ra
             submitBtn.disabled = false;

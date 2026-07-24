@@ -116,4 +116,40 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         }
         return null;
     }
+
+    /**
+     * Broadcasts a system event to all WebSocket sessions associated with a specific ticket.
+     */
+    public void broadcastSystemEventToTicket(Integer ticketId, String eventType, String content, String adminName) {
+        if (ticketId == null) return;
+        
+        try {
+            Map<String, Object> payloadMap = new java.util.HashMap<>();
+            payloadMap.put("type", "SYSTEM");
+            payloadMap.put("event", eventType);
+            payloadMap.put("ticketId", ticketId);
+            payloadMap.put("adminName", adminName != null ? adminName : "Admin");
+            payloadMap.put("content", content);
+            
+            String payload = objectMapper.writeValueAsString(payloadMap);
+            TextMessage message = new TextMessage(payload);
+            
+            synchronized (sessions) {
+                for (WebSocketSession s : sessions) {
+                    if (s.isOpen()) {
+                        Integer sTicketId = (Integer) s.getAttributes().get("ticketId");
+                        if (Objects.equals(sTicketId, ticketId)) {
+                            try {
+                                s.sendMessage(message);
+                            } catch (IOException e) {
+                                // ignore
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(ChatWebSocketHandler.class).error("Error broadcasting system event", e);
+        }
+    }
 }

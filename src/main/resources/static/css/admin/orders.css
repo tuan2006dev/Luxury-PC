@@ -65,7 +65,7 @@ body.sidebar-collapsed .main-content {
         width: 100% !important;
         flex: 1 !important;
         min-height: 0 !important;
-        overflow-x: hidden !important;
+        overflow-x: auto !important; /* FIXED: allow horizontal scroll */
         overflow-y: auto !important;
         padding-right: 4px !important;
         padding-bottom: 4rem !important;
@@ -112,7 +112,7 @@ body.sidebar-collapsed .main-content {
 
 .admin-table {
         width: 100% !important;
-        min-width: 0 !important;
+        min-width: 1200px !important; /* FIXED: prevent column squishing */
         border-collapse: collapse !important;
         font-size: 0.8rem !important;
         table-layout: fixed !important;

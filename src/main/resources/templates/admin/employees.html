@@ -188,7 +188,7 @@
             <h2><i class="fa-solid fa-list-check" style="color: var(--gold); margin-right: 8px;"></i> Danh Sách Nhân Viên</h2>
 
             <div style="width: 100%; overflow-x: auto;">
-                <table>
+                <table class="admin-table" style="min-width: 1000px;">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -232,19 +232,20 @@
                                             th:data-gender="${u.gender}"
                                             th:data-status="${u.status}"
                                             th:data-role="${u.userRoles != null and !u.userRoles.empty ? u.userRoles[0].role.name : 'STAFF'}"
-                                            onclick="editEmployee(this)">
+                                            onclick="editEmployee(this)"
+                                            style="margin: 0; border: 1px solid #0066cc;">
                                         <i class="fa-solid fa-pen"></i> Sửa
                                     </button>
 
-                                    <form th:action="@{/admin/employees/toggle-status/{id}(id=${u.id})}" method="post" style="display: contents;" onsubmit="return window.confirmSubmit(event, 'Xác nhận khoá/mở khoá tài khoản này?');">
-                                        <button type="submit" class="btn-action" th:style="${u.status ? 'background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;' : 'background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;'}">
+                                    <form th:action="@{/admin/employees/toggle-status/{id}(id=${u.id})}" method="post" style="margin: 0; padding: 0; display: block; height: 32px;" onsubmit="return window.confirmSubmit(event, 'Xác nhận khoá/mở khoá tài khoản này?');">
+                                        <button type="submit" class="btn-action" th:style="${u.status ? 'background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; margin: 0;' : 'background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; margin: 0;'}">
                                             <i th:class="${u.status ? 'fa-solid fa-lock' : 'fa-solid fa-lock-open'}"></i>
                                             <span th:text="${u.status ? 'Khóa' : 'Mở khoá'}">Khóa</span>
                                         </button>
                                     </form>
 
-                                    <form th:action="@{/admin/employees/reset-password/{id}(id=${u.id})}" method="post" style="display: contents;" onsubmit="return window.confirmSubmit(event, 'Bạn có chắc muốn Reset mật khẩu cho nhân viên này?');">
-                                        <button type="submit" class="btn-action" style="background: #fffbe6; color: #d97706; border: 1px solid #fef3c7;" title="Reset mật khẩu">
+                                    <form th:action="@{/admin/employees/reset-password/{id}(id=${u.id})}" method="post" style="margin: 0; padding: 0; display: block; height: 32px;" onsubmit="return window.confirmSubmit(event, 'Bạn có chắc muốn Reset mật khẩu cho nhân viên này?');">
+                                        <button type="submit" class="btn-action" style="background: #fffbe6; color: #d97706; border: 1px solid #fef3c7; margin: 0;" title="Reset mật khẩu">
                                             <i class="fa-solid fa-key"></i> Reset MK
                                         </button>
                                     </form>

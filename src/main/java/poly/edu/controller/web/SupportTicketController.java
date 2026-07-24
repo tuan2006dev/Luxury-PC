@@ -15,6 +15,7 @@ import poly.edu.repository.SupportTicketRepository;
 import poly.edu.repository.UserRepository;
 import poly.edu.repository.ChatMessageRepository;
 import poly.edu.repository.AdminLogRepository;
+import poly.edu.config.ChatWebSocketHandler;
 
 import java.util.*;
 
@@ -30,6 +31,8 @@ public class SupportTicketController {
     private final ChatMessageRepository chatMessageRepo;
 
     private final AdminLogRepository adminLogRepository;
+    
+    private final ChatWebSocketHandler chatWebSocketHandler;
 
     // ========================
     // CUSTOMER: Submit ticket via API (from 3D builder modal)
@@ -214,6 +217,62 @@ public class SupportTicketController {
             logAction(auth, request, "Phản hồi Ticket (Trạng thái: " + status + ")", "Ticket #" + ticketId);
         });
         return "redirect:/admin/tickets";
+    }
+
+    // ========================
+    // ADMIN: Assign Ticket to Current Logged-in Admin
+    // ========================
+    @PostMapping("/admin/tickets/assign")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> assignTicket(
+            @RequestBody Map<String, Integer> body,
+            Authentication auth) {
+        Map<String, Object> res = new HashMap<>();
+        if (auth == null) {
+            res.put("success", false);
+            res.put("message", "Vui lòng đăng nhập.");
+            return ResponseEntity.status(401).body(res);
+        }
+
+        Integer ticketId = body.get("id");
+        if (ticketId == null) {
+            res.put("success", false);
+            res.put("message", "Ticket ID không hợp lệ.");
+            return ResponseEntity.badRequest().body(res);
+        }
+
+        Optional<SupportTicket> opt = ticketRepo.findById(ticketId);
+        if (opt.isEmpty()) {
+            res.put("success", false);
+            res.put("message", "Ticket không tồn tại.");
+            return ResponseEntity.badRequest().body(res);
+        }
+
+        SupportTicket ticket = opt.get();
+        
+        // Prevent race condition: if already assigned to someone else
+        if (ticket.getAssignedAdmin() != null) {
+            res.put("success", false);
+            res.put("message", "Ticket đã được nhân viên khác nhận.");
+            return ResponseEntity.status(409).body(res);
+        }
+        
+        // Update ticket
+        ticket.setAssignedAdmin(auth.getName());
+        ticket.setStatus("IN_PROGRESS");
+        ticketRepo.save(ticket);
+        
+        // Broadcast WebSocket event
+        chatWebSocketHandler.broadcastSystemEventToTicket(
+            ticketId, 
+            "ADMIN_JOINED", 
+            "Nhân viên " + auth.getName() + " đã tham gia cuộc trò chuyện.", 
+            auth.getName()
+        );
+
+        res.put("success", true);
+        res.put("assignedAdmin", auth.getName());
+        return ResponseEntity.ok(res);
     }
 
     // ========================

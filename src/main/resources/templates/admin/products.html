@@ -186,20 +186,7 @@
             </table>
 
             <!-- Phân trang -->
-            <div class="pagination-container" th:if="${productPage.totalPages > 1}" style="display: flex; justify-content: center; align-items: center; padding: 20px 0; gap: 10px;">
-                <a th:if="${!productPage.first}" th:href="@{/admin/products(keyword=${keyword}, page=${productPage.number - 1})}" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text-main);"><i class="fa-solid fa-angle-left"></i></a>
-                
-                <span style="font-size: 14px; font-weight: 500;">Trang</span>
-                <select onchange="window.location.href=this.value" style="padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 14px; cursor: pointer; outline: none;">
-                    <option th:each="pageNum : ${#numbers.sequence(0, productPage.totalPages - 1)}" 
-                            th:value="@{/admin/products(keyword=${keyword}, page=${pageNum})}" 
-                            th:text="${pageNum + 1}" 
-                            th:selected="${pageNum == productPage.number}"></option>
-                </select>
-                <span style="font-size: 14px; font-weight: 500; color: #64748b;">/ [[${productPage.totalPages}]]</span>
-
-                <a th:if="${!productPage.last}" th:href="@{/admin/products(keyword=${keyword}, page=${productPage.number + 1})}" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text-main);"><i class="fa-solid fa-angle-right"></i></a>
-            </div>
+            <div th:replace="~{admin/layout/pagination :: pagination(pageObj=${productPage})}"></div>
         </div>
         <script th:src="@{/js/admin/products.js}"></script>
     </div>
