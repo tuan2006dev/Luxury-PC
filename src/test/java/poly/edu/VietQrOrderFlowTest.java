@@ -1,17 +1,15 @@
 package poly.edu;
 
 import jakarta.servlet.http.HttpSession;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.ExtendedModelMap;
 import poly.edu.controller.web.PaymentController;
 import poly.edu.dao.OrderDAO;
@@ -23,25 +21,19 @@ import poly.edu.entity.Product;
 import poly.edu.entity.User;
 import poly.edu.service.AdminService;
 import poly.edu.service.CustomerOrderService;
-import poly.edu.service.VietQrManualConfirmationException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = {
-        "sepay.bank.account-number=123456789",
-        "sepay.bank.account-name=TEST ACCOUNT"
-})
-@WithMockUser(username = "sepay-fixture@example.test", roles = "USER")
+@SpringBootTest
 @ActiveProfiles("test")
 @Transactional
 @AutoConfigureMockMvc
@@ -68,20 +60,6 @@ class VietQrOrderFlowTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    private User sepayFixtureUser;
-
-    @BeforeEach
-    void setUpSePayFixtureUser() {
-        sepayFixtureUser = userDAO.findByEmail("sepay-fixture@example.test");
-        if (sepayFixtureUser == null) {
-            sepayFixtureUser = new User();
-            sepayFixtureUser.setEmail("sepay-fixture@example.test");
-            sepayFixtureUser.setUsername("sepay-fixture@example.test");
-            sepayFixtureUser.setPassword("test-only");
-            sepayFixtureUser = userDAO.saveAndFlush(sepayFixtureUser);
-        }
-    }
 
     @Test
     @WithMockUser(username="testuser@gmail.com", roles={"USER"})
@@ -137,28 +115,24 @@ class VietQrOrderFlowTest {
 
         assertEquals("payment-vietqr", view);
         assertEquals(17_200_000L, model.get("amount"));
-        assertEquals("Luxury-" + order.getId(), model.get("orderCode"));
-        assertEquals("SEVQR DH" + order.getId(), model.get("transferContent"));
         assertEquals("Chờ xác nhận thanh toán", model.get("paymentStatus"));
-        assertEquals("VietinBank", model.get("bankDisplayName"));
-        assertEquals("123456789", model.get("accountNo"));
-        assertEquals("TEST ACCOUNT", model.get("accountName"));
+        assertEquals("MB Bank", model.get("bankDisplayName"));
+        assertEquals("9999999999", model.get("accountNo"));
+        assertEquals("LUXURYPC", model.get("accountName"));
         assertEquals(
-                "https://img.vietqr.io/image/ICB-123456789-compact.png"
-                        + "?amount=17200000&addInfo=SEVQR+DH" + order.getId()
-                        + "&accountName=TEST+ACCOUNT",
+                "https://img.vietqr.io/image/MB-9999999999-compact.png"
+                        + "?amount=17200000&addInfo=THANH+TOAN+" + order.getOrderCode()
+                        + "&accountName=LUXURYPC",
                 model.get("qrUrl"));
     }
 
     @Test
-    void adminCannotConfirmWaitingVietQrOrderManually() {
+    void adminCanConfirmWaitingVietQrOrder() {
         Order order = saveOrder("VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 500_000D);
 
-        assertThrows(VietQrManualConfirmationException.class,
-                () -> adminService.confirmVietQrPayment(order.getId()));
+        adminService.confirmVietQrPayment(order.getId());
 
-        assertEquals("CHO_XAC_NHAN_THANH_TOAN",
-                orderDAO.findById(order.getId()).orElseThrow().getStatus());
+        assertEquals("DA_THANH_TOAN", orderDAO.findById(order.getId()).orElseThrow().getStatus());
     }
 
     @Test
@@ -199,15 +173,11 @@ class VietQrOrderFlowTest {
     }
 
     @Test
-    void genericStatusUpdateCannotBypassPaymentOrRefundWorkflow() {
-        Order waiting = saveOrder("VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 500_000D);
-        assertThrows(VietQrManualConfirmationException.class,
-                () -> adminService.updateOrderStatus(waiting.getId(), "PAID"));
-        assertEquals("CHO_XAC_NHAN_THANH_TOAN",
-                orderDAO.findById(waiting.getId()).orElseThrow().getStatus());
-
+    void genericStatusUpdateCannotBypassRefundWorkflow() {
         Order order = saveOrder("VIETQR", "DA_THANH_TOAN", 500_000D);
+
         adminService.updateOrderStatus(order.getId(), "DA_HOAN_TIEN");
+
         assertEquals("DA_THANH_TOAN", orderDAO.findById(order.getId()).orElseThrow().getStatus());
 
         Order codOrder = saveOrder("COD", "PENDING", 500_000D);
@@ -297,7 +267,6 @@ class VietQrOrderFlowTest {
 
     private Order saveOrder(String paymentMethod, String status, Double totalPrice) {
         Order order = new Order();
-        order.setUser(sepayFixtureUser);
         order.setFullName("QA VietQR");
         order.setPhone("0900000000");
         order.setAddress("QA Address");
@@ -305,7 +274,7 @@ class VietQrOrderFlowTest {
         order.setPaymentMethod(paymentMethod);
         order.setStatus(status);
         orderDAO.saveAndFlush(order);
-        order.setOrderCode("Luxury-" + order.getId());
+        order.setOrderCode("DH" + order.getId());
         return orderDAO.saveAndFlush(order);
     }
 

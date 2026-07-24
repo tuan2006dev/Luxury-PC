@@ -56,7 +56,6 @@ public class SecurityConfig {
                                                                 "/api/reviews/**", "/api/wishlist/**",
                                                                 "/api/address/**",
                                                                 "/api/shipping/**", "/api/test-login-debug",
-                                                                "/api/sepay/webhook",
                                                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg",
                                                                 "/*.jpeg", "/*.svg", "/error", "/testdb",
                                                                 "/cart", "/cart/**",

@@ -37,10 +37,6 @@ public class AdminService {
     @Transactional
     public void updateOrderStatus(Integer orderId, String status) {
         Order order = getOrderById(orderId);
-        if (order != null && isWaitingVietQr(order)
-                && !isStatusValue(status, "DA_HUY", "CANCELLED")) {
-            throw new VietQrManualConfirmationException();
-        }
         if (order != null && Arrays.asList(
                 "PENDING", "PAID", "SHIPPING", "COMPLETED", "DA_HUY", "CANCELLED").contains(status)) {
             
@@ -64,8 +60,15 @@ public class AdminService {
     @Transactional
     public void confirmVietQrPayment(Integer orderId) {
         Order order = getOrderById(orderId);
-        if (order != null && "VIETQR".equals(order.getPaymentMethod())) {
-            throw new VietQrManualConfirmationException();
+        if (order != null
+                && "VIETQR".equals(order.getPaymentMethod())
+                && "CHO_XAC_NHAN_THANH_TOAN".equals(order.getStatus())) {
+            order.setStatus("DA_THANH_TOAN");
+            orderDAO.save(order);
+            
+            if (order.getVoucherCode() != null && order.getUser() != null) {
+                voucherService.consumeVoucher(order.getVoucherCode(), order.getUser().getId());
+            }
         }
     }
 
@@ -124,11 +127,6 @@ public class AdminService {
             order.setAdminNote(mergeNote(order.getAdminNote(), note));
             orderDAO.save(order);
         }
-    }
-
-    private boolean isWaitingVietQr(Order order) {
-        return "VIETQR".equals(order.getPaymentMethod())
-                && "CHO_XAC_NHAN_THANH_TOAN".equals(order.getStatus());
     }
 
     private boolean isStatus(Order order, String... statuses) {
