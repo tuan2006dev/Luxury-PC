@@ -1,0 +1,7 @@
+/* Profile Vouchers Section Styles */
+
+.voucher-input-wrap {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}

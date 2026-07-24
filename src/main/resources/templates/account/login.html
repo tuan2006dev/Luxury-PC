@@ -8,10 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
-
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/auth.css}">
-    <!-- SweetAlert2 for Disabled Account Popup -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
@@ -31,22 +29,29 @@
             <!-- CỘT ĐĂNG NHẬP -->
             <div class="auth-box reset-form">
                 <h1 class="auth-box-title" style="font-size: 24px; margin-bottom: 6px;">ĐĂNG NHẬP</h1>
-                <p class="auth-box-subtitle" style="margin-bottom: 24px;">Chào mừng bạn trở lại! Đăng nhập để tiếp tục mua sắm</p>
+                <p class="auth-box-subtitle" style="margin-bottom: 24px;">Chào mừng bạn trở lại! Đăng nhập để tiếp tục
+                    mua sắm</p>
                 <form action="/login" method="POST" novalidate onsubmit="return validateLogin(event)">
-                    <div th:replace="~{custominput/components :: textInput(label='Email hoặc Tên đăng nhập *', name='username', type='text', placeholder='Email hoặc username', required=true, id=null, value=null)}">
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Email hoặc Tên đăng nhập *', name='username', type='text', placeholder='Email hoặc username', required=true, id=null, value=null)}">
                     </div>
-                    <div th:replace="~{custominput/components :: textInput(label='Mật khẩu *', name='password', type='password', placeholder='••••••••', required=true, id=null, value=null)}">
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Mật khẩu *', name='password', type='password', placeholder='••••••••', required=true, id=null, value=null)}">
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <label class="checkbox-label">
                             <input type="checkbox" name="remember-me"> Ghi nhớ đăng nhập
                         </label>
-                        <a th:href="@{/auth/forgot-password}" style="color: #666; text-decoration: underline;">Quên mật khẩu?</a>
+                        <a th:href="@{/auth/forgot-password}" style="color: #666; text-decoration: underline;">Quên mật
+                            khẩu?</a>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">ĐĂNG NHẬP</button>
 
                     <div style="text-align: center; margin-top: 20px; font-size: 14px;">
-                        Chưa có tài khoản? <a th:href="@{/auth/register}" style="color: var(--accent-blue); font-weight: 600; text-decoration: underline;">Đăng ký ngay</a>
+                        Chưa có tài khoản? <a th:href="@{/auth/register}"
+                            style="color: var(--accent-blue); font-weight: 600; text-decoration: underline;">Đăng ký
+                            ngay</a>
                     </div>
 
                     <div class="or-divider"><span>HOẶC</span></div>

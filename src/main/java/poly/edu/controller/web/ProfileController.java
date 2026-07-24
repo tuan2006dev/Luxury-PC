@@ -46,24 +46,26 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String profile(Authentication authentication, Model model, HttpServletRequest request, HttpSession session) {
-        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
             return "redirect:/auth/login";
         }
-        
+
         try {
             java.util.Map<String, Object> profileData = profileService.getFullProfileData(authentication);
             model.addAllAttributes(profileData);
-            
+
             User user = (User) profileData.get("user");
             model.addAttribute("profile", user);
             model.addAttribute("name",
-                    user.getFullName() != null && !user.getFullName().isEmpty() ? user.getFullName() : user.getUsername());
+                    user.getFullName() != null && !user.getFullName().isEmpty() ? user.getFullName()
+                            : user.getUsername());
             model.addAttribute("email", user.getEmail());
             model.addAttribute("avatarInitial", getAvatarInitial(user));
 
             java.util.List<?> userVouchers = (java.util.List<?>) profileData.get("vouchers");
             model.addAttribute("voucherCount", userVouchers != null ? userVouchers.size() : 0);
-            
+
             java.util.List<?> wishlistItems = (java.util.List<?>) profileData.get("wishlistItems");
             model.addAttribute("wishlistCount", wishlistItems != null ? wishlistItems.size() : 0);
 
@@ -72,7 +74,7 @@ public class ProfileController {
             log.error("Error loading profile", ex);
             return "redirect:/error";
         }
-        
+
         return "account/profile";
     }
 
@@ -90,7 +92,8 @@ public class ProfileController {
             redirectAttributes.addFlashAttribute("addressMessage", "Đã lưu địa chỉ giao hàng.");
             redirectAttributes.addFlashAttribute("addressMessageType", "success");
         } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("addressMessage", "Không thể lưu địa chỉ. Vui lòng kiểm tra lại thông tin.");
+            redirectAttributes.addFlashAttribute("addressMessage",
+                    "Không thể lưu địa chỉ. Vui lòng kiểm tra lại thông tin.");
             redirectAttributes.addFlashAttribute("addressMessageType", "error");
             return "redirect:/profile?tab=address&openForm=1";
         }
@@ -145,7 +148,8 @@ public class ProfileController {
             redirectAttributes.addFlashAttribute("addressMessageType", "success");
             return "redirect:/profile?tab=address";
         } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("addressMessage", "Không thể cập nhật địa chỉ. Vui lòng kiểm tra lại thông tin.");
+            redirectAttributes.addFlashAttribute("addressMessage",
+                    "Không thể cập nhật địa chỉ. Vui lòng kiểm tra lại thông tin.");
             redirectAttributes.addFlashAttribute("addressMessageType", "error");
             return "redirect:/profile?tab=address&openEdit=" + id;
         }
@@ -176,7 +180,8 @@ public class ProfileController {
                 }
 
                 if (emailOtp == null || emailOtp.trim().isEmpty()) {
-                    redirectAttributes.addFlashAttribute("profileMessage", "Vui lòng nhập mã OTP để xác minh email mới.");
+                    redirectAttributes.addFlashAttribute("profileMessage",
+                            "Vui lòng nhập mã OTP để xác minh email mới.");
                     redirectAttributes.addFlashAttribute("profileMessageType", "error");
                     return "redirect:/profile?tab=info&openEdit=1";
                 }
@@ -202,7 +207,8 @@ public class ProfileController {
             redirectAttributes.addFlashAttribute("profileMessageType", "success");
             return "redirect:/profile?tab=info";
         } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("profileMessage", "Không thể cập nhật thông tin. Vui lòng kiểm tra lại dữ liệu.");
+            redirectAttributes.addFlashAttribute("profileMessage",
+                    "Không thể cập nhật thông tin. Vui lòng kiểm tra lại dữ liệu.");
             redirectAttributes.addFlashAttribute("profileMessageType", "error");
             return "redirect:/profile?tab=info&openEdit=1";
         }
@@ -222,8 +228,7 @@ public class ProfileController {
                     orderUpdates,
                     flashSale,
                     newProducts,
-                    weeklyNewsletter
-            );
+                    weeklyNewsletter);
             redirectAttributes.addFlashAttribute("notificationMessage", "Đã lưu cài đặt thông báo.");
             redirectAttributes.addFlashAttribute("notificationMessageType", "success");
         } catch (Exception ex) {
@@ -259,7 +264,8 @@ public class ProfileController {
 
             boolean hasExistingPassword = currentPasswordHash != null && !currentPasswordHash.isBlank();
             if (hasExistingPassword) {
-                if (currentPassword == null || currentPassword.isBlank() || !passwordEncoder.matches(currentPassword, currentPasswordHash)) {
+                if (currentPassword == null || currentPassword.isBlank()
+                        || !passwordEncoder.matches(currentPassword, currentPasswordHash)) {
                     redirectAttributes.addFlashAttribute("securityMessage", "Mật khẩu hiện tại không đúng.");
                     redirectAttributes.addFlashAttribute("securityMessageType", "error");
                     return "redirect:/profile?tab=security&openPasswordForm=1";
@@ -287,7 +293,8 @@ public class ProfileController {
                 // Ignore session registry exceptions
             }
 
-            // Immediately invalidate the current request session and clear authentication context
+            // Immediately invalidate the current request session and clear authentication
+            // context
             try {
                 request.logout();
             } catch (Exception e) {
@@ -338,7 +345,8 @@ public class ProfileController {
             }
 
             if (expiredCount > 0) {
-                redirectAttributes.addFlashAttribute("securityMessage", "Đã đăng xuất " + expiredCount + " phiên đăng nhập khác.");
+                redirectAttributes.addFlashAttribute("securityMessage",
+                        "Đã đăng xuất " + expiredCount + " phiên đăng nhập khác.");
             } else {
                 redirectAttributes.addFlashAttribute("securityMessage", "Không có phiên đăng nhập khác để đăng xuất.");
             }
@@ -396,7 +404,8 @@ public class ProfileController {
     }
 
     private String normalize(String value) {
-        if (value == null) return null;
+        if (value == null)
+            return null;
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
     }
@@ -428,6 +437,5 @@ public class ProfileController {
         }
         return null;
     }
-
 
 }
