@@ -16,53 +16,73 @@
     <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
     <div class="main-content">
+        <div class="header"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
+            <div class="title">
+                <h1 style="font-size: 1.6rem; margin: 0; color: #0f172a;"><i class="fa-solid fa-boxes-stacked"
+                        style="color:var(--gold);margin-right:10px;"></i><span>Quản Lý Kho Hàng</span></h1>
+                <p style="color: var(--muted); font-size: 0.85rem; margin: 4px 0 0 0;">Theo dõi và điều chỉnh số lượng
+                    tồn kho sản phẩm trong hệ thống</p>
+            </div>
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
+        </div>
+
         <!-- Search Bar -->
-        <div th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/inventory', keyword=${keyword})}"></div>
+        <div style="margin-bottom: 1.5rem;">
+            <div
+                th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/inventory', keyword=${keyword})}">
+            </div>
+        </div>
 
         <div class="table-card">
             <div class="table-h">
                 <h2>Quản Lý Kho Hàng</h2>
                 <span><span th:text="${inventory.size()}">0</span> <span>sản phẩm</span></span>
             </div>
-            <div style="width: 100%; overflow-x: auto;">
-                <table class="admin-table inventory-table">
+            <div class="table-wrapper">
+                <table class="admin-table inventory-table" style="min-width: 900px;">
                     <thead>
                         <tr>
-                            <th>Sản Phẩm</th>
-                            <th>Danh Mục</th>
-                            <th>Tồn Kho</th>
-                            <th>Cập Nhật Cuối</th>
-                            <th>Điều Chỉnh Kho</th>
+                            <th style="white-space: nowrap;">Sản Phẩm</th>
+                            <th style="white-space: nowrap;">Danh Mục</th>
+                            <th style="white-space: nowrap;">Tồn Kho</th>
+                            <th style="white-space: nowrap;">Cập Nhật Cuối</th>
+                            <th style="white-space: nowrap; text-align: center;">Điều Chỉnh Kho</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="item : ${inventory}">
-                            <td>
-                                <div th:text="${item.product.name}">Product Name</div>
+                            <td style="white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis;"
+                                th:title="${item.product != null ? item.product.name : ''}">
+                                <div th:text="${item.product != null ? item.product.name : '—'}"
+                                    style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500;">
+                                    Product Name</div>
                             </td>
-                            <td th:text="${item.product.category.name}">Category</td>
-                            <td>
+                            <td style="white-space: nowrap;"
+                                th:text="${item.product != null and item.product.category != null ? item.product.category.name : '—'}">
+                                Category</td>
+                            <td style="white-space: nowrap;">
                                 <div style="display: flex; align-items: center; white-space: nowrap;">
-                                    <span th:text="${item.quantity}" style="min-width: 20px;">0</span>
-                                    <span th:if="${item.quantity < 10}" class="badge badge-low" style="margin-left:8px;">Sắp hết</span>
+                                    <span th:text="${item.quantity}" style="min-width: 20px; font-weight: 600;">0</span>
+                                    <span th:if="${item.quantity < 10}" class="badge badge-low"
+                                        style="margin-left:8px;">Sắp hết</span>
                                 </div>
                             </td>
-                            <td th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
-                            <td>
+                            <td style="white-space: nowrap;"
+                                th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
+                            <td style="white-space: nowrap;">
                                 <form autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post"
-                                    style="display:flex; align-items:center;">
+                                    style="display:flex; align-items:center; gap: 6px; flex-wrap: nowrap;">
                                     <input autocomplete="off" type="hidden" name="productId"
-                                        th:value="${item.product.id}">
+                                        th:value="${item.product != null ? item.product.id : ''}">
                                     <input autocomplete="off" type="number" name="quantity" class="stock-input"
                                         placeholder="Số lượng" required min="1">
-                                    <select name="type" class="type-select">
-                                        <option value="IMPORT">Nhập Kho
-                                        </option>
-                                        <option value="EXPORT">Xuất Kho
-                                        </option>
+                                    <select name="type" class="type-select" style="margin: 0;">
+                                        <option value="IMPORT">Nhập Kho</option>
+                                        <option value="EXPORT">Xuất Kho</option>
                                     </select>
                                     <input autocomplete="off" type="text" name="note" class="stock-input"
-                                        style="width:120px; margin-right:0.5rem" placeholder="Ghi chú">
+                                        style="width:120px;" placeholder="Ghi chú">
                                     <button type="submit" class="adj-btn">Xác Nhận</button>
                                 </form>
                             </td>
@@ -70,9 +90,6 @@
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Phân trang -->
-            <div th:replace="~{admin/layout/pagination :: pagination(pageObj=${inventoryPage})}"></div>
         </div>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>

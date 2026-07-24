@@ -63,7 +63,8 @@ public class AdminNewsCategoryController {
                 }
             }
             newsCategoryService.saveCategory(category);
-            logAction(principal, request, isNew ? "Tạo danh mục tin tức" : "Cập nhật danh mục tin tức", category.getName());
+            logAction(principal, request, isNew ? "Tạo danh mục tin tức" : "Cập nhật danh mục tin tức",
+                    category.getName());
 
             redirectAttributes.addFlashAttribute("success", "Lưu danh mục thành công!");
         } catch (Exception e) {
@@ -81,8 +82,8 @@ public class AdminNewsCategoryController {
 
         try {
             Optional<NewsCategory> cat = newsCategoryService.getCategoryById(id);
-            if(cat.isPresent()) {
-                if(cat.get().getNewsList() != null && !cat.get().getNewsList().isEmpty()) {
+            if (cat.isPresent()) {
+                if (cat.get().getNewsList() != null && !cat.get().getNewsList().isEmpty()) {
                     redirectAttributes.addFlashAttribute("error", "Không thể xóa danh mục đang có bài viết!");
                     return "redirect:/admin/news-categories";
                 }

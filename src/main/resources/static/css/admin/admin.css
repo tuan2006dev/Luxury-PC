@@ -256,6 +256,16 @@ body.sidebar-collapsed .main-content {
   border: 2px solid #fff;
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--dark, #ffffff);
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(201, 168, 76, 0.2);
+}
+
 .admin-profile {
   display: flex;
   align-items: center;

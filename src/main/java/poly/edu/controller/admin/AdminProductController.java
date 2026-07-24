@@ -32,13 +32,9 @@ public class AdminProductController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String list(Model model, 
-                       @RequestParam(value = "keyword", required = false) String keyword,
-                       @RequestParam(value = "page", defaultValue = "0") int page) {
-        org.springframework.data.domain.Page<Product> productPage = productService.getProductsPage(keyword, page, 10);
-        model.addAttribute("products", productPage.getContent());
-        model.addAttribute("productPage", productPage);
-        model.addAttribute("keyword", keyword);
+    public String list(Model model) {
+        java.util.List<Product> prods = productService.getAllProducts();
+        model.addAttribute("products", prods);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("product", new Product());
         return "admin/products";
@@ -46,12 +42,12 @@ public class AdminProductController {
 
     @PostMapping("/save")
     public String save(@jakarta.validation.Valid @ModelAttribute("product") Product product,
-                       org.springframework.validation.BindingResult result,
-                       @RequestParam("imageFile") MultipartFile imageFile,
-                       Principal principal,
-                       HttpServletRequest request,
-                       Model model) {
-        
+            org.springframework.validation.BindingResult result,
+            @RequestParam("imageFile") MultipartFile imageFile,
+            Principal principal,
+            HttpServletRequest request,
+            Model model) {
+
         if (result.hasErrors()) {
             model.addAttribute("products", productService.getAllProducts());
             model.addAttribute("categories", categoryService.getAllCategories());
@@ -76,7 +72,8 @@ public class AdminProductController {
         boolean isNew = (product.getId() == null);
         if (isNew) {
             product.setCreatedAt(new Date());
-            if (product.getStock() == null) product.setStock(0);
+            if (product.getStock() == null)
+                product.setStock(0);
         }
 
         productService.saveProduct(product);
@@ -94,7 +91,7 @@ public class AdminProductController {
         return "admin/products";
     }
 
-    @RequestMapping(value = "/delete/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/delete/{id}", method = { RequestMethod.GET, RequestMethod.POST })
     public String delete(
             @PathVariable("id") Integer id,
             Principal principal,

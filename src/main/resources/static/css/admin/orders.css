@@ -13,7 +13,8 @@
         --white: #0f172a;
 }
 
-html, body {
+html,
+body {
         height: 100vh !important;
         max-height: 100vh !important;
         overflow: hidden !important;
@@ -29,9 +30,9 @@ html, body {
         padding: 1.25rem !important;
         box-sizing: border-box !important;
         transition: all 0.3s ease !important;
-        overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
+        overflow: hidden !important;
 }
 
 body.sidebar-collapsed .main-content {
@@ -45,12 +46,12 @@ body.sidebar-collapsed .main-content {
         border: 1px solid #e2e8f0 !important;
         border-radius: 10px !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-        overflow: hidden !important;
+        box-sizing: border-box !important;
         display: flex !important;
         flex-direction: column !important;
         flex: 1 !important;
         min-height: 0 !important;
-        box-sizing: border-box !important;
+        overflow: hidden !important;
 }
 
 .table-h {
@@ -63,30 +64,9 @@ body.sidebar-collapsed .main-content {
 
 .table-wrapper {
         width: 100% !important;
-        flex: 1 !important;
-        min-height: 0 !important;
-        overflow-x: auto !important; /* FIXED: allow horizontal scroll */
+        max-height: 58vh !important;
+        overflow-x: auto !important;
         overflow-y: auto !important;
-        padding-right: 4px !important;
-        padding-bottom: 4rem !important;
-}
-
-.table-wrapper::-webkit-scrollbar {
-        width: 6px;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 4px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-        background: #0066CC;
 }
 
 .table-h {
@@ -112,7 +92,8 @@ body.sidebar-collapsed .main-content {
 
 .admin-table {
         width: 100% !important;
-        min-width: 1200px !important; /* FIXED: prevent column squishing */
+        min-width: 1200px !important;
+        /* FIXED: prevent column squishing */
         border-collapse: collapse !important;
         font-size: 0.8rem !important;
         table-layout: fixed !important;

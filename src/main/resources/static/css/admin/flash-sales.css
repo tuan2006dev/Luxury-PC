@@ -178,9 +178,22 @@ th {
         padding: .8rem .5rem;
 }
 
+.actions-cell {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: nowrap;
+}
+
+.actions-cell .btn-sm {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.72rem;
+        white-space: nowrap;
+}
+
 td {
-        padding: .8rem .5rem;
-        font-size: .82rem;
+        padding: .6rem .4rem;
+        font-size: .8rem;
         border-bottom: 1px solid #e2e8f0;
 }
 

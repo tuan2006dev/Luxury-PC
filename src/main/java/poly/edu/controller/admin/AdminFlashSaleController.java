@@ -109,7 +109,8 @@ public class AdminFlashSaleController {
     @GetMapping("/{id}/items")
     public String manageItems(@PathVariable("id") Integer id, Model model) {
         FlashSale sale = flashSaleService.getById(id);
-        if (sale == null) return "redirect:/admin/flash-sales";
+        if (sale == null)
+            return "redirect:/admin/flash-sales";
 
         model.addAttribute("flashSale", sale);
         model.addAttribute("items", flashSaleService.getItemsBySaleId(id));

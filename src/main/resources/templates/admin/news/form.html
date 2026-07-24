@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <link rel="icon" type="image/png" th:href="@{/logo.png}" />
     <meta charset="UTF-8">
@@ -8,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
-    
+
     <!-- TinyMCE CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
@@ -24,7 +25,7 @@
             noneditable_class: 'mceNonEditable',
             toolbar_mode: 'sliding',
             contextmenu: 'link image table',
-            
+
             // Image upload handler
             images_upload_url: '/admin/news/upload-image',
             automatic_uploads: true,
@@ -35,12 +36,12 @@
                     xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
                     xhr.open('POST', '/admin/news/upload-image');
-                    
+
                     xhr.upload.onprogress = function (e) {
                         progress(e.loaded / e.total * 100);
                     };
-                    
-                    xhr.onload = function() {
+
+                    xhr.onload = function () {
                         var json;
                         if (xhr.status < 200 || xhr.status >= 300) {
                             reject('HTTP Error: ' + xhr.status);
@@ -53,11 +54,11 @@
                         }
                         resolve(json.location);
                     };
-                    
+
                     xhr.onerror = function () {
                         reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
                     };
-                    
+
                     formData = new FormData();
                     formData.append('file', blobInfo.blob(), blobInfo.filename());
                     xhr.send(formData);
@@ -65,28 +66,124 @@
             }
         });
     </script>
-    
+
     <style>
-        .form-container { background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .row { display: flex; gap: 24px; }
-        .col-8 { flex: 0 0 70%; }
-        .col-4 { flex: 0 0 30%; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-weight: 500; color: #475569; margin-bottom: 8px; }
-        .form-control { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: inherit; font-size: 14px; }
-        .form-control:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 2px rgba(14,165,233,0.2); }
-        textarea.form-control { resize: vertical; }
-        .btn-submit { background: #0ea5e9; color: white; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 500; cursor: pointer; width: 100%; }
-        .btn-submit:hover { background: #0284c7; }
-        .btn-cancel { display: block; text-align: center; color: #64748b; text-decoration: none; margin-top: 12px; font-weight: 500;}
-        .btn-cancel:hover { color: #334155; }
-        .main-content { margin-left: 280px; flex: 1; padding: 3rem; overflow-x: hidden; }
-        .page-header { border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
-        .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px;}
-        .card-title { font-weight: 600; margin-bottom: 16px; font-size: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;}
-        .img-preview { margin-top: 10px; max-width: 100%; border-radius: 4px; display: none; }
+        .form-container {
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .row {
+            display: flex;
+            gap: 24px;
+        }
+
+        .col-8 {
+            flex: 0 0 70%;
+        }
+
+        .col-4 {
+            flex: 0 0 30%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .btn-submit {
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background: #0284c7;
+        }
+
+        .btn-cancel {
+            display: block;
+            text-align: center;
+            color: #64748b;
+            text-decoration: none;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        .btn-cancel:hover {
+            color: #334155;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 3rem;
+            overflow-x: hidden;
+        }
+
+        .page-header {
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+            font-size: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .img-preview {
+            margin-top: 10px;
+            max-width: 100%;
+            border-radius: 4px;
+            display: none;
+        }
     </style>
 </head>
+
 <body>
     <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
@@ -94,68 +191,75 @@
         <div class="page-header">
             <h2 th:text="${news.id == null ? 'Thêm Bài Viết Mới' : 'Chỉnh Sửa Bài Viết'}"></h2>
         </div>
-        
+
         <form th:action="@{/admin/news/save}" th:object="${news}" method="post" enctype="multipart/form-data">
             <input type="hidden" th:field="*{id}" />
-            
-            <div th:if="${#fields.hasErrors('*')}" style="background:#fee2e2; color:#991b1b; padding:12px 16px; border-radius:6px; margin-bottom:20px; border:1px solid #fecaca; font-size:14px;">
+
+            <div th:if="${#fields.hasErrors('*')}"
+                style="background:#fee2e2; color:#991b1b; padding:12px 16px; border-radius:6px; margin-bottom:20px; border:1px solid #fecaca; font-size:14px;">
                 <strong><i class="fa fa-exclamation-triangle"></i> Có lỗi xảy ra khi lưu bài viết:</strong>
                 <ul style="margin:5px 0 0 20px; padding:0;">
                     <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
                 </ul>
             </div>
-            
+
             <div class="row">
                 <!-- Cột trái: Nội dung chính -->
                 <div class="col-8">
                     <div class="form-container">
                         <div class="form-group">
                             <label>Tiêu đề bài viết *</label>
-                            <input type="text" class="form-control" th:field="*{title}" required placeholder="Nhập tiêu đề bài viết..." />
+                            <input type="text" class="form-control" th:field="*{title}" required
+                                placeholder="Nhập tiêu đề bài viết..." />
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Mô tả tóm tắt (Summary)</label>
-                            <textarea class="form-control" th:field="*{summary}" rows="3" placeholder="Tóm tắt ngắn gọn nội dung bài viết..."></textarea>
+                            <textarea class="form-control" th:field="*{summary}" rows="3"
+                                placeholder="Tóm tắt ngắn gọn nội dung bài viết..."></textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Nội dung chi tiết *</label>
                             <textarea id="content" th:field="*{content}"></textarea>
                         </div>
                     </div>
-                    
+
                     <div class="form-container" style="margin-top: 24px;">
                         <h3 class="card-title">Tối ưu SEO</h3>
-                        
+
                         <div class="form-group">
                             <label>Đường dẫn tĩnh (Slug)</label>
-                            <input type="text" class="form-control" th:field="*{slug}" placeholder="Để trống sẽ tự tạo từ tiêu đề" />
+                            <input type="text" class="form-control" th:field="*{slug}"
+                                placeholder="Để trống sẽ tự tạo từ tiêu đề" />
                             <small style="color: #64748b;">Ví dụ: danh-gia-rtx-4060</small>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Meta Title</label>
-                            <input type="text" class="form-control" th:field="*{metaTitle}" placeholder="Tiêu đề SEO (nếu khác tiêu đề bài)" />
+                            <input type="text" class="form-control" th:field="*{metaTitle}"
+                                placeholder="Tiêu đề SEO (nếu khác tiêu đề bài)" />
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Meta Description</label>
-                            <textarea class="form-control" th:field="*{metaDescription}" rows="2" placeholder="Mô tả cho Google Search..."></textarea>
+                            <textarea class="form-control" th:field="*{metaDescription}" rows="2"
+                                placeholder="Mô tả cho Google Search..."></textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Meta Keywords</label>
-                            <input type="text" class="form-control" th:field="*{metaKeywords}" placeholder="rtx 4060, card đồ họa, đánh giá..." />
+                            <input type="text" class="form-control" th:field="*{metaKeywords}"
+                                placeholder="rtx 4060, card đồ họa, đánh giá..." />
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Cột phải: Thuộc tính & Xuất bản -->
                 <div class="col-4">
                     <div class="card">
                         <h3 class="card-title">Xuất bản</h3>
-                        
+
                         <div class="form-group">
                             <label>Trạng thái</label>
                             <select class="form-control" th:field="*{status}">
@@ -164,40 +268,44 @@
                                 <option value="ARCHIVED">Lưu trữ (Ẩn)</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Danh mục</label>
                             <select class="form-control" th:field="*{category.id}">
                                 <option value="">-- Chọn danh mục --</option>
-                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">
+                                </option>
                             </select>
                         </div>
-                        
+
                         <button type="submit" class="btn-submit"><i class="fa fa-save"></i> LƯU BÀI VIẾT</button>
                         <a th:href="@{/admin/news}" class="btn-cancel">Hủy bỏ</a>
                     </div>
-                    
+
                     <div class="card">
                         <h3 class="card-title">Ảnh đại diện (Thumbnail)</h3>
                         <div class="form-group">
-                            <input type="file" name="thumbnailFile" id="thumbnailFile" class="form-control" accept="image/*" onchange="previewImage(this);" />
-                            <small style="color: #64748b; display:block; margin-top:5px;">Chọn ảnh mới để thay thế ảnh cũ (nếu có)</small>
-                            
+                            <input type="file" name="thumbnailFile" id="thumbnailFile" class="form-control"
+                                accept="image/*" onchange="previewImage(this);" />
+                            <small style="color: #64748b; display:block; margin-top:5px;">Chọn ảnh mới để thay thế ảnh
+                                cũ (nếu có)</small>
+
                             <!-- Ảnh preview hoặc ảnh cũ -->
-                            <img id="preview" th:src="${news.thumbnail != null} ? @{${news.thumbnail.startsWith('http') || news.thumbnail.startsWith('/') ? news.thumbnail : '/images/news/' + news.thumbnail}} : '#'" 
-                                 class="img-preview" th:style="${news.thumbnail != null} ? 'display:block;' : ''" />
+                            <img id="preview"
+                                th:src="${news.thumbnail != null} ? @{${news.thumbnail.startsWith('http') || news.thumbnail.startsWith('/') ? news.thumbnail : '/images/news/' + news.thumbnail}} : '#'"
+                                class="img-preview" th:style="${news.thumbnail != null} ? 'display:block;' : ''" />
                         </div>
                     </div>
                 </div>
             </div>
         </form>
     </div>
-    
+
     <script>
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     var preview = document.getElementById('preview');
                     preview.src = e.target.result;
                     preview.style.display = 'block';
@@ -207,4 +315,5 @@
         }
     </script>
 </body>
+
 </html>

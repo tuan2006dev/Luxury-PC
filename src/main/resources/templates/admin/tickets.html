@@ -24,14 +24,7 @@
                         Trợ Khách Hàng</span></h1>
                 <p>Xem và phản hồi các yêu cầu tư vấn, hỗ trợ từ khách hàng</p>
             </div>
-            <div class="user-info" style="display: flex; align-items: center;">
-                <i class="fa-solid fa-user-shield"></i>
-                <span th:text="${#authentication.name}" style="margin-left: 8px;">Admin</span>
-                <span sec:authorize="hasRole('ADMIN')"
-                    style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">ADMIN</span>
-                <span sec:authorize="hasRole('STAFF')"
-                    style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 12px; font-weight: 600;">STAFF</span>
-            </div>
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
         </div>
 
         <!-- Stats Row -->

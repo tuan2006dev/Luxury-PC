@@ -58,27 +58,73 @@
         color: var(--gold);
 }
 
+html,
+body {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+}
+
 .main-content {
         margin-left: 280px !important;
         width: calc(100% - 280px) !important;
-        padding: 2rem !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        padding: 1.5rem !important;
         box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
 }
 
 .table-card {
         background: var(--dark);
-        padding: 2rem;
+        padding: 1.5rem;
         border: 1px solid #e2e8f0;
         border-radius: 8px;
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
 }
 
 .table-h {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.25rem;
+        flex-shrink: 0;
 }
 
+.table-wrapper {
+        width: 100%;
+        flex: 1 !important;
+        min-height: 0 !important;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+}
+
+.inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+}
+
+.inventory-table th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #f8fafc;
+        white-space: nowrap;
+        border-bottom: 2px solid #e2e8f0;
+}
+
+.inventory-table td {
+        white-space: nowrap;
+        vertical-align: middle;
+}
 
 .stock-input {
         background: var(--mid);
@@ -108,6 +154,7 @@ button.adj-btn {
         cursor: pointer;
         font-size: 0.75rem;
         font-weight: 600;
+        white-space: nowrap;
 }
 
 .badge {

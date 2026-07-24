@@ -23,6 +23,8 @@
                 <p>Tạo chương trình Flash Sale với giá sốc, thời gian giới
                     hạn</p>
             </div>
+
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
         </div>
 
         <div th:if="${success}" class="toast toast-success">
@@ -33,26 +35,36 @@
         </div>
 
         <div class="table-card">
-            <div class="table-h" style="flex-wrap: wrap; gap: 15px;">
-                <span style="white-space: nowrap;"><i class="fa-solid fa-list"></i> <span>Danh Sách
-                        Chương Trình</span></span>
-                <button class="btn btn-gold" onclick="openModal()" style="white-space: nowrap;"><i
-                        class="fa-solid fa-plus"></i> <span>Tạo Flash Sale</span></button>
+            <div class="table-h"
+                style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <span style="white-space: nowrap; font-weight: 700; font-size: 1.1rem;"><i class="fa-solid fa-list"
+                        style="color: var(--gold); margin-right: 6px;"></i> <span>Danh Sách Chương Trình</span></span>
+                <div style="display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap;">
+                    <div
+                        th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/flash-sales', keyword=${keyword})}">
+                    </div>
+                    <button class="btn btn-gold" onclick="openModal()" style="white-space: nowrap;"><i
+                            class="fa-solid fa-plus"></i> <span>Tạo Flash Sale</span></button>
+                </div>
             </div>
 
-            <div style="overflow-x: auto; width: 100%;">
-                <table th:if="${flashSales != null and !flashSales.isEmpty()}" style="min-width: 900px;">
+            <div class="table-wrapper"
+                style="width: 100%; max-height: 56vh; overflow-x: hidden !important; overflow-y: auto !important;">
+                <table th:if="${flashSales != null and !flashSales.isEmpty()}" class="admin-table"
+                    style="width: 100%; table-layout: auto;">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Banner</th>
-                            <th>Tên Chương Trình</th>
-                            <th>Bắt Đầu</th>
-                            <th>Kết Thúc</th>
-                            <th style="text-align:center;">Sản Phẩm</th>
-                            <th>Thời Gian</th>
-                            <th>Trạng Thái</th>
-                            <th>Hành Động</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">ID</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Banner</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tên Chương Trình
+                            </th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Bắt Đầu</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Kết Thúc</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; text-align:center;">
+                                Sản Phẩm</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Thời Gian</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Trạng Thái</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
