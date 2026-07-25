@@ -37,6 +37,7 @@
 
         .news-main {
             flex: 1;
+            min-width: 0;
             background: #fff;
             border-radius: 12px;
             padding: 40px;
@@ -376,8 +377,8 @@
                     <div class="top-post" th:each="tn : ${topViewed}">
                         <a th:href="@{/news/{slug}(slug=${tn.slug})}">
                             <img class="top-post-img"
-                                th:src="${tn.thumbnail != null ? '/images/news/' + tn.thumbnail : '/images/placeholder.jpg'}"
-                                alt="Thumb">
+                                th:src="@{${not #strings.isEmpty(tn.thumbnail) ? (tn.thumbnail.startsWith('http') || tn.thumbnail.startsWith('/') ? tn.thumbnail : '/images/news/' + tn.thumbnail) : '/images/placeholder.png'}}"
+                                onerror="this.onerror=null;this.src='/images/placeholder.png';" alt="Thumb">
                         </a>
                         <div class="top-post-info">
                             <a class="top-post-title" th:href="@{/news/{slug}(slug=${tn.slug})}"
@@ -394,8 +395,8 @@
                     <div class="top-post" th:each="rn : ${relatedNews}">
                         <a th:href="@{/news/{slug}(slug=${rn.slug})}">
                             <img class="top-post-img"
-                                th:src="${rn.thumbnail != null ? '/images/news/' + rn.thumbnail : '/images/placeholder.jpg'}"
-                                alt="Thumb">
+                                th:src="@{${not #strings.isEmpty(rn.thumbnail) ? (rn.thumbnail.startsWith('http') || rn.thumbnail.startsWith('/') ? rn.thumbnail : '/images/news/' + rn.thumbnail) : '/images/placeholder.png'}}"
+                                onerror="this.onerror=null;this.src='/images/placeholder.png';" alt="Thumb">
                         </a>
                         <div class="top-post-info">
                             <a class="top-post-title" th:href="@{/news/{slug}(slug=${rn.slug})}"

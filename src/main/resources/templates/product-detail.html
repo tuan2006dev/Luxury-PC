@@ -125,10 +125,13 @@
                     </ul>
                 </div>
 
-                <div class="pd-specs-short" th:if="${product.description != null and !product.description.isEmpty()}">
-                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 10px;">Mô tả ngắn:</h4>
-                    <p style="font-size: 14px; color: #444; line-height: 1.6;" th:text="${product.description}">Mô tả
-                    </p>
+                <div class="pd-specs-short" th:if="${parsedSpecs != null and !parsedSpecs.isEmpty()}">
+                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 10px;">Đặc điểm nổi bật:</h4>
+                    <ul style="font-size: 13.5px; color: #444; line-height: 1.8; padding-left: 20px; list-style-type: disc; margin: 0 0 15px 0;">
+                        <li th:each="spec, iter : ${parsedSpecs}" th:if="${iter.index < 4}">
+                            <span th:text="${spec.key}" style="font-weight: 600;"></span>: <span th:text="${spec.value}"></span>
+                        </li>
+                    </ul>
                 </div>
 
                 <div class="pd-actions" th:if="${product.stock > 0}"

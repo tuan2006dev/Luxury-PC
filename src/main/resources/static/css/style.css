@@ -253,6 +253,7 @@ textarea {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-width: 0;
 }
 
 .product-card:hover {
@@ -2133,6 +2134,7 @@ textarea {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-width: 0;
 }
 
 .product-card-fav {

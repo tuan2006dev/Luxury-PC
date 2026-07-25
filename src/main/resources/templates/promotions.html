@@ -390,8 +390,7 @@
                                        (${iterStat.index == 2} ? 'height: 3px; background: linear-gradient(90deg, #06b6d4, #3b82f6);' :
                                        'height: 3px; background: linear-gradient(90deg, #10b981, #059669);'))"></div>
                             <div style="padding: 11px 13px; background: #fafafa;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
                                     <!-- Left: index badge + name + date -->
                                     <div style="display: flex; align-items: flex-start; gap: 9px; min-width: 0;">
                                         <div
@@ -401,8 +400,8 @@
                                                    'width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;'))">
                                             <i class="fa-solid fa-bolt" style="color: #fff; font-size: 10px;"></i>
                                         </div>
-                                        <div style="min-width: 0;">
-                                            <div style="font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;"
+                                        <div style="min-width: 0; flex: 1;">
+                                            <div style="font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;"
                                                 th:text="${uSale.name}">Đợt 2</div>
                                             <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;"
                                                 th:if="${uSale.startTime != null}">
@@ -415,11 +414,10 @@
                                         </div>
                                     </div>
                                     <!-- Right: countdown -->
-                                    <div style="text-align: right; flex-shrink: 0;">
-                                        <div
-                                            style="font-size: 9px; color: #94a3b8; font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px dashed #cbd5e1;">
+                                        <div style="font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
                                             Bắt đầu sau</div>
-                                        <div style="font-size: 14px; font-weight: 800; color: #ef4444; background: linear-gradient(135deg, #fef2f2, #fff5f5); padding: 4px 9px; border-radius: 7px; border: 1px solid #fecaca; font-variant-numeric: tabular-nums; letter-spacing: 0.5px;"
+                                        <div style="font-size: 15px; font-weight: 800; color: #ef4444; font-variant-numeric: tabular-nums; letter-spacing: 0.5px;"
                                             class="upcoming-timer"
                                             th:attr="data-seconds=${uSale.startTime != null ? (uSale.startTime.time - #dates.createNow().getTime()) / 1000 : 0}">
                                             00:00:00</div>
@@ -434,15 +432,14 @@
                             style="display: none; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0;">
                             <div style="height: 3px; background: linear-gradient(90deg, #64748b, #94a3b8);"></div>
                             <div style="padding: 11px 13px; background: #fafafa;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
                                     <div style="display: flex; align-items: flex-start; gap: 9px; min-width: 0;">
                                         <div
                                             style="width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #64748b, #94a3b8); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;">
                                             <i class="fa-solid fa-bolt" style="color: #fff; font-size: 10px;"></i>
                                         </div>
-                                        <div style="min-width: 0;">
-                                            <div style="font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;"
+                                        <div style="min-width: 0; flex: 1;">
+                                            <div style="font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;"
                                                 th:text="${uSale.name}">Đợt X</div>
                                             <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;"
                                                 th:if="${uSale.startTime != null}">
@@ -454,11 +451,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div style="text-align: right; flex-shrink: 0;">
-                                        <div
-                                            style="font-size: 9px; color: #94a3b8; font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px dashed #cbd5e1;">
+                                        <div style="font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
                                             Bắt đầu sau</div>
-                                        <div style="font-size: 14px; font-weight: 800; color: #ef4444; background: linear-gradient(135deg, #fef2f2, #fff5f5); padding: 4px 9px; border-radius: 7px; border: 1px solid #fecaca; font-variant-numeric: tabular-nums; letter-spacing: 0.5px;"
+                                        <div style="font-size: 15px; font-weight: 800; color: #ef4444; font-variant-numeric: tabular-nums; letter-spacing: 0.5px;"
                                             class="upcoming-timer"
                                             th:attr="data-seconds=${uSale.startTime != null ? (uSale.startTime.time - #dates.createNow().getTime()) / 1000 : 0}">
                                             00:00:00</div>
