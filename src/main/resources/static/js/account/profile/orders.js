@@ -6,10 +6,16 @@ function toggleOrder(orderId) {
   if (pane.classList.contains('active')) {
     pane.classList.remove('active');
   } else {
-    document.querySelectorAll('.order-details-pane').forEach(el => el.classList.remove('active'));
     pane.classList.add('active');
   }
 }
+
+window.toggleOrder = toggleOrder;
+window.cancelOrder = cancelOrder;
+window.openReviewModal = openReviewModal;
+window.closeOrderModal = closeOrderModal;
+window.rate = rate;
+window.submitReview = submitReview;
 
 function cancelOrder(btn) {
   const orderId = btn?.dataset?.orderId;
@@ -103,7 +109,7 @@ function submitReview() {
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        toast(`✓ Đã lưu đánh giá ${orderModalState.stars} sao cho ${productName}`);
+        toast('✓ Đã lưu đánh giá ' + orderModalState.stars + ' sao cho ' + (productName || ''));
         closeOrderModal();
       } else {
         toast('⚠️ ' + (data.message || 'Không thể lưu đánh giá.'));
@@ -114,3 +120,22 @@ function submitReview() {
       toast('⚠️ Không thể lưu đánh giá.');
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const starBtns = document.querySelectorAll('.order-modal .review-stars button, .review-stars .star-btn');
+  const starContainer = document.querySelector('.order-modal .review-stars, .review-stars');
+
+  starBtns.forEach((btn, index) => {
+    btn.addEventListener('mouseenter', () => {
+      starBtns.forEach((b, i) => {
+        b.classList.toggle('hovered', i <= index);
+      });
+    });
+  });
+
+  if (starContainer) {
+    starContainer.addEventListener('mouseleave', () => {
+      starBtns.forEach(b => b.classList.remove('hovered'));
+    });
+  }
+});

@@ -36,6 +36,15 @@ async function loadAddresses() {
   }
 }
 
+window.loadAddresses = loadAddresses;
+window.setDefaultAddress = setDefaultAddress;
+window.openAddressForm = openAddressForm;
+window.closeAddressForm = closeAddressForm;
+window.editAddress = editAddress;
+window.getProfileLocation = getProfileLocation;
+window.saveAddress = saveAddress;
+window.deleteAddress = deleteAddress;
+
 function setDefaultAddress(id) {
   fetch('/api/address/' + id + '/default', {
     method: 'PUT',
@@ -56,17 +65,44 @@ function setDefaultAddress(id) {
     });
 }
 
+function clearAddressErrors() {
+  ['address-name', 'address-phone', 'address-detail', 'address-city', 'address-district'].forEach(id => {
+    const input = document.getElementById(id);
+    const errDiv = document.getElementById(id + '-error');
+    if (input) {
+      input.style.borderColor = '';
+    }
+    if (errDiv) {
+      errDiv.style.display = 'none';
+      errDiv.textContent = '';
+    }
+  });
+}
+
+function showAddressFieldError(fieldId, message) {
+  const input = document.getElementById(fieldId);
+  const errDiv = document.getElementById(fieldId + '-error');
+  if (input) {
+    input.style.borderColor = '#ef4444';
+  }
+  if (errDiv) {
+    errDiv.textContent = message;
+    errDiv.style.display = 'block';
+  }
+}
+
 function openAddressForm() {
   if (addressCount >= 5) {
     toast('⚠️ Bạn chỉ được lưu tối đa 5 địa chỉ giao hàng.');
     return;
   }
-  document.getElementById('address-id-edit').value = '';
-  document.getElementById('address-name').value = '';
-  document.getElementById('address-phone').value = '';
-  document.getElementById('address-detail').value = '';
-  document.getElementById('address-city').value = '';
-  document.getElementById('address-district').value = '';
+  clearAddressErrors();
+  if (document.getElementById('address-id-edit')) document.getElementById('address-id-edit').value = '';
+  if (document.getElementById('address-name')) document.getElementById('address-name').value = '';
+  if (document.getElementById('address-phone')) document.getElementById('address-phone').value = '';
+  if (document.getElementById('address-detail')) document.getElementById('address-detail').value = '';
+  if (document.getElementById('address-city')) document.getElementById('address-city').value = '';
+  if (document.getElementById('address-district')) document.getElementById('address-district').value = '';
 
   const formContainer = document.getElementById('address-form-container');
   const listContainer = document.getElementById('address-list-container');
@@ -81,14 +117,22 @@ function openAddressForm() {
     titleEl.textContent = 'Thêm Địa Chỉ Mới';
   }
 
-  document.getElementById('address-form-container').style.display = 'block';
+  if (formContainer) {
+    formContainer.style.display = 'block';
+    document.getElementById('address-name')?.focus();
+  }
 }
 
 function closeAddressForm() {
-  document.getElementById('address-form-container')?.style.display = 'none';
+  clearAddressErrors();
+  const container = document.getElementById('address-form-container');
+  if (container) {
+    container.style.display = 'none';
+  }
 }
 
 function editAddress(id) {
+  clearAddressErrors();
   fetch('/api/address/' + id)
     .then(res => res.json())
     .then(data => {
@@ -146,13 +190,36 @@ async function getProfileLocation() {
 
     if (nomData && nomData.address) {
       const addr = nomData.address;
-      const city = addr.city || addr.province || addr.state || addr.region || '';
-      const district = addr.county || addr.city_district || addr.district || addr.suburb || '';
-      const details = nomData.display_name;
+      
+      // 1. Tỉnh / Thành phố (Ưu tiên province/state hoặc thành phố lớn)
+      const candidatesCity = [addr.province, addr.state, addr.city, addr.region].filter(Boolean);
+      let city = candidatesCity.find(c => /tỉnh|thành phố|tp\.|hồ chí minh|hà nội|đà nẵng|hải phòng|cần thơ/i.test(c));
+      if (!city && candidatesCity.length > 0) {
+        city = candidatesCity[candidatesCity.length - 1];
+      }
+      city = city || addr.province || addr.state || addr.city || '';
+
+      // 2. Quận / Huyện (Khác Tỉnh/Thành phố, ưu tiên district/county/town/city_district)
+      const candidatesDistrict = [addr.district, addr.county, addr.town, addr.city_district, addr.municipality, addr.suburb].filter(Boolean);
+      let district = candidatesDistrict.find(d => d !== city && /quận|huyện|thị xã|thành phố/i.test(d));
+      if (!district) {
+        district = candidatesDistrict.find(d => d !== city);
+      }
+      district = district || addr.district || addr.county || addr.town || addr.city_district || '';
+
+      const details = nomData.display_name || '';
 
       document.getElementById('address-city').value = city;
       document.getElementById('address-district').value = district;
       document.getElementById('address-detail').value = details;
+
+      // Xóa lỗi viền đỏ nếu có
+      ['address-city', 'address-district', 'address-detail'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) input.style.borderColor = '';
+        const errDiv = document.getElementById(id + '-error');
+        if (errDiv) { errDiv.style.display = 'none'; errDiv.textContent = ''; }
+      });
 
       const nameInput = document.getElementById('address-name');
       const phoneInput = document.getElementById('address-phone');
@@ -196,23 +263,66 @@ async function getProfileLocation() {
 }
 
 function saveAddress() {
-  const id = document.getElementById('address-id-edit').value;
-  const name = document.getElementById('address-name').value.trim();
-  const phone = document.getElementById('address-phone').value.trim();
-  const detail = document.getElementById('address-detail').value.trim();
-  const city = document.getElementById('address-city').value.trim();
-  const district = document.getElementById('address-district').value.trim();
+  clearAddressErrors();
+  const idEl = document.getElementById('address-id-edit');
+  const nameEl = document.getElementById('address-name');
+  const phoneEl = document.getElementById('address-phone');
+  const detailEl = document.getElementById('address-detail');
+  const cityEl = document.getElementById('address-city');
+  const districtEl = document.getElementById('address-district');
 
-  if (!name) { toast('Vui lòng nhập tên người nhận.'); return; }
-  if (!phone) { toast('Vui lòng nhập số điện thoại.'); return; }
-  const phoneRegex = /^0(3|5|7|8|9)[0-9]{8}$/;
-  if (!phoneRegex.test(phone)) {
-    toast('Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số (đầu số 03, 05, 07, 08, 09).');
+  const id = idEl ? idEl.value : '';
+  const name = nameEl ? nameEl.value.trim() : '';
+  const phone = phoneEl ? phoneEl.value.trim() : '';
+  const detail = detailEl ? detailEl.value.trim() : '';
+  const city = cityEl ? cityEl.value.trim() : '';
+  const district = districtEl ? districtEl.value.trim() : '';
+
+  let isValid = true;
+  let firstInvalid = null;
+
+  if (!name) {
+    showAddressFieldError('address-name', 'Vui lòng nhập họ và tên người nhận.');
+    if (!firstInvalid) firstInvalid = nameEl;
+    isValid = false;
+  }
+
+  if (!phone) {
+    showAddressFieldError('address-phone', 'Vui lòng nhập số điện thoại.');
+    if (!firstInvalid) firstInvalid = phoneEl;
+    isValid = false;
+  } else {
+    const phoneRegex = /^0(3|5|7|8|9)[0-9]{8}$/;
+    if (!phoneRegex.test(phone)) {
+      showAddressFieldError('address-phone', 'Số điện thoại không hợp lệ (gồm 10 chữ số, đầu số 03, 05, 07, 08, 09).');
+      if (!firstInvalid) firstInvalid = phoneEl;
+      isValid = false;
+    }
+  }
+
+  if (!detail) {
+    showAddressFieldError('address-detail', 'Vui lòng nhập địa chỉ chi tiết (số nhà, đường phố).');
+    if (!firstInvalid) firstInvalid = detailEl;
+    isValid = false;
+  }
+
+  if (!city) {
+    showAddressFieldError('address-city', 'Vui lòng nhập tỉnh / thành phố.');
+    if (!firstInvalid) firstInvalid = cityEl;
+    isValid = false;
+  }
+
+  if (!district) {
+    showAddressFieldError('address-district', 'Vui lòng nhập quận / huyện.');
+    if (!firstInvalid) firstInvalid = districtEl;
+    isValid = false;
+  }
+
+  if (!isValid) {
+    firstInvalid?.focus();
+    toast('⚠️ Vui lòng điền đầy đủ và chính xác thông tin địa chỉ.');
     return;
   }
-  if (!detail) { toast('Vui lòng nhập địa chỉ chi tiết.'); return; }
-  if (!district) { toast('Vui lòng nhập quận/huyện.'); return; }
-  if (!city) { toast('Vui lòng nhập tỉnh/thành phố.'); return; }
 
   const payload = { recipientName: name, phone, detailedAddress: detail, city, district };
   const method = id ? 'PUT' : 'POST';
@@ -263,6 +373,20 @@ function deleteAddress(id) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  ['address-name', 'address-phone', 'address-detail', 'address-city', 'address-district'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', function () {
+        this.style.borderColor = '';
+        const errDiv = document.getElementById(id + '-error');
+        if (errDiv) {
+          errDiv.style.display = 'none';
+          errDiv.textContent = '';
+        }
+      });
+    }
+  });
+
   const addressPhoneInput = document.getElementById('address-phone');
   if (addressPhoneInput) {
     addressPhoneInput.addEventListener('input', function () {

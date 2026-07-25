@@ -17,6 +17,18 @@ function togglePasswordForm(force) {
   }
 }
 
+window.togglePasswordForm = togglePasswordForm;
+window.open2FAModal = open2FAModal;
+window.close2FAModal = close2FAModal;
+window.verifyAndEnable2FA = verifyAndEnable2FA;
+window.disable2FA = disable2FA;
+window.openEmailDetailsModal = openEmailDetailsModal;
+window.closeEmailDetailsModal = closeEmailDetailsModal;
+window.openSessionsModal = openSessionsModal;
+window.closeSessionsModal = closeSessionsModal;
+window.revokeSession = revokeSession;
+window.deleteAccount = deleteAccount;
+
 function open2FAModal() {
   toast('✓ Đang gửi mã OTP đến email của bạn...');
   const otpInput = document.getElementById('2fa-otp-input');

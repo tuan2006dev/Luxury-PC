@@ -125,34 +125,30 @@ document.addEventListener('input', function (e) {
 // Global Toast function
 let toastTimeout;
 window.showToast = function (msg, type = 'success') {
-    const el = document.getElementById('toast');
-    if (el) {
-        // Clear any active timeout to prevent previous toast call from hiding this one prematurely
-        clearTimeout(toastTimeout);
-
-        // Remove classes first to reset the entry animation
-        el.classList.remove('active', 'warning');
-
-        // Force reflow so the browser registers the class removal before adding them back
-        void el.offsetWidth;
-
-        // Set new message text
-        el.textContent = msg;
-
-        // Apply variant class
-        if (type === 'warning') {
-            el.classList.add('warning');
-        }
-
-        el.classList.add('active');
-
-        // Hide after 3.5 seconds
-        toastTimeout = setTimeout(() => {
-            el.classList.remove('active', 'warning');
-        }, 3500);
-    } else {
-        alert(msg);
+    if (!msg) return;
+    let el = document.getElementById('toast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'toast';
+        el.className = 'toast';
+        document.body.appendChild(el);
     }
+
+    clearTimeout(toastTimeout);
+    el.classList.remove('show', 'active', 'warning');
+    void el.offsetWidth;
+
+    el.textContent = msg;
+
+    if (type === 'warning') {
+        el.classList.add('warning');
+    }
+
+    el.classList.add('show', 'active');
+
+    toastTimeout = setTimeout(() => {
+        el.classList.remove('show', 'active', 'warning');
+    }, 3500);
 };
 window.toast = window.showToast;
 

@@ -16,11 +16,12 @@
           class="fa-solid fa-camera"></i></button>
       <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" />
     </div>
-    <div class="sb-name" th:text="${name}" style="font-size: 16px; font-weight: 700; margin-bottom: 5px;">Thanh Minh</div>
+    <div class="sb-name" th:text="${name}"
+      style="font-size: 16px; font-weight: 700; margin-bottom: 5px; color: #000000;">Thanh Minh</div>
     <div class="sb-email" th:text="${email}" style="font-size: 13px; color: #666; margin-bottom: 10px;">
       thanh.minh@email.com</div>
     <div class="sb-badge" th:text="${userRank != 'None' ? 'Thành viên ' + userRank : 'Thành viên mới'}"
-      style="display: inline-block; background: #fef3c7; color: #d97706; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+      style="display: inline-block; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">
       Thành viên</div>
   </div>
 
@@ -61,8 +62,8 @@
     <form th:action="@{/logout}" method="POST">
       <button type="submit"
         style="width: 100%; display: flex; align-items: center; padding: 12px 20px; color: #ef4444; background: none; border: none; text-decoration: none; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s;"><i
-          class="fa-solid fa-arrow-right-from-bracket"
-          style="width: 20px; text-align: center; margin-right: 10px;"></i> Đăng Xuất</button>
+          class="fa-solid fa-arrow-right-from-bracket" style="width: 20px; text-align: center; margin-right: 10px;"></i>
+        Đăng Xuất</button>
     </form>
   </nav>
 </aside>

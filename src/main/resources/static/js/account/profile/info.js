@@ -14,6 +14,7 @@ function toggleProfileEditForm(force) {
     panel.querySelector('input, select, textarea')?.focus();
   }
 }
+window.toggleProfileEditForm = toggleProfileEditForm;
 
 document.addEventListener('DOMContentLoaded', () => {
   // Email OTP logic

@@ -192,7 +192,7 @@ textarea {
 
 /* ========== BREADCRUMB ========== */
 .breadcrumb {
-    padding: 20px 0;
+    padding: 10px 0;
     font-size: 14px;
     color: var(--text-secondary);
 }
@@ -1705,29 +1705,39 @@ textarea {
     display: block;
 }
 
-/* ========== TOAST ========== */
+/* ========== UNIFIED GLOBAL TOAST STYLING ========== */
 .toast {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: #333;
-    color: white;
-    padding: 15px 25px;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #0f172a;
+    border: 1px solid #3b82f6;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.85rem 1.8rem;
     border-radius: 8px;
-    font-size: 14px;
     z-index: 99999;
-    transform: translateX(200%);
-    transition: transform 0.3s;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.25);
 }
 
+.toast.show,
 .toast.active {
-    transform: translateX(0);
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
 }
 
 .toast.warning {
-    background: #b45309;
+    background: #0f172a;
     color: #fef3c7;
-    border-left: 4px solid #f59e0b;
+    border: 1px solid #f59e0b;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(245, 158, 11, 0.3);
 }
 
 

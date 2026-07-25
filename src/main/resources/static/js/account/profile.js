@@ -8,16 +8,28 @@ document.body.classList.add('custom-cursor-enabled');
 /* TRANSLATION FALLBACK LOGIC */
 window.t = window.t || function (key, fallback) { return fallback; };
 
-/* TOAST */
+/* UNIFIED TOAST SYSTEM FOR PROFILE */
 let toastT;
 function toast(msg) {
-  const el = document.getElementById('toast');
-  if (!el) return;
+  if (!msg) return;
+  let el = document.getElementById('toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
   el.textContent = msg;
-  el.classList.add('active');
+  el.classList.add('show', 'active');
   clearTimeout(toastT);
-  toastT = setTimeout(() => el.classList.remove('active'), 3500);
+  toastT = setTimeout(() => {
+    el.classList.remove('show', 'active');
+  }, 3500);
 }
+
+window.toast = toast;
+window.showToast = toast;
+window.setTab = setTab;
 
 const tabIds = ['info', 'orders', 'vouchers', 'wishlist', 'security', 'notifications', 'address'];
 function setTab(id, event) {

@@ -20,3 +20,5 @@ function saveVoucherCode() {
       toast('⚠️ Không thể lưu mã voucher.');
     });
 }
+
+window.saveVoucherCode = saveVoucherCode;

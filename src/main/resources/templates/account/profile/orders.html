@@ -8,7 +8,7 @@
   <div class="orders-accordion-wrapper">
     <!-- Table Header -->
     <div class="order-header"
-      style="background: rgba(201, 168, 76, 0.05); padding: 1rem 1.5rem; cursor: default; border-bottom: 1px solid rgba(201, 168, 76, 0.1);">
+      style="background: #f8fafc; padding: 1rem 1.5rem; cursor: default; border-bottom: 1px solid #e2e8f0;">
       <div style="font-weight: 600; color: #000; font-size: 0.85rem; text-align: center;">Mã & Ngày</div>
       <div style="font-weight: 600; color: #000; font-size: 0.85rem; text-align: left;">Sản Phẩm</div>
       <div style="font-weight: 600; color: #000; font-size: 0.85rem; text-align: right;">Tổng Tiền</div>
@@ -103,9 +103,9 @@
                 i9-14900K</div>
               <button type="button" th:if="${order.status == 'COMPLETED'}" th:data-product-id="${oi.product.id}"
                 th:data-product-name="${oi.product.name}"
-                onclick="openReviewModal(this.getAttribute('data-product-id'), this.getAttribute('data-product-name'))"
-                style="display:inline-block; font-size:0.65rem; color:#3b82f6; background:transparent; border:1px solid rgba(201,168,76,0.5); padding:3px 8px; border-radius:3px; transition: 0.3s; cursor:pointer;"
-                onmouseover="this.style.background='#3b82f6'; this.style.color='var(--black)';"
+                onclick="event.stopPropagation(); openReviewModal(this.dataset.productId, this.dataset.productName)"
+                style="display:inline-block; font-size:0.65rem; color:#3b82f6; background:transparent; border:1px solid #cbd5e1; padding:3px 8px; border-radius:3px; transition: 0.3s; cursor:pointer;"
+                onmouseover="this.style.background='#3b82f6'; this.style.color='#fff';"
                 onmouseout="this.style.background='transparent'; this.style.color='#3b82f6';">
                 <span>⭐ Viết Đánh Giá</span>
               </button>
@@ -130,9 +130,9 @@
         </div>
         <!-- Delivery & Payment Information -->
         <div
-          style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(201, 168, 76, 0.15); border-radius: 6px; font-size: 0.8rem; line-height: 1.7;">
+          style="margin-top: 1.5rem; padding: 1.5rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.8rem; line-height: 1.7;">
           <div
-            style="font-size: 0.75rem; color: #3b82f6; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; border-bottom: 1px solid rgba(201, 168, 76, 0.15); padding-bottom: 0.5rem;">
+            style="font-size: 0.75rem; color: #3b82f6; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
             Thông tin nhận hàng & Thanh toán
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">

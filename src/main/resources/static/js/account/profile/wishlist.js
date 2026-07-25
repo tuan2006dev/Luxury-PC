@@ -18,6 +18,9 @@ function removeFromWishlist(btn) {
     });
 }
 
+window.removeFromWishlist = removeFromWishlist;
+window.removeAllWishlist = removeAllWishlist;
+
 function removeAllWishlist() {
   showConfirm('Bạn chắc chắn muốn xóa tất cả sản phẩm yêu thích?').then(confirmed => {
     if (!confirmed) return;
