@@ -227,7 +227,7 @@ body.sidebar-collapsed .logout-btn i {
     width: calc(100% - 280px) !important;
     padding: 2rem !important;
     box-sizing: border-box !important;
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: none !important;
     min-height: 100vh !important;
 }
 

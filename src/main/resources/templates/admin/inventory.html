@@ -72,17 +72,17 @@
                                 th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
                             <td style="white-space: nowrap;">
                                 <form autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post"
-                                    style="display:flex; align-items:center; gap: 6px; flex-wrap: nowrap;">
-                                    <input autocomplete="off" type="hidden" name="productId"
+                                    style="display:flex; align-items:center; gap: 10px; flex-wrap: nowrap;">
+                                    <input autocomplete="off" type="hidden" name="productId" style="width:200px;"
                                         th:value="${item.product != null ? item.product.id : ''}">
                                     <input autocomplete="off" type="number" name="quantity" class="stock-input"
-                                        placeholder="Số lượng" required min="1">
-                                    <select name="type" class="type-select" style="margin: 0;">
+                                        style="width:160px;" placeholder="Số lượng" required min="1">
+                                    <select name="type" class="type-select" style="margin: 0; width:160px;">
                                         <option value="IMPORT">Nhập Kho</option>
                                         <option value="EXPORT">Xuất Kho</option>
                                     </select>
                                     <input autocomplete="off" type="text" name="note" class="stock-input"
-                                        style="width:120px;" placeholder="Ghi chú">
+                                        style="width:160px;" placeholder="Ghi chú">
                                     <button type="submit" class="adj-btn">Xác Nhận</button>
                                 </form>
                             </td>

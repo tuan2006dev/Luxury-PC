@@ -26,10 +26,20 @@ public class AdminVoucherController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String listVouchers(Model model) {
-        model.addAttribute("vouchers", voucherService.getAllVouchers());
+    public String listVouchers(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        java.util.List<Voucher> vouchers = voucherService.getAllVouchers();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            vouchers = vouchers.stream()
+                    .filter(v -> (v.getCode() != null && v.getCode().toLowerCase().contains(kw)) ||
+                                 (v.getDescription() != null && v.getDescription().toLowerCase().contains(kw)) ||
+                                 (v.getId() != null && String.valueOf(v.getId()).contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        model.addAttribute("vouchers", vouchers);
         model.addAttribute("categories", categoryDAO.findAll());
         model.addAttribute("voucher", new Voucher());
+        model.addAttribute("keyword", keyword);
         return "admin/vouchers";
     }
 

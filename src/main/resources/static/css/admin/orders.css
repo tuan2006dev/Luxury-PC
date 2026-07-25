@@ -112,17 +112,8 @@ body.sidebar-collapsed .main-content {
         white-space: nowrap !important;
         position: sticky !important;
         top: 0 !important;
-        z-index: 10 !important;
+        z-index: 50 !important;
         box-shadow: 0 1px 0 #e2e8f0 !important;
-}
-
-.admin-table tr {
-        position: relative !important;
-}
-
-.admin-table tr:has(.action-menu[open]) {
-        z-index: 1000 !important;
-        position: relative !important;
 }
 
 .admin-table td {
@@ -132,11 +123,6 @@ body.sidebar-collapsed .main-content {
         vertical-align: middle !important;
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
-}
-
-.admin-table td:has(.action-menu[open]) {
-        position: relative !important;
-        z-index: 1000 !important;
 }
 
 .admin-table tr:hover td {
@@ -288,6 +274,11 @@ button.update-btn:hover {
 .action-menu summary::after {
         content: ' ▾' !important;
         font-size: 0.85em !important;
+}
+
+.action-menu {
+        position: relative !important;
+        display: inline-block !important;
 }
 
 .action-menu[open] {

@@ -22,9 +22,18 @@ public class AdminCategoryController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String list(Model model) {
-        model.addAttribute("categories", categoryService.getAllCategories());
+    public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        java.util.List<Category> categories = categoryService.getAllCategories();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            categories = categories.stream()
+                    .filter(c -> (c.getName() != null && c.getName().toLowerCase().contains(kw)) ||
+                                 (c.getId() != null && String.valueOf(c.getId()).contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        model.addAttribute("categories", categories);
         model.addAttribute("category", new Category());
+        model.addAttribute("keyword", keyword);
         return "admin/categories";
     }
 

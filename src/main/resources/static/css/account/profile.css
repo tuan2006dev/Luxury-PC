@@ -131,15 +131,15 @@ img {
 
 /* SIDEBAR */
 .sidebar {
-  background: var(--deep);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 3rem 0;
-  height: calc(100vh - 96px);
-  position: sticky;
-  top: 96px;
+  background: #ffffff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 0 !important;
+  height: fit-content !important;
+  align-self: flex-start !important;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -914,7 +914,7 @@ textarea::placeholder {
   border: 1px solid rgba(255, 255, 255, .08);
 }
 
-.notif-info {}
+/* .notif-info {} */
 
 .notif-title {
   font-size: .82rem;

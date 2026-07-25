@@ -582,14 +582,21 @@
                 }
             }
 
-            document.addEventListener("DOMContentLoaded", function () {
+            function initDashboardPage() {
                 if (typeof flatpickr !== 'undefined') {
                     flatpickr("#startDateInput", { dateFormat: "Y-m-d" });
                     flatpickr("#endDateInput", { dateFormat: "Y-m-d" });
                 }
+                if (typeof window.loadDashboardStats === 'function') {
+                    window.loadDashboardStats({ range: '30d' });
+                }
+            }
 
-                window.loadDashboardStats({ range: '30d' });
-            });
+            // Run immediately for SPA navigation
+            initDashboardPage();
+
+            // Run on DOMContentLoaded for direct page loads / F5
+            document.addEventListener("DOMContentLoaded", initDashboardPage);
         </script>
     </div>
 </body>

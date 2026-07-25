@@ -32,11 +32,20 @@ public class AdminProductController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String list(Model model) {
+    public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
         java.util.List<Product> prods = productService.getAllProducts();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            prods = prods.stream()
+                    .filter(p -> (p.getName() != null && p.getName().toLowerCase().contains(kw)) ||
+                                 (p.getId() != null && String.valueOf(p.getId()).contains(kw)) ||
+                                 (p.getCategory() != null && p.getCategory().getName() != null && p.getCategory().getName().toLowerCase().contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
         model.addAttribute("products", prods);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("product", new Product());
+        model.addAttribute("keyword", keyword);
         return "admin/products";
     }
 

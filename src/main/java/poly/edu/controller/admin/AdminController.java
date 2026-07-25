@@ -56,8 +56,20 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    public String manageOrders(Model model) {
-        model.addAttribute("orders", adminService.getAllOrders());
+    public String manageOrders(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        java.util.List<poly.edu.entity.Order> orders = adminService.getAllOrders();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            orders = orders.stream()
+                    .filter(o -> (o.getId() != null && String.valueOf(o.getId()).contains(kw)) ||
+                                 (o.getUser() != null && o.getUser().getUsername() != null && o.getUser().getUsername().toLowerCase().contains(kw)) ||
+                                 (o.getUser() != null && o.getUser().getFullName() != null && o.getUser().getFullName().toLowerCase().contains(kw)) ||
+                                 (o.getStatus() != null && o.getStatus().toLowerCase().contains(kw)) ||
+                                 (o.getPhone() != null && o.getPhone().contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        model.addAttribute("orders", orders);
+        model.addAttribute("keyword", keyword);
         return "admin/orders";
     }
 
@@ -158,8 +170,18 @@ public class AdminController {
     }
 
     @GetMapping("/inventory")
-    public String manageInventory(Model model) {
-        model.addAttribute("inventory", adminService.getFullInventory());
+    public String manageInventory(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        java.util.List<poly.edu.entity.Inventory> inventory = adminService.getFullInventory();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            inventory = inventory.stream()
+                    .filter(inv -> (inv.getProduct() != null && inv.getProduct().getName() != null && inv.getProduct().getName().toLowerCase().contains(kw)) ||
+                                   (inv.getProduct() != null && inv.getProduct().getId() != null && String.valueOf(inv.getProduct().getId()).contains(kw)) ||
+                                   (inv.getProduct() != null && inv.getProduct().getCategory() != null && inv.getProduct().getCategory().getName() != null && inv.getProduct().getCategory().getName().toLowerCase().contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        model.addAttribute("inventory", inventory);
+        model.addAttribute("keyword", keyword);
         return "admin/inventory";
     }
 

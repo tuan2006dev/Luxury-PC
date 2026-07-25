@@ -109,7 +109,7 @@
                                 <span th:if="${o.refundReason == null and o.adminNote == null}">-</span>
                             </td>
                             <td>
-                                <details class="action-menu">
+                                <details class="action-menu" name="admin-order-action">
                                     <summary>Thao tác</summary>
                                     <div class="action-panel">
                                         <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}"
@@ -198,29 +198,14 @@
         </div>
     </div>
     <script>
-        function initActionMenuAccordion() {
-            document.querySelectorAll('.action-menu summary').forEach(summary => {
-                summary.onclick = function () {
-                    const currentDetails = this.closest('details');
-                    document.querySelectorAll('details.action-menu[open]').forEach(menu => {
-                        if (menu !== currentDetails) {
-                            menu.removeAttribute('open');
-                        }
-                    });
-                };
-            });
-        }
-
         document.addEventListener('click', function (e) {
-            document.querySelectorAll('details.action-menu[open]').forEach(menu => {
-                if (!menu.contains(e.target)) {
-                    menu.removeAttribute('open');
+            const clickedDetails = e.target.closest('details.action-menu');
+            document.querySelectorAll('details.action-menu[open]').forEach(details => {
+                if (details !== clickedDetails) {
+                    details.removeAttribute('open');
                 }
             });
         });
-
-        initActionMenuAccordion();
-        document.addEventListener('spa:load', initActionMenuAccordion);
     </script>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

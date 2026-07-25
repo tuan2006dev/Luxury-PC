@@ -29,8 +29,17 @@ public class AdminFlashSaleController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String listFlashSales(Model model) {
-        model.addAttribute("flashSales", flashSaleService.getAllFlashSales());
+    public String listFlashSales(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        java.util.List<FlashSale> flashSales = flashSaleService.getAllFlashSales();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            flashSales = flashSales.stream()
+                    .filter(f -> (f.getName() != null && f.getName().toLowerCase().contains(kw)) ||
+                                 (f.getId() != null && String.valueOf(f.getId()).contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        model.addAttribute("flashSales", flashSales);
+        model.addAttribute("keyword", keyword);
         return "admin/flash-sales";
     }
 
