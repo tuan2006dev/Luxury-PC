@@ -169,6 +169,59 @@ public class VoucherService {
     }
 
     /**
+     * Validate Combo 2 Mã Voucher: 1 Mã Đơn Hàng / Danh Mục + 1 Mã Freeship
+     */
+    public Map<String, Object> validateVoucherCombo(String voucherCode, String freeshipCode, double cartTotal, double shippingFee, Collection<poly.edu.entity.CartItem> cartItems, poly.edu.entity.User user) {
+        Map<String, Object> result = new HashMap<>();
+        double orderDiscount = 0;
+        double freeshipDiscount = 0;
+        String appliedVoucherCode = null;
+        String appliedFreeshipCode = null;
+        StringBuilder messageBuilder = new StringBuilder();
+
+        // 1. Validate Order / Category Discount Voucher
+        if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+            Map<String, Object> val1 = validateVoucher(voucherCode, cartTotal, shippingFee, cartItems, user);
+            if (!Boolean.TRUE.equals(val1.get("valid"))) {
+                result.put("success", false);
+                result.put("valid", false);
+                result.put("message", val1.get("message"));
+                return result;
+            }
+            orderDiscount = (double) val1.get("discount");
+            appliedVoucherCode = voucherCode.trim().toUpperCase();
+            messageBuilder.append("Áp dụng mã giảm giá ").append(appliedVoucherCode).append(" (Giảm ").append(String.format("%,.0f", orderDiscount)).append("₫). ");
+        }
+
+        // 2. Validate Freeship Voucher
+        if (freeshipCode != null && !freeshipCode.trim().isEmpty()) {
+            Map<String, Object> val2 = validateVoucher(freeshipCode, cartTotal, shippingFee, cartItems, user);
+            if (!Boolean.TRUE.equals(val2.get("valid"))) {
+                result.put("success", false);
+                result.put("valid", false);
+                result.put("message", val2.get("message"));
+                return result;
+            }
+            freeshipDiscount = (double) val2.get("discount");
+            appliedFreeshipCode = freeshipCode.trim().toUpperCase();
+            messageBuilder.append("Áp dụng mã Freeship ").append(appliedFreeshipCode).append(" (Giảm ").append(String.format("%,.0f", freeshipDiscount)).append("₫ phí ship).");
+        }
+
+        double finalPrice = Math.max(0, (cartTotal - orderDiscount) + Math.max(0, shippingFee - freeshipDiscount));
+
+        result.put("success", true);
+        result.put("valid", true);
+        result.put("orderDiscount", orderDiscount);
+        result.put("freeshipDiscount", freeshipDiscount);
+        result.put("totalDiscount", orderDiscount + freeshipDiscount);
+        result.put("voucherCode", appliedVoucherCode);
+        result.put("freeshipCode", appliedFreeshipCode);
+        result.put("newTotal", finalPrice);
+        result.put("message", messageBuilder.length() > 0 ? messageBuilder.toString() : "Chưa chọn mã voucher.");
+        return result;
+    }
+
+    /**
      * Tạm giữ voucher khi người dùng đặt hàng
      */
     @Transactional

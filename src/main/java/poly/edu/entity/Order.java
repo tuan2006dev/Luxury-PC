@@ -41,6 +41,12 @@ public class Order {
     @Column(name = "discount_amount")
     private Double discountAmount;
 
+    @Column(name = "freeship_voucher_code")
+    private String freeshipVoucherCode;
+
+    @Column(name = "freeship_discount")
+    private Double freeshipDiscount;
+
     @Column(name = "shipping_fee")
     private Double shippingFee;
 
@@ -194,6 +200,22 @@ public class Order {
 
     public void setDiscountAmount(Double discountAmount) {
         this.discountAmount = discountAmount;
+    }
+
+    public String getFreeshipVoucherCode() {
+        return freeshipVoucherCode;
+    }
+
+    public void setFreeshipVoucherCode(String freeshipVoucherCode) {
+        this.freeshipVoucherCode = freeshipVoucherCode;
+    }
+
+    public Double getFreeshipDiscount() {
+        return freeshipDiscount;
+    }
+
+    public void setFreeshipDiscount(Double freeshipDiscount) {
+        this.freeshipDiscount = freeshipDiscount;
     }
 
     public Double getShippingFee() {

@@ -626,8 +626,12 @@
                             <span style="color: var(--text-main); font-weight:500;" id="shippingFeeText">30.000đ</span>
                         </div>
                         <div class="summary-row">
-                            <span>Giảm giá</span>
+                            <span>Giảm giá đơn hàng</span>
                             <span style="color: var(--danger); font-weight:500;" id="discountText">-0đ</span>
+                        </div>
+                        <div class="summary-row" id="freeshipDiscountRow" style="display: none;">
+                            <span>Giảm phí vận chuyển</span>
+                            <span style="color: #059669; font-weight:500;" id="freeshipDiscountText">-0đ</span>
                         </div>
 
                         <!-- Voucher Button -->
@@ -644,6 +648,9 @@
                         
                         <!-- Input ẩn để lưu mã -->
                         <input type="hidden" id="voucherInput" th:value="${voucherCode}" />
+                        <input type="hidden" id="freeshipInput" th:value="${freeshipCode}" />
+                        <input type="hidden" name="voucherCode" id="voucherCodeHidden" th:value="${voucherCode}" />
+                        <input type="hidden" name="freeshipCode" id="freeshipCodeHidden" th:value="${freeshipCode}" />
 
                         <!-- Total -->
                         <div class="summary-row total">
@@ -729,7 +736,7 @@
                         <h4 style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 12px; margin-top: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
                             <i class="fa-solid fa-truck-fast" style="color: #059669;"></i> Miễn phí vận chuyển
                         </h4>
-                        <div th:each="uv : ${userVouchers}" th:if="${uv.voucher.voucherScope != null and uv.voucher.voucherScope.name() == 'FREESHIP'}" class="voucher-item" th:data-code="${uv.voucher.code}" onclick="selectVoucher(this.getAttribute('data-code'))" style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='#059669'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                        <div th:each="uv : ${userVouchers}" th:if="${uv.voucher.voucherScope != null and uv.voucher.voucherScope.name() == 'FREESHIP'}" class="voucher-item" th:data-code="${uv.voucher.code}" onclick="selectVoucher(this.getAttribute('data-code'), 'FREESHIP')" style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='#059669'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                             <div style="width: 110px; background: #059669; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 15px; border-right: 2px dashed rgba(255,255,255,0.5);">
                                 <i class="fa-solid fa-truck-fast" style="font-size: 28px; margin-bottom: 8px;"></i>
                                 <span style="font-size: 11px; font-weight: 600; text-align: center;">Freeship</span>
@@ -751,7 +758,7 @@
                         <h4 style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 12px; margin-top: 15px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
                             <i class="fa-solid fa-tags" style="color: var(--primary);"></i> Mã giảm giá / Hoàn tiền
                         </h4>
-                        <div th:each="uv : ${userVouchers}" th:if="${uv.voucher.voucherScope == null or uv.voucher.voucherScope.name() != 'FREESHIP'}" class="voucher-item" th:data-code="${uv.voucher.code}" onclick="selectVoucher(this.getAttribute('data-code'))" style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                        <div th:each="uv : ${userVouchers}" th:if="${uv.voucher.voucherScope == null or uv.voucher.voucherScope.name() != 'FREESHIP'}" class="voucher-item" th:data-code="${uv.voucher.code}" onclick="selectVoucher(this.getAttribute('data-code'), 'GLOBAL')" style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                             <div style="width: 110px; background: var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 15px; border-right: 2px dashed rgba(255,255,255,0.5);">
                                 <i class="fa-solid fa-gift" style="font-size: 28px; margin-bottom: 8px;"></i>
                                 <span style="font-size: 11px; font-weight: 600; text-align: center;" th:text="${uv.voucher.voucherScope != null ? (uv.voucher.voucherScope?.name() == 'CATEGORY' ? 'Danh mục' : 'Toàn sàn') : 'Giảm giá'}"></span>
@@ -783,7 +790,8 @@
         // State
         let currentShipping = 30000;
         let currentShippingMethodName = 'Giao Hàng Tiêu Chuẩn';
-        let currentDiscount = 0;
+        let currentOrderDiscount = 0;
+        let currentFreeshipDiscount = 0;
         let voucherSelectInstance;
         let userLat = null;
         let userLon = null;
@@ -793,10 +801,21 @@
 
         function updateTotal() {
             document.getElementById('shippingFeeText').innerText = formatter.format(currentShipping) + 'đ';
-            document.getElementById('discountText').innerText = '-' + formatter.format(currentDiscount) + 'đ';
+            document.getElementById('discountText').innerText = '-' + formatter.format(currentOrderDiscount) + 'đ';
 
-            const finalTotal = baseTotal + currentShipping - currentDiscount;
-            document.getElementById('finalTotalText').innerText = formatter.format(Math.max(0, finalTotal)) + 'đ';
+            const freeshipRow = document.getElementById('freeshipDiscountRow');
+            if (freeshipRow) {
+                if (currentFreeshipDiscount > 0) {
+                    freeshipRow.style.display = 'flex';
+                    document.getElementById('freeshipDiscountText').innerText = '-' + formatter.format(currentFreeshipDiscount) + 'đ';
+                } else {
+                    freeshipRow.style.display = 'none';
+                }
+            }
+
+            const finalShipping = Math.max(0, currentShipping - currentFreeshipDiscount);
+            const finalTotal = Math.max(0, (baseTotal - currentOrderDiscount) + finalShipping);
+            document.getElementById('finalTotalText').innerText = formatter.format(finalTotal) + 'đ';
         }
 
         // Initialize Total
@@ -814,10 +833,24 @@
             document.getElementById('voucherModal').style.display = 'none';
         }
         
-        function selectVoucher(code) {
-            document.getElementById('voucherInput').value = code;
-            document.getElementById('selectedVoucherText').innerText = code;
-            document.getElementById('selectedVoucherText').style.color = 'var(--primary)';
+        function selectVoucher(code, scope) {
+            if (scope === 'FREESHIP') {
+                document.getElementById('freeshipInput').value = code;
+            } else {
+                document.getElementById('voucherInput').value = code;
+            }
+
+            const codeVal = document.getElementById('voucherInput').value;
+            const freeshipVal = document.getElementById('freeshipInput').value;
+            let displayMsg = [];
+            if (codeVal) displayMsg.push('Đơn hàng: ' + codeVal);
+            if (freeshipVal) displayMsg.push('Freeship: ' + freeshipVal);
+
+            const selectedTextEl = document.getElementById('selectedVoucherText');
+            if (selectedTextEl) {
+                selectedTextEl.innerText = displayMsg.length > 0 ? displayMsg.join(' | ') : 'Chọn hoặc nhập mã khuyến mãi';
+                selectedTextEl.style.color = displayMsg.length > 0 ? 'var(--primary)' : 'var(--text-main)';
+            }
             closeVoucherModal();
             applyVoucher();
         }
@@ -825,7 +858,7 @@
         function applyManualVoucher() {
             const code = document.getElementById('manualVoucherCode').value.trim();
             if(code) {
-                selectVoucher(code.toUpperCase());
+                selectVoucher(code.toUpperCase(), 'GLOBAL');
             } else {
                 alert('Vui lòng nhập mã giảm giá!');
             }
@@ -844,7 +877,8 @@
             
             // Nếu đang có voucher thì áp dụng lại để tính lại Freeship
             const code = document.getElementById('voucherInput').value.trim();
-            if (code) {
+            const freeshipCode = document.getElementById('freeshipInput').value.trim();
+            if (code || freeshipCode) {
                 applyVoucher();
             }
         }
@@ -1023,38 +1057,44 @@
         // Voucher logic
         function applyVoucher() {
             const code = document.getElementById('voucherInput').value.trim();
+            const freeshipCode = document.getElementById('freeshipInput').value.trim();
             const msg = document.getElementById('voucherMessage');
-            if (!code) {
-                msg.style.display = 'block';
-                msg.style.color = 'var(--danger)';
-                msg.innerText = 'Vui lòng chọn hoặc nhập mã giảm giá';
+
+            if (!code && !freeshipCode) {
+                if (msg) msg.style.display = 'none';
+                currentOrderDiscount = 0;
+                currentFreeshipDiscount = 0;
+                document.getElementById('voucherCodeHidden').value = '';
+                document.getElementById('freeshipCodeHidden').value = '';
+                updateTotal();
                 return;
             }
 
             const fee = currentShipping || 0;
-            fetch('/api/voucher/validate?code=' + encodeURIComponent(code) + '&shippingFee=' + fee, { method: 'POST' })
+            const url = `/api/voucher/validate-combo?code=${encodeURIComponent(code)}&freeshipCode=${encodeURIComponent(freeshipCode)}&shippingFee=${fee}`;
+            fetch(url, { method: 'POST' })
                 .then(res => res.json())
                 .then(data => {
-                    msg.style.display = 'block';
+                    if (msg) msg.style.display = 'block';
                     const isSuccess = data.success || data.valid;
                     if (isSuccess) {
-                        msg.style.color = 'var(--success)';
+                        msg.style.color = '#16a34a';
                         msg.innerText = data.message;
-                        document.getElementById('voucherCodeHidden').value = code;
+                        document.getElementById('voucherCodeHidden').value = data.voucherCode || '';
+                        document.getElementById('freeshipCodeHidden').value = data.freeshipCode || '';
 
-                        if (data.discount !== undefined) {
-                            currentDiscount = Number(data.discount);
-                        } else if (data.newTotal !== undefined) {
-                            currentDiscount = baseTotal - Number(data.newTotal);
-                        }
+                        currentOrderDiscount = Number(data.orderDiscount || 0);
+                        currentFreeshipDiscount = Number(data.freeshipDiscount || 0);
                         updateTotal();
                     } else {
                         msg.style.color = 'var(--danger)';
                         msg.innerText = data.message || 'Mã không hợp lệ';
                         document.getElementById('voucherCodeHidden').value = '';
-                        currentDiscount = 0;
+                        document.getElementById('freeshipCodeHidden').value = '';
+                        currentOrderDiscount = 0;
+                        currentFreeshipDiscount = 0;
                         updateTotal();
-                        
+
                         const codeInput = document.getElementById('manualVoucherCode');
                         if (codeInput) {
                             codeInput.classList.remove('shake');
@@ -1068,9 +1108,11 @@
                     }
                 })
                 .catch(e => {
-                    msg.style.display = 'block';
-                    msg.style.color = 'var(--danger)';
-                    msg.innerText = 'Lỗi kết nối';
+                    if (msg) {
+                        msg.style.display = 'block';
+                        msg.style.color = 'var(--danger)';
+                        msg.innerText = 'Lỗi kết nối kiểm tra mã voucher';
+                    }
                 });
         }
 

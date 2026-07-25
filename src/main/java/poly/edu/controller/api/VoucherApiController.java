@@ -67,6 +67,40 @@ public class VoucherApiController {
     }
 
     /**
+     * AJAX endpoint: validate combo 2 mã voucher (Mã giảm giá + Mã Freeship)
+     * POST /api/voucher/validate-combo
+     */
+    @PostMapping("/validate-combo")
+    public Map<String, Object> validateVoucherCombo(
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String freeshipCode,
+            @RequestParam(required = false, defaultValue = "0") Double shippingFee,
+            HttpSession session,
+            Authentication authentication) {
+
+        @SuppressWarnings("unchecked")
+        Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
+        @SuppressWarnings("unchecked")
+        Map<Integer, CartItem> buyNowCart = (Map<Integer, CartItem>) session.getAttribute("buyNowCart");
+        Map<Integer, CartItem> targetCart = (buyNowCart != null && !buyNowCart.isEmpty()) ? buyNowCart : cart;
+
+        double cartTotal = 0;
+        if (targetCart != null) {
+            cartTotal = targetCart.values().stream()
+                    .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                    .sum();
+        }
+
+        User user = null;
+        if (authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(String.valueOf(authentication.getPrincipal()))) {
+            user = profileService.getCurrentUser(authentication);
+        }
+
+        return voucherService.validateVoucherCombo(code, freeshipCode, cartTotal, shippingFee, targetCart != null ? targetCart.values() : null, user);
+    }
+
+    /**
      * API endpoint to delete voucher
      * DELETE /api/voucher/delete/{id}
      * POST /api/voucher/delete/{id}

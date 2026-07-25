@@ -75,6 +75,15 @@ public class CartService {
                                  String paymentMethod, String voucherCode,
                                  Double shippingFee, String shippingMethodName,
                                  Object principal) throws Exception {
+        return processCheckout(targetCart, fullName, phone, address, paymentMethod, voucherCode, null, shippingFee, shippingMethodName, principal);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Order processCheckout(Map<Integer, CartItem> targetCart,
+                                 String fullName, String phone, String address,
+                                 String paymentMethod, String voucherCode, String freeshipCode,
+                                 Double shippingFee, String shippingMethodName,
+                                 Object principal) throws Exception {
 
         // Validate fullName & phone
         if (fullName == null || fullName.trim().split("\\s+").length < 2) {
@@ -121,24 +130,33 @@ public class CartService {
         double discountRate = getDiscountRate(principal);
         double priceAfterVip = baseTotal - (baseTotal * discountRate);
 
-        // 4. Apply voucher
+        // 4. Apply voucher combo (Order/Category discount + Freeship)
         double voucherDiscount = 0;
+        double freeshipDiscount = 0;
         String appliedVoucherCode = null;
-        if (voucherCode != null && !voucherCode.trim().isEmpty() && currentUser != null) {
-            
-            Map<String, Object> validation = voucherService.validateVoucher(voucherCode, priceAfterVip, shippingFee, targetCart.values(), currentUser);
+        String appliedFreeshipCode = null;
+
+        if (currentUser != null) {
+            Map<String, Object> validation = voucherService.validateVoucherCombo(voucherCode, freeshipCode, priceAfterVip, shippingFee, targetCart.values(), currentUser);
             if (Boolean.TRUE.equals(validation.get("valid"))) {
-                voucherDiscount = (double) validation.get("discount");
-                appliedVoucherCode = voucherCode.trim().toUpperCase();
-                
-                // Reserve the voucher atomically
-                voucherService.reserveVoucher(appliedVoucherCode, currentUser.getId());
-            } else {
+                voucherDiscount = (double) validation.getOrDefault("orderDiscount", 0.0);
+                freeshipDiscount = (double) validation.getOrDefault("freeshipDiscount", 0.0);
+                appliedVoucherCode = (String) validation.get("voucherCode");
+                appliedFreeshipCode = (String) validation.get("freeshipCode");
+
+                if (appliedVoucherCode != null) {
+                    voucherService.reserveVoucher(appliedVoucherCode, currentUser.getId());
+                }
+                if (appliedFreeshipCode != null) {
+                    voucherService.reserveVoucher(appliedFreeshipCode, currentUser.getId());
+                }
+            } else if ((voucherCode != null && !voucherCode.trim().isEmpty()) || (freeshipCode != null && !freeshipCode.trim().isEmpty())) {
                 throw new Exception("Lỗi voucher: " + validation.get("message"));
             }
         }
 
-        double finalPrice = priceAfterVip + shippingFee - voucherDiscount;
+        double finalShippingFee = Math.max(0, shippingFee - freeshipDiscount);
+        double finalPrice = Math.max(0, (priceAfterVip - voucherDiscount) + finalShippingFee);
 
         // 5. Create Order
         Order order = new Order();
@@ -152,6 +170,8 @@ public class CartService {
         order.setTotalPrice(finalPrice);
         order.setVoucherCode(appliedVoucherCode);
         order.setDiscountAmount(voucherDiscount);
+        order.setFreeshipVoucherCode(appliedFreeshipCode);
+        order.setFreeshipDiscount(freeshipDiscount);
         order.setPaymentMethod(paymentMethod.toUpperCase());
         order.setShippingFee(shippingFee);
         order.setShippingMethodName(shippingMethodName);

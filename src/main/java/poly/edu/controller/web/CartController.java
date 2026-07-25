@@ -519,6 +519,7 @@ public class CartController {
             @RequestParam("address") String address,
             @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod,
             @RequestParam(value = "voucherCode", required = false) String voucherCode,
+            @RequestParam(value = "freeshipCode", required = false) String freeshipCode,
             @RequestParam(value = "shippingFee", defaultValue = "0") Double shippingFee,
             @RequestParam(value = "shippingMethodName", defaultValue = "") String shippingMethodName,
             @RequestParam(value = "checkoutType", defaultValue = "cart") String checkoutType,
@@ -552,7 +553,7 @@ public class CartController {
         if (targetCart == null || targetCart.isEmpty()) return "redirect:/cart";
 
         try {
-            Order order = cartService.processCheckout(targetCart, fullName, phone, address, paymentMethod, voucherCode, shippingFee, shippingMethodName, principal);
+            Order order = cartService.processCheckout(targetCart, fullName, phone, address, paymentMethod, voucherCode, freeshipCode, shippingFee, shippingMethodName, principal);
             
             if ("buynow".equals(checkoutType)) {
                 session.removeAttribute("buyNowCart");
