@@ -87,6 +87,10 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
     void nullifyOrderItemProductReferences(@Param("pid") Integer pid);
 
     @Modifying
+    @Query(value = "UPDATE order_items SET product_id = NULL WHERE product_id = :pid", nativeQuery = true)
+    void unlinkOrderItemsByProductId(@Param("pid") Integer pid);
+
+    @Modifying
     @Query(value = "UPDATE products SET category_id = NULL WHERE category_id = :cid", nativeQuery = true)
     void nullifyCategoryReferences(@Param("cid") Integer cid);
 } // Chỉ có duy nhất một dấu đóng ngoặc ở cuối cùng này
