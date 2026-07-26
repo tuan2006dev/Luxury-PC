@@ -17,7 +17,7 @@ public interface AdminLogRepository extends JpaRepository<AdminLog, Integer> {
             FROM User u 
             JOIN u.userRoles ur 
             JOIN ur.role r 
-            WHERE r.name = 'STAFF'
+            WHERE r.name IN ('STAFF', 'ADMIN')
         )
         ORDER BY al.createdAt DESC
     """)
