@@ -74,6 +74,7 @@ public class ProductService {
         productDAO.deleteInventoryByProductId(id);
         productDAO.deleteStockMovementsByProductId(id);
         productDAO.deleteComboDetailsByProductId(id);
+        productDAO.unlinkOrderItemsByProductId(id);
         
         try {
             productDAO.deleteById(id);
