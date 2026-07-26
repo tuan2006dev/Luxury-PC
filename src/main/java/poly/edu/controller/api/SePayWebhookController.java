@@ -63,13 +63,10 @@ public class SePayWebhookController {
     }
 
     private ResponseEntity<SePayWebhookResponse> responseFor(SePayWebhookResult result) {
+        // Every enum result represents a transaction already stored for reconciliation.
         return switch (result) {
-            case PROCESSED, DUPLICATE -> ResponseEntity.ok(new SePayWebhookResponse(true));
-            case BAD_REQUEST -> ResponseEntity.badRequest().body(new SePayWebhookResponse(false));
-            case ORDER_NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new SePayWebhookResponse(false));
-            case ORDER_CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new SePayWebhookResponse(false));
+            case PROCESSED, DUPLICATE, EXPIRED, BAD_REQUEST, ORDER_NOT_FOUND, ORDER_CONFLICT ->
+                    ResponseEntity.ok(new SePayWebhookResponse(true));
         };
     }
 
