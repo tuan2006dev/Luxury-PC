@@ -465,7 +465,6 @@
         <form th:action="@{/checkout/submit}" method="post" id="checkoutForm" th:if="${param.success == null}">
             <input type="hidden" name="checkoutType" th:value="${checkoutType}" />
             <input type="hidden" name="address" id="hiddenAddress" value="" />
-            <input type="hidden" name="voucherCode" id="voucherCodeHidden" value="" />
             <input type="hidden" name="shippingFee" id="hiddenShippingFee" value="0" />
             <input type="hidden" name="shippingMethodName" id="hiddenShippingMethodName" value="" />
 
@@ -1108,6 +1107,11 @@
                     }
                 })
                 .catch(e => {
+                    document.getElementById('voucherCodeHidden').value = '';
+                    document.getElementById('freeshipCodeHidden').value = '';
+                    currentOrderDiscount = 0;
+                    currentFreeshipDiscount = 0;
+                    updateTotal();
                     if (msg) {
                         msg.style.display = 'block';
                         msg.style.color = 'var(--danger)';
@@ -1575,6 +1579,22 @@
             if (wName) fullAddress += `, ${wName}`;
             if (dName) fullAddress += `, ${dName}`;
             if (pName) fullAddress += `, ${pName}`;
+
+            // Clean hidden voucher inputs before submission if they contain junk/empty values
+            const vCodeEl = document.getElementById('voucherCodeHidden');
+            if (vCodeEl) {
+                const val = (vCodeEl.value || '').trim();
+                if (!val || val === 'null' || val === 'undefined') {
+                    vCodeEl.value = '';
+                }
+            }
+            const fCodeEl = document.getElementById('freeshipCodeHidden');
+            if (fCodeEl) {
+                const val = (fCodeEl.value || '').trim();
+                if (!val || val === 'null' || val === 'undefined') {
+                    fCodeEl.value = '';
+                }
+            }
 
             document.getElementById('hiddenAddress').value = fullAddress;
             document.getElementById('hiddenShippingFee').value = currentShipping;

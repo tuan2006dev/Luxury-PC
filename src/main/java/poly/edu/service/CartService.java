@@ -136,7 +136,10 @@ public class CartService {
         String appliedVoucherCode = null;
         String appliedFreeshipCode = null;
 
-        if (currentUser != null) {
+        voucherCode = cleanVoucherCode(voucherCode);
+        freeshipCode = cleanVoucherCode(freeshipCode);
+
+        if (currentUser != null && (voucherCode != null || freeshipCode != null)) {
             Map<String, Object> validation = voucherService.validateVoucherCombo(voucherCode, freeshipCode, priceAfterVip, shippingFee, targetCart.values(), currentUser);
             if (Boolean.TRUE.equals(validation.get("valid"))) {
                 voucherDiscount = (double) validation.getOrDefault("orderDiscount", 0.0);
@@ -310,5 +313,14 @@ public class CartService {
         if (cartOpt.isPresent()) {
             cartItemDAO.deleteByCartId(cartOpt.get().getId());
         }
+    }
+
+    private String cleanVoucherCode(String code) {
+        if (code == null) return null;
+        String trimmed = code.replaceAll("^,+|,+$", "").trim();
+        if (trimmed.isEmpty() || "null".equalsIgnoreCase(trimmed) || "undefined".equalsIgnoreCase(trimmed)) {
+            return null;
+        }
+        return trimmed;
     }
 }
