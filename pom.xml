@@ -82,6 +82,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Driver JDBC để Spring Boot kết nối với PostgreSQL (dùng trên Render Cloud Database). -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 
 		<!-- ======================================================= -->
 		<!-- 📬 4. Nhóm Thư viện Tiện ích & Real-time              -->
