@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+
+    <!-- Flatpickr for custom date filtering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1.5rem;
+        }
+
+        .preset-group {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+            background: #f8fafc;
+            padding: 3px 6px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-preset {
+            background: transparent;
+            color: #64748b;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-family: inherit;
+        }
+
+        .btn-preset:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .btn-preset.active {
+            background: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 1px 4px rgba(59, 130, 246, 0.3);
+        }
+
+        .custom-range-popover {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 6px;
+            z-index: 100;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .date-input-field {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            outline: none;
+            font-family: inherit;
+            width: 115px;
+            transition: border-color 0.2s;
+        }
+
+        .date-input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+        }
+
+        .btn-apply {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-apply:hover {
+            background: #2563eb;
+        }
+
+        .no-data-notice {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #94a3b8;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <!-- Clean Standard Header -->
+        <div class="header frame-in-up">
+            <div class="title">
+                <h1 class="text-gradient" style="font-size: 1.8rem; font-weight: 600; color: #0f172a; margin: 0;">Bảng
+                    Điều Khiển</h1>
+                <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">Tổng quan chỉ số kinh doanh & hoạt động
+                    của Luxury PC</p>
+            </div>
+
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
+        </div>
+
+        <!-- Summary KPI Cards -->
+        <div class="stats-grid">
+            <div class="stat-card fade-in-up delay-1">
+                <i class="fa-solid fa-wallet stat-icon"></i>
+                <div class="stat-label">Doanh Thu Trong Kỳ</div>
+                <div class="stat-value" id="stat-revenue">0₫</div>
+            </div>
+            <div class="stat-card fade-in-up delay-2">
+                <i class="fa-solid fa-cart-shopping stat-icon"></i>
+                <div class="stat-label">Tổng Đơn Hàng</div>
+                <div class="stat-value" id="stat-orders">0</div>
+            </div>
+            <div class="stat-card fade-in-up delay-3">
+                <i class="fa-solid fa-triangle-exclamation stat-icon"></i>
+                <div class="stat-label">Cảnh Báo Kho</div>
+                <div class="stat-value" th:text="${lowStock} ? ${lowStock.size()} : 0">0</div>
+            </div>
+            <div class="stat-card fade-in-up delay-4">
+                <i class="fa-solid fa-users stat-icon"></i>
+                <div class="stat-label">Khách Hàng Mới</div>
+                <div class="stat-value" id="stat-customers">0</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tabs -->
+        <div class="dashboard-tabs fade-in-up delay-2">
+            <button class="tab-btn active" onclick="switchTab('tab-charts', event)"><i
+                    class="fa-solid fa-chart-line"></i> Biểu Đồ Doanh Thu & Đơn Hàng</button>
+            <button class="tab-btn" onclick="switchTab('tab-users', event)"><i class="fa-solid fa-users"></i> Phân Tích
+                Người Dùng</button>
+            <button class="tab-btn" onclick="switchTab('tab-products', event)"><i class="fa-solid fa-box"></i> Báo Cáo
+                Sản Phẩm</button>
+        </div>
+
+        <div class="tab-content fade-in-up delay-2">
+            <!-- Tab 1: Charts -->
+            <div id="tab-charts" class="tab-pane active">
+                <div class="charts-grid">
+                    <!-- Chart 1: Revenue Line Chart with Filter Controls inside Table-H Header -->
+                    <div class="chart-container" style="position: relative;">
+                        <div class="table-h"
+                            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-chart-area"></i>
+                                <span>Biểu Đồ Doanh Thu Theo Ngày</span>
+                                <span id="statsLoader"
+                                    style="display: none; color: #3b82f6; font-size: 0.8rem; margin-left: 6px;">
+                                    <i class="fa-solid fa-spinner fa-spin"></i>
+                                </span>
+                            </div>
+
+                            <!-- Integrated Date Filter Widget inside Chart Card Header -->
+                            <div style="display: flex; align-items: center; gap: 6px; position: relative;">
+                                <div class="preset-group">
+                                    <button type="button" class="btn-preset" data-range="today"
+                                        onclick="handlePresetClick('today', this)">Hôm nay</button>
+                                    <button type="button" class="btn-preset" data-range="yesterday"
+                                        onclick="handlePresetClick('yesterday', this)">Hôm qua</button>
+                                    <button type="button" class="btn-preset" data-range="7d"
+                                        onclick="handlePresetClick('7d', this)">7 ngày</button>
+                                    <button type="button" class="btn-preset active" data-range="30d"
+                                        onclick="handlePresetClick('30d', this)">30 ngày</button>
+                                    <button type="button" class="btn-preset" data-range="thisMonth"
+                                        onclick="handlePresetClick('thisMonth', this)">Tháng này</button>
+                                    <button type="button" class="btn-preset" data-range="lastMonth"
+                                        onclick="handlePresetClick('lastMonth', this)">Tháng trước</button>
+                                    <button type="button" class="btn-preset" id="customToggleBtn"
+                                        onclick="toggleCustomRange(this)">Tùy chọn</button>
+                                </div>
+
+                                <!-- Custom Range Popover -->
+                                <div id="customRangeBox" class="custom-range-popover">
+                                    <input type="text" id="startDateInput" class="date-input-field"
+                                        placeholder="Từ ngày">
+                                    <span style="color: #94a3b8; font-size: 0.8rem;">-</span>
+                                    <input type="text" id="endDateInput" class="date-input-field"
+                                        placeholder="Đến ngày">
+                                    <button type="button" class="btn-apply" onclick="applyCustomFilter()">
+                                        <i class="fa-solid fa-check"></i> Áp dụng
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="flex: 1; min-height: 0; position: relative; width: 100%;">
+                            <canvas id="revenueChart"></canvas>
+                            <div id="revenueNoData" class="no-data-notice" style="display: none;">Không có dữ liệu doanh
+                                thu trong khoảng thời gian này</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Order Status Doughnut Chart -->
+                    <div class="chart-container" style="position: relative;">
+                        <div class="table-h"><i class="fa-solid fa-chart-pie"></i> <span>Phân Bố Trạng Thái Đơn
+                                Hàng</span></div>
+                        <div
+                            style="flex: 1; min-height: 0; position: relative; width: 100%; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="orderStatusChart"></canvas>
+                            <div id="orderStatusNoData" class="no-data-notice" style="display: none;">Không có đơn hàng
+                                trong khoảng thời gian này</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Users -->
+            <div id="tab-users" class="tab-pane">
+                <div class="chart-container" style="height: 100%; position: relative;">
+                    <div class="table-h"><i class="fa-solid fa-users"></i> <span>Người Dùng Đăng Ký Mới Theo Ngày</span>
+                    </div>
+                    <div style="flex: 1; min-height: 0; position: relative; width: 100%;">
+                        <canvas id="newUsersChart"></canvas>
+                        <div id="newUsersNoData" class="no-data-notice" style="display: none;">Không có người dùng mới
+                            trong khoảng thời gian này</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Products -->
+            <div id="tab-products" class="tab-pane">
+                <div class="dashboard-grid">
+                    <div class="table-card">
+                        <div class="table-h"><i class="fa-solid fa-fire"></i> <span>Sản Phẩm Bán Chạy Nhất</span></div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Tên Linh Kiện</th>
+                                        <th
+                                            style="text-align: right; position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Đã Bán</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="p : ${topProducts}">
+                                        <td th:text="${p.name}">RTX 4090 Global</td>
+                                        <td th:text="${p.totalQty}"
+                                            style="text-align: right; font-weight: bold; color: var(--gold);">15</td>
+                                    </tr>
+                                    <tr th:if="${topProducts == null or topProducts.empty}">
+                                        <td colspan="2" style="text-align: center; color: #888; padding: 1.5rem 0;">Chưa
+                                            có dữ liệu sản phẩm.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-h"><i class="fa-solid fa-circle-exclamation"></i> <span>Cảnh Báo Kho Hàng (Sắp
+                                Hết)</span></div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Tên Sản Phẩm</th>
+                                        <th
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Tồn Kho</th>
+                                        <th
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            Trạng Thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${lowStock}">
+                                        <td th:text="${item.product.name}">CPU i9-14900K</td>
+                                        <td th:text="${item.quantity}" style="font-weight: bold;">2</td>
+                                        <td><span class="badge badge-red">Chỉ còn ít</span></td>
+                                    </tr>
+                                    <tr th:if="${lowStock == null or lowStock.empty}">
+                                        <td colspan="3"
+                                            style="text-align: center; color: var(--green); padding: 2rem 0;">
+                                            <i class="fa-solid fa-check-circle"
+                                                style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                                            <span>Tất cả sản phẩm đều đủ hàng.</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            window.switchTab = function (tabId, event) {
+                document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+                event.currentTarget.classList.add('active');
+            };
+
+            let revenueChartInstance = null;
+            let orderStatusChartInstance = null;
+            let newUsersChartInstance = null;
+
+            const currencyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+
+            const statusLabels = {
+                'PENDING': 'Chờ xử lý',
+                'CHO_XAC_NHAN_THANH_TOAN': 'Chờ xác nhận TT',
+                'DA_THANH_TOAN': 'Đã thanh toán',
+                'SHIPPING': 'Đang giao',
+                'COMPLETED': 'Hoàn thành',
+                'YEU_CAU_HOAN_TIEN': 'Yêu cầu hoàn tiền',
+                'DA_HOAN_TIEN': 'Đã hoàn tiền',
+                'THU_HOI': 'Thu hồi',
+                'CANCELLED': 'Đã hủy',
+                'DA_HUY': 'Đã hủy'
+            };
+
+            const statusColors = {
+                'PENDING': '#ef4444',
+                'CHO_XAC_NHAN_THANH_TOAN': '#f59e0b',
+                'DA_THANH_TOAN': '#8b5cf6',
+                'SHIPPING': '#3b82f6',
+                'COMPLETED': '#10b981',
+                'YEU_CAU_HOAN_TIEN': '#eab308',
+                'DA_HOAN_TIEN': '#64748b',
+                'THU_HOI': '#ec4899',
+                'CANCELLED': '#6b7280',
+                'DA_HUY': '#6b7280'
+            };
+
+            window.handlePresetClick = function (range, btn) {
+                document.querySelectorAll('.btn-preset').forEach(el => el.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('customRangeBox').style.display = 'none';
+
+                window.loadDashboardStats({ range: range });
+            };
+
+            window.toggleCustomRange = function (btn) {
+                document.querySelectorAll('.btn-preset').forEach(el => el.classList.remove('active'));
+                btn.classList.add('active');
+
+                const box = document.getElementById('customRangeBox');
+                box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+            };
+
+            window.applyCustomFilter = function () {
+                const start = document.getElementById('startDateInput').value;
+                const end = document.getElementById('endDateInput').value;
+
+                if (!start || !end) {
+                    alert('Vui lòng chọn đầy đủ Từ ngày và Đến ngày!');
+                    return;
+                }
+
+                window.loadDashboardStats({ start: start, end: end });
+            };
+
+            window.loadDashboardStats = async function (params = { range: '30d' }) {
+                const loader = document.getElementById('statsLoader');
+                if (loader) loader.style.display = 'inline-block';
+
+                try {
+                    let url = '/api/admin/dashboard/stats';
+                    let queryParams = new URLSearchParams();
+
+                    if (params.start && params.end) {
+                        queryParams.append('start', params.start);
+                        queryParams.append('end', params.end);
+                    } else if (params.range) {
+                        queryParams.append('range', params.range);
+                    }
+
+                    if (queryParams.toString()) {
+                        url += '?' + queryParams.toString();
+                    }
+
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error('API Response Error');
+                    const data = await response.json();
+
+                    // 1. Update Summary Cards
+                    if (data.summary) {
+                        document.getElementById('stat-revenue').innerText = currencyFormatter.format(data.summary.revenue || 0);
+                        document.getElementById('stat-orders').innerText = (data.summary.orders || 0).toLocaleString();
+                        document.getElementById('stat-customers').innerText = (data.summary.customers || 0).toLocaleString();
+                    }
+
+                    // 2. Update Revenue Chart
+                    updateRevenueChart(data.dailyRevenue || []);
+
+                    // 3. Update Order Status Chart
+                    updateOrderStatusChart(data.orderStatus || []);
+
+                    // 4. Update New Users Chart
+                    updateNewUsersChart(data.newUsers || []);
+
+                } catch (error) {
+                    console.error("Failed to fetch dashboard stats:", error);
+                } finally {
+                    if (loader) loader.style.display = 'none';
+                }
+            };
+
+            function updateRevenueChart(dailyRevenue) {
+                const ctx = document.getElementById('revenueChart');
+                const noDataNotice = document.getElementById('revenueNoData');
+                if (!ctx) return;
+
+                const labels = dailyRevenue.map(item => item.date);
+                const values = dailyRevenue.map(item => item.revenue);
+
+                if (noDataNotice) {
+                    noDataNotice.style.display = (dailyRevenue.length === 0) ? 'block' : 'none';
+                }
+
+                if (revenueChartInstance) {
+                    revenueChartInstance.data.labels = labels;
+                    revenueChartInstance.data.datasets[0].data = values;
+                    revenueChartInstance.update();
+                } else {
+                    const context2d = ctx.getContext('2d');
+                    let gradient = context2d.createLinearGradient(0, 0, 0, 400);
+                    gradient.addColorStop(0, 'rgba(0, 102, 204, 0.3)');
+                    gradient.addColorStop(1, 'rgba(0, 102, 204, 0.02)');
+
+                    revenueChartInstance = new Chart(context2d, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Doanh Thu (VNĐ)',
+                                data: values,
+                                borderColor: '#0066CC',
+                                backgroundColor: gradient,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: '#0066CC',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b' } },
+                                x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                            }
+                        }
+                    });
+                }
+            }
+
+            function updateOrderStatusChart(orderStatus) {
+                const ctx = document.getElementById('orderStatusChart');
+                const noDataNotice = document.getElementById('orderStatusNoData');
+                if (!ctx) return;
+
+                const labels = orderStatus.map(item => statusLabels[item.status] || item.status);
+                const values = orderStatus.map(item => item.count);
+                const bgColors = orderStatus.map(item => statusColors[item.status] || '#888');
+
+                if (noDataNotice) {
+                    noDataNotice.style.display = (orderStatus.length === 0) ? 'block' : 'none';
+                }
+
+                if (orderStatusChartInstance) {
+                    orderStatusChartInstance.data.labels = labels.length > 0 ? labels : ['Chưa có dữ liệu'];
+                    orderStatusChartInstance.data.datasets[0].data = values.length > 0 ? values : [0];
+                    orderStatusChartInstance.data.datasets[0].backgroundColor = bgColors.length > 0 ? bgColors : ['#e2e8f0'];
+                    orderStatusChartInstance.update();
+                } else {
+                    orderStatusChartInstance = new Chart(ctx, {
+                        type: 'doughnut',
+                        plugins: typeof ChartDataLabels !== 'undefined' ? [ChartDataLabels] : [],
+                        data: {
+                            labels: labels.length > 0 ? labels : ['Chưa có dữ liệu'],
+                            datasets: [{
+                                data: values.length > 0 ? values : [0],
+                                backgroundColor: bgColors.length > 0 ? bgColors : ['#e2e8f0'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '70%',
+                            plugins: {
+                                legend: { position: 'right', labels: { color: '#475569', boxWidth: 12, padding: 12 } },
+                                datalabels: { color: '#fff', font: { weight: 'bold', size: 13 }, formatter: val => val > 0 ? val : '' }
+                            }
+                        }
+                    });
+                }
+            }
+
+            function updateNewUsersChart(newUsers) {
+                const ctx = document.getElementById('newUsersChart');
+                const noDataNotice = document.getElementById('newUsersNoData');
+                if (!ctx) return;
+
+                const labels = newUsers.map(item => item.date);
+                const values = newUsers.map(item => item.count);
+
+                if (noDataNotice) {
+                    noDataNotice.style.display = (newUsers.length === 0) ? 'block' : 'none';
+                }
+
+                if (newUsersChartInstance) {
+                    newUsersChartInstance.data.labels = labels;
+                    newUsersChartInstance.data.datasets[0].data = values;
+                    newUsersChartInstance.update();
+                } else {
+                    newUsersChartInstance = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Người Dùng Mới',
+                                data: values,
+                                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b', stepSize: 1 } },
+                                x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                            }
+                        }
+                    });
+                }
+            }
+
+            function initDashboardPage() {
+                if (typeof flatpickr !== 'undefined') {
+                    flatpickr("#startDateInput", { dateFormat: "Y-m-d" });
+                    flatpickr("#endDateInput", { dateFormat: "Y-m-d" });
+                }
+                if (typeof window.loadDashboardStats === 'function') {
+                    window.loadDashboardStats({ range: '30d' });
+                }
+            }
+
+            // Run immediately for SPA navigation
+            initDashboardPage();
+
+            // Run on DOMContentLoaded for direct page loads / F5
+            document.addEventListener("DOMContentLoaded", initDashboardPage);
+        </script>
+    </div>
+</body>
+
+</html>

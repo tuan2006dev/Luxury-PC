@@ -1,0 +1,337 @@
+package poly.edu;
+
+import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ExtendedModelMap;
+import poly.edu.controller.web.PaymentController;
+import poly.edu.dao.OrderDAO;
+import poly.edu.dao.ProductDAO;
+import poly.edu.dao.UserDAO;
+import poly.edu.entity.CartItem;
+import poly.edu.entity.Order;
+import poly.edu.entity.Product;
+import poly.edu.entity.User;
+import poly.edu.service.AdminService;
+import poly.edu.service.CustomerOrderService;
+import poly.edu.service.VietQrManualConfirmationException;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest(properties = {
+        "sepay.bank.account-number=123456789",
+        "sepay.bank.account-name=TEST ACCOUNT"
+})
+@WithMockUser(username = "sepay-fixture@example.test", roles = "USER")
+@ActiveProfiles("test")
+@Transactional
+@AutoConfigureMockMvc
+@SuppressWarnings("null")
+class VietQrOrderFlowTest {
+
+    @Autowired
+    private OrderDAO orderDAO;
+
+    @Autowired
+    private ProductDAO productDAO;
+
+    @Autowired
+    private AdminService adminService;
+
+    @Autowired
+    private CustomerOrderService customerOrderService;
+
+    @Autowired
+    private UserDAO userDAO;
+
+    @Autowired
+    private PaymentController paymentController;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    private User sepayFixtureUser;
+
+    @BeforeEach
+    void setUpSePayFixtureUser() {
+        sepayFixtureUser = userDAO.findByEmail("sepay-fixture@example.test");
+        if (sepayFixtureUser == null) {
+            sepayFixtureUser = new User();
+            sepayFixtureUser.setEmail("sepay-fixture@example.test");
+            sepayFixtureUser.setUsername("sepay-fixture@example.test");
+            sepayFixtureUser.setPassword("test-only");
+            sepayFixtureUser = userDAO.saveAndFlush(sepayFixtureUser);
+        }
+    }
+
+    @Test
+    @WithMockUser(username="testuser@gmail.com", roles={"USER"})
+    void checkoutCreatesPersistedVietQrOrderAndRedirectsToQrPage() throws Exception {
+        Product mockProduct = new Product();
+        mockProduct.setName("QA VietQR");
+        mockProduct.setPrice(17_200_000D);
+        mockProduct.setStock(10);
+        mockProduct = productDAO.saveAndFlush(mockProduct);
+
+        MockHttpSession mockSession = new MockHttpSession();
+        Map<Integer, CartItem> cart = new HashMap<>();
+        cart.put(mockProduct.getId(), new CartItem(mockProduct.getId(), "QA VietQR", 17_200_000D, 1));
+        mockSession.setAttribute("cart", cart);
+
+        mockMvc.perform(post("/checkout/submit")
+                        .session(mockSession)
+                        .param("fullName", "QA VietQR")
+                        .param("phone", "0900000000")
+                        .param("address", "QA Address")
+                        .param("paymentMethod", "VIETQR"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/payment/vietqr?amount=17200000&orderCode=DH*"));
+
+        Order order = orderDAO.findAllOrderedByDate().get(0);
+        assertEquals(17_200_000D, order.getTotalPrice());
+        assertEquals("VIETQR", order.getPaymentMethod());
+        assertEquals("CHO_XAC_NHAN_THANH_TOAN", order.getStatus());
+        assertNotNull(order.getOrderCode());
+    }
+
+    @Test
+    @WithMockUser(username="testuser@gmail.com", roles={"USER"})
+    public void testOrderFlowWithVietQrSuccess() throws Exception {
+        assertNonQrCheckout("COD");
+        assertNonQrCheckout("INSTALLMENT");
+    }
+
+    @Test
+    @WithMockUser(username="testuser@gmail.com", roles={"USER"})
+    void checkoutKeepsCodAndInstallmentFlowsWorking() throws Exception {
+        assertNonQrCheckout("COD");
+        assertNonQrCheckout("INSTALLMENT");
+    }
+
+    @Test
+    void vietQrPageUsesPersistedOrderAmountAndStatus() {
+        Order order = saveOrder("VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 17_200_000D);
+        ExtendedModelMap model = new ExtendedModelMap();
+        HttpSession mockSession = new MockHttpSession();
+
+        String view = paymentController.vietQrPayment(1L, order.getOrderCode(), model, mockSession);
+
+        assertEquals("payment-vietqr", view);
+        assertEquals(17_200_000L, model.get("amount"));
+        assertEquals("Luxury-" + order.getId(), model.get("orderCode"));
+        assertEquals("SEVQR DH" + order.getId(), model.get("transferContent"));
+        assertEquals("Chờ xác nhận thanh toán", model.get("paymentStatus"));
+        assertEquals("VietinBank", model.get("bankDisplayName"));
+        assertEquals("123456789", model.get("accountNo"));
+        assertEquals("TEST ACCOUNT", model.get("accountName"));
+        assertEquals(
+                "https://img.vietqr.io/image/ICB-123456789-compact.png"
+                        + "?amount=17200000&addInfo=SEVQR+DH" + order.getId()
+                        + "&accountName=TEST+ACCOUNT",
+                model.get("qrUrl"));
+    }
+
+    @Test
+    void adminCannotConfirmWaitingVietQrOrderManually() {
+        Order order = saveOrder("VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 500_000D);
+
+        assertThrows(VietQrManualConfirmationException.class,
+                () -> adminService.confirmVietQrPayment(order.getId()));
+
+        assertEquals("CHO_XAC_NHAN_THANH_TOAN",
+                orderDAO.findById(order.getId()).orElseThrow().getStatus());
+    }
+
+    @Test
+    void adminConfirmationDoesNotChangeCodOrder() {
+        Order order = saveOrder("COD", "PENDING", 500_000D);
+
+        adminService.confirmVietQrPayment(order.getId());
+
+        assertEquals("PENDING", orderDAO.findById(order.getId()).orElseThrow().getStatus());
+    }
+
+    @Test
+    void adminCanRequestAndConfirmVietQrRefundWithNotes() {
+        Order order = saveOrder("VIETQR", "DA_THANH_TOAN", 500_000D);
+
+        adminService.requestRefund(order.getId(), "Khách yêu cầu hoàn tiền");
+        Order waitingRefund = orderDAO.findById(order.getId()).orElseThrow();
+        assertEquals("CHO_HOAN_TIEN", waitingRefund.getStatus());
+        assertEquals("Khách yêu cầu hoàn tiền", waitingRefund.getAdminNote());
+
+        adminService.confirmRefund(order.getId(), "Đã chuyển khoản hoàn tiền");
+        Order refunded = orderDAO.findById(order.getId()).orElseThrow();
+        assertEquals("DA_HOAN_TIEN", refunded.getStatus());
+        assertEquals("Khách yêu cầu hoàn tiền | Đã chuyển khoản hoàn tiền", refunded.getAdminNote());
+    }
+
+    @Test
+    void adminCanRecallPaidOrderButCannotRefundCodPendingOrder() {
+        Order paidOrder = saveOrder("VIETQR", "DA_THANH_TOAN", 500_000D);
+        adminService.recallOrder(paidOrder.getId(), "Thu hồi để kiểm tra");
+        Order recalled = orderDAO.findById(paidOrder.getId()).orElseThrow();
+        assertEquals("THU_HOI", recalled.getStatus());
+        assertEquals("Thu hồi để kiểm tra", recalled.getAdminNote());
+
+        Order codOrder = saveOrder("COD", "PENDING", 500_000D);
+        adminService.requestRefund(codOrder.getId(), "Không hợp lệ");
+        assertEquals("PENDING", orderDAO.findById(codOrder.getId()).orElseThrow().getStatus());
+    }
+
+    @Test
+    void genericStatusUpdateCannotBypassPaymentOrRefundWorkflow() {
+        Order waiting = saveOrder("VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 500_000D);
+        assertThrows(VietQrManualConfirmationException.class,
+                () -> adminService.updateOrderStatus(waiting.getId(), "PAID"));
+        assertEquals("CHO_XAC_NHAN_THANH_TOAN",
+                orderDAO.findById(waiting.getId()).orElseThrow().getStatus());
+
+        Order order = saveOrder("VIETQR", "DA_THANH_TOAN", 500_000D);
+        adminService.updateOrderStatus(order.getId(), "DA_HOAN_TIEN");
+        assertEquals("DA_THANH_TOAN", orderDAO.findById(order.getId()).orElseThrow().getStatus());
+
+        Order codOrder = saveOrder("COD", "PENDING", 500_000D);
+        adminService.updateOrderStatus(codOrder.getId(), "DA_THANH_TOAN");
+        assertEquals("PENDING", orderDAO.findById(codOrder.getId()).orElseThrow().getStatus());
+    }
+
+    @Test
+    void customerCanRequestRefundOnlyForOwnedEligibleOrder() {
+        User owner = userDAO.findByEmail("nguyentruongq169@gmail.com");
+        Order order = saveOrder("VIETQR", "DA_THANH_TOAN", 500_000D);
+        order.setUser(owner);
+        order.setAdminNote("Ghi chú giao hàng");
+        orderDAO.saveAndFlush(order);
+
+        assertEquals(false, customerOrderService.requestRefund(order.getId(), new User(), "Không hợp lệ"));
+        assertTrue(customerOrderService.requestRefund(order.getId(), owner, "Sản phẩm không phù hợp"));
+
+        Order requested = orderDAO.findById(order.getId()).orElseThrow();
+        assertEquals("YEU_CAU_HOAN_TIEN", requested.getStatus());
+        assertEquals("DA_THANH_TOAN", requested.getRefundPreviousStatus());
+        assertEquals("Sản phẩm không phù hợp", requested.getRefundReason());
+        assertEquals("Ghi chú giao hàng", requested.getAdminNote());
+    }
+
+    @Test
+    void adminCanApproveOrRejectCustomerRefundRequest() {
+        Order approved = saveOrder("VIETQR", "YEU_CAU_HOAN_TIEN", 500_000D);
+        approved.setRefundPreviousStatus("DA_THANH_TOAN");
+        orderDAO.saveAndFlush(approved);
+
+        adminService.approveCustomerRefund(approved.getId(), "Đã duyệt");
+        assertEquals("CHO_HOAN_TIEN", orderDAO.findById(approved.getId()).orElseThrow().getStatus());
+
+        Order rejected = saveOrder("VIETQR", "YEU_CAU_HOAN_TIEN", 500_000D);
+        rejected.setRefundPreviousStatus("COMPLETED");
+        orderDAO.saveAndFlush(rejected);
+
+        adminService.rejectCustomerRefund(rejected.getId(), "Không đủ điều kiện");
+        Order rejectedResult = orderDAO.findById(rejected.getId()).orElseThrow();
+        assertEquals("COMPLETED", rejectedResult.getStatus());
+        assertEquals("Không đủ điều kiện", rejectedResult.getAdminNote());
+    }
+
+    @Test
+    void orderProvidesCustomerFriendlyPaymentLabels() {
+        Order order = new Order();
+        order.setOrderCode("DH100");
+        order.setPaymentMethod("VIETQR");
+        order.setStatus("CHO_XAC_NHAN_THANH_TOAN");
+
+        assertEquals("VietQR", order.getPaymentMethodDisplay());
+        assertEquals("Chờ xác nhận thanh toán", order.getStatusDisplay());
+        assertEquals("THANH TOAN DH100", order.getTransferContent());
+
+        order.setStatus("DA_THANH_TOAN");
+        assertEquals("Đã thanh toán", order.getStatusDisplay());
+        order.setStatus("PENDING");
+        assertEquals("Chờ xử lý", order.getStatusDisplay());
+        order.setStatus("CANCELLED");
+        assertEquals("Đã hủy", order.getStatusDisplay());
+        order.setStatus("COMPLETED");
+        assertEquals("Hoàn thành", order.getStatusDisplay());
+        order.setStatus("CHO_HOAN_TIEN");
+        assertEquals("Chờ hoàn tiền", order.getStatusDisplay());
+        order.setStatus("YEU_CAU_HOAN_TIEN");
+        assertEquals("Đã yêu cầu hoàn trả", order.getStatusDisplay());
+        order.setStatus("DA_HOAN_TIEN");
+        assertEquals("Đã hoàn tiền", order.getStatusDisplay());
+        order.setStatus("THU_HOI");
+        assertEquals("Đã thu hồi", order.getStatusDisplay());
+        order.setStatus("DA_HUY");
+        assertEquals("Đã hủy", order.getStatusDisplay());
+        order.setStatus("HOAN_THANH");
+        assertEquals("Hoàn thành", order.getStatusDisplay());
+
+        order.setStatus("DA_THANH_TOAN");
+        assertTrue(order.isCustomerRefundEligible());
+        order.setStatus("CHO_HOAN_TIEN");
+        assertEquals(false, order.isCustomerRefundEligible());
+
+        order.setVoucherCode("QA500K");
+        order.setDiscountAmount(500_000D);
+        assertEquals("QA500K", order.getVoucherCode());
+        assertEquals(500_000D, order.getDiscountAmount());
+    }
+
+    private Order saveOrder(String paymentMethod, String status, Double totalPrice) {
+        Order order = new Order();
+        order.setUser(sepayFixtureUser);
+        order.setFullName("QA VietQR");
+        order.setPhone("0900000000");
+        order.setAddress("QA Address");
+        order.setTotalPrice(totalPrice);
+        order.setPaymentMethod(paymentMethod);
+        order.setStatus(status);
+        orderDAO.saveAndFlush(order);
+        order.setOrderCode("Luxury-" + order.getId());
+        return orderDAO.saveAndFlush(order);
+    }
+
+    private void assertNonQrCheckout(String paymentMethod) throws Exception {
+        Product mockProduct = new Product();
+        mockProduct.setName("QA " + paymentMethod);
+        mockProduct.setPrice(1_000_000D);
+        mockProduct.setStock(10);
+        mockProduct = productDAO.saveAndFlush(mockProduct);
+
+        MockHttpSession mockSession = new MockHttpSession();
+        Map<Integer, CartItem> cart = new HashMap<>();
+        cart.put(mockProduct.getId(), new CartItem(mockProduct.getId(), "QA " + paymentMethod, 1_000_000D, 1));
+        mockSession.setAttribute("cart", cart);
+
+        mockMvc.perform(post("/checkout/submit")
+                        .session(mockSession)
+                        .param("fullName", "QA " + paymentMethod)
+                        .param("phone", "0900000000")
+                        .param("address", "QA Address")
+                        .param("paymentMethod", paymentMethod))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/checkout?success"));
+
+        Order order = orderDAO.findAllOrderedByDate().get(0);
+        assertEquals(paymentMethod, order.getPaymentMethod());
+        assertEquals("PENDING", order.getStatus());
+    }
+}

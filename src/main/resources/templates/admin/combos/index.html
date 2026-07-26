@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Combo — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/products.css}" />
+    <style>
+        .badge-preview {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="title">
+                <h1>Quản Lý Combo (<span th:text="${combos != null ? combos.size() : 0}">0</span>)</h1>
+            </div>
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
+        </div>
+
+        <div th:if="${message}" class="alert alert-success"
+            style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 6px; color: #22c55e;">
+            <i class="fa-solid fa-circle-check"></i> <span th:text="${message}"></span>
+        </div>
+
+        <!-- Nút mở form tạo -->
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/admin/combos/create}" class="btn btn-gold"><i class="fa-solid fa-plus"></i> <span
+                    class="btn-text">Thêm Combo Mới</span></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Danh sách Combo hiện có</h2>
+            </div>
+
+            <div class="table-wrapper" style="width: 100%; max-height: 49vh; overflow-x: hidden; overflow-y: auto;">
+                <table class="admin-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th width="50" style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">ID</th>
+                            <th width="100" style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Hình ảnh
+                            </th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tên Combo</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Nhãn (Badge)</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Giá Bán</th>
+                            <th width="120"
+                                style="position: sticky; top: 0; z-index: 10; background: #f8fafc; text-align: center;">
+                                Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${combos == null or combos.isEmpty()}">
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #888;">Không có Combo nào.
+                            </td>
+                        </tr>
+                        <tr th:each="c : ${combos}">
+                            <td th:text="${c.id}">1</td>
+                            <td>
+                                <div class="img-preview" style="background-image: url('');"
+                                    th:style="'background-image: url(' + ${c.image != null and !c.image.startsWith('http') and !c.image.startsWith('/images') ? '/images/products/' + c.image : (c.image != null ? c.image : '/images/placeholder.jpg')} + ')'">
+                                </div>
+                            </td>
+                            <td><strong th:text="${c.name}">Combo Name</strong></td>
+                            <td>
+                                <span class="badge-preview"
+                                    th:style="'background-color: ' + ${c.badgeColor != null and !c.badgeColor.isBlank() ? c.badgeColor : '#ef4444'}"
+                                    th:text="${c.badge}">HOT</span>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</td>
+                            <td style="text-align: center;">
+                                <div class="action-btns" style="justify-content: center;">
+                                    <a th:href="@{/admin/combos/edit/{id}(id=${c.id})}" class="icon-btn icon-btn-edit"
+                                        title="Sửa"><i class="fa-solid fa-pen"></i></a>
+                                    <a th:href="@{/admin/combos/delete/{id}(id=${c.id})}" class="icon-btn icon-btn-del"
+                                        title="Xóa"
+                                        onclick="return window.confirmNavigate(event, 'Bạn có chắc chắn muốn xóa Combo này?', this.href);"><i
+                                            class="fa-solid fa-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="cursor-glow"></div>
+    <script th:src="@{/js/cursor.js}"></script>
+
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
+</body>
+
+</html>

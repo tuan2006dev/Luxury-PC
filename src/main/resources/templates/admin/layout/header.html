@@ -1,0 +1,30 @@
+<!-- Header -->
+<header class="top-header" th:fragment="top-header">
+    <div class="header-left">
+        <button class="btn-menu"><i class="fa-solid fa-bars"></i></button>
+        <div class="page-title" th:text="${pageTitle}">Dashboard</div>
+    </div>
+
+    <div class="header-right">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Tìm kiếm...">
+        </div>
+
+        <div class="header-icons">
+            <button class="btn-icon">
+                <i class="fa-regular fa-bell"></i>
+                <span class="badge-dot"></span>
+            </button>
+        </div>
+
+        <div class="user-info" th:fragment="adminProfile">
+            <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
+            <span th:text="${#authentication.name}" style="font-weight: 500;">Admin</span>
+            <span sec:authorize="hasRole('ADMIN')"
+                style="background-color: #0056b3; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">ADMIN</span>
+            <span sec:authorize="hasRole('STAFF')"
+                style="background-color: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">STAFF</span>
+        </div>
+    </div>
+</header>

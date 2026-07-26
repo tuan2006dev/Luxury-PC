@@ -1,0 +1,92 @@
+/* ============================================
+   THEME VARIABLES
+============================================ */
+/* Base light theme colors */
+body.light-mode {
+  --black: #ffffff;
+  /* Main background becomes white */
+  --deep: #f8f9fa;
+  /* Deep sections become light gray */
+  --dark: #e9ecef;
+  /* Dark surfaces become medium-light gray */
+  --mid: #dee2e6;
+  /* Borders and mid elements */
+
+  --cream: #111111;
+  /* Main text color becomes very dark gray/black */
+  --white: #0a0a0a;
+  /* Inverted white text becomes black */
+  --text-muted: #555555;
+  /* Muted text becomes darker for readability */
+
+  --gold: #a67c00;
+  /* Gold color slightly darkened for better contrast on white */
+  --gold-light: #c9a84c;
+  --gold-dark: #664d00;
+}
+
+/* Theme Toggle Button Styles */
+.theme-toggle-btn {
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: var(--gold);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 15px;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(201, 168, 76, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.2);
+}
+
+.theme-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+/* Icon rotation animation on toggle */
+body.light-mode .theme-toggle-btn svg.sun-icon {
+  display: none;
+}
+
+body:not(.light-mode) .theme-toggle-btn svg.moon-icon {
+  display: none;
+}
+
+.floating-theme-btn {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  z-index: 9999;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  width: 48px;
+  height: 48px;
+  margin-left: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0.2;
+  transition: all 0.3s ease;
+}
+
+body.light-mode .floating-theme-btn {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.floating-theme-btn:hover {
+  opacity: 1;
+  background: rgba(201, 168, 76, 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.3);
+}

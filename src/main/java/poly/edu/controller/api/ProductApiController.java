@@ -1,0 +1,249 @@
+package poly.edu.controller.api;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import poly.edu.entity.AdminLog;
+import poly.edu.entity.FlashSale;
+import poly.edu.entity.Product;
+import poly.edu.repository.AdminLogRepository;
+import poly.edu.service.FlashSaleService;
+import poly.edu.service.ProductService;
+
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@RestController
+@CrossOrigin(origins = "*") // Allow React to connect seamlessly
+@RequiredArgsConstructor
+public class ProductApiController {
+
+    private final ProductService productService;
+    private final FlashSaleService flashSaleService;
+    private final AdminLogRepository adminLogRepository;
+
+    @GetMapping("/api/products")
+    public List<Map<String, Object>> getProducts() {
+        return productService.getAllProducts().stream().map(p -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", p.getId());
+            map.put("name", p.getName());
+            // URL để điều hướng đến trang chi tiết sản phẩm
+            map.put("productUrl", "/product/" + p.getId());
+            
+            String categoryName = "Linh Kiện";
+            if (p.getCategory() != null && p.getCategory().getName() != null) {
+                categoryName = p.getCategory().getName();
+            }
+            map.put("cat", categoryName);
+            
+            double price = p.getPrice() != null ? p.getPrice() : 0.0;
+            map.put("price", String.format("%,.0f₫", price).replace(',', '.'));
+            
+            // Generate icon based on category loosely
+            String icon = "📦";
+            String catLow = categoryName.toLowerCase();
+            if (catLow.contains("cpu")) icon = "🖥️";
+            else if (catLow.contains("vga") || catLow.contains("card")) icon = "🎮";
+            else if (catLow.contains("ram")) icon = "🧠";
+            else if (catLow.contains("main") || catLow.contains("bo mạch")) icon = "⚙️";
+            else if (catLow.contains("ssd") || catLow.contains("hdd")) icon = "💾";
+            else if (catLow.contains("màn") || catLow.contains("monitor")) icon = "📺";
+            else if (catLow.contains("nguồn") || catLow.contains("psu")) icon = "⚡";
+            
+            map.put("icon", icon);
+            
+            String imageUrl = p.getImage();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                if (!imageUrl.startsWith("http")) {
+                    if (imageUrl.startsWith("/images/products/")) {
+                        // Already has prefix
+                    } else {
+                        imageUrl = "/images/products/" + imageUrl;
+                    }
+                }
+                map.put("image", imageUrl);
+            } else {
+                map.put("image", "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=400&auto=format&fit=crop");
+            }
+            return map;
+        }).collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/products/search")
+    public List<Map<String, Object>> searchProductsAjax(@RequestParam("q") String q) {
+        if (q == null || q.trim().isEmpty()) return new ArrayList<>();
+        List<Product> matches = productService.searchProducts(null, null, null, q, null);
+        return matches.stream().limit(5).map(p -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", p.getId());
+            map.put("name", p.getName());
+            map.put("productUrl", "/product/" + p.getId());
+            map.put("price", String.format("%,.0f₫", p.getPrice() != null ? p.getPrice() : 0.0).replace(',', '.'));
+            
+            String imageUrl = p.getImage();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                if (!imageUrl.startsWith("http")) {
+                    if (!imageUrl.startsWith("/images/products/")) {
+                        imageUrl = "/images/products/" + imageUrl;
+                    }
+                }
+            } else {
+                imageUrl = "/images/placeholder.png";
+            }
+            map.put("image", imageUrl);
+            map.put("cat", p.getCategory() != null ? p.getCategory().getName() : "Linh Kiện");
+            return map;
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * API: Get categorized products for 3D PC Builder
+     * Fetches from the product database and parses them into Case, Mainboard, CPU, GPU, RAM, PSU categories.
+     * NOTE: This project now uses SQL Server instead of Supabase/PostgreSQL.
+     */
+    @GetMapping("/api/build/components")
+    public Map<String, List<Map<String, Object>>> getBuildComponents() {
+        Map<String, List<Map<String, Object>>> result = new HashMap<>();
+        for (String cat : new String[]{"CASE", "MAINBOARD", "CPU", "COOLER", "RAM", "GPU", "PSU", "MONITOR", "KEYBOARD", "MOUSE"}) {
+            result.put(cat, new ArrayList<>());
+        }
+
+        List<Product> dbProducts = productService.getAllProducts();
+        for (Product p : dbProducts) {
+            if (p == null || p.getName() == null) continue;
+            
+            String dbCatName = p.getCategory() != null ? p.getCategory().getName().toLowerCase() : "";
+            String pName = p.getName().toLowerCase();
+            String matchedCat = null;
+
+            if (dbCatName.contains("case") || dbCatName.contains("vỏ") || pName.contains("vỏ case") || pName.contains("case ")) {
+                matchedCat = "CASE";
+            } else if (dbCatName.contains("main") || dbCatName.contains("bo mạch") || pName.contains("mainboard") || pName.contains("main ")) {
+                matchedCat = "MAINBOARD";
+            } else if (dbCatName.contains("cpu") || dbCatName.contains("vi xử lý") || pName.contains("intel") || pName.contains("ryzen") || pName.contains("core i")) {
+                matchedCat = "CPU";
+            } else if (dbCatName.contains("tản") || dbCatName.contains("cooler") || dbCatName.contains("fan") || pName.contains("tản nhiệt") || pName.contains("aio")) {
+                matchedCat = "COOLER";
+            } else if (dbCatName.contains("ram") || pName.contains("ram ") || pName.contains("ddr5") || pName.contains("ddr4")) {
+                matchedCat = "RAM";
+            } else if (dbCatName.contains("vga") || dbCatName.contains("card") || dbCatName.contains("đồ họa") || pName.contains("nvidia") || pName.contains("radeon") || pName.contains("rtx") || pName.contains("gtx") || pName.contains("rx ")) {
+                matchedCat = "GPU";
+            } else if (dbCatName.contains("nguồn") || dbCatName.contains("psu") || pName.contains("nguồn ") || pName.contains("psu ")) {
+                matchedCat = "PSU";
+            } else if (dbCatName.contains("màn") || dbCatName.contains("monitor") || pName.contains("màn hình") || pName.contains("monitor")) {
+                matchedCat = "MONITOR";
+            } else if (dbCatName.contains("phím") || dbCatName.contains("keyboard") || pName.contains("bàn phím") || pName.contains("keyboard")) {
+                matchedCat = "KEYBOARD";
+            } else if (dbCatName.contains("chuột") || dbCatName.contains("mouse") || pName.contains("chuột ") || pName.contains("mouse")) {
+                matchedCat = "MOUSE";
+            }
+
+            if (matchedCat != null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", String.valueOf(p.getId()));
+                map.put("name", p.getName());
+                map.put("price", p.getPrice() != null ? p.getPrice().intValue() : 0);
+                map.put("spec", p.getDescription() != null && !p.getDescription().isEmpty() ? p.getDescription() : "Linh kiện chính hãng");
+                
+                String imageUrl = p.getImage();
+                if (imageUrl != null && !imageUrl.isEmpty()) {
+                    if (!imageUrl.startsWith("http")) {
+                        imageUrl = "/images/products/" + imageUrl;
+                    }
+                    map.put("image", imageUrl);
+                } else {
+                    map.put("image", "/images/placeholder.png");
+                }
+                
+                // Color and sizes based on category
+                String color = "#c9a84c";
+                List<Double> size = Arrays.asList(0.5, 0.5, 0.5);
+                List<Double> pos = Arrays.asList(0.0, 0.0, 0.0);
+                
+                if (matchedCat.equals("CASE")) {
+                    color = p.getName().toLowerCase().contains("white") ? "#eaeaea" : "#1a1a1a";
+                    size = Arrays.asList(4.0, 5.0, 4.5);
+                } else if (matchedCat.equals("MAINBOARD")) {
+                    color = "#1c1e24";
+                    size = Arrays.asList(2.5, 3.2, 0.15);
+                } else if (matchedCat.equals("CPU")) {
+                    color = p.getName().toLowerCase().contains("intel") ? "#0071c5" : "#f35c00";
+                    size = Arrays.asList(0.6, 0.6, 0.1);
+                    pos = Arrays.asList(-0.2, 0.5, 0.1);
+                } else if (matchedCat.equals("COOLER")) {
+                    color = "#333333";
+                    size = Arrays.asList(0.9, 0.9, 0.4);
+                    pos = Arrays.asList(-0.2, 0.5, 0.45);
+                } else if (matchedCat.equals("RAM")) {
+                    color = "#c9a84c";
+                    size = Arrays.asList(0.1, 1.2, 0.3);
+                    pos = Arrays.asList(0.4, 0.5, 0.2);
+                } else if (matchedCat.equals("GPU")) {
+                    color = "#444444";
+                    size = Arrays.asList(0.8, 2.5, 0.7);
+                    pos = Arrays.asList(0.1, -0.6, 0.6);
+                } else if (matchedCat.equals("PSU")) {
+                    color = "#111111";
+                    size = Arrays.asList(1.8, 1.2, 1.5);
+                    pos = Arrays.asList(0.0, -2.1, -1.2);
+                } else if (matchedCat.equals("MONITOR")) {
+                    color = "#111111";
+                    size = Arrays.asList(6.2, 3.2, 0.4);
+                    pos = Arrays.asList(-2.0, 0.6, -0.4);
+                } else if (matchedCat.equals("KEYBOARD")) {
+                    color = "#1a1a1a";
+                    size = Arrays.asList(1.4, 0.08, 0.55);
+                    pos = Arrays.asList(-2.0, -2.75, 1.8);
+                } else if (matchedCat.equals("MOUSE")) {
+                    color = "#111111";
+                    size = Arrays.asList(0.22, 0.12, 0.38);
+                    pos = Arrays.asList(-0.6, -2.75, 1.8);
+                }
+                
+                map.put("color", color);
+                map.put("size", size);
+                map.put("pos", pos);
+                
+                result.get(matchedCat).add(map);
+            }
+        }
+        
+        return result;
+    }
+
+
+
+    @GetMapping("/api/products/broken-images")
+    public List<Map<String, Object>> getBrokenImages() {
+        return productService.getAllProducts().stream()
+            .filter(p -> p.getImage() == null || p.getImage().isEmpty() || p.getImage().contains("placeholder") || p.getImage().contains("null"))
+            .map(p -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", p.getId());
+                map.put("name", p.getName());
+                map.put("image", p.getImage());
+                return map;
+            }).collect(Collectors.toList());
+    }
+
+    /**
+     * API endpoint to delete flash sale
+     * DELETE /api/flash-sales/delete/{id}
+     * POST /api/flash-sales/delete/{id}
+     */
+    @DeleteMapping("/api/flash-sales/delete/{id}")
+    public Map<String, Object> deleteFlashSaleApi(@PathVariable("id") Integer id) {
+        flashSaleService.deleteFlashSale(id);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", true);
+        resp.put("message", "Đã xóa Flash Sale thành công!");
+        return resp;
+    }
+
+    @PostMapping("/api/flash-sales/delete/{id}")
+    public Map<String, Object> deleteFlashSaleApiPost(@PathVariable("id") Integer id) {
+        return deleteFlashSaleApi(id);
+    }
+}

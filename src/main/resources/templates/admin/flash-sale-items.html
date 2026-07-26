@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản Phẩm Flash Sale — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <link rel="stylesheet" th:href="@{/css/admin/flash-sale-items.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+</head>
+
+<body>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <a href="/admin/flash-sales" class="back-link"><i class="fa-solid fa-arrow-left"></i> <span>Quay lại danh sách Flash Sale</span></a>
+
+        <div class="header">
+            <div class="title">
+                <h1><i class="fa-solid fa-cubes" style="color:var(--gold);margin-right:10px;"></i><span>Sản Phẩm Flash Sale</span></h1>
+                <p><span>Chương trình</span>: <strong
+                        th:text="${flashSale.name}" style="color:var(--gold);">Flash Sale</strong>
+                    — <span th:text="${#dates.format(flashSale.startTime, 'dd/MM/yyyy HH:mm')}">01/04</span>
+                    <span>đến</span> <span
+                        th:text="${#dates.format(flashSale.endTime, 'dd/MM/yyyy HH:mm')}">30/04</span>
+                </p>
+            </div>
+        </div>
+
+        <div th:if="${success}" class="toast toast-success">
+            <i class="fa-solid fa-check-circle"></i> <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="toast toast-error">
+            <i class="fa-solid fa-exclamation-circle"></i> <span th:text="${error}"></span>
+        </div>
+
+        <!-- Add product form -->
+        <div class="form-card">
+            <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span>Thêm Sản Phẩm Vào Flash Sale</span></div>
+            <form autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST" id="addFlashSaleItemForm" onsubmit="return validateFlashSaleItem(this)">
+                <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 3; min-width: 250px; margin-bottom: 0;">
+                        <label>Sản Phẩm</label>
+                        <select name="productId" required>
+                            <option value="">-- Chọn sản phẩm --
+                            </option>
+                            <option th:each="p : ${products}" th:value="${p.id}"
+                                th:data-price="${p.price}"
+                                th:text="${p.name + ' — ' + #numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                                Product
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                        <label>Giá Sale (₫)</label>
+                        <input autocomplete="off" type="number" name="salePrice" required placeholder="VD: 15000000" min="0">
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                        <label>Số Lượng Sale</label>
+                        <input autocomplete="off" type="number" name="saleQuantity" required placeholder="VD: 50"
+                            value="50" min="0">
+                    </div>
+                    <button type="submit" class="btn btn-gold" style="height: 38px; white-space: nowrap;"><i
+                            class="fa-solid fa-plus"></i> <span>Thêm</span></button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Items table -->
+        <div class="table-card">
+            <div class="table-h"><i class="fa-solid fa-list"></i> <span>Sản
+                    Phẩm Trong Chương Trình</span> (<span th:text="${items.size()}">0</span>)</div>
+
+            <div style="width: 100%; overflow-x: auto;">
+                <table th:if="${items != null and !items.isEmpty()}" style="min-width: 800px;">
+                    <thead>
+                        <tr>
+                            <th>Sản Phẩm</th>
+                            <th>Giá Gốc</th>
+                            <th>Giá Sale</th>
+                            <th>Giảm</th>
+                            <th>Đã Bán</th>
+                            <th>Tiến Trình</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${items}">
+                            <td style="font-weight:600;color:var(--white); max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:title="${item.product.name}" th:text="${item.product.name}">RTX 4090</td>
+                            <td>
+                                <span class="original-price"
+                                    th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">20.000.000₫</span>
+                            </td>
+                            <td style="color:var(--gold);font-weight:700;"
+                                th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'">
+                                15.000.000₫</td>
+                            <td>
+                                <span class="discount-tag" th:text="'-' + ${item.discountPercent} + '%'">-25%</span>
+                            </td>
+                            <td th:text="${item.soldCount + '/' + item.saleQuantity}">5/50</td>
+                            <td style="min-width:120px;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" th:style="'width:' + ${item.soldPercent} + '%'"></div>
+                                </div>
+                                <div style="font-size:.65rem;color:var(--muted);margin-top:3px;"><span
+                                        th:text="${item.soldPercent}">10</span>% <span>đã bán</span></div>
+                            </td>
+                            <td>
+                                <form novalidate autocomplete="off"
+                                    th:action="@{/admin/flash-sales/{saleId}/items/remove/{itemId}(saleId=${flashSale.id},itemId=${item.id})}"
+                                    method="POST"
+                                    th:onsubmit="event.preventDefault(); window.confirmDelete(this, 'Xóa sản phẩm này khỏi Flash Sale?');">
+                                    <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i> <span>Xóa</span></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${items == null or items.isEmpty()}" class="empty-state">
+                <i class="fa-solid fa-cubes"></i>
+                <p>Chưa có sản phẩm nào trong chương trình này. Thêm sản phẩm ở
+                    form bên trên.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/confirm-popup.js}"></script>
+    <script>
+        function validateFlashSaleItem(form) {
+            const select = form.querySelector('select[name="productId"]');
+            const salePriceInput = form.querySelector('input[name="salePrice"]');
+            
+            if (select && salePriceInput && select.selectedIndex >= 0) {
+                const selectedOption = select.options[select.selectedIndex];
+                const originalPrice = parseFloat(selectedOption.getAttribute('data-price'));
+                const salePrice = parseFloat(salePriceInput.value);
+                
+                if (!isNaN(originalPrice) && !isNaN(salePrice)) {
+                    if (salePrice > originalPrice) {
+                        alert('Giá SALE không được cao hơn giá gốc của sản phẩm (' + originalPrice.toLocaleString('vi-VN') + '₫)!');
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    </script>
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
+</body>
+
+</html>

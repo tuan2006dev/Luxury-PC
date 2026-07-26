@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Nhân Viên — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/account.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <style>
+        .alert-custom {
+            padding: 12px 18px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .alert-success-custom {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+
+        .alert-error-custom {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <!-- Standard Admin Header -->
+        <div class="header frame-in-up">
+            <div class="title">
+                <h1 class="text-gradient">Quản Lý Nhân Viên (Staff)</h1>
+                <p>Quản lý danh sách tài khoản Nhân viên (Staff) và nhật ký thao tác</p>
+            </div>
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
+        </div>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert-custom alert-success-custom">
+            <i class="fa-solid fa-circle-check"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert-custom alert-error-custom">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- KPI Stat Cards (3 Grid Columns matching Staff metrics) -->
+        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat-card">
+                <i class="fa-solid fa-users-gear stat-icon"></i>
+                <div class="stat-label">Tổng Nhân Viên (Staff)</div>
+                <div class="stat-value" th:text="${employeeCount} ?: 0">0</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-user-check stat-icon" style="color: #10b981;"></i>
+                <div class="stat-label">Đang Hoạt Động</div>
+                <div class="stat-value" th:text="${activeCount} ?: 0">0</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-user-lock stat-icon" style="color: #ef4444;"></i>
+                <div class="stat-label">Đã Khóa</div>
+                <div class="stat-value" th:text="${lockedCount} ?: 0">0</div>
+            </div>
+        </div>
+
+        <!-- Filter & Action Toolbar Card -->
+        <div class="card" style="padding: 1rem 1.5rem; margin-bottom: 2rem;">
+            <div
+                style="display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                <button class="btn-action" id="toggleFormBtn" onclick="toggleForm()" type="button"
+                    style="margin: 0 !important; height: 38px; padding: 0 16px; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; box-sizing: border-box; background: #0066CC; color: #ffffff; border: none; font-weight: 600;">
+                    <i class="fa-solid fa-user-plus" style="margin-right: 6px;"></i> <span>Thêm Nhân Viên Mới</span>
+                </button>
+
+                <form method="get" th:action="@{/admin/employees}"
+                    style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0;">
+                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo Tên, Email, SĐT..."
+                        style="margin: 0 !important; height: 38px; background: var(--mid); border: 1px solid #cbd5e1; color: var(--white); padding: 0 12px; border-radius: 6px; font-size: 0.88rem; min-width: 220px; box-sizing: border-box; outline: none;">
+
+                    <select name="statusFilter"
+                        style="margin: 0 !important; height: 38px; background: var(--mid); border: 1px solid #cbd5e1; color: var(--white); padding: 0 12px; border-radius: 6px; font-size: 0.88rem; box-sizing: border-box; outline: none;">
+                        <option value="" th:selected="${statusFilter == null}">Tất cả Trạng Thái</option>
+                        <option value="true" th:selected="${statusFilter == true}">Hoạt Động</option>
+                        <option value="false" th:selected="${statusFilter == false}">Đã Khóa</option>
+                    </select>
+
+                    <button type="submit" class="btn-action"
+                        style="margin: 0 !important; height: 38px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; box-sizing: border-box; background: #0066CC; color: #ffffff; border: none; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-filter" style="margin-right: 6px;"></i> Lọc
+                    </button>
+
+                    <a href="/admin/employees" class="btn-action"
+                        style="margin: 0 !important; height: 38px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; box-sizing: border-box; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; font-weight: 500;">
+                        <i class="fa-solid fa-rotate-left" style="margin-right: 6px;"></i> Đặt lại
+                    </a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add / Edit Employee Form Modal -->
+        <div class="card add-form-container" id="userForm" th:classappend="${user.id != null ? 'active' : ''}">
+            <div class="card-header">
+                <h2 id="formTitle">Thêm Nhân Viên Mới</h2>
+                <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát" type="button"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form novalidate th:action="@{/admin/employees/save}" method="post">
+                <input type="hidden" name="id" id="empId" th:value="${user.id}">
+
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Username <span style="color: var(--red);">*</span></label>
+                        <input type="text" name="username" id="empUsername" th:value="${user.username}" required
+                            placeholder="Ví dụ: staff_nam">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Email <span style="color: var(--red);">*</span></label>
+                        <input type="email" name="email" id="empEmail" th:value="${user.email}" required
+                            placeholder="nhanvien@luxury-pc.com">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Mật khẩu <span id="pwdNotice" style="font-size: 0.8rem; color: var(--muted);">(Để trống
+                                nếu tự sinh ngẫu nhiên)</span></label>
+                        <input type="password" name="password" id="empPassword"
+                            placeholder="Nhập mật khẩu hoặc để trống">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Họ tên</label>
+                        <input type="text" name="fullName" id="empFullName" th:value="${user.fullName}"
+                            placeholder="Nguyễn Văn A">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Số điện thoại</label>
+                        <input type="text" name="phone" id="empPhone" th:value="${user.phone}" placeholder="0987654321">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Địa chỉ</label>
+                        <input type="text" name="address" id="empAddress" th:value="${user.address}"
+                            placeholder="Hà Nội, Việt Nam">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Giới tính</label>
+                        <select name="gender" id="empGender">
+                            <option value="true" th:selected="${user.gender == true}">Nam</option>
+                            <option value="false" th:selected="${user.gender == false}">Nữ</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Vai Trò / Phân Quyền</label>
+                        <select name="roleName" id="empRole" disabled style="background: #f1f5f9; color: #64748b;">
+                            <option value="STAFF" selected>Nhân viên (STAFF)</option>
+                        </select>
+                        <input type="hidden" name="roleName" value="STAFF">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Trạng thái</label>
+                        <select name="status" id="empStatus">
+                            <option value="true" th:selected="${user.status == null or user.status == true}">Hoạt động
+                            </option>
+                            <option value="false" th:selected="${user.status == false}">Đã khóa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" style="margin-top: 1.5rem;">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu Thông Tin Nhân Viên
+                </button>
+            </form>
+        </div>
+
+        <!-- Employee Table Card -->
+        <div class="card">
+            <h2><i class="fa-solid fa-list-check" style="color: var(--gold); margin-right: 8px;"></i> Danh Sách Nhân
+                Viên</h2>
+
+            <div style="width: 100%; overflow-x: auto;">
+                <table class="admin-table" style="min-width: 1000px;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Họ Tên</th>
+                            <th>Email</th>
+                            <th>SĐT</th>
+                            <th>Vai Trò</th>
+                            <th>Ngày Tạo</th>
+                            <th>Trạng Thái</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${employees}">
+                            <td th:text="${u.id}">1</td>
+                            <td th:text="${u.username}" style="font-weight: 600; color: #0f172a;">username</td>
+                            <td th:text="${u.fullName} ?: '—'">—</td>
+                            <td th:text="${u.email}">email@domain.com</td>
+                            <td th:text="${u.phone} ?: '—'">—</td>
+                            <td>
+                                <span th:each="ur : ${u.userRoles}">
+                                    <span th:if="${ur.role.name == 'ADMIN'}" class="badge"
+                                        style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 600;"><i
+                                            class="fa-solid fa-shield"></i> ADMIN</span>
+                                    <span th:if="${ur.role.name == 'STAFF'}" class="badge"
+                                        style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 600;"><i
+                                            class="fa-solid fa-user-gear"></i> STAFF</span>
+                                </span>
+                            </td>
+                            <td th:text="${u.createdAt != null ? #dates.format(u.createdAt, 'dd/MM/yyyy HH:mm') : '—'}">
+                                01/01/2026</td>
+                            <td>
+                                <span th:if="${u.status}" class="badge active-badge"><i class="fa-solid fa-check"></i>
+                                    Hoạt động</span>
+                                <span th:if="${!u.status}" class="badge inactive-badge"><i class="fa-solid fa-lock"></i>
+                                    Đã khoá</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 6px; align-items: center; white-space: nowrap;">
+                                    <button type="button" class="btn-action" th:data-id="${u.id}"
+                                        th:data-username="${u.username}" th:data-email="${u.email}"
+                                        th:data-fullname="${u.fullName != null ? u.fullName : ''}"
+                                        th:data-phone="${u.phone != null ? u.phone : ''}"
+                                        th:data-address="${u.address != null ? u.address : ''}"
+                                        th:data-gender="${u.gender}" th:data-status="${u.status}"
+                                        th:data-role="${u.userRoles != null and !u.userRoles.empty ? u.userRoles[0].role.name : 'STAFF'}"
+                                        onclick="editEmployee(this)" style="margin: 0; border: 1px solid #0066cc;">
+                                        <i class="fa-solid fa-pen"></i> Sửa
+                                    </button>
+
+                                    <form th:action="@{/admin/employees/toggle-status/{id}(id=${u.id})}" method="post"
+                                        style="margin: 0; padding: 0; display: block; height: 32px;"
+                                        onsubmit="return window.confirmSubmit(event, 'Xác nhận khoá/mở khoá tài khoản này?');">
+                                        <button type="submit" class="btn-action"
+                                            th:style="${u.status ? 'background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; margin: 0;' : 'background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; margin: 0;'}">
+                                            <i
+                                                th:class="${u.status ? 'fa-solid fa-lock' : 'fa-solid fa-lock-open'}"></i>
+                                            <span th:text="${u.status ? 'Khóa' : 'Mở khoá'}">Khóa</span>
+                                        </button>
+                                    </form>
+
+                                    <form th:action="@{/admin/employees/reset-password/{id}(id=${u.id})}" method="post"
+                                        style="margin: 0; padding: 0; display: block; height: 32px;"
+                                        onsubmit="return window.confirmSubmit(event, 'Bạn có chắc muốn Reset mật khẩu cho nhân viên này?');">
+                                        <button type="submit" class="btn-action"
+                                            style="background: #fffbe6; color: #d97706; border: 1px solid #fef3c7; margin: 0;"
+                                            title="Reset mật khẩu">
+                                            <i class="fa-solid fa-key"></i> Reset MK
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${employees == null or employees.empty}">
+                            <td colspan="9" style="text-align: center; color: var(--muted); padding: 2rem 0;">
+                                <i class="fa-solid fa-folder-open"
+                                    style="font-size: 2rem; margin-bottom: 10px; color: #cbd5e1;"></i><br>
+                                <span>Không tìm thấy nhân viên phù hợp.</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Audit Logs Card -->
+        <div class="card" style="margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: #1e293b;">
+                    <i class="fa-solid fa-clock-rotate-left" style="color: var(--gold); margin-right: 8px;"></i>
+                    Nhật Ký Thao Tác Nhân Viên (Staff Audit Logs)
+                </h2>
+                <span class="badge"
+                    style="background: #f1f5f9; color: #64748b; font-weight: 600; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px;">
+                    <i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> 50 Nhật ký mới nhất
+                </span>
+            </div>
+            <div class="table-wrapper" style="width: 100%; overflow-x: auto;">
+                <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr
+                            style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <th style="padding: 12px 16px; text-align: left; width: 70px;">#ID</th>
+                            <th style="padding: 12px 16px; text-align: left; width: 170px;">Thời Gian</th>
+                            <th style="padding: 12px 16px; text-align: left; width: 220px;">Nhân Viên Thực Hiện</th>
+                            <th style="padding: 12px 16px; text-align: left; width: 220px;">Hành Động</th>
+                            <th style="padding: 12px 16px; text-align: left;">Đối Tượng Bị Tác Động</th>
+                            <th style="padding: 12px 16px; text-align: center; width: 140px;">Địa Chỉ IP</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 0.9rem;">
+                        <tr th:each="log : ${recentLogs}"
+                            style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;">
+                            <td style="padding: 12px 16px; font-weight: 700; color: #94a3b8;" th:text="${'#' + log.id}">
+                                #1</td>
+                            <td style="padding: 12px 16px; white-space: nowrap; color: #475569;">
+                                <i class="fa-regular fa-clock" style="color: #94a3b8; margin-right: 6px;"></i>
+                                <span th:text="${#dates.format(log.createdAt, 'dd/MM/yyyy HH:mm:ss')}">22/07/2026
+                                    08:30:00</span>
+                            </td>
+                            <td style="padding: 12px 16px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div
+                                        style="width: 28px; height: 28px; border-radius: 50%; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                                        <i class="fa-solid fa-user-gear"></i>
+                                    </div>
+                                    <span th:text="${log.adminUsername}"
+                                        style="color: #0f172a; font-weight: 600;">staff_user</span>
+                                </div>
+                            </td>
+                            <td style="padding: 12px 16px;">
+                                <span
+                                    th:if="${#strings.containsIgnoreCase(log.action, 'Xóa') or #strings.containsIgnoreCase(log.action, 'Hủy') or #strings.containsIgnoreCase(log.action, 'Khóa')}"
+                                    style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span th:text="${log.action}">Xóa sản phẩm</span>
+                                </span>
+                                <span
+                                    th:if="${#strings.containsIgnoreCase(log.action, 'Thêm') or #strings.containsIgnoreCase(log.action, 'Tạo')}"
+                                    style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-plus-circle"></i>
+                                    <span th:text="${log.action}">Thêm mới</span>
+                                </span>
+                                <span
+                                    th:if="${!#strings.containsIgnoreCase(log.action, 'Xóa') and !#strings.containsIgnoreCase(log.action, 'Hủy') and !#strings.containsIgnoreCase(log.action, 'Khóa') and !#strings.containsIgnoreCase(log.action, 'Thêm') and !#strings.containsIgnoreCase(log.action, 'Tạo')}"
+                                    style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    <span th:text="${log.action}">Cập nhật</span>
+                                </span>
+                            </td>
+                            <td style="padding: 12px 16px; font-weight: 600; color: #1e293b;"
+                                th:text="${log.targetUser != null ? log.targetUser : 'N/A'}">Intel Core i5-14400F</td>
+                            <td style="padding: 12px 16px; text-align: center;">
+                                <span class="badge"
+                                    style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; font-family: monospace; font-size: 0.85rem; padding: 4px 10px; border-radius: 6px;">
+                                    <i class="fa-solid fa-network-wired" style="margin-right: 4px;"></i><span
+                                        th:text="${log.ipAddress}">127.0.0.1</span>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr th:if="${recentLogs == null or recentLogs.empty}">
+                            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 2rem 0;">
+                                <i class="fa-solid fa-inbox"
+                                    style="font-size: 2rem; margin-bottom: 8px; color: #cbd5e1;"></i><br>
+                                <span>Chưa có nhật ký thao tác nào từ Nhân viên (Staff).</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script th:inline="javascript">
+        function toggleForm() {
+            const form = document.getElementById('userForm');
+            form.classList.toggle('active');
+            if (!form.classList.contains('active')) {
+                // Reset form fields
+                document.getElementById('empId').value = '';
+                document.getElementById('empUsername').value = '';
+                document.getElementById('empUsername').readOnly = false;
+                document.getElementById('empEmail').value = '';
+                document.getElementById('empEmail').readOnly = false;
+                document.getElementById('empPassword').value = '';
+                document.getElementById('empFullName').value = '';
+                document.getElementById('empPhone').value = '';
+                document.getElementById('empAddress').value = '';
+                document.getElementById('empRole').value = 'STAFF';
+                document.getElementById('empStatus').value = 'true';
+                document.getElementById('formTitle').innerText = 'Thêm Nhân Viên Mới';
+            }
+        }
+
+        function editEmployee(btn) {
+            const id = btn.getAttribute('data-id');
+            const username = btn.getAttribute('data-username');
+            const email = btn.getAttribute('data-email');
+            const fullname = btn.getAttribute('data-fullname');
+            const phone = btn.getAttribute('data-phone');
+            const address = btn.getAttribute('data-address');
+            const gender = btn.getAttribute('data-gender');
+            const status = btn.getAttribute('data-status');
+            const role = btn.getAttribute('data-role');
+
+            document.getElementById('empId').value = id;
+            document.getElementById('empUsername').value = username;
+            document.getElementById('empUsername').readOnly = true;
+            document.getElementById('empEmail').value = email;
+            document.getElementById('empEmail').readOnly = true;
+            document.getElementById('empPassword').value = '';
+            document.getElementById('empFullName').value = fullname;
+            document.getElementById('empPhone').value = phone;
+            document.getElementById('empAddress').value = address;
+            if (gender !== null) document.getElementById('empGender').value = gender;
+            if (status !== null) document.getElementById('empStatus').value = status;
+            if (role !== null) document.getElementById('empRole').value = role;
+
+            document.getElementById('formTitle').innerText = 'Cập Nhật Nhân Viên: ' + username;
+
+            const form = document.getElementById('userForm');
+            form.classList.add('active');
+            form.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
+</body>
+
+</html>

@@ -1,0 +1,208 @@
+<div th:fragment="ordersTab" class="profile-section" id="sec-orders">
+  <div class="section-head">
+    <div>
+      <div class="section-tag">Lịch sử</div>
+      <div class="section-h">Đơn Hàng Của Tôi</div>
+    </div>
+  </div>
+  <div class="orders-accordion-wrapper">
+    <!-- Table Header -->
+    <div class="order-header"
+      style="background: #f8fafc; padding: 1rem 1.5rem; cursor: default; border-bottom: 1px solid #e2e8f0;">
+      <div style="font-weight: 600; color: #000; font-size: 0.85rem; text-align: center;">Mã & Ngày</div>
+      <div style="font-weight: 600; color: #000; font-size: 0.85rem; text-align: left;">Sản Phẩm</div>
+      <div style="font-weight: 600; color: #000; font-size: 0.85rem; text-align: right;">Tổng Tiền</div>
+      <div style="font-weight: 600; color: #000; font-size: 0.85rem; text-align: center;">Trạng Thái</div>
+      <div style="font-weight: 600; color: #000; font-size: 0.85rem; text-align: center;">Thao Tác</div>
+    </div>
+
+    <!-- Iterate over orders using Thymeleaf -->
+    <div class="order-row" th:each="order : ${orders}">
+      <div class="order-header" th:onclick="|toggleOrder('order-${order.id}')|">
+        <div style="text-align: center;">
+          <div class="order-h-id" th:text="'#Luxury-' + ${order.id}">#LUXURY-2603</div>
+          <div class="order-h-date" th:text="${#calendars.format(order.createdAt, 'dd/MM/yyyy')}">12/03/2026
+          </div>
+        </div>
+        <div
+          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 15px; text-align: left;">
+          <span th:if="${order.orderItems != null && order.orderItems.size() > 0}"
+            th:text="${order.orderItems[0].product.name + ' × ' + order.orderItems[0].quantity + (order.orderItems.size() > 1 ? ' (...)' : '')}">Sản
+            phẩm...</span>
+          <span th:if="${order.orderItems == null || order.orderItems.size() == 0}">Đơn hàng trống</span>
+        </div>
+        <div class="order-total" style="text-align: right;"
+          th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</div>
+        <div style="text-align: center;">
+          <span th:class="'order-status status-' + ${(order.status != null ? order.status : 'PENDING').toLowerCase()}"
+            th:text="${order.status == 'PENDING' ? 'Chờ xử lý' : (order.status == 'PAID' ? 'Đã thanh toán' : (order.status == 'COMPLETED' ? 'Hoàn thành' : (order.status == 'SHIPPING' ? 'Đang giao' : (order.status == 'CANCELED' || order.status == 'CANCELLED' ? 'Đã hủy' : (order.status == 'CHO_XAC_NHAN_THANH_TOAN' ? 'Chờ xác nhận' : (order.status != null ? order.status : 'Chờ xử lý'))))))}">
+            Đang xử lý
+          </span>
+        </div>
+        <div style="text-align: center;"><button type="button" class="btn-edit order-detail-btn"
+            style="padding: 5px 10px; font-size: 0.75rem;">Chi Tiết ▼</button>
+        </div>
+      </div>
+      <div class="order-details-pane" th:id="'order-' + ${order.id}">
+        <!-- COD Timeline (Đã đặt -> Đang giao -> Đã thanh toán -> Hoàn thành) -->
+        <div th:if="${order.paymentMethod == 'COD' or order.paymentMethod == null}" class="timeline-track">
+          <div class="tl-step done">
+            <div class="tl-dot">✔</div>
+            <div class="tl-label">Đã Đặt Hàng</div>
+          </div>
+          <div
+            th:class="${order.status == 'SHIPPING' or order.status == 'PAID' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+            <div class="tl-dot">🚚</div>
+            <div class="tl-label">Đang Giao Vận</div>
+          </div>
+          <div th:class="${order.status == 'PAID' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+            <div class="tl-dot">✔</div>
+            <div class="tl-label">Đã Thanh Toán</div>
+          </div>
+          <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }"
+            th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}">
+            <div class="tl-dot"
+              th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">
+              ★</div>
+            <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn Thành
+            </div>
+          </div>
+        </div>
+
+        <!-- Online / Installment Timeline (Đã đặt -> Đã thanh toán -> Đang giao -> Hoàn thành) -->
+        <div th:if="${order.paymentMethod != 'COD' and order.paymentMethod != null}" class="timeline-track">
+          <div class="tl-step done">
+            <div class="tl-dot">✔</div>
+            <div class="tl-label">Đã Đặt Hàng</div>
+          </div>
+          <div
+            th:class="${order.status == 'PAID' or order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+            <div class="tl-dot">✔</div>
+            <div class="tl-label">Đã Thanh Toán</div>
+          </div>
+          <div th:class="${order.status == 'SHIPPING' or order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }">
+            <div class="tl-dot">🚚</div>
+            <div class="tl-label">Đang Giao Vận</div>
+          </div>
+          <div th:class="${order.status == 'COMPLETED' ? 'tl-step done' : 'tl-step' }"
+            th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}">
+            <div class="tl-dot"
+              th:style="${order.status == 'COMPLETED' ? 'background:var(--green);border-color:var(--green);' : ''}">
+              ★</div>
+            <div th:style="${order.status == 'COMPLETED' ? 'color:var(--green);' : ''}" class="tl-label">Hoàn Thành
+            </div>
+          </div>
+        </div>
+        <div class="item-mini-list">
+          <div style="font-size:0.75rem; color:#3b82f6; margin-bottom: 15px; text-transform: uppercase;">Sản
+            phẩm trong đơn hàng</div>
+          <div class="item-mini" th:each="oi : ${order.orderItems}">
+            <div style="flex: 1;">
+              <div th:text="${oi.quantity} + 'x ' + ${oi.product.name}" style="margin-bottom: 5px;">1x Intel
+                Core
+                i9-14900K</div>
+              <button type="button" th:if="${order.status == 'COMPLETED'}" th:data-product-id="${oi.product.id}"
+                th:data-product-name="${oi.product.name}"
+                onclick="event.stopPropagation(); openReviewModal(this.dataset.productId, this.dataset.productName)"
+                style="display:inline-block; font-size:0.65rem; color:#3b82f6; background:transparent; border:1px solid #cbd5e1; padding:3px 8px; border-radius:3px; transition: 0.3s; cursor:pointer;"
+                onmouseover="this.style.background='#3b82f6'; this.style.color='#fff';"
+                onmouseout="this.style.background='transparent'; this.style.color='#3b82f6';">
+                <span>⭐ Viết Đánh Giá</span>
+              </button>
+            </div>
+            <span style="color:#3b82f6;"
+              th:text="${#numbers.formatDecimal(oi.price * oi.quantity, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</span>
+          </div>
+          <div class="item-mini">
+            <span
+              th:text="'Phí vận chuyển ' + (${order.shippingMethodName != null and order.shippingMethodName != ''} ? '(' + ${order.shippingMethodName} + ')' : '')">Phí
+              vận chuyển</span>
+            <span style="color:#3b82f6;"
+              th:text="${order.shippingFee != null and order.shippingFee > 0 ? #numbers.formatDecimal(order.shippingFee, 1, 'COMMA', 0, 'POINT') + '₫' : 'Miễn phí'}">0
+              ₫</span>
+          </div>
+          <div class="item-mini" th:if="${order.voucherCode != null and order.voucherCode != ''}">
+            <span th:text="'Voucher áp dụng (' + ${order.voucherCode} + ')'">Voucher áp dụng</span>
+            <span style="color:#ef4444;"
+              th:text="'-' + ${#numbers.formatDecimal(order.discountAmount != null ? order.discountAmount : 0, 1, 'COMMA', 0, 'POINT')} + '₫'">-0
+              ₫</span>
+          </div>
+        </div>
+        <!-- Delivery & Payment Information -->
+        <div
+          style="margin-top: 1.5rem; padding: 1.5rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.8rem; line-height: 1.7;">
+          <div
+            style="font-size: 0.75rem; color: #3b82f6; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
+            Thông tin nhận hàng & Thanh toán
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <div style="color: #64748b; margin-bottom: 0.2rem;">Người nhận hàng</div>
+              <div style="color: #000; font-weight: 500;" th:text="${order.fullName}">Nguyễn Văn A</div>
+            </div>
+            <div>
+              <div style="color: #64748b; margin-bottom: 0.2rem;">
+                Số điện thoại</div>
+              <div style="color: #000; font-weight: 500;" th:text="${order.phone}">0901234567</div>
+            </div>
+            <div style="grid-column: span 2;">
+              <div style="color: #64748b; margin-bottom: 0.2rem;">Địa chỉ giao hàng</div>
+              <div style="color: #000; font-weight: 500;" th:text="${order.address}">123 Đường ABC, Quận 1, TP.
+                Hồ Chí Minh</div>
+            </div>
+            <div style="grid-column: span 2;">
+              <div style="color: #64748b; margin-bottom: 0.2rem;">
+                Phương thức thanh toán</div>
+              <div style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+                <span th:if="${order.paymentMethod == 'COD'}" style="color: #3b82f6;">💵 Thanh toán khi nhận hàng
+                  (COD)</span>
+                <span th:if="${order.paymentMethod == 'INSTALLMENT'}" style="color: #60a5fa;">💳 Trả góp
+                  (Installment)</span>
+                <span th:if="${order.paymentMethod != 'COD' and order.paymentMethod != 'INSTALLMENT'}"
+                  style="color: #3b82f6;">
+                  <span th:text="${order.paymentMethod}" th:if="${order.paymentMethod != null}"></span>
+                  <span th:if="${order.paymentMethod == null}">COD (Mặc định)</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:if="${order.paymentMethod == 'VIETQR' and order.status == 'CHO_XAC_NHAN_THANH_TOAN'}"
+          style="margin-top: 15px; text-align: right;">
+          <a th:href="@{/payment/vietqr(orderCode=${order.orderCode})}"
+            style="display:inline-block; font-size:0.75rem; color:#3b82f6; background:transparent; border:1px solid rgba(59,130,246,0.5); padding:6px 15px; border-radius:3px; transition:0.3s; text-decoration:none;"
+            onmouseover="this.style.background='#3b82f6'; this.style.color='#fff';"
+            onmouseout="this.style.background='transparent'; this.style.color='#3b82f6';">
+            Thanh toán lại
+          </a>
+        </div>
+        <div th:if="${order.status == 'PENDING' or (order.status == 'PAID' and order.paymentMethod != 'COD')}"
+          style="margin-top: 15px; text-align: right;">
+          <button type="button" th:data-order-id="${order.id}" onclick="cancelOrder(this)"
+            style="display:inline-block; font-size:0.75rem; color:var(--red); background:transparent; border:1px solid rgba(239,68,68,0.5); padding:6px 15px; border-radius:3px; transition: 0.3s; cursor:pointer;"
+            onmouseover="this.style.background='var(--red)'; this.style.color='#000';"
+            onmouseout="this.style.background='transparent'; this.style.color='#var(--red)';">
+            ⚠️ <span>Hủy Đơn Hàng</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div th:if="${orders.size() == 0}">
+      <div style="text-align:center; padding: 2rem; color: #64748b;">Bạn
+        chưa có đơn hàng nào.</div>
+    </div>
+  </div>
+
+  <script>
+    function toggleOrder(orderId) {
+      const pane = document.getElementById(orderId);
+      if (pane.classList.contains('active')) {
+        pane.classList.remove('active');
+      } else {
+        // Close others
+        document.querySelectorAll('.order-details-pane').forEach(el => el.classList.remove('active'));
+        pane.classList.add('active');
+      }
+    }
+  </script>
+</div>

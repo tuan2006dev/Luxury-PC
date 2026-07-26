@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Luxury PC | Cửa Hàng Máy Tính Cao Cấp</title>
+    <meta name="description"
+        content="Luxury PC — Cung cấp PC Gaming, PC Đồ Họa, linh kiện máy tính cao cấp chính hãng." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/index.css}" />
+</head>
+
+<body>
+    <!-- LOADING SCREEN -->
+    <div class="loader" id="loader">
+        <div class="loader-inner">
+            <div class="loader-logo">LUXURY PC</div>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('load', function () {
+            var l = document.getElementById('loader');
+            if (l) { l.classList.add('hidden'); setTimeout(function () { l.style.display = 'none'; }, 500); }
+        });
+    </script>
+
+    <!-- HEADER -->
+    <div th:replace="~{layout/header :: header}"></div>
+
+    <div class="container" style="padding-top: 20px;">
+
+        <!-- HERO BANNER CAROUSEL -->
+        <div class="hero-carousel">
+            <div class="hero-carousel-track">
+                <div class="hero-slide active" data-index="0">
+                    <img th:src="@{/images/ui-new/banner1.png}" alt="Banner 1">
+                </div>
+                <div class="hero-slide next" data-index="1">
+                    <img th:src="@{/images/ui-new/banner2.png}" alt="Banner 2">
+                </div>
+                <div class="hero-slide prev" data-index="2">
+                    <img th:src="@{/images/ui-new/banner3.png}" alt="Banner 3">
+                </div>
+            </div>
+            <button class="hero-carousel-btn hero-prev" onclick="heroCarouselNav(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="hero-carousel-btn hero-next" onclick="heroCarouselNav(1)">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <div class="hero-carousel-dots">
+                <span class="hero-dot active" onclick="heroCarouselGo(0)"></span>
+                <span class="hero-dot" onclick="heroCarouselGo(1)"></span>
+                <span class="hero-dot" onclick="heroCarouselGo(2)"></span>
+            </div>
+        </div>
+
+        <!-- MUA SẮM THEO DANH MỤC (ĐỘNG & XỔ/THU GỌN) -->
+        <div class="section-header" th:if="${categories != null and !categories.isEmpty()}">
+            <h2 class="section-title">Mua sắm theo danh mục</h2>
+            <a href="javascript:void(0)" onclick="toggleCategories(this)" class="section-view-all"
+                th:if="${categories.size() > 5}">Xem tất cả ></a>
+            <a th:href="@{/products}" class="section-view-all" th:unless="${categories.size() > 5}">Xem tất cả ></a>
+        </div>
+        <div class="category-cards" th:if="${categories != null and !categories.isEmpty()}">
+            <a class="category-card category-card-item" th:each="cat, iterStat : ${categories}"
+                th:href="@{/products(cid=${cat.id})}"
+                th:style="${iterStat.index >= 5 ? 'display: none; text-decoration: none;' : 'text-decoration: none;'}">
+                <img th:src="@{${cat.categoryImage}}" th:alt="${cat.name}"
+                    onerror="this.onerror=null; this.src='/images/ui-new/PC.png';" />
+                <span th:text="${cat.name}">Danh mục</span>
+            </a>
+        </div>
+
+        <!-- CÁC ƯU ĐÃI HẤP DẪN (Featured Products) -->
+        <div class="section-header" th:if="${featuredProducts != null and !featuredProducts.isEmpty()}">
+            <h2 class="section-title">Các sản phẩm nổi bật</h2>
+            <a href="javascript:void(0)" onclick="toggleFeatured(this)" class="section-view-all" id="view-all-featured"
+                th:if="${featuredProducts.size() > 10}">Xem tất cả ></a>
+        </div>
+        <div class="promo-cards" th:if="${featuredProducts != null}">
+            <div class="promo-card promo-card-item" th:each="p : ${featuredProducts}"
+                th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor:pointer;">
+                <div class="promo-card-img">
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                        th:alt="${p.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                </div>
+                <div class="promo-specs">
+                    <div th:text="${p.category != null ? p.category.name : 'Linh kiện'}">Danh mục</div>
+                    <div th:text="${p.brand != null ? p.brand : 'Chính hãng'}">Hãng</div>
+                </div>
+                <h4 class="promo-title" th:text="${p.name}">Tên sản phẩm</h4>
+                <div class="promo-price-row">
+                    <span class="promo-price-new"
+                        th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</span>
+                </div>
+                <div style="display:flex; justify-content:flex-end; align-items:center;">
+                    <button class="btn-cart-small" style="position:static; width:28px; height:28px; font-size:12px;"
+                        th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'"><i
+                            class="fa-solid fa-cart-shopping"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FLASH SALE / XẢ KHO -->
+        <!-- Case 1: Active Flash Sale -->
+        <div th:if="${flashSale != null and flashSaleItems != null and !flashSaleItems.isEmpty()}">
+            <div class="section-header" style="margin-top: 40px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <h2 class="section-title" style="color: #ef4444; border:none; margin:0;"
+                        th:text="${flashSale.name}">
+                        Flash Sale</h2>
+                    <div class="flash-badge" style="margin:0;">🔥 HOT DEAL</div>
+                </div>
+                <div class="flash-countdown" id="flash-countdown" style="display: flex; gap: 8px; align-items: center;">
+                    <div class="countdown-block" id="fs-days-block"
+                        style="display: none; flex-direction: column; align-items: center;">
+                        <span class="countdown-num" id="fs-days"
+                            style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                        <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Ngày</span>
+                    </div>
+                    <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
+                        <span class="countdown-num" id="fs-hours"
+                            style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                        <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Giờ</span>
+                    </div>
+                    <span style="font-weight:bold; color: #ef4444; margin-top: -14px;">:</span>
+                    <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
+                        <span class="countdown-num" id="fs-minutes"
+                            style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                        <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Phút</span>
+                    </div>
+                    <span style="font-weight:bold; color: #ef4444; margin-top: -14px;">:</span>
+                    <div class="countdown-block" style="display: flex; flex-direction: column; align-items: center;">
+                        <span class="countdown-num" id="fs-seconds"
+                            style="background:#ef4444; padding: 4px 0; width: 34px; text-align: center; border-radius: 4px; color:white; font-weight:bold; font-size: 16px; font-variant-numeric: tabular-nums; display: inline-block; box-sizing: border-box;">00</span>
+                        <span style="font-size: 10px; font-weight: bold; color: #ef4444; margin-top: 2px;">Giây</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-5-cols"
+                style="display: flex; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 15px; scrollbar-width: thin; margin-bottom: 35px;">
+                <div class="product-card" th:each="item : ${flashSaleItems}"
+                    style="flex: 0 0 calc(20% - 16px); min-width: 220px; height: 390px; display: flex; flex-direction: column; box-sizing: border-box; cursor: pointer; position: relative;"
+                    th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|">
+                    <div class="flash-discount-badge"
+                        style="position:absolute; top:10px; left:10px; background:#ef4444; color:white; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:bold; z-index:2;">
+                        Flash Sale</div>
+                    <div class="product-card-img" style="height: 140px; flex-shrink: 0;">
+                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}"
+                            th:alt="${item.product.name}"
+                            onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                    </div>
+                    <h4 class="product-card-title"
+                        style="font-size:14px; height: 40px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; margin-bottom: 4px;"
+                        th:text="${item.product.name}">Tên sản phẩm</h4>
+                    <p class="product-spec"
+                        style="font-size: 12px; color: #666; height: 36px; margin: 0 0 8px 0; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                        th:text="${item.product.description != null ? item.product.description : 'Sản phẩm cao cấp'}">
+                        Description</p>
+                    <div style="margin-top: auto; padding-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                            <div>
+                                <div class="promo-price-new"
+                                    th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + '₫'"
+                                    style="color:#ef4444; font-weight: 700;">12.990.000₫</div>
+                                <div class="promo-price-old"><span
+                                        th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">15.000.000₫</span>
+                                </div>
+                            </div>
+                            <div style="font-size: 11px; color: #ef4444; font-weight: 500;">
+                                Còn lại: <span
+                                    th:text="${T(java.lang.Math).min(item.saleQuantity - item.soldCount, item.product.stock)}">45</span>
+                            </div>
+                        </div>
+                        <div th:if="${item.product.stock != null and item.product.stock <= 0}"
+                            style="text-align: center; color: red; font-weight: bold; font-size: 12px; padding: 4px 8px; border: 1px solid red; border-radius: 4px; background-color: #fff5f5; width: 100%; box-sizing: border-box;">
+                            Hết hàng</div>
+                        <div th:if="${item.product.stock == null or item.product.stock > 0}"
+                            style="display:flex; justify-content:flex-end; gap:5px;">
+                            <button class="btn-buy-small"
+                                style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 10px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px; white-space: nowrap;"
+                                th:onclick="'buyNow(' + ${item.product.id} + '); event.stopPropagation();'"
+                                title="Mua ngay">Mua ngay
+                            </button>
+                            <button class="btn-cart-small"
+                                style="position:static; width:30px; height:30px; font-size:14px; flex-shrink: 0;"
+                                th:onclick="'addToCart(' + ${item.product.id} + ', 1); event.stopPropagation();'"><i
+                                    class="fa-solid fa-cart-shopping"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Case 2: Fallback Low Stock Products (when no active Flash Sale) -->
+        <div
+            th:if="${(flashSale == null or flashSaleItems == null or flashSaleItems.isEmpty()) and fallbackFlashSaleProducts != null and !fallbackFlashSaleProducts.isEmpty()}">
+            <div class="section-header" style="margin-top: 40px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <h2 class="section-title" style="color: #ef4444; border:none; margin:0;">
+                        Sản phẩm số lượng có hạn</h2>
+                    <div class="flash-badge" style="margin:0;">⚡ SẮP HẾT HÀNG</div>
+                </div>
+            </div>
+
+            <div class="grid-5-cols"
+                style="display: flex; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 15px; scrollbar-width: thin; margin-bottom: 35px;">
+                <div class="product-card" th:each="p : ${fallbackFlashSaleProducts}"
+                    style="flex: 0 0 calc(20% - 16px); min-width: 220px; height: 390px; display: flex; flex-direction: column; box-sizing: border-box; cursor: pointer; position: relative;"
+                    th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|">
+                    <div class="flash-discount-badge"
+                        style="position:absolute; top:10px; left:10px; background:#f59e0b; color:white; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:bold; z-index:2;">
+                        Sắp hết hàng</div>
+                    <div class="product-card-img" style="height: 140px; flex-shrink: 0;">
+                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                            th:alt="${p.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                    </div>
+                    <h4 class="product-card-title"
+                        style="font-size:14px; height: 40px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; margin-bottom: 4px;"
+                        th:text="${p.name}">Tên sản phẩm</h4>
+                    <p class="product-spec"
+                        style="font-size: 12px; color: #666; height: 36px; margin: 0 0 8px 0; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                        th:text="${p.description != null ? p.description : 'Sản phẩm cao cấp'}">
+                        Description</p>
+                    <div style="margin-top: auto; padding-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                            <div>
+                                <div class="promo-price-new"
+                                    th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
+                                    style="color:#ef4444; font-weight: 700;">12.990.000₫</div>
+                            </div>
+                            <div style="font-size: 11px; color: #ef4444; font-weight: 500;">
+                                Chỉ còn: <span th:text="${p.stock}">5</span>
+                            </div>
+                        </div>
+                        <div th:if="${p.stock != null and p.stock <= 0}"
+                            style="text-align: center; color: red; font-weight: bold; font-size: 12px; padding: 4px 8px; border: 1px solid red; border-radius: 4px; background-color: #fff5f5; width: 100%; box-sizing: border-box;">
+                            Hết hàng</div>
+                        <div th:if="${p.stock == null or p.stock > 0}"
+                            style="display:flex; justify-content:flex-end; gap:5px;">
+                            <button class="btn-buy-small"
+                                style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 10px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px; white-space: nowrap;"
+                                th:onclick="'buyNow(' + ${p.id} + '); event.stopPropagation();'" title="Mua ngay">Mua
+                                ngay
+                            </button>
+                            <button class="btn-cart-small"
+                                style="position:static; width:30px; height:30px; font-size:14px; flex-shrink: 0;"
+                                th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'"><i
+                                    class="fa-solid fa-cart-shopping"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2 class="section-title">Sản phẩm mới nhất</h2>
+            <a href="javascript:void(0)" onclick="toggleNewest(this)" class="section-view-all" id="view-all-newest"
+                th:if="${allProducts != null and allProducts.size() > 10}">Xem tất cả ></a>
+        </div>
+        <div class="filter-tabs">
+            <span class="filter-tab">DANH MỤC</span>
+            <span class="filter-tab active" onclick="filterProducts('ALL', this)">TẤT CẢ</span>
+            <span class="filter-tab" onclick="filterProducts('CPU', this)">CPU</span>
+            <span class="filter-tab" onclick="filterProducts('VGA', this)">VGA</span>
+            <span class="filter-tab" onclick="filterProducts('RAM', this)">RAM</span>
+            <span class="filter-tab" onclick="filterProducts('Mainboard', this)">MAINBOARD</span>
+        </div>
+        <div class="grid-5-cols">
+            <div class="product-card product-filter-item" th:each="p : ${allProducts}"
+                th:data-category="${p.category != null ? p.category.name : ''}"
+                th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|"
+                style="display: flex; flex-direction: column; height: 100%; cursor: pointer;">
+                <div class="product-card-img" style="height: 140px;">
+                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                        th:alt="${p.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                </div>
+                <h4 class="product-card-title" style="font-size:14px;" th:text="${p.name}">Tên sản phẩm</h4>
+                <p class="product-spec"
+                    style="font-size: 12px; color: #666; margin: 5px 0 10px 0; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                    th:text="${p.description != null ? p.description : 'Sản phẩm cao cấp'}">Description</p>
+                <div style="margin-top:auto; padding-top:10px; display:flex; flex-direction:column; gap:8px;">
+                    <!-- Row 1: Price and Out of Stock Status -->
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="promo-price-new"
+                            th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">12.990.000₫
+                        </div>
+                        <div th:if="${p.stock != null and p.stock <= 0}"
+                            style="text-align: center; color: red; font-weight: bold; font-size: 12px; padding: 4px 8px; border: 1px solid red; border-radius: 4px; background-color: #fff5f5; white-space: nowrap;">
+                            Hết hàng</div>
+                    </div>
+                    <!-- Row 2: Action Buttons (pinned to the right) -->
+                    <div
+                        th:style="'display:flex; justify-content:flex-end; gap:5px;' + (${p.stock != null and p.stock <= 0} ? 'visibility: hidden;' : '')">
+                        <button class="btn-buy-small"
+                            style="background: #000; color: #fff; border: none; border-radius: 4px; padding: 0 12px; font-size: 12px; font-weight: 600; cursor: pointer; height: 30px; white-space: nowrap;"
+                            th:onclick="'buyNow(' + ${p.id} + '); event.stopPropagation();'" title="Mua ngay">Mua
+                            ngay</button>
+                        <button class="btn-cart-small"
+                            style="position:static; width:30px; height:30px; font-size:14px; flex-shrink: 0;"
+                            th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'"><i
+                                class="fa-solid fa-cart-shopping"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CÁC DANH MỤC NỔI BẬT (DARK BANNERS) -->
+        <div class="section-header" style="margin-top: 40px;">
+            <h2 class="section-title">Build PC theo nhu cầu</h2>
+            <a th:href="@{/build-pc}" class="section-view-all">Tự Build PC ></a>
+        </div>
+        <div class="dark-banners">
+            <div class="dark-banner"
+                style="background: linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.3)), url('/images/ui-new/dark_pc4.png') center/cover no-repeat;">
+                <div class="dark-banner-info">
+                    <h3>PC Gaming</h3>
+                    <p>Khả năng xử lý cao</p>
+                    <a th:href="@{/build-pc}">Xem ngay →</a>
+                </div>
+            </div>
+            <div class="dark-banner"
+                style="background: linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.3)), url('/images/ui-new/dark_pc3.png') center/cover no-repeat;">
+                <div class="dark-banner-info">
+                    <h3>PC Đồ hoạ</h3>
+                    <p>Render, Edit 3D</p>
+                    <a th:href="@{/build-pc}">Xem ngay →</a>
+                </div>
+            </div>
+            <div class="dark-banner"
+                style="background: linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.3)), url('/images/ui-new/dark_pc2.png') center/cover no-repeat;">
+                <div class="dark-banner-info">
+                    <h3>PC Văn phòng</h3>
+                    <p>Làm việc, Học tập</p>
+                    <a th:href="@{/build-pc}">Xem ngay →</a>
+                </div>
+            </div>
+            <div class="dark-banner"
+                style="background: linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.3)), url('/images/ui-new/dark_pc1.png') center/cover no-repeat;">
+                <div class="dark-banner-info">
+                    <h3>PC Streamer</h3>
+                    <p>Live stream, Edit Video</p>
+                    <a th:href="@{/build-pc}">Xem ngay →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- THƯƠNG HIỆU -->
+        <div class="section-header">
+            <h2 class="section-title">Các thương hiệu</h2>
+        </div>
+        <div class="brands-row">
+            <div th:each="b : ${brands}" class="brand-box"
+                th:onclick="'location.href=\'' + @{${b.link != null and !b.link.isEmpty() ? b.link : '/products?brand=' + b.name}} + '\''">
+                <img th:src="@{${b.logo}}" th:alt="${b.name}" style="max-height:35px; object-fit:contain;">
+            </div>
+        </div>
+
+        <!-- TIN TỨC MỚI NHẤT & TIN TỨC NỔI BẬT -->
+        <div class="bottom-sections">
+            <div class="news-list" th:if="${newestNews != null and !newestNews.isEmpty()}">
+                <div class="section-header">
+                    <h2 class="section-title">Tin tức mới nhất</h2>
+                    <a th:href="@{/news}" class="section-view-all">Xem tất cả ></a>
+                </div>
+                <a class="news-item" th:each="n, iterStat : ${newestNews}" th:if="${iterStat.index < 5}"
+                    th:href="@{/news/{slug}(slug=${n.slug})}" style="text-decoration: none;">
+                    <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
+                        th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                    <h4 th:text="${n.title}">Tiêu đề tin tức</h4>
+                </a>
+            </div>
+
+            <div class="populars-list" th:if="${featuredNews != null and !featuredNews.isEmpty()}">
+                <div class="section-header">
+                    <h2 class="section-title">Tin tức nổi bật</h2>
+                    <a th:href="@{/news}" class="section-view-all">Xem tất cả ></a>
+                </div>
+                <a class="news-item" th:each="n, iterStat : ${featuredNews}" th:if="${iterStat.index < 5}"
+                    th:href="@{/news/{slug}(slug=${n.slug})}" style="text-decoration: none;">
+                    <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
+                        th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                    <h4 th:text="${n.title}">Tiêu đề tin tức</h4>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
+        /*]]>*/
+    </script>
+    <script th:src="@{/js/script.js(v=3)}"></script>
+    <script th:src="@{/js/cart.js}"></script>
+    <script th:inline="javascript">
+        let newestExpanded = false;
+        let featuredExpanded = false;
+        let categoriesExpanded = false;
+
+        function toggleCategories(btn) {
+            categoriesExpanded = !categoriesExpanded;
+            const cards = document.querySelectorAll('.category-card-item');
+            const container = document.querySelector('.category-cards');
+
+            if (container) {
+                if (categoriesExpanded) {
+                    container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))';
+                } else {
+                    container.style.gridTemplateColumns = 'repeat(5, 1fr)';
+                }
+            }
+
+            cards.forEach((card, index) => {
+                if (index >= 5) {
+                    card.style.display = categoriesExpanded ? '' : 'none';
+                }
+            });
+
+            if (btn) {
+                btn.textContent = categoriesExpanded ? 'Thu gọn <' : 'Xem tất cả >';
+            }
+        }
+
+        // Flash sale countdown timer
+        if (typeof flashSaleEndTime !== 'undefined' && flashSaleEndTime > 0) {
+            function updateFlashSaleTimer() {
+                const now = new Date().getTime();
+                const distance = flashSaleEndTime - now;
+
+                if (distance < 0) {
+                    if (document.getElementById('fs-hours')) document.getElementById('fs-hours').innerText = "00";
+                    if (document.getElementById('fs-minutes')) document.getElementById('fs-minutes').innerText = "00";
+                    if (document.getElementById('fs-seconds')) document.getElementById('fs-seconds').innerText = "00";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                const ds = document.getElementById('fs-days');
+                const hs = document.getElementById('fs-hours');
+                const ms = document.getElementById('fs-minutes');
+                const ss = document.getElementById('fs-seconds');
+                const dBlock = document.getElementById('fs-days-block');
+
+                if (days > 0) {
+                    if (dBlock) dBlock.style.display = 'flex';
+                    if (ds) ds.innerText = days < 10 ? '0' + days : days;
+                } else {
+                    if (dBlock) dBlock.style.display = 'none';
+                }
+
+                if (hs) hs.innerText = hours < 10 ? '0' + hours : hours;
+                if (ms) ms.innerText = minutes < 10 ? '0' + minutes : minutes;
+                if (ss) ss.innerText = seconds < 10 ? '0' + seconds : seconds;
+            }
+
+            updateFlashSaleTimer();
+            setInterval(updateFlashSaleTimer, 1000);
+        }
+
+        function filterProducts(category, element) {
+            // Update active status on tabs
+            document.querySelectorAll('.filter-tabs .filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            if (element) {
+                element.classList.add('active');
+            } else {
+                // Fallback to active the ALL tab on page load
+                const allTab = Array.from(document.querySelectorAll('.filter-tabs .filter-tab'))
+                    .find(tab => tab.textContent.trim() === 'TẤT CẢ');
+                if (allTab) allTab.classList.add('active');
+            }
+
+            // Save active category globally
+            window.activeCategory = category || 'ALL';
+
+            const cards = document.querySelectorAll('.product-filter-item');
+            const targetCat = window.activeCategory.trim().toUpperCase();
+
+            // First count total matching products
+            let totalMatchingCount = 0;
+            cards.forEach(card => {
+                const cardCat = (card.getAttribute('data-category') || '').trim().toUpperCase();
+                let matches = false;
+                if (targetCat === 'ALL' || targetCat === 'TẤT CẢ') {
+                    matches = true;
+                } else {
+                    matches = cardCat.includes(targetCat);
+                }
+                if (matches) {
+                    totalMatchingCount++;
+                }
+            });
+
+            // Limit: if not expanded -> limit to 10. Otherwise show all matching.
+            const limit = !newestExpanded ? 10 : 9999;
+
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const cardCat = (card.getAttribute('data-category') || '').trim().toUpperCase();
+                let matches = false;
+                if (targetCat === 'ALL' || targetCat === 'TẤT CẢ') {
+                    matches = true;
+                } else {
+                    matches = cardCat.includes(targetCat);
+                }
+
+                if (matches && visibleCount < limit) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Dynamically show/hide/label 'Xem tất cả' button
+            const viewAllBtn = document.getElementById('view-all-newest');
+            if (viewAllBtn) {
+                if (totalMatchingCount > 10 || newestExpanded) {
+                    viewAllBtn.style.display = '';
+                    viewAllBtn.textContent = newestExpanded ? 'Thu gọn <' : 'Xem tất cả >';
+                } else {
+                    viewAllBtn.style.display = 'none';
+                }
+            }
+        }
+
+        function toggleNewest(btn) {
+            newestExpanded = !newestExpanded;
+            filterProducts(window.activeCategory || 'ALL');
+            if (btn) {
+                btn.textContent = newestExpanded ? 'Thu gọn <' : 'Xem tất cả >';
+            }
+        }
+
+        function toggleFeatured(btn) {
+            featuredExpanded = !featuredExpanded;
+            document.querySelectorAll('.promo-card-item').forEach((card, index) => {
+                if (index >= 10) {
+                    card.style.display = featuredExpanded ? '' : 'none';
+                }
+            });
+            if (btn) {
+                btn.textContent = featuredExpanded ? 'Thu gọn <' : 'Xem tất cả >';
+            }
+        }
+
+        // Initialize display limit and layout on document ready
+        document.addEventListener('DOMContentLoaded', function () {
+            filterProducts('ALL');
+
+            // Limit initial visible featured products to 10
+            document.querySelectorAll('.promo-card-item').forEach((card, index) => {
+                if (index >= 10) {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

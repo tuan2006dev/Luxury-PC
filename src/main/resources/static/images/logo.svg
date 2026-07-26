@@ -1,0 +1,16 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="luxuryGold" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#FFE072"/>
+      <stop offset="25%" stop-color="#F5B82E"/>
+      <stop offset="65%" stop-color="#C58B16"/>
+      <stop offset="100%" stop-color="#8F5E04"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Letter 'L' with Serif -->
+  <path d="M 62,40 C 73,40 80,36 84,30 L 102,30 L 102,130 L 170,130 L 170,148 L 62,148 L 62,130 L 78,130 L 78,48 L 62,48 Z" fill="url(#luxuryGold)"/>
+
+  <!-- Sparkle Star -->
+  <path d="M 148,65 C 148,80 138,87 123,87 C 138,87 148,94 148,109 C 148,94 158,87 173,87 C 158,87 148,80 148,65 Z" fill="url(#luxuryGold)"/>
+</svg>

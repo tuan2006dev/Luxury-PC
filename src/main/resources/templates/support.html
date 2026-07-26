@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hỗ Trợ Khách Hàng - LUXURY | PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/support.css}">
+</head>
+
+<body>
+    <!-- HEADER CONTAINER -->
+    <div th:replace="~{layout/header :: header}"></div>
+
+    <div class="support-container" style="padding-top: 20px;">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb" style="margin-bottom: 20px;">
+            <a th:href="@{/}">Trang chủ</a> > <span>Hỗ trợ khách hàng</span>
+        </div>
+
+        <!-- Page Header -->
+        <div class="support-header">
+            <h4 class="support-subtitle">TRUNG TÂM HỖ TRỢ KHÁCH HÀNG</h4>
+            <h1 class="support-title">Hỗ Trợ Khách Hàng</h1>
+            <p class="support-desc">Chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7. Dưới đây là các câu hỏi thường gặp<br>hoặc
+                gửi yêu cầu để đội ngũ hỗ trợ của chúng tôi liên hệ với bạn nhanh nhất.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="support-content-layout">
+
+            <!-- Left Column -->
+            <div class="support-left">
+
+                <!-- FAQs -->
+                <div class="support-section">
+                    <h2 class="section-title">Câu Hỏi Thường Gặp (FAQs)</h2>
+
+                    <div class="faq-list">
+                        <div class="faq-item active">
+                            <div class="faq-question">
+                                <span>Quy trình bảo hành linh kiện của Luxury PC như thế nào?</span>
+                                <i class="fa-solid fa-chevron-up"></i>
+                            </div>
+                            <div class="faq-answer" style="display: block;">
+                                Luxury PC áp dụng chính sách bảo hành chính hãng theo tiêu chuẩn của nhà sản xuất. Thời
+                                gian bảo hành tùy thuộc vào từng linh kiện. Khách hàng chỉ cần cung cấp mã đơn hàng hoặc
+                                hóa đơn để được hỗ trợ nhanh chóng.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Shop có hỗ trợ giao hàng và cài đặt tận nơi không?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Có. Luxury PC hỗ trợ giao hàng toàn quốc và cài đặt tận nơi miễn phí cho các bộ PC trong
+                                khu vực nội thành.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Tôi có thể mua trả góp qua hình thức nào?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Chúng tôi hỗ trợ mua trả góp qua thẻ tín dụng (lãi suất 0%) hoặc qua các công ty tài
+                                chính (HD Saison, Home Credit) với thủ tục đơn giản.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Chính sách đổi trả sản phẩm khi không phù hợp nhu cầu?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Khách hàng được đổi trả sản phẩm trong vòng 7 ngày đầu nếu có lỗi từ nhà sản xuất. Đối
+                                với trường hợp không phù hợp nhu cầu, chính sách đổi trả sẽ áp dụng tùy theo loại sản
+                                phẩm và tình trạng thực tế.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="support-section" style="margin-top: 40px;">
+                    <h2 class="section-title">Thông Tin Liên Hệ Nhanh</h2>
+
+                    <div class="contact-cards">
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fa-solid fa-headset"></i>
+                            </div>
+                            <div class="contact-info">
+                                <h3>Tổng đài hỗ trợ 24/7</h3>
+                                <div class="contact-highlight">1800-PCSTORE (Miễn phí cuộc gọi)</div>
+                                <div class="contact-time">Thời gian hoạt động: 08:00 - 22:00 (Tất cả các ngày)</div>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div class="contact-info">
+                                <h3>Showroom chính</h3>
+                                <div class="contact-highlight">123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh</div>
+                                <div class="contact-time">Thời gian mở cửa: 08:30 - 21:00 (Tất cả các ngày)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column -->
+            <div class="support-right">
+
+                <div class="support-form-card">
+                    <h2>Gửi Yêu Cầu Hỗ Trợ</h2>
+
+                    <!-- Alert message for status feedback -->
+                    <script th:inline="javascript">
+                        document.addEventListener('DOMContentLoaded', function () {
+                            /*<![CDATA[*/
+                            const successMsg = /*[[${successMessage}]]*/ null;
+                            const errorMsg = /*[[${errorMessage}]]*/ null;
+                            /*]]>*/
+                            if (typeof window.showAlert === 'function') {
+                                if (successMsg) window.showAlert(successMsg, true);
+                                else if (errorMsg) window.showAlert(errorMsg, false);
+                            }
+                        });
+                    </script>
+
+                    <form th:action="@{/support/contact}" method="POST" class="support-form" id="support-form">
+                        <div class="form-group">
+                            <label>HỌ VÀ TÊN <span>*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fa-regular fa-user"></i>
+                                <input type="text" name="name" placeholder="Nhập họ và tên của bạn" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>EMAIL LIÊN HỆ <span>*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fa-regular fa-envelope"></i>
+                                <input type="email" name="email" placeholder="example@email.com" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>NỘI DUNG YÊU CẦU <span>*</span></label>
+                            <div class="textarea-with-icon">
+                                <i class="fa-solid fa-pen"></i>
+                                <textarea name="message"
+                                    placeholder="Hãy mô tả chi tiết vấn đề hoặc yêu cầu hỗ trợ của bạn để chúng tôi hỗ trợ bạn tốt nhất..."
+                                    required></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit-support">
+                            <i class="fa-regular fa-paper-plane"></i> GỬI YÊU CẦU HỖ TRỢ
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+
+    <!-- JS -->
+    <script th:src="@{/js/script.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+
+                question.addEventListener('click', () => {
+                    // Check if current item is active
+                    const isActive = item.classList.contains('active');
+
+                    // Close all items
+                    faqItems.forEach(faq => {
+                        faq.classList.remove('active');
+                        faq.querySelector('.faq-answer').style.display = 'none';
+                        const icon = faq.querySelector('i');
+                        icon.classList.remove('fa-chevron-up');
+                        icon.classList.add('fa-chevron-down');
+                    });
+
+                    // If not active, open it
+                    if (!isActive) {
+                        item.classList.add('active');
+                        item.querySelector('.faq-answer').style.display = 'block';
+                        const icon = item.querySelector('i');
+                        icon.classList.remove('fa-chevron-down');
+                        icon.classList.add('fa-chevron-up');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

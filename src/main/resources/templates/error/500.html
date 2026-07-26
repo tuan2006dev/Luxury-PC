@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>500 - Lỗi Máy Chủ</title>
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            text-align: center;
+            padding: 100px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            font-size: 80px;
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 20px;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+            background-color: #0d6efd;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        a:hover {
+            background-color: #0b5ed7;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>500</h1>
+    <p>Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.</p>
+    <a th:href="@{/}">Quay về trang chủ</a>
+</body>
+
+</html>

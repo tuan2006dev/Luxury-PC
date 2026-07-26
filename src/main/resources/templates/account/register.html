@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - LUXURY | PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+
+<body>
+    <!-- HEADER CONTAINER -->
+    <div th:replace="~{layout/header :: header}"></div>
+
+    <div class="container" style="padding-top: 20px;">
+        <!-- BREADCRUMB -->
+        <div class="breadcrumb" style="margin-bottom: 25px;">
+            <a th:href="@{/}">Trang chủ</a> &gt; <span>Đăng ký</span>
+        </div>
+
+        <!-- AUTH FORM LAYOUT -->
+        <div class="auth-layout" style="grid-template-columns: 1fr; max-width: 540px; margin: 0 auto 60px auto;">
+
+            <!-- CỘT ĐĂNG KÝ -->
+            <div class="auth-box reset-form">
+                <h1 class="auth-box-title" style="font-size: 24px; margin-bottom: 6px;">ĐĂNG KÝ TÀI KHOẢN</h1>
+                <p class="auth-box-subtitle" style="margin-bottom: 24px;">Tạo tài khoản mới để bắt đầu mua sắm cùng
+                    chúng tôi</p>
+
+                <form id="form-register" action="/api/register" method="POST" onsubmit="submitRegister(event)"
+                    novalidate>
+                    <div class="form-row">
+                        <div
+                            th:replace="~{custominput/components :: textInput(label='Họ *', name='firstName', type='text', placeholder='Nguyễn', required=true, id=null, value=null)}">
+                        </div>
+                        <div
+                            th:replace="~{custominput/components :: textInput(label='Tên *', name='lastName', type='text', placeholder='Văn A', required=true, id=null, value=null)}">
+                        </div>
+                    </div>
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Email *', name='email', type='email', placeholder='you@email.com', required=true, id=null, value=null)}">
+                    </div>
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Số điện thoại *', name='phone', type='text', placeholder='0901xxxxxx', required=true, id=null, value=null)}">
+                    </div>
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Mật khẩu *', name='password', type='password', placeholder='••••••••', required=true, id='reg-pw', value=null)}">
+                    </div>
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Nhập lại mật khẩu *', name='confirmPassword', type='password', placeholder='••••••••', required=true, id='reg-pw-confirm', value=null)}">
+                    </div>
+                    <div
+                        th:replace="~{custominput/components :: otpInput(label='Mã xác nhận (OTP) *', name='otp', placeholder='Nhập mã OTP', required=true, onClickSend='sendOTP()')}">
+                    </div>
+
+                    <label class="checkbox-label terms" style="margin-top: 15px; margin-bottom: 20px;">
+                        <input type="checkbox" required> Tôi đồng ý với <a href="/products"
+                            style="color: #666; text-decoration: underline;">Điều khoản dịch vụ</a> và <a
+                            href="/products" style="color: #666; text-decoration: underline;">Chính sách bảo mật</a>
+                    </label>
+
+                    <button type="submit" class="btn btn-primary" id="btn-register" style="width: 100%;">ĐĂNG
+                        KÝ</button>
+
+                    <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                        Đã có tài khoản? <a th:href="@{/auth/login}"
+                            style="color: var(--accent-blue); font-weight: 600; text-decoration: underline;">Đăng nhập
+                            ngay</a>
+                    </div>
+
+                    <div class="or-divider"><span>HOẶC</span></div>
+
+                    <div class="social-login">
+                        <a href="/oauth2/authorization/google" class="btn btn-outline">
+                            <i class="fa-brands fa-google" style="color: #DB4437; font-size: 18px;"></i> Google
+                        </a>
+                        <a href="/oauth2/authorization/facebook" class="btn btn-outline">
+                            <i class="fa-brands fa-facebook" style="color: #1877F2; font-size: 18px;"></i> Facebook
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER CONTAINER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+
+    <!-- URL Notification Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            if (typeof window.showAlert === 'function') {
+                if (params.has('exist')) window.showAlert('Email đã tồn tại trong hệ thống. Vui lòng đăng nhập!', false);
+                else if (params.has('mismatch')) window.showAlert('Mật khẩu xác nhận không khớp. Vui lòng thử lại.', false);
+                else if (params.has('invalidOtp')) window.showAlert('Mã OTP không chính xác hoặc đã hết hạn!', false);
+                else if (params.has('invalidEmail')) window.showAlert('Định dạng email không hợp lệ!', false);
+                else if (params.has('phoneExist')) window.showAlert('Số điện thoại đã được sử dụng!', false);
+            }
+        });
+
+        function sendOTP() {
+            const emailInput = document.querySelector('input[name="email"]');
+            const email = emailInput ? emailInput.value.trim() : '';
+            if (!email) {
+                if (typeof window.showAlert === 'function') {
+                    window.showAlert('Vui lòng nhập email trước khi gửi mã OTP!', false);
+                } else {
+                    alert('Vui lòng nhập email trước khi gửi mã OTP!');
+                }
+                if (emailInput) emailInput.focus();
+                return;
+            }
+
+            const btn = document.querySelector('.btn-otp');
+            if (btn) {
+                btn.innerText = 'ĐANG GỬI...';
+                btn.disabled = true;
+            }
+
+            const formData = new URLSearchParams();
+            formData.append('email', email);
+
+            fetch('/api/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
+            })
+                .then(res => res.text())
+                .then(data => {
+                    if (data === 'success') {
+                        if (typeof window.showAlert === 'function') {
+                            window.showAlert({
+                                message: 'Đã gửi mã xác nhận (OTP)',
+                                subMessage: 'Vui lòng kiểm tra email của bạn (kể cả trong thư rác).',
+                                isSuccess: true
+                            });
+                        }
+
+                        // Countdown 60s
+                        let timeLeft = 60;
+                        if (btn) btn.innerText = `CHỜ ${timeLeft}S`;
+                        const timer = setInterval(() => {
+                            timeLeft--;
+                            if (timeLeft <= 0) {
+                                clearInterval(timer);
+                                if (btn) {
+                                    btn.innerText = 'GỬI LẠI MÃ';
+                                    btn.disabled = false;
+                                }
+                            } else {
+                                if (btn) btn.innerText = `CHỜ ${timeLeft}S`;
+                            }
+                        }, 1000);
+                    } else if (data === 'error_exist') {
+                        if (typeof window.showAlert === 'function') window.showAlert('Email này đã được đăng ký tài khoản!', false);
+                        if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
+                    } else {
+                        if (typeof window.showAlert === 'function') window.showAlert('Không thể gửi OTP. Vui lòng thử lại sau.', false);
+                        if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    if (typeof window.showAlert === 'function') window.showAlert('Đã xảy ra lỗi mạng. Vui lòng thử lại.', false);
+                    if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
+                });
+        }
+
+        function submitRegister(e) {
+            e.preventDefault();
+
+            // Reset error states
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.innerText = '';
+            });
+            document.querySelectorAll('.reset-form input').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+
+            const firstNameInput = document.querySelector('input[name="firstName"]');
+            const lastNameInput = document.querySelector('input[name="lastName"]');
+            const emailInput = document.querySelector('input[name="email"]');
+            const phoneInput = document.querySelector('input[name="phone"]');
+            const pwInput = document.getElementById('reg-pw');
+            const pwConfirmInput = document.getElementById('reg-pw-confirm');
+            const otpInput = document.querySelector('input[name="otp"]');
+            const termsCheckbox = document.querySelector('.terms input[type="checkbox"]');
+
+            let isValid = true;
+
+            const showFieldError = (input, msg) => {
+                if (!input) return;
+                input.classList.add('is-invalid');
+                const formGroup = input.closest('.form-group');
+                if (formGroup) {
+                    const errSpan = formGroup.querySelector('.error-message');
+                    if (errSpan) {
+                        errSpan.innerText = msg;
+                        errSpan.style.display = 'block';
+                    }
+                }
+                isValid = false;
+            };
+
+            if (!firstNameInput || !firstNameInput.value.trim()) { showFieldError(firstNameInput, 'Vui lòng nhập Họ!'); }
+            if (!lastNameInput || !lastNameInput.value.trim()) { showFieldError(lastNameInput, 'Vui lòng nhập Tên!'); }
+            if (!emailInput || !emailInput.value.trim()) { showFieldError(emailInput, 'Vui lòng nhập Email!'); }
+            if (!phoneInput || !phoneInput.value.trim()) { showFieldError(phoneInput, 'Vui lòng nhập Số điện thoại!'); }
+            if (!pwInput || !pwInput.value) { showFieldError(pwInput, 'Vui lòng nhập Mật khẩu!'); }
+            if (!pwConfirmInput || !pwConfirmInput.value) { showFieldError(pwConfirmInput, 'Vui lòng nhập lại Mật khẩu!'); }
+
+            if (pwInput && pwConfirmInput && pwInput.value && pwConfirmInput.value && pwInput.value !== pwConfirmInput.value) {
+                showFieldError(pwConfirmInput, 'Mật khẩu nhập lại không khớp!');
+            }
+
+            if (!otpInput || !otpInput.value.trim()) { showFieldError(otpInput, 'Vui lòng nhập mã xác nhận (OTP)!'); }
+
+            if (isValid && termsCheckbox && !termsCheckbox.checked) {
+                if (typeof window.showAlert === 'function') {
+                    window.showAlert('Bạn cần đồng ý với Điều khoản dịch vụ và Chính sách bảo mật!', false);
+                }
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return false;
+            }
+
+            document.getElementById('form-register').submit();
+        }
+    </script>
+
+    <script th:src="@{/js/script.js}"></script>
+</body>
+
+</html>

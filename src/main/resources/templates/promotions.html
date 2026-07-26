@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khuyến mãi - LUXURY | PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/promotions.css}">
+</head>
+
+<body>
+    <!-- HEADER -->
+    <div th:replace="~{layout/header :: header}"></div>
+
+    <main class="promo-container" style="padding-top: 20px;">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> > <span>Khuyến mãi</span>
+        </div>
+
+        <!-- Header -->
+        <div class="promo-page-header">
+            <h1 class="promo-page-title">KHUYẾN MÃI</h1>
+            <p class="promo-page-desc">Săn ưu đãi cực hời - Tiết kiệm tối đa khi mua sắm tại Luxury PC</p>
+        </div>
+
+        <!-- Banners -->
+        <div class="promo-banners">
+            <!-- Flash Sale Slider -->
+            <div class="flash-sale-slider-container"
+                style="position: relative; width: 100%; border-radius: 12px; overflow: hidden; display: flex; flex: 1; aspect-ratio: 2.5 / 1; max-height: 420px; min-height: 260px; height: auto;">
+                <div class="flash-sale-slider-track" id="flashSaleSliderTrack"
+                    style="display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out;">
+                    <!-- Fallback if sliderSales is empty -->
+                    <div th:if="${sliderSales == null or sliderSales.isEmpty()}" class="promo-banner-card banner-red"
+                        style="background: #111827 url('/images/flashsale/flashsalered.png') no-repeat center center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px; flex: 0 0 100%; height: 100%; box-sizing: border-box; border-radius: 0;">
+                        <div class="banner-content" style="max-width: 40%; z-index: 2; text-align: left;">
+                            <h2
+                                style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 5px; line-height: 1.2;">
+                                <span style="color: #facc15;">FLASH SALE</span><br>
+                                <span style="font-size: 18px; color: #fff;">GIỜ VÀNG GIÁ SỐC</span>
+                            </h2>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <div style="font-size: 11px; font-weight: 600; line-height: 1.2; color: #fff;">
+                                    Giảm<br>đến
+                                </div>
+                                <div style="font-size: 32px; font-weight: 800; color: #facc15; line-height: 1;">-50%
+                                </div>
+                            </div>
+                            <a href="#flash-sale" class="btn-banner"
+                                style="background: #fff; color: #dc2626; padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none;">Xem
+                                ngay <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- Loop over sliderSales -->
+                    <div th:each="sale, iterStat : ${sliderSales}" class="promo-banner-card banner-red flash-slide"
+                        th:with="bannerUrl=${sale.bannerImage != null and !sale.bannerImage.isEmpty() ? (sale.bannerImage.startsWith('http') ? sale.bannerImage : '/images/flashsale/' + sale.bannerImage) : '/images/flashsale/flashsalered.png'},
+                                  isUpcoming=${sale.startTime.getTime() > #dates.createNow().getTime()}"
+                        th:style="'background: #111827 url(\'' + @{${bannerUrl}} + '\') no-repeat center center/cover; justify-content: flex-start; align-items: center; display: flex; gap: 20px; padding: 0 50px; flex: 0 0 100%; height: 100%; box-sizing: border-box; border-radius: 0;'">
+
+                        <div class="banner-content"
+                            style="max-width: 210px; width: fit-content; z-index: 3; text-align: left; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); margin-left: 20px;">
+                            <h2
+                                style="font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.25; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                                <span style="color: #facc15;" th:text="${sale.name}">FLASH SALE</span><br>
+                                <span style="font-size: 13px; color: #e2e8f0; font-weight: 600;"
+                                    th:text="${isUpcoming ? 'SẮP DIỄN RA' : 'ĐANG DIỄN RA'}">GIỜ VÀNG GIÁ SỐC</span>
+                            </h2>
+                            <div style="background: #facc15; color: #0f172a; font-size: 10px; font-weight: 700; padding: 4px 10px; display: table; border-radius: 20px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);"
+                                th:text="${isUpcoming ? 'Từ ' + #dates.format(sale.startTime, 'dd/MM HH:mm') : 'DUY NHẤT HÔM NAY'}">
+                                DUY NHẤT HÔM NAY
+                            </div>
+                            <!-- Description -->
+                            <div th:if="${sale.description != null and !sale.description.isEmpty()}"
+                                style="font-size: 10px; color: rgba(255,255,255,0.85); margin-bottom: 8px; line-height: 1.4; max-width: 180px;"
+                                th:text="${sale.description}">Sản phẩm giảm giá sâu trong khung giờ vàng...</div>
+                            <div style="margin-top: 4px; display: block;">
+                                <a href="#flash-sale" class="btn-banner"
+                                    style="background: linear-gradient(135deg, #ffffff, #f1f5f9); color: #dc2626; padding: 6px 16px; border-radius: 25px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">Xem
+                                    ngay <i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <!-- Countdown timer: active sale (kết thúc trong) -->
+                        <div th:if="${not isUpcoming}" class="banner-countdown"
+                            th:attr="data-endtime=${sale.endTime.getTime()}"
+                            style="background: rgba(15, 23, 42, 0.75); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 3; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); position: absolute; bottom: 20px; right: 20px;">
+                            <div
+                                style="font-size: 10px; font-weight: 700; margin-bottom: 8px; color: #fecaca; text-transform: uppercase; letter-spacing: 1px;">
+                                Kết thúc trong</div>
+                            <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                <div class="days-block-item"
+                                    style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="promo-days-item"
+                                        style="background: #fff; color: #000; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Ngày</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="promo-hours-item"
+                                        style="background: #fff; color: #000; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Giờ</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="promo-minutes-item"
+                                        style="background: #fff; color: #000; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Phút</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="promo-seconds-item"
+                                        style="background: #fff; color: #000; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fecaca; margin-top: 4px;">Giây</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Countdown timer: upcoming sale (bắt đầu sau) -->
+                        <div th:if="${isUpcoming}" class="banner-countdown upcoming-timer"
+                            th:attr="data-seconds=${(sale.startTime.time - #dates.createNow().getTime()) / 1000}"
+                            style="background: rgba(15, 23, 42, 0.75); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); text-align: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 3; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: absolute; bottom: 20px; right: 20px;">
+                            <div
+                                style="font-size: 10px; font-weight: 700; margin-bottom: 8px; color: #fde68a; text-transform: uppercase; letter-spacing: 1px;">
+                                Bắt đầu sau</div>
+                            <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                <div class="upcoming-days-block"
+                                    style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="upcoming-days"
+                                        style="background: #fff; color: #dc2626; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fde68a; margin-top: 4px;">Ngày</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="upcoming-hours"
+                                        style="background: #fff; color: #dc2626; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fde68a; margin-top: 4px;">Giờ</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="upcoming-minutes"
+                                        style="background: #fff; color: #dc2626; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fde68a; margin-top: 4px;">Phút</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="upcoming-seconds"
+                                        style="background: #fff; color: #dc2626; font-size: 16px; font-weight: 800; padding: 4px 8px; border-radius: 6px; min-width: 42px; width: auto; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-variant-numeric: tabular-nums; box-sizing: border-box; display: inline-block; white-space: nowrap;">
+                                        00</div>
+                                    <span
+                                        style="font-size: 9px; font-weight: 600; color: #fde68a; margin-top: 4px;">Giây</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slider Arrows -->
+                <button th:if="${sliderSales != null and sliderSales.size() > 1}" onclick="moveFlashSlider(-1)"
+                    class="slider-btn prev-btn"
+                    style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i
+                        class="fa-solid fa-chevron-left" style="color: #000;"></i></button>
+                <button th:if="${sliderSales != null and sliderSales.size() > 1}" onclick="moveFlashSlider(1)"
+                    class="slider-btn next-btn"
+                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i
+                        class="fa-solid fa-chevron-right" style="color: #000;"></i></button>
+            </div>
+
+
+        </div>
+
+        <!-- Categories Filter -->
+        <div class="promo-categories"
+            style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; margin: 30px 0; scrollbar-width: thin;">
+            <div class="promo-cat-item active"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: #eff6ff; border: 1px solid #3b82f6; border-radius: 6px; cursor: pointer; min-width: 120px; flex-shrink: 0;">
+                <i class="fa-solid fa-shapes" style="font-size: 18px; color: #3b82f6;"></i>
+                <div class="promo-cat-info">
+                    <h4 style="margin: 0; font-size: 13px; font-weight: 600; color: #1e3a8a;">Tất cả</h4>
+                    <span style="font-size: 10px; color: #6b7280; white-space: nowrap;">95 Khuyến mãi</span>
+                </div>
+            </div>
+            <div class="promo-cat-item"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; min-width: 120px; flex-shrink: 0;">
+                <i class="fa-solid fa-bolt" style="font-size: 18px; color: #ef4444;"></i>
+                <div class="promo-cat-info">
+                    <h4 style="margin: 0; font-size: 13px; font-weight: 600; color: #1f2937;">Flash Sale</h4>
+                    <span style="font-size: 10px; color: #6b7280; white-space: nowrap;">12 Khuyến mãi</span>
+                </div>
+            </div>
+            <!-- Dynamic Categories from Database -->
+            <div class="promo-cat-item" th:each="cat : ${categories}"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; min-width: 120px; flex-shrink: 0;">
+                <i class="fa-solid"
+                    th:classappend="${cat.name.equalsIgnoreCase('CPU') ? 'fa-microchip' : 
+                                    (cat.name.equalsIgnoreCase('VGA') ? 'fa-server' : 
+                                    (cat.name.equalsIgnoreCase('Mainboard') ? 'fa-network-wired' : 
+                                    (cat.name.equalsIgnoreCase('RAM') ? 'fa-memory' : 
+                                    (cat.name.equalsIgnoreCase('SSD') ? 'fa-database' : 
+                                    (cat.name.equalsIgnoreCase('Nguồn') ? 'fa-plug' : 
+                                    (cat.name.equalsIgnoreCase('Vỏ case') ? 'fa-box' : 
+                                    (cat.name.toLowerCase().contains('pc') || cat.name.toLowerCase().contains('combo') ? 'fa-desktop' : 'fa-shapes')))))))}"
+                    style="font-size: 18px; color: #3b82f6;"></i>
+                <div class="promo-cat-info">
+                    <h4 style="margin: 0; font-size: 13px; font-weight: 600; color: #1f2937;" th:text="${cat.name}">
+                        Category Name</h4>
+                    <span style="font-size: 10px; color: #6b7280; white-space: nowrap;">0 Khuyến mãi</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Sale Section -->
+        <div class="layout-2col" id="flash-sale"
+            style="display: grid; grid-template-columns: 4fr 1.15fr; gap: 20px; margin-bottom: 40px; align-items: stretch;">
+            <!-- Dynamic List of Flash Sales -->
+            <div style="display: flex; flex-direction: column; gap: 30px;"
+                th:if="${sliderSales != null and !sliderSales.isEmpty()}">
+                <div class="flash-sale-main"
+                    style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;"
+                    th:each="sale, saleStat : ${sliderSales}" th:if="${saleStat.index < 3}"
+                    th:with="isUpcoming=${sale.startTime.getTime() > #dates.createNow().getTime()}, items=${sliderItemsMap.get(sale.id)}">
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-bolt" style="color: #f97316; font-size: 20px;"></i>
+                                <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #1f2937;"
+                                    th:text="${sale.name}">FLASH SALE</h2>
+                                <span th:if="${isUpcoming}"
+                                    style="font-size: 11px; color: #ef4444; background: #fef2f2; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-left: 10px;">SẮP
+                                    DIỄN RA</span>
+                                <span th:if="${!isUpcoming}"
+                                    style="font-size: 11px; color: #ef4444; background: #fef2f2; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-left: 10px;">ĐANG
+                                    DIỄN RA</span>
+                            </div>
+                            <p style="margin: 5px 0 0; font-size: 13px; color: #6b7280;">Sản phẩm giảm giá sâu trong
+                                khung giờ vàng, số lượng có hạn,...</p>
+                        </div>
+
+                        <!-- End / Start Timers -->
+                        <div th:if="${!isUpcoming}"
+                            style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span style="font-size: 11px; font-weight: 600; color: #ef4444; margin-bottom: 5px;">Kết
+                                thúc trong:</span>
+                            <div class="card-countdown main-end-timer" th:attr="data-endtime=${sale.endTime.getTime()}"
+                                style="font-size: 14px; font-weight: 700; color: #ef4444; background: #fef2f2; padding: 4px 10px; border-radius: 6px; display: inline-block;">
+                                00:00:00</div>
+                        </div>
+                        <div th:if="${isUpcoming}"
+                            style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span style="font-size: 11px; font-weight: 600; color: #ef4444; margin-bottom: 5px;">Bắt đầu
+                                sau:</span>
+                            <div class="card-countdown upcoming-timer main-start-timer"
+                                th:attr="data-seconds=${sale.startTime != null ? (sale.startTime.time - #dates.createNow().getTime()) / 1000 : 0}"
+                                style="font-size: 14px; font-weight: 700; color: #ef4444; background: #fef2f2; padding: 4px 10px; border-radius: 6px; display: inline-block;">
+                                00:00:00</div>
+                        </div>
+                    </div>
+
+                    <div class="flash-grid" th:if="${items != null and !items.isEmpty()}">
+                        <div class="flash-card" th:each="item, iterStat : ${items}" th:if="${item.product != null}"
+                            th:classappend="${iterStat.index >= 20} ? 'flash-item-hidden flash-item-togglable' : ''"
+                            th:onclick="|location.href='@{/product/{id}(id=${item.product.id})}'|"
+                            th:attr="data-category=${item.product.category != null ? item.product.category.name : ''}"
+                            th:style="${iterStat.index >= 20} ? 'display: none; cursor: pointer; position: relative; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; transition: 0.2s; justify-content: space-between; min-height: 340px; height: auto;' : 'cursor: pointer; position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; transition: 0.2s; justify-content: space-between; min-height: 340px; height: auto;'"
+                            onmouseover="this.style.borderColor='#3b82f6'"
+                            onmouseout="this.style.borderColor='#e5e7eb'">
+
+                            <div style="position: relative; width: 100%; text-align: center; margin-bottom: 10px;">
+                                <div class="flash-badge"
+                                    style="position: absolute; top: 0; left: 0; background: #ef4444; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 6px; border-radius: 4px; z-index: 2;">
+                                    -<span th:text="${item.discountPercent}">12</span>%
+                                </div>
+                                <img th:src="@{${item.product != null && item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}"
+                                    alt="Product"
+                                    style="width: 100%; height: 130px; object-fit: contain; margin-top: 20px;">
+                            </div>
+
+                            <div
+                                style="display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+                                <div>
+                                    <h4 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; color: #1f2937; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px;"
+                                        th:text="${item.product != null ? item.product.name : 'Unknown Product'}">
+                                        Product Name</h4>
+
+                                    <div style="display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px;">
+                                        <span style="font-size: 11px; text-decoration: line-through; color: #9ca3af;"
+                                            th:if="${item.product.price != null}"
+                                            th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                                        <span style="color: #ef4444; font-size: 14px; font-weight: 700;"
+                                            th:if="${item.salePrice != null && !isUpcoming}"
+                                            th:text="${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                                        <span style="color: #ef4444; font-size: 14px; font-weight: 700;"
+                                            th:if="${item.salePrice != null && isUpcoming}"
+                                            th:with="formattedPrice=${#numbers.formatDecimal(item.salePrice, 0, 'COMMA', 0, 'POINT')}"
+                                            th:text="${formattedPrice.substring(0, 1) + formattedPrice.substring(1).replaceAll('[0-9]', 'x')} + 'đ'">0đ</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div
+                                        style="font-size: 11px; color: #9ca3af; margin-bottom: 12px; display: flex; align-items: center; gap: 3px;">
+                                        <span
+                                            th:text="${productRatings != null && productRatings.containsKey(item.product.id) ? #numbers.formatDecimal(productRatings.get(item.product.id), 1, 1) : '0.0'}">0.0</span>
+                                        <i class="fa-solid fa-star" style="color: #fbbf24; font-size: 10px;"></i>
+                                        <span
+                                            th:text="'(' + ${productReviewCounts != null && productReviewCounts.containsKey(item.product.id) ? productReviewCounts.get(item.product.id) : 0} + ' đánh giá)'">(0
+                                            đánh giá)</span>
+                                    </div>
+
+                                    <button class="btn-add-cart" th:if="${!isUpcoming}"
+                                        th:attr="onclick='addToCart(' + ${item.product.id} + ', 1); event.stopPropagation();'"
+                                        style="width: 100%; padding: 8px 0; background: #fff; color: #3b82f6; border: 1px solid #3b82f6; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px;"
+                                        onmouseover="this.style.background='#3b82f6'; this.style.color='#fff'"
+                                        onmouseout="this.style.background='#fff'; this.style.color='#3b82f6'">
+                                        Thêm vào giỏ hàng
+                                    </button>
+                                    <button class="btn-add-cart" th:if="${isUpcoming}"
+                                        style="width: 100%; padding: 8px 0; background: #f3f4f6; color: #9ca3af; border: 1px solid #d1d5db; border-radius: 6px; font-weight: 600; cursor: not-allowed; display: flex; align-items: center; justify-content: center; font-size: 12px;"
+                                        onclick="event.stopPropagation();">
+                                        Sắp mở bán
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${items == null or items.isEmpty()}"
+                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; color: #9ca3af; width: 100%;">
+                        <i class="fa-solid fa-face-frown"
+                            style="font-size: 30px; color: #cbd5e1; margin-bottom: 15px;"></i>
+                        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #6b7280;">Chưa có sản phẩm cho
+                            đợt này</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fallback if NO Sales -->
+            <div class="flash-sale-main"
+                style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;"
+                th:if="${sliderSales == null or sliderSales.isEmpty()}">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-bolt" style="color: #f97316; font-size: 20px;"></i>
+                            <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #1f2937;">FLASH SALE</h2>
+                        </div>
+                        <p style="margin: 5px 0 0; font-size: 13px; color: #6b7280;">Hiện không có Flash Sale nào đang
+                            hoặc sắp diễn ra</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar "Sắp diễn ra" -->
+            <div class="sidebar-box"
+                style="background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; align-self: start; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <!-- Header gradient -->
+                <div
+                    style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 16px 20px; display: flex; align-items: center; gap: 10px;">
+                    <div
+                        style="width: 32px; height: 32px; background: linear-gradient(135deg, #ef4444, #f97316); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fa-solid fa-calendar-days" style="color: #fff; font-size: 14px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 0.3px;">SẮP DIỄN RA
+                        </div>
+                        <div style="font-size: 10px; color: #94a3b8; margin-top: 1px;">Lịch Flash Sale sắp tới</div>
+                    </div>
+                </div>
+
+                <div style="padding: 16px;">
+                    <!-- Dynamic Upcoming List (top 4 upcoming sales) -->
+                    <div class="upcoming-list" style="display: flex; flex-direction: column; gap: 10px;"
+                        th:if="${top4UpcomingSales != null and !top4UpcomingSales.isEmpty()}">
+                        <div th:each="uSale, iterStat : ${top4UpcomingSales}"
+                            style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; transition: box-shadow 0.2s;"
+                            onmouseover="this.style.boxShadow='0 4px 12px rgba(239,68,68,0.12)'"
+                            onmouseout="this.style.boxShadow='none'">
+                            <!-- Colored top accent bar -->
+                            <div th:style="${iterStat.index == 0} ? 'height: 3px; background: linear-gradient(90deg, #ef4444, #f97316);' :
+                                       (${iterStat.index == 1} ? 'height: 3px; background: linear-gradient(90deg, #8b5cf6, #6366f1);' :
+                                       (${iterStat.index == 2} ? 'height: 3px; background: linear-gradient(90deg, #06b6d4, #3b82f6);' :
+                                       'height: 3px; background: linear-gradient(90deg, #10b981, #059669);'))"></div>
+                            <div style="padding: 11px 13px; background: #fafafa;">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                    <!-- Left: index badge + name + date -->
+                                    <div style="display: flex; align-items: flex-start; gap: 9px; min-width: 0;">
+                                        <div
+                                            th:style="${iterStat.index == 0} ? 'width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #ef4444, #f97316); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;' :
+                                                   (${iterStat.index == 1} ? 'width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #8b5cf6, #6366f1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;' :
+                                                   (${iterStat.index == 2} ? 'width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #06b6d4, #3b82f6); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;' :
+                                                   'width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;'))">
+                                            <i class="fa-solid fa-bolt" style="color: #fff; font-size: 10px;"></i>
+                                        </div>
+                                        <div style="min-width: 0;">
+                                            <div style="font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;"
+                                                th:text="${uSale.name}">Đợt 2</div>
+                                            <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;"
+                                                th:if="${uSale.startTime != null}">
+                                                <i class="fa-regular fa-clock"
+                                                    style="font-size: 9px; color: #94a3b8;"></i>
+                                                <span style="font-size: 10px; color: #64748b;"
+                                                    th:text="${#dates.format(uSale.startTime, 'dd/MM/yyyy HH:mm')}">19/07
+                                                    23:00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Right: countdown -->
+                                    <div style="text-align: right; flex-shrink: 0;">
+                                        <div
+                                            style="font-size: 9px; color: #94a3b8; font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                            Bắt đầu sau</div>
+                                        <div style="font-size: 14px; font-weight: 800; color: #ef4444; background: linear-gradient(135deg, #fef2f2, #fff5f5); padding: 4px 9px; border-radius: 7px; border: 1px solid #fecaca; font-variant-numeric: tabular-nums; letter-spacing: 0.5px;"
+                                            class="upcoming-timer"
+                                            th:attr="data-seconds=${uSale.startTime != null ? (uSale.startTime.time - #dates.createNow().getTime()) / 1000 : 0}">
+                                            00:00:00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden slots (from 5th onwards) -->
+                        <div th:each="uSale, iterStat : ${allUpcomingSales}" th:if="${iterStat.index >= 4}"
+                            class="upcoming-slot-hidden"
+                            style="display: none; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0;">
+                            <div style="height: 3px; background: linear-gradient(90deg, #64748b, #94a3b8);"></div>
+                            <div style="padding: 11px 13px; background: #fafafa;">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                    <div style="display: flex; align-items: flex-start; gap: 9px; min-width: 0;">
+                                        <div
+                                            style="width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #64748b, #94a3b8); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;">
+                                            <i class="fa-solid fa-bolt" style="color: #fff; font-size: 10px;"></i>
+                                        </div>
+                                        <div style="min-width: 0;">
+                                            <div style="font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;"
+                                                th:text="${uSale.name}">Đợt X</div>
+                                            <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;"
+                                                th:if="${uSale.startTime != null}">
+                                                <i class="fa-regular fa-clock"
+                                                    style="font-size: 9px; color: #94a3b8;"></i>
+                                                <span style="font-size: 10px; color: #64748b;"
+                                                    th:text="${#dates.format(uSale.startTime, 'dd/MM/yyyy HH:mm')}">--/--
+                                                    --:--</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right; flex-shrink: 0;">
+                                        <div
+                                            style="font-size: 9px; color: #94a3b8; font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                            Bắt đầu sau</div>
+                                        <div style="font-size: 14px; font-weight: 800; color: #ef4444; background: linear-gradient(135deg, #fef2f2, #fff5f5); padding: 4px 9px; border-radius: 7px; border: 1px solid #fecaca; font-variant-numeric: tabular-nums; letter-spacing: 0.5px;"
+                                            class="upcoming-timer"
+                                            th:attr="data-seconds=${uSale.startTime != null ? (uSale.startTime.time - #dates.createNow().getTime()) / 1000 : 0}">
+                                            00:00:00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 36px 10px; text-align: center;"
+                        th:if="${top4UpcomingSales == null or top4UpcomingSales.isEmpty()}">
+                        <div
+                            style="width: 52px; height: 52px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                            <i class="fa-solid fa-calendar-xmark" style="font-size: 22px; color: #cbd5e1;"></i>
+                        </div>
+                        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #6b7280;">Chưa có Flash Sale nào
+                            sắp diễn ra</p>
+                        <p style="margin: 6px 0 0; font-size: 11px; color: #9ca3af;">Hãy quay lại sau nhé!</p>
+                    </div>
+
+                    <button th:if="${allUpcomingSales != null and allUpcomingSales.size() > 4}" id="btnToggleUpcoming"
+                        onclick="toggleUpcomingSales()"
+                        style="width: 100%; border: none; background: linear-gradient(135deg, #f8fafc, #f1f5f9); color: #475569; padding: 10px 0; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 12px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;"
+                        onmouseover="this.style.background='linear-gradient(135deg, #eff6ff, #dbeafe)'; this.style.color='#2563eb'"
+                        onmouseout="this.style.background='linear-gradient(135deg, #f8fafc, #f1f5f9)'; this.style.color='#475569'">
+                        <i class="fa-solid fa-chevron-down" id="toggleUpcomingIcon"
+                            style="font-size: 10px; transition: transform 0.2s;"></i>
+                        Xem tất cả lịch Flash Sale
+                    </button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Vouchers Section -->
+        <div class="layout-2col" id="vouchers"
+            style="display: grid; grid-template-columns: 4fr 1.15fr; gap: 20px; margin-top: 40px; align-items: stretch;">
+            <div class="vouchers-main"
+                style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-fire-flame-curved" style="color: #ea580c; font-size: 20px;"></i>
+                            <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #1f2937;">KHUYẾN MÃI HOT
+                            </h2>
+                        </div>
+                        <div class="voucher-tabs" style="display: flex; gap: 10px;">
+                            <div class="voucher-tab active"
+                                style="font-size: 12px; font-weight: 600; padding: 6px 12px; background: #eff6ff; color: #2563eb; border-radius: 4px; cursor: pointer;">
+                                Tất cả (12)</div>
+                            <div class="voucher-tab"
+                                style="font-size: 12px; font-weight: 600; padding: 6px 12px; color: #4b5563; border-radius: 4px; cursor: pointer;">
+                                Mã giảm giá (8)</div>
+                            <div class="voucher-tab"
+                                style="font-size: 12px; font-weight: 600; padding: 6px 12px; color: #4b5563; border-radius: 4px; cursor: pointer;">
+                                Ưu đãi theo danh mục (4)</div>
+                        </div>
+                    </div>
+                    <a href="#vouchers"
+                        style="font-size: 13px; font-weight: 600; color: #3b82f6; text-decoration: none;">Xem tất cả
+                        Khuyến mãi <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+
+                <div class="voucher-grid" style="margin-top: 20px;">
+                    <!-- Loop through activeVouchers if present -->
+                    <div class="voucher-card" th:each="v, status : ${activeVouchers}"
+                        th:if="${activeVouchers != null and !activeVouchers.isEmpty()}"
+                        th:attr="data-type=${v.category != null ? 'CATEGORY' : 'GENERAL'}"
+                        th:with="textColor=${status.index % 4 == 0 ? '#ea580c' : (status.index % 4 == 1 ? '#db2777' : (status.index % 4 == 2 ? '#2563eb' : '#16a34a'))},
+                                 borderColor=${status.index % 4 == 0 ? '#fed7aa' : (status.index % 4 == 1 ? '#fbcfe8' : (status.index % 4 == 2 ? '#bfdbfe' : '#bbf7d0'))},
+                                 shadowColor=${status.index % 4 == 0 ? 'rgba(234, 88, 12, 0.15)' : (status.index % 4 == 1 ? 'rgba(219, 39, 119, 0.15)' : (status.index % 4 == 2 ? 'rgba(37, 99, 235, 0.15)' : 'rgba(22, 163, 74, 0.15)'))}"
+                        style="display: flex; flex-direction: column; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; overflow: hidden; padding: 15px; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); min-height: 230px; height: 100%; position: relative; box-sizing: border-box; transition: transform 0.3s ease, box-shadow 0.3s ease; will-change: transform;"
+                        onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.06)';"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.03)';"
+                        th:styleappend="'border-color: ' + ${borderColor}">
+
+                        <!-- Top Half: Code Box -->
+                        <div style="margin-bottom: 12px; text-align: center; position: relative; z-index: 2;">
+                            <div th:style="'background: ' + ${textColor} + '; border-radius: 6px; padding: 8px 0; color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 0.8px; box-shadow: 0 4px 6px ' + ${shadowColor} + ';'"
+                                th:text="${v.code}">
+                                PCSTORE10
+                            </div>
+                        </div>
+
+                        <!-- Separator Line -->
+                        <div style="border-top: 1.5px dashed #e5e7eb; margin: 10px -15px 12px -15px; z-index: 1;"
+                            th:styleappend="'border-color: ' + ${borderColor}"></div>
+
+                        <!-- Bottom Half: Details -->
+                        <div
+                            style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; z-index: 2; margin-top: 5px;">
+                            <div>
+                                <span th:if="${v.voucherScope != null}"
+                                    th:text="${v.voucherScope.name() == 'FREESHIP' ? 'Miễn phí vận chuyển' : (v.voucherScope.name() == 'CATEGORY' ? (v.category != null ? v.category.name : 'Danh mục') : 'Toàn sàn')}"
+                                    style="font-size: 10px; padding: 3px 6px; border-radius: 4px; background-color: #f3f4f6; color: #4b5563; font-weight: 600; display: inline-block; margin-bottom: 6px;">Toàn
+                                    sàn</span>
+                                <h4 style="margin: 0 0 4px; font-size: 13px; font-weight: 700; color: #111827;"
+                                    th:text="${v.description}">Giảm 10%</h4>
+                                <span style="font-size: 11px; color: #6b7280; display: block;"
+                                    th:if="${v.minOrderAmount != null}"
+                                    th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(v.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">Đơn
+                                    tối thiểu 2.000.000đ</span>
+                            </div>
+
+                            <div>
+                                <div
+                                    style="font-size: 10px; color: #9ca3af; margin-bottom: 12px; display: flex; flex-direction: column; gap: 2px;">
+                                    <span>HSD: <strong style="color: #4b5563;"
+                                            th:text="${v.endDate != null ? #dates.format(v.endDate, 'dd/MM/yyyy') : 'Không giới hạn'}">30/06/2025</strong></span>
+                                    <span>Số lượt dùng: <strong style="color: #4b5563;"
+                                            th:text="${v.usedCount != null ? v.usedCount : 0} + '/' + ${v.usageLimit != null ? v.usageLimit : '∞'}">152/500</strong></span>
+                                </div>
+
+                                <button class="btn-copy" th:attr="onclick='saveVoucher(this, \'' + ${v.code} + '\')'"
+                                    th:style="'width: 100%; background: #fff; color: ' + ${textColor} + '; border: 1px solid ' + ${textColor} + '; padding: 7px 0; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;'"
+                                    onmouseover="this.style.background=this.getAttribute('data-color'); this.style.color='#fff';"
+                                    onmouseout="this.style.background='#fff'; this.style.color=this.getAttribute('data-color');"
+                                    th:data-color="${textColor}">
+                                    Lưu mã
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fallback if activeVouchers is empty/null -->
+                    <th:block th:if="${activeVouchers == null or activeVouchers.isEmpty()}">
+                        <div
+                            style="width: 100%; grid-column: 1 / -1; text-align: center; padding: 50px 20px; background: #fff; border-radius: 12px; border: 1px dashed #d1d5db; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-ticket-alt"
+                                style="font-size: 48px; color: #d1d5db; margin-bottom: 15px;"></i>
+                            <h3 style="font-size: 16px; color: #4b5563; margin: 0 0 8px; font-weight: 600;">Không có mã
+                                giảm giá nào mới</h3>
+                            <p style="font-size: 14px; color: #6b7280; margin: 0;">Bạn đã lưu tất cả các mã hiện có hoặc
+                                hệ thống đang chuẩn bị đợt khuyến mãi tiếp theo. Hãy kiểm tra ví voucher của bạn!</p>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+
+            <!-- Terms Box -->
+            <div class="terms-box"
+                style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; align-self: start; display: flex; flex-direction: column; justify-content: space-between; height: 100%; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <div>
+                    <div class="sidebar-box-title"
+                        style="font-size: 14px; font-weight: 700; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; color: #1f2937; text-transform: uppercase;">
+                        ĐIỀU KIỆN & HƯỚNG DẪN</div>
+                    <ul class="terms-list"
+                        style="padding-left: 20px; font-size: 13px; color: #4b5563; line-height: 1.8; margin-bottom: 25px;">
+                        <li style="margin-bottom: 8px;">Chương trình Flash Sale có số lượng và thời gian giới hạn.</li>
+                        <li style="margin-bottom: 8px;">Mã giảm giá chỉ áp dụng 1 lần/đơn hàng.</li>
+                        <li style="margin-bottom: 8px;">Không áp dụng đồng thời nhiều mã giảm giá.</li>
+                        <li style="margin-bottom: 8px;">Kiểm tra kỹ giỏ hàng và thông tin trước khi thanh toán.</li>
+                    </ul>
+                </div>
+                <button onclick="openRulesModal()"
+                    style="width: 100%; border: 1px solid #3b82f6; background: #fff; color: #3b82f6; padding: 10px 0; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;"
+                    onmouseover="this.style.background='#3b82f6'; this.style.color='#fff'"
+                    onmouseout="this.style.background='#fff'; this.style.color='#3b82f6'">Xem chi tiết thể lệ</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rules Modal -->
+    <div id="rules-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div
+            style="background: #fff; border-radius: 12px; width: 90%; max-width: 500px; padding: 25px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); position: relative; animation: modalFadeIn 0.3s ease-out; text-align: left;">
+            <h3
+                style="margin-top: 0; font-size: 18px; font-weight: 700; color: #1f2937; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; text-transform: uppercase;">
+                Thể Lệ Chi Tiết & Hướng Dẫn</h3>
+
+            <div
+                style="font-size: 13px; color: #4b5563; line-height: 1.6; margin: 15px 0 20px; max-height: 300px; overflow-y: auto; padding-right: 5px;">
+                <p style="margin: 0 0 5px; font-weight: 700; color: #1f2937;">1. Quy định Flash Sale:</p>
+                <ul style="padding-left: 20px; margin: 0 0 15px 0;">
+                    <li style="margin-bottom: 5px;">Mỗi khách hàng chỉ được mua tối đa 1 sản phẩm Flash Sale cùng loại
+                        trong suốt đợt mở bán.</li>
+                    <li style="margin-bottom: 5px;">Đơn hàng Flash Sale cần được thanh toán hoặc xác nhận trong vòng 15
+                        phút, quá thời gian trên hệ thống sẽ tự động hủy đơn.</li>
+                    <li style="margin-bottom: 5px;">Không áp dụng chung với các chương trình khuyến mãi khác.</li>
+                </ul>
+
+                <p style="margin: 0 0 5px; font-weight: 700; color: #1f2937;">2. Quy định sử dụng Voucher:</p>
+                <ul style="padding-left: 20px; margin: 0 0 15px 0;">
+                    <li style="margin-bottom: 5px;">Voucher có giá trị sử dụng khi tổng giá trị sản phẩm trong giỏ hàng
+                        (không gồm phí vận chuyển) đạt mức tối thiểu quy định.</li>
+                    <li style="margin-bottom: 5px;">Voucher danh mục chỉ áp dụng cho nhóm sản phẩm tương ứng.</li>
+                    <li style="margin-bottom: 5px;">Số lượng Voucher có hạn, hệ thống sẽ ưu tiên cho khách hàng áp dụng
+                        mã sớm nhất tại bước thanh toán.</li>
+                </ul>
+
+                <p style="margin: 0 0 5px; font-weight: 700; color: #1f2937;">3. Hướng dẫn tham gia:</p>
+                <ul style="padding-left: 20px; margin: 0;">
+                    <li style="margin-bottom: 5px;">Bước 1: Chọn lưu Voucher vào ví tài khoản bằng cách click "Lưu mã".
+                    </li>
+                    <li style="margin-bottom: 5px;">Bước 2: Cho các sản phẩm khuyến mãi hoặc Flash Sale vào giỏ hàng.
+                    </li>
+                    <li style="margin-bottom: 5px;">Bước 3: Tại trang Thanh toán (Checkout), chọn mã giảm giá đã lưu để
+                        áp dụng giảm trừ trực tiếp vào hóa đơn.</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button onclick="closeRulesModal()"
+                    style="background: #3b82f6; color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;"
+                    onmouseover="this.style.background='#2563eb'"
+                    onmouseout="this.style.background='#3b82f6'">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+    <div id="toast"
+        style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;">
+    </div>
+
+    <script th:inline="javascript">
+        var flashSaleEndTime = 0;
+    </script>
+    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/promotions.js}"></script>
+</body>
+
+</html>

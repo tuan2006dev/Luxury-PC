@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="_csrf" th:content="${_csrf?.token}" />
+  <meta name="_csrf_header" th:content="${_csrf?.headerName}" />
+  <title>Luxury PC — Hồ Sơ Cá Nhân</title>
+  <meta name="description" content="Quản lý tài khoản và hồ sơ cá nhân Luxury PC của bạn." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" th:href="@{/css/account/profile.css}" />
+  <link rel="stylesheet" th:href="@{/css/account/profile/info.css}" />
+  <link rel="stylesheet" th:href="@{/css/account/profile/orders.css}" />
+  <link rel="stylesheet" th:href="@{/css/account/profile/vouchers.css}" />
+  <link rel="stylesheet" th:href="@{/css/account/profile/wishlist.css}" />
+  <link rel="stylesheet" th:href="@{/css/account/profile/security.css}" />
+  <link rel="stylesheet" th:href="@{/css/account/profile/notifications.css}" />
+  <link rel="stylesheet" th:href="@{/css/account/profile/addresses.css}" />
+  <link rel="stylesheet" th:href="@{/css/cursor.css}" />
+</head>
+
+<body>
+
+  <div th:replace="~{layout/header :: header}"></div>
+
+  <div class="container" style="padding-top: 20px; padding-bottom: 60px;">
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb" style="margin-bottom: 20px;">
+      <a th:href="@{/}">Trang chủ</a> > <span>Hồ sơ cá nhân</span>
+    </div>
+
+    <div class="profile-page" style="display: flex; gap: 30px;">
+
+      <!-- ===== SIDEBAR FRAGMENT ===== -->
+      <aside th:replace="~{account/profile/sidebar :: sidebar}"></aside>
+
+      <!-- ===== MAIN ===== -->
+      <main class="profile-main" style="flex-grow: 1;">
+
+        <!-- TABS BUTTONS (Hidden for JS compatibility) -->
+        <div class="profile-tabs" style="display: none;">
+          <button class="profile-tab active" id="pt-info" onclick="setTab('info')">Thông Tin</button>
+          <button class="profile-tab" id="pt-orders" onclick="setTab('orders')">Đơn Hàng</button>
+          <button class="profile-tab" id="pt-vouchers" onclick="setTab('vouchers')">Ví Voucher</button>
+          <button class="profile-tab" id="pt-wishlist" onclick="setTab('wishlist')">Yêu Thích</button>
+          <button class="profile-tab" id="pt-security" onclick="setTab('security')">Bảo Mật</button>
+          <button class="profile-tab" id="pt-notifications" onclick="setTab('notifications')">Thông Báo</button>
+          <button class="profile-tab" id="pt-address" onclick="setTab('address')">Địa Chỉ</button>
+        </div>
+
+        <!-- ============ TAB FRAGMENTS ============ -->
+        <div th:replace="~{account/profile/info :: infoTab}"></div>
+        <div th:replace="~{account/profile/orders :: ordersTab}"></div>
+        <div th:replace="~{account/profile/vouchers :: vouchersTab}"></div>
+        <div th:replace="~{account/profile/wishlist :: wishlistTab}"></div>
+        <div th:replace="~{account/profile/security :: securityTab}"></div>
+        <div th:replace="~{account/profile/notifications :: notificationsTab}"></div>
+        <div th:replace="~{account/profile/addresses :: addressesTab}"></div>
+
+      </main><!-- end profile-main -->
+    </div><!-- end profile-page -->
+
+    <!-- ===== MODALS FRAGMENT ===== -->
+    <div th:replace="~{account/profile/modals :: modals}"></div>
+
+    <script th:inline="javascript">
+      window.PROFILE_CONFIG = {
+        profileMessage: null,
+        addressMessage: null,
+        securityMessage: null,
+        notificationMessage: null
+      };
+    </script>
+    <script th:src="@{/js/account/profile.js}"></script>
+    <script th:src="@{/js/account/profile/info.js}"></script>
+    <script th:src="@{/js/account/profile/orders.js}"></script>
+    <script th:src="@{/js/account/profile/vouchers.js}"></script>
+    <script th:src="@{/js/account/profile/wishlist.js}"></script>
+    <script th:src="@{/js/account/profile/security.js}"></script>
+    <script th:src="@{/js/account/profile/notifications.js}"></script>
+    <script th:src="@{/js/account/profile/addresses.js}"></script>
+    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/cursor.js}"></script>
+    <script th:src="@{/js/confirm-popup.js}"></script>
+</body>
+
+</html>

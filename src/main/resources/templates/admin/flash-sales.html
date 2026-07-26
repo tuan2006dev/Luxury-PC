@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Flash Sale — Luxury PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/flash-sales.css(v=5.0)}" />
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+</head>
+
+<body>
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="title">
+                <h1><i class="fa-solid fa-bolt" style="color:var(--gold);margin-right:10px;"></i><span>Quản Lý Flash
+                        Sale</span></h1>
+                <p>Tạo chương trình Flash Sale với giá sốc, thời gian giới
+                    hạn</p>
+            </div>
+
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
+        </div>
+
+        <div th:if="${success}" class="toast toast-success">
+            <i class="fa-solid fa-check-circle"></i> <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="toast toast-error">
+            <i class="fa-solid fa-exclamation-circle"></i> <span th:text="${error}"></span>
+        </div>
+
+        <div class="table-card">
+            <div class="table-h"
+                style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <span style="white-space: nowrap; font-weight: 700; font-size: 1.1rem;"><i class="fa-solid fa-list"
+                        style="color: var(--gold); margin-right: 6px;"></i> <span>Danh Sách Chương Trình</span></span>
+                <div style="display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap;">
+                    <div
+                        th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/flash-sales', keyword=${keyword})}">
+                    </div>
+                    <button class="btn btn-gold" onclick="openModal()" style="white-space: nowrap;"><i
+                            class="fa-solid fa-plus"></i> <span>Tạo Flash Sale</span></button>
+                </div>
+            </div>
+
+            <div class="table-wrapper"
+                style="width: 100%; max-height: 56vh; overflow-x: hidden !important; overflow-y: auto !important;">
+                <table th:if="${flashSales != null and !flashSales.isEmpty()}" class="admin-table"
+                    style="width: 100%; table-layout: auto;">
+                    <thead>
+                        <tr>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">ID</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Banner</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tên Chương Trình
+                            </th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Bắt Đầu</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Kết Thúc</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; text-align:center;">
+                                Sản Phẩm</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Thời Gian</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Trạng Thái</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="fs : ${flashSales}">
+                            <td style="color:var(--muted);" th:text="${fs.id}">#1</td>
+                            <td>
+                                <img th:if="${fs.bannerImage != null and !fs.bannerImage.isEmpty()}"
+                                    th:src="@{${fs.bannerImage.startsWith('http') ? fs.bannerImage : '/images/flashsale/' + fs.bannerImage}}"
+                                    onerror="this.src='/images/placeholder.png'"
+                                    style="height: 45px; width: 120px; object-fit: cover; border-radius: 4px;"
+                                    alt="Banner">
+                                <span th:if="${fs.bannerImage == null or fs.bannerImage.isEmpty()}"
+                                    style="color:var(--muted);font-size:12px;">Chưa có</span>
+                            </td>
+                            <td style="font-weight:600;color:var(--white);" th:text="${fs.name}">Flash Sale Tháng 4</td>
+                            <td style="font-size:.75rem;" th:text="${#dates.format(fs.startTime, 'dd/MM/yyyy HH:mm')}">
+                                01/04/2026</td>
+                            <td style="font-size:.75rem;" th:text="${#dates.format(fs.endTime, 'dd/MM/yyyy HH:mm')}">
+                                30/04/2026</td>
+                            <td style="text-align:center;">
+                                <span
+                                    style="background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:12px; font-size:12px; font-weight:600; color:var(--white);"
+                                    th:text="${fs.items != null ? fs.items.size() : 0}">0</span>
+                            </td>
+                            <td>
+                                <span class="admin-countdown"
+                                    th:attr="data-start=${fs.startTime != null ? fs.startTime.time : 0}, data-end=${fs.endTime != null ? fs.endTime.time : 0}"
+                                    style="font-size: 11px; font-weight: 600; white-space: nowrap;">
+                                    --
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-green" th:if="${fs.status == 'RUNNING'}">🔥 <span>Đang diễn
+                                        ra</span></span>
+                                <span class="badge badge-blue" th:if="${fs.status == 'UPCOMING'}">⏳ <span>Sắp diễn
+                                        ra</span></span>
+                                <span class="badge badge-red" th:if="${fs.status == 'ENDED'}">Đã kết thúc</span>
+                                <span class="badge badge-red" th:if="${fs.status == 'DISABLED'}">Đã tắt</span>
+                            </td>
+                            <td>
+                                <div class="actions-cell">
+                                    <form novalidate autocomplete="off"
+                                        th:action="@{/admin/flash-sales/activate/{id}(id=${fs.id})}" method="POST"
+                                        style="display:inline;">
+                                        <!-- Khi chưa kích hoạt: Nút Bật (Kích hoạt) -->
+                                        <button type="submit" class="btn btn-sm btn-gold" th:if="${!fs.active}"
+                                            title="Kích hoạt" style="width: 85px; text-align: center;">
+                                            <i class="fa-solid fa-play"></i> Bật
+                                        </button>
+                                        <!-- Khi đang kích hoạt: Nút Tắt -->
+                                        <button type="submit" class="btn btn-sm"
+                                            style="width: 85px; text-align: center; background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);cursor:pointer;"
+                                            th:if="${fs.active}" title="Tắt hiển thị">
+                                            <i class="fa-solid fa-stop"></i> Tắt
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-sm"
+                                        style="border:1px solid var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);"
+                                        th:data-id="${fs.id}" th:data-name="${fs.name}"
+                                        th:data-start="${#dates.format(fs.startTime, 'yyyy-MM-dd''T''HH:mm')}"
+                                        th:data-end="${#dates.format(fs.endTime, 'yyyy-MM-dd''T''HH:mm')}"
+                                        th:data-banner="${fs.bannerImage != null ? fs.bannerImage : ''}"
+                                        th:data-description="${fs.description != null ? fs.description : ''}"
+                                        th:data-max-per-user="${fs.maxPerUser != null ? fs.maxPerUser : ''}"
+                                        onclick="editFlashSale(this)" title="Sửa">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <a th:href="@{/admin/flash-sales/{id}/items(id=${fs.id})}"
+                                        class="btn btn-sm btn-blue"><i class="fa-solid fa-cubes"></i> <span>Sản
+                                            Phẩm</span></a>
+                                    <button type="button" class="btn btn-sm btn-red" title="Xóa"
+                                        th:onclick="'deleteFlashSaleApi(' + ${fs.id} + ')'"><i
+                                            class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${flashSales == null or flashSales.isEmpty()}" class="empty-state">
+                <i class="fa-solid fa-bolt"></i>
+                <p>Chưa có chương trình Flash Sale nào.</p>
+            </div>
+        </div>
+
+        <!-- Create Flash Sale Modal -->
+        <div class="modal-overlay" id="flashSaleModal">
+            <div class="modal">
+                <div class="modal-title"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i><span
+                        id="modalTitle">Tạo Flash Sale Mới</span></div>
+                <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/save}" method="POST"
+                    id="flashSaleForm" enctype="multipart/form-data">
+                    <input type="hidden" name="id" id="fsId">
+                    <div class="form-group">
+                        <label>Tên Chương Trình</label>
+                        <input autocomplete="off" type="text" name="name" id="fsName" required
+                            placeholder="VD: Flash Sale Tháng 4">
+                    </div>
+                    <div class="form-group">
+                        <label>Mô Tả <span style="font-weight:400; color:var(--muted); font-size:11px;">(Tùy chọn - Hiển
+                                thị dưới banner)</span></label>
+                        <textarea autocomplete="off" name="description" id="fsDescription" rows="2"
+                            placeholder="VD: Giảm đến 50% các linh kiện CPU, GPU trong 24 giờ..."
+                            style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; resize:vertical; outline: none;"
+                            onfocus="this.style.borderColor='var(--gold)'"
+                            onblur="this.style.borderColor='#cbd5e1'"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Bắt Đầu</label>
+                            <input autocomplete="off" type="datetime-local" name="startTime" id="fsStart" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kết Thúc</label>
+                            <input autocomplete="off" type="datetime-local" name="endTime" id="fsEnd" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Giới Hạn Mua / Người <span
+                                style="font-weight:400; color:var(--muted); font-size:11px;">(Tùy chọn - để trống =
+                                không giới hạn)</span></label>
+                        <input autocomplete="off" type="number" name="maxPerUser" id="fsMaxPerUser" min="1"
+                            placeholder="VD: 3 (mỗi user chỉ mua tối đa 3 sản phẩm)" style="width:100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Ảnh Banner (Tải lên hoặc dùng Link)</label>
+
+                        <div
+                            style="display: flex; gap: 15px; align-items: flex-start; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <!-- Image Preview -->
+                            <div
+                                style="flex-shrink: 0; width: 100px; height: 60px; background: var(--dark); border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
+                                <img id="bannerPreviewImg" src="/images/placeholder.png"
+                                    style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            </div>
+
+                            <!-- Inputs -->
+                            <div
+                                style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                                <input autocomplete="off" type="file" name="bannerImageFile" id="fsBannerFile"
+                                    accept="image/*"
+                                    style="font-size: 12px; padding: 6px; background: var(--black); border-radius: 4px; border: 1px solid #e2e8f0; color: var(--cream); width: 100%; cursor: pointer;"
+                                    onchange="previewBannerFile(this)">
+
+                                <div id="urlInputGroup"
+                                    style="display: none; align-items: center; gap: 8px; margin-top: 4px;">
+                                    <span style="font-size: 11px; color: var(--muted); white-space: nowrap;">URL:</span>
+                                    <input autocomplete="off" type="text" name="bannerImage" id="fsBannerUrl"
+                                        placeholder="https://..."
+                                        style="flex-grow: 1; font-size: 12px; padding: 6px 8px; background: var(--black); border: 1px solid #e2e8f0; border-radius: 4px; color: var(--cream);"
+                                        oninput="previewBannerUrl(this.value)">
+                                </div>
+                                <a href="javascript:void(0)"
+                                    onclick="document.getElementById('urlInputGroup').style.display = document.getElementById('urlInputGroup').style.display === 'none' ? 'flex' : 'none'; this.innerText = document.getElementById('urlInputGroup').style.display === 'none' ? '+ Dùng link ảnh' : '- Ẩn link ảnh';"
+                                    style="font-size: 11px; color: var(--gold); text-decoration: none; align-self: flex-start; margin-top: 2px;">+
+                                    Dùng link ảnh</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn" style="color: black;" onclick="closeModal()">Hủy</button>
+                        <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span
+                                id="btnSubmitText">Tạo Chương Trình</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script th:src="@{/js/admin/flash-sales.js?v=2}"></script>
+    </div>
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
+</body>
+
+</html>

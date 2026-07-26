@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - LUXURY | PC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <!-- HEADER CONTAINER -->
+    <div th:replace="~{layout/header :: header}"></div>
+
+    <div class="container" style="padding-top: 20px;">
+        <!-- BREADCRUMB -->
+        <div class="breadcrumb" style="margin-bottom: 25px;">
+            <a th:href="@{/}">Trang chủ</a> &gt; <span>Đăng nhập</span>
+        </div>
+
+        <!-- AUTH FORM LAYOUT -->
+        <div class="auth-layout" style="grid-template-columns: 1fr; max-width: 540px; margin: 0 auto 60px auto;">
+
+            <!-- CỘT ĐĂNG NHẬP -->
+            <div class="auth-box reset-form">
+                <h1 class="auth-box-title" style="font-size: 24px; margin-bottom: 6px;">ĐĂNG NHẬP</h1>
+                <p class="auth-box-subtitle" style="margin-bottom: 24px;">Chào mừng bạn trở lại! Đăng nhập để tiếp tục
+                    mua sắm</p>
+                <form action="/login" method="POST" novalidate onsubmit="return validateLogin(event)">
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Email hoặc Tên đăng nhập *', name='username', type='text', placeholder='Email hoặc username', required=true, id=null, value=null)}">
+                    </div>
+                    <div
+                        th:replace="~{custominput/components :: textInput(label='Mật khẩu *', name='password', type='password', placeholder='••••••••', required=true, id=null, value=null)}">
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember-me"> Ghi nhớ đăng nhập
+                        </label>
+                        <a th:href="@{/auth/forgot-password}" style="color: #666; text-decoration: underline;">Quên mật
+                            khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">ĐĂNG NHẬP</button>
+
+                    <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                        Chưa có tài khoản? <a th:href="@{/auth/register}"
+                            style="color: var(--accent-blue); font-weight: 600; text-decoration: underline;">Đăng ký
+                            ngay</a>
+                    </div>
+
+                    <div class="or-divider"><span>HOẶC</span></div>
+
+                    <div class="social-login">
+                        <a href="/oauth2/authorization/google" class="btn btn-outline">
+                            <i class="fa-brands fa-google" style="color: #DB4437; font-size: 18px;"></i> Google
+                        </a>
+                        <a href="/oauth2/authorization/facebook" class="btn btn-outline">
+                            <i class="fa-brands fa-facebook" style="color: #1877F2; font-size: 18px;"></i> Facebook
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER CONTAINER -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+
+    <script th:src="@{/js/account/login.js}"></script>
+    <script th:src="@{/js/script.js}"></script>
+</body>
+
+</html>
