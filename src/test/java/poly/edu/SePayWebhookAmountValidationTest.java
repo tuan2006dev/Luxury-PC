@@ -8,6 +8,7 @@ import poly.edu.dao.OrderDAO;
 import poly.edu.dao.SePayTransactionRepository;
 import poly.edu.entity.Order;
 import poly.edu.entity.SePayTransaction;
+import poly.edu.service.SePayPaymentSession;
 import poly.edu.service.SePaySignatureVerifier;
 import poly.edu.service.SePayWebhookResult;
 import poly.edu.service.SePayWebhookService;
@@ -50,7 +51,8 @@ class SePayWebhookAmountValidationTest {
                 mock(SePaySignatureVerifier.class),
                 properties,
                 transactions,
-                orders);
+                orders,
+                mock(SePayPaymentSession.class));
         String payload = "{"
                 + "\"id\":3001,"
                 + "\"accountNumber\":\"123456789\","

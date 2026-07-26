@@ -42,6 +42,10 @@ public class SePayTransaction {
     @Column(name = "raw_payload", nullable = false, columnDefinition = "TEXT")
     private String rawPayload;
 
+    @Column(name = "transaction_date")
+    private Instant transactionDate;
+
+    // Existing received_at is the authoritative webhookReceivedAt timestamp.
     @Column(name = "received_at", nullable = false)
     private Instant receivedAt;
 
@@ -116,12 +120,28 @@ public class SePayTransaction {
         this.rawPayload = rawPayload;
     }
 
+    public Instant getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(Instant transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
     public Instant getReceivedAt() {
         return receivedAt;
     }
 
     public void setReceivedAt(Instant receivedAt) {
         this.receivedAt = receivedAt;
+    }
+
+    public Instant getWebhookReceivedAt() {
+        return receivedAt;
+    }
+
+    public void setWebhookReceivedAt(Instant webhookReceivedAt) {
+        this.receivedAt = webhookReceivedAt;
     }
 
     public Instant getProcessedAt() {
