@@ -49,15 +49,15 @@ window.showConfirmPopup = window.showConfirm;
 // =======================================================================
 window.confirmNavigate = function (event, message, url) {
     if (event) event.preventDefault(); // Chặn việc trình duyệt tự động nhảy sang link mới
-    
+
     // Lấy thẻ <a> an toàn để tránh lỗi event.currentTarget = null
-    const trigger = (event && event.currentTarget) ? event.currentTarget : 
-                    (event && event.target ? event.target.closest('a') : null);
-                    
+    const trigger = (event && event.currentTarget) ? event.currentTarget :
+        (event && event.target ? event.target.closest('a') : null);
+
     if (trigger && trigger.style) {
         trigger.style.pointerEvents = 'none'; // Khóa nút không cho bấm 2 lần liên tục
     }
-    
+
     // Gọi popup xác nhận lên
     window.showConfirm(message).then(ok => {
         if (ok) {
@@ -84,15 +84,15 @@ window.confirmNavigate = function (event, message, url) {
 // =======================================================================
 window.confirmSubmit = function (event, message) {
     if (event) event.preventDefault(); // Chặn việc Form tự động Submit (tải lại trang)
-    
+
     // Lấy thẻ form một cách an toàn
-    const form = (event && event.target && event.target.tagName === 'FORM') ? event.target : 
-                 (event && event.target ? event.target.closest('form') : null);
-    
+    const form = (event && event.target && event.target.tagName === 'FORM') ? event.target :
+        (event && event.target ? event.target.closest('form') : null);
+
     // Tạm thời vô hiệu hóa nút Submit bên trong form để chống spam click
     const submitBtn = form ? form.querySelector('[type="submit"]') : null;
     if (submitBtn) submitBtn.disabled = true;
-    
+
     // Gọi popup xác nhận lên
     window.showConfirm(message).then(ok => {
         if (ok) {
@@ -150,18 +150,25 @@ window.closeConfirmModal = function () {
 
 // ===== 3. CHUẨN TOAST THÔNG BÁO NHANH: showAlert(msg, isSuccess) =====
 window.showAlert = function (msg, isSuccess) {
+    let titleStr = msg;
+    let successState = isSuccess;
+    if (typeof msg === 'object' && msg !== null) {
+        titleStr = msg.message || msg.title || msg.text || JSON.stringify(msg);
+        if (msg.isSuccess !== undefined) successState = msg.isSuccess;
+    }
+
     if (typeof Swal !== 'undefined') {
-        const iconType = isSuccess === false ? 'error' : (isSuccess === true ? 'success' : 'info');
+        const iconType = successState === false ? 'error' : (successState === true ? 'success' : 'info');
         Swal.fire({
             toast: true,
             position: 'top-end',
             icon: iconType,
-            title: msg,
+            title: titleStr,
             showConfirmButton: false,
             timer: 3000,
             timerProgressBar: true
         });
     } else {
-        alert(msg);
+        alert(titleStr);
     }
 };

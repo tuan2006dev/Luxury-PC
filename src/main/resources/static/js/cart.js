@@ -183,7 +183,7 @@ function removeItem(id) {
                                 updateGrandTotal();
                                 const successMsg = "Đã xóa sản phẩm khỏi giỏ hàng thành công!";
                                 if (typeof window.showAlert === 'function') {
-                                    window.showAlert({ message: successMsg, isSuccess: true });
+                                    window.showAlert(successMsg, true);
                                 }
                             }, 300);
                         } else {
