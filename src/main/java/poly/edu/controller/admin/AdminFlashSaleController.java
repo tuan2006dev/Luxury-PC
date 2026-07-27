@@ -116,13 +116,27 @@ public class AdminFlashSaleController {
     }
 
     @GetMapping("/{id}/items")
-    public String manageItems(@PathVariable("id") Integer id, Model model) {
+    public String itemsPage(
+            @PathVariable("id") Integer id,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            Model model) {
         FlashSale sale = flashSaleService.getById(id);
         if (sale == null)
             return "redirect:/admin/flash-sales";
 
+        java.util.List<FlashSaleItem> items = flashSaleService.getItemsBySaleId(id);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kwLower = keyword.trim().toLowerCase();
+            items = items.stream()
+                    .filter(item -> item.getProduct() != null && 
+                            item.getProduct().getName() != null && 
+                            item.getProduct().getName().toLowerCase().contains(kwLower))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
         model.addAttribute("flashSale", sale);
-        model.addAttribute("items", flashSaleService.getItemsBySaleId(id));
+        model.addAttribute("items", items);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("products", productDAO.findAll());
         return "admin/flash-sale-items";
     }

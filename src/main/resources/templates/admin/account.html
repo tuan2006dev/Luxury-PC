@@ -26,7 +26,7 @@
                 <h1 style="font-size: 1.6rem; margin: 0; color: #0f172a;"><i class="fa-solid fa-users-gear"
                         style="color:var(--gold);margin-right:10px;"></i><span>Quản Lý Tài Khoản</span></h1>
                 <p style="color: var(--muted); font-size: 0.85rem; margin: 4px 0 0 0;">Quản lý và cấp quyền tài khoản
-                    người dùng, nhân viên</p>
+                    người dùng</p>
             </div>
             <div th:replace="~{admin/layout/header :: adminProfile}"></div>
         </div>
@@ -44,13 +44,13 @@
         <div style="margin-bottom: 1.5rem;">
             <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()" type="button"><i
                     class="fa-solid fa-plus"></i> <span class="btn-text">Thêm
-                    Staff Mới</span></button>
+                    Customer Mới</span></button>
         </div>
 
         <div class="card add-form-container" id="userForm" th:classappend="${user.id != null ? 'active' : ''}">
 
             <div class="card-header">
-                <h2>Thêm / Cập nhật Staff</h2>
+                <h2>Thêm / Cập nhật Customer</h2>
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát" type="button"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
@@ -113,7 +113,7 @@
                     <div class="input-group">
                         <label>Vai trò</label>
                         <select name="roleName">
-                            <option value="USER" th:selected="${currentRole == 'USER'}">Khách hàng (USER)</option>
+                            <option value="USER" th:selected="${currentRole == 'USER'}">Customer (USER)</option>
                             <option value="STAFF" th:selected="${currentRole == 'STAFF'}">Nhân viên (STAFF)</option>
                             <option value="ADMIN" th:selected="${currentRole == 'ADMIN'}">Quản trị viên (ADMIN)</option>
                         </select>
@@ -139,7 +139,7 @@
                 </div>
 
                 <button type="submit">
-                    Lưu Staff
+                    Lưu Customer
                 </button>
 
             </form>
@@ -148,7 +148,7 @@
 
         <div class="card">
 
-            <h2>Danh sách Staff</h2>
+            <h2>Danh sách Customer</h2>
 
             <div class="table-wrapper" style="width: 100%; max-height: 50vh; overflow-x: hidden; overflow-y: auto;">
                 <table style="width: 100%;">
