@@ -135,6 +135,7 @@ window.showToast = function (msg, type = 'success') {
     }
 
     clearTimeout(toastTimeout);
+    el.style.display = '';
     el.classList.remove('show', 'active', 'warning');
     void el.offsetWidth;
 
