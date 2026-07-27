@@ -2,11 +2,13 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Thanh Toán - Luxury PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/modal-system.css(v=1)}">
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.default.min.css" rel="stylesheet">
     <style>
@@ -51,10 +53,28 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
         }
+
         .shake {
             animation: shake 0.5s;
             border-color: var(--danger) !important;
@@ -418,6 +438,54 @@
             margin-bottom: 8px;
             color: var(--text-muted);
         }
+
+        /* ===== FIX: Checkout Modal Overrides ===== */
+        #voucherModal,
+        #addressBookModal {
+            display: none !important;
+            position: fixed !important;
+            z-index: 99999 !important;
+            inset: 0 !important;
+            background-color: rgba(0, 0, 0, 0.6) !important;
+            backdrop-filter: blur(4px) !important;
+            align-items: center !important;
+            justify-content: center !important;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #voucherModal.active,
+        #addressBookModal.active {
+            display: flex !important;
+            opacity: 1 !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        #voucherModal>.lux-modal-container,
+        #addressBookModal>.lux-modal-container {
+            background-color: #fff;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(0) scale(1);
+        }
+
+        #addressBookModal>.lux-modal-container {
+            max-width: 600px;
+        }
+
+        /* Responsive checkout grid */
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
     </style>
 </head>
 
@@ -473,9 +541,11 @@
                 <div>
                     <!-- Shipping Info -->
                     <div class="checkout-section">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
                             <div class="section-title" style="margin-bottom:0;">1. THÔNG TIN GIAO HÀNG</div>
-                            <button type="button" th:if="${#authentication.name != 'anonymousUser'}" onclick="openAddressBookModal()" 
+                            <button type="button" th:if="${#authentication.name != 'anonymousUser'}"
+                                onclick="openAddressBookModal()"
                                 style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 4px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
                                 <i class="fa-solid fa-address-book"></i> <span>Sổ địa chỉ</span>
                             </button>
@@ -634,17 +704,23 @@
                         </div>
 
                         <!-- Voucher Button -->
-                        <div class="voucher-box" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 1px dashed var(--primary); border-radius: 8px; cursor: pointer; background: #f8fafc; margin-bottom: 5px; transition: all 0.2s;" onclick="openVoucherModal()" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                        <div class="voucher-box"
+                            style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 1px dashed var(--primary); border-radius: 8px; cursor: pointer; background: #f8fafc; margin-bottom: 5px; transition: all 0.2s;"
+                            onclick="openVoucherModal()" onmouseover="this.style.background='#f1f5f9'"
+                            onmouseout="this.style.background='#f8fafc'">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <i class="fa-solid fa-ticket" style="color: var(--primary); font-size: 20px;"></i>
                                 <div style="display: flex; flex-direction: column;">
-                                    <span style="font-weight: 600; font-size: 14px; color: var(--text-main);" id="selectedVoucherText">Chọn hoặc nhập mã khuyến mãi</span>
+                                    <span style="font-weight: 600; font-size: 14px; color: var(--text-main);"
+                                        id="selectedVoucherText">Chọn hoặc nhập mã khuyến mãi</span>
                                 </div>
                             </div>
                             <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
                         </div>
-                        <div id="voucherMessage" style="font-size:13px; margin-bottom:15px; display:none; text-align: right; font-weight: 500;"></div>
-                        
+                        <div id="voucherMessage"
+                            style="font-size:13px; margin-bottom:15px; display:none; text-align: right; font-weight: 500;">
+                        </div>
+
                         <!-- Input ẩn để lưu mã -->
                         <input type="hidden" id="voucherInput" th:value="${voucherCode}" />
                         <input type="hidden" id="freeshipInput" th:value="${freeshipCode}" />
@@ -703,77 +779,128 @@
     </div>
 
     <!-- Address Book Modal -->
-    <div id="addressBookModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
-        <div style="background:#fff; width: 90%; max-width: 600px; border-radius: 8px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; max-height: 80vh; display: flex; flex-direction: column;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-                <h3 style="margin:0; font-size:18px;">Chọn Địa Chỉ Giao Hàng</h3>
-                <button type="button" onclick="closeAddressBookModal()" style="background:none; border:none; font-size:20px; cursor:pointer; color:#64748b;"><i class="fa-solid fa-xmark"></i></button>
+    <div id="addressBookModal" class="lux-modal-backdrop" onclick="closeAddressBookModal()">
+        <div class="lux-modal-container" onclick="event.stopPropagation()">
+            <div class="lux-modal-header">
+                <h3 class="lux-modal-title">Chọn Địa Chỉ Giao Hàng</h3>
+                <button type="button" class="lux-modal-close" onclick="closeAddressBookModal()"><i
+                        class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="addressBookList" style="flex-grow: 1; overflow-y: auto; padding-right: 8px; display: flex; flex-direction: column; gap: 12px;">
-                <div style="text-align:center; padding: 20px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách địa chỉ...</div>
+            <div class="lux-modal-body" id="addressBookList" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="text-align:center; padding: 20px; color:#64748b;"><i
+                        class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách địa chỉ...</div>
             </div>
         </div>
     </div>
 
     <!-- Voucher Modal -->
-    <div id="voucherModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
-        <div class="modal-content" style="background-color: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; margin: 0 15px;">
-            <span class="close" onclick="closeVoucherModal()" style="position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #64748b; line-height: 1;">&times;</span>
-            <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 700; color: #0f172a;"><i class="fa-solid fa-ticket" style="color: var(--primary); margin-right: 8px;"></i> LUXURY PC VOUCHER</h3>
-            
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <input type="text" id="manualVoucherCode" placeholder="Nhập mã voucher..." style="flex: 1; padding: 12px 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; outline: none; text-transform: uppercase;" />
-                <button type="button" onclick="applyManualVoucher()" style="padding: 0 20px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">ÁP DỤNG</button>
+    <div id="voucherModal" class="lux-modal-backdrop" onclick="closeVoucherModal()">
+        <div class="lux-modal-container lux-modal-small" onclick="event.stopPropagation()">
+            <div class="lux-modal-header">
+                <h3 class="lux-modal-title"><i class="fa-solid fa-ticket" style="color: var(--primary);"></i> LUXURY PC
+                    VOUCHER</h3>
+                <button type="button" class="lux-modal-close" onclick="closeVoucherModal()"><i
+                        class="fa-solid fa-xmark"></i></button>
             </div>
+            <div class="lux-modal-body">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="manualVoucherCode" placeholder="Nhập mã voucher..."
+                        style="flex: 1; padding: 12px 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; outline: none; text-transform: uppercase;" />
+                    <button type="button" class="btn btn-primary" onclick="applyManualVoucher()">ÁP DỤNG</button>
+                </div>
 
-            <div style="max-height: 400px; overflow-y: auto; padding-right: 5px;" class="custom-scrollbar">
-                <p th:if="${userVouchers == null or userVouchers.isEmpty()}" style="text-align: center; color: #64748b; margin: 30px 0; font-size: 14px;">Bạn chưa lưu mã giảm giá nào.</p>
-                
-                <th:block th:if="${userVouchers != null and !userVouchers.isEmpty()}">
-                    <!-- FREESHIP VOUCHERS -->
-                    <div th:if="${#lists.size(userVouchers.?[voucher.voucherScope != null and voucher.voucherScope.name() == 'FREESHIP']) > 0}">
-                        <h4 style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 12px; margin-top: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-truck-fast" style="color: #059669;"></i> Miễn phí vận chuyển
-                        </h4>
-                        <div th:each="uv : ${userVouchers}" th:if="${uv.voucher.voucherScope != null and uv.voucher.voucherScope.name() == 'FREESHIP'}" class="voucher-item" th:data-code="${uv.voucher.code}" onclick="selectVoucher(this.getAttribute('data-code'), 'FREESHIP')" style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='#059669'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
-                            <div style="width: 110px; background: #059669; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 15px; border-right: 2px dashed rgba(255,255,255,0.5);">
-                                <i class="fa-solid fa-truck-fast" style="font-size: 28px; margin-bottom: 8px;"></i>
-                                <span style="font-size: 11px; font-weight: 600; text-align: center;">Freeship</span>
-                            </div>
-                            <div style="padding: 12px 15px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative;">
-                                <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 4px; text-transform: uppercase;" th:text="${uv.voucher.code}"></div>
-                                <div style="font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600;" th:text="${uv.voucher.discountValue == null ? 'Miễn phí vận chuyển' : (uv.voucher.discountType != null and uv.voucher.discountType?.name() == 'PERCENTAGE' ? 'Giảm phí vận chuyển ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm phí vận chuyển ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ')}"></div>
-                                <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" th:text="${uv.voucher.description != null ? uv.voucher.description : ''}"></div>
-                                <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;" th:if="${uv.voucher.minOrderAmount != null and uv.voucher.minOrderAmount > 0}" th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(uv.voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
-                                <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: auto;">
-                                    <span style="font-size: 11px; color: #ef4444; font-weight: 500;" th:if="${uv.voucher.endDate != null}" th:text="'HSD: ' + ${#dates.format(uv.voucher.endDate, 'dd/MM/yyyy')}"></span>
+                <div style="padding-right: 5px;" class="custom-scrollbar">
+                    <p th:if="${userVouchers == null or userVouchers.isEmpty()}"
+                        style="text-align: center; color: #64748b; margin: 30px 0; font-size: 14px;">Bạn chưa lưu mã
+                        giảm giá nào.</p>
+
+                    <th:block th:if="${userVouchers != null and !userVouchers.isEmpty()}">
+                        <!-- FREESHIP VOUCHERS -->
+                        <div
+                            th:if="${#lists.size(userVouchers.?[voucher.voucherScope != null and voucher.voucherScope.name() == 'FREESHIP']) > 0}">
+                            <h4
+                                style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 12px; margin-top: 5px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-truck-fast" style="color: #059669;"></i> Miễn phí vận chuyển
+                            </h4>
+                            <div th:each="uv : ${userVouchers}"
+                                th:if="${uv.voucher.voucherScope != null and uv.voucher.voucherScope.name() == 'FREESHIP'}"
+                                class="voucher-item" th:data-code="${uv.voucher.code}"
+                                onclick="selectVoucher(this.getAttribute('data-code'), 'FREESHIP')"
+                                style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;"
+                                onmouseover="this.style.borderColor='#059669'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'"
+                                onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                                <div
+                                    style="width: 110px; background: #059669; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 15px; border-right: 2px dashed rgba(255,255,255,0.5);">
+                                    <i class="fa-solid fa-truck-fast" style="font-size: 28px; margin-bottom: 8px;"></i>
+                                    <span style="font-size: 11px; font-weight: 600; text-align: center;">Freeship</span>
+                                </div>
+                                <div
+                                    style="padding: 12px 15px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative;">
+                                    <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 4px; text-transform: uppercase;"
+                                        th:text="${uv.voucher.code}"></div>
+                                    <div style="font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600;"
+                                        th:text="${uv.voucher.discountValue == null ? 'Miễn phí vận chuyển' : (uv.voucher.discountType != null and uv.voucher.discountType?.name() == 'PERCENTAGE' ? 'Giảm phí vận chuyển ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm phí vận chuyển ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ')}">
+                                    </div>
+                                    <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                                        th:text="${uv.voucher.description != null ? uv.voucher.description : ''}"></div>
+                                    <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;"
+                                        th:if="${uv.voucher.minOrderAmount != null and uv.voucher.minOrderAmount > 0}"
+                                        th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(uv.voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                    </div>
+                                    <div
+                                        style="display: flex; justify-content: flex-end; align-items: center; margin-top: auto;">
+                                        <span style="font-size: 11px; color: #ef4444; font-weight: 500;"
+                                            th:if="${uv.voucher.endDate != null}"
+                                            th:text="'HSD: ' + ${#dates.format(uv.voucher.endDate, 'dd/MM/yyyy')}"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- DISCOUNT VOUCHERS -->
-                    <div th:if="${#lists.size(userVouchers.?[voucher.voucherScope == null or voucher.voucherScope.name() != 'FREESHIP']) > 0}">
-                        <h4 style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 12px; margin-top: 15px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-tags" style="color: var(--primary);"></i> Mã giảm giá / Hoàn tiền
-                        </h4>
-                        <div th:each="uv : ${userVouchers}" th:if="${uv.voucher.voucherScope == null or uv.voucher.voucherScope.name() != 'FREESHIP'}" class="voucher-item" th:data-code="${uv.voucher.code}" onclick="selectVoucher(this.getAttribute('data-code'), 'GLOBAL')" style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
-                            <div style="width: 110px; background: var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 15px; border-right: 2px dashed rgba(255,255,255,0.5);">
-                                <i class="fa-solid fa-gift" style="font-size: 28px; margin-bottom: 8px;"></i>
-                                <span style="font-size: 11px; font-weight: 600; text-align: center;" th:text="${uv.voucher.voucherScope != null ? (uv.voucher.voucherScope?.name() == 'CATEGORY' ? 'Danh mục' : 'Toàn sàn') : 'Giảm giá'}"></span>
-                            </div>
-                            <div style="padding: 12px 15px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative;">
-                                <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 4px; text-transform: uppercase;" th:text="${uv.voucher.code}"></div>
-                                <div style="font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600;" th:text="${uv.voucher.discountValue == null ? 'Khuyến mãi' : (uv.voucher.discountType != null and uv.voucher.discountType?.name() == 'PERCENTAGE' ? 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ')}"></div>
-                                <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" th:text="${uv.voucher.description != null ? uv.voucher.description : ''}"></div>
-                                <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;" th:if="${uv.voucher.minOrderAmount != null and uv.voucher.minOrderAmount > 0}" th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(uv.voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
-                                <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: auto;">
-                                    <span style="font-size: 11px; color: #ef4444; font-weight: 500;" th:if="${uv.voucher.endDate != null}" th:text="'HSD: ' + ${#dates.format(uv.voucher.endDate, 'dd/MM/yyyy')}"></span>
+
+                        <!-- DISCOUNT VOUCHERS -->
+                        <div
+                            th:if="${#lists.size(userVouchers.?[voucher.voucherScope == null or voucher.voucherScope.name() != 'FREESHIP']) > 0}">
+                            <h4
+                                style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 12px; margin-top: 15px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-tags" style="color: var(--primary);"></i> Mã giảm giá / Hoàn tiền
+                            </h4>
+                            <div th:each="uv : ${userVouchers}"
+                                th:if="${uv.voucher.voucherScope == null or uv.voucher.voucherScope.name() != 'FREESHIP'}"
+                                class="voucher-item" th:data-code="${uv.voucher.code}"
+                                onclick="selectVoucher(this.getAttribute('data-code'), 'GLOBAL')"
+                                style="display: flex; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; overflow: hidden; transition: all 0.2s;"
+                                onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'"
+                                onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                                <div
+                                    style="width: 110px; background: var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 15px; border-right: 2px dashed rgba(255,255,255,0.5);">
+                                    <i class="fa-solid fa-gift" style="font-size: 28px; margin-bottom: 8px;"></i>
+                                    <span style="font-size: 11px; font-weight: 600; text-align: center;"
+                                        th:text="${uv.voucher.voucherScope != null ? (uv.voucher.voucherScope?.name() == 'CATEGORY' ? 'Danh mục' : 'Toàn sàn') : 'Giảm giá'}"></span>
+                                </div>
+                                <div
+                                    style="padding: 12px 15px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative;">
+                                    <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 4px; text-transform: uppercase;"
+                                        th:text="${uv.voucher.code}"></div>
+                                    <div style="font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600;"
+                                        th:text="${uv.voucher.discountValue == null ? 'Khuyến mãi' : (uv.voucher.discountType != null and uv.voucher.discountType?.name() == 'PERCENTAGE' ? 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ')}">
+                                    </div>
+                                    <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                                        th:text="${uv.voucher.description != null ? uv.voucher.description : ''}"></div>
+                                    <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;"
+                                        th:if="${uv.voucher.minOrderAmount != null and uv.voucher.minOrderAmount > 0}"
+                                        th:text="'Đơn tối thiểu ' + ${#numbers.formatDecimal(uv.voucher.minOrderAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                    </div>
+                                    <div
+                                        style="display: flex; justify-content: flex-end; align-items: center; margin-top: auto;">
+                                        <span style="font-size: 11px; color: #ef4444; font-weight: 500;"
+                                            th:if="${uv.voucher.endDate != null}"
+                                            th:text="'HSD: ' + ${#dates.format(uv.voucher.endDate, 'dd/MM/yyyy')}"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </th:block>
+                    </th:block>
+                </div>
             </div>
         </div>
     </div>
@@ -784,178 +911,198 @@
         const baseTotal = /*[[${totalPrice}]]*/ 0;
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-    <script>
-        // State
-        let currentShipping = 30000;
-        let currentShippingMethodName = 'Giao Hàng Tiêu Chuẩn';
-        let currentOrderDiscount = 0;
-        let currentFreeshipDiscount = 0;
-        let voucherSelectInstance;
-        let userLat = null;
-        let userLon = null;
+        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+        <script>
+            // State
+            let currentShipping = 30000;
+            let currentShippingMethodName = 'Giao Hàng Tiêu Chuẩn';
+            let currentOrderDiscount = 0;
+            let currentFreeshipDiscount = 0;
+            let voucherSelectInstance;
+            let userLat = null;
+            let userLon = null;
 
-        // Number formatter
-        const formatter = new Intl.NumberFormat('vi-VN');
+            // Number formatter
+            const formatter = new Intl.NumberFormat('en-US');
 
-        function updateTotal() {
-            document.getElementById('shippingFeeText').innerText = formatter.format(currentShipping) + 'đ';
-            document.getElementById('discountText').innerText = '-' + formatter.format(currentOrderDiscount) + 'đ';
+            function updateTotal() {
+                document.getElementById('shippingFeeText').innerText = formatter.format(currentShipping) + 'đ';
+                document.getElementById('discountText').innerText = '-' + formatter.format(currentOrderDiscount) + 'đ';
 
-            const freeshipRow = document.getElementById('freeshipDiscountRow');
-            if (freeshipRow) {
-                if (currentFreeshipDiscount > 0) {
-                    freeshipRow.style.display = 'flex';
-                    document.getElementById('freeshipDiscountText').innerText = '-' + formatter.format(currentFreeshipDiscount) + 'đ';
+                const freeshipRow = document.getElementById('freeshipDiscountRow');
+                if (freeshipRow) {
+                    if (currentFreeshipDiscount > 0) {
+                        freeshipRow.style.display = 'flex';
+                        document.getElementById('freeshipDiscountText').innerText = '-' + formatter.format(currentFreeshipDiscount) + 'đ';
+                    } else {
+                        freeshipRow.style.display = 'none';
+                    }
+                }
+
+                const finalShipping = Math.max(0, currentShipping - currentFreeshipDiscount);
+                const finalTotal = Math.max(0, (baseTotal - currentOrderDiscount) + finalShipping);
+                document.getElementById('finalTotalText').innerText = formatter.format(finalTotal) + 'đ';
+            }
+
+            // Initialize Total
+            document.addEventListener('DOMContentLoaded', () => {
+                fetchShippingMethods('');
+                loadProvinces();
+            });
+
+            // Voucher Modal Logic
+            function openVoucherModal() {
+                const modal = document.getElementById('voucherModal');
+                if (!modal) return;
+                // Always move to body first to escape any CSS stacking context
+                if (modal.parentElement !== document.body) {
+                    document.body.appendChild(modal);
+                }
+                // Force full-screen overlay using setAttribute to bypass !important rules
+                modal.setAttribute('style',
+                    'display:flex !important;' +
+                    'position:fixed !important;' +
+                    'inset:0 !important;' +
+                    'z-index:2147483647 !important;' +
+                    'background-color:rgba(0,0,0,0.6) !important;' +
+                    'align-items:center !important;' +
+                    'justify-content:center !important;' +
+                    'opacity:1 !important;'
+                );
+                modal.classList.add('active');
+            }
+
+            function closeVoucherModal() {
+                const modal = document.getElementById('voucherModal');
+                if (!modal) return;
+                modal.classList.remove('active');
+                modal.removeAttribute('style');
+            }
+
+            function selectVoucher(code, scope) {
+                if (scope === 'FREESHIP') {
+                    document.getElementById('freeshipInput').value = code;
                 } else {
-                    freeshipRow.style.display = 'none';
+                    document.getElementById('voucherInput').value = code;
+                }
+
+                const codeVal = document.getElementById('voucherInput').value;
+                const freeshipVal = document.getElementById('freeshipInput').value;
+                let displayMsg = [];
+                if (codeVal) displayMsg.push('Đơn hàng: ' + codeVal);
+                if (freeshipVal) displayMsg.push('Freeship: ' + freeshipVal);
+
+                const selectedTextEl = document.getElementById('selectedVoucherText');
+                if (selectedTextEl) {
+                    selectedTextEl.innerText = displayMsg.length > 0 ? displayMsg.join(' | ') : 'Chọn hoặc nhập mã khuyến mãi';
+                    selectedTextEl.style.color = displayMsg.length > 0 ? 'var(--primary)' : 'var(--text-main)';
+                }
+                closeVoucherModal();
+                applyVoucher();
+            }
+
+            function applyManualVoucher() {
+                const code = document.getElementById('manualVoucherCode').value.trim();
+                if (code) {
+                    selectVoucher(code.toUpperCase(), 'GLOBAL');
+                } else {
+                    alert('Vui lòng nhập mã giảm giá!');
                 }
             }
 
-            const finalShipping = Math.max(0, currentShipping - currentFreeshipDiscount);
-            const finalTotal = Math.max(0, (baseTotal - currentOrderDiscount) + finalShipping);
-            document.getElementById('finalTotalText').innerText = formatter.format(finalTotal) + 'đ';
-        }
+            function selectShipping(el, fee, name) {
+                document.querySelectorAll('input[name="shippingMethodDummy"]').forEach(r => {
+                    r.checked = false;
+                    r.closest('.radio-block').classList.remove('active');
+                });
+                el.querySelector('input').checked = true;
+                el.classList.add('active');
+                currentShipping = fee;
+                if (name) currentShippingMethodName = name;
+                updateTotal();
 
-        // Initialize Total
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchShippingMethods('');
-            loadProvinces();
-        });
-
-        // Voucher Modal Logic
-        function openVoucherModal() {
-            document.getElementById('voucherModal').style.display = 'flex';
-        }
-
-        function closeVoucherModal() {
-            document.getElementById('voucherModal').style.display = 'none';
-        }
-        
-        function selectVoucher(code, scope) {
-            if (scope === 'FREESHIP') {
-                document.getElementById('freeshipInput').value = code;
-            } else {
-                document.getElementById('voucherInput').value = code;
+                // Nếu đang có voucher thì áp dụng lại để tính lại Freeship
+                const code = document.getElementById('voucherInput').value.trim();
+                const freeshipCode = document.getElementById('freeshipInput').value.trim();
+                if (code || freeshipCode) {
+                    applyVoucher();
+                }
             }
 
-            const codeVal = document.getElementById('voucherInput').value;
-            const freeshipVal = document.getElementById('freeshipInput').value;
-            let displayMsg = [];
-            if (codeVal) displayMsg.push('Đơn hàng: ' + codeVal);
-            if (freeshipVal) displayMsg.push('Freeship: ' + freeshipVal);
-
-            const selectedTextEl = document.getElementById('selectedVoucherText');
-            if (selectedTextEl) {
-                selectedTextEl.innerText = displayMsg.length > 0 ? displayMsg.join(' | ') : 'Chọn hoặc nhập mã khuyến mãi';
-                selectedTextEl.style.color = displayMsg.length > 0 ? 'var(--primary)' : 'var(--text-main)';
+            function selectPayment(el) {
+                document.querySelectorAll('input[name="paymentMethod"]').forEach(r => {
+                    r.closest('.radio-block').classList.remove('active');
+                });
+                el.querySelector('input').checked = true;
+                el.classList.add('active');
             }
-            closeVoucherModal();
-            applyVoucher();
-        }
-        
-        function applyManualVoucher() {
-            const code = document.getElementById('manualVoucherCode').value.trim();
-            if(code) {
-                selectVoucher(code.toUpperCase(), 'GLOBAL');
-            } else {
-                alert('Vui lòng nhập mã giảm giá!');
-            }
-        }
-
-        function selectShipping(el, fee, name) {
-            document.querySelectorAll('input[name="shippingMethodDummy"]').forEach(r => {
-                r.checked = false;
-                r.closest('.radio-block').classList.remove('active');
-            });
-            el.querySelector('input').checked = true;
-            el.classList.add('active');
-            currentShipping = fee;
-            if (name) currentShippingMethodName = name;
-            updateTotal();
-            
-            // Nếu đang có voucher thì áp dụng lại để tính lại Freeship
-            const code = document.getElementById('voucherInput').value.trim();
-            const freeshipCode = document.getElementById('freeshipInput').value.trim();
-            if (code || freeshipCode) {
-                applyVoucher();
-            }
-        }
-
-        function selectPayment(el) {
-            document.querySelectorAll('input[name="paymentMethod"]').forEach(r => {
-                r.closest('.radio-block').classList.remove('active');
-            });
-            el.querySelector('input').checked = true;
-            el.classList.add('active');
-        }
 
 
-        // Dynamic Shipping Logic (Tính phí vận chuyển theo khoảng cách từ 1011 Tân Kỳ Tân Quý)
-        async function fetchShippingMethods(provinceCode, districtName, lat, lng) {
-            const container = document.getElementById('shipping-methods-container');
+            // Dynamic Shipping Logic (Tính phí vận chuyển theo khoảng cách từ 1011 Tân Kỳ Tân Quý)
+            async function fetchShippingMethods(provinceCode, districtName, lat, lng) {
+                const container = document.getElementById('shipping-methods-container');
 
-            const hasLatLon = (lat && lng) || (userLat && userLon);
-            if (!provinceCode && !hasLatLon) {
-                container.innerHTML = `
+                const hasLatLon = (lat && lng) || (userLat && userLon);
+                if (!provinceCode && !hasLatLon) {
+                    container.innerHTML = `
                     <div style="padding: 20px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 6px;">
                         <i class="fa-solid fa-map-location-dot" style="margin-right: 6px; color: var(--primary); font-size: 18px;"></i>
                         Vui lòng chọn Tỉnh / Thành phố hoặc dùng nút định vị GPS ở bước 1 để tính phí vận chuyển.
                     </div>
                 `;
-                currentShipping = 0;
-                currentShippingMethodName = '';
-                document.getElementById('shippingFeeText').innerText = 'Chưa chọn địa chỉ';
-                updateTotal();
-                return;
-            }
-
-            container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--primary);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tính phí vận chuyển từ 1011 Tân Kỳ Tân Quý...</div>';
-
-            let totalWeight = 0;
-            document.querySelectorAll('.order-name').forEach(el => {
-                let name = el.innerText.toLowerCase();
-                let qtyEl = el.nextElementSibling;
-                let qtyStr = qtyEl ? qtyEl.innerText.replace('x', '').trim() : "1";
-                let qty = parseInt(qtyStr) || 1;
-                
-                let itemWeight = 2.5; // Mặc định hạng vừa (Mainboard, VGA, Nguồn, Laptop...)
-                
-                if (name.includes("ram") || name.includes("cpu") || name.includes("ryzen") || name.includes("intel core") || name.includes("ssd") || name.includes("hdd") || name.includes("chuột") || name.includes("phím") || name.includes("tai nghe") || name.includes("usb") || name.includes("cáp") || name.includes("fan") || name.includes("tản nhiệt")) {
-                    itemWeight = 0.5;
-                } else if (name.includes("màn hình") || name.includes("monitor") || name.includes("case") || name.includes("vỏ") || name.includes("ghế") || name.includes("bàn") || name.includes("tower")) {
-                    itemWeight = 8.0;
-                } else if (name.includes("pc") || name.includes("combo") || name.includes("bộ")) {
-                    itemWeight = 15.0;
+                    currentShipping = 0;
+                    currentShippingMethodName = '';
+                    document.getElementById('shippingFeeText').innerText = 'Chưa chọn địa chỉ';
+                    updateTotal();
+                    return;
                 }
-                totalWeight += itemWeight * qty;
-            });
 
-            let url = `/api/shipping/calculate?provinceCode=${provinceCode || ''}&weight=${totalWeight}`;
-            if (districtName) url += `&districtName=${encodeURIComponent(districtName)}`;
-            if (lat && lng) {
-                url += `&lat=${lat}&lng=${lng}`;
-            } else if (userLat && userLon) {
-                url += `&lat=${userLat}&lng=${userLon}`;
-            }
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--primary);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tính phí vận chuyển từ 1011 Tân Kỳ Tân Quý...</div>';
 
-            try {
-                const res = await fetch(url);
-                const methods = await res.json();
+                let totalWeight = 0;
+                document.querySelectorAll('.order-name').forEach(el => {
+                    let name = el.innerText.toLowerCase();
+                    let qtyEl = el.nextElementSibling;
+                    let qtyStr = qtyEl ? qtyEl.innerText.replace('x', '').trim() : "1";
+                    let qty = parseInt(qtyStr) || 1;
 
-                container.innerHTML = '';
-                methods.forEach((m, index) => {
-                    const isActive = index === 0;
-                    if (isActive) {
-                        currentShipping = m.fee;
-                        currentShippingMethodName = m.name;
+                    let itemWeight = 2.5; // Mặc định hạng vừa (Mainboard, VGA, Nguồn, Laptop...)
+
+                    if (name.includes("ram") || name.includes("cpu") || name.includes("ryzen") || name.includes("intel core") || name.includes("ssd") || name.includes("hdd") || name.includes("chuột") || name.includes("phím") || name.includes("tai nghe") || name.includes("usb") || name.includes("cáp") || name.includes("fan") || name.includes("tản nhiệt")) {
+                        itemWeight = 0.5;
+                    } else if (name.includes("màn hình") || name.includes("monitor") || name.includes("case") || name.includes("vỏ") || name.includes("ghế") || name.includes("bàn") || name.includes("tower")) {
+                        itemWeight = 8.0;
+                    } else if (name.includes("pc") || name.includes("combo") || name.includes("bộ")) {
+                        itemWeight = 15.0;
                     }
+                    totalWeight += itemWeight * qty;
+                });
 
-                    const el = document.createElement('label');
-                    el.className = `radio-block ${isActive ? 'active' : ''}`;
-                    el.onclick = function () { selectShipping(this, m.fee, m.name); };
+                let url = `/api/shipping/calculate?provinceCode=${provinceCode || ''}&weight=${totalWeight}`;
+                if (districtName) url += `&districtName=${encodeURIComponent(districtName)}`;
+                if (lat && lng) {
+                    url += `&lat=${lat}&lng=${lng}`;
+                } else if (userLat && userLon) {
+                    url += `&lat=${userLat}&lng=${userLon}`;
+                }
 
-                    el.innerHTML = `
+                try {
+                    const res = await fetch(url);
+                    const methods = await res.json();
+
+                    container.innerHTML = '';
+                    methods.forEach((m, index) => {
+                        const isActive = index === 0;
+                        if (isActive) {
+                            currentShipping = m.fee;
+                            currentShippingMethodName = m.name;
+                        }
+
+                        const el = document.createElement('label');
+                        el.className = `radio-block ${isActive ? 'active' : ''}`;
+                        el.onclick = function () { selectShipping(this, m.fee, m.name); };
+
+                        el.innerHTML = `
                         <div class="radio-content">
                             <input type="radio" name="shippingMethodDummy" ${isActive ? 'checked' : ''}>
                             <i class="${m.icon}"></i>
@@ -966,453 +1113,468 @@
                         </div>
                         <div class="radio-price">${m.fee === 0 ? 'Miễn phí' : formatter.format(m.fee) + 'đ'}</div>
                     `;
-                    container.appendChild(el);
-                });
-                updateTotal();
-            } catch (e) {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--danger);">Lỗi tải phương thức vận chuyển</div>';
-            }
-        }
-
-        // Address API
-        async function loadProvinces() {
-            try {
-                const res = await fetch('https://provinces.open-api.vn/api/p/');
-                const data = await res.json();
-                const sel = document.getElementById('province');
-                data.forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.code;
-                    opt.text = p.name;
-                    sel.appendChild(opt);
-                });
-            } catch (e) { console.error('Error loading provinces', e); }
-        }
-
-        document.getElementById('province').addEventListener('change', async function () {
-            const val = this.value;
-            userLat = null;
-            userLon = null;
-            
-            // Ẩn nút GPS nếu người dùng đã tự chọn Tỉnh/Thành phố
-            if (val) {
-                document.getElementById('btnGetLocation').style.display = 'none';
-            } else {
-                document.getElementById('btnGetLocation').style.display = 'flex';
+                        container.appendChild(el);
+                    });
+                    updateTotal();
+                } catch (e) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--danger);">Lỗi tải phương thức vận chuyển</div>';
+                }
             }
 
-            fetchShippingMethods(val);
-            const distSel = document.getElementById('district');
-            const wardSel = document.getElementById('ward');
-            distSel.innerHTML = '<option value="">Chọn Quận / Huyện</option>';
-            wardSel.innerHTML = '<option value="">Chọn Phường / Xã</option>';
-
-            if (!val) {
-                distSel.disabled = true;
-                wardSel.disabled = true;
-                return;
+            // Address API
+            async function loadProvinces() {
+                try {
+                    const res = await fetch('https://provinces.open-api.vn/api/p/');
+                    const data = await res.json();
+                    const sel = document.getElementById('province');
+                    data.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.code;
+                        opt.text = p.name;
+                        sel.appendChild(opt);
+                    });
+                } catch (e) { console.error('Error loading provinces', e); }
             }
 
-            try {
-                const res = await fetch(`https://provinces.open-api.vn/api/p/${val}?depth=2`);
-                const data = await res.json();
-                distSel.disabled = false;
-                data.districts.forEach(d => {
-                    const opt = document.createElement('option');
-                    opt.value = d.code;
-                    opt.text = d.name;
-                    distSel.appendChild(opt);
-                });
-            } catch (e) { console.error(e); }
-        });
+            document.getElementById('province').addEventListener('change', async function () {
+                const val = this.value;
+                userLat = null;
+                userLon = null;
 
-        document.getElementById('district').addEventListener('change', async function () {
-            const val = this.value;
-            const pSel = document.getElementById('province');
-            const dName = (this.options[this.selectedIndex] && val) ? this.options[this.selectedIndex].text : '';
-            fetchShippingMethods(pSel.value, dName);
+                // Ẩn nút GPS nếu người dùng đã tự chọn Tỉnh/Thành phố
+                if (val) {
+                    document.getElementById('btnGetLocation').style.display = 'none';
+                } else {
+                    document.getElementById('btnGetLocation').style.display = 'flex';
+                }
 
-            const wardSel = document.getElementById('ward');
-            wardSel.innerHTML = '<option value="">Chọn Phường / Xã</option>';
+                fetchShippingMethods(val);
+                const distSel = document.getElementById('district');
+                const wardSel = document.getElementById('ward');
+                distSel.innerHTML = '<option value="">Chọn Quận / Huyện</option>';
+                wardSel.innerHTML = '<option value="">Chọn Phường / Xã</option>';
 
-            if (!val) {
-                wardSel.disabled = true;
-                return;
-            }
+                if (!val) {
+                    distSel.disabled = true;
+                    wardSel.disabled = true;
+                    return;
+                }
 
-            try {
-                const res = await fetch(`https://provinces.open-api.vn/api/d/${val}?depth=2`);
-                const data = await res.json();
-                wardSel.disabled = false;
-                data.wards.forEach(w => {
-                    const opt = document.createElement('option');
-                    opt.value = w.code;
-                    opt.text = w.name;
-                    wardSel.appendChild(opt);
-                });
-            } catch (e) { console.error(e); }
-        });
+                try {
+                    const res = await fetch(`https://provinces.open-api.vn/api/p/${val}?depth=2`);
+                    const data = await res.json();
+                    distSel.disabled = false;
+                    data.districts.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.code;
+                        opt.text = d.name;
+                        distSel.appendChild(opt);
+                    });
+                } catch (e) { console.error(e); }
+            });
 
-        // Voucher logic
-        function applyVoucher() {
-            const code = document.getElementById('voucherInput').value.trim();
-            const freeshipCode = document.getElementById('freeshipInput').value.trim();
-            const msg = document.getElementById('voucherMessage');
+            document.getElementById('district').addEventListener('change', async function () {
+                const val = this.value;
+                const pSel = document.getElementById('province');
+                const dName = (this.options[this.selectedIndex] && val) ? this.options[this.selectedIndex].text : '';
+                fetchShippingMethods(pSel.value, dName);
 
-            if (!code && !freeshipCode) {
-                if (msg) msg.style.display = 'none';
-                currentOrderDiscount = 0;
-                currentFreeshipDiscount = 0;
-                document.getElementById('voucherCodeHidden').value = '';
-                document.getElementById('freeshipCodeHidden').value = '';
-                updateTotal();
-                return;
-            }
+                const wardSel = document.getElementById('ward');
+                wardSel.innerHTML = '<option value="">Chọn Phường / Xã</option>';
 
-            const fee = currentShipping || 0;
-            const url = `/api/voucher/validate-combo?code=${encodeURIComponent(code)}&freeshipCode=${encodeURIComponent(freeshipCode)}&shippingFee=${fee}`;
-            fetch(url, { method: 'POST' })
-                .then(res => res.json())
-                .then(data => {
-                    if (msg) msg.style.display = 'block';
-                    const isSuccess = data.success || data.valid;
-                    if (isSuccess) {
-                        msg.style.color = '#16a34a';
-                        msg.innerText = data.message;
-                        document.getElementById('voucherCodeHidden').value = data.voucherCode || '';
-                        document.getElementById('freeshipCodeHidden').value = data.freeshipCode || '';
+                if (!val) {
+                    wardSel.disabled = true;
+                    return;
+                }
 
-                        currentOrderDiscount = Number(data.orderDiscount || 0);
-                        currentFreeshipDiscount = Number(data.freeshipDiscount || 0);
-                        updateTotal();
-                    } else {
-                        msg.style.color = 'var(--danger)';
-                        msg.innerText = data.message || 'Mã không hợp lệ';
+                try {
+                    const res = await fetch(`https://provinces.open-api.vn/api/d/${val}?depth=2`);
+                    const data = await res.json();
+                    wardSel.disabled = false;
+                    data.wards.forEach(w => {
+                        const opt = document.createElement('option');
+                        opt.value = w.code;
+                        opt.text = w.name;
+                        wardSel.appendChild(opt);
+                    });
+                } catch (e) { console.error(e); }
+            });
+
+            // Voucher logic
+            function applyVoucher() {
+                const code = document.getElementById('voucherInput').value.trim();
+                const freeshipCode = document.getElementById('freeshipInput').value.trim();
+                const msg = document.getElementById('voucherMessage');
+
+                if (!code && !freeshipCode) {
+                    if (msg) msg.style.display = 'none';
+                    currentOrderDiscount = 0;
+                    currentFreeshipDiscount = 0;
+                    document.getElementById('voucherCodeHidden').value = '';
+                    document.getElementById('freeshipCodeHidden').value = '';
+                    updateTotal();
+                    return;
+                }
+
+                const fee = currentShipping || 0;
+                const url = `/api/voucher/validate-combo?code=${encodeURIComponent(code)}&freeshipCode=${encodeURIComponent(freeshipCode)}&shippingFee=${fee}`;
+                fetch(url, { method: 'POST' })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (msg) msg.style.display = 'block';
+                        const isSuccess = data.success || data.valid;
+                        if (isSuccess) {
+                            msg.style.color = '#16a34a';
+                            msg.innerText = data.message;
+                            document.getElementById('voucherCodeHidden').value = data.voucherCode || '';
+                            document.getElementById('freeshipCodeHidden').value = data.freeshipCode || '';
+
+                            currentOrderDiscount = Number(data.orderDiscount || 0);
+                            currentFreeshipDiscount = Number(data.freeshipDiscount || 0);
+                            updateTotal();
+                        } else {
+                            msg.style.color = 'var(--danger)';
+                            msg.innerText = data.message || 'Mã không hợp lệ';
+                            document.getElementById('voucherCodeHidden').value = '';
+                            document.getElementById('freeshipCodeHidden').value = '';
+                            currentOrderDiscount = 0;
+                            currentFreeshipDiscount = 0;
+                            updateTotal();
+
+                            const codeInput = document.getElementById('manualVoucherCode');
+                            if (codeInput) {
+                                codeInput.classList.remove('shake');
+                                void codeInput.offsetWidth; // force reflow
+                                codeInput.classList.add('shake');
+                                codeInput.addEventListener('animationend', function handler() {
+                                    codeInput.classList.remove('shake');
+                                    codeInput.removeEventListener('animationend', handler);
+                                });
+                            }
+                        }
+                    })
+                    .catch(e => {
                         document.getElementById('voucherCodeHidden').value = '';
                         document.getElementById('freeshipCodeHidden').value = '';
                         currentOrderDiscount = 0;
                         currentFreeshipDiscount = 0;
                         updateTotal();
-
-                        const codeInput = document.getElementById('manualVoucherCode');
-                        if (codeInput) {
-                            codeInput.classList.remove('shake');
-                            void codeInput.offsetWidth; // force reflow
-                            codeInput.classList.add('shake');
-                            codeInput.addEventListener('animationend', function handler() {
-                                codeInput.classList.remove('shake');
-                                codeInput.removeEventListener('animationend', handler);
-                            });
+                        if (msg) {
+                            msg.style.display = 'block';
+                            msg.style.color = 'var(--danger)';
+                            msg.innerText = 'Lỗi kết nối kiểm tra mã voucher';
                         }
-                    }
-                })
-                .catch(e => {
-                    document.getElementById('voucherCodeHidden').value = '';
-                    document.getElementById('freeshipCodeHidden').value = '';
-                    currentOrderDiscount = 0;
-                    currentFreeshipDiscount = 0;
-                    updateTotal();
-                    if (msg) {
-                        msg.style.display = 'block';
-                        msg.style.color = 'var(--danger)';
-                        msg.innerText = 'Lỗi kết nối kiểm tra mã voucher';
-                    }
-                });
-        }
-
-        // Validation functions
-        function validateFullName() {
-            const fnInput = document.getElementById('fullName');
-            const err = document.getElementById('fullNameError');
-            if (!fnInput || !err) return true;
-            const val = fnInput.value.trim();
-            const words = val.split(/\s+/).filter(w => w.length > 0);
-
-            if (val.length === 0) {
-                err.style.display = 'block';
-                err.innerText = 'Vui lòng nhập họ và tên.';
-                fnInput.style.borderColor = 'var(--danger)';
-                return false;
-            } else if (words.length < 2) {
-                err.style.display = 'block';
-                err.innerText = 'Họ và tên phải bao gồm cả Họ và Tên (ít nhất 2 từ, ví dụ: Nguyễn Văn A).';
-                fnInput.style.borderColor = 'var(--danger)';
-                return false;
-            } else {
-                err.style.display = 'none';
-                fnInput.style.borderColor = 'var(--border)';
-                return true;
+                    });
             }
-        }
 
-        function validatePhone() {
-            const phoneInput = document.getElementById('phone');
-            const err = document.getElementById('phoneError');
-            if (!phoneInput || !err) return true;
-            const val = phoneInput.value.trim().replace(/\s+/g, '');
-            const phoneRegex = /^(0[3|5|7|8|9|1|2])[0-9]{8}$/;
+            // Validation functions
+            function validateFullName() {
+                const fnInput = document.getElementById('fullName');
+                const err = document.getElementById('fullNameError');
+                if (!fnInput || !err) return true;
+                const val = fnInput.value.trim();
+                const words = val.split(/\s+/).filter(w => w.length > 0);
 
-            if (val.length === 0) {
-                err.style.display = 'block';
-                err.innerText = 'Vui lòng nhập số điện thoại.';
-                phoneInput.style.borderColor = 'var(--danger)';
-                return false;
-            } else if (!phoneRegex.test(val)) {
-                err.style.display = 'block';
-                err.innerText = 'Số điện thoại không hợp lệ (Phải gồm 10 chữ số Việt Nam, ví dụ: 0901234567).';
-                phoneInput.style.borderColor = 'var(--danger)';
-                return false;
-            } else {
-                err.style.display = 'none';
-                phoneInput.style.borderColor = 'var(--border)';
-                return true;
-            }
-        }
-
-        // Real-time address input geocoding listener
-        let addressDebounceTimer = null;
-        document.addEventListener('DOMContentLoaded', () => {
-            const fnInput = document.getElementById('fullName');
-            const phoneInput = document.getElementById('phone');
-            const addressInput = document.getElementById('addressLine');
-
-            if (fnInput) {
-                fnInput.addEventListener('blur', validateFullName);
-                fnInput.addEventListener('input', () => {
-                    if (fnInput.value.trim().split(/\s+/).filter(w => w.length > 0).length >= 2) {
-                        validateFullName();
-                    }
-                });
-            }
-            if (phoneInput) {
-                phoneInput.addEventListener('blur', validatePhone);
-                phoneInput.addEventListener('input', () => {
-                    const clean = phoneInput.value.trim().replace(/\s+/g, '');
-                    if (clean.length >= 10) {
-                        validatePhone();
-                    }
-                });
-            }
-            if (addressInput) {
-                addressInput.addEventListener('input', () => {
-                    clearTimeout(addressDebounceTimer);
-                    const text = addressInput.value.trim();
-                    if (text.length >= 6) {
-                        addressDebounceTimer = setTimeout(async () => {
-                            try {
-                                const pSel = document.getElementById('province');
-                                const dSel = document.getElementById('district');
-                                const pName = (pSel.options[pSel.selectedIndex] && pSel.value) ? pSel.options[pSel.selectedIndex].text : '';
-                                const dName = (dSel.options[dSel.selectedIndex] && dSel.value) ? dSel.options[dSel.selectedIndex].text : '';
-
-                                const query = `${text}, ${dName}, ${pName}, Việt Nam`;
-                                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`);
-                                const data = await res.json();
-
-                                if (data && data.length > 0) {
-                                    userLat = parseFloat(data[0].lat);
-                                    userLon = parseFloat(data[0].lon);
-                                    fetchShippingMethods(pSel.value, dName, userLat, userLon);
-                                }
-                            } catch (e) { }
-                        }, 800);
-                    }
-                });
-            }
-        });
-
-        function onGpsSuccess() {
-            document.getElementById('province').disabled = true;
-            document.getElementById('province').removeAttribute('required');
-            document.getElementById('district').disabled = true;
-            document.getElementById('district').removeAttribute('required');
-            document.getElementById('ward').disabled = true;
-            document.getElementById('ward').removeAttribute('required');
-            
-            document.getElementById('province-group').style.display = 'none';
-            document.getElementById('district-group').style.display = 'none';
-            document.getElementById('ward-group').style.display = 'none';
-            
-            document.getElementById('addressLine').readOnly = true;
-            document.getElementById('addressLine').style.backgroundColor = '#f1f5f9';
-            
-            document.getElementById('btnClearLocation').style.display = 'flex';
-            document.getElementById('btnGetLocation').style.display = 'none';
-        }
-
-        window.clearLocation = function() {
-            userLat = null;
-            userLon = null;
-            const addressInput = document.getElementById('addressLine');
-            addressInput.value = '';
-            addressInput.readOnly = false;
-            addressInput.style.backgroundColor = '';
-            
-            document.getElementById('province-group').style.display = 'block';
-            document.getElementById('district-group').style.display = 'block';
-            document.getElementById('ward-group').style.display = 'block';
-            
-            const pSel = document.getElementById('province');
-            const dSel = document.getElementById('district');
-            const wSel = document.getElementById('ward');
-            
-            pSel.disabled = false;
-            pSel.setAttribute('required', 'required');
-            
-            // If a province is already selected, leave district/ward enabled if they have data
-            if (pSel.value) {
-                dSel.disabled = false;
-                dSel.setAttribute('required', 'required');
-                if (dSel.value) {
-                    wSel.disabled = false;
-                    wSel.setAttribute('required', 'required');
+                if (val.length === 0) {
+                    err.style.display = 'block';
+                    err.innerText = 'Vui lòng nhập họ và tên.';
+                    fnInput.style.borderColor = 'var(--danger)';
+                    return false;
+                } else if (words.length < 2) {
+                    err.style.display = 'block';
+                    err.innerText = 'Họ và tên phải bao gồm cả Họ và Tên (ít nhất 2 từ, ví dụ: Nguyễn Văn A).';
+                    fnInput.style.borderColor = 'var(--danger)';
+                    return false;
+                } else {
+                    err.style.display = 'none';
+                    fnInput.style.borderColor = 'var(--border)';
+                    return true;
                 }
             }
-            
-            document.getElementById('btnClearLocation').style.display = 'none';
-            document.getElementById('btnGetLocation').style.display = 'flex';
-            document.getElementById('locationStatus').innerText = '';
-            fetchShippingMethods(pSel.value);
-        }
 
-        // Robust GPS & IP Geolocation with BigDataCloud & Nominatim Fallback
-        async function getCurrentLocation() {
-            const btn = document.getElementById('btnGetLocation');
-            const statusMsg = document.getElementById('locationStatus');
-            const addressInput = document.getElementById('addressLine');
+            function validatePhone() {
+                const phoneInput = document.getElementById('phone');
+                const err = document.getElementById('phoneError');
+                if (!phoneInput || !err) return true;
+                const val = phoneInput.value.trim().replace(/\s+/g, '');
+                const phoneRegex = /^(0[3|5|7|8|9|1|2])[0-9]{8}$/;
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Đang vị trí...</span>';
-            statusMsg.style.display = 'block';
-            statusMsg.style.color = '#0284c7';
-            statusMsg.innerText = 'Đang xin quyền vị trí và tra cứu bản đồ...';
-
-            async function reverseGeocode(lat, lon) {
-                userLat = lat;
-                userLon = lon;
-
-                // Primary: OpenStreetMap Nominatim (Provides detailed street address)
-                try {
-                    const nomRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=vi`);
-                    const nomData = await nomRes.json();
-                    if (nomData && nomData.display_name) {
-                        addressInput.value = nomData.display_name;
-
-                        statusMsg.style.color = 'var(--success)';
-                        statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã tự động định vị vị trí thành công!';
-                        fetchShippingMethods('', '', userLat, userLon);
-                        onGpsSuccess();
-                        return true;
-                    }
-                } catch (e) {
-                    console.warn('Nominatim reverse geocode failed:', e);
+                if (val.length === 0) {
+                    err.style.display = 'block';
+                    err.innerText = 'Vui lòng nhập số điện thoại.';
+                    phoneInput.style.borderColor = 'var(--danger)';
+                    return false;
+                } else if (!phoneRegex.test(val)) {
+                    err.style.display = 'block';
+                    err.innerText = 'Số điện thoại không hợp lệ (Phải gồm 10 chữ số Việt Nam, ví dụ: 0901234567).';
+                    phoneInput.style.borderColor = 'var(--danger)';
+                    return false;
+                } else {
+                    err.style.display = 'none';
+                    phoneInput.style.borderColor = 'var(--border)';
+                    return true;
                 }
-
-                // Fallback: BigDataCloud Reverse Geocoding API (Fast, Free, No CORS block but only City level)
-                try {
-                    const bdcRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`);
-                    const bdcData = await bdcRes.json();
-                    if (bdcData && (bdcData.locality || bdcData.city || bdcData.principalSubdivision)) {
-                        const parts = [bdcData.locality, bdcData.city, bdcData.principalSubdivision].filter(Boolean);
-                        addressInput.value = parts.join(', ');
-
-                        statusMsg.style.color = 'var(--success)';
-                        statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã tự động định vị vị trí thành công (Cấp độ Thành phố)!';
-                        fetchShippingMethods('', '', userLat, userLon);
-                        onGpsSuccess();
-                        return true;
-                    }
-                } catch (e) {
-                    console.warn('BigDataCloud reverse geocode failed:', e);
-                }
-
-                statusMsg.style.color = 'var(--danger)';
-                statusMsg.innerText = 'Không thể chuyển đổi tọa độ vị trí thành địa chỉ.';
-                return false;
             }
 
-            async function fallbackIpLocation() {
-                statusMsg.innerText = 'Đang tự động xác định vị trí qua IP mạng...';
-                try {
-                    const res = await fetch('https://ipapi.co/json/');
-                    const data = await res.json();
-                    if (data && data.latitude && data.longitude) {
-                        return await reverseGeocode(data.latitude, data.longitude);
+            // Real-time address input geocoding listener
+            let addressDebounceTimer = null;
+            document.addEventListener('DOMContentLoaded', () => {
+                const fnInput = document.getElementById('fullName');
+                const phoneInput = document.getElementById('phone');
+                const addressInput = document.getElementById('addressLine');
+
+                if (fnInput) {
+                    fnInput.addEventListener('blur', validateFullName);
+                    fnInput.addEventListener('input', () => {
+                        if (fnInput.value.trim().split(/\s+/).filter(w => w.length > 0).length >= 2) {
+                            validateFullName();
+                        }
+                    });
+                }
+                if (phoneInput) {
+                    phoneInput.addEventListener('blur', validatePhone);
+                    phoneInput.addEventListener('input', () => {
+                        const clean = phoneInput.value.trim().replace(/\s+/g, '');
+                        if (clean.length >= 10) {
+                            validatePhone();
+                        }
+                    });
+                }
+                if (addressInput) {
+                    addressInput.addEventListener('input', () => {
+                        clearTimeout(addressDebounceTimer);
+                        const text = addressInput.value.trim();
+                        if (text.length >= 6) {
+                            addressDebounceTimer = setTimeout(async () => {
+                                try {
+                                    const pSel = document.getElementById('province');
+                                    const dSel = document.getElementById('district');
+                                    const pName = (pSel.options[pSel.selectedIndex] && pSel.value) ? pSel.options[pSel.selectedIndex].text : '';
+                                    const dName = (dSel.options[dSel.selectedIndex] && dSel.value) ? dSel.options[dSel.selectedIndex].text : '';
+
+                                    const query = `${text}, ${dName}, ${pName}, Việt Nam`;
+                                    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`);
+                                    const data = await res.json();
+
+                                    if (data && data.length > 0) {
+                                        userLat = parseFloat(data[0].lat);
+                                        userLon = parseFloat(data[0].lon);
+                                        fetchShippingMethods(pSel.value, dName, userLat, userLon);
+                                    }
+                                } catch (e) { }
+                            }, 800);
+                        }
+                    });
+                }
+            });
+
+            function onGpsSuccess() {
+                document.getElementById('province').disabled = true;
+                document.getElementById('province').removeAttribute('required');
+                document.getElementById('district').disabled = true;
+                document.getElementById('district').removeAttribute('required');
+                document.getElementById('ward').disabled = true;
+                document.getElementById('ward').removeAttribute('required');
+
+                document.getElementById('province-group').style.display = 'none';
+                document.getElementById('district-group').style.display = 'none';
+                document.getElementById('ward-group').style.display = 'none';
+
+                document.getElementById('addressLine').readOnly = true;
+                document.getElementById('addressLine').style.backgroundColor = '#f1f5f9';
+
+                document.getElementById('btnClearLocation').style.display = 'flex';
+                document.getElementById('btnGetLocation').style.display = 'none';
+            }
+
+            window.clearLocation = function () {
+                userLat = null;
+                userLon = null;
+                const addressInput = document.getElementById('addressLine');
+                addressInput.value = '';
+                addressInput.readOnly = false;
+                addressInput.style.backgroundColor = '';
+
+                document.getElementById('province-group').style.display = 'block';
+                document.getElementById('district-group').style.display = 'block';
+                document.getElementById('ward-group').style.display = 'block';
+
+                const pSel = document.getElementById('province');
+                const dSel = document.getElementById('district');
+                const wSel = document.getElementById('ward');
+
+                pSel.disabled = false;
+                pSel.setAttribute('required', 'required');
+
+                // If a province is already selected, leave district/ward enabled if they have data
+                if (pSel.value) {
+                    dSel.disabled = false;
+                    dSel.setAttribute('required', 'required');
+                    if (dSel.value) {
+                        wSel.disabled = false;
+                        wSel.setAttribute('required', 'required');
                     }
-                } catch (e) {
+                }
+
+                document.getElementById('btnClearLocation').style.display = 'none';
+                document.getElementById('btnGetLocation').style.display = 'flex';
+                document.getElementById('locationStatus').innerText = '';
+                fetchShippingMethods(pSel.value);
+            }
+
+            // Robust GPS & IP Geolocation with BigDataCloud & Nominatim Fallback
+            async function getCurrentLocation() {
+                const btn = document.getElementById('btnGetLocation');
+                const statusMsg = document.getElementById('locationStatus');
+                const addressInput = document.getElementById('addressLine');
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Đang vị trí...</span>';
+                statusMsg.style.display = 'block';
+                statusMsg.style.color = '#0284c7';
+                statusMsg.innerText = 'Đang xin quyền vị trí và tra cứu bản đồ...';
+
+                async function reverseGeocode(lat, lon) {
+                    userLat = lat;
+                    userLon = lon;
+
+                    // Primary: OpenStreetMap Nominatim (Provides detailed street address)
                     try {
-                        const res2 = await fetch('https://freeipapi.com/api/json');
-                        const data2 = await res2.json();
-                        if (data2 && data2.latitude && data2.longitude) {
-                            return await reverseGeocode(data2.latitude, data2.longitude);
-                        }
-                    } catch (e2) { }
-                }
-                return false;
-            }
+                        const nomRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=vi`);
+                        const nomData = await nomRes.json();
+                        if (nomData && nomData.display_name) {
+                            addressInput.value = nomData.display_name;
 
-            // Check if HTML5 geolocation is supported and on secure context or localhost
-            const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-            if (navigator.geolocation && isSecure) {
-                navigator.geolocation.getCurrentPosition(
-                    async (pos) => {
-                        await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> <span>Tự động định vị địa chỉ (GPS/Bản đồ)</span>';
-                    },
-                    async (err) => {
-                        console.warn('Browser GPS position error:', err);
-                        const ok = await fallbackIpLocation();
-                        if (!ok) {
-                            statusMsg.style.color = 'var(--danger)';
-                            statusMsg.innerText = 'Không thể lấy được vị trí. Vui lòng chọn Tỉnh/Thành phố bên dưới.';
+                            statusMsg.style.color = 'var(--success)';
+                            statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã tự động định vị vị trí thành công!';
+                            fetchShippingMethods('', '', userLat, userLon);
+                            onGpsSuccess();
+                            return true;
                         }
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> <span>Tự động định vị địa chỉ (GPS/Bản đồ)</span>';
-                    },
-                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-                );
-            } else {
-                // If on HTTP or non-secure origin -> fallback to IP geolocation
-                const ok = await fallbackIpLocation();
-                if (!ok) {
+                    } catch (e) {
+                        console.warn('Nominatim reverse geocode failed:', e);
+                    }
+
+                    // Fallback: BigDataCloud Reverse Geocoding API (Fast, Free, No CORS block but only City level)
+                    try {
+                        const bdcRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`);
+                        const bdcData = await bdcRes.json();
+                        if (bdcData && (bdcData.locality || bdcData.city || bdcData.principalSubdivision)) {
+                            const parts = [bdcData.locality, bdcData.city, bdcData.principalSubdivision].filter(Boolean);
+                            addressInput.value = parts.join(', ');
+
+                            statusMsg.style.color = 'var(--success)';
+                            statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã tự động định vị vị trí thành công (Cấp độ Thành phố)!';
+                            fetchShippingMethods('', '', userLat, userLon);
+                            onGpsSuccess();
+                            return true;
+                        }
+                    } catch (e) {
+                        console.warn('BigDataCloud reverse geocode failed:', e);
+                    }
+
                     statusMsg.style.color = 'var(--danger)';
-                    statusMsg.innerText = 'Trình duyệt chặn GPS trên kết nối HTTP. Vui lòng chọn Tỉnh/Thành phố thủ công.';
+                    statusMsg.innerText = 'Không thể chuyển đổi tọa độ vị trí thành địa chỉ.';
+                    return false;
                 }
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> <span>Tự động định vị địa chỉ (GPS/Bản đồ)</span>';
-            }
-        }
 
-        function autoMatchProvince(data) {
-            const rawName = data.city || data.principalSubdivision || data.state || data.province || data.region || '';
-            if (!rawName) return;
+                async function fallbackIpLocation() {
+                    statusMsg.innerText = 'Đang tự động xác định vị trí qua IP mạng...';
+                    try {
+                        const res = await fetch('https://ipapi.co/json/');
+                        const data = await res.json();
+                        if (data && data.latitude && data.longitude) {
+                            return await reverseGeocode(data.latitude, data.longitude);
+                        }
+                    } catch (e) {
+                        try {
+                            const res2 = await fetch('https://freeipapi.com/api/json');
+                            const data2 = await res2.json();
+                            if (data2 && data2.latitude && data2.longitude) {
+                                return await reverseGeocode(data2.latitude, data2.longitude);
+                            }
+                        } catch (e2) { }
+                    }
+                    return false;
+                }
 
-            const sel = document.getElementById('province');
-            const search = rawName.toLowerCase().replace(/tỉnh|thành phố|tp\.?/gi, '').trim();
-            if (!search) return;
-
-            for (let i = 0; i < sel.options.length; i++) {
-                const text = sel.options[i].text.toLowerCase();
-                if (text.includes(search) || search.includes(text.replace(/tỉnh|thành phố|tp\.?/gi, '').trim())) {
-                    sel.selectedIndex = i;
-                    sel.dispatchEvent(new Event('change'));
-                    break;
+                // Check if HTML5 geolocation is supported and on secure context or localhost
+                const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+                if (navigator.geolocation && isSecure) {
+                    navigator.geolocation.getCurrentPosition(
+                        async (pos) => {
+                            await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> <span>Tự động định vị địa chỉ (GPS/Bản đồ)</span>';
+                        },
+                        async (err) => {
+                            console.warn('Browser GPS position error:', err);
+                            const ok = await fallbackIpLocation();
+                            if (!ok) {
+                                statusMsg.style.color = 'var(--danger)';
+                                statusMsg.innerText = 'Không thể lấy được vị trí. Vui lòng chọn Tỉnh/Thành phố bên dưới.';
+                            }
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> <span>Tự động định vị địa chỉ (GPS/Bản đồ)</span>';
+                        },
+                        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                    );
+                } else {
+                    // If on HTTP or non-secure origin -> fallback to IP geolocation
+                    const ok = await fallbackIpLocation();
+                    if (!ok) {
+                        statusMsg.style.color = 'var(--danger)';
+                        statusMsg.innerText = 'Trình duyệt chặn GPS trên kết nối HTTP. Vui lòng chọn Tỉnh/Thành phố thủ công.';
+                    }
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> <span>Tự động định vị địa chỉ (GPS/Bản đồ)</span>';
                 }
             }
-        }
 
-        // --- ADDRESS BOOK LOGIC ---
-        function openAddressBookModal() {
-            document.getElementById('addressBookModal').style.display = 'flex';
-            const listContainer = document.getElementById('addressBookList');
-            listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách địa chỉ...</div>';
-            
-            fetch('/api/address')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.data && data.data.length > 0) {
-                        listContainer.innerHTML = data.data.map(addr => `
+            function autoMatchProvince(data) {
+                const rawName = data.city || data.principalSubdivision || data.state || data.province || data.region || '';
+                if (!rawName) return;
+
+                const sel = document.getElementById('province');
+                const search = rawName.toLowerCase().replace(/tỉnh|thành phố|tp\.?/gi, '').trim();
+                if (!search) return;
+
+                for (let i = 0; i < sel.options.length; i++) {
+                    const text = sel.options[i].text.toLowerCase();
+                    if (text.includes(search) || search.includes(text.replace(/tỉnh|thành phố|tp\.?/gi, '').trim())) {
+                        sel.selectedIndex = i;
+                        sel.dispatchEvent(new Event('change'));
+                        break;
+                    }
+                }
+            }
+
+            // --- ADDRESS BOOK LOGIC ---
+            function openAddressBookModal() {
+                const addrModal = document.getElementById('addressBookModal');
+                if (!addrModal) return;
+                if (addrModal.parentElement !== document.body) {
+                    document.body.appendChild(addrModal);
+                }
+                addrModal.setAttribute('style',
+                    'display:flex !important;' +
+                    'position:fixed !important;' +
+                    'inset:0 !important;' +
+                    'z-index:2147483647 !important;' +
+                    'background-color:rgba(0,0,0,0.6) !important;' +
+                    'align-items:center !important;' +
+                    'justify-content:center !important;' +
+                    'opacity:1 !important;'
+                );
+                addrModal.classList.add('active');
+                const listContainer = document.getElementById('addressBookList');
+                listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách địa chỉ...</div>';
+
+                fetch('/api/address')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && data.data && data.data.length > 0) {
+                            listContainer.innerHTML = data.data.map(addr => `
                             <div style="border: 1px solid var(--border); padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
                                 <div>
                                     <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${addr.recipientName} <span style="font-weight: normal; color: #64748b;">| ${addr.phone}</span></div>
@@ -1422,185 +1584,188 @@
                                 <button type="button" onclick="selectAddressFromBook('${encodeURIComponent(JSON.stringify(addr))}')" style="background: var(--primary); color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: 500;">Chọn</button>
                             </div>
                         `).join('');
-                    } else {
-                        listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:#64748b;">Bạn chưa lưu địa chỉ nào trong sổ địa chỉ.</div>';
-                    }
-                })
-                .catch(err => {
-                    listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--danger);">Lỗi tải danh sách địa chỉ.</div>';
-                });
-        }
-
-        function closeAddressBookModal() {
-            document.getElementById('addressBookModal').style.display = 'none';
-        }
-
-        function selectAddressFromBook(addrJsonEnc) {
-            const addr = JSON.parse(decodeURIComponent(addrJsonEnc));
-            document.getElementById('fullName').value = addr.recipientName || '';
-            document.getElementById('phone').value = addr.phone || '';
-
-            closeAddressBookModal();
-            
-            // Xóa GPS mode nếu đang có
-            if (document.getElementById('btnGetLocation').style.display === 'none' && !document.getElementById('province').value) {
-                 if (typeof window.clearLocation === 'function') {
-                      window.clearLocation();
-                 }
-            }
-            
-            // Thay vì chỉ hiển thị detail, ta hiển thị chuỗi đầy đủ và ẩn các form dropdown (giống GPS)
-            let fullAddress = addr.detailedAddress || '';
-            if (addr.district && !fullAddress.includes(addr.district)) {
-                fullAddress += ', ' + addr.district;
-            }
-            if (addr.city && !fullAddress.includes(addr.city)) {
-                fullAddress += ', ' + addr.city;
-            }
-            document.getElementById('addressLine').value = fullAddress;
-            
-            // Gọi hàm onGpsSuccess để ẩn các form Tỉnh/Huyện/Xã đi
-            if (typeof onGpsSuccess === 'function') {
-                onGpsSuccess();
-            } else {
-                // Fallback nếu hàm nằm trong scope khác
-                document.getElementById('province-group').style.display = 'none';
-                document.getElementById('district-group').style.display = 'none';
-                document.getElementById('ward-group').style.display = 'none';
-                document.getElementById('addressLine').readOnly = true;
-                document.getElementById('addressLine').style.backgroundColor = '#f1f5f9';
-                document.getElementById('btnClearLocation').style.display = 'flex';
-                document.getElementById('btnGetLocation').style.display = 'none';
-                
-                document.getElementById('province').disabled = true;
-                document.getElementById('province').removeAttribute('required');
-                document.getElementById('district').disabled = true;
-                document.getElementById('district').removeAttribute('required');
-                document.getElementById('ward').disabled = true;
-                document.getElementById('ward').removeAttribute('required');
-            }
-
-            // Hàm chuẩn hóa chuỗi để so sánh
-            const normalize = (str) => {
-                if (!str) return '';
-                return str.toLowerCase()
-                          .replace(/tỉnh|thành phố|tp\.?|quận|huyện|thị xã|phường|xã/gi, '')
-                          .replace(/\s+/g, ' ')
-                          .trim();
-            };
-
-            const pSel = document.getElementById('province');
-            let targetCity = normalize(addr.city);
-            let targetDist = normalize(addr.district);
-            
-            // Xử lý đặc biệt cho Thủ Đức (Nhiều api/user coi Thủ Đức là Thành phố/Tỉnh)
-            if (targetCity.includes('thủ đức')) {
-                targetCity = 'hồ chí minh';
-                targetDist = 'thủ đức';
-            }
-
-            let matchedProvince = false;
-            for (let i = 0; i < pSel.options.length; i++) {
-                const optText = normalize(pSel.options[i].text);
-                if (targetCity && optText && (optText === targetCity || optText.includes(targetCity) || targetCity.includes(optText))) {
-                    pSel.selectedIndex = i;
-                    matchedProvince = true;
-                    
-                    // Trigger change to load districts
-                    pSel.dispatchEvent(new Event('change'));
-                    
-                    // Chờ API tải quận/huyện xong rồi chọn
-                    setTimeout(() => {
-                        const dSel = document.getElementById('district');
-                        for (let j = 0; j < dSel.options.length; j++) {
-                             const dOptText = normalize(dSel.options[j].text);
-                             if (targetDist && dOptText && (dOptText === targetDist || dOptText.includes(targetDist) || targetDist.includes(dOptText))) {
-                                 dSel.selectedIndex = j;
-                                 dSel.dispatchEvent(new Event('change'));
-                                 break;
-                             }
+                        } else {
+                            listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:#64748b;">Bạn chưa lưu địa chỉ nào trong sổ địa chỉ.</div>';
                         }
-                    }, 800); // Tăng delay lên 800ms cho chắc chắn
-                    break;
-                }
+                    })
+                    .catch(err => {
+                        listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--danger);">Lỗi tải danh sách địa chỉ.</div>';
+                    });
             }
-            
-            // Nếu không tìm thấy bằng city, thử tìm bằng district (Trường hợp user nhập ngược)
-            if (!matchedProvince && targetDist) {
+
+            function closeAddressBookModal() {
+                const addrModal = document.getElementById('addressBookModal');
+                if (!addrModal) return;
+                addrModal.classList.remove('active');
+                addrModal.removeAttribute('style');
+            }
+
+            function selectAddressFromBook(addrJsonEnc) {
+                const addr = JSON.parse(decodeURIComponent(addrJsonEnc));
+                document.getElementById('fullName').value = addr.recipientName || '';
+                document.getElementById('phone').value = addr.phone || '';
+
+                closeAddressBookModal();
+
+                // Xóa GPS mode nếu đang có
+                if (document.getElementById('btnGetLocation').style.display === 'none' && !document.getElementById('province').value) {
+                    if (typeof window.clearLocation === 'function') {
+                        window.clearLocation();
+                    }
+                }
+
+                // Thay vì chỉ hiển thị detail, ta hiển thị chuỗi đầy đủ và ẩn các form dropdown (giống GPS)
+                let fullAddress = addr.detailedAddress || '';
+                if (addr.district && !fullAddress.includes(addr.district)) {
+                    fullAddress += ', ' + addr.district;
+                }
+                if (addr.city && !fullAddress.includes(addr.city)) {
+                    fullAddress += ', ' + addr.city;
+                }
+                document.getElementById('addressLine').value = fullAddress;
+
+                // Gọi hàm onGpsSuccess để ẩn các form Tỉnh/Huyện/Xã đi
+                if (typeof onGpsSuccess === 'function') {
+                    onGpsSuccess();
+                } else {
+                    // Fallback nếu hàm nằm trong scope khác
+                    document.getElementById('province-group').style.display = 'none';
+                    document.getElementById('district-group').style.display = 'none';
+                    document.getElementById('ward-group').style.display = 'none';
+                    document.getElementById('addressLine').readOnly = true;
+                    document.getElementById('addressLine').style.backgroundColor = '#f1f5f9';
+                    document.getElementById('btnClearLocation').style.display = 'flex';
+                    document.getElementById('btnGetLocation').style.display = 'none';
+
+                    document.getElementById('province').disabled = true;
+                    document.getElementById('province').removeAttribute('required');
+                    document.getElementById('district').disabled = true;
+                    document.getElementById('district').removeAttribute('required');
+                    document.getElementById('ward').disabled = true;
+                    document.getElementById('ward').removeAttribute('required');
+                }
+
+                // Hàm chuẩn hóa chuỗi để so sánh
+                const normalize = (str) => {
+                    if (!str) return '';
+                    return str.toLowerCase()
+                        .replace(/tỉnh|thành phố|tp\.?|quận|huyện|thị xã|phường|xã/gi, '')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                };
+
+                const pSel = document.getElementById('province');
+                let targetCity = normalize(addr.city);
+                let targetDist = normalize(addr.district);
+
+                // Xử lý đặc biệt cho Thủ Đức (Nhiều api/user coi Thủ Đức là Thành phố/Tỉnh)
+                if (targetCity.includes('thủ đức')) {
+                    targetCity = 'hồ chí minh';
+                    targetDist = 'thủ đức';
+                }
+
+                let matchedProvince = false;
                 for (let i = 0; i < pSel.options.length; i++) {
                     const optText = normalize(pSel.options[i].text);
-                    if (optText && (optText === targetDist || optText.includes(targetDist) || targetDist.includes(optText))) {
+                    if (targetCity && optText && (optText === targetCity || optText.includes(targetCity) || targetCity.includes(optText))) {
                         pSel.selectedIndex = i;
                         matchedProvince = true;
+
+                        // Trigger change to load districts
                         pSel.dispatchEvent(new Event('change'));
+
+                        // Chờ API tải quận/huyện xong rồi chọn
+                        setTimeout(() => {
+                            const dSel = document.getElementById('district');
+                            for (let j = 0; j < dSel.options.length; j++) {
+                                const dOptText = normalize(dSel.options[j].text);
+                                if (targetDist && dOptText && (dOptText === targetDist || dOptText.includes(targetDist) || targetDist.includes(dOptText))) {
+                                    dSel.selectedIndex = j;
+                                    dSel.dispatchEvent(new Event('change'));
+                                    break;
+                                }
+                            }
+                        }, 800); // Tăng delay lên 800ms cho chắc chắn
                         break;
                     }
                 }
-            }
-            
-            if (!matchedProvince && (addr.city || addr.district)) {
-                 alert('Đã tải thông tin, nhưng hệ thống không nhận dạng được Tỉnh/Thành phố (Do tên không khớp). Vui lòng chọn thủ công.');
-            }
-        }
 
-
-        // Prepare submit
-        function prepareSubmit(e) {
-            const form = document.getElementById('checkoutForm');
-
-            const isNameValid = validateFullName();
-            const isPhoneValid = validatePhone();
-
-            if (!isNameValid || !isPhoneValid) {
-                e.preventDefault();
-                if (!isNameValid) {
-                    document.getElementById('fullName').focus();
-                } else if (!isPhoneValid) {
-                    document.getElementById('phone').focus();
+                // Nếu không tìm thấy bằng city, thử tìm bằng district (Trường hợp user nhập ngược)
+                if (!matchedProvince && targetDist) {
+                    for (let i = 0; i < pSel.options.length; i++) {
+                        const optText = normalize(pSel.options[i].text);
+                        if (optText && (optText === targetDist || optText.includes(targetDist) || targetDist.includes(optText))) {
+                            pSel.selectedIndex = i;
+                            matchedProvince = true;
+                            pSel.dispatchEvent(new Event('change'));
+                            break;
+                        }
+                    }
                 }
-                return false;
-            }
 
-            if (!form.checkValidity()) {
-                return;
-            }
-
-            // Build full address
-            const line = document.getElementById('addressLine').value;
-            const pSel = document.getElementById('province');
-            const dSel = document.getElementById('district');
-            const wSel = document.getElementById('ward');
-
-            const pName = (pSel.options[pSel.selectedIndex] && pSel.value) ? pSel.options[pSel.selectedIndex].text : '';
-            const dName = (dSel.options[dSel.selectedIndex] && dSel.value) ? dSel.options[dSel.selectedIndex].text : '';
-            const wName = (wSel.options[wSel.selectedIndex] && wSel.value) ? wSel.options[wSel.selectedIndex].text : '';
-
-            let fullAddress = line;
-            if (wName) fullAddress += `, ${wName}`;
-            if (dName) fullAddress += `, ${dName}`;
-            if (pName) fullAddress += `, ${pName}`;
-
-            // Clean hidden voucher inputs before submission if they contain junk/empty values
-            const vCodeEl = document.getElementById('voucherCodeHidden');
-            if (vCodeEl) {
-                const val = (vCodeEl.value || '').trim();
-                if (!val || val === 'null' || val === 'undefined') {
-                    vCodeEl.value = '';
-                }
-            }
-            const fCodeEl = document.getElementById('freeshipCodeHidden');
-            if (fCodeEl) {
-                const val = (fCodeEl.value || '').trim();
-                if (!val || val === 'null' || val === 'undefined') {
-                    fCodeEl.value = '';
+                if (!matchedProvince && (addr.city || addr.district)) {
+                    alert('Đã tải thông tin, nhưng hệ thống không nhận dạng được Tỉnh/Thành phố (Do tên không khớp). Vui lòng chọn thủ công.');
                 }
             }
 
-            document.getElementById('hiddenAddress').value = fullAddress;
-            document.getElementById('hiddenShippingFee').value = currentShipping;
-            document.getElementById('hiddenShippingMethodName').value = currentShippingMethodName;
-        }
-    </script>
+
+            // Prepare submit
+            function prepareSubmit(e) {
+                const form = document.getElementById('checkoutForm');
+
+                const isNameValid = validateFullName();
+                const isPhoneValid = validatePhone();
+
+                if (!isNameValid || !isPhoneValid) {
+                    e.preventDefault();
+                    if (!isNameValid) {
+                        document.getElementById('fullName').focus();
+                    } else if (!isPhoneValid) {
+                        document.getElementById('phone').focus();
+                    }
+                    return false;
+                }
+
+                if (!form.checkValidity()) {
+                    return;
+                }
+
+                // Build full address
+                const line = document.getElementById('addressLine').value;
+                const pSel = document.getElementById('province');
+                const dSel = document.getElementById('district');
+                const wSel = document.getElementById('ward');
+
+                const pName = (pSel.options[pSel.selectedIndex] && pSel.value) ? pSel.options[pSel.selectedIndex].text : '';
+                const dName = (dSel.options[dSel.selectedIndex] && dSel.value) ? dSel.options[dSel.selectedIndex].text : '';
+                const wName = (wSel.options[wSel.selectedIndex] && wSel.value) ? wSel.options[wSel.selectedIndex].text : '';
+
+                let fullAddress = line;
+                if (wName) fullAddress += `, ${wName}`;
+                if (dName) fullAddress += `, ${dName}`;
+                if (pName) fullAddress += `, ${pName}`;
+
+                // Clean hidden voucher inputs before submission if they contain junk/empty values
+                const vCodeEl = document.getElementById('voucherCodeHidden');
+                if (vCodeEl) {
+                    const val = (vCodeEl.value || '').trim();
+                    if (!val || val === 'null' || val === 'undefined') {
+                        vCodeEl.value = '';
+                    }
+                }
+                const fCodeEl = document.getElementById('freeshipCodeHidden');
+                if (fCodeEl) {
+                    const val = (fCodeEl.value || '').trim();
+                    if (!val || val === 'null' || val === 'undefined') {
+                        fCodeEl.value = '';
+                    }
+                }
+
+                document.getElementById('hiddenAddress').value = fullAddress;
+                document.getElementById('hiddenShippingFee').value = currentShipping;
+                document.getElementById('hiddenShippingMethodName').value = currentShippingMethodName;
+            }
+        </script>
 </body>
 
 </html>

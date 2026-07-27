@@ -53,7 +53,7 @@
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
-            <form novalidate autocomplete="off" th:action="@{/admin/categories/save}" method="post"
+            <form novalidate class="needs-validation" autocomplete="off" th:action="@{/admin/categories/save}" method="post"
                 th:object="${category}">
 
                 <input autocomplete="off" type="hidden" th:field="*{id}">

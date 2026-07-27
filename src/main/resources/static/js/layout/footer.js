@@ -1,30 +1,4 @@
-function showConfirm(msg, callback, title = "Xác nhận") {
-    if (typeof window.showConfirm === 'function') {
-        window.showConfirm(msg, title).then(confirmed => {
-            if (confirmed && typeof callback === 'function') {
-                callback();
-            }
-        });
-    } else if (typeof callback === 'function') {
-        if (confirm(msg)) callback();
-    }
-}
-
-function closeConfirm() {
-    if (typeof window.closeConfirmModal === 'function') {
-        window.closeConfirmModal();
-    }
-}
-
-function showAlert(msg, title = "Thông báo") {
-    if (typeof window.showAlertModal === 'function') {
-        window.showAlertModal(title, msg);
-    } else {
-        alert(msg);
-    }
-}
-
-function toggleChatWindow() {
+﻿function toggleChatWindow() {
         const windowEl = document.getElementById('ai-chat-window');
         if (!windowEl) return;
         const isOpen = windowEl.style.display === 'flex' || windowEl.classList.contains('open');
@@ -133,7 +107,7 @@ function toggleChatWindow() {
               const remaining = Math.ceil((30000 - elapsed) / 1000);
               if (inputEl) {
                   inputEl.disabled = true;
-                  inputEl.placeholder = `Vui lòng đợi ${remaining}s...`;
+                  inputEl.placeholder = `Vui lÃ²ng Ä‘á»£i ${remaining}s...`;
               }
               if (sendBtn) sendBtn.disabled = true;
               quickBtns.forEach(btn => btn.disabled = true);
@@ -142,7 +116,7 @@ function toggleChatWindow() {
           } else {
               if (inputEl) {
                   inputEl.disabled = false;
-                  inputEl.placeholder = "Hỏi về linh kiện, budget, tương thích...";
+                  inputEl.placeholder = "Há»i vá» linh kiá»‡n, budget, tÆ°Æ¡ng thÃ­ch...";
               }
               if (sendBtn) sendBtn.disabled = false;
               quickBtns.forEach(btn => btn.disabled = false);
@@ -174,16 +148,16 @@ function toggleChatWindow() {
         appendMessage(text, 'user');
         inputEl.value = '';
 
-        // Hiển thị trạng thái AI đang gõ...
+        // Hiá»ƒn thá»‹ tráº¡ng thÃ¡i AI Ä‘ang gÃµ...
         const area = document.getElementById('chat-messages-area');
         const loadingMsg = document.createElement('div');
         loadingMsg.className = 'chat-bubble bot';
         loadingMsg.id = 'ai-loading-indicator';
-        loadingMsg.innerHTML = '<div class="chat-bubble-icon">🤖</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
+        loadingMsg.innerHTML = '<div class="chat-bubble-icon">ðŸ¤–</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
         area.appendChild(loadingMsg);
         area.scrollTop = area.scrollHeight;
 
-        // Gửi request lên Backend Spring Boot
+        // Gá»­i request lÃªn Backend Spring Boot
         fetch('/api/build/ai-advisor', {
           method: 'POST',
           headers: {
@@ -193,7 +167,7 @@ function toggleChatWindow() {
         })
         .then(response => response.json())
         .then(data => {
-          // Xóa chỉ báo loading
+          // XÃ³a chá»‰ bÃ¡o loading
           const indicator = document.getElementById('ai-loading-indicator');
           if (indicator) indicator.remove();
 
@@ -205,14 +179,14 @@ function toggleChatWindow() {
             
             appendMessage(formattedText, 'bot');
           } else {
-            appendMessage("Có lỗi xảy ra khi xử lý phản hồi từ AI.", 'bot');
+            appendMessage("CÃ³ lá»—i xáº£y ra khi xá»­ lÃ½ pháº£n há»“i tá»« AI.", 'bot');
           }
         })
         .catch(error => {
           const indicator = document.getElementById('ai-loading-indicator');
           if (indicator) indicator.remove();
           console.error('Error:', error);
-          appendMessage("Không thể kết nối đến máy chủ AI. Vui lòng thử lại sau.", 'bot');
+          appendMessage("KhÃ´ng thá»ƒ káº¿t ná»‘i Ä‘áº¿n mÃ¡y chá»§ AI. Vui lÃ²ng thá»­ láº¡i sau.", 'bot');
         });
       }
 
@@ -222,7 +196,7 @@ function toggleChatWindow() {
         const msg = document.createElement('div');
         msg.className = `chat-bubble ${sender}`;
         
-        let icon = sender === 'bot' ? '🤖' : '👤';
+        let icon = sender === 'bot' ? 'ðŸ¤–' : 'ðŸ‘¤';
         let htmlContent = `<div class="chat-bubble-icon">${icon}</div>`;
         htmlContent += `<div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 100%;">`;
         htmlContent += `<div class="chat-bubble-text">${text}</div>`;
@@ -243,7 +217,7 @@ function toggleChatWindow() {
 
       // Action from quick chatbot button to switch directly to live chat
       function triggerConsultantRedirect() {
-        appendMessage("Đang kết nối bạn với nhân viên hỗ trợ trực tuyến...", 'bot');
+        appendMessage("Äang káº¿t ná»‘i báº¡n vá»›i nhÃ¢n viÃªn há»— trá»£ trá»±c tuyáº¿n...", 'bot');
         setTimeout(() => {
           changeMode('live');
         }, 1000);
@@ -258,19 +232,19 @@ function toggleChatWindow() {
         updateAiChatCooldown();
 
         let actualQuery = query;
-        if (query === 'gaming') actualQuery = "Tôi cần tư vấn cấu hình chiến game 4K";
-        else if (query === 'graphic') actualQuery = "Tư vấn cấu hình làm đồ họa 3D render";
-        else if (query === 'ai') actualQuery = "Tôi muốn build máy AI Workstation";
-        else if (query === 'cool') actualQuery = "Nên chọn tản nước hay tản khí?";
+        if (query === 'gaming') actualQuery = "TÃ´i cáº§n tÆ° váº¥n cáº¥u hÃ¬nh chiáº¿n game 4K";
+        else if (query === 'graphic') actualQuery = "TÆ° váº¥n cáº¥u hÃ¬nh lÃ m Ä‘á»“ há»a 3D render";
+        else if (query === 'ai') actualQuery = "TÃ´i muá»‘n build mÃ¡y AI Workstation";
+        else if (query === 'cool') actualQuery = "NÃªn chá»n táº£n nÆ°á»›c hay táº£n khÃ­?";
 
         appendMessage(actualQuery, 'user');
 
-        // Hiển thị trạng thái AI đang gõ...
+        // Hiá»ƒn thá»‹ tráº¡ng thÃ¡i AI Ä‘ang gÃµ...
         const area = document.getElementById('chat-messages-area');
         const loadingMsg = document.createElement('div');
         loadingMsg.className = 'chat-bubble bot';
         loadingMsg.id = 'ai-loading-indicator';
-        loadingMsg.innerHTML = '<div class="chat-bubble-icon">🤖</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
+        loadingMsg.innerHTML = '<div class="chat-bubble-icon">ðŸ¤–</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
         area.appendChild(loadingMsg);
         area.scrollTop = area.scrollHeight;
 
@@ -294,14 +268,14 @@ function toggleChatWindow() {
             
             appendMessage(formattedText, 'bot');
           } else {
-            appendMessage("Không nhận được phản hồi từ cố vấn AI.", 'bot');
+            appendMessage("KhÃ´ng nháº­n Ä‘Æ°á»£c pháº£n há»“i tá»« cá»‘ váº¥n AI.", 'bot');
           }
         })
         .catch(error => {
           const indicator = document.getElementById('ai-loading-indicator');
           if (indicator) indicator.remove();
           console.error('Error:', error);
-          appendMessage("Lỗi kết nối AI.", 'bot');
+          appendMessage("Lá»—i káº¿t ná»‘i AI.", 'bot');
         });
       }
 
@@ -331,9 +305,9 @@ function toggleChatWindow() {
             const modeBar = document.createElement('div');
             modeBar.className = 'chatbot-mode-bar';
             modeBar.innerHTML = `
-              <div class="mode-step" id="socket-tab-ai" style="cursor: none !important;" onclick="changeMode('ai')">🤖 AI Chat</div>
-              <div class="mode-arrow">›</div>
-              <div class="mode-step active" id="socket-tab-live" style="cursor: none !important;" onclick="changeMode('live')">💬 Live Chat</div>
+              <div class="mode-step" id="socket-tab-ai" style="cursor: none !important;" onclick="changeMode('ai')">ðŸ¤– AI Chat</div>
+              <div class="mode-arrow">â€º</div>
+              <div class="mode-step active" id="socket-tab-live" style="cursor: none !important;" onclick="changeMode('live')">ðŸ’¬ Live Chat</div>
             `;
             header.parentNode.insertBefore(modeBar, header.nextSibling);
             
@@ -382,3 +356,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
     });
+// --- FOOTER MODALS (Build PC Guide, Share, Confirm Clear) ---
+function showBuildGuide() { const el = document.getElementById('guideModal'); if (el) el.classList.add('active'); }
+function closeBuildGuide() { const el = document.getElementById('guideModal'); if (el) el.classList.remove('active'); }
+function openShareModal() { const el = document.getElementById('shareModal'); if (el) el.classList.add('active'); }
+function closeShareModal() { const el = document.getElementById('shareModal'); if (el) el.classList.remove('active'); }
+function copyShareUrl() { const copyText = document.getElementById('shareUrlInput'); if (!copyText) return; copyText.select(); document.execCommand('copy'); if (typeof showToast === 'function') showToast('Ðã copy link vào Clipboard!'); else alert('Ðã copy link vào Clipboard!'); }
+function openShareUrl() { const input = document.getElementById('shareUrlInput'); if (input && input.value) window.open(input.value, '_blank'); }
+function confirmClearAll() { const el = document.getElementById('confirmClearModal'); if (el) el.classList.add('active'); }
+function closeConfirmClear() { const el = document.getElementById('confirmClearModal'); if (el) el.classList.remove('active'); }
+function downloadQR() { const qrImg = document.querySelector('#qrCodeContainer img'); const qrCanvas = document.querySelector('#qrCodeContainer canvas'); if (!qrImg && !qrCanvas) { if (typeof showToast === 'function') showToast('Không tìm th?y mã QR!'); else alert('Không tìm th?y mã QR!'); return; } let url; if (qrCanvas) url = qrCanvas.toDataURL('image/png'); else if (qrImg) url = qrImg.src; const a = document.createElement('a'); a.href = url; a.download = 'build-pc-qr.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a); }

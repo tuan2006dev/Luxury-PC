@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('../modal-system.css');
 
 :root {
   --admin-sidebar-bg: #FFFFFF;
@@ -644,14 +645,9 @@ body.sidebar-collapsed .main-content {
 .swal2-modal {
   z-index: 100000 !important;
 }
-
-/* Hide spinner buttons on input[type=number] inside .form-group */
-.form-group input[type="number"]::-webkit-inner-spin-button,
-.form-group input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+/* Form Validation Styles */
+input.is-invalid, select.is-invalid, textarea.is-invalid {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
 }
 
-.form-group input[type="number"] {
-  -moz-appearance: textfield;
-}

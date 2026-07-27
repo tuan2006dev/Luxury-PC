@@ -15,10 +15,10 @@ function openModal() {
     if (urlGroup) urlGroup.style.display = 'none';
     if (toggleLink) toggleLink.innerText = '+ Dùng link ảnh';
     
-    document.getElementById('flashSaleModal').classList.add('show');
+    document.getElementById('flashSaleModal').classList.add('active');
 }
 
-function closeModal() { document.getElementById('flashSaleModal').classList.remove('show'); }
+function closeModal() { document.getElementById('flashSaleModal').classList.remove('active'); }
 
 document.getElementById('flashSaleModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
@@ -100,7 +100,7 @@ function editFlashSale(btn) {
     const title = document.getElementById('modalTitle');
     if (title) title.innerText = 'Cập Nhật Flash Sale';
     
-    document.getElementById('flashSaleModal').classList.add('show');
+    document.getElementById('flashSaleModal').classList.add('active');
 }
 
 function deleteFlashSaleApi(id) {

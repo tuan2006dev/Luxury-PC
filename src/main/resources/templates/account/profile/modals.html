@@ -1,15 +1,12 @@
 <div th:fragment="modals">
   <!-- Order Review Modal -->
-  <div class="order-modal-backdrop" id="order-modal-backdrop" onclick="closeOrderModal()">
-    <div class="order-modal" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeOrderModal()">✕</button>
-      <div class="modal-head">
-        <div>
-          <div class="section-tag">Đánh giá sản phẩm</div>
-          <h3 id="modal-review-product-title" style="color:#000; margin-top:5px; font-size:1.1rem;">Đánh giá sản phẩm</h3>
-        </div>
+  <div class="lux-modal-backdrop" id="order-modal-backdrop" onclick="closeOrderModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title" id="modal-review-product-title">Đánh giá sản phẩm</h3>
+        <button class="lux-modal-close" onclick="closeOrderModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="modal-content" id="order-modal-content" style="padding-top: 15px;">
+      <div class="lux-modal-body" id="order-modal-content">
         <input type="hidden" id="review-product-id" />
         <input type="hidden" id="review-product-name" />
 
@@ -21,113 +18,82 @@
             <button type="button" class="star-btn" onclick="rate(4)">★</button>
             <button type="button" class="star-btn" onclick="rate(5)">★</button>
           </div>
-          <div
-            style="font-size: 0.75rem; color: #3b82f6; margin-top: 8px; letter-spacing: 1px; text-transform: uppercase;"
-            id="star-desc">Chọn số sao đánh giá</div>
+          <div style="font-size: 0.75rem; color: #3b82f6; margin-top: 8px; letter-spacing: 1px; text-transform: uppercase;" id="star-desc">Chọn số sao đánh giá</div>
         </div>
 
         <div class="form-group" style="margin-bottom: 1.5rem;">
           <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Bình luận / Nhận xét</label>
-          <textarea id="review-comment" class="form-input" rows="4"
-            placeholder="Nhập chia sẻ của bạn về sản phẩm này..."
-            style="width: 100%; box-sizing: border-box; background: #fff; color: #000; border: 1px solid #cbd5e1; padding: 12px; border-radius: 4px; resize: none; font-family: inherit; font-size: 0.85rem; line-height: 1.5;"></textarea>
+          <textarea id="review-comment" class="form-input" rows="4" placeholder="Nhập chia sẻ của bạn về sản phẩm này..." style="width: 100%; box-sizing: border-box; background: #fff; color: #000; border: 1px solid #cbd5e1; padding: 12px; border-radius: 4px; resize: none; font-family: inherit; font-size: 0.85rem; line-height: 1.5;"></textarea>
         </div>
-
-        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-          <button type="button" class="btn-save" onclick="submitReview()" style="padding: 0.6rem 1.5rem;">
-            <span class="btn-save-inner">Gửi Đánh Giá</span>
-          </button>
-          <button type="button" class="btn-edit" onclick="closeOrderModal()" style="padding: 0.6rem 1.5rem;">Hủy</button>
-        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeOrderModal()">Hủy</button>
+        <button type="button" class="btn btn-primary" onclick="submitReview()">Gửi Đánh Giá</button>
       </div>
     </div>
   </div>
 
   <!-- 2FA Modal -->
-  <div class="order-modal-backdrop" id="2fa-modal-backdrop" onclick="close2FAModal()">
-    <div class="order-modal" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="close2FAModal()">✕</button>
-      <div class="modal-head">
-        <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:#000; margin-top:5px; font-size:1.1rem;">
-            Kích hoạt xác thực 2 lớp (2FA)</h3>
+  <div class="lux-modal-backdrop" id="2fa-modal-backdrop" onclick="close2FAModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title">Kích hoạt xác thực 2 lớp (2FA)</h3>
+        <button class="lux-modal-close" onclick="close2FAModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="lux-modal-body">
+        <p style="font-size: 0.8rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
+          Chúng tôi đã gửi một mã xác thực OTP gồm 6 chữ số đến email của bạn. Vui lòng nhập mã này dưới đây để xác nhận kích hoạt tính năng đăng nhập 2 lớp.
+        </p>
+        <div class="form-group">
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Mã OTP Xác Thực</label>
+          <input type="text" id="2fa-otp-input" class="form-input" placeholder="Nhập mã OTP 6 số" maxlength="6" style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; background: #fff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 4px;" />
         </div>
       </div>
-      <div class="modal-content" style="padding-top: 15px;">
-        <p style="font-size: 0.8rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
-          Chúng tôi đã gửi một mã xác thực OTP gồm 6 chữ số đến email của bạn. Vui lòng nhập mã này dưới đây để xác
-          nhận kích hoạt tính năng đăng nhập 2 lớp.
-        </p>
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Mã OTP Xác Thực</label>
-          <input type="text" id="2fa-otp-input" class="form-input" placeholder="Nhập mã OTP 6 số" maxlength="6"
-            style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; background: #fff;" />
-        </div>
-        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-          <button type="button" class="btn-save" onclick="verifyAndEnable2FA()" style="padding: 0.6rem 1.5rem;">
-            <span class="btn-save-inner">Kích Hoạt</span>
-          </button>
-          <button type="button" class="btn-edit" onclick="close2FAModal()" style="padding: 0.6rem 1.5rem;">Hủy</button>
-        </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-outline" onclick="close2FAModal()">Hủy</button>
+        <button type="button" class="btn btn-primary" onclick="verifyAndEnable2FA()">Kích Hoạt</button>
       </div>
     </div>
   </div>
 
   <!-- Email Details Modal -->
-  <div class="order-modal-backdrop" id="email-details-modal-backdrop" onclick="closeEmailDetailsModal()">
-    <div class="order-modal" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeEmailDetailsModal()">✕</button>
-      <div class="modal-head">
-        <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:#000; margin-top:5px; font-size:1.1rem;">Chi Tiết Email Xác Minh</h3>
-        </div>
+  <div class="lux-modal-backdrop" id="email-details-modal-backdrop" onclick="closeEmailDetailsModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title">Chi Tiết Email Xác Minh</h3>
+        <button class="lux-modal-close" onclick="closeEmailDetailsModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="modal-content" style="padding-top: 15px;">
+      <div class="lux-modal-body">
         <div style="display: flex; flex-direction: column; gap: 1rem; color: #333;">
-          <div
-            style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.8rem;">
-            <span style="color: #64748b; font-size: 0.8rem;">Địa
-              chỉ Email:</span>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.8rem;">
+            <span style="color: #64748b; font-size: 0.8rem;">Địa chỉ Email:</span>
             <strong th:text="${email}">you@email.com</strong>
           </div>
-          <div
-            style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.8rem;">
-            <span style="color: #64748b; font-size: 0.8rem;">Trạng
-              thái xác minh:</span>
-            <span class="sec-status-ok" style="font-size: 0.8rem;">● Đã xác
-              minh</span>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.8rem;">
+            <span style="color: #64748b; font-size: 0.8rem;">Trạng thái xác minh:</span>
+            <span class="sec-status-ok" style="font-size: 0.8rem;">● Đã xác minh</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding-bottom: 0.8rem;">
-            <span style="color: #64748b; font-size: 0.8rem;">Ngày
-              tạo tài khoản:</span>
-            <strong
-              th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'dd/MM/yyyy HH:mm') : ''}"
-              th:if="${user != null && user.createdAt != null}">01/01/2026</strong>
+            <span style="color: #64748b; font-size: 0.8rem;">Ngày tạo tài khoản:</span>
+            <strong th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'dd/MM/yyyy HH:mm') : ''}" th:if="${user != null && user.createdAt != null}">01/01/2026</strong>
             <strong th:if="${user == null || user.createdAt == null}">Chưa xác định</strong>
           </div>
         </div>
-        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
-          <button type="button" class="btn-save" onclick="closeEmailDetailsModal()" style="padding: 0.6rem 2rem;">
-            <span class="btn-save-inner">Đóng</span>
-          </button>
-        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-primary" onclick="closeEmailDetailsModal()">Đóng</button>
       </div>
     </div>
   </div>
 
   <!-- Sessions Modal -->
-  <div class="order-modal-backdrop" id="sessions-modal-backdrop" onclick="closeSessionsModal()">
-    <div class="order-modal" onclick="event.stopPropagation()" style="max-width: 600px;">
-      <button class="modal-close" onclick="closeSessionsModal()">✕</button>
-      <div class="modal-head">
-        <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:#000; margin-top:5px; font-size:1.1rem;">Quản Lý Phiên Đăng Nhập</h3>
-        </div>
+  <div class="lux-modal-backdrop" id="sessions-modal-backdrop" onclick="closeSessionsModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title">Quản Lý Phiên Đăng Nhập</h3>
+        <button class="lux-modal-close" onclick="closeSessionsModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="modal-content" style="padding-top: 15px;">
+      <div class="lux-modal-body">
         <p style="font-size: 0.8rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
           Dưới đây là danh sách các thiết bị hiện đang đăng nhập vào tài khoản của bạn. Bạn có thể đăng xuất khỏi các
           thiết bị từ xa.
@@ -135,12 +101,12 @@
         <div id="active-sessions-list" style="display: flex; flex-direction: column; gap: 1rem;">
           <!-- Dynamic loaded via JS -->
         </div>
-        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
-          <button type="button" class="btn-save" onclick="closeSessionsModal()" style="padding: 0.6rem 2rem;">
-            <span class="btn-save-inner">Đóng</span>
-          </button>
-        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-primary" onclick="closeSessionsModal()">Đóng</button>
       </div>
     </div>
   </div>
+
+  <div class="toast" id="toast"></div>
 </div>

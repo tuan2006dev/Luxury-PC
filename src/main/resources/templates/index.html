@@ -273,10 +273,10 @@
         <div class="filter-tabs">
             <span class="filter-tab">DANH MỤC</span>
             <span class="filter-tab active" onclick="filterProducts('ALL', this)">TẤT CẢ</span>
-            <span class="filter-tab" th:each="cat : ${categories}"
-                th:if="${allProducts != null and #lists.contains(allProducts.![category?.id], cat.id)}"
-                th:data-name="${cat.name}" onclick="filterProducts(this.getAttribute('data-name'), this)"
-                th:text="${#strings.toUpperCase(cat.name)}">DANH MỤC</span>
+            <span class="filter-tab" onclick="filterProducts('CPU', this)">CPU</span>
+            <span class="filter-tab" onclick="filterProducts('VGA', this)">VGA</span>
+            <span class="filter-tab" onclick="filterProducts('RAM', this)">RAM</span>
+            <span class="filter-tab" onclick="filterProducts('Mainboard', this)">MAINBOARD</span>
         </div>
         <div class="grid-5-cols">
             <div class="product-card product-filter-item" th:each="p : ${allProducts}"
@@ -404,9 +404,11 @@
     <div th:replace="~{layout/footer :: footer}"></div>
 
     <script th:inline="javascript">
-        var flashSaleEndTime = 0;
+        /*<![CDATA[*/
+        var flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
+        /*]]>*/
     </script>
-    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/script.js(v=3)}"></script>
     <script th:src="@{/js/cart.js}"></script>
     <script th:inline="javascript">
         let newestExpanded = false;

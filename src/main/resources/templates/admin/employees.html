@@ -121,7 +121,7 @@
                         class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <form novalidate th:action="@{/admin/employees/save}" method="post">
+            <form novalidate class="needs-validation" th:action="@{/admin/employees/save}" method="post">
                 <input type="hidden" name="id" id="empId" th:value="${user.id}">
 
                 <div class="form-grid">
@@ -145,20 +145,18 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Họ tên</label>
-                        <input type="text" name="fullName" id="empFullName" th:value="${user.fullName}"
-                            placeholder="Nguyễn Văn A">
+                        <label>Họ tên *</label>
+                        <input type="text" name="fullName" id="empFullName" th:value="${user.fullName}" placeholder="Nguyễn Văn A" required>
                     </div>
 
                     <div class="input-group">
-                        <label>Số điện thoại</label>
-                        <input type="text" name="phone" id="empPhone" th:value="${user.phone}" placeholder="0987654321">
+                        <label>Số điện thoại *</label>
+                        <input type="text" name="phone" id="empPhone" th:value="${user.phone}" placeholder="0987654321" required>
                     </div>
 
                     <div class="input-group">
                         <label>Địa chỉ</label>
-                        <input type="text" name="address" id="empAddress" th:value="${user.address}"
-                            placeholder="Hà Nội, Việt Nam">
+                        <input type="text" name="address" id="empAddress" th:value="${user.address}" placeholder="Hà Nội, Việt Nam">
                     </div>
 
                     <div class="input-group">

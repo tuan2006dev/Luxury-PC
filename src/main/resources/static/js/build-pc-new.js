@@ -173,6 +173,21 @@ function removeComponent(catId) {
     delete currentBuild[catId];
     renderBuildComponents();
     calculateTotals();
+};
+
+function executeClearAll() {
+    currentBuild = {};
+    localStorage.removeItem('luxury_saved_build');
+    
+    renderBuildComponents();
+    calculateTotals();
+    
+    // Reset specific UI elements if needed
+    const grid = document.getElementById('build-components-list');
+    if (grid) grid.innerHTML = '';
+    
+    closeConfirmClear();
+    showToast('Đã xóa tất cả linh kiện!');
 }
 
 function clearAll() {
@@ -190,11 +205,11 @@ function openModal(catId) {
     document.getElementById('modalSearch').value = '';
     
     renderModalProducts(productsData[catId] || []);
-    document.getElementById('productModal').style.display = 'flex';
+    document.getElementById('productModal').classList.add('active');
 }
 
 function closeModal() {
-    document.getElementById('productModal').style.display = 'none';
+    document.getElementById('productModal').classList.remove('active');
 }
 
 function renderModalProducts(prods) {
@@ -933,19 +948,6 @@ window.deleteSelectedBuild = function(index) {
     }
 };
 
-function confirmClearAll() {
-    document.getElementById('confirmClearModal').style.display = 'flex';
-}
-
-function closeConfirmClear() {
-    document.getElementById('confirmClearModal').style.display = 'none';
-}
-
-function executeClearAll() {
-    currentBuild = {};
-    localStorage.removeItem('luxury_saved_build');
-    
-    renderBuildComponents();
     calculateTotals();
     
     // Reset specific UI elements if needed
@@ -956,52 +958,7 @@ function executeClearAll() {
     showToast('Đã xóa tất cả linh kiện!');
 }
 
-function showBuildGuide() {
-    document.getElementById('guideModal').style.display = 'flex';
-}
 
-function closeBuildGuide() {
-    document.getElementById('guideModal').style.display = 'none';
-}
-
-function closeShareModal() {
-    document.getElementById('shareModal').style.display = 'none';
-}
-
-function copyShareUrl() {
-    const copyText = document.getElementById("shareUrlInput");
-    copyText.select();
-    document.execCommand("copy");
-    showToast('Đã copy link vào Clipboard!');
-}
-
-function openShareUrl() {
-    const url = document.getElementById("shareUrlInput").value;
-    if (url) window.open(url, '_blank');
-}
-
-function downloadQR() {
-    const qrImg = document.querySelector('#qrCodeContainer img');
-    const qrCanvas = document.querySelector('#qrCodeContainer canvas');
-    if (!qrImg && !qrCanvas) {
-        showToast('Không tìm thấy mã QR!');
-        return;
-    }
-    
-    let url;
-    if (qrCanvas) {
-        url = qrCanvas.toDataURL("image/png");
-    } else if (qrImg) {
-        url = qrImg.src;
-    }
-    
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "build-pc-qr.png";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
 
 async function shareBuild() {
     let hasItems = false;
@@ -1057,7 +1014,7 @@ async function shareBuild() {
                 correctLevel : QRCode.CorrectLevel.H
             });
             
-            document.getElementById('shareModal').style.display = 'flex';
+            document.getElementById('shareModal').classList.add('active');
         } else {
             Swal.fire('Lỗi', 'Không thể tạo link chia sẻ.', 'error');
         }

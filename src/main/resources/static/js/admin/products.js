@@ -28,80 +28,10 @@ function initProductFormState() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initProductFormState();
-
-    const form = document.getElementById('productFormElement');
-    if (form) {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const name = document.querySelector('input[name="name"]').value.trim();
-            if (!name) {
-                showValidationError('Vui lòng nhập tên sản phẩm.');
-                return;
-            }
-
-            const price = document.querySelector('input[name="price"]').value;
-            if (!price || price === '') {
-                showValidationError('Vui lòng nhập giá bán.');
-                return;
-            }
-
-            const cat = document.querySelector('select[name="category.id"]').value;
-            if (!cat) {
-                showValidationError('Vui lòng chọn danh mục sản phẩm.');
-                return;
-            }
-
-            form.submit();
-        });
-    }
 });
-
-function showValidationError(message) {
-    if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            title: 'Lỗi!',
-            text: message,
-            icon: 'warning',
-            background: '#1a1a1a',
-            color: '#f5f0e8',
-            confirmButtonColor: '#c9a84c'
-        });
-    } else {
-        alert(message);
-    }
-}
 
 document.addEventListener('spa:load', () => {
     initProductFormState();
-
-    const form = document.getElementById('productFormElement');
-    if (form && !form.dataset.hasValidation) {
-        form.dataset.hasValidation = 'true';
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const name = document.querySelector('input[name="name"]').value.trim();
-            if (!name) {
-                showValidationError('Vui lòng nhập tên sản phẩm.');
-                return;
-            }
-
-            const price = document.querySelector('input[name="price"]').value;
-            if (!price || price === '') {
-                showValidationError('Vui lòng nhập giá bán.');
-                return;
-            }
-
-            const cat = document.querySelector('select[name="category.id"]').value;
-            if (!cat) {
-                showValidationError('Vui lòng chọn danh mục sản phẩm.');
-                return;
-            }
-
-            form.submit();
-        });
-    }
 });
 
 function editProduct(btn) {

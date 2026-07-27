@@ -13,9 +13,7 @@ import poly.edu.dao.OrderDAO;
 import poly.edu.dao.SePayTransactionRepository;
 import poly.edu.entity.Order;
 import poly.edu.entity.SePayTransaction;
-import poly.edu.entity.VietQrPaymentSession;
 import poly.edu.service.SePayDuplicateTransactionException;
-import poly.edu.service.SePayPaymentSession;
 import poly.edu.service.SePaySignatureVerifier;
 import poly.edu.service.SePayWebhookResult;
 import poly.edu.service.SePayWebhookService;
@@ -45,9 +43,6 @@ class SePayWebhookServiceTest {
     @Mock
     private OrderDAO orderDAO;
 
-    @Mock
-    private SePayPaymentSession paymentSession;
-
     private SePayProperties properties;
     private SePayWebhookService service;
 
@@ -65,8 +60,7 @@ class SePayWebhookServiceTest {
                 signatureVerifier,
                 properties,
                 transactionRepository,
-                orderDAO,
-                paymentSession);
+                orderDAO);
     }
 
     @Test
@@ -179,7 +173,6 @@ class SePayWebhookServiceTest {
     @Test
     void paymentCodeDh39LocksOrder39AndMarksItPaid() {
         Order order = waitingOrder(39, "VIETQR", 500_000D);
-        allowValidPaymentSession(order);
         prepareStoredTransaction();
         when(orderDAO.findByIdForUpdate(39)).thenReturn(Optional.of(order));
 
@@ -215,7 +208,6 @@ class SePayWebhookServiceTest {
     @Test
     void correctCodeInContentIsAcceptedWhenCodeFieldIsNotUsable() {
         Order order = waitingOrder(39, "VIETQR", 500_000D);
-        allowValidPaymentSession(order);
         prepareStoredTransaction();
         when(orderDAO.findByIdForUpdate(39)).thenReturn(Optional.of(order));
 
@@ -346,14 +338,6 @@ class SePayWebhookServiceTest {
         return order;
     }
 
-    private void allowValidPaymentSession(Order order) {
-        VietQrPaymentSession session = new VietQrPaymentSession();
-        session.setOrder(order);
-        when(paymentSession.findSessionValidAt(
-                org.mockito.ArgumentMatchers.eq(order.getId()),
-                any())).thenReturn(Optional.of(session));
-    }
-
     private byte[] validPayload(
             long id,
             String code,
@@ -363,7 +347,6 @@ class SePayWebhookServiceTest {
             long amount) {
         return ("{"
                 + "\"id\":" + id + ","
-                + "\"transactionDate\":\"2026-07-26 12:05:00\","
                 + "\"accountNumber\":\"" + accountNumber + "\","
                 + "\"transferType\":\"" + transferType + "\","
                 + "\"transferAmount\":" + amount + ","

@@ -68,9 +68,9 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 2rem;
         border-bottom: 1px solid #e2e8f0;
-        padding-bottom: 0.5rem;
+        padding-bottom: 1.5rem;
 }
 
 .title h1 {
@@ -209,10 +209,10 @@ td {
 
 .form-card {
         background: var(--dark);
-        padding: 1rem;
+        padding: 1.5rem;
         border: 1px solid #e2e8f0;
         border-radius: 8px;
-        margin-bottom: 0.5rem;
+        margin-bottom: 2rem;
 }
 
 .form-row {
@@ -250,16 +250,6 @@ td {
 .form-group input:focus,
 .form-group select:focus {
         border-color: var(--gold);
-}
-
-.form-group input[type="number"]::-webkit-inner-spin-button,
-.form-group input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-}
-
-.form-group input[type="number"] {
-        -moz-appearance: textfield;
 }
 
 .progress-bar {

@@ -1,9 +1,6 @@
 package poly.edu.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,21 +10,12 @@ import poly.edu.dao.SePayTransactionRepository;
 import poly.edu.dto.SePayWebhookPayload;
 import poly.edu.entity.Order;
 import poly.edu.entity.SePayTransaction;
-import poly.edu.entity.VietQrPaymentSession;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoField;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
@@ -43,62 +31,27 @@ import java.util.regex.Pattern;
 @Service
 public class SePayWebhookService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SePayWebhookService.class);
-    private static final ZoneId SEPAY_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
-    private static final DateTimeFormatter SEPAY_LOCAL_DATE_TIME =
-            new DateTimeFormatterBuilder()
-                    .appendPattern("uuuu-MM-dd HH:mm:ss")
-                    .optionalStart()
-                    .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
-                    .optionalEnd()
-                    .toFormatter(Locale.ROOT);
-
     private final ObjectMapper objectMapper;
     private final SePaySignatureVerifier signatureVerifier;
     private final SePayProperties sePayProperties;
     private final SePayTransactionRepository transactionRepository;
     private final OrderDAO orderDAO;
-    private final SePayPaymentSession sePayPaymentSession;
-    private final Clock clock;
-
-    @Autowired
-    public SePayWebhookService(
-            ObjectMapper objectMapper,
-            SePaySignatureVerifier signatureVerifier,
-            SePayProperties sePayProperties,
-            SePayTransactionRepository transactionRepository,
-            OrderDAO orderDAO,
-            SePayPaymentSession sePayPaymentSession) {
-        this(
-                objectMapper,
-                signatureVerifier,
-                sePayProperties,
-                transactionRepository,
-                orderDAO,
-                sePayPaymentSession,
-                Clock.systemUTC());
-    }
 
     public SePayWebhookService(
             ObjectMapper objectMapper,
             SePaySignatureVerifier signatureVerifier,
             SePayProperties sePayProperties,
             SePayTransactionRepository transactionRepository,
-            OrderDAO orderDAO,
-            SePayPaymentSession sePayPaymentSession,
-            Clock clock) {
+            OrderDAO orderDAO) {
         this.objectMapper = objectMapper;
         this.signatureVerifier = signatureVerifier;
         this.sePayProperties = sePayProperties;
         this.transactionRepository = transactionRepository;
         this.orderDAO = orderDAO;
-        this.sePayPaymentSession = sePayPaymentSession;
-        this.clock = clock;
     }
 
     @Transactional
     public SePayWebhookResult process(String signature, String timestamp, byte[] rawBody) {
-        Instant webhookReceivedAt = clock.instant();
         signatureVerifier.verify(signature, timestamp, rawBody);
         SePayWebhookPayload payload = parsePayload(rawBody);
         validateRequiredFields(payload);
@@ -107,11 +60,8 @@ public class SePayWebhookService {
             return SePayWebhookResult.DUPLICATE;
         }
 
-        Optional<Instant> transactionDate = parseTransactionDate(payload.transactionDate());
-        String fallbackReason = fallbackReason(payload.transactionDate(), transactionDate);
         String paymentCode = resolvePaymentCode(payload);
-        SePayTransaction transaction =
-                newTransaction(payload, paymentCode, rawBody, webhookReceivedAt, transactionDate.orElse(null));
+        SePayTransaction transaction = newTransaction(payload, paymentCode, rawBody);
         try {
             transactionRepository.saveAndFlush(transaction);
         } catch (DataIntegrityViolationException exception) {
@@ -119,13 +69,6 @@ public class SePayWebhookService {
                 throw new SePayDuplicateTransactionException();
             }
             throw exception;
-        }
-
-        if (fallbackReason != null) {
-            logger.warn(
-                    "SePay transaction {} uses webhookReceivedAt because transactionDate is {}",
-                    payload.id(),
-                    fallbackReason);
         }
 
         if (!"in".equalsIgnoreCase(payload.transferType())) {
@@ -177,54 +120,10 @@ public class SePayWebhookService {
             return SePayWebhookResult.ORDER_CONFLICT;
         }
 
-        Instant effectivePaymentTime = transactionDate.orElse(webhookReceivedAt);
-        Optional<VietQrPaymentSession> validSession =
-                sePayPaymentSession.findSessionValidAt(order.getId(), effectivePaymentTime);
-        if (validSession.isEmpty()) {
-            Optional<VietQrPaymentSession> latestSession = sePayPaymentSession.latest(order.getId());
-            if (latestSession.isEmpty()) {
-                markProcessed(transaction, "REJECTED_QR_SESSION_MISSING");
-                return SePayWebhookResult.ORDER_CONFLICT;
-            }
-
-            // Equality belongs to the expired side: valid sessions require paymentTime < qrExpiresAt.
-            if (!webhookReceivedAt.isBefore(latestSession.get().getQrExpiresAt())) {
-                sePayPaymentSession.markExpired(latestSession.get(), webhookReceivedAt);
-            }
-            markProcessed(transaction, expiredProcessingStatus(fallbackReason));
-            return SePayWebhookResult.EXPIRED;
-        }
-
         order.setStatus("DA_THANH_TOAN");
         orderDAO.save(order);
-        sePayPaymentSession.markPaid(validSession.get(), webhookReceivedAt);
-        markProcessed(transaction, paidProcessingStatus(fallbackReason));
+        markProcessed(transaction, "PAID");
         return SePayWebhookResult.PROCESSED;
-    }
-
-    public static Optional<Instant> parseTransactionDate(String value) {
-        if (value == null || value.isBlank()) {
-            return Optional.empty();
-        }
-
-        String normalized = value.trim();
-        try {
-            return Optional.of(Instant.parse(normalized));
-        } catch (DateTimeParseException ignored) {
-            // SePay normally sends local wall-clock time, but accept explicit offsets when supplied.
-        }
-        try {
-            return Optional.of(OffsetDateTime.parse(normalized).toInstant());
-        } catch (DateTimeParseException ignored) {
-            // Continue with SePay's documented Asia/Ho_Chi_Minh local timestamp shape.
-        }
-        try {
-            return Optional.of(LocalDateTime.parse(normalized, SEPAY_LOCAL_DATE_TIME)
-                    .atZone(SEPAY_ZONE)
-                    .toInstant());
-        } catch (DateTimeParseException ignored) {
-            return Optional.empty();
-        }
     }
 
     private SePayWebhookPayload parsePayload(byte[] rawBody) {
@@ -243,12 +142,7 @@ public class SePayWebhookService {
         }
     }
 
-    private SePayTransaction newTransaction(
-            SePayWebhookPayload payload,
-            String paymentCode,
-            byte[] rawBody,
-            Instant webhookReceivedAt,
-            Instant transactionDate) {
+    private SePayTransaction newTransaction(SePayWebhookPayload payload, String paymentCode, byte[] rawBody) {
         SePayTransaction transaction = new SePayTransaction();
         transaction.setSepayTransactionId(payload.id());
         transaction.setTransferAmount(payload.transferAmount());
@@ -257,42 +151,14 @@ public class SePayWebhookService {
         transaction.setPaymentCode(paymentCode);
         transaction.setProcessingStatus("RECEIVED");
         transaction.setRawPayload(new String(rawBody, StandardCharsets.UTF_8));
-        transaction.setTransactionDate(transactionDate);
-        transaction.setWebhookReceivedAt(webhookReceivedAt);
+        transaction.setReceivedAt(Instant.now());
         return transaction;
     }
 
     private void markProcessed(SePayTransaction transaction, String status) {
         transaction.setProcessingStatus(status);
-        transaction.setProcessedAt(clock.instant());
+        transaction.setProcessedAt(Instant.now());
         transactionRepository.save(transaction);
-    }
-
-    private String fallbackReason(String rawTransactionDate, Optional<Instant> transactionDate) {
-        if (transactionDate.isPresent()) {
-            return null;
-        }
-        return rawTransactionDate == null || rawTransactionDate.isBlank() ? "missing" : "invalid";
-    }
-
-    private String paidProcessingStatus(String fallbackReason) {
-        if ("missing".equals(fallbackReason)) {
-            return "PAID_FALLBACK_MISSING_TRANSACTION_DATE";
-        }
-        if ("invalid".equals(fallbackReason)) {
-            return "PAID_FALLBACK_INVALID_TRANSACTION_DATE";
-        }
-        return "PAID";
-    }
-
-    private String expiredProcessingStatus(String fallbackReason) {
-        if ("missing".equals(fallbackReason)) {
-            return "REJECTED_QR_EXPIRED_FALLBACK_MISSING_DATE";
-        }
-        if ("invalid".equals(fallbackReason)) {
-            return "REJECTED_QR_EXPIRED_FALLBACK_INVALID_DATE";
-        }
-        return "REJECTED_QR_EXPIRED";
     }
 
     private String resolvePaymentCode(SePayWebhookPayload payload) {

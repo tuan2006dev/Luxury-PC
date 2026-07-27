@@ -3,6 +3,8 @@
    Font: Outfit | Accent: #0066CC | BG: #F9F9F9
    ============================================ */
 
+@import url('modal-system.css');
+
 :root {
     --bg-main: #F9F9F9;
     --bg-surface: #FFFFFF;

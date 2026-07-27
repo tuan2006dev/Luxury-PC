@@ -133,7 +133,7 @@ class VietQrOrderFlowTest {
         ExtendedModelMap model = new ExtendedModelMap();
         HttpSession mockSession = new MockHttpSession();
 
-        String view = paymentController.vietQrPayment(1L, order.getOrderCode(), false, model, mockSession);
+        String view = paymentController.vietQrPayment(1L, order.getOrderCode(), model, mockSession);
 
         assertEquals("payment-vietqr", view);
         assertEquals(17_200_000L, model.get("amount"));

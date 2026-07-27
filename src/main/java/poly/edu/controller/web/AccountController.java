@@ -41,7 +41,7 @@ public class AccountController {
 
         model.addAttribute(
                 "users",
-                userRepository.findAllCustomers()
+                userRepository.findAllUserNotAdmin()
         );
 
         return "admin/account";
@@ -127,7 +127,7 @@ public class AccountController {
 
         model.addAttribute(
                 "users",
-                userRepository.findAllCustomers()
+                userRepository.findAll()
         );
 
         return "admin/account";

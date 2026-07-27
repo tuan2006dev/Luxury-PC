@@ -33,7 +33,7 @@ function open2FAModal() {
   toast('✓ Đang gửi mã OTP đến email của bạn...');
   const otpInput = document.getElementById('2fa-otp-input');
   if (otpInput) otpInput.value = '';
-  document.getElementById('2fa-modal-backdrop')?.classList.add('open');
+  document.getElementById('2fa-modal-backdrop')?.classList.add('active');
   setTimeout(() => document.getElementById('2fa-otp-input')?.focus(), 200);
 
   fetch('/api/profile/2fa/send-otp', {
@@ -55,7 +55,7 @@ function open2FAModal() {
 }
 
 function close2FAModal() {
-  document.getElementById('2fa-modal-backdrop')?.classList.remove('open');
+  document.getElementById('2fa-modal-backdrop')?.classList.remove('active');
 }
 
 function verifyAndEnable2FA() {
@@ -110,20 +110,20 @@ function disable2FA() {
 }
 
 function openEmailDetailsModal() {
-  document.getElementById('email-details-modal-backdrop')?.classList.add('open');
+  document.getElementById('email-details-modal-backdrop')?.classList.add('active');
 }
 
 function closeEmailDetailsModal() {
-  document.getElementById('email-details-modal-backdrop')?.classList.remove('open');
+  document.getElementById('email-details-modal-backdrop')?.classList.remove('active');
 }
 
 function openSessionsModal() {
-  document.getElementById('sessions-modal-backdrop')?.classList.add('open');
+  document.getElementById('sessions-modal-backdrop')?.classList.add('active');
   loadSessions();
 }
 
 function closeSessionsModal() {
-  document.getElementById('sessions-modal-backdrop')?.classList.remove('open');
+  document.getElementById('sessions-modal-backdrop')?.classList.remove('active');
 }
 
 function loadSessions() {

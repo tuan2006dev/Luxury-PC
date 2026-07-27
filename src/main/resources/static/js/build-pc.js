@@ -661,7 +661,7 @@ function registerCursorEvents() {}
 
         <div class="pkg-price-row">
           <div>
-            <span class="pkg-price">${pkg.price.toLocaleString('vi-VN')}₫</span>
+            <span class="pkg-price">${pkg.price.toLocaleString('en-US')}₫</span>
           </div>
           ${savings > 0 ? `<span class="pkg-savings">Tiết kiệm ${(savings/1000000).toFixed(1)}Tr₫</span>` : ''}
         </div>
@@ -708,7 +708,7 @@ function registerCursorEvents() {}
           document.getElementById('sel-'+slotKey+'-name').textContent=item.name;
           document.getElementById('sel-'+slotKey+'-name').style.color='var(--white)';
           document.getElementById('sel-'+slotKey+'-name').style.fontStyle='normal';
-          document.getElementById('sel-'+slotKey+'-price').textContent=item.price.toLocaleString('vi-VN')+'₫';
+          document.getElementById('sel-'+slotKey+'-price').textContent=item.price.toLocaleString('en-US')+'₫';
           document.getElementById('sel-'+slotKey+'-price').style.color='var(--gold)';
           
           slotEl.querySelectorAll('.picker-item').forEach(pi => {
@@ -855,14 +855,14 @@ function registerCursorEvents() {}
       slotData.items.forEach(item => {
         const isSelected = selectedItem && selectedItem.name === item.name;
         itemsHtml += `
-          <div class="picker-item ${isSelected ? 'selected' : ''}" onclick="selectCompWrapper('${slotKey}', this, '${item.name}', '${item.price.toLocaleString('vi-VN')}₫', ${item.price})">
+          <div class="picker-item ${isSelected ? 'selected' : ''}" onclick="selectCompWrapper('${slotKey}', this, '${item.name}', '${item.price.toLocaleString('en-US')}₫', ${item.price})">
             <span class="pi-icon">${slotData.icon}</span>
             <div class="pi-info">
               <div class="pi-name">${item.name}</div>
               <div class="pi-spec">${item.desc}</div>
             </div>
             <span class="compat-badge badge-ok">✓ ${'Ok'}</span>
-            <div class="pi-price">${item.price.toLocaleString('vi-VN')}₫</div>
+            <div class="pi-price">${item.price.toLocaleString('en-US')}₫</div>
             <div class="pi-check">✓</div>
           </div>
         `;
@@ -878,7 +878,7 @@ function registerCursorEvents() {}
             </div>
           </div>
           <div class="slot-price" id="sel-${slotKey}-price" style="${!selectedItem ? 'color:var(--muted);' : ''}">
-            ${selectedItem ? selectedItem.price.toLocaleString('vi-VN') + '₫' : '+'}
+            ${selectedItem ? selectedItem.price.toLocaleString('en-US') + '₫' : '+'}
           </div>
           <div class="slot-toggle">▾</div>
         </div>
@@ -933,7 +933,7 @@ function registerCursorEvents() {}
               <div class="sum-type">${window.t('build-pc-slot-' + slotKey, MOCK_DB[slotKey].title)}</div>
               <div class="sum-name">${shortName}</div>
             </div>
-            <div class="sum-price">${item.price.toLocaleString('vi-VN')}₫</div>
+            <div class="sum-price">${item.price.toLocaleString('en-US')}₫</div>
           </div>
         `;
       } else {
@@ -965,7 +965,7 @@ function registerCursorEvents() {}
       }
     }
 
-    document.getElementById('grand-total').textContent = totalPrice.toLocaleString('vi-VN') + '₫';
+    document.getElementById('grand-total').textContent = totalPrice.toLocaleString('en-US') + '₫';
     document.getElementById('part-count').innerHTML = `${count} <span>${'linh kiện đã chọn'}</span>`;
 
     // Socket matching alert

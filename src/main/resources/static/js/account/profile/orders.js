@@ -62,11 +62,11 @@ function openReviewModal(productId, productName) {
   document.getElementById('review-product-name').value = productName;
   document.getElementById('review-comment').value = '';
   document.getElementById('modal-review-product-title').textContent = window.t('profile-review-modal-product-title', 'Đánh giá sản phẩm: ') + productName;
-  document.getElementById('order-modal-backdrop')?.classList.add('open');
+  document.getElementById('order-modal-backdrop')?.classList.add('active');
 }
 
 function closeOrderModal() {
-  document.getElementById('order-modal-backdrop')?.classList.remove('open');
+  document.getElementById('order-modal-backdrop')?.classList.remove('active');
 }
 
 function rate(star) {

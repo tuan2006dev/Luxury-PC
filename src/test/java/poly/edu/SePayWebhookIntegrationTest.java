@@ -13,14 +13,11 @@ import poly.edu.dao.OrderDAO;
 import poly.edu.dao.SePayTransactionRepository;
 import poly.edu.entity.Order;
 import poly.edu.entity.SePayTransaction;
-import poly.edu.service.SePayPaymentSession;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.HexFormat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,9 +42,6 @@ class SePayWebhookIntegrationTest {
 
     @Autowired
     private SePayTransactionRepository transactionRepository;
-
-    @Autowired
-    private SePayPaymentSession paymentSession;
 
     @Test
     void validWebhookMarksOrderPaidAndDuplicateDoesNotProcessAgain() throws Exception {
@@ -75,11 +69,11 @@ class SePayWebhookIntegrationTest {
     }
 
     @Test
-    void webhookWithNonExactAmountIsRecordedAndAcknowledged() throws Exception {
+    void webhookWithNonExactAmountIsRecordedButReturnsBadRequest() throws Exception {
         Order order = saveVietQrOrder(500_000D);
         String body = payload(9_003L, paymentCode(order), "SEVQR " + paymentCode(order), 500_001L);
 
-        sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
+        sendSignedWebhook(body).andExpect(status().isBadRequest()).andExpect(jsonPath("$.success").value(false));
 
         assertEquals("CHO_XAC_NHAN_THANH_TOAN", orderDAO.findById(order.getId()).orElseThrow().getStatus());
         SePayTransaction transaction = transactionRepository.findBySepayTransactionId(9_003L).orElseThrow();
@@ -87,11 +81,11 @@ class SePayWebhookIntegrationTest {
     }
 
     @Test
-    void webhookWithUnknownPaymentCodeIsRecordedAndAcknowledged() throws Exception {
+    void webhookWithUnknownPaymentCodeReturnsNotFound() throws Exception {
         String paymentCode = "DH999999";
         String body = payload(9_004L, paymentCode, "SEVQR " + paymentCode, 500_000L);
 
-        sendSignedWebhook(body).andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true));
+        sendSignedWebhook(body).andExpect(status().isNotFound()).andExpect(jsonPath("$.success").value(false));
 
         SePayTransaction transaction = transactionRepository.findBySepayTransactionId(9_004L).orElseThrow();
         assertEquals(paymentCode, transaction.getPaymentCode());
@@ -138,10 +132,7 @@ class SePayWebhookIntegrationTest {
         return "{"
                 + "\"id\":" + transactionId + ","
                 + "\"gateway\":\"" + sePayProperties.getBank().getId() + "\","
-                + "\"transactionDate\":\""
-                + Instant.now().plusSeconds(1).atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
-                        .format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss.SSS"))
-                + "\","
+                + "\"transactionDate\":\"2026-07-13 10:00:00\","
                 + "\"accountNumber\":\"" + sePayProperties.getBank().getAccountNumber() + "\","
                 + "\"subAccount\":\"\","
                 + "\"code\":" + codeValue + ","
@@ -168,8 +159,6 @@ class SePayWebhookIntegrationTest {
         order.setStatus("CHO_XAC_NHAN_THANH_TOAN");
         order = orderDAO.saveAndFlush(order);
         order.setOrderCode("Luxury-" + order.getId());
-        order = orderDAO.saveAndFlush(order);
-        paymentSession.currentOrCreate(order.getId(), Instant.now());
-        return order;
+        return orderDAO.saveAndFlush(order);
     }
 }

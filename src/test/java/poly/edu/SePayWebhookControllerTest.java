@@ -27,10 +27,9 @@ class SePayWebhookControllerTest {
     void mapsProcessingResultsToDocumentedHttpStatuses() {
         assertResultStatus(SePayWebhookResult.PROCESSED, HttpStatus.OK, true);
         assertResultStatus(SePayWebhookResult.DUPLICATE, HttpStatus.OK, true);
-        assertResultStatus(SePayWebhookResult.EXPIRED, HttpStatus.OK, true);
-        assertResultStatus(SePayWebhookResult.BAD_REQUEST, HttpStatus.OK, true);
-        assertResultStatus(SePayWebhookResult.ORDER_NOT_FOUND, HttpStatus.OK, true);
-        assertResultStatus(SePayWebhookResult.ORDER_CONFLICT, HttpStatus.OK, true);
+        assertResultStatus(SePayWebhookResult.BAD_REQUEST, HttpStatus.BAD_REQUEST, false);
+        assertResultStatus(SePayWebhookResult.ORDER_NOT_FOUND, HttpStatus.NOT_FOUND, false);
+        assertResultStatus(SePayWebhookResult.ORDER_CONFLICT, HttpStatus.CONFLICT, false);
     }
 
     @Test

@@ -11,7 +11,6 @@ import poly.edu.dao.SePayTransactionRepository;
 import poly.edu.entity.Order;
 import poly.edu.entity.SePayTransaction;
 import poly.edu.service.SePayDuplicateTransactionException;
-import poly.edu.service.SePayPaymentSession;
 import poly.edu.service.SePaySignatureVerifier;
 import poly.edu.service.SePayWebhookResult;
 import poly.edu.service.SePayWebhookService;
@@ -49,8 +48,7 @@ class SePayWebhookAdditionalEdgeTest {
                 mock(SePaySignatureVerifier.class),
                 properties,
                 transactions,
-                orders,
-                mock(SePayPaymentSession.class));
+                orders);
 
         SePayWebhookResult result = service.process(
                 "signature",

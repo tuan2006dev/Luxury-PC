@@ -339,13 +339,17 @@
                 event.currentTarget.classList.add('active');
             };
 
-            let revenueChartInstance = null;
-            let orderStatusChartInstance = null;
-            let newUsersChartInstance = null;
+            var revenueChartInstance = null;
+            var orderStatusChartInstance = null;
+            var newUsersChartInstance = null;
 
-            const currencyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+            var currencyFormatter = {
+                format: function(value) {
+                    return Number(value).toLocaleString('en-US') + ' ₫';
+                }
+            };
 
-            const statusLabels = {
+            var statusLabels = {
                 'PENDING': 'Chờ xử lý',
                 'CHO_XAC_NHAN_THANH_TOAN': 'Chờ xác nhận TT',
                 'DA_THANH_TOAN': 'Đã thanh toán',
@@ -358,7 +362,7 @@
                 'DA_HUY': 'Đã hủy'
             };
 
-            const statusColors = {
+            var statusColors = {
                 'PENDING': '#ef4444',
                 'CHO_XAC_NHAN_THANH_TOAN': '#f59e0b',
                 'DA_THANH_TOAN': '#8b5cf6',

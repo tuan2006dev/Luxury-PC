@@ -324,7 +324,7 @@
                                     </div>
 
                                     <button class="btn-add-cart" th:if="${!isUpcoming}"
-                                        th:onclick="'addToCart(' + ${item.product.id} + ', 1); event.stopPropagation();'"
+                                        th:attr="onclick='addToCart(' + ${item.product.id} + ', 1); event.stopPropagation();'"
                                         style="width: 100%; padding: 8px 0; background: #fff; color: #3b82f6; border: 1px solid #3b82f6; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px;"
                                         onmouseover="this.style.background='#3b82f6'; this.style.color='#fff'"
                                         onmouseout="this.style.background='#fff'; this.style.color='#3b82f6'">
@@ -500,6 +500,7 @@
                 </div>
             </div>
         </div>
+        </div>
 
         <!-- Vouchers Section -->
         <div class="layout-2col" id="vouchers"
@@ -526,9 +527,8 @@
                                 Ưu đãi theo danh mục (4)</div>
                         </div>
                     </div>
-                    <a href="javascript:void(0)" id="btnToggleVouchers" onclick="toggleVouchers(event)"
-                        style="font-size: 13px; font-weight: 600; color: #3b82f6; text-decoration: none; cursor: pointer;">Xem
-                        tất cả
+                    <a href="#vouchers"
+                        style="font-size: 13px; font-weight: 600; color: #3b82f6; text-decoration: none;">Xem tất cả
                         Khuyến mãi <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
 
@@ -632,16 +632,13 @@
     </main>
 
     <!-- Rules Modal -->
-    <div id="rules-modal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-        <div
-            style="background: #fff; border-radius: 12px; width: 90%; max-width: 500px; padding: 25px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); position: relative; animation: modalFadeIn 0.3s ease-out; text-align: left;">
-            <h3
-                style="margin-top: 0; font-size: 18px; font-weight: 700; color: #1f2937; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; text-transform: uppercase;">
-                Thể Lệ Chi Tiết & Hướng Dẫn</h3>
-
-            <div
-                style="font-size: 13px; color: #4b5563; line-height: 1.6; margin: 15px 0 20px; max-height: 300px; overflow-y: auto; padding-right: 5px;">
+    <div id="rules-modal" class="lux-modal-backdrop">
+        <div class="lux-modal-container lux-modal-small">
+            <div class="lux-modal-header">
+                <h3 class="lux-modal-title">Thể Lệ Chi Tiết & Hướng Dẫn</h3>
+                <button class="lux-modal-close" onclick="closeRulesModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="lux-modal-body" style="font-size: 13px; color: #4b5563; line-height: 1.6;">
                 <p style="margin: 0 0 5px; font-weight: 700; color: #1f2937;">1. Quy định Flash Sale:</p>
                 <ul style="padding-left: 20px; margin: 0 0 15px 0;">
                     <li style="margin-bottom: 5px;">Mỗi khách hàng chỉ được mua tối đa 1 sản phẩm Flash Sale cùng loại
@@ -670,18 +667,17 @@
                         áp dụng giảm trừ trực tiếp vào hóa đơn.</li>
                 </ul>
             </div>
-
-            <div style="display: flex; justify-content: flex-end;">
-                <button onclick="closeRulesModal()"
-                    style="background: #3b82f6; color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;"
-                    onmouseover="this.style.background='#2563eb'"
-                    onmouseout="this.style.background='#3b82f6'">Đóng</button>
+            <div class="lux-modal-footer">
+                <button class="btn btn-primary" onclick="closeRulesModal()">Đóng</button>
             </div>
         </div>
     </div>
 
     <!-- FOOTER -->
     <div th:replace="~{layout/footer :: footer}"></div>
+    <div id="toast"
+        style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;">
+    </div>
 
     <script th:inline="javascript">
         var flashSaleEndTime = 0;

@@ -17,8 +17,6 @@ import poly.edu.entity.Review;
 import poly.edu.entity.User;
 import poly.edu.entity.FlashSale;
 import poly.edu.entity.FlashSaleItem;
-import poly.edu.entity.Brand;
-import poly.edu.service.BrandService;
 import poly.edu.service.CategoryService;
 import poly.edu.service.ProductService;
 import poly.edu.service.WishlistService;
@@ -28,12 +26,9 @@ import poly.edu.dao.FlashSaleItemDAO;
 import poly.edu.repository.UserRepository;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @SuppressWarnings("null")
@@ -45,8 +40,6 @@ public class ProductPageController {
     final ProductService productService;
 
     final CategoryService categoryService;
-
-    final BrandService brandService;
 
     final ReviewDAO reviewDAO;
 
@@ -69,8 +62,7 @@ public class ProductPageController {
             @RequestParam(name = "min", required = false) Double min,
             @RequestParam(name = "max", required = false) Double max,
             @RequestParam(name = "kw", required = false) String kw,
-            @RequestParam(name = "brand", required = false) String brand,
-            @RequestParam(name = "flashSale", required = false) Boolean flashSale) {
+            @RequestParam(name = "brand", required = false) String brand) {
         if (kw != null && kw.trim().isEmpty()) kw = null;
         if (brand != null && brand.trim().isEmpty()) brand = null;
         
@@ -89,45 +81,8 @@ public class ProductPageController {
         }
         
         List<Product> products = productService.searchProducts(cid, min, max, kw, brand);
-
-        // Build Flash Sale map for active campaign
-        Map<Integer, FlashSaleItem> flashSaleMap = new HashMap<>();
-        Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
-        if (currentSale.isPresent()) {
-            List<FlashSaleItem> items = flashSaleService.getItemsBySaleId(currentSale.get().getId());
-            if (items != null) {
-                for (FlashSaleItem item : items) {
-                    if (item.getProduct() != null && item.isAvailable()) {
-                        flashSaleMap.put(item.getProduct().getId(), item);
-                    }
-                }
-            }
-        }
-
-        // Lọc theo checkbox Flash Sale
-        if (Boolean.TRUE.equals(flashSale)) {
-            if (!flashSaleMap.isEmpty()) {
-                products = products.stream()
-                        .filter(p -> flashSaleMap.containsKey(p.getId()))
-                        .collect(Collectors.toList());
-            } else {
-                List<Product> fallbackFlashSale = productService.getFlashSaleProducts();
-                Set<Integer> fallbackIds = fallbackFlashSale != null ? 
-                        fallbackFlashSale.stream().map(Product::getId).collect(Collectors.toSet()) : Collections.emptySet();
-                products = products.stream()
-                        .filter(p -> fallbackIds.contains(p.getId()))
-                        .collect(Collectors.toList());
-            }
-        }
-
         model.addAttribute("allProducts", products);
         model.addAttribute("categories", categoryService.getAllCategories());
-        if (brandService != null) {
-            List<String> brandNames = brandService.getAllBrands().stream()
-                    .map(Brand::getName)
-                    .collect(Collectors.toList());
-            model.addAttribute("brands", brandNames);
-        }
         
         // Gửi lại các tham số lọc để giữ trạng thái trên UI
         model.addAttribute("selectedCid", cid);
@@ -135,8 +90,6 @@ public class ProductPageController {
         model.addAttribute("maxPrice", max);
         model.addAttribute("keywords", kw);
         model.addAttribute("selectedBrand", brand);
-        model.addAttribute("isFlashSale", flashSale);
-        model.addAttribute("flashSaleMap", flashSaleMap);
         addWishlistAttributes(model);
 
         return "all-products"; 

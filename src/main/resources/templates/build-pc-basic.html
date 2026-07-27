@@ -10,7 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/modal-system.css(v=1)}">
     <link rel="stylesheet" th:href="@{/css/build-pc.css}" />
     <link rel="stylesheet" th:href="@{/css/light-theme.css}" />
     <style>
@@ -461,71 +462,6 @@
             margin: 2rem 0;
         }
 
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.9);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-content {
-            width: 90%;
-            max-width: 1000px;
-            max-height: 85vh;
-            background: var(--black);
-            border: 1px solid var(--gold);
-            display: flex;
-            flex-direction: column;
-            transform: translateY(30px);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--deep);
-        }
-
-        .modal-header h2 {
-            font-family: var(--font-serif);
-            font-size: 1.5rem;
-            font-weight: 300;
-            color: var(--gold);
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color var(--transition);
-        }
-
-        .close-modal:hover {
-            color: var(--white);
-        }
 
         .modal-body {
             padding: 2rem;
@@ -1001,14 +937,16 @@
     <div th:replace="~{layout/footer :: footer}"></div>
 
     <!-- Modal -->
-    <div class="modal-overlay" id="productModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Danh sách linh kiện</h2>
-                <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="lux-modal-backdrop" id="productModal">
+        <div class="lux-modal-container lux-modal-xlarge">
+            <div class="lux-modal-header">
+                <h3 class="lux-modal-title" id="modalTitle">Danh sách linh kiện</h3>
+                <button class="lux-modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body">
-                <input type="text" class="search-bar" placeholder="Tìm kiếm tên sản phẩm..." id="searchInput">
+            <div class="lux-modal-search">
+                <input type="text" placeholder="Tìm kiếm tên sản phẩm..." id="searchInput">
+            </div>
+            <div class="lux-modal-body">
                 <div class="product-grid" id="modalProductGrid">
                     <!-- JS injected -->
                 </div>
@@ -1037,7 +975,7 @@
         }
 
         const formatMoney = (amount) => {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+            return new Intl.NumberFormat('en-US').format(amount) + 'đ';
         };
 
         function openModal(category) {

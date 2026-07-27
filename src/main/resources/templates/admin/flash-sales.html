@@ -9,7 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/flash-sales.css(v=5.0)}" />
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/modal-system.css(v=1)}">
 </head>
 
 <body>
@@ -49,7 +50,7 @@
             </div>
 
             <div class="table-wrapper"
-                style="width: 100%; max-height: 56vh; overflow-x: hidden !important; overflow-y: auto !important;">
+                style="width: 100%; max-height: 56vh; overflow-x: auto !important; overflow-y: auto !important;">
                 <table th:if="${flashSales != null and !flashSales.isEmpty()}" class="admin-table"
                     style="width: 100%; table-layout: auto;">
                     <thead>
@@ -152,11 +153,14 @@
         </div>
 
         <!-- Create Flash Sale Modal -->
-        <div class="modal-overlay" id="flashSaleModal">
-            <div class="modal">
-                <div class="modal-title"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i><span
-                        id="modalTitle">Tạo Flash Sale Mới</span></div>
-                <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/save}" method="POST"
+        <div class="lux-modal-backdrop" id="flashSaleModal">
+            <div class="lux-modal-container">
+                <div class="lux-modal-header">
+                    <h3 class="lux-modal-title"><i class="fa-solid fa-bolt" style="color: var(--primary);"></i> <span id="modalTitle">Tạo Flash Sale Mới</span></h3>
+                    <button class="lux-modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="lux-modal-body">
+                <form class="needs-validation" novalidate autocomplete="off" th:action="@{/admin/flash-sales/save}" method="POST"
                     id="flashSaleForm" enctype="multipart/form-data">
                     <input type="hidden" name="id" id="fsId">
                     <div class="form-group">
@@ -225,7 +229,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-actions">
+                    <div class="lux-modal-footer">
                         <button type="button" class="btn" style="color: black;" onclick="closeModal()">Hủy</button>
                         <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span
                                 id="btnSubmitText">Tạo Chương Trình</span></button>
@@ -234,7 +238,7 @@
             </div>
         </div>
 
-        <script th:src="@{/js/admin/flash-sales.js}"></script>
+        <script th:src="@{/js/admin/flash-sales.js(v=3)}"></script>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

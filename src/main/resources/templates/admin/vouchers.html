@@ -9,7 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/vouchers.css}" />
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/modal-system.css(v=1)}">
 </head>
 
 <body>
@@ -101,7 +102,7 @@
                             </td>
                             <td>
                                 <div class="actions-cell">
-                                    <form novalidate autocomplete="off"
+                                    <form class="needs-validation" novalidate autocomplete="off"
                                         th:action="@{/admin/vouchers/toggle/{id}(id=${v.id})}" method="POST"
                                         style="display:inline;">
                                         <button type="submit" class="btn btn-sm"
@@ -125,11 +126,14 @@
         </div>
 
         <!-- Create/Edit Voucher Modal -->
-        <div class="modal-overlay" id="voucherModal">
-            <div class="modal">
-                <div class="modal-title"><i class="fa-solid fa-ticket" style="margin-right:8px;"></i>Tạo Voucher Mới
+        <div class="lux-modal-backdrop" id="voucherModal">
+            <div class="lux-modal-container">
+                <div class="lux-modal-header">
+                    <h3 class="lux-modal-title"><i class="fa-solid fa-ticket" style="color: var(--primary);"></i> Tạo Voucher Mới</h3>
+                    <button class="lux-modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <form novalidate autocomplete="off" th:action="@{/admin/vouchers/save}" method="POST">
+                <div class="lux-modal-body">
+                <form class="needs-validation" novalidate autocomplete="off" th:action="@{/admin/vouchers/save}" method="POST">
                     <input autocomplete="off" th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}"
                         th:value="${_csrf.token}" />
                     <input autocomplete="off" type="hidden" name="id" id="voucherId">
@@ -208,7 +212,7 @@
                                 id="endDate"> <i class="fa-solid fa-calendar-days"></i> </div>
                     </div>
 
-                    <div class="form-actions">
+                    <div class="lux-modal-footer">
                         <button type="button" class="btn" style="background:var(--mid);color:var(--muted);"
                             onclick="closeModal()">Hủy</button>
                         <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span>Lưu
@@ -229,7 +233,7 @@
             });
         </script>
 
-        <script th:src="@{/js/admin/vouchers.js}"></script>
+        <script th:src="@{/js/admin/vouchers.js(v=2)}"></script>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

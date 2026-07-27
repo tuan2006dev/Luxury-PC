@@ -338,7 +338,7 @@
     background: #fbfbfb;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 30px 25px 25px 25px;
+    padding: 25px;
     align-self: start;
 }
 

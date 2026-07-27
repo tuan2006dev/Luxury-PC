@@ -13,11 +13,8 @@ import poly.edu.dao.OrderDAO;
 import poly.edu.dto.VietQrPaymentStatusResponse;
 import poly.edu.entity.Order;
 import poly.edu.entity.User;
-import poly.edu.entity.VietQrPaymentSession;
 import poly.edu.service.ProfileService;
 import poly.edu.service.SePayPaymentSession;
-
-import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/payments/vietqr")
@@ -55,21 +52,8 @@ public class VietQrPaymentStatusController {
             throw new PaymentStatusForbiddenException();
         }
 
-        Instant serverTime = Instant.now();
-        VietQrPaymentSession paymentSession = sePayPaymentSession.current(order.getId(), serverTime)
-                .orElseThrow(PaymentStatusForbiddenException::new);
         boolean paid = "DA_THANH_TOAN".equals(order.getStatus()) || "PAID".equals(order.getStatus());
-        boolean expired = !paid && SePayPaymentSession.isExpired(paymentSession, serverTime);
-        return new VietQrPaymentStatusResponse(
-                order.getOrderCode(),
-                order.getStatus(),
-                order.getStatusDisplay(),
-                paid,
-                serverTime,
-                paymentSession.getQrCreatedAt(),
-                paymentSession.getQrExpiresAt(),
-                expired ? 0 : SePayPaymentSession.remainingSeconds(paymentSession, serverTime),
-                expired);
+        return new VietQrPaymentStatusResponse(order.getOrderCode(), order.getStatusDisplay(), paid);
     }
 
     private User currentUser(Authentication authentication) {
