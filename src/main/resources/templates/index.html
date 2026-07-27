@@ -404,7 +404,9 @@
     <div th:replace="~{layout/footer :: footer}"></div>
 
     <script th:inline="javascript">
-        var flashSaleEndTime = 0;
+        /*<![CDATA[*/
+        var flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
+        /*]]>*/
     </script>
     <script th:src="@{/js/script.js}"></script>
     <script th:src="@{/js/cart.js}"></script>

@@ -38,12 +38,12 @@ public class CartController {
      */
     @PostMapping("/cart/add")
     public String addToCart(@RequestParam("id") Integer id,
-                            @RequestParam(value = "name", required = false) String name,
-                            @RequestParam(value = "price", required = false) Double price,
-                            @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
-                            HttpSession session,
-                            RedirectAttributes redirectAttributes,
-                            @AuthenticationPrincipal Object principal) {
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "price", required = false) Double price,
+            @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
+            HttpSession session,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal Object principal) {
 
         Map<Integer, CartItem> cart = getCartFromSession(session);
         int currentInCart = cart.containsKey(id) ? cart.get(id).getQuantity() : 0;
@@ -64,29 +64,28 @@ public class CartController {
             redirectAttributes.addAttribute("error", "Sản phẩm \"" + name + "\" đã hết hàng!");
             return "redirect:/cart";
         }
-        
-        // Giới hạn thêm theo số lượng Flash Sale còn lại nếu sản phẩm đang chạy Flash Sale
+
+        // Giới hạn thêm theo số lượng Flash Sale còn lại nếu sản phẩm đang chạy Flash
+        // Sale
         int maxAllowed = productStock;
         Optional<poly.edu.entity.FlashSaleItem> fsiOpt = flashSaleService.getActiveFlashSaleItem(id);
         if (fsiOpt.isPresent()) {
-            if (principal == null) {
-                redirectAttributes.addFlashAttribute("error", "Vui lòng đăng nhập để mua sản phẩm Flash Sale!");
-                return "redirect:/auth/login";
-            }
             poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
             int remainingSale = fsi.getSaleQuantity() - fsi.getSoldCount();
             maxAllowed = Math.min(productStock, remainingSale);
         }
 
         if (maxAllowed <= 0) {
-            redirectAttributes.addAttribute("error", "Sản phẩm \"" + name + "\" đã hết hàng hoặc đã hết lượt giảm giá Flash Sale!");
+            redirectAttributes.addAttribute("error",
+                    "Sản phẩm \"" + name + "\" đã hết hàng hoặc đã hết lượt giảm giá Flash Sale!");
             return "redirect:/cart";
         }
 
         if (currentInCart + quantity > maxAllowed) {
             int allowedQuantity = Math.max(0, maxAllowed - currentInCart);
             if (allowedQuantity <= 0) {
-                redirectAttributes.addAttribute("error", "Sản phẩm \"" + name + "\" đã đạt giới hạn tối đa có thể mua (" + maxAllowed + " sản phẩm)!");
+                redirectAttributes.addAttribute("error",
+                        "Sản phẩm \"" + name + "\" đã đạt giới hạn tối đa có thể mua (" + maxAllowed + " sản phẩm)!");
                 return "redirect:/cart";
             }
             quantity = allowedQuantity;
@@ -105,14 +104,15 @@ public class CartController {
     }
 
     /**
-     * 1b. AJAX: Thêm sản phẩm vào giỏ, trả về JSON (dùng cho nút thêm nhanh trên các trang)
+     * 1b. AJAX: Thêm sản phẩm vào giỏ, trả về JSON (dùng cho nút thêm nhanh trên
+     * các trang)
      */
     @PostMapping("/api/cart/add")
     @ResponseBody
     public Map<String, Object> addToCartAjax(@RequestParam("id") Integer id,
-                                              @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
-                                              HttpSession session,
-                                              @AuthenticationPrincipal Object principal) {
+            @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
+            HttpSession session,
+            @AuthenticationPrincipal Object principal) {
         Map<String, Object> result = new HashMap<>();
 
         Optional<Product> pOpt = productDAO.findById(id);
@@ -137,12 +137,6 @@ public class CartController {
         Optional<poly.edu.entity.FlashSaleItem> fsiOpt = flashSaleService.getActiveFlashSaleItem(id);
         int maxAllowed = productStock;
         if (fsiOpt.isPresent()) {
-            if (principal == null) {
-                result.put("success", false);
-                result.put("requireLogin", true);
-                result.put("message", "Vui lòng đăng nhập để mua sản phẩm Flash Sale!");
-                return result;
-            }
             poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
             price = fsi.getSalePrice();
             maxAllowed = Math.min(productStock, fsi.getSaleQuantity() - fsi.getSoldCount());
@@ -161,7 +155,8 @@ public class CartController {
             int allowedQty = Math.max(0, maxAllowed - currentInCart);
             if (allowedQty <= 0) {
                 result.put("success", false);
-                result.put("message", "Sản phẩm \"" + name + "\" đã đạt giới hạn tối đa (" + maxAllowed + " sản phẩm)!");
+                result.put("message",
+                        "Sản phẩm \"" + name + "\" đã đạt giới hạn tối đa (" + maxAllowed + " sản phẩm)!");
                 return result;
             }
             quantity = allowedQty;
@@ -181,15 +176,14 @@ public class CartController {
         return result;
     }
 
-
     @PostMapping("/cart/buy-now")
     public String buyNow(@RequestParam("id") Integer id,
-                         @RequestParam(value = "name", required = false) String name,
-                         @RequestParam(value = "price", required = false) Double price,
-                         @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
-                         HttpSession session,
-                         RedirectAttributes redirectAttributes,
-                         @AuthenticationPrincipal Object principal) {
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "price", required = false) Double price,
+            @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
+            HttpSession session,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal Object principal) {
 
         Map<Integer, CartItem> cart = getCartFromSession(session);
         int currentInCart = cart.containsKey(id) ? cart.get(id).getQuantity() : 0;
@@ -210,29 +204,28 @@ public class CartController {
             redirectAttributes.addAttribute("error", "Sản phẩm \"" + name + "\" đã hết hàng!");
             return "redirect:/cart";
         }
-        
-        // Giới hạn thêm theo số lượng Flash Sale còn lại nếu sản phẩm đang chạy Flash Sale
+
+        // Giới hạn thêm theo số lượng Flash Sale còn lại nếu sản phẩm đang chạy Flash
+        // Sale
         int maxAllowed = productStock;
         Optional<poly.edu.entity.FlashSaleItem> fsiOpt = flashSaleService.getActiveFlashSaleItem(id);
         if (fsiOpt.isPresent()) {
-            if (principal == null) {
-                redirectAttributes.addFlashAttribute("error", "Vui lòng đăng nhập để mua sản phẩm Flash Sale!");
-                return "redirect:/auth/login";
-            }
             poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
             int remainingSale = fsi.getSaleQuantity() - fsi.getSoldCount();
             maxAllowed = Math.min(productStock, remainingSale);
         }
 
         if (maxAllowed <= 0) {
-            redirectAttributes.addAttribute("error", "Sản phẩm \"" + name + "\" đã hết hàng hoặc đã hết lượt giảm giá Flash Sale!");
+            redirectAttributes.addAttribute("error",
+                    "Sản phẩm \"" + name + "\" đã hết hàng hoặc đã hết lượt giảm giá Flash Sale!");
             return "redirect:/cart";
         }
 
         if (currentInCart + quantity > maxAllowed) {
             int allowedQuantity = Math.max(0, maxAllowed - currentInCart);
             if (allowedQuantity <= 0) {
-                redirectAttributes.addAttribute("error", "Sản phẩm \"" + name + "\" đã đạt giới hạn tối đa có thể mua (" + maxAllowed + " sản phẩm)!");
+                redirectAttributes.addAttribute("error",
+                        "Sản phẩm \"" + name + "\" đã đạt giới hạn tối đa có thể mua (" + maxAllowed + " sản phẩm)!");
                 return "redirect:/cart";
             }
             quantity = allowedQuantity;
@@ -247,13 +240,15 @@ public class CartController {
 
     @PostMapping("/api/cart/add-build")
     @ResponseBody
-    public java.util.Map<String, Object> addBuildToCart(@RequestBody java.util.List<Integer> productIds, HttpSession session, @AuthenticationPrincipal Object principal) {
+    public java.util.Map<String, Object> addBuildToCart(@RequestBody java.util.List<Integer> productIds,
+            HttpSession session, @AuthenticationPrincipal Object principal) {
         Map<Integer, CartItem> cart = getCartFromSession(session);
         java.util.Map<String, Object> response = new HashMap<>();
 
         try {
             for (Integer id : productIds) {
-                if (id == null) continue;
+                if (id == null)
+                    continue;
                 Optional<Product> pOpt = productDAO.findById(id);
                 if (pOpt.isPresent()) {
                     Product p = pOpt.get();
@@ -281,9 +276,9 @@ public class CartController {
     @PostMapping("/cart/update")
     @ResponseBody
     public Map<String, Object> updateCart(@RequestParam("id") Integer id,
-                           @RequestParam("quantity") Integer quantity,
-                           HttpSession session,
-                           @AuthenticationPrincipal Object principal) {
+            @RequestParam("quantity") Integer quantity,
+            HttpSession session,
+            @AuthenticationPrincipal Object principal) {
         Map<String, Object> response = new HashMap<>();
         Map<Integer, CartItem> cart = getCartFromSession(session);
         if (cart.containsKey(id)) {
@@ -294,16 +289,12 @@ public class CartController {
                 productStock = pOpt.get().getStock();
                 prodName = pOpt.get().getName();
             }
-            
-            // Giới hạn thêm theo số lượng Flash Sale còn lại nếu sản phẩm đang chạy Flash Sale
+
+            // Giới hạn thêm theo số lượng Flash Sale còn lại nếu sản phẩm đang chạy Flash
+            // Sale
             int maxAllowed = productStock;
             Optional<poly.edu.entity.FlashSaleItem> fsiOpt = flashSaleService.getActiveFlashSaleItem(id);
             if (fsiOpt.isPresent()) {
-                if (principal == null) {
-                    response.put("success", false);
-                    response.put("message", "Vui lòng đăng nhập để mua sản phẩm Flash Sale!");
-                    return response;
-                }
                 poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
                 int remainingSale = fsi.getSaleQuantity() - fsi.getSoldCount();
                 maxAllowed = Math.min(productStock, remainingSale);
@@ -311,7 +302,8 @@ public class CartController {
 
             if (quantity > maxAllowed) {
                 response.put("success", false);
-                response.put("message", "Số lượng yêu cầu vượt quá giới hạn tối đa có thể mua của \"" + prodName + "\" (chỉ còn " + maxAllowed + " sản phẩm)!");
+                response.put("message", "Số lượng yêu cầu vượt quá giới hạn tối đa có thể mua của \"" + prodName
+                        + "\" (chỉ còn " + maxAllowed + " sản phẩm)!");
                 response.put("maxStock", maxAllowed);
                 return response;
             }
@@ -332,7 +324,8 @@ public class CartController {
      */
     @PostMapping("/cart/remove")
     @ResponseBody
-    public String removeFromCart(@RequestParam("id") Integer id, HttpSession session, @AuthenticationPrincipal Object principal) {
+    public String removeFromCart(@RequestParam("id") Integer id, HttpSession session,
+            @AuthenticationPrincipal Object principal) {
         Map<Integer, CartItem> cart = getCartFromSession(session);
         if (cart.containsKey(id)) {
             cart.remove(id);
@@ -376,7 +369,7 @@ public class CartController {
             } else {
                 item.setStock(5);
             }
-            
+
             if (item.getStock() <= 0) {
                 iterator.remove();
                 cartChanged = true;
@@ -388,7 +381,7 @@ public class CartController {
         if (cartChanged) {
             session.setAttribute("cart", cart);
         }
-        
+
         double baseTotal = cartService.calculateTotal(cart.values());
         double discountRate = cartService.getDiscountRate(principal);
 
@@ -406,8 +399,8 @@ public class CartController {
      */
     @GetMapping("/checkout")
     public String viewCheckout(Model model, HttpSession session, @AuthenticationPrincipal Object principal,
-                               @RequestParam(value = "type", required = false) String type,
-                               @RequestParam(value = "success", required = false) String success) {
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "success", required = false) String success) {
         if (success != null) {
             model.addAttribute("checkoutType", "cart");
             model.addAttribute("cartItems", new java.util.ArrayList<>());
@@ -446,7 +439,7 @@ public class CartController {
             } else {
                 item.setStock(5);
             }
-            
+
             if (item.getStock() <= 0) {
                 iterator.remove();
                 cartChanged = true;
@@ -466,7 +459,7 @@ public class CartController {
         if (targetCart.isEmpty()) {
             return "redirect:/cart";
         }
-        
+
         double baseTotal = cartService.calculateTotal(targetCart.values());
         double discountRate = cartService.getDiscountRate(principal);
 
@@ -493,17 +486,20 @@ public class CartController {
                 emailOrUsername = u.getUsername();
             }
             User currentUser = userDAO.findByEmail(emailOrUsername);
-            if (currentUser == null) currentUser = userDAO.findByUsername(emailOrUsername);
+            if (currentUser == null)
+                currentUser = userDAO.findByUsername(emailOrUsername);
             if (currentUser != null) {
-                List<UserVoucher> userVouchers = userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(currentUser, "AVAILABLE");
+                List<UserVoucher> userVouchers = userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(currentUser,
+                        "AVAILABLE");
                 model.addAttribute("userVouchers", userVouchers);
 
-                List<UserVoucher> consumed = userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(currentUser, "CONSUMED");
+                List<UserVoucher> consumed = userVoucherDAO.findByUserAndStatusOrderBySavedAtDesc(currentUser,
+                        "CONSUMED");
                 List<String> consumedCodes = consumed.stream().map(uv -> uv.getVoucher().getCode()).toList();
                 activeVouchers.removeIf(v -> consumedCodes.contains(v.getCode()));
             }
         }
-        
+
         model.addAttribute("activeVouchers", activeVouchers);
 
         return "checkout";
@@ -528,13 +524,16 @@ public class CartController {
             @AuthenticationPrincipal Object principal) {
 
         // Backend Validation: Chặn bypass phí vận chuyển
-        boolean isExpressOrStore = shippingMethodName.toLowerCase().contains("hỏa tốc") || shippingMethodName.toLowerCase().contains("cửa hàng");
+        boolean isExpressOrStore = shippingMethodName.toLowerCase().contains("hỏa tốc")
+                || shippingMethodName.toLowerCase().contains("cửa hàng");
         String addrLower = address.toLowerCase();
-        boolean isAddressHCM = addrLower.contains("hồ chí minh") || addrLower.contains("hcm") || addrLower.contains("ho chi minh");
+        boolean isAddressHCM = addrLower.contains("hồ chí minh") || addrLower.contains("hcm")
+                || addrLower.contains("ho chi minh");
 
         if (isExpressOrStore && !isAddressHCM) {
             // Chặn đơn hàng: Nếu chọn Hỏa Tốc hoặc Cửa Hàng mà địa chỉ không ở TP.HCM
-            redirectAttributes.addAttribute("error", "Địa chỉ giao hàng không hợp lệ cho phương thức vận chuyển đã chọn. Vui lòng không giả mạo vị trí.");
+            redirectAttributes.addAttribute("error",
+                    "Địa chỉ giao hàng không hợp lệ cho phương thức vận chuyển đã chọn. Vui lòng không giả mạo vị trí.");
             return "redirect:/cart";
         }
 
@@ -550,11 +549,13 @@ public class CartController {
             targetCart = getCartFromSession(session);
         }
 
-        if (targetCart == null || targetCart.isEmpty()) return "redirect:/cart";
+        if (targetCart == null || targetCart.isEmpty())
+            return "redirect:/cart";
 
         try {
-            Order order = cartService.processCheckout(targetCart, fullName, phone, address, paymentMethod, voucherCode, freeshipCode, shippingFee, shippingMethodName, principal);
-            
+            Order order = cartService.processCheckout(targetCart, fullName, phone, address, paymentMethod, voucherCode,
+                    freeshipCode, shippingFee, shippingMethodName, principal);
+
             if ("buynow".equals(checkoutType)) {
                 session.removeAttribute("buyNowCart");
             } else {
@@ -605,25 +606,25 @@ public class CartController {
         }
 
         boolean cartChanged = false;
-        
+
         if (!cart.isEmpty()) {
             java.util.List<Integer> productIds = new java.util.ArrayList<>(cart.keySet());
             java.util.List<Product> products = productDAO.findAllById(productIds);
             java.util.Map<Integer, Product> productMap = products.stream()
-                .collect(java.util.stream.Collectors.toMap(Product::getId, p -> p));
+                    .collect(java.util.stream.Collectors.toMap(Product::getId, p -> p));
 
             java.util.Iterator<CartItem> iterator = cart.values().iterator();
             while (iterator.hasNext()) {
                 CartItem item = iterator.next();
                 Product p = productMap.get(item.getId());
-                
+
                 if (p != null) {
                     item.setStock(p.getStock());
                     item.setImage(p.getImage());
                 } else {
                     item.setStock(5);
                 }
-                
+
                 if (item.getStock() <= 0) {
                     iterator.remove();
                     cartChanged = true;
@@ -641,8 +642,10 @@ public class CartController {
     }
 
     private User getUserFromPrincipal(Object principal) {
-        if (principal == null) return null;
-        if (principal instanceof User u) return u;
+        if (principal == null)
+            return null;
+        if (principal instanceof User u)
+            return u;
 
         String emailOrUsername = null;
         if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauthUser) {
@@ -660,7 +663,8 @@ public class CartController {
             emailOrUsername = principal.toString();
         }
 
-        if (emailOrUsername == null || emailOrUsername.isBlank()) return null;
+        if (emailOrUsername == null || emailOrUsername.isBlank())
+            return null;
         emailOrUsername = emailOrUsername.trim().toLowerCase();
 
         User user = userDAO.findByEmail(emailOrUsername);
