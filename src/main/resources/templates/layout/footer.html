@@ -125,7 +125,8 @@
                     <button class="lux-modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="lux-modal-search">
-                    <input type="text" id="modalSearch" placeholder="Tìm kiếm sản phẩm..." oninput="filterModalProducts()">
+                    <input type="text" id="modalSearch" placeholder="Tìm kiếm sản phẩm..."
+                        oninput="filterModalProducts()">
                 </div>
                 <div class="lux-modal-body" id="modalProductList">
                     <!-- Product Items -->
@@ -138,22 +139,35 @@
         <div id="guideModal" class="lux-modal-backdrop">
             <div class="lux-modal-container">
                 <div class="lux-modal-header">
-                    <h3 class="lux-modal-title"><i class="fa-solid fa-book-open" style="color:#3b82f6;"></i> Hướng Dẫn Tự Build PC</h3>
-                    <button class="lux-modal-close" onclick="closeBuildGuide()"><i class="fa-solid fa-xmark"></i></button>
+                    <h3 class="lux-modal-title"><i class="fa-solid fa-book-open" style="color:#3b82f6;"></i> Hướng Dẫn
+                        Tự Build PC</h3>
+                    <button class="lux-modal-close" onclick="closeBuildGuide()"><i
+                            class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="lux-modal-body" style="font-size:15px; color:#475569; line-height:1.6;">
                     <h4 style="color:#0f172a; margin-top:0;">Quy Trình Chuẩn (Gợi Ý)</h4>
                     <ol style="padding-left:20px; margin-bottom:20px;">
-                        <li style="margin-bottom:10px;"><strong>Bước 1: Chọn CPU (Bộ Vi Xử Lý)</strong> - Là trái tim của hệ thống. Quyết định sức mạnh tính toán tổng thể.</li>
-                        <li style="margin-bottom:10px;"><strong>Bước 2: Chọn Mainboard (Bo Mạch Chủ)</strong> - Khung xương kết nối mọi thứ. Phải có Socket tương thích với CPU đã chọn.</li>
-                        <li style="margin-bottom:10px;"><strong>Bước 3: Chọn RAM (Bộ Nhớ Trong)</strong> - DDR4 hoặc DDR5 tùy thuộc vào Mainboard. Dung lượng khuyên dùng từ 16GB trở lên.</li>
-                        <li style="margin-bottom:10px;"><strong>Bước 4: Chọn VGA (Card Đồ Họa)</strong> - Quan trọng nhất cho việc chơi Game và làm Đồ họa (Render).</li>
-                        <li style="margin-bottom:10px;"><strong>Bước 5: Chọn Lưu Trữ (SSD/HDD)</strong> - Nên có ít nhất 1 ổ SSD NVMe để cài Windows cho tốc độ khởi động nhanh.</li>
-                        <li style="margin-bottom:10px;"><strong>Bước 6: Chọn Nguồn (PSU)</strong> - Rất quan trọng! Công suất nguồn phải đủ lớn để gánh toàn bộ linh kiện, đặc biệt là VGA. Hệ thống sẽ tự động tính toán tổng công suất tiêu thụ cho bạn.</li>
-                        <li style="margin-bottom:10px;"><strong>Bước 7: Chọn Case & Tản Nhiệt</strong> - Tản nhiệt giúp CPU mát mẻ, Case giúp chứa mọi thứ và tăng tính thẩm mỹ.</li>
+                        <li style="margin-bottom:10px;"><strong>Bước 1: Chọn CPU (Bộ Vi Xử Lý)</strong> - Là trái tim
+                            của hệ thống. Quyết định sức mạnh tính toán tổng thể.</li>
+                        <li style="margin-bottom:10px;"><strong>Bước 2: Chọn Mainboard (Bo Mạch Chủ)</strong> - Khung
+                            xương kết nối mọi thứ. Phải có Socket tương thích với CPU đã chọn.</li>
+                        <li style="margin-bottom:10px;"><strong>Bước 3: Chọn RAM (Bộ Nhớ Trong)</strong> - DDR4 hoặc
+                            DDR5 tùy thuộc vào Mainboard. Dung lượng khuyên dùng từ 16GB trở lên.</li>
+                        <li style="margin-bottom:10px;"><strong>Bước 4: Chọn VGA (Card Đồ Họa)</strong> - Quan trọng
+                            nhất cho việc chơi Game và làm Đồ họa (Render).</li>
+                        <li style="margin-bottom:10px;"><strong>Bước 5: Chọn Lưu Trữ (SSD/HDD)</strong> - Nên có ít nhất
+                            1 ổ SSD NVMe để cài Windows cho tốc độ khởi động nhanh.</li>
+                        <li style="margin-bottom:10px;"><strong>Bước 6: Chọn Nguồn (PSU)</strong> - Rất quan trọng! Công
+                            suất nguồn phải đủ lớn để gánh toàn bộ linh kiện, đặc biệt là VGA. Hệ thống sẽ tự động tính
+                            toán tổng công suất tiêu thụ cho bạn.</li>
+                        <li style="margin-bottom:10px;"><strong>Bước 7: Chọn Case & Tản Nhiệt</strong> - Tản nhiệt giúp
+                            CPU mát mẻ, Case giúp chứa mọi thứ và tăng tính thẩm mỹ.</li>
                     </ol>
-                    <div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:15px; border-radius:4px; font-size:14px;">
-                        <i class="fa-solid fa-circle-info" style="color:#3b82f6;"></i> <strong>Mẹo:</strong> Hệ thống của chúng tôi có công cụ <em>Kiểm Tra Tương Thích</em> ở cột giữa để đảm bảo các linh kiện bạn chọn sẽ hoạt động hoàn hảo cùng nhau.
+                    <div
+                        style="background:#eff6ff; border-left:4px solid #3b82f6; padding:15px; border-radius:4px; font-size:14px;">
+                        <i class="fa-solid fa-circle-info" style="color:#3b82f6;"></i> <strong>Mẹo:</strong> Hệ thống
+                        của chúng tôi có công cụ <em>Kiểm Tra Tương Thích</em> ở cột giữa để đảm bảo các linh kiện bạn
+                        chọn sẽ hoạt động hoàn hảo cùng nhau.
                     </div>
                 </div>
                 <div class="lux-modal-footer">
@@ -166,18 +180,27 @@
         <div id="shareModal" class="lux-modal-backdrop">
             <div class="lux-modal-container lux-modal-small">
                 <div class="lux-modal-header">
-                    <h3 class="lux-modal-title"><i class="fa-solid fa-share-nodes" style="color:#10b981;"></i> Chia Sẻ Cấu Hình</h3>
-                    <button class="lux-modal-close" onclick="closeShareModal()"><i class="fa-solid fa-xmark"></i></button>
+                    <h3 class="lux-modal-title"><i class="fa-solid fa-share-nodes" style="color:#10b981;"></i> Chia Sẻ
+                        Cấu Hình</h3>
+                    <button class="lux-modal-close" onclick="closeShareModal()"><i
+                            class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="lux-modal-body" style="text-align:center; display:flex; flex-direction:column; align-items:center;">
-                    <div id="qrCodeContainer" style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:20px; display:inline-block;"></div>
+                <div class="lux-modal-body"
+                    style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+                    <div id="qrCodeContainer"
+                        style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:20px; display:inline-block;">
+                    </div>
                     <div style="width:100%; margin-bottom:15px; display:flex; gap:10px;">
-                        <input type="text" id="shareUrlInput" readonly style="flex:1; padding:10px 15px; border:1px solid #cbd5e1; border-radius:6px; background:#f8fafc; color:#475569; font-size:14px; outline:none;" />
-                        <button onclick="copyShareUrl()" class="btn btn-primary" style="background:#10b981; border:none;"><i class="fa-regular fa-copy"></i> Copy</button>
+                        <input type="text" id="shareUrlInput" readonly
+                            style="flex:1; padding:10px 15px; border:1px solid #cbd5e1; border-radius:6px; background:#f8fafc; color:#475569; font-size:14px; outline:none;" />
+                        <button onclick="copyShareUrl()" class="btn btn-primary"
+                            style="background:#10b981; border:none;"><i class="fa-regular fa-copy"></i> Copy</button>
                     </div>
                     <div style="display:flex; gap:10px; width:100%;">
-                        <button onclick="downloadQR()" class="btn btn-outline" style="flex:1;"><i class="fa-solid fa-download"></i> Tải mã QR</button>
-                        <button onclick="openShareUrl()" class="btn btn-outline" style="flex:1;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Link</button>
+                        <button onclick="downloadQR()" class="btn btn-outline" style="flex:1;"><i
+                                class="fa-solid fa-download"></i> Tải mã QR</button>
+                        <button onclick="openShareUrl()" class="btn btn-outline" style="flex:1;"><i
+                                class="fa-solid fa-arrow-up-right-from-square"></i> Mở Link</button>
                     </div>
                 </div>
             </div>
@@ -187,15 +210,19 @@
         <div id="confirmClearModal" class="lux-modal-backdrop">
             <div class="lux-modal-container lux-modal-confirm">
                 <div class="lux-modal-body">
-                    <div style="width:60px; height:60px; border-radius:50%; background:#fee2e2; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 20px;">
+                    <div
+                        style="width:60px; height:60px; border-radius:50%; background:#fee2e2; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 20px;">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
-                    <h3 style="margin:0 0 10px; font-size:20px; color:#1e293b; font-weight:700;">Xóa tất cả linh kiện?</h3>
-                    <p style="color:#64748b; font-size:15px; margin:0 0 20px; line-height:1.5;">Hành động này sẽ làm trống cấu hình hiện tại và không thể hoàn tác. Bạn có chắc chắn muốn tiếp tục?</p>
+                    <h3 style="margin:0 0 10px; font-size:20px; color:#1e293b; font-weight:700;">Xóa tất cả linh kiện?
+                    </h3>
+                    <p style="color:#64748b; font-size:15px; margin:0 0 20px; line-height:1.5;">Hành động này sẽ làm
+                        trống cấu hình hiện tại và không thể hoàn tác. Bạn có chắc chắn muốn tiếp tục?</p>
                 </div>
                 <div class="lux-modal-footer">
                     <button class="btn btn-outline" onclick="closeConfirmClear()" style="flex:1;">Hủy</button>
-                    <button class="btn btn-primary" onclick="executeClearAll()" style="flex:1; background:#ef4444; border-color:#ef4444;">Đồng ý xóa</button>
+                    <button class="btn btn-primary" onclick="executeClearAll()"
+                        style="flex:1; background:#ef4444; border-color:#ef4444;">Đồng ý xóa</button>
                 </div>
             </div>
         </div>
@@ -205,9 +232,9 @@
 
         <!-- Script for Live Chat Box -->
         <script th:src="@{/js/socket-chat-v2.js}"></script>
-        
+
         <!-- Script for footer features (modals, etc) -->
-        <script th:src="@{/js/layout/footer.js(v=2)}"></script>
+        <script th:src="@{/js/layout/footer.js}"></script>
     </div>
 </body>
 
