@@ -62,7 +62,8 @@ public class ProductPageController {
             @RequestParam(name = "min", required = false) Double min,
             @RequestParam(name = "max", required = false) Double max,
             @RequestParam(name = "kw", required = false) String kw,
-            @RequestParam(name = "brand", required = false) String brand) {
+            @RequestParam(name = "brand", required = false) String brand,
+            @RequestParam(name = "flashSale", required = false) Boolean flashSale) {
         if (kw != null && kw.trim().isEmpty()) kw = null;
         if (brand != null && brand.trim().isEmpty()) brand = null;
         
@@ -81,6 +82,27 @@ public class ProductPageController {
         }
         
         List<Product> products = productService.searchProducts(cid, min, max, kw, brand);
+
+        // Lấy danh sách Flash Sale đang diễn ra
+        java.util.Map<Integer, FlashSaleItem> flashSaleMap = new java.util.HashMap<>();
+        Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
+        if (currentSale.isPresent()) {
+            List<FlashSaleItem> items = flashSaleService.getItemsBySaleId(currentSale.get().getId());
+            for (FlashSaleItem item : items) {
+                if (item.getProduct() != null && item.getSoldCount() < item.getSaleQuantity()) {
+                    flashSaleMap.put(item.getProduct().getId(), item);
+                }
+            }
+        }
+        model.addAttribute("flashSaleMap", flashSaleMap);
+
+        // Nếu chọn lọc theo Flash Sale
+        if (Boolean.TRUE.equals(flashSale)) {
+            products = products.stream()
+                    .filter(p -> p != null && flashSaleMap.containsKey(p.getId()))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
         model.addAttribute("allProducts", products);
         model.addAttribute("categories", categoryService.getAllCategories());
         
@@ -90,6 +112,7 @@ public class ProductPageController {
         model.addAttribute("maxPrice", max);
         model.addAttribute("keywords", kw);
         model.addAttribute("selectedBrand", brand);
+        model.addAttribute("isFlashSale", flashSale);
         addWishlistAttributes(model);
 
         return "all-products"; 

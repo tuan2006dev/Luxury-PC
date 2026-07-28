@@ -34,6 +34,13 @@
             </div>
         </div>
 
+        <div th:if="${success}" class="toast toast-success" style="margin-bottom: 1rem;">
+            <i class="fa-solid fa-check-circle"></i> <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="toast toast-error" style="margin-bottom: 1rem;">
+            <i class="fa-solid fa-exclamation-circle"></i> <span th:text="${error}"></span>
+        </div>
+
         <div class="table-card">
             <div class="table-h">
                 <h2>Quản Lý Kho Hàng</h2>
@@ -71,18 +78,24 @@
                             <td style="white-space: nowrap;"
                                 th:text="${#dates.format(item.lastUpdate, 'dd/MM/yyyy HH:mm')}">27/03/2026</td>
                             <td style="white-space: nowrap;">
-                                <form autocomplete="off" th:action="@{/admin/inventory/adjust}" method="post"
+                                <form class="form-group" autocomplete="off" novalidate
+                                    th:action="@{/admin/inventory/adjust}" method="post"
+                                    onsubmit="return validateInventoryForm(this)"
                                     style="display:flex; align-items:center; gap: 10px; flex-wrap: nowrap;">
                                     <input autocomplete="off" type="hidden" name="productId" style="width:200px;"
                                         th:value="${item.product != null ? item.product.id : ''}">
-                                    <input autocomplete="off" type="number" name="quantity" class="stock-input"
-                                        style="width:160px;" placeholder="Số lượng" required min="1">
+                                    <div style="position: relative;">
+                                        <input autocomplete="off" type="number" name="quantity" class="stock-input"
+                                            style="width:160px;" placeholder="Số lượng" required min="1" max="200">
+                                    </div>
                                     <select name="type" class="type-select" style="margin: 0; width:160px;">
                                         <option value="IMPORT">Nhập Kho</option>
                                         <option value="EXPORT">Xuất Kho</option>
                                     </select>
-                                    <input autocomplete="off" type="text" name="note" class="stock-input"
-                                        style="width:160px;" placeholder="Ghi chú">
+                                    <div style="position: relative;">
+                                        <input autocomplete="off" type="text" name="note" class="stock-input"
+                                            style="width:160px;" placeholder="Ghi chú">
+                                    </div>
                                     <button type="submit" class="adj-btn">Xác Nhận</button>
                                 </form>
                             </td>
@@ -92,6 +105,84 @@
             </div>
         </div>
     </div>
+    <script>
+        function showFieldError(inputEl, msg) {
+            if (!inputEl) return;
+            const container = inputEl.parentElement;
+            if (!container) return;
+
+            let errorEl = container.querySelector('.field-error-msg');
+            if (!errorEl) {
+                errorEl = document.createElement('small');
+                errorEl.className = 'field-error-msg';
+                errorEl.style.cssText = "position: absolute; top: 100%; left: 0; margin-top: 2px; color: #ef4444; font-size: 11px; font-weight: 500; display: block; line-height: 1.2; white-space: nowrap; z-index: 10;";
+                if (getComputedStyle(container).position === 'static') {
+                    container.style.position = 'relative';
+                }
+                container.appendChild(errorEl);
+            }
+            errorEl.innerText = msg;
+            errorEl.style.display = 'block';
+
+            inputEl.classList.remove('input-error');
+            void inputEl.offsetWidth; // re-trigger animation
+            inputEl.classList.add('input-error');
+        }
+
+        function clearFieldError(inputEl) {
+            if (!inputEl) return;
+            inputEl.classList.remove('input-error');
+            const container = inputEl.parentElement;
+            if (container) {
+                const errorEl = container.querySelector('.field-error-msg');
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                    errorEl.innerText = '';
+                }
+            }
+        }
+
+        function validateInventoryForm(form) {
+            const quantityInput = form.querySelector('input[name="quantity"]');
+            let isValid = true;
+            let firstInvalidEl = null;
+
+            clearFieldError(quantityInput);
+
+            if (!quantityInput || !quantityInput.value || quantityInput.value.trim() === '') {
+                showFieldError(quantityInput, 'Vui lòng nhập số lượng!');
+                if (!firstInvalidEl) firstInvalidEl = quantityInput;
+                isValid = false;
+            } else {
+                const quantity = parseInt(quantityInput.value.trim(), 10);
+                if (isNaN(quantity) || quantity <= 0) {
+                    showFieldError(quantityInput, 'Số lượng phải lớn hơn 0!');
+                    if (!firstInvalidEl) firstInvalidEl = quantityInput;
+                    isValid = false;
+                } else if (quantity > 200) {
+                    showFieldError(quantityInput, 'Tối đa 200 sản phẩm!');
+                    if (!firstInvalidEl) firstInvalidEl = quantityInput;
+                    isValid = false;
+                }
+            }
+            if (!isValid && firstInvalidEl) {
+                firstInvalidEl.focus();
+            }
+
+            return isValid;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('.inventory-table input[name="quantity"], .inventory-table input[name="note"]');
+            inputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    if (this.value && this.value.trim() !== '') {
+                        clearFieldError(this);
+                    }
+                });
+            });
+        });
+    </script>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 

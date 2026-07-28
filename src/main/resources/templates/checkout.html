@@ -303,9 +303,9 @@
     </div>
 
     <!-- Address Book Modal -->
-    <div id="addressBookModal"
+    <div id="addressBookModal" onclick="closeAddressBookModal()"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
-        <div
+        <div onclick="event.stopPropagation()"
             style="background:#fff; width: 90%; max-width: 600px; border-radius: 8px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; max-height: 80vh; display: flex; flex-direction: column;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
                 <h3 style="margin:0; font-size:18px;">Chọn Địa Chỉ Giao Hàng</h3>
@@ -372,7 +372,7 @@
                                 <div style="font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600;"
                                     th:text="${uv.voucher.discountValue == null ? 'Miễn phí vận chuyển' : (uv.voucher.discountType != null and uv.voucher.discountType?.name() == 'PERCENTAGE' ? 'Giảm phí vận chuyển ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm phí vận chuyển ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ')}">
                                 </div>
-                                <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                                <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
                                     th:text="${uv.voucher.description != null ? uv.voucher.description : ''}"></div>
                                 <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;"
                                     th:if="${uv.voucher.minOrderAmount != null and uv.voucher.minOrderAmount > 0}"
@@ -415,7 +415,7 @@
                                 <div style="font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600;"
                                     th:text="${uv.voucher.discountValue == null ? 'Khuyến mãi' : (uv.voucher.discountType != null and uv.voucher.discountType?.name() == 'PERCENTAGE' ? 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + '%' : 'Giảm ' + #numbers.formatDecimal(uv.voucher.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ')}">
                                 </div>
-                                <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                                <div style="font-size: 12px; color: #64748b; margin-bottom: 6px; line-height: 1.4; display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
                                     th:text="${uv.voucher.description != null ? uv.voucher.description : ''}"></div>
                                 <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;"
                                     th:if="${uv.voucher.minOrderAmount != null and uv.voucher.minOrderAmount > 0}"
@@ -1108,8 +1108,7 @@
         function closeAddressBookModal() {
             const addrModal = document.getElementById('addressBookModal');
             if (!addrModal) return;
-            addrModal.classList.remove('active');
-            addrModal.removeAttribute('style');
+            addrModal.style.display = 'none';
         }
 
         function selectAddressFromBook(addrJsonEnc) {

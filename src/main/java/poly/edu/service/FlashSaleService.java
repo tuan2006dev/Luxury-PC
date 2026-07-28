@@ -17,8 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class FlashSaleService {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FlashSaleService.class);
 
     private final FlashSaleDAO flashSaleDAO;
 

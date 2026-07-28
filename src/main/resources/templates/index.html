@@ -9,8 +9,8 @@
         content="Luxury PC — Cung cấp PC Gaming, PC Đồ Họa, linh kiện máy tính cao cấp chính hãng." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
 
@@ -273,10 +273,10 @@
         <div class="filter-tabs">
             <span class="filter-tab">DANH MỤC</span>
             <span class="filter-tab active" onclick="filterProducts('ALL', this)">TẤT CẢ</span>
-            <span class="filter-tab" onclick="filterProducts('CPU', this)">CPU</span>
-            <span class="filter-tab" onclick="filterProducts('VGA', this)">VGA</span>
-            <span class="filter-tab" onclick="filterProducts('RAM', this)">RAM</span>
-            <span class="filter-tab" onclick="filterProducts('Mainboard', this)">MAINBOARD</span>
+            <span class="filter-tab" th:each="cat : ${categories}"
+                th:if="${allProducts != null and #lists.contains(allProducts.![category?.id], cat.id)}"
+                th:data-name="${cat.name}" onclick="filterProducts(this.getAttribute('data-name'), this)"
+                th:text="${#strings.toUpperCase(cat.name)}">DANH MỤC</span>
         </div>
         <div class="grid-5-cols">
             <div class="product-card product-filter-item" th:each="p : ${allProducts}"
@@ -404,11 +404,9 @@
     <div th:replace="~{layout/footer :: footer}"></div>
 
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        var flashSaleEndTime = /*[[${flashSaleEndTime}]]*/ 0;
-        /*]]>*/
+        var flashSaleEndTime = /*[[${flashSaleEndTime != null ? flashSaleEndTime : 0}]]*/ 0;
     </script>
-    <script th:src="@{/js/script.js(v=3)}"></script>
+    <script th:src="@{/js/script.js}"></script>
     <script th:src="@{/js/cart.js}"></script>
     <script th:inline="javascript">
         let newestExpanded = false;

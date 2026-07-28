@@ -294,7 +294,7 @@
                             <div
                                 style="display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
                                 <div>
-                                    <h4 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; color: #1f2937; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px;"
+                                    <h4 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; color: #1f2937; line-height: 1.4; display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px;"
                                         th:text="${item.product != null ? item.product.name : 'Unknown Product'}">
                                         Product Name</h4>
 
@@ -324,7 +324,7 @@
                                     </div>
 
                                     <button class="btn-add-cart" th:if="${!isUpcoming}"
-                                        th:attr="onclick='addToCart(' + ${item.product.id} + ', 1); event.stopPropagation();'"
+                                        th:onclick="'addToCart(' + ${item.product.id} + ', 1); event.stopPropagation();'"
                                         style="width: 100%; padding: 8px 0; background: #fff; color: #3b82f6; border: 1px solid #3b82f6; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px;"
                                         onmouseover="this.style.background='#3b82f6'; this.style.color='#fff'"
                                         onmouseout="this.style.background='#fff'; this.style.color='#3b82f6'">
@@ -680,7 +680,7 @@
     </div>
 
     <script th:inline="javascript">
-        var flashSaleEndTime = 0;
+        var flashSaleEndTime = /*[[${flashSaleEndTime != null ? flashSaleEndTime : 0}]]*/ 0;
     </script>
     <script th:src="@{/js/script.js}"></script>
     <script th:src="@{/js/promotions.js}"></script>

@@ -53,8 +53,8 @@
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
-            <form novalidate class="needs-validation" id="productFormElement" autocomplete="off" th:action="@{/admin/products/save}"
-                method="post" th:object="${product}" enctype="multipart/form-data">
+            <form novalidate class="needs-validation" id="productFormElement" autocomplete="off"
+                th:action="@{/admin/products/save}" method="post" th:object="${product}" enctype="multipart/form-data">
 
                 <input autocomplete="off" type="hidden" th:field="*{id}">
                 <div class="form-grid">
@@ -185,7 +185,7 @@
                 </table>
             </div>
         </div>
-        <script th:src="@{/js/admin/products.js(v=2)}"></script>
+        <script th:src="@{/js/admin/products.js}"></script>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

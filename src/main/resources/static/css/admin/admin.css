@@ -22,6 +22,18 @@
   --blue: #0066CC;
 }
 
+/* Ẩn spinner của input number */
+.form-group input[type="number"]::-webkit-inner-spin-button,
+.form-group input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-group input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -645,9 +657,11 @@ body.sidebar-collapsed .main-content {
 .swal2-modal {
   z-index: 100000 !important;
 }
-/* Form Validation Styles */
-input.is-invalid, select.is-invalid, textarea.is-invalid {
-    border-color: #ef4444 !important;
-    background-color: #fef2f2 !important;
-}
 
+/* Form Validation Styles */
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}

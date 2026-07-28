@@ -4,8 +4,9 @@
 
     <!-- Sidebar Header with Logo and Collapse/Expand Toggle Button -->
     <div class="sidebar-header">
-        <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
-        <button type="button" class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" title="Thu gọn / Mở rộng menu">
+        <a href="/" class="logo">LUXURY<span style="font-weight:300; color: var(--blue)"><Strong>PC</Strong></span></a>
+        <button type="button" class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()"
+            title="Thu gọn / Mở rộng menu">
             <i class="fa-solid fa-bars"></i>
         </button>
     </div>
@@ -52,10 +53,8 @@
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="userMenu">
-                <a href="/admin/employees" id="nav-employees"
-                    sec:authorize="hasRole('ADMIN')">Quản lý Nhân viên</a>
-                <a href="/admin/account" id="nav-account"
-                    sec:authorize="hasRole('ADMIN')">Quản lý Khách hàng</a>
+                <a href="/admin/employees" id="nav-employees" sec:authorize="hasRole('ADMIN')">Quản lý Nhân viên</a>
+                <a href="/admin/account" id="nav-account" sec:authorize="hasRole('ADMIN')">Quản lý Khách hàng</a>
                 <a href="/admin/vouchers" id="nav-vouchers">Voucher</a>
                 <a href="/admin/tickets" id="nav-tickets">Hỗ Trợ (Tickets)</a>
             </div>

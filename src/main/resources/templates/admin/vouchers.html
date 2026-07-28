@@ -129,113 +129,115 @@
         <div class="lux-modal-backdrop" id="voucherModal">
             <div class="lux-modal-container">
                 <div class="lux-modal-header">
-                    <h3 class="lux-modal-title"><i class="fa-solid fa-ticket" style="color: var(--primary);"></i> Tạo Voucher Mới</h3>
+                    <h3 class="lux-modal-title"><i class="fa-solid fa-ticket" style="color: var(--primary);"></i> Tạo
+                        Voucher Mới</h3>
                     <button class="lux-modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="lux-modal-body">
-                <form class="needs-validation" novalidate autocomplete="off" th:action="@{/admin/vouchers/save}" method="POST">
-                    <input autocomplete="off" th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}"
-                        th:value="${_csrf.token}" />
-                    <input autocomplete="off" type="hidden" name="id" id="voucherId">
+                    <form class="needs-validation" novalidate autocomplete="off" th:action="@{/admin/vouchers/save}"
+                        method="POST">
+                        <input autocomplete="off" th:if="${_csrf != null}" type="hidden"
+                            th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <input autocomplete="off" type="hidden" name="id" id="voucherId">
 
-                    <div class="form-row">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Mã Voucher</label>
+                                <input autocomplete="off" type="text" name="code" id="voucherCode" required
+                                    placeholder="VD: LUXURY10" style="text-transform:uppercase;">
+                            </div>
+                            <div class="form-group">
+                                <label>Loại Giảm Giá</label>
+                                <select name="discountType" id="discountType" onchange="toggleMaxDiscount()">
+                                    <option value="PERCENTAGE">Phần trăm (%)
+                                    </option>
+                                    <option value="FIXED_AMOUNT">Số tiền cố định
+                                        (₫)
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <label>Mã Voucher</label>
-                            <input autocomplete="off" type="text" name="code" id="voucherCode" required
-                                placeholder="VD: LUXURY10" style="text-transform:uppercase;">
+                            <label>Mô Tả</label>
+                            <input autocomplete="off" type="text" name="description" id="voucherDesc"
+                                placeholder="VD: Giảm 10% cho tất cả đơn hàng">
                         </div>
-                        <div class="form-group">
-                            <label>Loại Giảm Giá</label>
-                            <select name="discountType" id="discountType" onchange="toggleMaxDiscount()">
-                                <option value="PERCENTAGE">Phần trăm (%)
-                                </option>
-                                <option value="FIXED_AMOUNT">Số tiền cố định
-                                    (₫)
-                                </option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label>Mô Tả</label>
-                        <input autocomplete="off" type="text" name="description" id="voucherDesc"
-                            placeholder="VD: Giảm 10% cho tất cả đơn hàng">
-                    </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Phân Loại (Scope)</label>
+                                <select name="voucherScope" id="voucherScope" onchange="toggleCategorySelect()">
+                                    <option value="GLOBAL">Toàn Sàn</option>
+                                    <option value="FREESHIP">Miễn Phí Vận Chuyển</option>
+                                    <option value="CATEGORY">Danh Mục</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="categoryGroup" style="display: none;">
+                                <label>Chọn Danh Mục</label>
+                                <select name="categoryId" id="categoryId">
+                                    <option value="">Tất cả sản phẩm</option>
+                                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">CPU
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Phân Loại (Scope)</label>
-                            <select name="voucherScope" id="voucherScope" onchange="toggleCategorySelect()">
-                                <option value="GLOBAL">Toàn Sàn</option>
-                                <option value="FREESHIP">Miễn Phí Vận Chuyển</option>
-                                <option value="CATEGORY">Danh Mục</option>
-                            </select>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Giá Trị Giảm</label>
+                                <input autocomplete="off" type="number" name="discountValue" id="discountValue" required
+                                    min="0" step="0.01" placeholder="10">
+                            </div>
+                            <div class="form-group" id="maxDiscountGroup">
+                                <label>Giảm Tối Đa (₫)</label>
+                                <input autocomplete="off" type="number" name="maxDiscountAmount" id="maxDiscountAmount"
+                                    min="0" placeholder="Không giới hạn">
+                            </div>
                         </div>
-                        <div class="form-group" id="categoryGroup" style="display: none;">
-                            <label>Chọn Danh Mục</label>
-                            <select name="categoryId" id="categoryId">
-                                <option value="">Tất cả sản phẩm</option>
-                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">CPU
-                                </option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Giá Trị Giảm</label>
-                            <input autocomplete="off" type="number" name="discountValue" id="discountValue" required
-                                min="0" step="0.01" placeholder="10">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Đơn Tối Thiểu (₫)</label>
+                                <input autocomplete="off" type="number" name="minOrderAmount" id="minOrderAmount"
+                                    min="0" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Giới Hạn Lượt Dùng</label>
+                                <input autocomplete="off" type="number" name="usageLimit" id="usageLimit" min="0"
+                                    placeholder="Không giới hạn">
+                            </div>
                         </div>
-                        <div class="form-group" id="maxDiscountGroup">
-                            <label>Giảm Tối Đa (₫)</label>
-                            <input autocomplete="off" type="number" name="maxDiscountAmount" id="maxDiscountAmount"
-                                min="0" placeholder="Không giới hạn">
-                        </div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Đơn Tối Thiểu (₫)</label>
-                            <input autocomplete="off" type="number" name="minOrderAmount" id="minOrderAmount" min="0"
-                                placeholder="0">
+                        <div class="form-group"> <label>Kết Thúc</label>
+                            <div class="datetime-wrapper"> <input autocomplete="off" type="datetime-local"
+                                    name="endDate" id="endDate"> <i class="fa-solid fa-calendar-days"></i> </div>
                         </div>
-                        <div class="form-group">
-                            <label>Giới Hạn Lượt Dùng</label>
-                            <input autocomplete="off" type="number" name="usageLimit" id="usageLimit" min="0"
-                                placeholder="Không giới hạn">
+
+                        <div class="lux-modal-footer">
+                            <button type="button" class="btn" style="background:var(--mid);color:var(--muted);"
+                                onclick="closeModal()">Hủy</button>
+                            <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span>Lưu
+                                    Voucher</span></button>
                         </div>
-                    </div>
-
-                    <div class="form-group"> <label>Kết Thúc</label>
-                        <div class="datetime-wrapper"> <input autocomplete="off" type="datetime-local" name="endDate"
-                                id="endDate"> <i class="fa-solid fa-calendar-days"></i> </div>
-                    </div>
-
-                    <div class="lux-modal-footer">
-                        <button type="button" class="btn" style="background:var(--mid);color:var(--muted);"
-                            onclick="closeModal()">Hủy</button>
-                        <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span>Lưu
-                                Voucher</span></button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
+
+            <script>
+                function toggleCategorySelect() {
+                    var scope = document.getElementById('voucherScope').value;
+                    document.getElementById('categoryGroup').style.display = scope === 'CATEGORY' ? 'block' : 'none';
+                }
+                // Auto run on load to handle prepopulated states (if any)
+                document.addEventListener("DOMContentLoaded", function () {
+                    toggleCategorySelect();
+                });
+            </script>
+
+            <script th:src="@{/js/admin/vouchers.js}"></script>
         </div>
-
-        <script>
-            function toggleCategorySelect() {
-                var scope = document.getElementById('voucherScope').value;
-                document.getElementById('categoryGroup').style.display = scope === 'CATEGORY' ? 'block' : 'none';
-            }
-            // Auto run on load to handle prepopulated states (if any)
-            document.addEventListener("DOMContentLoaded", function () {
-                toggleCategorySelect();
-            });
-        </script>
-
-        <script th:src="@{/js/admin/vouchers.js(v=2)}"></script>
-    </div>
-    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
+        <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 
 </html>

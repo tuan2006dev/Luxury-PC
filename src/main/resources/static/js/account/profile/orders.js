@@ -54,10 +54,7 @@ let orderModalState = { currentOrder: null, stars: 0 };
 
 function openReviewModal(productId, productName) {
   orderModalState.stars = 0;
-  document.querySelectorAll('.order-modal .review-stars button').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  document.getElementById('star-desc').textContent = window.t('profile-review-star-select', 'Chọn số sao đánh giá');
+  updateStarUI(0);
   document.getElementById('review-product-id').value = productId;
   document.getElementById('review-product-name').value = productName;
   document.getElementById('review-comment').value = '';
@@ -69,10 +66,11 @@ function closeOrderModal() {
   document.getElementById('order-modal-backdrop')?.classList.remove('active');
 }
 
-function rate(star) {
-  orderModalState.stars = star;
-  document.querySelectorAll('.order-modal .review-stars button').forEach((btn, index) => {
-    btn.classList.toggle('active', index < star);
+function updateStarUI(starCount) {
+  const starBtns = document.querySelectorAll('.review-stars .star-btn, .order-modal .review-stars button');
+  starBtns.forEach((btn, index) => {
+    btn.classList.toggle('active', index < starCount);
+    btn.classList.remove('hovered');
   });
   const starDescs = [
     window.t('profile-review-star-select', 'Chọn số sao đánh giá'),
@@ -82,7 +80,15 @@ function rate(star) {
     '⭐⭐⭐⭐ ' + window.t('profile-review-star-4', 'Tốt'),
     '⭐⭐⭐⭐⭐ ' + window.t('profile-review-star-5', 'Rất Tốt')
   ];
-  document.getElementById('star-desc').textContent = starDescs[star] || window.t('profile-review-star-select', 'Chọn số sao đánh giá');
+  const descEl = document.getElementById('star-desc');
+  if (descEl) {
+    descEl.textContent = starDescs[starCount] || window.t('profile-review-star-select', 'Chọn số sao đánh giá');
+  }
+}
+
+function rate(star) {
+  orderModalState.stars = star;
+  updateStarUI(star);
 }
 
 function submitReview() {
@@ -122,20 +128,18 @@ function submitReview() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const starBtns = document.querySelectorAll('.order-modal .review-stars button, .review-stars .star-btn');
-  const starContainer = document.querySelector('.order-modal .review-stars, .review-stars');
+  const starBtns = document.querySelectorAll('.review-stars .star-btn, .order-modal .review-stars button');
+  const starContainer = document.querySelector('.review-stars, .order-modal .review-stars');
 
   starBtns.forEach((btn, index) => {
     btn.addEventListener('mouseenter', () => {
-      starBtns.forEach((b, i) => {
-        b.classList.toggle('hovered', i <= index);
-      });
+      updateStarUI(index + 1);
     });
   });
 
   if (starContainer) {
     starContainer.addEventListener('mouseleave', () => {
-      starBtns.forEach(b => b.classList.remove('hovered'));
+      updateStarUI(orderModalState.stars);
     });
   }
 });

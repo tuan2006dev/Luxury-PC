@@ -1,6 +1,5 @@
 package poly.edu.dto.dashboard;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class RevenueDTO {
     private String date;
     private Double revenue;
+
+    public RevenueDTO(String date, Double revenue) {
+        this.date = date;
+        this.revenue = revenue;
+    }
 }

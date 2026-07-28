@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Combo — Luxury PC</title>
@@ -41,7 +41,8 @@
         </div>
 
         <div class="card">
-            <form class="needs-validation" novalidate th:action="@{/admin/combos/save}" method="post" th:object="${combo}" enctype="multipart/form-data">
+            <form class="needs-validation" novalidate th:action="@{/admin/combos/save}" method="post"
+                th:object="${combo}" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{id}">
 
                 <div class="form-grid">

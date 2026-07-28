@@ -7,6 +7,7 @@
   <meta name="_csrf" th:content="${_csrf?.token}" />
   <meta name="_csrf_header" th:content="${_csrf?.headerName}" />
   <title>Luxury PC — Hồ Sơ Cá Nhân</title>
+  <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
   <meta name="description" content="Quản lý tài khoản và hồ sơ cá nhân Luxury PC của bạn." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,7 +24,6 @@
   <link rel="stylesheet" th:href="@{/css/account/profile/security.css}" />
   <link rel="stylesheet" th:href="@{/css/account/profile/notifications.css}" />
   <link rel="stylesheet" th:href="@{/css/account/profile/addresses.css}" />
-  <link rel="stylesheet" th:href="@{/css/cursor.css}" />
 </head>
 
 <body>
@@ -72,10 +72,10 @@
 
     <script th:inline="javascript">
       window.PROFILE_CONFIG = {
-        profileMessage: null,
-        addressMessage: null,
-        securityMessage: null,
-        notificationMessage: null
+        profileMessage: /*[[${profileMessage}]]*/ null,
+        addressMessage: /*[[${addressMessage}]]*/ null,
+        securityMessage: /*[[${securityMessage}]]*/ null,
+        notificationMessage: /*[[${notificationMessage}]]*/ null
       };
     </script>
     <script th:src="@{/js/account/profile.js}"></script>
