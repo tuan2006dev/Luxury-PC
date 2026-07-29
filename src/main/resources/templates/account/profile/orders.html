@@ -35,7 +35,7 @@
           th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</div>
         <div style="text-align: center;">
           <span th:class="'order-status status-' + ${(order.status != null ? order.status : 'PENDING').toLowerCase()}"
-            th:text="${order.status == 'PENDING' ? 'Chờ xử lý' : (order.status == 'PAID' ? 'Đã thanh toán' : (order.status == 'COMPLETED' ? 'Hoàn thành' : (order.status == 'SHIPPING' ? 'Đang giao' : (order.status == 'CANCELED' || order.status == 'CANCELLED' ? 'Đã hủy' : (order.status == 'CHO_XAC_NHAN_THANH_TOAN' ? 'Chờ xác nhận' : (order.status != null ? order.status : 'Chờ xử lý'))))))}">
+            th:text="${order.statusDisplay}">
             Đang xử lý
           </span>
         </div>

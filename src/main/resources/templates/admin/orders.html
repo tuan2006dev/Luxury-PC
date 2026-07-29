@@ -91,7 +91,7 @@
                             </td>
                             <td>
                                 <span th:class="'badge badge-' + ${o.status.toLowerCase()}"
-                                    th:text="${o.statusDisplay}">Chờ xử lý</span>
+                                    th:text="${o.status == 'PROCESSING' or o.status == 'DANG_XU_LY' ? 'Đang xử lý' : o.statusDisplay}">Chờ xử lý</span>
                             </td>
                             <td class="admin-note"
                                 style="white-space: normal !important; word-break: break-word; overflow: hidden;">
@@ -115,12 +115,13 @@
                                         <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}"
                                             class="admin-note">Đơn đã kết thúc xử lý.</span>
                                         <form novalidate autocomplete="off"
-                                            th:if="${o.paymentMethod == 'VIETQR' and o.status == 'CHO_XAC_NHAN_THANH_TOAN'}"
-                                            th:action="@{/admin/orders/confirm-payment}" method="post"
+                                            th:if="${(o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PENDING' or o.status == 'CHO_THANH_TOAN' or o.status == 'CHO_XAC_NHAN_THANH_TOAN')}"
+                                            th:action="@{/admin/orders/update-status}" method="post"
                                             class="action-form">
 
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
-                                            <button type="submit" class="update-btn">Xác Nhận Thanh Toán</button>
+                                            <input autocomplete="off" type="hidden" name="status" value="DA_HUY">
+                                            <button type="submit" class="update-btn">Đã Hủy</button>
                                         </form>
                                         <form novalidate autocomplete="off" th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}"
                                             th:action="@{/admin/orders/approve-refund}" method="post"
@@ -169,22 +170,25 @@
                                             <button type="submit" class="update-btn">Thu Hồi Đơn</button>
                                         </form>
                                         <form novalidate autocomplete="off"
-                                            th:unless="${o.status == 'CHO_XAC_NHAN_THANH_TOAN' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN' or o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}"
+                                            th:if="${(o.paymentMethod == 'COD' and (o.status == 'PENDING' or o.status == 'PROCESSING' or o.status == 'DANG_XU_LY' or o.status == 'SHIPPING' or o.status == 'DANG_GIAO' or o.status == 'PAID' or o.status == 'DA_THANH_TOAN')) or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN' or o.status == 'PROCESSING' or o.status == 'DANG_XU_LY' or o.status == 'SHIPPING' or o.status == 'DANG_GIAO'))}"
                                             th:action="@{/admin/orders/update-status}" method="post"
                                             class="action-form">
 
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <select name="status">
-                                                <option value="PENDING" th:selected="${o.status == 'PENDING'}">Chờ xử lý
+                                                <option value="PROCESSING"
+                                                    th:if="${(o.paymentMethod == 'COD' and o.status == 'PENDING') or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN'))}">Đang xử lý
                                                 </option>
-                                                <option value="PAID" th:selected="${o.status == 'PAID'}">Đã thanh toán
+                                                <option value="SHIPPING"
+                                                    th:if="${o.status == 'PROCESSING' or o.status == 'DANG_XU_LY'}">Đang giao
                                                 </option>
-                                                <option value="SHIPPING" th:selected="${o.status == 'SHIPPING'}">Đang
-                                                    giao</option>
-                                                <option value="COMPLETED" th:selected="${o.status == 'COMPLETED'}">Hoàn
-                                                    thành</option>
-                                                <option value="DA_HUY" th:selected="${o.status == 'DA_HUY'}">Đã hủy
+                                                <option value="PAID"
+                                                    th:if="${o.paymentMethod == 'COD' and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO')}">Đã thanh toán
                                                 </option>
+                                                <option value="COMPLETED"
+                                                    th:if="${(o.paymentMethod == 'COD' and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN')) or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO'))}">Hoàn thành
+                                                </option>
+                                                <option value="DA_HUY">Đã hủy</option>
                                             </select>
                                             <button type="submit" class="update-btn">Cập Nhật Trạng Thái</button>
                                         </form>
