@@ -1,32 +1,22 @@
 package poly.edu.controller.admin;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import poly.edu.repository.AdminLogRepository;
-import poly.edu.repository.SupportTicketRepository;
-import poly.edu.repository.UserRepository;
-import poly.edu.service.AdminService;
-import poly.edu.service.VietQrManualConfirmationException;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class AdminControllerVietQrTest {
 
     @Test
-    void manualVietQrStatusConflictReturnsBusinessMessage() {
-        AdminController controller = new AdminController(
-                mock(AdminService.class),
-                mock(SupportTicketRepository.class),
-                mock(UserRepository.class),
-                mock(AdminLogRepository.class));
+    void adminControllerDoesNotExposeManualPaymentConfirmationEndpoint() {
+        boolean manualConfirmationEndpointExists = Arrays.stream(AdminController.class.getDeclaredMethods())
+                .map(method -> method.getAnnotation(PostMapping.class))
+                .filter(annotation -> annotation != null)
+                .anyMatch(annotation -> Arrays.asList(annotation.value()).contains("/orders/confirm-payment")
+                        || Arrays.asList(annotation.path()).contains("/orders/confirm-payment"));
 
-        var response = controller.manualConfirmationConflict(
-                new VietQrManualConfirmationException());
-
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertTrue(response.getBody().contains("SePay"));
-        assertTrue(response.getBody().contains("không thể xác nhận thủ công"));
+        assertFalse(manualConfirmationEndpointExists);
     }
 }
