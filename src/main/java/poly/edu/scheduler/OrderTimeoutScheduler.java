@@ -37,6 +37,9 @@ public class OrderTimeoutScheduler {
 
         List<Order> expiredOrders = orderDAO.findExpiredPendingOrders(threshold);
         for (Order order : expiredOrders) {
+            if (!isWaitingVietQrPayment(order)) {
+                continue;
+            }
             order.setStatus("CANCELLED");
             order.setRefundReason("Hệ thống tự động hủy do quá hạn thanh toán");
             orderDAO.save(order);
@@ -55,5 +58,14 @@ public class OrderTimeoutScheduler {
                 }
             }
         }
+    }
+
+    private boolean isWaitingVietQrPayment(Order order) {
+        boolean isVietQr = "VIETQR".equalsIgnoreCase(order.getPaymentMethod())
+                || "SEPAY".equalsIgnoreCase(order.getPaymentMethod());
+        String status = order.getStatus();
+        return isVietQr && ("PENDING".equals(status)
+                || "CHO_THANH_TOAN".equals(status)
+                || "CHO_XAC_NHAN_THANH_TOAN".equals(status));
     }
 }

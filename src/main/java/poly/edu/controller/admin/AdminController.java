@@ -86,17 +86,6 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
-    @PostMapping("/orders/confirm-payment")
-    public String confirmVietQrPayment(
-            @RequestParam Integer orderId,
-            Principal principal,
-            HttpServletRequest request) {
-
-        adminService.confirmVietQrPayment(orderId);
-        logAction(principal, request, "Xác nhận thanh toán VietQR", "Đơn hàng #" + orderId);
-
-        return "redirect:/admin/orders";
-    }
 
     @ExceptionHandler(VietQrManualConfirmationException.class)
     @ResponseBody

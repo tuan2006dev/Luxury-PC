@@ -151,23 +151,23 @@ class VietQrOrderFlowTest {
     }
 
     @Test
-    void adminCannotConfirmWaitingVietQrOrderManually() {
+    void adminCannotMarkWaitingVietQrOrderPaid() {
         Order order = saveOrder("VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 500_000D);
 
         assertThrows(VietQrManualConfirmationException.class,
-                () -> adminService.confirmVietQrPayment(order.getId()));
+                () -> adminService.updateOrderStatus(order.getId(), "PAID"));
 
         assertEquals("CHO_XAC_NHAN_THANH_TOAN",
                 orderDAO.findById(order.getId()).orElseThrow().getStatus());
     }
 
     @Test
-    void adminConfirmationDoesNotChangeCodOrder() {
-        Order order = saveOrder("COD", "PENDING", 500_000D);
+    void adminStatusFlowMarksShippingCodOrderPaid() {
+        Order order = saveOrder("COD", "SHIPPING", 500_000D);
 
-        adminService.confirmVietQrPayment(order.getId());
+        adminService.updateOrderStatus(order.getId(), "PAID");
 
-        assertEquals("PENDING", orderDAO.findById(order.getId()).orElseThrow().getStatus());
+        assertEquals("PAID", orderDAO.findById(order.getId()).orElseThrow().getStatus());
     }
 
     @Test
