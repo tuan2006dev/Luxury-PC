@@ -2,7 +2,6 @@ package poly.edu.controller.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -20,7 +19,6 @@ import poly.edu.config.ChatWebSocketHandler;
 import java.util.*;
 
 @Controller
-@SuppressWarnings("null")
 @RequiredArgsConstructor
 public class SupportTicketController {
 
@@ -299,7 +297,22 @@ public class SupportTicketController {
     }
 
     // ========================
-    // ADMIN: Delete ticket
+    // ADMIN: Delete ticket (Form Submission)
+    // ========================
+    @PostMapping("/admin/tickets/delete/{id}")
+    public String deleteTicketByPath(
+            @PathVariable("id") Integer id,
+            Authentication auth,
+            HttpServletRequest request) {
+
+        ticketRepo.deleteById(id);
+        logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+
+        return "redirect:/admin/tickets";
+    }
+
+    // ========================
+    // ADMIN: Delete ticket (API AJAX)
     // ========================
     @PostMapping("/admin/tickets/delete")
     @ResponseBody
@@ -309,8 +322,10 @@ public class SupportTicketController {
             HttpServletRequest request) {
 
         Integer id = body.get("id");
-        ticketRepo.deleteById(id);
-        logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+        if (id != null) {
+            ticketRepo.deleteById(id);
+            logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+        }
 
         Map<String, Object> res = new HashMap<>();
         res.put("success", true);

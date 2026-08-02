@@ -3,7 +3,6 @@ package poly.edu.controller.web;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,7 @@ import poly.edu.entity.Review;
 import poly.edu.entity.User;
 import poly.edu.entity.FlashSale;
 import poly.edu.entity.FlashSaleItem;
+import poly.edu.service.BrandService;
 import poly.edu.service.CategoryService;
 import poly.edu.service.ProductService;
 import poly.edu.service.WishlistService;
@@ -31,7 +31,6 @@ import java.util.Optional;
 import java.util.Set;
 
 @Controller
-@SuppressWarnings("null")
 @RequiredArgsConstructor
 public class ProductPageController {
 
@@ -40,6 +39,8 @@ public class ProductPageController {
     final ProductService productService;
 
     final CategoryService categoryService;
+
+    final BrandService brandService;
 
     final ReviewDAO reviewDAO;
 
@@ -64,23 +65,29 @@ public class ProductPageController {
             @RequestParam(name = "kw", required = false) String kw,
             @RequestParam(name = "brand", required = false) String brand,
             @RequestParam(name = "flashSale", required = false) Boolean flashSale) {
-        if (kw != null && kw.trim().isEmpty()) kw = null;
-        if (brand != null && brand.trim().isEmpty()) brand = null;
-        
+        if (kw != null && kw.trim().isEmpty())
+            kw = null;
+        if (brand != null && brand.trim().isEmpty())
+            brand = null;
+
         if (min != null) {
-            if (min < 0.0) min = 0.0;
-            if (min > 100000000.0) min = 100000000.0;
+            if (min < 0.0)
+                min = 0.0;
+            if (min > 100000000.0)
+                min = 100000000.0;
         }
         if (max != null) {
-            if (max < 0.0) max = 0.0;
-            if (max > 100000000.0) max = 100000000.0;
+            if (max < 0.0)
+                max = 0.0;
+            if (max > 100000000.0)
+                max = 100000000.0;
         }
         if (min != null && max != null && min > max) {
             Double temp = min;
             min = max;
             max = temp;
         }
-        
+
         List<Product> products = productService.searchProducts(cid, min, max, kw, brand);
 
         // Lấy danh sách Flash Sale đang diễn ra
@@ -105,7 +112,8 @@ public class ProductPageController {
 
         model.addAttribute("allProducts", products);
         model.addAttribute("categories", categoryService.getAllCategories());
-        
+        model.addAttribute("brands", brandService.getAllBrands());
+
         // Gửi lại các tham số lọc để giữ trạng thái trên UI
         model.addAttribute("selectedCid", cid);
         model.addAttribute("minPrice", min);
@@ -115,7 +123,7 @@ public class ProductPageController {
         model.addAttribute("isFlashSale", flashSale);
         addWishlistAttributes(model);
 
-        return "all-products"; 
+        return "all-products";
     }
 
     @GetMapping("/product/{id}")
@@ -124,14 +132,14 @@ public class ProductPageController {
         if (p == null) {
             return "redirect:/products";
         }
-        
+
         List<Review> reviews = reviewDAO.findByProductIdOrderByCreatedAtDesc(id);
         double avgRating = reviews.stream()
-            .map(Review::getStars)
-            .filter(java.util.Objects::nonNull)
-            .mapToInt(Integer::intValue)
-            .average()
-            .orElse(0.0);
+                .map(Review::getStars)
+                .filter(java.util.Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
 
         long count5 = reviews.stream().filter(r -> r.getStars() != null && r.getStars() == 5).count();
         long count4 = reviews.stream().filter(r -> r.getStars() != null && r.getStars() == 4).count();
@@ -155,7 +163,8 @@ public class ProductPageController {
             String[] lines = p.getDescription().replaceAll("<[^>]*>", "").split("\\r?\\n");
             for (String line : lines) {
                 line = line.trim();
-                if (line.isEmpty()) continue;
+                if (line.isEmpty())
+                    continue;
                 if (line.contains(":")) {
                     String[] parts = line.split(":", 2);
                     parsedSpecs.put(parts[0].trim(), parts[1].trim());
@@ -184,7 +193,7 @@ public class ProductPageController {
             related.removeIf(prod -> prod.getId().equals(id));
             model.addAttribute("relatedProducts", related);
         }
-        
+
         addWishlistAttributes(model);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute("productInWishlist", wishlistService.isProductInWishlist(auth, id));
@@ -202,17 +211,18 @@ public class ProductPageController {
                 emailOrUsername = auth.getName();
             }
             Optional<User> uOpt = userRepository.findByEmail(emailOrUsername);
-            if (uOpt.isEmpty()) uOpt = userRepository.findByUsername(emailOrUsername);
+            if (uOpt.isEmpty())
+                uOpt = userRepository.findByUsername(emailOrUsername);
             if (uOpt.isPresent()) {
                 currentUser = uOpt.get();
                 if (currentUser.getUserRoles() != null) {
                     isAdmin = currentUser.getUserRoles().stream()
-                        .anyMatch(ur -> ur.getRole() != null && "ADMIN".equalsIgnoreCase(ur.getRole().getName()));
+                            .anyMatch(ur -> ur.getRole() != null && "ADMIN".equalsIgnoreCase(ur.getRole().getName()));
                 }
             }
             if (!isAdmin) {
                 isAdmin = auth.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ADMIN"));
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ADMIN"));
             }
         }
         model.addAttribute("currentUser", currentUser);
@@ -247,9 +257,9 @@ public class ProductPageController {
             @RequestParam(value = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
             @RequestParam(value = "videoFile", required = false) org.springframework.web.multipart.MultipartFile videoFile,
             @org.springframework.security.core.annotation.AuthenticationPrincipal Object principal) {
-        
+
         java.util.Map<String, Object> response = new java.util.HashMap<>();
-        
+
         if (principal == null) {
             response.put("success", false);
             response.put("message", "Vui lòng đăng nhập để gửi đánh giá.");
@@ -274,7 +284,8 @@ public class ProductPageController {
         }
 
         Optional<User> uOpt = userRepository.findByEmail(emailOrUsername);
-        if (uOpt.isEmpty()) uOpt = userRepository.findByUsername(emailOrUsername);
+        if (uOpt.isEmpty())
+            uOpt = userRepository.findByUsername(emailOrUsername);
 
         if (uOpt.isEmpty()) {
             response.put("success", false);
@@ -293,7 +304,8 @@ public class ProductPageController {
         long countPurchase = orderItemDAO.countCompletedPurchasesByUserAndProduct(uOpt.get().getId(), id);
         if (countPurchase == 0) {
             response.put("success", false);
-            response.put("message", "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
+            response.put("message",
+                    "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
             return org.springframework.http.ResponseEntity.status(403).body(response);
         }
 
@@ -317,7 +329,8 @@ public class ProductPageController {
                 if (originalFilename != null && originalFilename.contains(".")) {
                     extension = originalFilename.substring(originalFilename.lastIndexOf("."));
                 }
-                String filename = "review_" + p.getId() + "_" + uOpt.get().getId() + "_" + System.currentTimeMillis() + extension;
+                String filename = "review_" + p.getId() + "_" + uOpt.get().getId() + "_" + System.currentTimeMillis()
+                        + extension;
 
                 // Lưu vào src/main/resources
                 String srcUploadDir = "src/main/resources/static/uploads/reviews/";
@@ -326,7 +339,8 @@ public class ProductPageController {
                     srcFolder.mkdirs();
                 }
                 java.nio.file.Path srcPath = java.nio.file.Paths.get(srcUploadDir + filename);
-                java.nio.file.Files.copy(imageFile.getInputStream(), srcPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                java.nio.file.Files.copy(imageFile.getInputStream(), srcPath,
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
                 // Copy sang target cho phép hiển thị ngay lập tức
                 String targetUploadDir = "target/classes/static/uploads/reviews/";
@@ -334,7 +348,8 @@ public class ProductPageController {
                 if (targetFolder.exists() || targetFolder.mkdirs()) {
                     java.nio.file.Path targetPath = java.nio.file.Paths.get(targetUploadDir + filename);
                     try {
-                        java.nio.file.Files.copy(srcPath, targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        java.nio.file.Files.copy(srcPath, targetPath,
+                                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     } catch (Exception e) {
                         // Bỏ qua lỗi copy sang target
                     }
@@ -363,7 +378,8 @@ public class ProductPageController {
                 if (originalFilename != null && originalFilename.contains(".")) {
                     extension = originalFilename.substring(originalFilename.lastIndexOf("."));
                 }
-                String filename = "review_vid_" + p.getId() + "_" + uOpt.get().getId() + "_" + System.currentTimeMillis() + extension;
+                String filename = "review_vid_" + p.getId() + "_" + uOpt.get().getId() + "_"
+                        + System.currentTimeMillis() + extension;
 
                 // Lưu vào src/main/resources
                 String srcUploadDir = "src/main/resources/static/uploads/reviews/";
@@ -372,7 +388,8 @@ public class ProductPageController {
                     srcFolder.mkdirs();
                 }
                 java.nio.file.Path srcPath = java.nio.file.Paths.get(srcUploadDir + filename);
-                java.nio.file.Files.copy(videoFile.getInputStream(), srcPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                java.nio.file.Files.copy(videoFile.getInputStream(), srcPath,
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
                 // Copy sang target cho phép hiển thị ngay lập tức
                 String targetUploadDir = "target/classes/static/uploads/reviews/";
@@ -380,7 +397,8 @@ public class ProductPageController {
                 if (targetFolder.exists() || targetFolder.mkdirs()) {
                     java.nio.file.Path targetPath = java.nio.file.Paths.get(targetUploadDir + filename);
                     try {
-                        java.nio.file.Files.copy(srcPath, targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        java.nio.file.Files.copy(srcPath, targetPath,
+                                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     } catch (Exception e) {
                         // Bỏ qua lỗi copy sang target
                     }
@@ -400,11 +418,11 @@ public class ProductPageController {
         // 3. Tính toán lại rating trung bình và số lượng đánh giá mới để cập nhật UI
         List<Review> reviews = reviewDAO.findByProductIdOrderByCreatedAtDesc(id);
         double avgRating = reviews.stream()
-            .map(Review::getStars)
-            .filter(java.util.Objects::nonNull)
-            .mapToInt(Integer::intValue)
-            .average()
-            .orElse(0.0);
+                .map(Review::getStars)
+                .filter(java.util.Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
 
         // Chuẩn bị dữ liệu phản hồi
         java.util.Map<String, Object> reviewData = new java.util.HashMap<>();
@@ -412,9 +430,11 @@ public class ProductPageController {
         reviewData.put("content", r.getContent());
         reviewData.put("stars", r.getStars());
         reviewData.put("image", r.getImage());
-        reviewData.put("userName", uOpt.get().getFullName() != null && !uOpt.get().getFullName().isEmpty() 
-            ? uOpt.get().getFullName() : uOpt.get().getUsername());
-        reviewData.put("createdAt", r.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        reviewData.put("userName", uOpt.get().getFullName() != null && !uOpt.get().getFullName().isEmpty()
+                ? uOpt.get().getFullName()
+                : uOpt.get().getUsername());
+        reviewData.put("createdAt",
+                r.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
         long c5 = reviews.stream().filter(rev -> rev.getStars() != null && rev.getStars() == 5).count();
         long c4 = reviews.stream().filter(rev -> rev.getStars() != null && rev.getStars() == 4).count();
@@ -432,7 +452,7 @@ public class ProductPageController {
         response.put("count3", c3);
         response.put("count2", c2);
         response.put("count1", c1);
-        
+
         return org.springframework.http.ResponseEntity.ok(response);
     }
 
@@ -441,9 +461,9 @@ public class ProductPageController {
     public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> deleteReview(
             @PathVariable("id") Integer id,
             @org.springframework.security.core.annotation.AuthenticationPrincipal Object principal) {
-        
+
         java.util.Map<String, Object> response = new java.util.HashMap<>();
-        
+
         if (principal == null) {
             response.put("success", false);
             response.put("message", "Vui lòng đăng nhập để thực hiện.");
@@ -458,7 +478,8 @@ public class ProductPageController {
         }
 
         Optional<User> uOpt = userRepository.findByEmail(emailOrUsername);
-        if (uOpt.isEmpty()) uOpt = userRepository.findByUsername(emailOrUsername);
+        if (uOpt.isEmpty())
+            uOpt = userRepository.findByUsername(emailOrUsername);
 
         if (uOpt.isEmpty()) {
             response.put("success", false);
@@ -475,17 +496,18 @@ public class ProductPageController {
 
         Review r = rOpt.get();
         User currentUser = uOpt.get();
-        
+
         // Kiểm tra quyền Admin
         boolean isAdmin = false;
-        Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication();
         if (auth != null) {
             isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ADMIN"));
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ADMIN"));
         }
         if (!isAdmin && currentUser.getUserRoles() != null) {
             isAdmin = currentUser.getUserRoles().stream()
-                .anyMatch(ur -> ur.getRole() != null && "ADMIN".equalsIgnoreCase(ur.getRole().getName()));
+                    .anyMatch(ur -> ur.getRole() != null && "ADMIN".equalsIgnoreCase(ur.getRole().getName()));
         }
 
         if (!isAdmin) {
@@ -535,11 +557,11 @@ public class ProductPageController {
         // Tính toán lại rating trung bình và số lượng đánh giá mới
         List<Review> reviews = reviewDAO.findByProductIdOrderByCreatedAtDesc(productId);
         double avgRating = reviews.stream()
-            .map(Review::getStars)
-            .filter(java.util.Objects::nonNull)
-            .mapToInt(Integer::intValue)
-            .average()
-            .orElse(0.0);
+                .map(Review::getStars)
+                .filter(java.util.Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
 
         long c5 = reviews.stream().filter(rev -> rev.getStars() != null && rev.getStars() == 5).count();
         long c4 = reviews.stream().filter(rev -> rev.getStars() != null && rev.getStars() == 4).count();
@@ -571,9 +593,9 @@ public class ProductPageController {
             @RequestParam(value = "videoFile", required = false) org.springframework.web.multipart.MultipartFile videoFile,
             @RequestParam(value = "removeVideo", required = false) Boolean removeVideo,
             @org.springframework.security.core.annotation.AuthenticationPrincipal Object principal) {
-        
+
         java.util.Map<String, Object> response = new java.util.HashMap<>();
-        
+
         if (principal == null) {
             response.put("success", false);
             response.put("message", "Vui lòng đăng nhập để thực hiện.");
@@ -588,7 +610,8 @@ public class ProductPageController {
         }
 
         Optional<User> uOpt = userRepository.findByEmail(emailOrUsername);
-        if (uOpt.isEmpty()) uOpt = userRepository.findByUsername(emailOrUsername);
+        if (uOpt.isEmpty())
+            uOpt = userRepository.findByUsername(emailOrUsername);
 
         if (uOpt.isEmpty()) {
             response.put("success", false);
@@ -632,9 +655,11 @@ public class ProductPageController {
                 try {
                     String imagePath = r.getImage();
                     java.io.File fileInSrc = new java.io.File("src/main/resources/static" + imagePath);
-                    if (fileInSrc.exists()) fileInSrc.delete();
+                    if (fileInSrc.exists())
+                        fileInSrc.delete();
                     java.io.File fileInTarget = new java.io.File("target/classes/static" + imagePath);
-                    if (fileInTarget.exists()) fileInTarget.delete();
+                    if (fileInTarget.exists())
+                        fileInTarget.delete();
                 } catch (Exception e) {
                     log.error("[ProductPage] Unexpected error", e);
                 }
@@ -656,9 +681,11 @@ public class ProductPageController {
                     try {
                         String oldPath = r.getImage();
                         java.io.File fileInSrc = new java.io.File("src/main/resources/static" + oldPath);
-                        if (fileInSrc.exists()) fileInSrc.delete();
+                        if (fileInSrc.exists())
+                            fileInSrc.delete();
                         java.io.File fileInTarget = new java.io.File("target/classes/static" + oldPath);
-                        if (fileInTarget.exists()) fileInTarget.delete();
+                        if (fileInTarget.exists())
+                            fileInTarget.delete();
                     } catch (Exception e) {
                         log.error("[ProductPage] Unexpected error", e);
                     }
@@ -669,7 +696,8 @@ public class ProductPageController {
                 if (originalFilename != null && originalFilename.contains(".")) {
                     extension = originalFilename.substring(originalFilename.lastIndexOf("."));
                 }
-                String filename = "review_" + r.getProduct().getId() + "_" + currentUser.getId() + "_" + System.currentTimeMillis() + extension;
+                String filename = "review_" + r.getProduct().getId() + "_" + currentUser.getId() + "_"
+                        + System.currentTimeMillis() + extension;
 
                 // Lưu vào src/main/resources
                 String srcUploadDir = "src/main/resources/static/uploads/reviews/";
@@ -678,7 +706,8 @@ public class ProductPageController {
                     srcFolder.mkdirs();
                 }
                 java.nio.file.Path srcPath = java.nio.file.Paths.get(srcUploadDir + filename);
-                java.nio.file.Files.copy(imageFile.getInputStream(), srcPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                java.nio.file.Files.copy(imageFile.getInputStream(), srcPath,
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
                 // Copy sang target cho phép hiển thị ngay lập tức
                 String targetUploadDir = "target/classes/static/uploads/reviews/";
@@ -686,7 +715,8 @@ public class ProductPageController {
                 if (targetFolder.exists() || targetFolder.mkdirs()) {
                     java.nio.file.Path targetPath = java.nio.file.Paths.get(targetUploadDir + filename);
                     try {
-                        java.nio.file.Files.copy(srcPath, targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        java.nio.file.Files.copy(srcPath, targetPath,
+                                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     } catch (Exception e) {
                         // Bỏ qua
                     }
@@ -707,9 +737,11 @@ public class ProductPageController {
                 try {
                     String videoPath = r.getVideo();
                     java.io.File fileInSrc = new java.io.File("src/main/resources/static" + videoPath);
-                    if (fileInSrc.exists()) fileInSrc.delete();
+                    if (fileInSrc.exists())
+                        fileInSrc.delete();
                     java.io.File fileInTarget = new java.io.File("target/classes/static" + videoPath);
-                    if (fileInTarget.exists()) fileInTarget.delete();
+                    if (fileInTarget.exists())
+                        fileInTarget.delete();
                 } catch (Exception e) {
                     log.error("[ProductPage] Unexpected error", e);
                 }
@@ -731,9 +763,11 @@ public class ProductPageController {
                     try {
                         String oldPath = r.getVideo();
                         java.io.File fileInSrc = new java.io.File("src/main/resources/static" + oldPath);
-                        if (fileInSrc.exists()) fileInSrc.delete();
+                        if (fileInSrc.exists())
+                            fileInSrc.delete();
                         java.io.File fileInTarget = new java.io.File("target/classes/static" + oldPath);
-                        if (fileInTarget.exists()) fileInTarget.delete();
+                        if (fileInTarget.exists())
+                            fileInTarget.delete();
                     } catch (Exception e) {
                         log.error("[ProductPage] Unexpected error", e);
                     }
@@ -744,7 +778,8 @@ public class ProductPageController {
                 if (originalFilename != null && originalFilename.contains(".")) {
                     extension = originalFilename.substring(originalFilename.lastIndexOf("."));
                 }
-                String filename = "review_vid_" + r.getProduct().getId() + "_" + currentUser.getId() + "_" + System.currentTimeMillis() + extension;
+                String filename = "review_vid_" + r.getProduct().getId() + "_" + currentUser.getId() + "_"
+                        + System.currentTimeMillis() + extension;
 
                 // Lưu vào src/main/resources
                 String srcUploadDir = "src/main/resources/static/uploads/reviews/";
@@ -753,7 +788,8 @@ public class ProductPageController {
                     srcFolder.mkdirs();
                 }
                 java.nio.file.Path srcPath = java.nio.file.Paths.get(srcUploadDir + filename);
-                java.nio.file.Files.copy(videoFile.getInputStream(), srcPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                java.nio.file.Files.copy(videoFile.getInputStream(), srcPath,
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
                 // Copy sang target cho phép hiển thị ngay lập tức
                 String targetUploadDir = "target/classes/static/uploads/reviews/";
@@ -761,7 +797,8 @@ public class ProductPageController {
                 if (targetFolder.exists() || targetFolder.mkdirs()) {
                     java.nio.file.Path targetPath = java.nio.file.Paths.get(targetUploadDir + filename);
                     try {
-                        java.nio.file.Files.copy(srcPath, targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        java.nio.file.Files.copy(srcPath, targetPath,
+                                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     } catch (Exception e) {
                         // Bỏ qua
                     }
@@ -781,11 +818,11 @@ public class ProductPageController {
         // Tính toán lại các chỉ số thống kê
         List<Review> reviews = reviewDAO.findByProductIdOrderByCreatedAtDesc(r.getProduct().getId());
         double avgRating = reviews.stream()
-            .map(Review::getStars)
-            .filter(java.util.Objects::nonNull)
-            .mapToInt(Integer::intValue)
-            .average()
-            .orElse(0.0);
+                .map(Review::getStars)
+                .filter(java.util.Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
 
         long c5 = reviews.stream().filter(rev -> rev.getStars() != null && rev.getStars() == 5).count();
         long c4 = reviews.stream().filter(rev -> rev.getStars() != null && rev.getStars() == 4).count();
@@ -800,9 +837,11 @@ public class ProductPageController {
         reviewData.put("stars", r.getStars());
         reviewData.put("image", r.getImage());
         reviewData.put("video", r.getVideo());
-        reviewData.put("userName", currentUser.getFullName() != null && !currentUser.getFullName().isEmpty() 
-            ? currentUser.getFullName() : currentUser.getUsername());
-        reviewData.put("createdAt", r.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        reviewData.put("userName", currentUser.getFullName() != null && !currentUser.getFullName().isEmpty()
+                ? currentUser.getFullName()
+                : currentUser.getUsername());
+        reviewData.put("createdAt",
+                r.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
         response.put("success", true);
         response.put("message", "Cập nhật đánh giá thành công.");

@@ -2,7 +2,6 @@ package poly.edu.controller.web;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,6 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin/account")
-@SuppressWarnings("null")
 @RequiredArgsConstructor
 public class AccountController {
 
@@ -41,7 +39,7 @@ public class AccountController {
 
         model.addAttribute(
                 "users",
-                userRepository.findAllUserNotAdmin()
+                userRepository.findAllCustomers()
         );
 
         return "admin/account";

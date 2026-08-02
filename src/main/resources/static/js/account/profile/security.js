@@ -18,6 +18,7 @@ function togglePasswordForm(force) {
 }
 
 window.togglePasswordForm = togglePasswordForm;
+window.validateChangePassword = validateChangePassword;
 window.open2FAModal = open2FAModal;
 window.close2FAModal = close2FAModal;
 window.verifyAndEnable2FA = verifyAndEnable2FA;
@@ -28,6 +29,100 @@ window.openSessionsModal = openSessionsModal;
 window.closeSessionsModal = closeSessionsModal;
 window.revokeSession = revokeSession;
 window.deleteAccount = deleteAccount;
+
+document.addEventListener('DOMContentLoaded', function () {
+  const pwPanel = document.getElementById('password-change-panel');
+  if (pwPanel) {
+    // Dynamic removal of error state when user types into any input field
+    pwPanel.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', function () {
+        if (this.value.trim() !== '') {
+          this.classList.remove('is-invalid');
+          const group = this.closest('.form-group');
+          if (group) {
+            const errSpan = group.querySelector('.error-message');
+            if (errSpan) {
+              errSpan.style.display = 'none';
+              errSpan.innerText = '';
+            }
+          }
+        }
+      });
+    });
+
+    // Form submit listener to block POST when invalid
+    pwPanel.addEventListener('submit', function (e) {
+      if (!validateChangePassword(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    });
+  }
+});
+
+function validateChangePassword(e) {
+  const form = document.getElementById('password-change-panel');
+  if (!form) return true;
+
+  let isValid = true;
+
+  // Reset previous error states
+  form.querySelectorAll('.form-input').forEach(input => input.classList.remove('is-invalid'));
+  form.querySelectorAll('.error-message').forEach(span => {
+    span.style.display = 'none';
+    span.innerText = '';
+  });
+
+  const currentPwInput = form.querySelector('input[name="currentPassword"]');
+  const newPwInput = form.querySelector('input[name="newPassword"]');
+  const confirmPwInput = form.querySelector('input[name="confirmPassword"]');
+
+  const showFieldError = (input, msg) => {
+    if (!input) return;
+    input.classList.add('is-invalid');
+    const group = input.closest('.form-group');
+    if (group) {
+      const errSpan = group.querySelector('.error-message');
+      if (errSpan) {
+        errSpan.innerText = msg;
+        errSpan.style.display = 'block';
+      }
+    }
+    isValid = false;
+  };
+
+  // 1. Mật khẩu hiện tại
+  if (!currentPwInput || !currentPwInput.value) {
+    showFieldError(currentPwInput, 'Vui lòng nhập mật khẩu hiện tại!');
+  }
+
+  // 2. Mật khẩu mới
+  if (!newPwInput || !newPwInput.value) {
+    showFieldError(newPwInput, 'Vui lòng nhập mật khẩu mới!');
+  } else if (newPwInput.value.length < 8) {
+    showFieldError(newPwInput, 'Mật khẩu mới phải có ít nhất 8 ký tự!');
+  } else if (currentPwInput && currentPwInput.value && newPwInput.value === currentPwInput.value) {
+    showFieldError(newPwInput, 'Mật khẩu mới không được trùng với mật khẩu hiện tại!');
+  }
+
+  // 3. Xác nhận mật khẩu mới
+  if (!confirmPwInput || !confirmPwInput.value) {
+    showFieldError(confirmPwInput, 'Vui lòng nhập lại mật khẩu mới!');
+  } else if (newPwInput && newPwInput.value && confirmPwInput.value !== newPwInput.value) {
+    showFieldError(confirmPwInput, 'Mật khẩu xác nhận không khớp với mật khẩu mới!');
+  }
+
+  if (!isValid) {
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    return false;
+  }
+
+  return true;
+}
 
 function open2FAModal() {
   toast('✓ Đang gửi mã OTP đến email của bạn...');

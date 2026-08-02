@@ -24,7 +24,9 @@ public class DatabaseUpdateConfig {
                 jdbcTemplate.execute(
                         "IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'auth_provider' AND Object_ID = Object_ID(N'users')) BEGIN ALTER TABLE users ADD auth_provider VARCHAR(255) END");
                 jdbcTemplate.execute(
-                        "IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'provider_id' AND Object_ID = Object_ID(N'users')) BEGIN ALTER TABLE users ADD provider_id VARCHAR(255) END");
+                        "IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'google_id' AND Object_ID = Object_ID(N'users')) BEGIN ALTER TABLE users ADD google_id VARCHAR(255) END");
+                jdbcTemplate.execute(
+                        "IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'facebook_id' AND Object_ID = Object_ID(N'users')) BEGIN ALTER TABLE users ADD facebook_id VARCHAR(255) END");
                 
                 // Ensure columns exist for user_vouchers
                 jdbcTemplate.execute(

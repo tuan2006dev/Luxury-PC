@@ -107,6 +107,20 @@ h2 {
     border-color: var(--gold);
 }
 
+.input-group input.is-invalid,
+.input-group select.is-invalid {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+.input-group .error-message {
+    color: #ef4444;
+    font-size: 0.78rem;
+    margin-top: 0.25rem;
+    display: none;
+    font-weight: 500;
+}
+
 button {
     margin-top: 1rem;
     background: var(--gold);

@@ -37,8 +37,11 @@ public class User {
     @Column(name = "auth_provider")
     private AuthProvider authProvider = AuthProvider.LOCAL;
 
-    @Column(name = "provider_id")
-    private String providerId;
+    @Column(name = "google_id")
+    private String googleId;
+
+    @Column(name = "facebook_id")
+    private String facebookId;
 
     @Column(name = "notify_order_updates")
     private Boolean notifyOrderUpdates = true;
@@ -183,12 +186,20 @@ public class User {
         this.authProvider = authProvider;
     }
 
-    public String getProviderId() {
-        return providerId;
+    public String getGoogleId() {
+        return googleId;
     }
 
-    public void setProviderId(String providerId) {
-        this.providerId = providerId;
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
     }
 
     public Boolean getNotifyOrderUpdates() {

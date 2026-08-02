@@ -81,7 +81,7 @@
       <div class="stat-lbl">Yêu thích</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-num" th:text="${userRank != 'None' ? userRank : 'Mới'}">VIP</div>
+      <div class="stat-num" th:text="${userRank != 'None' ? userRank : 'New'}">VIP</div>
       <div class="stat-lbl">Hạng thành viên</div>
     </div>
   </div>
@@ -123,7 +123,7 @@
       <div class="ic-label">Hạng thành viên</div>
       <div class="ic-value"
         th:style="${userRank == 'Diamond' ? 'color:#0ea5e9; font-weight:600; ' : (userRank == 'Platinum' ? 'color:#94a3b8; font-weight:600;' : (userRank == 'Silver' ? 'color:#64748b; font-weight:600;' : 'color:#333; font-weight:600;'))}"
-        th:text="${userRank != 'None' ? '⭐ ' + userRank : 'Thành viên mới'}">⭐ VIP Gold</div>
+        th:text="${userRank != 'None' ? '⭐ ' + userRank : 'New'}">⭐ VIP Gold</div>
     </div>
   </div>
 </div>

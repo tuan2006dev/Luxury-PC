@@ -1,7 +1,6 @@
 package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,7 +110,7 @@ public class CartService {
             }
         }
 
-        // 2. Identify User
+        // 2. Identify User & Require Login
         User currentUser = null;
         if (principal != null) {
             String emailOrUsername = "";
@@ -123,6 +122,10 @@ public class CartService {
             Optional<User> uOpt = userRepository.findByEmail(emailOrUsername);
             if (uOpt.isEmpty()) uOpt = userRepository.findByUsername(emailOrUsername);
             if (uOpt.isPresent()) currentUser = uOpt.get();
+        }
+
+        if (currentUser == null) {
+            throw new Exception("Vui lòng đăng nhập để tiến hành đặt hàng!");
         }
 
         // 3. Calculate Prices
@@ -139,7 +142,7 @@ public class CartService {
         voucherCode = cleanVoucherCode(voucherCode);
         freeshipCode = cleanVoucherCode(freeshipCode);
 
-        if (currentUser != null && (voucherCode != null || freeshipCode != null)) {
+        if (voucherCode != null || freeshipCode != null) {
             Map<String, Object> validation = voucherService.validateVoucherCombo(voucherCode, freeshipCode, priceAfterVip, shippingFee, targetCart.values(), currentUser);
             if (Boolean.TRUE.equals(validation.get("valid"))) {
                 voucherDiscount = (double) validation.getOrDefault("orderDiscount", 0.0);
@@ -161,12 +164,10 @@ public class CartService {
         double finalShippingFee = Math.max(0, shippingFee - freeshipDiscount);
         double finalPrice = Math.max(0, (priceAfterVip - voucherDiscount) + finalShippingFee);
 
-        // 5. Create Order
+        // 5. Create Order (Linked to currentUser)
         Order order = new Order();
-        if (currentUser != null) {
-            order.setUser(currentUser);
-            if (order.getEmail() == null) order.setEmail(currentUser.getEmail());
-        }
+        order.setUser(currentUser);
+        order.setEmail(currentUser.getEmail());
         order.setFullName(fullName);
         order.setPhone(phone);
         order.setAddress(address);
@@ -187,7 +188,7 @@ public class CartService {
         orderDAO.save(order);
 
         // 6. Create Order Items & Update Stock
-        if (appliedVoucherCode != null && currentUser != null && !"VIETQR".equalsIgnoreCase(paymentMethod)) {
+        if (appliedVoucherCode != null && !"VIETQR".equalsIgnoreCase(paymentMethod)) {
             voucherService.consumeVoucher(appliedVoucherCode, currentUser.getId());
         }
         for (CartItem item : targetCart.values()) {
@@ -210,9 +211,7 @@ public class CartService {
             }
         }
 
-        if (currentUser != null) {
-            clearDbCart(currentUser);
-        }
+        clearDbCart(currentUser);
 
         return order;
     }

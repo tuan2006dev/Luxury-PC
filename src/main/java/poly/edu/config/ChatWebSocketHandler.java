@@ -1,8 +1,5 @@
 package poly.edu.config;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -18,14 +15,10 @@ import java.util.Objects;
 import java.util.Set;
 
 @Component
-@SuppressWarnings("null")
-@RequiredArgsConstructor
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    private final ApplicationContext applicationContext;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -43,9 +36,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         String payload = message.getPayload();
         
         Integer msgTicketId = null;
-        String sender = "CUSTOMER";
-        String senderName = "Khách hàng";
-        String content = "";
         
         try {
             @SuppressWarnings("unchecked")
@@ -53,18 +43,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             if (msgMap.containsKey("ticketId") && msgMap.get("ticketId") != null) {
                 msgTicketId = Integer.parseInt(msgMap.get("ticketId").toString());
             }
-            if (msgMap.containsKey("sender") && msgMap.get("sender") != null) {
-                sender = msgMap.get("sender").toString();
-            }
-            if (msgMap.containsKey("senderName") && msgMap.get("senderName") != null) {
-                senderName = msgMap.get("senderName").toString();
-            }
-            if (msgMap.containsKey("content") && msgMap.get("content") != null) {
-                content = msgMap.get("content").toString();
-            }
         } catch (Exception e) {
-            // Not a JSON message, treat raw payload as content
-            content = payload;
+            // Not a JSON message
         }
 
         // Bind ticketId to session attributes if found

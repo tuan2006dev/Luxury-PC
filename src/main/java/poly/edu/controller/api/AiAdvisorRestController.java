@@ -3,7 +3,6 @@ package poly.edu.controller.api;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +46,6 @@ public class AiAdvisorRestController {
             for (poly.edu.entity.Product p : allProducts) {
                 if (p.getCategory() == null || p.getCategory().getName() == null) continue;
                 String c = p.getCategory().getName().toUpperCase();
-                String name = p.getName().toLowerCase();
                 String idStr = String.valueOf(p.getId());
                 
                 if (c.contains("CASE") || c.contains("VỎ")) catToIds.get("CASE").add(idStr);

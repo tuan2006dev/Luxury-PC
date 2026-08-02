@@ -1,6 +1,6 @@
 /**
- * Quản Lý Tài Khoản Khách Hàng - Realtime Live Field Validation & UI Handler
- * Viết theo phong cách đơn giản, tuyến tính (Fresher/Junior Style) giống login.js
+ * Quản Lý Nhân Viên (Staff) - Realtime Live Field Validation & UI Handler
+ * Viết theo phong cách đơn giản, tuyến tính (Fresher/Junior Style) giống account.js và login.js
  */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -17,10 +17,9 @@ document.addEventListener('spa:load', function () {
 // 1. Bắt sự kiện Blur & Input cho các ô nhập
 // =====================================
 function bindValidationEvents() {
-    const form = document.querySelector('form[action$="/admin/account/save"]');
+    const form = document.querySelector('form[action$="/admin/employees/save"]');
     if (!form) return;
 
-    // Ngăn chặn submit nếu có lỗi validation
     form.onsubmit = function (e) {
         const isUsernameValid = checkUsername();
         const isEmailValid = checkEmail();
@@ -36,11 +35,11 @@ function bindValidationEvents() {
         }
     };
 
-    const usernameInput = form.querySelector('input[name="username"]');
-    const emailInput = form.querySelector('input[name="email"]');
-    const passwordInput = form.querySelector('input[name="password"]');
-    const fullNameInput = form.querySelector('input[name="fullName"]');
-    const phoneInput = form.querySelector('input[name="phone"]');
+    const usernameInput = document.getElementById('empUsername');
+    const emailInput = document.getElementById('empEmail');
+    const passwordInput = document.getElementById('empPassword');
+    const fullNameInput = document.getElementById('empFullName');
+    const phoneInput = document.getElementById('empPhone');
 
     if (usernameInput) {
         usernameInput.addEventListener('blur', checkUsername);
@@ -105,11 +104,11 @@ function clearAllFormErrors() {
 // 3. Các hàm kiểm tra từng ô dữ liệu
 // =====================================
 function checkUsername() {
-    const input = document.querySelector('input[name="username"]');
+    const input = document.getElementById('empUsername');
     if (!input) return true;
     const val = input.value.trim();
     if (!val) {
-        showError(input, 'Vui lòng nhập Username!');
+        showError(input, 'Vui lòng nhập Username cho nhân viên!');
         return false;
     }
     if (val.length < 3) {
@@ -126,7 +125,7 @@ function checkUsername() {
 }
 
 function checkEmail() {
-    const input = document.querySelector('input[name="email"]');
+    const input = document.getElementById('empEmail');
     if (!input) return true;
     const val = input.value.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -135,7 +134,7 @@ function checkEmail() {
         return false;
     }
     if (!emailRegex.test(val)) {
-        showError(input, 'Email không đúng định dạng (ví dụ: example@gmail.com)!');
+        showError(input, 'Email không đúng định dạng (ví dụ: nhanvien@luxury-pc.com)!');
         return false;
     }
     clearError(input);
@@ -143,39 +142,24 @@ function checkEmail() {
 }
 
 function checkPassword() {
-    const input = document.querySelector('input[name="password"]');
-    const idInput = document.querySelector('input[name="id"]');
+    const input = document.getElementById('empPassword');
     if (!input) return true;
     const val = input.value.trim();
-    const isNewUser = !idInput || !idInput.value;
-
-    // Nếu là thêm mới -> Bắt buộc nhập mật khẩu ít nhất 6 ký tự
-    if (isNewUser) {
-        if (!val) {
-            showError(input, 'Vui lòng nhập Mật khẩu cho tài khoản mới!');
-            return false;
-        }
-        if (val.length < 6) {
-            showError(input, 'Mật khẩu phải chứa ít nhất 6 ký tự!');
-            return false;
-        }
-    } else {
-        // Nếu là cập nhật -> Nhập mới kiểm tra (nếu bỏ trống thì giữ nguyên)
-        if (val && val.length < 6) {
-            showError(input, 'Mật khẩu mới phải chứa ít nhất 6 ký tự!');
-            return false;
-        }
+    // Mật khẩu nhân viên có thể để trống (tự sinh ngẫu nhiên ở backend), nhưng nếu nhập thì phải >= 6 ký tự
+    if (val && val.length < 6) {
+        showError(input, 'Mật khẩu phải chứa ít nhất 6 ký tự!');
+        return false;
     }
     clearError(input);
     return true;
 }
 
 function checkFullName() {
-    const input = document.querySelector('input[name="fullName"]');
+    const input = document.getElementById('empFullName');
     if (!input) return true;
     const val = input.value.trim();
     if (!val) {
-        showError(input, 'Vui lòng nhập Họ và tên!');
+        showError(input, 'Vui lòng nhập Họ và tên nhân viên!');
         return false;
     }
     if (val.split(/\s+/).length < 2) {
@@ -187,7 +171,7 @@ function checkFullName() {
 }
 
 function checkPhone() {
-    const input = document.querySelector('input[name="phone"]');
+    const input = document.getElementById('empPhone');
     if (!input) return true;
     const val = input.value.trim();
     const phoneRegex = /^(\+?84|0)[3578912][0-9]{8}$/;
@@ -196,7 +180,7 @@ function checkPhone() {
         return false;
     }
     if (!phoneRegex.test(val)) {
-        showError(input, 'Số điện thoại không hợp lệ (đủ 10 chữ số, ví dụ: 0912345678)!');
+        showError(input, 'Số điện thoại không hợp lệ (đủ 10 chữ số, ví dụ: 0987654321)!');
         return false;
     }
     clearError(input);
@@ -204,34 +188,43 @@ function checkPhone() {
 }
 
 // =====================================
-// 4. Các hàm điều khiển UI Form & Bảng
+// 4. Các hàm điều khiển UI Form & Reset
 // =====================================
 function toggleForm() {
     const form = document.getElementById('userForm');
+    if (!form) return;
     const isActive = form.classList.toggle('active');
     updateToggleButtonState(isActive);
-    clearUserForm();
+
+    if (!isActive) {
+        resetFormFields();
+    }
 }
 
-function clearUserForm() {
-    document.querySelector('input[name="id"]').value = '';
-    document.querySelector('input[name="username"]').value = '';
-    document.querySelector('input[name="email"]').value = '';
-    document.querySelector('input[name="password"]').value = '';
-    document.querySelector('input[name="fullName"]').value = '';
-    document.querySelector('input[name="phone"]').value = '';
-    document.querySelector('input[name="address"]').value = '';
+function resetFormFields() {
+    document.getElementById('empId').value = '';
+    document.getElementById('empUsername').value = '';
+    document.getElementById('empUsername').readOnly = false;
+    document.getElementById('empEmail').value = '';
+    document.getElementById('empEmail').readOnly = false;
+    document.getElementById('empPassword').value = '';
+    document.getElementById('empFullName').value = '';
+    document.getElementById('empPhone').value = '';
+    document.getElementById('empAddress').value = '';
 
-    const genderSelect = document.querySelector('select[name="gender"]');
+    const genderSelect = document.getElementById('empGender');
     if (genderSelect) genderSelect.value = 'true';
 
-    const statusSelect = document.querySelector('select[name="status"]');
+    const statusSelect = document.getElementById('empStatus');
     if (statusSelect) statusSelect.value = 'true';
+
+    const title = document.getElementById('formTitle');
+    if (title) title.innerText = 'Thêm Nhân Viên Mới';
 
     clearAllFormErrors();
 }
 
-function editUser(btn) {
+function editEmployee(btn) {
     const id = btn.getAttribute('data-id');
     const username = btn.getAttribute('data-username');
     const email = btn.getAttribute('data-email');
@@ -241,29 +234,39 @@ function editUser(btn) {
     const gender = btn.getAttribute('data-gender');
     const status = btn.getAttribute('data-status');
 
-    document.querySelector('input[name="id"]').value = id || '';
-    document.querySelector('input[name="username"]').value = username || '';
-    document.querySelector('input[name="email"]').value = email || '';
-    document.querySelector('input[name="password"]').value = '';
-    document.querySelector('input[name="fullName"]').value = fullname || '';
-    document.querySelector('input[name="phone"]').value = phone || '';
-    document.querySelector('input[name="address"]').value = address || '';
+    document.getElementById('empId').value = id || '';
 
-    const genderSelect = document.querySelector('select[name="gender"]');
-    if (genderSelect) genderSelect.value = gender === 'true' ? 'true' : 'false';
+    const usernameInput = document.getElementById('empUsername');
+    usernameInput.value = username || '';
+    usernameInput.readOnly = true;
 
-    const statusSelect = document.querySelector('select[name="status"]');
-    if (statusSelect) statusSelect.value = status === 'true' ? 'true' : 'false';
+    const emailInput = document.getElementById('empEmail');
+    emailInput.value = email || '';
+    emailInput.readOnly = true;
+
+    document.getElementById('empPassword').value = '';
+    document.getElementById('empFullName').value = fullname || '';
+    document.getElementById('empPhone').value = phone || '';
+    document.getElementById('empAddress').value = address || '';
+
+    if (gender !== null && gender !== undefined) {
+        document.getElementById('empGender').value = (gender === 'true' || gender === true) ? 'true' : 'false';
+    }
+    if (status !== null && status !== undefined) {
+        document.getElementById('empStatus').value = (status === 'true' || status === true) ? 'true' : 'false';
+    }
+
+    const title = document.getElementById('formTitle');
+    if (title) title.innerText = 'Cập Nhật Nhân Viên: ' + (username || '');
 
     clearAllFormErrors();
 
     const form = document.getElementById('userForm');
-    if (form && !form.classList.contains('active')) {
+    if (form) {
         form.classList.add('active');
         updateToggleButtonState(true);
+        form.scrollIntoView({ behavior: 'smooth' });
     }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function updateToggleButtonState(isActive) {
@@ -271,46 +274,12 @@ function updateToggleButtonState(isActive) {
     if (!btn) return;
 
     if (isActive) {
-        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text">Hủy</span>';
-        btn.classList.remove('btn-gold');
-        btn.classList.add('btn-danger');
-        btn.style.padding = "0.6rem 1.2rem";
+        btn.innerHTML = '<i class="fa-solid fa-xmark" style="margin-right: 6px;"></i> <span>Hủy</span>';
+        btn.style.background = "#dc2626";
     } else {
-        btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span class="btn-text">Thêm Khách Hàng Mới</span>';
-        btn.classList.remove('btn-danger');
-        btn.classList.add('btn-gold');
+        btn.innerHTML = '<i class="fa-solid fa-user-plus" style="margin-right: 6px;"></i> <span>Thêm Nhân Viên Mới</span>';
+        btn.style.background = "#0066CC";
     }
-}
-
-function filterUserTable() {
-    const searchInput = document.getElementById('userSearchInput');
-    const statusSelect = document.getElementById('userStatusFilter');
-    if (!searchInput && !statusSelect) return;
-
-    const filterText = searchInput ? searchInput.value.toLowerCase().trim() : '';
-    const filterStatus = statusSelect ? statusSelect.value : '';
-
-    const rows = document.querySelectorAll('.table-wrapper tbody tr');
-    rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        const badge = row.querySelector('.badge');
-        const isActive = badge && badge.classList.contains('active-badge');
-
-        let matchesSearch = !filterText || text.includes(filterText);
-        let matchesStatus = true;
-
-        if (filterStatus === 'active') {
-            matchesStatus = isActive;
-        } else if (filterStatus === 'inactive') {
-            matchesStatus = !isActive;
-        }
-
-        if (matchesSearch && matchesStatus) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
 }
 
 function initUserFormState() {

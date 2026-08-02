@@ -44,13 +44,13 @@
         <div style="margin-bottom: 1.5rem;">
             <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()" type="button"><i
                     class="fa-solid fa-plus"></i> <span class="btn-text">Thêm
-                    Staff Mới</span></button>
+                    Khách Hàng Mới</span></button>
         </div>
 
         <div class="card add-form-container" id="userForm" th:classappend="${user.id != null ? 'active' : ''}">
 
             <div class="card-header">
-                <h2>Thêm / Cập nhật Staff</h2>
+                <h2>Thêm / Cập nhật Khách Hàng</h2>
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát" type="button"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
@@ -112,10 +112,8 @@
 
                     <div class="input-group">
                         <label>Vai trò</label>
-                        <select name="roleName">
-                            <option value="USER" th:selected="${currentRole == 'USER'}">Khách hàng (USER)</option>
-                            <option value="STAFF" th:selected="${currentRole == 'STAFF'}">Nhân viên (STAFF)</option>
-                            <option value="ADMIN" th:selected="${currentRole == 'ADMIN'}">Quản trị viên (ADMIN)</option>
+                        <select name="roleName" style="pointer-events: none; background-color: #f1f5f9; cursor: not-allowed; opacity: 0.85;" tabindex="-1">
+                            <option value="USER" selected>Khách hàng (USER)</option>
                         </select>
                     </div>
 
@@ -139,7 +137,7 @@
                 </div>
 
                 <button type="submit">
-                    Lưu Staff
+                    Lưu Khách Hàng
                 </button>
 
             </form>
@@ -147,8 +145,13 @@
         </div>
 
         <div class="card">
-
-            <h2>Danh sách Staff</h2>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <h2 style="margin: 0;">Danh sách khách hàng</h2>
+                <div
+                    th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/account', keyword=${keyword})}">
+                </div>
+            </div>
 
             <div class="table-wrapper" style="width: 100%; max-height: 50vh; overflow-x: hidden; overflow-y: auto;">
                 <table style="width: 100%;">

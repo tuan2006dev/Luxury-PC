@@ -3,7 +3,6 @@ package poly.edu.config;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import poly.edu.dao.ReviewDAO;
@@ -13,7 +12,6 @@ import poly.edu.entity.User;
 import java.util.Arrays;
 
 @Configuration
-@SuppressWarnings("null")
 @RequiredArgsConstructor
 public class ReviewDataLoader implements CommandLineRunner {
 

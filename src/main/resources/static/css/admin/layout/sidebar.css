@@ -340,7 +340,7 @@ body.sidebar-collapsed .main-content {
     border-radius: 12px !important;
     padding: 1.5rem !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
     width: 100% !important;
     box-sizing: border-box !important;
 }

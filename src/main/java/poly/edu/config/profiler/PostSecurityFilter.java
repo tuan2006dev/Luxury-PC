@@ -2,7 +2,6 @@ package poly.edu.config.profiler;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ public class PostSecurityFilter implements Filter {
             chain.doFilter(request, response);
         } finally {
             long time = System.currentTimeMillis() - start;
-            if (request instanceof HttpServletRequest req) {
+            if (request instanceof HttpServletRequest) {
                 SimpleProfiler.logController("DispatcherServlet_And_View", time);
             }
         }

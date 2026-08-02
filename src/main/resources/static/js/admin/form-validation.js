@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', initFormValidation);
 document.addEventListener('spa:load', initFormValidation);
 
 // Từ điển các câu thông báo lỗi chi tiết theo thuộc tính "name" của input
-const errorMessagesDict = {
+var errorMessagesDict = window.errorMessagesDict || {
     'name': 'Vui lòng nhập tên (Sản phẩm, Danh mục, Chương trình, ...).',
     'price': 'Vui lòng nhập giá bán hợp lệ.',
     'salePrice': 'Vui lòng nhập giá khuyến mãi.',

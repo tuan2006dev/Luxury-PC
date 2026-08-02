@@ -6,7 +6,6 @@ import org.springframework.data.repository.query.Param;
 import poly.edu.entity.FlashSale;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface FlashSaleDAO extends JpaRepository<FlashSale, Integer> {
 

@@ -53,6 +53,21 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Đổi mật khẩu thành công. Vui lòng đăng nhập lại.');
         }
     }
+
+    // Dynamic removal of error state when user types into any input field
+    document.querySelectorAll('.reset-form input').forEach(input => {
+        input.addEventListener('input', function () {
+            if (this.value.trim() !== '') {
+                this.classList.remove('is-invalid');
+                const errSpan = this.closest('.form-group')?.querySelector('.error-message')
+                    || this.closest('.floating-group')?.querySelector('.error-message');
+                if (errSpan) {
+                    errSpan.style.display = 'none';
+                    errSpan.innerText = '';
+                }
+            }
+        });
+    });
 });
 
 function validateLogin(e) {

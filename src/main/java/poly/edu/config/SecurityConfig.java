@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
@@ -48,6 +47,7 @@ public class SecurityConfig {
                                                                 "/admin/employees/**", "/admin/employees")
                                                 .hasRole("ADMIN")
                                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
+                                                .requestMatchers("/checkout", "/checkout/**", "/cart/checkout", "/cart/checkout/**").authenticated()
                                                 .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp",
                                                                 "/api/forgot-password/**",
                                                                 "/api/voucher/**", "/api/user-voucher/**", "/api/cart", "/api/cart/add",

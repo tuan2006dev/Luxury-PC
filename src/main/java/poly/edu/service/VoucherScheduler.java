@@ -7,10 +7,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.UserVoucherDAO;
-import poly.edu.dao.VoucherDAO;
 import poly.edu.entity.UserVoucher;
 import java.util.List;
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor

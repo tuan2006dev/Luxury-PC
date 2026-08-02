@@ -61,8 +61,8 @@ body {
 .stats-grid {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 0.85rem !important;
-	margin-bottom: 0.85rem !important;
+	gap: 0.5rem !important;
+	margin-bottom: 0.5rem !important;
 	flex-shrink: 0 !important;
 }
 

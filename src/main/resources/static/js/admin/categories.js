@@ -1,5 +1,6 @@
 function toggleForm() {
-    const form = document.getElementById('categoryForm');
+    const form = document.getElementById('categoryForm') || document.querySelector('.add-form-container');
+    if (!form) return;
     const isActive = form.classList.toggle('active');
     updateToggleButtonState(isActive);
 }

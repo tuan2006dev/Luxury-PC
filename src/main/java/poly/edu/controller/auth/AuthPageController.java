@@ -1,7 +1,6 @@
 package poly.edu.controller.auth;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +29,15 @@ public class AuthPageController {
     }
 
     @GetMapping("/auth/register")
-    public String showRegisterPage() {
+    public String showRegisterPage(@RequestParam(required = false) String firstName,
+                                   @RequestParam(required = false) String lastName,
+                                   @RequestParam(required = false) String email,
+                                   @RequestParam(required = false) String phone,
+                                   Model model) {
+        model.addAttribute("firstName", firstName != null ? firstName : "");
+        model.addAttribute("lastName", lastName != null ? lastName : "");
+        model.addAttribute("email", email != null ? email : "");
+        model.addAttribute("phone", phone != null ? phone : "");
         return "account/register"; // file register.html
     }
 

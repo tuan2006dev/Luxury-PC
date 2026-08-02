@@ -68,6 +68,10 @@
     margin-bottom: 20px;
 }
 
+.form-group .floating-group {
+    margin-bottom: 0;
+}
+
 .floating-group input {
     all: unset;
     display: block;
@@ -123,23 +127,47 @@ input:-webkit-autofill:active {
     font-size: 11px;
     font-weight: 600;
     color: var(--accent-blue);
+    background-color: #ffffff;
 }
 
-.floating-group .error-message {
+.floating-group .error-message,
+.error-message {
     color: #ef4444;
-    font-size: 13px;
-    margin-top: 5px;
-    display: none;
+    font-size: 12px;
     font-weight: 500;
+    margin-top: 5px;
+    padding-left: 2px;
+    display: none;
+    line-height: 1.4;
 }
 
+/* ===== TRẠNG THÁI BỊ LỖI (is-invalid): VIỀN ĐỎ & NHÃN LABEL MÀU ĐỎ ===== */
 .floating-group input.is-invalid {
     border-color: #ef4444 !important;
-    background-color: #fef2f2 !important;
 }
 
 .floating-group input.is-invalid+label {
     color: #ef4444 !important;
+}
+
+/* Nền đỏ nhạt khi ô bị lỗi còn trống (chưa tương tác) */
+.floating-group input.is-invalid:placeholder-shown {
+    background-color: #fef2f2 !important;
+}
+
+.floating-group input.is-invalid:placeholder-shown+label {
+    background-color: #fef2f2 !important;
+}
+
+/* Khi click vào (focus), rê chuột vào (hover), hoặc đã gõ chữ -> Chuyển màu nền thành TRẮNG 100% */
+.floating-group input.is-invalid:focus,
+.floating-group input.is-invalid:not(:placeholder-shown) {
+    background-color: #ffffff !important;
+}
+
+.floating-group input.is-invalid:focus+label,
+.floating-group input.is-invalid:not(:placeholder-shown)+label {
+    background-color: #ffffff !important;
 }
 
 .checkbox-label {
@@ -147,7 +175,6 @@ input:-webkit-autofill:active {
     align-items: center;
     gap: 10px;
     font-size: 15px;
-    margin-bottom: 20px;
     cursor: pointer;
 }
 
@@ -219,6 +246,7 @@ input:-webkit-autofill:active {
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    font-feature-settings: "tnum";
     gap: 15px;
 }
 

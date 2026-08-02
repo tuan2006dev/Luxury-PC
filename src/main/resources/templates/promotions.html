@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/modal-system.css}">
     <link rel="stylesheet" th:href="@{/css/promotions.css}">
 </head>
 
@@ -500,7 +501,6 @@
                 </div>
             </div>
         </div>
-        </div>
 
         <!-- Vouchers Section -->
         <div class="layout-2col" id="vouchers"
@@ -527,8 +527,9 @@
                                 Ưu đãi theo danh mục (4)</div>
                         </div>
                     </div>
-                    <a href="#vouchers"
-                        style="font-size: 13px; font-weight: 600; color: #3b82f6; text-decoration: none;">Xem tất cả
+                    <a href="javascript:void(0)" id="btnToggleVouchers" onclick="toggleVouchers()"
+                        style="font-size: 13px; font-weight: 600; color: #3b82f6; text-decoration: none; cursor: pointer;">Xem
+                        tất cả
                         Khuyến mãi <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
 
@@ -610,7 +611,7 @@
 
             <!-- Terms Box -->
             <div class="terms-box"
-                style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; align-self: start; display: flex; flex-direction: column; justify-content: space-between; height: 100%; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; align-self: start; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                 <div>
                     <div class="sidebar-box-title"
                         style="font-size: 14px; font-weight: 700; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; color: #1f2937; text-transform: uppercase;">
@@ -632,8 +633,8 @@
     </main>
 
     <!-- Rules Modal -->
-    <div id="rules-modal" class="lux-modal-backdrop">
-        <div class="lux-modal-container lux-modal-small">
+    <div id="rules-modal" class="lux-modal-backdrop" onclick="if(event.target === this) closeRulesModal()">
+        <div class="lux-modal-container lux-modal-large">
             <div class="lux-modal-header">
                 <h3 class="lux-modal-title">Thể Lệ Chi Tiết & Hướng Dẫn</h3>
                 <button class="lux-modal-close" onclick="closeRulesModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -675,9 +676,6 @@
 
     <!-- FOOTER -->
     <div th:replace="~{layout/footer :: footer}"></div>
-    <div id="toast"
-        style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:4px; font-size:14px; z-index:9999;">
-    </div>
 
     <script th:inline="javascript">
         var flashSaleEndTime = /*[[${flashSaleEndTime != null ? flashSaleEndTime : 0}]]*/ 0;

@@ -10,7 +10,6 @@ import poly.edu.entity.CartItem;
 import poly.edu.entity.User;
 import poly.edu.entity.Voucher;
 import poly.edu.repository.AdminLogRepository;
-import poly.edu.service.FlashSaleService;
 import poly.edu.service.ProfileService;
 import poly.edu.service.VoucherService;
 
@@ -26,8 +25,6 @@ public class VoucherApiController {
     private final VoucherService voucherService;
 
     private final ProfileService profileService;
-
-    private final FlashSaleService flashSaleService;
 
     private final AdminLogRepository adminLogRepository;
 

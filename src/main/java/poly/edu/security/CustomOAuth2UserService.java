@@ -1,7 +1,6 @@
 package poly.edu.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -39,8 +38,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // Check if the user account is locked
         if (dbUser != null && !Boolean.TRUE.equals(dbUser.getStatus())) {
             throw new OAuth2AuthenticationException(
-                new org.springframework.security.oauth2.core.OAuth2Error("account_locked", "Tài khoản của bạn đã bị khóa.", null)
-            );
+                    new org.springframework.security.oauth2.core.OAuth2Error("account_locked",
+                            "Tài khoản của bạn đã bị khóa.", null));
         }
 
         return customOAuth2User;
@@ -54,13 +53,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Object idObj = oauth2User.getAttribute("id");
         String providerId = subObj != null ? String.valueOf(subObj) : (idObj != null ? String.valueOf(idObj) : null);
 
-        // First, try to find user by providerId
+        // First, try to find user by provider specific ID
         Optional<User> userOptional = Optional.empty();
         if (providerId != null) {
-            userOptional = userRepository.findByProviderId(providerId);
+            if ("facebook".equalsIgnoreCase(registrationId)) {
+                userOptional = userRepository.findByFacebookId(providerId);
+            } else {
+                userOptional = userRepository.findByGoogleId(providerId);
+            }
         }
 
-        // If not found by providerId, try by email (if email is not null)
+        // If not found by OAuth ID, try by email (if email is not null)
         if (!userOptional.isPresent() && email != null) {
             userOptional = userRepository.findByEmail(email);
         }
@@ -68,11 +71,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user;
         if (userOptional.isPresent()) {
             user = userOptional.get();
-            // Handle null authProvider or different provider logic
-            if (user.getAuthProvider() == null || !user.getAuthProvider().name().equalsIgnoreCase(registrationId)) {
-                user.setAuthProvider(User.AuthProvider.valueOf(registrationId.toUpperCase()));
-                user.setProviderId(providerId);
-                user = userRepository.save(user);
+            // If user already exists, link OAuth ID if not linked yet, but NEVER overwrite authProvider!
+            if ("facebook".equalsIgnoreCase(registrationId)) {
+                if (user.getFacebookId() == null && providerId != null) {
+                    user.setFacebookId(providerId);
+                    user = userRepository.save(user);
+                }
+            } else {
+                if (user.getGoogleId() == null && providerId != null) {
+                    user.setGoogleId(providerId);
+                    user = userRepository.save(user);
+                }
             }
         } else {
             // New user registration via OAuth2
@@ -94,7 +103,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setFullName(name);
 
             user.setAuthProvider(User.AuthProvider.valueOf(registrationId.toUpperCase()));
-            user.setProviderId(providerId);
+            if ("facebook".equalsIgnoreCase(registrationId)) {
+                user.setFacebookId(providerId);
+            } else {
+                user.setGoogleId(providerId);
+            }
 
             user = userRepository.save(user);
 

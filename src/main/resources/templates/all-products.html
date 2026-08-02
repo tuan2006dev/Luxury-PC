@@ -83,8 +83,9 @@
                                         th:checked="${selectedBrand == null or selectedBrand == ''}"> Tất cả</label>
                             </li>
                             <li th:each="b : ${brands}">
-                                <label><input type="radio" name="brand" th:value="${b}"
-                                        th:checked="${selectedBrand == b}"> <span th:text="${b}"></span></label>
+                                <label><input type="radio" name="brand" th:value="${b.name}"
+                                        th:checked="${selectedBrand == b.name}"> <span
+                                        th:text="${b.name}"></span></label>
                             </li>
                         </ul>
                     </div>

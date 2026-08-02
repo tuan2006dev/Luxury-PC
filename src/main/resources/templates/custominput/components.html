@@ -8,10 +8,13 @@
 <body>
 
     <!-- Standard Text Input Fragment -->
-    <div th:fragment="textInput(label, name, type, placeholder, required, id, value)" class="floating-group">
-        <input th:type="${type != null ? type : 'text'}" th:name="${name}" th:id="${id}" th:value="${value}"
-            th:required="${required}" placeholder=" ">
-        <label th:text="${label}">Label</label>
+    <div th:fragment="textInput(label, name, type, placeholder, required, id, value)" class="form-group"
+        style="margin-bottom: 20px;">
+        <div class="floating-group">
+            <input th:type="${type != null ? type : 'text'}" th:name="${name}" th:id="${id}" th:value="${value}"
+                th:required="${required}" placeholder=" ">
+            <label th:text="${label}">Label</label>
+        </div>
         <span class="error-message"></span>
     </div>
 
@@ -20,7 +23,8 @@
         style="margin-bottom: 20px;">
         <div class="otp-group" style="display: flex; gap: 10px; width: 100%;">
             <div class="floating-group" style="flex: 1; margin-bottom: 0;">
-                <input type="text" th:name="${name}" th:required="${required}" placeholder=" ">
+                <input type="text" th:name="${name}" th:required="${required}" placeholder=" " inputmode="numeric"
+                    pattern="[0-9]*" maxlength="6" oninput="this.value = this.value.replace(/\D/g, '')">
                 <label th:text="${label}">Mã xác nhận (otp) *</label>
             </div>
             <button type="button" class="btn-otp" th:attr="onclick=${onClickSend}">GỬI MÃ</button>

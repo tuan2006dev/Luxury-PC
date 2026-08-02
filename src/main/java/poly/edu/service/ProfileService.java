@@ -93,6 +93,31 @@ public class ProfileService {
     public void addUserAddress(Authentication authentication, String recipientName, String phone,
             String addressLine, String district, String city) {
         User user = getCurrentUser(authentication);
+        List<ShippingAddress> existingList = shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+
+        String phoneInput = phone != null ? phone.trim() : "";
+        String detailInput = addressLine != null ? addressLine.trim() : "";
+        String cityInput = city != null ? city.trim() : "";
+        String districtInput = district != null ? district.trim() : "";
+
+        for (ShippingAddress a : existingList) {
+            boolean samePhone = a.getPhone() != null && a.getPhone().trim().equalsIgnoreCase(phoneInput);
+            boolean sameDetail = a.getAddress() != null && a.getAddress().trim().equalsIgnoreCase(detailInput);
+            boolean sameCity = a.getCity() != null && a.getCity().trim().equalsIgnoreCase(cityInput);
+            String existingDistrict = a.getDistrict() != null ? a.getDistrict().trim() : "";
+            boolean sameDistrict = existingDistrict.equalsIgnoreCase(districtInput);
+
+            if (samePhone && sameDetail && sameCity && sameDistrict) {
+                a.setRecipientName(requireNonBlank(recipientName, "recipientName"));
+                a.setPhone(requireNonBlank(phone, "phone"));
+                a.setAddress(requireNonBlank(addressLine, "address"));
+                a.setDistrict(normalize(district));
+                a.setCity(normalize(city));
+                shippingAddressRepository.save(a);
+                return;
+            }
+        }
+
         ShippingAddress a = new ShippingAddress();
         a.setUser(user);
         a.setRecipientName(requireNonBlank(recipientName, "recipientName"));
@@ -100,8 +125,7 @@ public class ProfileService {
         a.setAddress(requireNonBlank(addressLine, "address"));
         a.setDistrict(normalize(district));
         a.setCity(normalize(city));
-        long n = shippingAddressRepository.countByUser_Id(user.getId());
-        a.setDefault(n == 0);
+        a.setDefault(existingList.isEmpty());
         shippingAddressRepository.save(a);
     }
 
