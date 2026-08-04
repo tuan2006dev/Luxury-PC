@@ -41,13 +41,13 @@
                     <thead>
                         <tr>
                             <th style="width: 6%;">Mã Đơn</th>
-                            <th style="width: 20%;">Khách Hàng</th>
+                            <th style="width: 14%;">Khách Hàng</th>
                             <th style="width: 8%;">Ngày Đặt</th>
                             <th style="width: 9%;">Tổng Tiền</th>
-                            <th style="width: 8%;">Thanh Toán</th>
-                            <th style="width: 8%;">Giao Hàng</th>
+                            <th style="width: 9%;">Thanh Toán</th>
+                            <th style="width: 10%;">Giao Hàng</th>
                             <th style="width: 7%;">Voucher</th>
-                            <th style="width: 10%;">Trạng Thái</th>
+                            <th style="width: 11%;">Trạng Thái</th>
                             <th style="width: 15%;">Ghi Chú</th>
                             <th style="width: 9%; text-align: center;">Hành Động</th>
                         </tr>
@@ -91,7 +91,8 @@
                             </td>
                             <td>
                                 <span th:class="'badge badge-' + ${o.status.toLowerCase()}"
-                                    th:text="${o.status == 'PROCESSING' or o.status == 'DANG_XU_LY' ? 'Đang xử lý' : o.statusDisplay}">Chờ xử lý</span>
+                                    th:text="${o.status == 'PROCESSING' or o.status == 'DANG_XU_LY' ? 'Đang xử lý' : o.statusDisplay}">Chờ
+                                    xử lý</span>
                             </td>
                             <td class="admin-note"
                                 style="white-space: normal !important; word-break: break-word; overflow: hidden;">
@@ -177,16 +178,20 @@
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <select name="status">
                                                 <option value="PROCESSING"
-                                                    th:if="${(o.paymentMethod == 'COD' and o.status == 'PENDING') or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN'))}">Đang xử lý
+                                                    th:if="${(o.paymentMethod == 'COD' and o.status == 'PENDING') or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN'))}">
+                                                    Đang xử lý
                                                 </option>
                                                 <option value="SHIPPING"
-                                                    th:if="${o.status == 'PROCESSING' or o.status == 'DANG_XU_LY'}">Đang giao
+                                                    th:if="${o.status == 'PROCESSING' or o.status == 'DANG_XU_LY'}">Đang
+                                                    giao
                                                 </option>
                                                 <option value="PAID"
-                                                    th:if="${o.paymentMethod == 'COD' and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO')}">Đã thanh toán
+                                                    th:if="${o.paymentMethod == 'COD' and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO')}">
+                                                    Đã thanh toán
                                                 </option>
                                                 <option value="COMPLETED"
-                                                    th:if="${(o.paymentMethod == 'COD' and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN')) or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO'))}">Hoàn thành
+                                                    th:if="${(o.paymentMethod == 'COD' and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN')) or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO'))}">
+                                                    Hoàn thành
                                                 </option>
                                                 <option value="DA_HUY">Đã hủy</option>
                                             </select>

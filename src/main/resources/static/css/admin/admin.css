@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap');
 @import url('../modal-system.css');
 
 :root {
@@ -29,7 +29,13 @@
   margin: 0;
 }
 
-.form-group input[type="number"] {
+.input-group input[type="number"]::-webkit-inner-spin-button,
+.input-group input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-group input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
 }
@@ -40,8 +46,12 @@
   box-sizing: border-box;
 }
 
+body, input, select, textarea, button, table, th, td {
+  font-family: 'Roboto', 'Outfit', sans-serif !important;
+}
+
 body {
-  font-family: 'Outfit', sans-serif;
+  font-variant-numeric: tabular-nums;
   background: var(--admin-bg);
   color: var(--admin-text-main);
 }
@@ -231,6 +241,40 @@ body.sidebar-collapsed .main-content {
   top: 50%;
   transform: translateY(-50%);
   color: var(--admin-text-muted);
+}
+
+.datetime-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.datetime-wrapper input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding-right: 2.5rem !important;
+}
+
+.datetime-wrapper i {
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+  color: var(--admin-text-muted, #64748b) !important;
+  font-size: 0.9rem !important;
+  z-index: 2 !important;
+}
+
+.datetime-wrapper input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  opacity: 0 !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: pointer !important;
 }
 
 .header-icons {

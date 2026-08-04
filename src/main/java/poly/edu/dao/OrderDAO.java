@@ -47,6 +47,9 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.user.id = :userId AND o.status IN ('PAID', 'DA_THANH_TOAN', 'SHIPPING', 'COMPLETED')")
     Double getTotalSpentByUser(Integer userId);
 
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId AND o.status IN ('PAID', 'DA_THANH_TOAN', 'COMPLETED', 'HOAN_THANH')")
+    Long countCompletedOrdersByUser(Integer userId);
+
     @Query("SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId")
     Long countOrdersByUser(Integer userId);
 

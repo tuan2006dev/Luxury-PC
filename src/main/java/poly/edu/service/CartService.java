@@ -61,9 +61,10 @@ public class CartService {
         if (uOpt.isPresent()) {
             Double spent = orderDAO.getTotalSpentByUser(uOpt.get().getId());
             if (spent == null) spent = 0.0;
-            if (spent >= 200_000_000) return 0.10; // 10%
-            if (spent >= 50_000_000) return 0.05;  // 5%
-            if (spent >= 10_000_000) return 0.02;  // 2%
+            if (spent >= 200_000_000) return 0.10; // Kim Cương: 10%
+            if (spent >= 100_000_000) return 0.08; // Bạch Kim: 8%
+            if (spent >= 50_000_000) return 0.05;  // Vàng: 5%
+            if (spent >= 10_000_000) return 0.02;  // Bạc: 2%
         }
         return 0.0;
     }
@@ -131,7 +132,8 @@ public class CartService {
         // 3. Calculate Prices
         double baseTotal = calculateTotal(targetCart.values());
         double discountRate = getDiscountRate(principal);
-        double priceAfterVip = baseTotal - (baseTotal * discountRate);
+        double vipDiscount = baseTotal * discountRate;
+        double priceAfterVip = baseTotal - vipDiscount;
 
         // 4. Apply voucher combo (Order/Category discount + Freeship)
         double voucherDiscount = 0;
@@ -174,6 +176,7 @@ public class CartService {
         order.setTotalPrice(finalPrice);
         order.setVoucherCode(appliedVoucherCode);
         order.setDiscountAmount(voucherDiscount);
+        order.setVipDiscount(vipDiscount);
         order.setFreeshipVoucherCode(appliedFreeshipCode);
         order.setFreeshipDiscount(freeshipDiscount);
         order.setPaymentMethod(paymentMethod.toUpperCase());

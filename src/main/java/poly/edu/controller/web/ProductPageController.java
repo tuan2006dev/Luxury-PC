@@ -64,6 +64,8 @@ public class ProductPageController {
             @RequestParam(name = "max", required = false) Double max,
             @RequestParam(name = "kw", required = false) String kw,
             @RequestParam(name = "brand", required = false) String brand,
+            @RequestParam(name = "sort", required = false, defaultValue = "newest") String sort,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(name = "flashSale", required = false) Boolean flashSale) {
         if (kw != null && kw.trim().isEmpty())
             kw = null;
@@ -88,8 +90,6 @@ public class ProductPageController {
             max = temp;
         }
 
-        List<Product> products = productService.searchProducts(cid, min, max, kw, brand);
-
         // Lấy danh sách Flash Sale đang diễn ra
         java.util.Map<Integer, FlashSaleItem> flashSaleMap = new java.util.HashMap<>();
         Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
@@ -103,14 +103,59 @@ public class ProductPageController {
         }
         model.addAttribute("flashSaleMap", flashSaleMap);
 
-        // Nếu chọn lọc theo Flash Sale
+        // Sorting
+        org.springframework.data.domain.Sort sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id");
+        if ("price_asc".equalsIgnoreCase(sort)) {
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "price");
+        } else if ("price_desc".equalsIgnoreCase(sort)) {
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "price");
+        } else if ("name_asc".equalsIgnoreCase(sort)) {
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "name");
+        } else if ("name_desc".equalsIgnoreCase(sort)) {
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "name");
+        }
+
+        int pageSize = 100;
+        int currentPage = (page != null && page > 0) ? page : 1;
+        int pageIndex = currentPage - 1;
+
+        List<Product> products;
+        int totalPages;
+        long totalProducts;
+
         if (Boolean.TRUE.equals(flashSale)) {
-            products = products.stream()
+            org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.PageRequest.of(0, 10000, sortObj);
+            List<Product> allMatches = productService.searchProductsPage(cid, min, max, kw, brand, unpaged).getContent();
+            List<Product> filtered = allMatches.stream()
                     .filter(p -> p != null && flashSaleMap.containsKey(p.getId()))
                     .collect(java.util.stream.Collectors.toList());
+
+            totalProducts = filtered.size();
+            totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+            if (totalPages < 1) totalPages = 1;
+
+            int fromIndex = pageIndex * pageSize;
+            int toIndex = Math.min(fromIndex + pageSize, (int) totalProducts);
+            if (fromIndex <= totalProducts && fromIndex < toIndex) {
+                products = filtered.subList(fromIndex, toIndex);
+            } else {
+                products = java.util.Collections.emptyList();
+            }
+        } else {
+            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(pageIndex, pageSize, sortObj);
+            org.springframework.data.domain.Page<Product> productPage = productService.searchProductsPage(cid, min, max, kw, brand, pageable);
+            products = productPage.getContent();
+            totalPages = productPage.getTotalPages();
+            totalProducts = productPage.getTotalElements();
+            if (totalPages < 1) totalPages = 1;
         }
 
         model.addAttribute("allProducts", products);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalProducts", totalProducts);
+        model.addAttribute("selectedSort", sort);
+
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrands());
 

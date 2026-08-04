@@ -15,6 +15,15 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByGoogleId(String googleId);
     Optional<User> findByFacebookId(String facebookId);
 
+    @Query("SELECT u FROM User u WHERE u.email IS NOT NULL AND u.email <> '' AND (u.notifyFlashSale IS NULL OR u.notifyFlashSale = true)")
+    List<User> findFlashSaleSubscribers();
+
+    @Query("SELECT u FROM User u WHERE u.email IS NOT NULL AND u.email <> '' AND u.notifyNewProducts = true")
+    List<User> findNewProductsSubscribers();
+
+    @Query("SELECT u FROM User u WHERE u.email IS NOT NULL AND u.email <> '' AND (u.notifyWeeklyNewsletter IS NULL OR u.notifyWeeklyNewsletter = true)")
+    List<User> findWeeklyNewsletterSubscribers();
+
     @Query("""
 		SELECT u 
 		FROM User u

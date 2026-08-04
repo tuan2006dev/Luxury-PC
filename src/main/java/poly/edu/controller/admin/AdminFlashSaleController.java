@@ -35,7 +35,7 @@ public class AdminFlashSaleController {
             String kw = keyword.trim().toLowerCase();
             flashSales = flashSales.stream()
                     .filter(f -> (f.getName() != null && f.getName().toLowerCase().contains(kw)) ||
-                                 (f.getId() != null && String.valueOf(f.getId()).contains(kw)))
+                            (f.getId() != null && String.valueOf(f.getId()).contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
         model.addAttribute("flashSales", flashSales);
@@ -46,9 +46,9 @@ public class AdminFlashSaleController {
     @PostMapping("/save")
     public String saveFlashSale(
             @RequestParam(value = "id", required = false) Integer id,
-            @RequestParam("name") String name,
-            @RequestParam("startTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startTime,
-            @RequestParam("endTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date endTime,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "startTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startTime,
+            @RequestParam(value = "endTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date endTime,
             @RequestParam(value = "active", required = false, defaultValue = "true") Boolean active,
             @RequestParam(value = "bannerImageFile", required = false) org.springframework.web.multipart.MultipartFile bannerImageFile,
             @RequestParam(value = "bannerImage", required = false) String bannerImageUrl,
@@ -58,7 +58,17 @@ public class AdminFlashSaleController {
             HttpServletRequest request,
             RedirectAttributes ra) {
 
-        if (startTime != null && endTime != null && endTime.before(startTime)) {
+        if (name == null || name.trim().isEmpty()) {
+            ra.addFlashAttribute("error", "Vui lòng nhập tên chương trình Flash Sale!");
+            return "redirect:/admin/flash-sales";
+        }
+
+        if (startTime == null || endTime == null) {
+            ra.addFlashAttribute("error", "Vui lòng chọn đầy đủ thời gian bắt đầu và thời gian kết thúc!");
+            return "redirect:/admin/flash-sales";
+        }
+
+        if (!endTime.after(startTime)) {
             ra.addFlashAttribute("error", "Thời gian kết thúc phải sau thời gian bắt đầu!");
             return "redirect:/admin/flash-sales";
         }

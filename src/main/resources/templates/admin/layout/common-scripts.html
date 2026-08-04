@@ -5,4 +5,22 @@
     <script th:src="@{/js/confirm-popup.js}"></script>
     <!-- Centralized Form Validation -->
     <script th:src="@{/js/admin/form-validation.js}"></script>
+    <script>
+        // Global Smart Reload Prevention for Admin Active Tabs & Links
+        document.addEventListener('click', function (e) {
+            const link = e.target.closest('a');
+            if (!link) return;
+            const href = link.getAttribute('href');
+            if (!href || href === '#' || href.startsWith('javascript:')) return;
+
+            const isSelfActive = link.classList.contains('active') || link.classList.contains('is-active');
+            const isParentActive = link.parentElement && link.parentElement.classList.contains('active');
+            const isCurrentUrl = link.href && (link.href === window.location.href);
+
+            if (isSelfActive || isParentActive || isCurrentUrl) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+    </script>
 </div>

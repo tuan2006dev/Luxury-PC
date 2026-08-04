@@ -38,7 +38,7 @@
                     <!-- Sắp xếp -->
                     <div class="filter-section">
                         <h4>Sắp xếp</h4>
-                        <select name="sort"
+                        <select name="sort" onchange="this.form.submit()"
                             style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 13px;">
                             <option value="newest" th:selected="${selectedSort == 'newest'}">Mới nhất</option>
                             <option value="price_asc" th:selected="${selectedSort == 'price_asc'}">Giá: Thấp đến Cao
@@ -132,7 +132,7 @@
                 <div class="brand-section">
                     <div class="brand-header">
                         <h3 class="brand-title">KẾT QUẢ TÌM KIẾM <span
-                                th:text="'(' + ${allProducts.size()} + ' sản phẩm)'"
+                                th:text="'(' + ${totalProducts != null ? totalProducts : allProducts.size()} + ' sản phẩm)'"
                                 style="font-weight: 400; font-size: 14px; color: #666; margin-left: 10px;"></span></h3>
                     </div>
 

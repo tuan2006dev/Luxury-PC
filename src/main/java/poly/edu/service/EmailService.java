@@ -5,6 +5,11 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import poly.edu.entity.Order;
+import poly.edu.entity.PasswordReset;
+import poly.edu.entity.User;
+import poly.edu.repository.PasswordResetRepository;
+
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,8 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EmailService {
 
     private final JavaMailSender mailSender;
-
-    private final poly.edu.repository.PasswordResetRepository passwordResetRepo;
+    private final PasswordResetRepository passwordResetRepo;
 
     public static class OtpData {
         private final String code;
@@ -40,7 +44,7 @@ public class EmailService {
 
     public void sendOtpEmail(String storedEmail, String toEmail) {
         String otp = String.format("%06d", new Random().nextInt(999999));
-        
+
         // Lưu OTP với thời hạn 5 phút (300.000 ms)
         long expiryTime = System.currentTimeMillis() + 5 * 60 * 1000;
         otpStorage.put(storedEmail, new OtpData(otp, expiryTime));
@@ -58,8 +62,8 @@ public class EmailService {
     public void sendForgotPasswordOtpEmail(String storedEmail, String toEmail) {
         String otp = String.format("%06d", new Random().nextInt(999999));
 
-        poly.edu.entity.PasswordReset pr = passwordResetRepo.findByEmail(storedEmail)
-                .orElse(new poly.edu.entity.PasswordReset());
+        PasswordReset pr = passwordResetRepo.findByEmail(storedEmail)
+                .orElse(new PasswordReset());
         pr.setEmail(storedEmail);
         pr.setToken(otp);
         pr.setExpiry(java.time.LocalDateTime.now().plusMinutes(5));
@@ -90,7 +94,7 @@ public class EmailService {
         if (otpData == null) {
             return false;
         }
-        
+
         // 1. Kiểm tra hết hạn
         if (otpData.isExpired()) {
             otpStorage.remove(email); // Xóa mã đã hết hạn
@@ -115,7 +119,7 @@ public class EmailService {
         mailSender.send(mail);
     }
 
-    public void sendOrderCancellationEmailToAdmin(poly.edu.entity.Order order) {
+    public void sendOrderCancellationEmailToAdmin(Order order) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom("luxury.pc.noreply@gmail.com");
@@ -132,6 +136,99 @@ public class EmailService {
             mailSender.send(message);
         } catch (Exception e) {
             System.err.println("Gửi email thông báo hủy đơn cho admin thất bại: " + e.getMessage());
+        }
+    }
+
+    public void sendOrderStatusUpdateEmail(User user, Order order, String newStatus) {
+        if (user == null || user.getEmail() == null || user.getEmail().trim().isEmpty())
+            return;
+        if (Boolean.FALSE.equals(user.getNotifyOrderUpdates()))
+            return;
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("luxury.pc.noreply@gmail.com");
+            message.setTo(user.getEmail());
+            message.setSubject("[Luxury PC] Cập nhật trạng thái đơn hàng #Luxury-" + order.getId());
+            message.setText("Chào " + (user.getFullName() != null ? user.getFullName() : "bạn") + ",\n\n"
+                    + "Trạng thái đơn hàng #Luxury-" + order.getId() + " của bạn đã được thay đổi:\n"
+                    + "👉 Trạng thái mới: " + newStatus + "\n\n"
+                    + "Tổng giá trị: " + String.format("%,.0f", order.getTotalPrice()) + " ₫\n\n"
+                    + "Cảm ơn bạn đã tin tưởng mua sắm tại Luxury PC!\n"
+                    + "Trân trọng,\nHệ thống Luxury PC");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Gửi email cập nhật đơn hàng thất bại: " + e.getMessage());
+        }
+    }
+
+    public void sendFlashSaleNotificationEmail(User user, String title, String content) {
+        if (user == null || user.getEmail() == null || user.getEmail().trim().isEmpty())
+            return;
+        if (Boolean.FALSE.equals(user.getNotifyFlashSale()))
+            return;
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("luxury.pc.noreply@gmail.com");
+            message.setTo(user.getEmail());
+            message.setSubject("[Luxury PC Flash Sale] " + title);
+            message.setText("Chào " + (user.getFullName() != null ? user.getFullName() : "bạn") + ",\n\n"
+                    + "⚡ SỰ KIỆN FLASH SALE & KHUYẾN MÃI ĐẶC BIỆT!\n\n"
+                    + content + "\n\n"
+                    + "Truy cập ngay Luxury PC để chọn mua những linh kiện giá tốt nhất!\n\n"
+                    + "Trân trọng,\nLuxury PC Team");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Gửi email Flash Sale thất bại: " + e.getMessage());
+        }
+    }
+
+    public void sendNewProductNotificationEmail(User user, String productName, Double price) {
+        if (user == null || user.getEmail() == null || user.getEmail().trim().isEmpty())
+            return;
+        if (!Boolean.TRUE.equals(user.getNotifyNewProducts()))
+            return;
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("luxury.pc.noreply@gmail.com");
+            message.setTo(user.getEmail());
+            message.setSubject("[Luxury PC] Linh kiện mới về kho: " + productName);
+            message.setText("Chào " + (user.getFullName() != null ? user.getFullName() : "bạn") + ",\n\n"
+                    + "🔥 LINH KIỆN MỚI CỰC HOT VỪA VỀ KHO LUXURY PC!\n\n"
+                    + "- Tên linh kiện: " + productName + "\n"
+                    + "- Giá niêm yết: " + String.format("%,.0f", price != null ? price : 0.0) + " ₫\n\n"
+                    + "Đặt hàng ngay hôm nay để nhận ưu đãi vận chuyển tốt nhất!\n\n"
+                    + "Trân trọng,\nLuxury PC Team");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Gửi email Sản phẩm mới thất bại: " + e.getMessage());
+        }
+    }
+
+    public void sendWeeklyNewsletterEmail(User user) {
+        if (user == null || user.getEmail() == null || user.getEmail().trim().isEmpty())
+            return;
+        if (Boolean.FALSE.equals(user.getNotifyWeeklyNewsletter()))
+            return;
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("luxury.pc.noreply@gmail.com");
+            message.setTo(user.getEmail());
+            message.setSubject("[Luxury PC] Bản tin xu hướng công nghệ & Review hàng tuần");
+            message.setText("Chào " + (user.getFullName() != null ? user.getFullName() : "bạn") + ",\n\n"
+                    + "📰 BẢN TIN CÔNG NGHỆ THỨ HAI HÀNG TUẦN TỪ LUXURY PC!\n\n"
+                    + "Tổng hợp xu hướng PC, linh kiện mới nhất và đánh giá chuyên sâu trong tuần qua:\n"
+                    + "1. Xu hướng cấu hình PC Gaming 2026 vượt trội.\n"
+                    + "2. Đánh giá thế hệ Card đồ họa & CPU mới nhất.\n"
+                    + "3. Mẹo tối ưu hiệu năng máy tính cho Game thủ & Coder.\n\n"
+                    + "Chúc bạn một tuần mới làm việc và giải trí hiệu quả!\n\n"
+                    + "Trân trọng,\nLuxury PC Team");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Gửi email Bản tin hàng tuần thất bại: " + e.getMessage());
         }
     }
 }

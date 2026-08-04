@@ -373,3 +373,13 @@ document.addEventListener('spa:load', function() {
         cleanupTicketsWs();
     }
 });
+
+// Prevent reloading data when clicking an already active filter tab
+document.addEventListener('click', function(e) {
+    const tab = e.target.closest('.filter-tab');
+    if (tab && tab.classList.contains('active')) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+}, true);
+

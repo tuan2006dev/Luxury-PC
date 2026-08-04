@@ -10,7 +10,7 @@
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/checkout.css}">
+    <link rel="stylesheet" th:href="@{/css/actions/check-out/checkout.css}">
     <link rel="stylesheet" th:href="@{/css/cart.css}">
 </head>
 
@@ -24,23 +24,22 @@
             <a th:href="@{/}">Trang chủ</a> > <span>Giỏ hàng của bạn</span>
         </div>
 
-        <!-- Progress Steps -->
-        <div class="checkout-steps">
+        <!-- Stepper -->
+        <div class="stepper">
             <div class="step active">
-                <div class="step-circle">1</div>
-                <div class="step-label">Giỏ hàng</div>
+                <div class="step-circle">1</div> Giỏ hàng
             </div>
+            <div class="step-line"></div>
             <div class="step">
-                <div class="step-circle">2</div>
-                <div class="step-label">Thông tin giao hàng</div>
+                <div class="step-circle">2</div> Thanh toán
             </div>
+            <div class="step-line"></div>
             <div class="step">
-                <div class="step-circle">3</div>
-                <div class="step-label">Thanh toán</div>
+                <div class="step-circle">3</div> Xác nhận
             </div>
+            <div class="step-line"></div>
             <div class="step">
-                <div class="step-circle">4</div>
-                <div class="step-label">Hoàn thành</div>
+                <div class="step-circle">4</div> Hoàn thành
             </div>
         </div>
 
@@ -68,7 +67,7 @@
                     th:data-stock="${item.stock}" th:data-name="${item.name}">
                     <div class="cart-item-img">
                         <img th:if="${item.image != null and item.image != ''}"
-                            th:src="@{${item.image.startsWith('http') ? item.image : '/images/products/' + item.image}}"
+                            th:src="@{${item.image != null ? (item.image.startsWith('http') || item.image.startsWith('/') ? item.image : '/images/products/' + item.image) : '/images/placeholder.png'}}"
                             th:alt="${item.name}">
                         <i th:unless="${item.image != null and item.image != ''}" class="fa-solid fa-computer"
                             style="font-size: 40px; color: #ccc;"></i>
@@ -89,9 +88,9 @@
                                     th:replace="~{customnumber/components :: removeBtn(itemId=${item.id})}"></button>
                             </div>
                         </div>
-                        <div class="cart-item-price item-price" th:data-price="${item.price}">
+                        <div class="cart-item-price item-price" th:data-price="${item.price != null ? item.price : 0.0}">
                             <span
-                                th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">Giá</span>
+                                th:text="${#numbers.formatDecimal(item.price != null ? item.price : 0.0, 0, 'COMMA', 0, 'POINT')} + 'đ'">Giá</span>
                         </div>
                     </div>
                 </div>

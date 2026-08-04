@@ -359,20 +359,39 @@ public class CartController {
         boolean cartChanged = false;
         while (iterator.hasNext()) {
             CartItem item = iterator.next();
+            if (item == null || item.getId() == null) {
+                iterator.remove();
+                cartChanged = true;
+                continue;
+            }
+
             Optional<Product> pOpt = productDAO.findById(item.getId());
             if (pOpt.isPresent()) {
                 Product product = pOpt.get();
                 item.setImage(product.getImage());
-                item.setStock(product.getStock());
-                item.setPrice(flashSaleService.getEffectivePrice(product.getId()));
+                item.setStock(product.getStock() != null ? product.getStock() : 5);
+                
+                Double price = null;
+                if (flashSaleService != null) {
+                    try {
+                        price = flashSaleService.getEffectivePrice(product.getId());
+                    } catch (Exception ignored) {}
+                }
+                if (price == null) {
+                    price = product.getPrice() != null ? product.getPrice() : 0.0;
+                }
+                item.setPrice(price);
             } else {
                 item.setStock(5);
+                if (item.getPrice() == null) {
+                    item.setPrice(0.0);
+                }
             }
 
-            if (item.getStock() <= 0) {
+            if (item.getStock() == null || item.getStock() <= 0) {
                 iterator.remove();
                 cartChanged = true;
-            } else if (item.getQuantity() > item.getStock()) {
+            } else if (item.getQuantity() != null && item.getQuantity() > item.getStock()) {
                 item.setQuantity(item.getStock());
                 cartChanged = true;
             }
@@ -476,6 +495,7 @@ public class CartController {
 
         model.addAttribute("cartItems", targetCart.values());
         model.addAttribute("totalPrice", baseTotal);
+        model.addAttribute("discountRate", discountRate);
         model.addAttribute("discountAmt", baseTotal * discountRate);
         model.addAttribute("finalPrice", baseTotal - (baseTotal * discountRate));
         List<Voucher> activeVouchers = new java.util.ArrayList<>(voucherService.getActiveVouchers());

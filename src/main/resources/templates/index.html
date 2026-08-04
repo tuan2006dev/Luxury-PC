@@ -22,13 +22,18 @@
     <!-- LOADING SCREEN -->
     <div class="loader" id="loader">
         <div class="loader-inner">
+            <div class="loader-glow"></div>
             <div class="loader-logo">LUXURY PC</div>
+            <div class="loader-sub">LOADING...</div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
         </div>
     </div>
     <script>
         window.addEventListener('load', function () {
             var l = document.getElementById('loader');
-            if (l) { l.classList.add('hidden'); setTimeout(function () { l.style.display = 'none'; }, 500); }
+            if (l) { l.classList.add('hidden'); setTimeout(function () { l.style.display = 'none'; }, 600); }
         });
     </script>
 

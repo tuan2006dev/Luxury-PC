@@ -54,26 +54,31 @@
 
         <!-- Filter Tabs -->
         <div class="filter-bar">
-            <a th:href="@{/admin/tickets}" th:classappend="${filterStatus == null} ? 'active' : ''" class="filter-tab">
+            <a th:href="@{/admin/tickets}" th:classappend="${filterStatus == null} ? 'active' : ''" class="filter-tab"
+                onclick="if(this.classList.contains('active')) event.preventDefault();">
                 <i class="fa-solid fa-list"></i> <span>Tất cả</span>
             </a>
             <a th:href="@{/admin/tickets(status='OPEN')}" th:classappend="${filterStatus == 'OPEN'} ? 'active' : ''"
-                class="filter-tab open-tab">
+                class="filter-tab open-tab"
+                onclick="if(this.classList.contains('active')) event.preventDefault();">
                 <i class="fa-solid fa-circle-dot"></i> <span>Mới / Chờ xử
                     lý</span>
             </a>
             <a th:href="@{/admin/tickets(status='IN_PROGRESS')}"
-                th:classappend="${filterStatus == 'IN_PROGRESS'} ? 'active' : ''" class="filter-tab progress-tab">
+                th:classappend="${filterStatus == 'IN_PROGRESS'} ? 'active' : ''" class="filter-tab progress-tab"
+                onclick="if(this.classList.contains('active')) event.preventDefault();">
                 <i class="fa-solid fa-spinner"></i> <span>Đang xử
                     lý</span>
             </a>
             <a th:href="@{/admin/tickets(status='RESOLVED')}"
-                th:classappend="${filterStatus == 'RESOLVED'} ? 'active' : ''" class="filter-tab resolved-tab">
+                th:classappend="${filterStatus == 'RESOLVED'} ? 'active' : ''" class="filter-tab resolved-tab"
+                onclick="if(this.classList.contains('active')) event.preventDefault();">
                 <i class="fa-solid fa-check-circle"></i> <span>Đã giải
                     quyết</span>
             </a>
             <a th:href="@{/admin/tickets(status='CLOSED')}" th:classappend="${filterStatus == 'CLOSED'} ? 'active' : ''"
-                class="filter-tab closed-tab">
+                class="filter-tab closed-tab"
+                onclick="if(this.classList.contains('active')) event.preventDefault();">
                 <i class="fa-solid fa-lock"></i> <span>Đóng</span>
             </a>
         </div>

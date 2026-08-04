@@ -86,6 +86,15 @@ document.addEventListener('submit', function(event) {
                 if (!emailRegex.test(value)) {
                     errorMsg = `Email không đúng định dạng. VD: admin@gmail.com`;
                 }
+            } else if ((inputName === 'endTime' || inputName === 'endDate') && value !== '') {
+                const startEl = form.querySelector('input[name="startTime"], input[name="startDate"]');
+                if (startEl && startEl.value && startEl.value.trim() !== '') {
+                    const startDate = new Date(startEl.value.trim());
+                    const endDate = new Date(value);
+                    if (endDate <= startDate) {
+                        errorMsg = 'Thời gian kết thúc phải sau thời gian bắt đầu.';
+                    }
+                }
             }
 
             if (errorMsg) {

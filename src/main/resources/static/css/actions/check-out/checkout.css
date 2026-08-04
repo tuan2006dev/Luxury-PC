@@ -86,23 +86,26 @@
         }
 
         /* Breadcrumb Stepper */
-        .stepper {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 40px;
+        .stepper,
+        .checkout-steps {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin-bottom: 40px !important;
+          gap: 0;
         }
 
         .step {
           display: flex;
           align-items: center;
-          color: var(--text-muted);
+          color: var(--text-muted, #666);
           font-size: 14px;
           font-weight: 500;
         }
 
-        .step.active {
-          color: var(--primary);
+        .step.active,
+        .step.completed {
+          color: var(--primary, #0066cc);
         }
 
         .step-circle {
@@ -117,20 +120,22 @@
           font-weight: 600;
         }
 
-        .step.active .step-circle {
-          background: var(--primary);
-          color: var(--white);
+        .step.active .step-circle,
+        .step.completed .step-circle {
+          background: var(--primary, #0066cc);
+          color: #ffffff;
         }
 
         .step-line {
           width: 100px;
           height: 2px;
-          background: var(--border);
+          background: var(--border, #e5e7eb);
           margin: 0 15px;
         }
 
-        .step.active+.step-line {
-          background: var(--primary);
+        .step.active+.step-line,
+        .step.completed+.step-line {
+          background: var(--primary, #0066cc);
         }
 
         /* Layout */

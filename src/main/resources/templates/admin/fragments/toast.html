@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="toast">
+        <div th:if="${success}" class="toast toast-success">
+            <i class="fa-solid fa-check-circle"></i> <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="toast toast-error">
+            <i class="fa-solid fa-exclamation-circle"></i> <span th:text="${error}"></span>
+        </div>
+
+        <script th:if="${success != null or error != null}">
+            setTimeout(() => {
+                document.querySelectorAll('.toast').forEach(toast => toast.remove());
+            }, 3000);
+        </script>
+    </div>
+</body>
+
+</html>

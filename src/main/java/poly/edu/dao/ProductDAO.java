@@ -39,14 +39,19 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
     @Query(value = "SELECT p FROM Product p JOIN FETCH p.category", countQuery = "SELECT COUNT(p) FROM Product p")
     org.springframework.data.domain.Page<Product> findAllWithCategory(org.springframework.data.domain.Pageable pageable);
 
-    @Query("SELECT p FROM Product p WHERE " +
+    @Query(value = "SELECT p FROM Product p WHERE " +
             "(:cid IS NULL OR p.category.id = :cid) AND " +
             "(:min IS NULL OR p.price >= :min) AND " +
             "(:max IS NULL OR p.price <= :max) AND " +
             "(:kw IS NULL OR p.name LIKE %:kw% OR p.description LIKE %:kw%) AND " +
-            "(:brand IS NULL OR p.brand = :brand OR LOWER(p.name) LIKE LOWER(CONCAT('%', :brand, '%'))) AND " +
-            "p.image IS NOT NULL")
-    List<Product> searchProducts(
+            "(:brand IS NULL OR p.brand = :brand OR LOWER(p.name) LIKE LOWER(CONCAT('%', :brand, '%')))",
+            countQuery = "SELECT COUNT(p) FROM Product p WHERE " +
+            "(:cid IS NULL OR p.category.id = :cid) AND " +
+            "(:min IS NULL OR p.price >= :min) AND " +
+            "(:max IS NULL OR p.price <= :max) AND " +
+            "(:kw IS NULL OR p.name LIKE %:kw% OR p.description LIKE %:kw%) AND " +
+            "(:brand IS NULL OR p.brand = :brand OR LOWER(p.name) LIKE LOWER(CONCAT('%', :brand, '%')))")
+    org.springframework.data.domain.Page<Product> searchProducts(
             @Param("cid") Integer cid,
             @Param("min") Double min,
             @Param("max") Double max,

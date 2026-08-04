@@ -207,6 +207,8 @@
                                         onclick="handlePresetClick('thisMonth', this)">Tháng này</button>
                                     <button type="button" class="btn-preset" data-range="lastMonth"
                                         onclick="handlePresetClick('lastMonth', this)">Tháng trước</button>
+                                    <button type="button" class="btn-preset" data-range="all"
+                                        onclick="handlePresetClick('all', this)">Tất cả</button>
                                     <button type="button" class="btn-preset" id="customToggleBtn"
                                         onclick="toggleCustomRange(this)">Tùy chọn</button>
                                 </div>
@@ -344,7 +346,7 @@
             var newUsersChartInstance = null;
 
             var currencyFormatter = {
-                format: function(value) {
+                format: function (value) {
                     return Number(value).toLocaleString('en-US') + ' ₫';
                 }
             };
@@ -602,6 +604,7 @@
             // Run on DOMContentLoaded for direct page loads / F5
             document.addEventListener("DOMContentLoaded", initDashboardPage);
         </script>
+        <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
     </div>
 </body>
 

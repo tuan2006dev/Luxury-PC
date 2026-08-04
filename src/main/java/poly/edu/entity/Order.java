@@ -41,6 +41,9 @@ public class Order {
     @Column(name = "discount_amount")
     private Double discountAmount;
 
+    @Column(name = "vip_discount")
+    private Double vipDiscount;
+
     @Column(name = "freeship_voucher_code")
     private String freeshipVoucherCode;
 
@@ -200,6 +203,14 @@ public class Order {
 
     public void setDiscountAmount(Double discountAmount) {
         this.discountAmount = discountAmount;
+    }
+
+    public Double getVipDiscount() {
+        return vipDiscount;
+    }
+
+    public void setVipDiscount(Double vipDiscount) {
+        this.vipDiscount = vipDiscount;
     }
 
     public String getFreeshipVoucherCode() {

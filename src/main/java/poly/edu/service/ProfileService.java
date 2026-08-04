@@ -280,11 +280,26 @@ public class ProfileService {
         Double totalSpent = orderDAO.getTotalSpentByUser(user.getId());
         totalSpent = (totalSpent == null) ? 0.0 : totalSpent;
         
+        String userRank = getRank(totalSpent);
+        int discountPercent = getDiscountPercent(totalSpent);
+        String nextRank = getNextRank(totalSpent);
+        int nextRankDiscount = getDiscountPercent(getNextRankThreshold(totalSpent));
+        double nextThreshold = getNextRankThreshold(totalSpent);
+        double neededSpent = Math.max(0.0, nextThreshold - totalSpent);
+        double rankProgress = getRankProgress(totalSpent);
+        
         data.put("user", user);
         data.put("totalSpent", totalSpent);
-        data.put("totalOrders", orderDAO.countByUser_Id(user.getId()));
-        data.put("userRank", getRank(totalSpent));
+        Long completedOrders = orderDAO.countCompletedOrdersByUser(user.getId());
+        data.put("totalOrders", completedOrders != null ? completedOrders : 0);
+        data.put("userRank", userRank);
         data.put("rankClass", getRankClass(totalSpent));
+        data.put("discountPercent", discountPercent);
+        data.put("nextRank", nextRank);
+        data.put("nextRankDiscount", nextRankDiscount);
+        data.put("nextThreshold", nextThreshold);
+        data.put("neededSpent", neededSpent);
+        data.put("rankProgress", Math.min(100.0, Math.max(0.0, rankProgress)));
         
         data.put("orders", orderDAO.findByUser_IdOrderByCreatedAtDesc(user.getId()));
         data.put("wishlistItems", wishlistItemRepository.findByUser_IdOrderByCreatedAtDesc(user.getId()));
@@ -292,25 +307,75 @@ public class ProfileService {
         data.put("notificationSettings", getCurrentUserNotificationSettings(authentication));
         java.util.List<poly.edu.entity.UserVoucher> allVouchers = userVoucherDAO.findByUserOrderBySavedAtDesc(user);
         java.util.List<poly.edu.entity.UserVoucher> validVouchers = allVouchers.stream()
-            .filter(uv -> uv.getVoucher() != null && uv.getVoucher().isValid())
+            .filter(uv -> uv.getVoucher() != null && uv.getVoucher().isValid() && !"CONSUMED".equalsIgnoreCase(uv.getStatus()))
             .collect(java.util.stream.Collectors.toList());
         data.put("vouchers", validVouchers);
         
         return data;
     }
 
+    public int getDiscountPercent(Double totalSpent) {
+        if (totalSpent == null) return 0;
+        if (totalSpent >= 200_000_000) return 10;
+        if (totalSpent >= 100_000_000) return 8;
+        if (totalSpent >= 50_000_000) return 5;
+        if (totalSpent >= 10_000_000) return 2;
+        return 0;
+    }
+
+    private String getNextRank(Double totalSpent) {
+        if (totalSpent == null || totalSpent < 10_000_000) return "Silver";
+        if (totalSpent < 50_000_000) return "Gold";
+        if (totalSpent < 100_000_000) return "Platinum";
+        if (totalSpent < 200_000_000) return "Diamond";
+        return "MAX";
+    }
+
+    private double getNextRankThreshold(Double totalSpent) {
+        if (totalSpent == null || totalSpent < 10_000_000) return 10_000_000.0;
+        if (totalSpent < 50_000_000) return 50_000_000.0;
+        if (totalSpent < 100_000_000) return 100_000_000.0;
+        if (totalSpent < 200_000_000) return 200_000_000.0;
+        return 200_000_000.0;
+    }
+
+    private double getRankProgress(Double totalSpent) {
+        if (totalSpent == null || totalSpent <= 0) return 0.0;
+        if (totalSpent >= 200_000_000) return 100.0;
+        
+        double currentMin = 0.0;
+        double nextMax = 10_000_000.0;
+        
+        if (totalSpent >= 100_000_000) {
+            currentMin = 100_000_000.0;
+            nextMax = 200_000_000.0;
+        } else if (totalSpent >= 50_000_000) {
+            currentMin = 50_000_000.0;
+            nextMax = 100_000_000.0;
+        } else if (totalSpent >= 10_000_000) {
+            currentMin = 10_000_000.0;
+            nextMax = 50_000_000.0;
+        }
+        
+        return ((totalSpent - currentMin) / (nextMax - currentMin)) * 100.0;
+    }
+
     private String getRank(Double totalSpent) {
+        if (totalSpent == null) return "Bronze";
         if (totalSpent >= 200_000_000) return "Diamond";
-        if (totalSpent >= 50_000_000) return "Platinum";
+        if (totalSpent >= 100_000_000) return "Platinum";
+        if (totalSpent >= 50_000_000) return "Gold";
         if (totalSpent >= 10_000_000) return "Silver";
-        return "None";
+        return "Bronze";
     }
 
     private String getRankClass(Double totalSpent) {
+        if (totalSpent == null) return "rank-bronze";
         if (totalSpent >= 200_000_000) return "rank-diamond";
-        if (totalSpent >= 50_000_000) return "rank-platinum";
+        if (totalSpent >= 100_000_000) return "rank-platinum";
+        if (totalSpent >= 50_000_000) return "rank-gold";
         if (totalSpent >= 10_000_000) return "rank-silver";
-        return "rank-none";
+        return "rank-bronze";
     }
 
     @Transactional

@@ -24,6 +24,7 @@ public class AdminService {
 
     private final StockMovementDAO stockMovementDAO;
     private final VoucherService voucherService;
+    private final EmailService emailService;
 
     public List<Order> getAllOrders() {
         return orderDAO.findAllOrderedByDate();
@@ -58,6 +59,7 @@ public class AdminService {
             String oldStatus = order.getStatus();
             order.setStatus(status);
             orderDAO.save(order);
+            emailService.sendOrderStatusUpdateEmail(order.getUser(), order, status);
             
             // Voucher lifecycle management
             if (order.getVoucherCode() != null && order.getUser() != null) {

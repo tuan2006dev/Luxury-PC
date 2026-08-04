@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap');
 @import url('modal-system.css');
 
 :root {
@@ -8,7 +9,7 @@
     --text-muted: #999999;
     --accent-blue: #0066CC;
     --border-color: #E5E7EB;
-    --font-main: 'Outfit', sans-serif;
+    --font-main: 'Roboto', 'Outfit', sans-serif;
     --red: #E53935;
     --green: #28a745;
     --gold: #0066CC;
@@ -21,8 +22,12 @@
     padding: 0;
 }
 
+body, input, select, textarea, button, table, th, td {
+    font-family: var(--font-main) !important;
+}
+
 body {
-    font-family: var(--font-main);
+    font-variant-numeric: tabular-nums;
     background: var(--bg-main);
     color: var(--text-primary);
     line-height: 1.5;
@@ -39,16 +44,6 @@ ul {
 
 img {
     max-width: 100%;
-}
-
-button {
-    font-family: var(--font-main);
-}
-
-input,
-select,
-textarea {
-    font-family: var(--font-main);
 }
 
 /* ========== CONTAINER ========== */
@@ -974,46 +969,110 @@ textarea {
 
 
 /* ========== LOADING ========== */
+/* ========== LOADING SCREEN (PREMIUM MES STYLE) ========== */
 .loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: white;
+    background: #232834;
     z-index: 100000;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.5s;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
 }
 
 .loader.hidden {
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
 }
 
 .loader-inner {
+    position: relative;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.loader-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(59, 130, 246, 0.1) 50%, rgba(0, 0, 0, 0) 70%);
+    filter: blur(35px);
+    pointer-events: none;
+    animation: glowPulse 2.5s ease-in-out infinite alternate;
 }
 
 .loader-logo {
-    font-size: 36px;
-    font-weight: 300;
-    color: var(--text-secondary);
-    animation: pulse 1.5s infinite;
+    font-size: 46px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    font-family: 'Outfit', sans-serif;
+    color: #38bdf8;
+    text-shadow: 0 0 20px rgba(56, 189, 248, 0.8), 0 0 40px rgba(59, 130, 246, 0.5), 0 0 60px rgba(37, 99, 235, 0.3);
+    animation: logoFloat 2s ease-in-out infinite alternate;
+    user-select: none;
 }
 
-@keyframes pulse {
+.loader-sub {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    animation: textFade 1.5s ease-in-out infinite alternate;
+}
 
-    0%,
+.loader-bar {
+    width: 140px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+    position: relative;
+}
+
+.loader-progress {
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #60a5fa);
+    border-radius: 3px;
+    box-shadow: 0 0 10px #38bdf8;
+    animation: lineSlide 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes logoFloat {
+    0% {
+        transform: translateY(0) scale(1);
+    }
     100% {
-        opacity: 1;
+        transform: translateY(-3px) scale(1.02);
     }
+}
 
-    50% {
-        opacity: 0.5;
-    }
+@keyframes glowPulse {
+    0% { opacity: 0.4; transform: translate(-50%, -50%) scale(0.85); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+}
+
+@keyframes textFade {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+@keyframes lineSlide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
 }
 
 /* ========== TRUST BANNER ========== */

@@ -301,3 +301,23 @@ window.buyNow = function (productId) {
     form.submit();
 };
 
+// Global Smart Reload Prevention for Active Tabs and Current Links
+document.addEventListener('click', function (e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    // Ignore javascript:void(0) or anchors with href="#"
+    const href = link.getAttribute('href');
+    if (!href || href === '#' || href.startsWith('javascript:')) return;
+
+    const isSelfActive = link.classList.contains('active') || link.classList.contains('is-active');
+    const isParentActive = link.parentElement && link.parentElement.classList.contains('active');
+    const isCurrentUrl = link.href && (link.href === window.location.href);
+
+    if (isSelfActive || isParentActive || isCurrentUrl) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+}, true);
+
+

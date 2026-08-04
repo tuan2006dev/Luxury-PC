@@ -34,12 +34,7 @@
             </div>
         </div>
 
-        <div th:if="${success}" class="toast toast-success" style="margin-bottom: 1rem;">
-            <i class="fa-solid fa-check-circle"></i> <span th:text="${success}"></span>
-        </div>
-        <div th:if="${error}" class="toast toast-error" style="margin-bottom: 1rem;">
-            <i class="fa-solid fa-exclamation-circle"></i> <span th:text="${error}"></span>
-        </div>
+        <div th:replace="~{admin/fragments/toast :: toast}"></div>
 
         <div class="table-card">
             <div class="table-h">

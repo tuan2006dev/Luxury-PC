@@ -38,6 +38,8 @@ class AdminServiceVietQrTest {
     private ProductDAO productDAO;
     @Mock
     private VoucherService voucherService;
+    @Mock
+    private EmailService emailService;
 
     private AdminService adminService;
 
@@ -49,6 +51,7 @@ class AdminServiceVietQrTest {
                 inventoryDAO,
                 stockMovementDAO,
                 voucherService,
+                emailService,
                 userRepository,
                 productDAO);
     }

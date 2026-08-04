@@ -37,6 +37,9 @@ class PaymentControllerTest {
     private SePayPaymentSession paymentSession;
 
     @Mock
+    private poly.edu.service.OrderService orderService;
+
+    @Mock
     private Authentication authentication;
 
     private PaymentController controller;
@@ -50,7 +53,7 @@ class PaymentControllerTest {
         properties.getBank().setAccountNumber("123456789");
         properties.getBank().setAccountName("TEST ACCOUNT");
         properties.getPaymentCode().setPrefix("DH");
-        controller = new PaymentController(orderDAO, profileService, properties, paymentSession);
+        controller = new PaymentController(orderDAO, profileService, properties, paymentSession, orderService);
 
         owner = new User();
         owner.setId(1);

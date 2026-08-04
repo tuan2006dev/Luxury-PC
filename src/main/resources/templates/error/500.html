@@ -43,6 +43,10 @@
 <body>
     <h1>500</h1>
     <p>Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.</p>
+    <!-- ko sửa gì hoặc code nữa thì commit lại -->
+    <p th:if="${exception != null}"
+        style="font-size: 13px; color: #dc3545; background: #fff3cd; padding: 12px 20px; border-radius: 6px; font-family: monospace; max-width: 800px; margin: 0 auto 30px auto; word-break: break-all;"
+        th:text="${exception}"></p>
     <a th:href="@{/}">Quay về trang chủ</a>
 </body>
 

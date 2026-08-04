@@ -121,6 +121,11 @@
               th:text="${order.shippingFee != null and order.shippingFee > 0 ? #numbers.formatDecimal(order.shippingFee, 1, 'COMMA', 0, 'POINT') + '₫' : 'Miễn phí'}">0
               ₫</span>
           </div>
+          <div class="item-mini" th:if="${order.vipDiscount != null and order.vipDiscount > 0}">
+            <span>⭐ Ưu đãi Hạng VIP</span>
+            <span style="color:#d97706;"
+              th:text="'-' + ${#numbers.formatDecimal(order.vipDiscount, 1, 'COMMA', 0, 'POINT')} + '₫'">-0 ₫</span>
+          </div>
           <div class="item-mini" th:if="${order.voucherCode != null and order.voucherCode != ''}">
             <span th:text="'Voucher áp dụng (' + ${order.voucherCode} + ')'">Voucher áp dụng</span>
             <span style="color:#ef4444;"

@@ -15,9 +15,9 @@
           </div>
 
           <div class="wishlist-grid">
-            <div class="wl-card" th:each="uv : ${vouchers}"
+            <div class="wl-card" th:each="uv : ${vouchers}" th:if="${uv.status != 'CONSUMED'}"
               style="display:flex; flex-direction:column; justify-content:space-between;"
-              th:styleappend="${uv.status == 'CONSUMED' or (uv.voucher.endDate != null and uv.voucher.endDate.before(#dates.createNow())) or !uv.voucher.active} ? 'opacity: 0.5; filter: grayscale(1);' : ''">
+              th:styleappend="${(uv.voucher.endDate != null and uv.voucher.endDate.before(#dates.createNow())) or !uv.voucher.active} ? 'opacity: 0.5; filter: grayscale(1);' : ''">
               <div class="wl-info">
                 <div class="wl-cat">Voucher · <span th:if="${uv.voucher.discountType.name() == 'PERCENTAGE'}">Giảm %</span><span
                     th:if="${uv.voucher.discountType.name() != 'PERCENTAGE'}">Giảm Tiền</span>

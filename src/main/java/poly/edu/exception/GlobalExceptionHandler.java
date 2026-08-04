@@ -89,6 +89,7 @@ public class GlobalExceptionHandler {
         }
         model.addAttribute("errorCode", 500);
         model.addAttribute("errorMessage", "Hệ thống gặp sự cố. Vui lòng thử lại sau.");
+        model.addAttribute("exception", ex.getClass().getName() + ": " + ex.getMessage());
         return "error/500";
     }
 

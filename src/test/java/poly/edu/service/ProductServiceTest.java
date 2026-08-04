@@ -39,7 +39,7 @@ public class ProductServiceTest {
     void searchProducts_CallsDAO() {
         Product p = new Product();
         p.setId(1);
-        when(productDAO.searchProducts(any(), any(), any(), anyString(), any(), any())).thenReturn(List.of(p));
+        when(productDAO.searchProducts(any(), any(), any(), anyString(), any(), any())).thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(p)));
 
         List<Product> list = productService.searchProducts(null, null, null, "keyword", null);
         assertThat(list).hasSize(1);
