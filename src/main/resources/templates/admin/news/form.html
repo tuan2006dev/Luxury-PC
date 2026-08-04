@@ -170,10 +170,28 @@
                     <div class="card">
                         <h3 class="card-title">Ảnh đại diện (Thumbnail)</h3>
                         <div class="form-group">
-                            <input type="file" name="thumbnailFile" id="thumbnailFile" class="form-control"
-                                accept="image/*" onchange="previewImage(this);" />
-                            <small style="color: #64748b; display:block; margin-top:5px;">Chọn ảnh mới để thay thế ảnh
-                                cũ (nếu có)</small>
+                            <label class="file-upload-label" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 15px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; width: 100%; box-sizing: border-box; overflow: hidden;">
+                                <i class="fa-solid fa-cloud-arrow-up" style="color: #64748b; font-size: 18px; flex-shrink: 0;"></i>
+                                <span class="file-name" style="flex: 1; min-width: 0; font-size: 13px; color: #475569; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">Chọn ảnh tải lên...</span>
+                                <input autocomplete="off" type="file" name="thumbnailFile" id="thumbnailFile" accept="image/*"
+                                    style="display: none;" onchange="
+                                    let name = 'Chọn ảnh tải lên...';
+                                    if (this.files && this.files.length > 0) {
+                                        name = this.files[0].name;
+                                        if (name.length > 25) {
+                                            const dotIdx = name.lastIndexOf('.');
+                                            const ext = dotIdx !== -1 ? name.substring(dotIdx) : '';
+                                            const base = dotIdx !== -1 ? name.substring(0, dotIdx) : name;
+                                            name = base.substring(0, 18) + '...' + ext;
+                                        }
+                                    }
+                                    const label = this.closest('.file-upload-label');
+                                    const textSpan = label.querySelector('.file-name');
+                                    if (textSpan) textSpan.innerText = name;
+                                    previewImage(this);
+                                ">
+                            </label>
+                            <small style="color: #64748b; display:block; margin-bottom:12px;">Chọn ảnh mới để thay thế ảnh cũ (nếu có)</small>
 
                             <!-- Ảnh preview hoặc ảnh cũ -->
                             <img id="preview"

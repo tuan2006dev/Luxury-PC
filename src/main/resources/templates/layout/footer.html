@@ -36,10 +36,11 @@
                     <div class="footer-col">
                         <h4>Đăng ký nhận tin</h4>
                         <p>Nhận thông tin khuyến mãi và sản phẩm mới nhất</p>
-                        <div class="newsletter">
-                            <input type="text" placeholder="Nhập email của bạn">
-                            <button class="btn-subscribe">Đăng ký</button>
-                        </div>
+                        <form class="newsletter" onsubmit="handleNewsletterSubscribe(event)">
+                            <input type="email" id="newsletterEmail" placeholder="Nhập email của bạn..."
+                                th:value="${session.user != null ? session.user.email : ''}" required autocomplete="email">
+                            <button type="submit" class="btn-subscribe">Đăng ký</button>
+                        </form>
                     </div>
                     <div class="footer-col">
                         <h4>Về chúng tôi</h4>

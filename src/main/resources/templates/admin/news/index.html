@@ -50,7 +50,7 @@
                         <td>
                             <img th:if="${n.thumbnail != null}"
                                 th:src="@{${n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail}}"
-                                alt="Thumb" />
+                                alt="Thumb" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;" />
                             <span th:unless="${n.thumbnail != null}">-</span>
                         </td>
                         <td>

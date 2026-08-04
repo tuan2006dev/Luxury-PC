@@ -130,10 +130,12 @@
             <!-- CỘT PHẢI: DANH SÁCH SẢN PHẨM -->
             <div class="product-lists">
                 <div class="brand-section">
-                    <div class="brand-header">
-                        <h3 class="brand-title">KẾT QUẢ TÌM KIẾM <span
-                                th:text="'(' + ${totalProducts != null ? totalProducts : allProducts.size()} + ' sản phẩm)'"
-                                style="font-weight: 400; font-size: 14px; color: #666; margin-left: 10px;"></span></h3>
+                    <div class="brand-header" th:with="isFiltering=${(keywords != null and !keywords.isEmpty()) or selectedCid != null or (selectedBrand != null and !selectedBrand.isEmpty()) or minPrice != null or maxPrice != null or isFlashSale == true}">
+                        <h3 class="brand-title">
+                            <span th:text="${isFiltering ? 'KẾT QUẢ TÌM KIẾM' : 'TẤT CẢ SẢN PHẨM'}">TẤT CẢ SẢN PHẨM</span>
+                            <span th:text="'(' + ${isFiltering ? (totalProducts != null ? totalProducts : allProducts.size()) : allProducts.size()} + ' sản phẩm)'"
+                                style="font-weight: 400; font-size: 14px; color: #666; margin-left: 10px;"></span>
+                        </h3>
                     </div>
 
                     <div class="product-grid" th:if="${!#lists.isEmpty(allProducts)}">

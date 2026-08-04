@@ -90,11 +90,20 @@
                                     lên...</span>
                                 <input autocomplete="off" type="file" name="imageFile" accept="image/*"
                                     class="file-input-hidden" onchange="
-                                const fileName = this.files.length > 0 ? this.files[0].name : 'Chọn ảnh tải lên...';
+                                let name = 'Chọn ảnh tải lên...';
+                                if (this.files && this.files.length > 0) {
+                                    name = this.files[0].name;
+                                    if (name.length > 25) {
+                                        const dotIdx = name.lastIndexOf('.');
+                                        const ext = dotIdx !== -1 ? name.substring(dotIdx) : '';
+                                        const base = dotIdx !== -1 ? name.substring(0, dotIdx) : name;
+                                        name = base.substring(0, 18) + '...' + ext;
+                                    }
+                                }
                                 const label = this.closest('.file-upload-label');
                                 const textSpan = label.querySelector('.file-name');
-                                if (textSpan) textSpan.innerText = fileName;
-                                if (this.files.length > 0) label.classList.add('has-file');
+                                if (textSpan) textSpan.innerText = name;
+                                if (this.files && this.files.length > 0) label.classList.add('has-file');
                                 else label.classList.remove('has-file');
                             ">
                             </label>

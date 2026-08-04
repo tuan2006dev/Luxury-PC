@@ -231,4 +231,35 @@ public class EmailService {
             System.err.println("Gửi email Bản tin hàng tuần thất bại: " + e.getMessage());
         }
     }
+
+    public void sendNewsletterWelcomeEmail(String toEmail, boolean isUser) {
+        if (toEmail == null || toEmail.trim().isEmpty())
+            return;
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("luxury.pc.noreply@gmail.com");
+            message.setTo(toEmail.trim());
+            message.setSubject("🎉 Cảm ơn bạn đã đăng ký nhận tin từ Luxury PC!");
+
+            String content = "Chào bạn,\n\n"
+                    + "Cảm ơn bạn đã đăng ký nhận bản tin khuyến mãi và tin tức công nghệ từ Luxury PC!\n\n"
+                    + "🎁 ĐẶC QUYỀN CỦA BẠN:\n"
+                    + "- Nhận mã giảm giá độc quyền các đợt Flash Sale hàng tuần.\n"
+                    + "- Cập nhật sớm nhất thông tin ra mắt các dòng PC & Linh kiện hot.\n"
+                    + "- Nhận bài viết hướng dẫn tối ưu hiệu năng máy tính chuyên sâu.\n\n";
+
+            if (!isUser) {
+                content += "💡 Gợi ý: Tạo tài khoản ngay tại Luxury PC để nhận thêm voucher WELCOME10 giảm giá cho đơn hàng đầu tiên!\n\n";
+            }
+
+            content += "Chúc bạn có những trải nghiệm mua sắm tuyệt vời!\n\n"
+                    + "Trân trọng,\nLuxury PC Team";
+
+            message.setText(content);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Gửi email chào mừng Newsletter thất bại: " + e.getMessage());
+        }
+    }
 }

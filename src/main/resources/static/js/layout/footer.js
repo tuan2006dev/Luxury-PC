@@ -1,4 +1,4 @@
-﻿function toggleChatWindow() {
+function toggleChatWindow() {
         const windowEl = document.getElementById('ai-chat-window');
         if (!windowEl) return;
         const isOpen = windowEl.style.display === 'flex' || windowEl.classList.contains('open');
@@ -366,3 +366,61 @@ function openShareUrl() { const input = document.getElementById('shareUrlInput')
 function confirmClearAll() { const el = document.getElementById('confirmClearModal'); if (el) el.classList.add('active'); }
 function closeConfirmClear() { const el = document.getElementById('confirmClearModal'); if (el) el.classList.remove('active'); }
 function downloadQR() { const qrImg = document.querySelector('#qrCodeContainer img'); const qrCanvas = document.querySelector('#qrCodeContainer canvas'); if (!qrImg && !qrCanvas) { if (typeof showToast === 'function') showToast('Không tìm th?y mã QR!'); else alert('Không tìm th?y mã QR!'); return; } let url; if (qrCanvas) url = qrCanvas.toDataURL('image/png'); else if (qrImg) url = qrImg.src; const a = document.createElement('a'); a.href = url; a.download = 'build-pc-qr.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+
+async function handleNewsletterSubscribe(event) {
+    if (event) event.preventDefault();
+    const input = document.getElementById('newsletterEmail');
+    if (!input) return;
+    const email = input.value ? input.value.trim() : '';
+
+    if (!email) {
+        if (typeof showToast === 'function') showToast('⚠️ Vui lòng nhập địa chỉ Email của bạn!');
+        else alert('Vui lòng nhập địa chỉ Email!');
+        return;
+    }
+
+    const btn = document.querySelector('.newsletter .btn-subscribe');
+    const originalText = btn ? btn.innerText : 'Đăng ký';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Đang gửi...';
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append('email', email);
+
+        const response = await fetch('/api/newsletter/subscribe', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            if (typeof showToast === 'function') {
+                showToast(data.message || '🎉 Đăng ký nhận tin thành công!');
+            } else {
+                alert(data.message || 'Đăng ký nhận tin thành công!');
+            }
+            if (!data.alreadySubscribed) {
+                input.value = '';
+            }
+        } else {
+            if (typeof showToast === 'function') {
+                showToast('⚠️ ' + (data.message || 'Đăng ký thất bại!'));
+            } else {
+                alert(data.message || 'Đăng ký thất bại!');
+            }
+        }
+    } catch (err) {
+        console.error('Newsletter subscribe error:', err);
+        if (typeof showToast === 'function') showToast('⚠️ Có lỗi xảy ra. Vui lòng thử lại!');
+        else alert('Có lỗi xảy ra. Vui lòng thử lại!');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    }
+}

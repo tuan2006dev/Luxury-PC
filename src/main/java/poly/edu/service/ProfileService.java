@@ -83,7 +83,8 @@ public class ProfileService {
         m.put("orderUpdates",
                 user.getNotifyOrderUpdates() == null || Boolean.TRUE.equals(user.getNotifyOrderUpdates()));
         m.put("flashSale", user.getNotifyFlashSale() == null || Boolean.TRUE.equals(user.getNotifyFlashSale()));
-        m.put("newProducts", Boolean.TRUE.equals(user.getNotifyNewProducts()));
+        m.put("newProducts",
+                user.getNotifyNewProducts() == null || Boolean.TRUE.equals(user.getNotifyNewProducts()));
         m.put("weeklyNewsletter",
                 user.getNotifyWeeklyNewsletter() == null || Boolean.TRUE.equals(user.getNotifyWeeklyNewsletter()));
         return m;

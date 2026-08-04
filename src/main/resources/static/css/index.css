@@ -280,8 +280,13 @@
 .news-item img {
     width: 100px;
     height: 60px;
+    min-width: 100px;
+    max-width: 100px;
+    min-height: 60px;
+    max-height: 60px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 6px;
+    flex-shrink: 0;
 }
 
 .news-item h4 {
@@ -290,6 +295,8 @@
     line-height: 1.4;
     color: #000;
     transition: color 0.2s;
+    flex: 1;
+    min-width: 0;
 }
 
 .why-grid {

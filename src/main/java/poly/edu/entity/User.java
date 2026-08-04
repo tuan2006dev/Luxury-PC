@@ -50,7 +50,7 @@ public class User {
     private Boolean notifyFlashSale = true;
 
     @Column(name = "notify_new_products")
-    private Boolean notifyNewProducts = false;
+    private Boolean notifyNewProducts = true;
 
     @Column(name = "notify_weekly_newsletter")
     private Boolean notifyWeeklyNewsletter = true;
