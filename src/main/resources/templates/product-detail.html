@@ -239,7 +239,7 @@
                         <div
                             style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                             <div style="font-weight: 600; font-size: 15px;"
-                                th:text="${rv.user != null ? rv.user.username : 'Khách hàng'}">User</div>
+                                th:text="${rv.user != null ? rv.user.fullName : 'Khách hàng'}">User</div>
                             <div style="color: #999; font-size: 12px;"
                                 th:text="${#temporals.format(rv.createdAt, 'dd/MM/yyyy HH:mm')}">Date</div>
                         </div>
@@ -252,7 +252,12 @@
                         <div class="review-text" style="color: #444; font-size: 14px; line-height: 1.5;"
                             th:text="${rv.content}">Nội dung đánh giá</div>
                         <div th:if="${rv.image != null}" style="margin-top: 10px;">
-                            <img th:src="${rv.image}" style="max-height: 100px; border-radius: 4px;">
+                            <img th:src="${rv.image}"
+                                style="max-height: 140px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                        </div>
+                        <div th:if="${rv.video != null}" style="margin-top: 10px;">
+                            <video th:src="${rv.video}" controls
+                                style="max-height: 200px; max-width: 100%; border-radius: 6px; border: 1px solid #e2e8f0;"></video>
                         </div>
                     </div>
                 </div>

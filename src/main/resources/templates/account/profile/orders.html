@@ -101,7 +101,15 @@
               <div th:text="${oi.quantity} + 'x ' + ${oi.product.name}" style="margin-bottom: 5px;">1x Intel
                 Core
                 i9-14900K</div>
-              <button type="button" th:if="${order.status == 'COMPLETED'}" th:data-product-id="${oi.product.id}"
+              <!-- Đã đánh giá -->
+              <span th:if="${order.status == 'COMPLETED' and reviewedProductIds != null and reviewedProductIds.contains(oi.product.id)}"
+                style="display:inline-flex; align-items:center; gap:4px; font-size:0.65rem; color:#10b981; background:#ecfdf5; border:1px solid #a7f3d0; padding:3px 8px; border-radius:4px; font-weight:600;">
+                <i class="fa-solid fa-circle-check"></i> Đã đánh giá
+              </span>
+
+              <!-- Chưa đánh giá -->
+              <button type="button" th:if="${order.status == 'COMPLETED' and (reviewedProductIds == null or !reviewedProductIds.contains(oi.product.id))}"
+                th:data-product-id="${oi.product.id}"
                 th:data-product-name="${oi.product.name}"
                 onclick="event.stopPropagation(); openReviewModal(this.dataset.productId, this.dataset.productName)"
                 style="display:inline-block; font-size:0.65rem; color:#3b82f6; background:transparent; border:1px solid #cbd5e1; padding:3px 8px; border-radius:3px; transition: 0.3s; cursor:pointer;"

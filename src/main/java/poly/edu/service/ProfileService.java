@@ -94,7 +94,8 @@ public class ProfileService {
     public void addUserAddress(Authentication authentication, String recipientName, String phone,
             String addressLine, String district, String city) {
         User user = getCurrentUser(authentication);
-        List<ShippingAddress> existingList = shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+        List<ShippingAddress> existingList = shippingAddressRepository
+                .findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
 
         String phoneInput = phone != null ? phone.trim() : "";
         String detailInput = addressLine != null ? addressLine.trim() : "";
@@ -277,10 +278,10 @@ public class ProfileService {
     public Map<String, Object> getFullProfileData(Authentication authentication) {
         Map<String, Object> data = new HashMap<>();
         User user = getCurrentUser(authentication);
-        
+
         Double totalSpent = orderDAO.getTotalSpentByUser(user.getId());
         totalSpent = (totalSpent == null) ? 0.0 : totalSpent;
-        
+
         String userRank = getRank(totalSpent);
         int discountPercent = getDiscountPercent(totalSpent);
         String nextRank = getNextRank(totalSpent);
@@ -288,7 +289,7 @@ public class ProfileService {
         double nextThreshold = getNextRankThreshold(totalSpent);
         double neededSpent = Math.max(0.0, nextThreshold - totalSpent);
         double rankProgress = getRankProgress(totalSpent);
-        
+
         data.put("user", user);
         data.put("totalSpent", totalSpent);
         Long completedOrders = orderDAO.countCompletedOrdersByUser(user.getId());
@@ -301,52 +302,69 @@ public class ProfileService {
         data.put("nextThreshold", nextThreshold);
         data.put("neededSpent", neededSpent);
         data.put("rankProgress", Math.min(100.0, Math.max(0.0, rankProgress)));
-        
+
         data.put("orders", orderDAO.findByUser_IdOrderByCreatedAtDesc(user.getId()));
         data.put("wishlistItems", wishlistItemRepository.findByUser_IdOrderByCreatedAtDesc(user.getId()));
         data.put("addresses", getCurrentUserAddresses(authentication));
         data.put("notificationSettings", getCurrentUserNotificationSettings(authentication));
         java.util.List<poly.edu.entity.UserVoucher> allVouchers = userVoucherDAO.findByUserOrderBySavedAtDesc(user);
         java.util.List<poly.edu.entity.UserVoucher> validVouchers = allVouchers.stream()
-            .filter(uv -> uv.getVoucher() != null && uv.getVoucher().isValid() && !"CONSUMED".equalsIgnoreCase(uv.getStatus()))
-            .collect(java.util.stream.Collectors.toList());
+                .filter(uv -> uv.getVoucher() != null && uv.getVoucher().isValid()
+                        && !"CONSUMED".equalsIgnoreCase(uv.getStatus()))
+                .collect(java.util.stream.Collectors.toList());
         data.put("vouchers", validVouchers);
-        
+        data.put("reviewedProductIds", reviewDAO.findReviewedProductIdsByUserId(user.getId()));
+
         return data;
     }
 
     public int getDiscountPercent(Double totalSpent) {
-        if (totalSpent == null) return 0;
-        if (totalSpent >= 200_000_000) return 10;
-        if (totalSpent >= 100_000_000) return 8;
-        if (totalSpent >= 50_000_000) return 5;
-        if (totalSpent >= 10_000_000) return 2;
+        if (totalSpent == null)
+            return 0;
+        if (totalSpent >= 200_000_000)
+            return 10;
+        if (totalSpent >= 100_000_000)
+            return 8;
+        if (totalSpent >= 50_000_000)
+            return 5;
+        if (totalSpent >= 10_000_000)
+            return 2;
         return 0;
     }
 
     private String getNextRank(Double totalSpent) {
-        if (totalSpent == null || totalSpent < 10_000_000) return "Silver";
-        if (totalSpent < 50_000_000) return "Gold";
-        if (totalSpent < 100_000_000) return "Platinum";
-        if (totalSpent < 200_000_000) return "Diamond";
+        if (totalSpent == null || totalSpent < 10_000_000)
+            return "Silver";
+        if (totalSpent < 50_000_000)
+            return "Gold";
+        if (totalSpent < 100_000_000)
+            return "Platinum";
+        if (totalSpent < 200_000_000)
+            return "Diamond";
         return "MAX";
     }
 
     private double getNextRankThreshold(Double totalSpent) {
-        if (totalSpent == null || totalSpent < 10_000_000) return 10_000_000.0;
-        if (totalSpent < 50_000_000) return 50_000_000.0;
-        if (totalSpent < 100_000_000) return 100_000_000.0;
-        if (totalSpent < 200_000_000) return 200_000_000.0;
+        if (totalSpent == null || totalSpent < 10_000_000)
+            return 10_000_000.0;
+        if (totalSpent < 50_000_000)
+            return 50_000_000.0;
+        if (totalSpent < 100_000_000)
+            return 100_000_000.0;
+        if (totalSpent < 200_000_000)
+            return 200_000_000.0;
         return 200_000_000.0;
     }
 
     private double getRankProgress(Double totalSpent) {
-        if (totalSpent == null || totalSpent <= 0) return 0.0;
-        if (totalSpent >= 200_000_000) return 100.0;
-        
+        if (totalSpent == null || totalSpent <= 0)
+            return 0.0;
+        if (totalSpent >= 200_000_000)
+            return 100.0;
+
         double currentMin = 0.0;
         double nextMax = 10_000_000.0;
-        
+
         if (totalSpent >= 100_000_000) {
             currentMin = 100_000_000.0;
             nextMax = 200_000_000.0;
@@ -357,38 +375,51 @@ public class ProfileService {
             currentMin = 10_000_000.0;
             nextMax = 50_000_000.0;
         }
-        
+
         return ((totalSpent - currentMin) / (nextMax - currentMin)) * 100.0;
     }
 
     private String getRank(Double totalSpent) {
-        if (totalSpent == null) return "Bronze";
-        if (totalSpent >= 200_000_000) return "Diamond";
-        if (totalSpent >= 100_000_000) return "Platinum";
-        if (totalSpent >= 50_000_000) return "Gold";
-        if (totalSpent >= 10_000_000) return "Silver";
+        if (totalSpent == null)
+            return "Bronze";
+        if (totalSpent >= 200_000_000)
+            return "Diamond";
+        if (totalSpent >= 100_000_000)
+            return "Platinum";
+        if (totalSpent >= 50_000_000)
+            return "Gold";
+        if (totalSpent >= 10_000_000)
+            return "Silver";
         return "Bronze";
     }
 
     private String getRankClass(Double totalSpent) {
-        if (totalSpent == null) return "rank-bronze";
-        if (totalSpent >= 200_000_000) return "rank-diamond";
-        if (totalSpent >= 100_000_000) return "rank-platinum";
-        if (totalSpent >= 50_000_000) return "rank-gold";
-        if (totalSpent >= 10_000_000) return "rank-silver";
+        if (totalSpent == null)
+            return "rank-bronze";
+        if (totalSpent >= 200_000_000)
+            return "rank-diamond";
+        if (totalSpent >= 100_000_000)
+            return "rank-platinum";
+        if (totalSpent >= 50_000_000)
+            return "rank-gold";
+        if (totalSpent >= 10_000_000)
+            return "rank-silver";
         return "rank-bronze";
     }
 
     @Transactional
-    public void uploadAvatar(org.springframework.web.multipart.MultipartFile file, User user) throws java.io.IOException {
+    public void uploadAvatar(org.springframework.web.multipart.MultipartFile file, User user)
+            throws java.io.IOException {
         String srcUploadDir = "src/main/resources/static/uploads/avatars/";
         String targetUploadDir = "target/classes/static/uploads/avatars/";
 
         java.io.File srcDir = new java.io.File(srcUploadDir);
-        if (!srcDir.exists()) srcDir.mkdirs();
+        if (!srcDir.exists())
+            srcDir.mkdirs();
 
         java.io.File targetDir = new java.io.File(targetUploadDir);
-        if (!targetDir.exists()) targetDir.mkdirs();
+        if (!targetDir.exists())
+            targetDir.mkdirs();
 
         String originalFilename = file.getOriginalFilename();
         String extension = "";

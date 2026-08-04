@@ -45,20 +45,25 @@ public class ReviewApiController {
     @PostMapping
     public ResponseEntity<ApiResponse<Map<String, Object>>> createReview(
             Authentication authentication,
-            @Valid @RequestBody ReviewRequest request,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return validationError(bindingResult);
+            @org.springframework.web.bind.annotation.RequestParam("productId") Integer productId,
+            @org.springframework.web.bind.annotation.RequestParam("rating") Integer rating,
+            @org.springframework.web.bind.annotation.RequestParam(value = "comment", required = false) String comment,
+            @org.springframework.web.bind.annotation.RequestParam(value = "file", required = false) org.springframework.web.multipart.MultipartFile file) {
+        try {
+            Review review = reviewService.createReviewWithMedia(authentication, productId, rating, comment, file);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("Đã lưu đánh giá sản phẩm.", reviewData(review)));
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Lỗi gửi đánh giá: " + e.getMessage(), null));
         }
-        Review review = reviewService.createReview(authentication, request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Đã lưu đánh giá sản phẩm.", reviewData(review)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteReview(Authentication authentication, @PathVariable Integer id) {
-        reviewService.deleteReview(authentication, id);
-        return ResponseEntity.ok(ApiResponse.success("Đã xóa đánh giá sản phẩm.", null));
+        return ResponseEntity.badRequest().body(ApiResponse.error("Đánh giá sau khi gửi không thể chỉnh sửa hoặc xóa.", null));
     }
 
     private Map<String, Object> reviewData(Review review) {
@@ -66,6 +71,8 @@ public class ReviewApiController {
         m.put("id", review.getId());
         m.put("stars", review.getStars());
         m.put("content", review.getContent());
+        m.put("image", review.getImage());
+        m.put("video", review.getVideo());
         m.put("createdAt", review.getCreatedAt());
         if (review.getProduct() != null) {
             m.put("productId", review.getProduct().getId());
