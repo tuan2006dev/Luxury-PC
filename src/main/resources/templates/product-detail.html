@@ -54,17 +54,52 @@
             <!-- Right: Info -->
             <div class="pd-info">
                 <h1 class="pd-title" th:text="${product.name}">Tên Sản Phẩm</h1>
-                <div class="pd-meta">
-                    <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                            class="fa-solid fa-star-half-stroke"></i></span>
-                    <span class="reviews"><a href="#"
-                            onclick="document.querySelector('[data-tab=\'tab-reviews\']').click(); document.getElementById('tab-reviews').scrollIntoView({behavior:'smooth'});">(Xem
-                            đánh giá)</a></span>
-                    <span class="divider">|</span>
-                    <span class="sku"
-                        th:text="'Thương hiệu: ' + ${product.brand != null ? product.brand : 'Đang cập nhật'}">Brand</span>
-                    <span class="divider">|</span>
+                <div class="pd-meta" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <!-- Điểm sao & Icon sao động -->
+                    <div style="display: inline-flex; align-items: center; gap: 4px;">
+                        <span th:if="${avgRating != null and avgRating > 0}"
+                            style="font-weight: 700; color: #d97706; font-size: 14px;"
+                            th:text="${#numbers.formatDecimal(avgRating, 1, 1)}">4.5</span>
+                        <span class="stars" style="color: #f59e0b; display: inline-flex; gap: 2px;">
+                            <th:block th:if="${avgRating != null and avgRating > 0}">
+                                <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                                    <i th:if="${avgRating >= i}" class="fa-solid fa-star"></i>
+                                    <i th:if="${avgRating < i and avgRating >= i - 0.5}"
+                                        class="fa-solid fa-star-half-stroke"></i>
+                                    <i th:if="${avgRating < i - 0.5}" class="fa-regular fa-star"
+                                        style="color: #cbd5e1;"></i>
+                                </th:block>
+                            </th:block>
+                            <th:block th:if="${avgRating == null or avgRating == 0}">
+                                <i th:each="i : ${#numbers.sequence(1, 5)}" class="fa-regular fa-star"
+                                    style="color: #cbd5e1;"></i>
+                            </th:block>
+                        </span>
+                    </div>
+
+                    <!-- Số lượng đánh giá -->
+                    <span class="reviews">
+                        <a href="javascript:void(0)"
+                            onclick="if(window.switchTab) { switchTab('tab-reviews'); } document.getElementById('tab-reviews').scrollIntoView({behavior:'smooth'});"
+                            style="color: #2563eb; text-decoration: none;"
+                            th:text="'(' + (${reviewCount != null ? reviewCount : 0}) + ' đánh giá)'">(0 đánh giá)</a>
+                    </span>
+
+                    <span class="divider" style="color: #ccc;">|</span>
+
+                    <!-- Mã SP -->
+                    <span class="sku" th:text="'Mã SP: #' + ${product.id}">Mã SP: #1</span>
+
+                    <span class="divider" style="color: #ccc;">|</span>
+
+                    <!-- Thương hiệu -->
+                    <span class="brand"
+                        th:text="'Thương hiệu: ' + ${product.brand != null and !product.brand.trim().isEmpty() ? product.brand : 'Đang cập nhật'}">Thương
+                        hiệu: Luxury PC</span>
+
+                    <span class="divider" style="color: #ccc;">|</span>
+
+                    <!-- Trạng thái kho hàng -->
                     <span th:classappend="${product.stock > 0 ? 'status text-success' : 'status text-danger'}"
                         th:text="${product.stock > 0 ? 'Còn hàng' : 'Hết hàng'}" style="font-weight: 600;">Còn
                         hàng</span>
@@ -238,8 +273,20 @@
                         style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
                         <div
                             style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                            <div style="font-weight: 600; font-size: 15px;"
-                                th:text="${rv.user != null ? rv.user.fullName : 'Khách hàng'}">User</div>
+                            <div
+                                style="font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <span
+                                    th:text="${rv.user != null ? (rv.user.fullName != null and !rv.user.fullName.isEmpty() ? rv.user.fullName : rv.user.username) : 'Khách hàng'}">User</span>
+                                <!-- Hộp thông tin dành riêng cho Admin/Staff để liên hệ Email/Username -->
+                                <span th:if="${isAdminOrStaff == true and rv.user != null}"
+                                    style="font-size: 12px; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 2px 8px; border-radius: 4px; font-weight: 500;">
+                                    <i class="fa-solid fa-user-gear"></i> Username: <strong
+                                        th:text="${rv.user.username}">user123</strong>
+                                    <span th:if="${rv.user.email != null}"> | Email: <a
+                                            th:href="'mailto:' + ${rv.user.email}" th:text="${rv.user.email}"
+                                            style="color: #0284c7; text-decoration: underline;">email@gmail.com</a></span>
+                                </span>
+                            </div>
                             <div style="color: #999; font-size: 12px;"
                                 th:text="${#temporals.format(rv.createdAt, 'dd/MM/yyyy HH:mm')}">Date</div>
                         </div>
@@ -258,6 +305,54 @@
                         <div th:if="${rv.video != null}" style="margin-top: 10px;">
                             <video th:src="${rv.video}" controls
                                 style="max-height: 200px; max-width: 100%; border-radius: 6px; border: 1px solid #e2e8f0;"></video>
+                        </div>
+
+                        <!-- Phản hồi từ Quản trị viên / Nhân viên cửa hàng -->
+                        <div th:if="${rv.replyContent != null and !rv.replyContent.isEmpty()}"
+                            style="margin-top: 14px; background: #f0fdf4; border-left: 4px solid #16a34a; padding: 12px 15px; border-radius: 0 6px 6px 0;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <div
+                                    style="font-weight: 700; font-size: 13px; color: #15803d; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                    <i class="fa-solid fa-shield-halved"></i> Phản hồi từ Luxury PC 
+                                    <span style="font-weight: 600; font-size: 11.5px; color: #15803d; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;"
+                                        th:if="${rv.repliedBy != null}">
+                                        <i class="fa-solid fa-user-check" style="font-size: 10px;"></i>
+                                        <span th:text="${rv.repliedBy}">Nguyễn Văn A - Quản Trị Viên</span>
+                                    </span>
+                                </div>
+                                <div style="font-size: 11px; color: #15803d;" th:if="${rv.repliedAt != null}"
+                                    th:text="${#temporals.format(rv.repliedAt, 'dd/MM/yyyy HH:mm')}">Date</div>
+                            </div>
+                            <div style="font-size: 13.5px; color: #166534; line-height: 1.5;"
+                                th:text="${rv.replyContent}">Nội dung phản hồi...</div>
+                        </div>
+
+                        <!-- Nút Trả Lời cho Staff & Admin -->
+                        <div th:if="${isAdminOrStaff == true}" style="margin-top: 12px;">
+                            <button type="button" th:onclick="'toggleReplyForm(' + ${rv.id} + ')'"
+                                style="font-size: 12px; font-weight: 600; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 5px 12px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;">
+                                <i class="fa-solid fa-reply"></i> <span
+                                    th:text="${rv.replyContent != null ? 'Chỉnh sửa phản hồi' : 'Trả lời đánh giá'}">Trả
+                                    lời</span>
+                            </button>
+                        </div>
+
+                        <!-- Inline Reply Form cho Staff & Admin -->
+                        <div th:if="${isAdminOrStaff == true}" th:id="'reply-form-' + ${rv.id}"
+                            style="display: none; margin-top: 12px; background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                            <div style="font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 6px;"></div>
+                            <textarea th:id="'reply-input-' + ${rv.id}" class="form-input" rows="3"
+                                placeholder="Nhập câu trả lời đại diện cho Luxury PC..."
+                                style="width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; font-size: 13px; resize: vertical;"
+                                th:text="${rv.replyContent}"></textarea>
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px;">
+                                <button type="button" th:onclick="'toggleReplyForm(' + ${rv.id} + ')'"
+                                    style="font-size: 12px; padding: 6px 14px; background: #e2e8f0; color: #475569; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Hủy</button>
+                                <button type="button" th:onclick="'submitReviewReply(' + ${rv.id} + ')'"
+                                    style="font-size: 12px; padding: 6px 14px; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Gửi
+                                    phản hồi</button>
+                            </div>
                         </div>
                     </div>
                 </div>

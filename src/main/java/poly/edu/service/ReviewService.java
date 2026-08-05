@@ -109,4 +109,50 @@ public class ReviewService {
     public void deleteReview(Authentication authentication, Integer id) {
         throw new IllegalStateException("Đánh giá sau khi gửi không thể sửa hoặc xóa.");
     }
+
+    @Transactional
+    public Review replyToReview(Authentication authentication, Integer reviewId, String replyContent) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("Vui lòng đăng nhập để thực hiện phản hồi.");
+        }
+
+        User staffUser = profileService.getCurrentUser(authentication);
+
+        boolean isStaffOrAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().contains("ADMIN") || a.getAuthority().contains("STAFF"));
+
+        if (!isStaffOrAdmin && staffUser.getUserRoles() != null) {
+            isStaffOrAdmin = staffUser.getUserRoles().stream()
+                    .anyMatch(ur -> ur.getRole() != null && ("ADMIN".equalsIgnoreCase(ur.getRole().getName()) || "STAFF".equalsIgnoreCase(ur.getRole().getName())));
+        }
+
+        if (!isStaffOrAdmin) {
+            throw new IllegalStateException("Chỉ Admin và Nhân viên (Staff) mới có quyền trả lời bài đánh giá.");
+        }
+
+        Review review = reviewDAO.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy bài đánh giá."));
+
+        String roleLabel = "Quản Trị Viên";
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().contains("ADMIN"));
+        if (!isAdmin && staffUser.getUserRoles() != null) {
+            isAdmin = staffUser.getUserRoles().stream()
+                    .anyMatch(ur -> ur.getRole() != null && "ADMIN".equalsIgnoreCase(ur.getRole().getName()));
+        }
+
+        if (!isAdmin) {
+            roleLabel = "Nhân Viên";
+        }
+
+        String displayName = staffUser.getFullName() != null && !staffUser.getFullName().isBlank()
+                ? staffUser.getFullName()
+                : staffUser.getUsername();
+
+        review.setReplyContent(replyContent != null ? replyContent.trim() : "");
+        review.setRepliedAt(java.time.LocalDateTime.now());
+        review.setRepliedBy(displayName + " - " + roleLabel);
+
+        return reviewDAO.save(review);
+    }
 }

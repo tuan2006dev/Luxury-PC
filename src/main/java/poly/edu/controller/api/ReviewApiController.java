@@ -61,6 +61,22 @@ public class ReviewApiController {
         }
     }
 
+    @PostMapping("/{id}/reply")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> replyReview(
+            Authentication authentication,
+            @PathVariable Integer id,
+            @org.springframework.web.bind.annotation.RequestParam("replyContent") String replyContent) {
+        try {
+            Review review = reviewService.replyToReview(authentication, id, replyContent);
+            return ResponseEntity.ok(ApiResponse.success("Đã phản hồi bài đánh giá.", reviewData(review)));
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Lỗi khi phản hồi: " + e.getMessage(), null));
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteReview(Authentication authentication, @PathVariable Integer id) {
         return ResponseEntity.badRequest().body(ApiResponse.error("Đánh giá sau khi gửi không thể chỉnh sửa hoặc xóa.", null));
@@ -73,6 +89,9 @@ public class ReviewApiController {
         m.put("content", review.getContent());
         m.put("image", review.getImage());
         m.put("video", review.getVideo());
+        m.put("replyContent", review.getReplyContent());
+        m.put("repliedAt", review.getRepliedAt());
+        m.put("repliedBy", review.getRepliedBy());
         m.put("createdAt", review.getCreatedAt());
         if (review.getProduct() != null) {
             m.put("productId", review.getProduct().getId());

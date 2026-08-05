@@ -99,6 +99,59 @@ public class Product implements Serializable {
     }
 
     public String getBrand() {
+        if (brand != null && !brand.trim().isEmpty()) {
+            return brand;
+        }
+        if (name != null && !name.trim().isEmpty()) {
+            String nameUpper = name.toUpperCase();
+            if (nameUpper.contains("INTEL")) return "Intel";
+            if (nameUpper.contains("AMD")) return "AMD";
+            if (nameUpper.contains("NVIDIA")) return "NVIDIA";
+            if (nameUpper.contains("ASUS") || nameUpper.contains("ROG") || nameUpper.contains("TUF")) return "ASUS";
+            if (nameUpper.contains("MSI")) return "MSI";
+            if (nameUpper.contains("GIGABYTE") || nameUpper.contains("AORUS")) return "Gigabyte";
+            if (nameUpper.contains("CORSAIR") || nameUpper.contains("VENGEANCE") || nameUpper.contains("DOMINATOR")) return "Corsair";
+            if (nameUpper.contains("RAZER")) return "Razer";
+            if (nameUpper.contains("LOGITECH")) return "Logitech";
+            if (nameUpper.contains("KINGSTON") || nameUpper.contains("FURY")) return "Kingston";
+            if (nameUpper.contains("SAMSUNG")) return "Samsung";
+            if (nameUpper.contains("WESTERN DIGITAL") || nameUpper.contains("WD") || nameUpper.contains("FIRECUDA")) return "Western Digital";
+            if (nameUpper.contains("SEAGATE")) return "Seagate";
+            if (nameUpper.contains("G.SKILL") || nameUpper.contains("TRIDENT") || nameUpper.contains("RIPJAWS")) return "G.Skill";
+            if (nameUpper.contains("CRUCIAL")) return "Crucial";
+            if (nameUpper.contains("T-FORCE") || nameUpper.contains("TEAMGROUP") || nameUpper.contains("TEAM")) return "TeamGroup";
+            if (nameUpper.contains("ADATA") || nameUpper.contains("XPG")) return "ADATA";
+            if (nameUpper.contains("LEXAR")) return "Lexar";
+            if (nameUpper.contains("ZOTAC")) return "Zotac";
+            if (nameUpper.contains("GALAX")) return "Galax";
+            if (nameUpper.contains("EVGA")) return "EVGA";
+            if (nameUpper.contains("SAPPHIRE")) return "Sapphire";
+            if (nameUpper.contains("POWERCOLOR")) return "PowerColor";
+            if (nameUpper.contains("STEELSERIES")) return "SteelSeries";
+            if (nameUpper.contains("DAREU")) return "Dareu";
+            if (nameUpper.contains("RAPOO")) return "Rapoo";
+            if (nameUpper.contains("FANTECH")) return "Fantech";
+            if (nameUpper.contains("HYPERX")) return "HyperX";
+            if (nameUpper.contains("BIOSTAR")) return "Biostar";
+            if (nameUpper.contains("COLORFUL") || nameUpper.contains("CVN")) return "Colorful";
+            if (nameUpper.contains("ASROCK")) return "ASRock";
+            if (nameUpper.contains("NZXT")) return "NZXT";
+            if (nameUpper.contains("THERMALTAKE")) return "Thermaltake";
+            if (nameUpper.contains("NOCTUA")) return "Noctua";
+            if (nameUpper.contains("DEEPCOOL")) return "DeepCool";
+            if (nameUpper.contains("ID-COOLING")) return "ID-Cooling";
+            if (nameUpper.contains("COOLER MASTER")) return "Cooler Master";
+            if (nameUpper.contains("XIGMATEK")) return "Xigmatek";
+            if (nameUpper.contains("MIK")) return "MIK";
+            if (nameUpper.contains("SAMA")) return "SAMA";
+            if (nameUpper.contains("VIEWSONIC")) return "ViewSonic";
+            if (nameUpper.contains("LG")) return "LG";
+            if (nameUpper.contains("DELL")) return "Dell";
+            if (nameUpper.contains("HP")) return "HP";
+            if (nameUpper.contains("ACER")) return "Acer";
+            if (nameUpper.contains("AOC")) return "AOC";
+            if (nameUpper.contains("BENQ")) return "BenQ";
+        }
         return brand;
     }
 

@@ -93,4 +93,37 @@ public class Review implements Serializable {
     public void setVideo(String video) {
         this.video = video;
     }
+
+    @Column(name = "reply_content", length = 2000)
+    private String replyContent;
+
+    @Column(name = "replied_at")
+    private LocalDateTime repliedAt;
+
+    @Column(name = "replied_by")
+    private String repliedBy;
+
+    public String getReplyContent() {
+        return replyContent;
+    }
+
+    public void setReplyContent(String replyContent) {
+        this.replyContent = replyContent;
+    }
+
+    public LocalDateTime getRepliedAt() {
+        return repliedAt;
+    }
+
+    public void setRepliedAt(LocalDateTime repliedAt) {
+        this.repliedAt = repliedAt;
+    }
+
+    public String getRepliedBy() {
+        return repliedBy;
+    }
+
+    public void setRepliedBy(String repliedBy) {
+        this.repliedBy = repliedBy;
+    }
 }

@@ -172,10 +172,16 @@ public class ProductPageController {
     }
 
     @GetMapping("/product/{id}")
-    public String showProductDetail(@PathVariable("id") Integer id, Model model) {
+    public String showProductDetail(@PathVariable("id") Integer id, Model model, Authentication authentication) {
         Product p = productService.getProductById(id);
         if (p == null) {
             return "redirect:/products";
+        }
+
+        boolean isAdminOrStaff = false;
+        if (authentication != null && authentication.isAuthenticated()) {
+            isAdminOrStaff = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().contains("ADMIN") || a.getAuthority().contains("STAFF"));
         }
 
         List<Review> reviews = reviewDAO.findByProductIdOrderByCreatedAtDesc(id);
@@ -201,6 +207,7 @@ public class ProductPageController {
         model.addAttribute("count3", count3);
         model.addAttribute("count2", count2);
         model.addAttribute("count1", count1);
+        model.addAttribute("isAdminOrStaff", isAdminOrStaff);
 
         java.util.Map<String, String> parsedSpecs = new java.util.LinkedHashMap<>();
         java.util.List<String> otherDescLines = new java.util.ArrayList<>();
