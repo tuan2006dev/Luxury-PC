@@ -15,6 +15,8 @@ import poly.edu.entity.UserRole;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.Optional;
 
 @Controller
@@ -54,26 +56,50 @@ public class AccountController {
     @Transactional
     public String saveUser(
             @ModelAttribute User user,
-            @RequestParam(value = "roleName", defaultValue = "USER") String roleName
+            @RequestParam(value = "roleName", defaultValue = "USER") String roleName,
+            RedirectAttributes redirectAttributes
     ){
+        // 1. Kiểm tra validation phía Backend (Server-side)
+        if (user.getUsername() == null || user.getUsername().isBlank() ||
+            user.getEmail() == null || user.getEmail().isBlank() ||
+            user.getFullName() == null || user.getFullName().isBlank() ||
+            user.getPhone() == null || user.getPhone().isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Vui lòng nhập đầy đủ các thông tin bắt buộc (Username, Email, Họ tên, SĐT)!");
+            return "redirect:/admin/account";
+        }
+
+        String username = user.getUsername().trim();
+        String email = user.getEmail().trim();
+
+        if (user.getId() == null) {
+            // Kiểm tra trùng Username khi tạo mới
+            if (userRepository.findByUsername(username).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Tên đăng nhập '" + username + "' đã tồn tại!");
+                return "redirect:/admin/account";
+            }
+
+            // Kiểm tra trùng Email khi tạo mới
+            if (userRepository.findByEmail(email).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Email '" + email + "' đã được sử dụng!");
+                return "redirect:/admin/account";
+            }
+            redirectAttributes.addFlashAttribute("message", "Thêm khách hàng thành công!");
+        } else {
+            // Kiểm tra trùng Email với người dùng khác khi cập nhật
+            Optional<User> existingEmailUser = userRepository.findByEmail(email);
+            if (existingEmailUser.isPresent() && !existingEmailUser.get().getId().equals(user.getId())) {
+                redirectAttributes.addFlashAttribute("error", "Email '" + email + "' đã được sử dụng bởi tài khoản khác!");
+                return "redirect:/admin/account";
+            }
+            redirectAttributes.addFlashAttribute("message", "Cập nhật thông tin khách hàng thành công!");
+        }
 
         // nếu không nhập password thì giữ nguyên password cũ
-        if(user.getId() != null){
-
-            Optional<User> oldUser =
-                    userRepository.findById(
-                            user.getId()
-                    );
-
-            if(oldUser.isPresent()){
-
-                if(user.getPassword() == null
-                        || user.getPassword().isEmpty()){
-
-                    user.setPassword(
-                            oldUser.get()
-                                    .getPassword()
-                    );
+        if (user.getId() != null) {
+            Optional<User> oldUser = userRepository.findById(user.getId());
+            if (oldUser.isPresent()) {
+                if (user.getPassword() == null || user.getPassword().isEmpty()) {
+                    user.setPassword(oldUser.get().getPassword());
                 }
             }
         }

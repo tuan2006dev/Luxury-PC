@@ -90,14 +90,18 @@ public class ProductPageController {
             max = temp;
         }
 
-        // Lấy danh sách Flash Sale đang diễn ra
+        // Lấy danh sách tất cả sản phẩm Flash Sale đang diễn ra
         java.util.Map<Integer, FlashSaleItem> flashSaleMap = new java.util.HashMap<>();
-        Optional<FlashSale> currentSale = flashSaleService.getCurrentFlashSale();
-        if (currentSale.isPresent()) {
-            List<FlashSaleItem> items = flashSaleService.getItemsBySaleId(currentSale.get().getId());
-            for (FlashSaleItem item : items) {
-                if (item.getProduct() != null && item.getSoldCount() < item.getSaleQuantity()) {
-                    flashSaleMap.put(item.getProduct().getId(), item);
+        List<FlashSale> activeSales = flashSaleService.getCurrentActiveSales();
+        if (activeSales != null) {
+            for (FlashSale sale : activeSales) {
+                List<FlashSaleItem> items = flashSaleService.getItemsBySaleId(sale.getId());
+                if (items != null) {
+                    for (FlashSaleItem item : items) {
+                        if (item.getProduct() != null && item.getSoldCount() < item.getSaleQuantity()) {
+                            flashSaleMap.put(item.getProduct().getId(), item);
+                        }
+                    }
                 }
             }
         }

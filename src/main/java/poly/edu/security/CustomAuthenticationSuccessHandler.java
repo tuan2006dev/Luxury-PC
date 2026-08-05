@@ -29,6 +29,18 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
         String emailOrUsername = authentication.getName();
+        Object principalObj = authentication.getPrincipal();
+        if (principalObj instanceof CustomOAuth2User customOAuth2User) {
+            if (customOAuth2User.getEmail() != null) {
+                emailOrUsername = customOAuth2User.getEmail();
+            }
+        } else if (principalObj instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+            Object emailAttr = oauth2User.getAttribute("email");
+            if (emailAttr != null) {
+                emailOrUsername = emailAttr.toString();
+            }
+        }
+
         User user = userDAO.findByEmail(emailOrUsername);
         if (user == null) {
             user = userDAO.findByUsername(emailOrUsername);
@@ -42,6 +54,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             java.util.Map<Integer, poly.edu.entity.CartItem> mergedCart = cartService.mergeCartOnLogin(user,
                     sessionCart);
             session.setAttribute("cart", mergedCart);
+        }
+
+        if (user != null && (Boolean.TRUE.equals(user.getForceChangePassword()) || user.getPassword() == null || user.getPassword().isBlank())) {
+            // Đăng nhập lần đầu tiên hoặc chưa có mật khẩu local - Bắt buộc đặt mật khẩu!
+            response.sendRedirect("/profile?tab=security&openPasswordForm=1&firstLogin=true");
+            return;
         }
 
         if (user != null && Boolean.TRUE.equals(user.getTwoFactorEnabled())) {

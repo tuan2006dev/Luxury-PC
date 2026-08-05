@@ -134,22 +134,24 @@ document.addEventListener('submit', function(event) {
 });
 
 document.addEventListener('input', function(e) {
-    if (e.target.classList && e.target.classList.contains('is-invalid')) {
-        e.target.classList.remove('is-invalid');
-        const nextEl = e.target.nextElementSibling;
-        if (nextEl && nextEl.classList.contains('error-text')) {
-            nextEl.remove();
-        }
+    const el = e.target;
+    if (el.classList && el.classList.contains('is-invalid')) {
+        el.classList.remove('is-invalid');
+    }
+    const wrapper = el.closest ? (el.closest('.file-upload-wrapper') || el.closest('.input-group') || el.parentNode) : el.parentNode;
+    if (wrapper) {
+        wrapper.querySelectorAll('.error-text, .error-message').forEach(errEl => errEl.remove());
     }
 });
 
 document.addEventListener('change', function(e) {
-    if (e.target.tagName === 'SELECT' && e.target.classList.contains('is-invalid')) {
-        e.target.classList.remove('is-invalid');
-        const nextEl = e.target.nextElementSibling;
-        if (nextEl && nextEl.classList.contains('error-text')) {
-            nextEl.remove();
-        }
+    const el = e.target;
+    if (el.classList && el.classList.contains('is-invalid')) {
+        el.classList.remove('is-invalid');
+    }
+    const wrapper = el.closest ? (el.closest('.file-upload-wrapper') || el.closest('.input-group') || el.parentNode) : el.parentNode;
+    if (wrapper) {
+        wrapper.querySelectorAll('.error-text, .error-message').forEach(errEl => errEl.remove());
     }
 });
 

@@ -28,12 +28,12 @@ public class AdminController {
     private final UserRepository userRepository;
     private final AdminLogRepository adminLogRepository;
 
-    @GetMapping({"", "/dashboard"})
+    @GetMapping({ "", "/dashboard" })
     public String dashboard(Model model) {
         try {
             List<Map<String, Object>> rawRevenue = adminService.getMonthlyRevenue();
             model.addAttribute("revenue", rawRevenue);
-            
+
             Double currentMonthRevenue = 0.0;
             if (rawRevenue != null && !rawRevenue.isEmpty()) {
                 Object revObj = rawRevenue.get(0).get("revenue");
@@ -42,14 +42,15 @@ public class AdminController {
                 }
             }
             model.addAttribute("currentMonthRevenue", currentMonthRevenue);
-            
+
             model.addAttribute("topProducts", adminService.getTopSellingProducts());
             model.addAttribute("pendingCount", adminService.getPendingOrdersCount());
             model.addAttribute("lowStock", adminService.getLowStockItems());
             model.addAttribute("openTickets", ticketRepo.countOpenTickets());
             model.addAttribute("totalCustomers", userRepository.count());
         } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger(AdminController.class).error("[AdminController] Error populating dashboard data: {}", e.getMessage(), e);
+            org.slf4j.LoggerFactory.getLogger(AdminController.class)
+                    .error("[AdminController] Error populating dashboard data: {}", e.getMessage(), e);
         }
         return "admin/dashboard";
     }
@@ -61,10 +62,14 @@ public class AdminController {
             String kw = keyword.trim().toLowerCase();
             orders = orders.stream()
                     .filter(o -> (o.getId() != null && String.valueOf(o.getId()).contains(kw)) ||
-                                 (o.getUser() != null && o.getUser().getUsername() != null && o.getUser().getUsername().toLowerCase().contains(kw)) ||
-                                 (o.getUser() != null && o.getUser().getFullName() != null && o.getUser().getFullName().toLowerCase().contains(kw)) ||
-                                 (o.getStatus() != null && o.getStatus().toLowerCase().contains(kw)) ||
-                                 (o.getPhone() != null && o.getPhone().contains(kw)))
+                            (o.getUser() != null && o.getUser().getUsername() != null
+                                    && o.getUser().getUsername().toLowerCase().contains(kw))
+                            ||
+                            (o.getUser() != null && o.getUser().getFullName() != null
+                                    && o.getUser().getFullName().toLowerCase().contains(kw))
+                            ||
+                            (o.getStatus() != null && o.getStatus().toLowerCase().contains(kw)) ||
+                            (o.getPhone() != null && o.getPhone().contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
         model.addAttribute("orders", orders);
@@ -85,7 +90,6 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
-
     @ExceptionHandler(VietQrManualConfirmationException.class)
     @ResponseBody
     public ResponseEntity<String> manualConfirmationConflict(VietQrManualConfirmationException exception) {
@@ -99,7 +103,7 @@ public class AdminController {
             Principal principal,
             HttpServletRequest request) {
 
-        adminService.requestRefund(orderId, note);
+        adminService.requestRefund(orderId, formatNoteWithRole(note, request));
         logAction(principal, request, "Yêu cầu hoàn tiền", "Đơn hàng #" + orderId);
 
         return "redirect:/admin/orders";
@@ -112,7 +116,7 @@ public class AdminController {
             Principal principal,
             HttpServletRequest request) {
 
-        adminService.approveCustomerRefund(orderId, note);
+        adminService.approveCustomerRefund(orderId, formatNoteWithRole(note, request));
         logAction(principal, request, "Duyệt yêu cầu hoàn tiền", "Đơn hàng #" + orderId);
 
         return "redirect:/admin/orders";
@@ -125,7 +129,7 @@ public class AdminController {
             Principal principal,
             HttpServletRequest request) {
 
-        adminService.rejectCustomerRefund(orderId, note);
+        adminService.rejectCustomerRefund(orderId, formatNoteWithRole(note, request));
         logAction(principal, request, "Từ chối hoàn tiền", "Đơn hàng #" + orderId);
 
         return "redirect:/admin/orders";
@@ -138,7 +142,7 @@ public class AdminController {
             Principal principal,
             HttpServletRequest request) {
 
-        adminService.confirmRefund(orderId, note);
+        adminService.confirmRefund(orderId, formatNoteWithRole(note, request));
         logAction(principal, request, "Xác nhận đã hoàn tiền", "Đơn hàng #" + orderId);
 
         return "redirect:/admin/orders";
@@ -151,10 +155,21 @@ public class AdminController {
             Principal principal,
             HttpServletRequest request) {
 
-        adminService.recallOrder(orderId, note);
+        adminService.recallOrder(orderId, formatNoteWithRole(note, request));
         logAction(principal, request, "Thu hồi đơn hàng", "Đơn hàng #" + orderId);
 
         return "redirect:/admin/orders";
+    }
+
+    private String formatNoteWithRole(String note, HttpServletRequest request) {
+        if (note == null || note.isBlank())
+            return note;
+        boolean isStaff = request.isUserInRole("ROLE_STAFF") && !request.isUserInRole("ROLE_ADMIN");
+        String prefix = isStaff ? "[Staff] " : "[Admin] ";
+        if (note.startsWith("[Staff]") || note.startsWith("[Admin]")) {
+            return note;
+        }
+        return prefix + note;
     }
 
     @GetMapping("/inventory")
@@ -163,9 +178,14 @@ public class AdminController {
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
             inventory = inventory.stream()
-                    .filter(inv -> (inv.getProduct() != null && inv.getProduct().getName() != null && inv.getProduct().getName().toLowerCase().contains(kw)) ||
-                                   (inv.getProduct() != null && inv.getProduct().getId() != null && String.valueOf(inv.getProduct().getId()).contains(kw)) ||
-                                   (inv.getProduct() != null && inv.getProduct().getCategory() != null && inv.getProduct().getCategory().getName() != null && inv.getProduct().getCategory().getName().toLowerCase().contains(kw)))
+                    .filter(inv -> (inv.getProduct() != null && inv.getProduct().getName() != null
+                            && inv.getProduct().getName().toLowerCase().contains(kw)) ||
+                            (inv.getProduct() != null && inv.getProduct().getId() != null
+                                    && String.valueOf(inv.getProduct().getId()).contains(kw))
+                            ||
+                            (inv.getProduct() != null && inv.getProduct().getCategory() != null
+                                    && inv.getProduct().getCategory().getName() != null
+                                    && inv.getProduct().getCategory().getName().toLowerCase().contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
         model.addAttribute("inventory", inventory);
@@ -175,8 +195,8 @@ public class AdminController {
 
     @PostMapping("/inventory/adjust")
     public String adjustStock(
-            @RequestParam Integer productId, 
-            @RequestParam(required = false) Integer quantity, 
+            @RequestParam Integer productId,
+            @RequestParam(required = false) Integer quantity,
             @RequestParam String type,
             @RequestParam(required = false) String note,
             Principal principal,

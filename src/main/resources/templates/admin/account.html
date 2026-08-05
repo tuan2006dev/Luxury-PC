@@ -112,11 +112,9 @@
 
                     <div class="input-group">
                         <label>Vai trò</label>
-                        <select name="roleName"
-                            style="pointer-events: none; background-color: #f1f5f9; cursor: not-allowed; opacity: 0.85;"
-                            tabindex="-1">
-                            <option value="USER" selected>Khách hàng (USER)</option>
-                        </select>
+                        <input type="text" value="Khách hàng (USER)" readonly
+                            style="background: #f1f5f9; color: #64748b; cursor: not-allowed;">
+                        <input type="hidden" name="roleName" value="USER">
                     </div>
 
                     <div class="input-group">
@@ -159,7 +157,7 @@
                 <table style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">ID</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">STT</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Username</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Email</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Họ tên</th>
@@ -169,8 +167,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="u : ${users}">
-                            <td th:text="${u.id}"></td>
+                        <tr th:each="u, iterStat : ${users}">
+                            <td style="text-align: center; font-weight: 700; color: #94a3b8;" th:text="${'#' + iterStat.count}">#1</td>
                             <td th:text="${u.username}"></td>
                             <td th:text="${u.email}"></td>
                             <td th:text="${u.fullName}"></td>

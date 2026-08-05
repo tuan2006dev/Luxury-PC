@@ -30,9 +30,11 @@ function bindValidationEvents() {
         if (!isUsernameValid || !isEmailValid || !isPasswordValid || !isFullNameValid || !isPhoneValid) {
             e.preventDefault();
             const firstInvalid = form.querySelector('.is-invalid');
-            if (firstInvalid) firstInvalid.focus();
+            if (firstInvalid) firstInvalid.focus({ preventScroll: true });
             return false;
         }
+
+        clearAllFormErrors();
     };
 
     const usernameInput = document.getElementById('empUsername');
@@ -43,23 +45,38 @@ function bindValidationEvents() {
 
     if (usernameInput) {
         usernameInput.addEventListener('blur', checkUsername);
-        usernameInput.addEventListener('input', function () { clearError(this); });
+        usernameInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkUsername();
+            else clearError(this);
+        });
     }
     if (emailInput) {
         emailInput.addEventListener('blur', checkEmail);
-        emailInput.addEventListener('input', function () { clearError(this); });
+        emailInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkEmail();
+            else clearError(this);
+        });
     }
     if (passwordInput) {
         passwordInput.addEventListener('blur', checkPassword);
-        passwordInput.addEventListener('input', function () { clearError(this); });
+        passwordInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkPassword();
+            else clearError(this);
+        });
     }
     if (fullNameInput) {
         fullNameInput.addEventListener('blur', checkFullName);
-        fullNameInput.addEventListener('input', function () { clearError(this); });
+        fullNameInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkFullName();
+            else clearError(this);
+        });
     }
     if (phoneInput) {
         phoneInput.addEventListener('blur', checkPhone);
-        phoneInput.addEventListener('input', function () { clearError(this); });
+        phoneInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkPhone();
+            else clearError(this);
+        });
     }
 }
 
@@ -96,8 +113,14 @@ function clearError(input) {
 }
 
 function clearAllFormErrors() {
-    const inputs = document.querySelectorAll('#userForm input');
-    inputs.forEach(input => clearError(input));
+    const form = document.getElementById('userForm');
+    if (!form) return;
+    form.querySelectorAll('.is-invalid').forEach(input => input.classList.remove('is-invalid'));
+    form.querySelectorAll('.error-message, .error-text').forEach(span => {
+        span.innerText = '';
+        span.style.display = 'none';
+        if (span.classList.contains('error-text')) span.remove();
+    });
 }
 
 // =====================================
@@ -106,6 +129,11 @@ function clearAllFormErrors() {
 function checkUsername() {
     const input = document.getElementById('empUsername');
     if (!input) return true;
+    const isEdit = input.readOnly || (document.getElementById('empId') && document.getElementById('empId').value);
+    if (isEdit) {
+        clearError(input);
+        return true;
+    }
     const val = input.value.trim();
     if (!val) {
         showError(input, 'Vui lòng nhập Username cho nhân viên!');
@@ -115,9 +143,9 @@ function checkUsername() {
         showError(input, 'Username phải chứa ít nhất 3 ký tự!');
         return false;
     }
-    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    const usernameRegex = /^[a-zA-Z0-9_.@-]+$/;
     if (!usernameRegex.test(val)) {
-        showError(input, 'Username chỉ chứa chữ cái, số và dấu gạch dưới!');
+        showError(input, 'Username chỉ chứa chữ cái, số, dấu gạch dưới, gạch ngang, chấm hoặc @!');
         return false;
     }
     clearError(input);
@@ -127,6 +155,11 @@ function checkUsername() {
 function checkEmail() {
     const input = document.getElementById('empEmail');
     if (!input) return true;
+    const isEdit = input.readOnly || (document.getElementById('empId') && document.getElementById('empId').value);
+    if (isEdit) {
+        clearError(input);
+        return true;
+    }
     const val = input.value.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!val) {
@@ -145,7 +178,6 @@ function checkPassword() {
     const input = document.getElementById('empPassword');
     if (!input) return true;
     const val = input.value.trim();
-    // Mật khẩu nhân viên có thể để trống (tự sinh ngẫu nhiên ở backend), nhưng nếu nhập thì phải >= 6 ký tự
     if (val && val.length < 6) {
         showError(input, 'Mật khẩu phải chứa ít nhất 6 ký tự!');
         return false;
@@ -162,8 +194,8 @@ function checkFullName() {
         showError(input, 'Vui lòng nhập Họ và tên nhân viên!');
         return false;
     }
-    if (val.split(/\s+/).length < 2) {
-        showError(input, 'Vui lòng nhập đầy đủ cả Họ và Tên (ít nhất 2 từ, ví dụ: Nguyễn Văn A)!');
+    if (val.length < 2) {
+        showError(input, 'Họ và tên quá ngắn!');
         return false;
     }
     clearError(input);
@@ -174,13 +206,14 @@ function checkPhone() {
     const input = document.getElementById('empPhone');
     if (!input) return true;
     const val = input.value.trim();
-    const phoneRegex = /^(\+?84|0)[3578912][0-9]{8}$/;
     if (!val) {
         showError(input, 'Vui lòng nhập Số điện thoại!');
         return false;
     }
-    if (!phoneRegex.test(val)) {
-        showError(input, 'Số điện thoại không hợp lệ (đủ 10 chữ số, ví dụ: 0987654321)!');
+    const cleanPhone = val.replace(/[\s.-]/g, '');
+    const phoneRegex = /^(\+?84|0)[0-9]{8,10}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+        showError(input, 'Số điện thoại không hợp lệ (ví dụ: 0987654321)!');
         return false;
     }
     clearError(input);
@@ -226,28 +259,28 @@ function resetFormFields() {
 
 function editEmployee(btn) {
     const id = btn.getAttribute('data-id');
-    const username = btn.getAttribute('data-username');
-    const email = btn.getAttribute('data-email');
-    const fullname = btn.getAttribute('data-fullname');
-    const phone = btn.getAttribute('data-phone');
-    const address = btn.getAttribute('data-address');
+    const username = btn.getAttribute('data-username') || '';
+    const email = btn.getAttribute('data-email') || '';
+    const fullname = btn.getAttribute('data-fullname') || '';
+    const phone = btn.getAttribute('data-phone') || '';
+    const address = btn.getAttribute('data-address') || '';
     const gender = btn.getAttribute('data-gender');
     const status = btn.getAttribute('data-status');
 
     document.getElementById('empId').value = id || '';
 
     const usernameInput = document.getElementById('empUsername');
-    usernameInput.value = username || '';
+    usernameInput.value = username;
     usernameInput.readOnly = true;
 
     const emailInput = document.getElementById('empEmail');
-    emailInput.value = email || '';
+    emailInput.value = email;
     emailInput.readOnly = true;
 
     document.getElementById('empPassword').value = '';
-    document.getElementById('empFullName').value = fullname || '';
-    document.getElementById('empPhone').value = phone || '';
-    document.getElementById('empAddress').value = address || '';
+    document.getElementById('empFullName').value = fullname;
+    document.getElementById('empPhone').value = phone;
+    document.getElementById('empAddress').value = address;
 
     if (gender !== null && gender !== undefined) {
         document.getElementById('empGender').value = (gender === 'true' || gender === true) ? 'true' : 'false';
@@ -257,7 +290,7 @@ function editEmployee(btn) {
     }
 
     const title = document.getElementById('formTitle');
-    if (title) title.innerText = 'Cập Nhật Nhân Viên: ' + (username || '');
+    if (title) title.innerText = 'Cập Nhật Nhân Viên: ' + username;
 
     clearAllFormErrors();
 

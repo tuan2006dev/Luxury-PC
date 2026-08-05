@@ -34,6 +34,8 @@ function bindValidationEvents() {
             if (firstInvalid) firstInvalid.focus();
             return false;
         }
+
+        clearAllFormErrors();
     };
 
     const usernameInput = form.querySelector('input[name="username"]');
@@ -43,24 +45,49 @@ function bindValidationEvents() {
     const phoneInput = form.querySelector('input[name="phone"]');
 
     if (usernameInput) {
-        usernameInput.addEventListener('blur', checkUsername);
-        usernameInput.addEventListener('input', function () { clearError(this); });
+        usernameInput.addEventListener('blur', function () {
+            if (this.value.trim() !== '') checkUsername();
+        });
+        usernameInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkUsername();
+            else clearError(this);
+        });
     }
     if (emailInput) {
-        emailInput.addEventListener('blur', checkEmail);
-        emailInput.addEventListener('input', function () { clearError(this); });
+        emailInput.addEventListener('blur', function () {
+            if (this.value.trim() !== '') checkEmail();
+        });
+        emailInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkEmail();
+            else clearError(this);
+        });
     }
     if (passwordInput) {
-        passwordInput.addEventListener('blur', checkPassword);
-        passwordInput.addEventListener('input', function () { clearError(this); });
+        passwordInput.addEventListener('blur', function () {
+            if (this.value.trim() !== '') checkPassword();
+        });
+        passwordInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkPassword();
+            else clearError(this);
+        });
     }
     if (fullNameInput) {
-        fullNameInput.addEventListener('blur', checkFullName);
-        fullNameInput.addEventListener('input', function () { clearError(this); });
+        fullNameInput.addEventListener('blur', function () {
+            if (this.value.trim() !== '') checkFullName();
+        });
+        fullNameInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkFullName();
+            else clearError(this);
+        });
     }
     if (phoneInput) {
-        phoneInput.addEventListener('blur', checkPhone);
-        phoneInput.addEventListener('input', function () { clearError(this); });
+        phoneInput.addEventListener('blur', function () {
+            if (this.value.trim() !== '') checkPhone();
+        });
+        phoneInput.addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) checkPhone();
+            else clearError(this);
+        });
     }
 }
 
@@ -88,17 +115,15 @@ function clearError(input) {
     input.classList.remove('is-invalid');
     const group = input.closest('.input-group');
     if (group) {
-        const errorSpan = group.querySelector('.error-message');
-        if (errorSpan) {
-            errorSpan.innerText = '';
-            errorSpan.style.display = 'none';
-        }
+        group.querySelectorAll('.error-message, .error-text').forEach(err => err.remove());
     }
 }
 
 function clearAllFormErrors() {
-    const inputs = document.querySelectorAll('#userForm input');
-    inputs.forEach(input => clearError(input));
+    const form = document.getElementById('userForm');
+    if (!form) return;
+    form.querySelectorAll('.is-invalid').forEach(input => input.classList.remove('is-invalid'));
+    form.querySelectorAll('.error-message, .error-text').forEach(span => span.remove());
 }
 
 // =====================================
@@ -107,6 +132,11 @@ function clearAllFormErrors() {
 function checkUsername() {
     const input = document.querySelector('input[name="username"]');
     if (!input) return true;
+    const isEdit = input.readOnly || (document.querySelector('input[name="id"]') && document.querySelector('input[name="id"]').value);
+    if (isEdit) {
+        clearError(input);
+        return true;
+    }
     const val = input.value.trim();
     if (!val) {
         showError(input, 'Vui lòng nhập Username!');
@@ -116,9 +146,9 @@ function checkUsername() {
         showError(input, 'Username phải chứa ít nhất 3 ký tự!');
         return false;
     }
-    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    const usernameRegex = /^[a-zA-Z0-9_.@-]+$/;
     if (!usernameRegex.test(val)) {
-        showError(input, 'Username chỉ chứa chữ cái, số và dấu gạch dưới!');
+        showError(input, 'Username chỉ chứa chữ cái, số, dấu gạch dưới, gạch ngang, chấm hoặc @!');
         return false;
     }
     clearError(input);
@@ -128,6 +158,11 @@ function checkUsername() {
 function checkEmail() {
     const input = document.querySelector('input[name="email"]');
     if (!input) return true;
+    const isEdit = input.readOnly || (document.querySelector('input[name="id"]') && document.querySelector('input[name="id"]').value);
+    if (isEdit) {
+        clearError(input);
+        return true;
+    }
     const val = input.value.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!val) {
@@ -149,7 +184,6 @@ function checkPassword() {
     const val = input.value.trim();
     const isNewUser = !idInput || !idInput.value;
 
-    // Nếu là thêm mới -> Bắt buộc nhập mật khẩu ít nhất 6 ký tự
     if (isNewUser) {
         if (!val) {
             showError(input, 'Vui lòng nhập Mật khẩu cho tài khoản mới!');
@@ -160,7 +194,6 @@ function checkPassword() {
             return false;
         }
     } else {
-        // Nếu là cập nhật -> Nhập mới kiểm tra (nếu bỏ trống thì giữ nguyên)
         if (val && val.length < 6) {
             showError(input, 'Mật khẩu mới phải chứa ít nhất 6 ký tự!');
             return false;
@@ -178,8 +211,8 @@ function checkFullName() {
         showError(input, 'Vui lòng nhập Họ và tên!');
         return false;
     }
-    if (val.split(/\s+/).length < 2) {
-        showError(input, 'Vui lòng nhập đầy đủ cả Họ và Tên (ít nhất 2 từ, ví dụ: Nguyễn Văn A)!');
+    if (val.length < 2) {
+        showError(input, 'Họ và tên quá ngắn!');
         return false;
     }
     clearError(input);
@@ -190,13 +223,14 @@ function checkPhone() {
     const input = document.querySelector('input[name="phone"]');
     if (!input) return true;
     const val = input.value.trim();
-    const phoneRegex = /^(\+?84|0)[3578912][0-9]{8}$/;
     if (!val) {
         showError(input, 'Vui lòng nhập Số điện thoại!');
         return false;
     }
-    if (!phoneRegex.test(val)) {
-        showError(input, 'Số điện thoại không hợp lệ (đủ 10 chữ số, ví dụ: 0912345678)!');
+    const cleanPhone = val.replace(/[\s.-]/g, '');
+    const phoneRegex = /^(\+?84|0)[0-9]{8,10}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+        showError(input, 'Số điện thoại không hợp lệ (ví dụ: 0912345678)!');
         return false;
     }
     clearError(input);

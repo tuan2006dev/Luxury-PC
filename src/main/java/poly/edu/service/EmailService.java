@@ -262,4 +262,27 @@ public class EmailService {
             System.err.println("Gửi email chào mừng Newsletter thất bại: " + e.getMessage());
         }
     }
+
+    public void sendStaffWelcomeEmail(User staff, String rawPassword) {
+        if (staff == null || staff.getEmail() == null || staff.getEmail().trim().isEmpty())
+            return;
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("luxury.pc.noreply@gmail.com");
+            message.setTo(staff.getEmail().trim());
+            message.setSubject("🎉 [Luxury PC] Thông báo cấp tài khoản Nhân viên (Staff)");
+            message.setText("Chào " + (staff.getFullName() != null && !staff.getFullName().isBlank() ? staff.getFullName() : staff.getUsername()) + ",\n\n"
+                    + "Tài khoản Nhân viên (Staff) của bạn tại hệ thống Luxury PC đã được khởi tạo thành công!\n\n"
+                    + "🔑 THÔNG TIN ĐĂNG NHẬP:\n"
+                    + "- Tên đăng nhập: " + staff.getUsername() + "\n"
+                    + "- Email: " + staff.getEmail() + "\n"
+                    + "- Mật khẩu khởi tạo: " + rawPassword + "\n\n"
+                    + "⚠️ Vì lý do bảo mật, vui lòng truy cập hệ thống, đăng nhập và tiến hành đổi mật khẩu cá nhân ở lần sử dụng đầu tiên.\n\n"
+                    + "Trân trọng,\nBan Quản Trị Luxury PC");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Gửi email cấp tài khoản staff thất bại: " + e.getMessage());
+        }
+    }
 }

@@ -103,9 +103,10 @@
                                         do</span>
                                 </div>
                                 <div th:if="${o.adminNote != null}" style="white-space: normal !important;">
-                                    <span class="note-label">Admin:</span>
-                                    <span th:text="${o.adminNote}" style="white-space: normal !important;">Ghi
-                                        chú</span>
+                                    <span class="note-label"
+                                        th:text="${o.adminNote != null and (#strings.startsWith(o.adminNote, '[Staff]') or #strings.contains(#strings.toLowerCase(o.adminNote), 'staff:')) ? 'Staff:' : 'Admin:'}">Admin:</span>
+                                    <span th:text="${#strings.replace(#strings.replace(o.adminNote, '[Staff] ', ''), '[Admin] ', '')}"
+                                        style="white-space: normal !important;">Ghi chú</span>
                                 </div>
                                 <span th:if="${o.refundReason == null and o.adminNote == null}">-</span>
                             </td>

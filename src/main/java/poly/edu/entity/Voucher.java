@@ -233,15 +233,16 @@ public class Voucher {
     public double calculateDiscount(double baseAmount) {
         if (!isValid()) return 0;
 
-        double discount;
+        double discount = 0;
         if (discountType == DiscountType.PERCENTAGE) {
-            discount = baseAmount * (discountValue / 100.0);
-            if (maxDiscountAmount != null && discount > maxDiscountAmount) {
+            double rate = discountValue != null ? discountValue : 0;
+            discount = baseAmount * (rate / 100.0);
+            if (maxDiscountAmount != null && maxDiscountAmount > 0 && discount > maxDiscountAmount) {
                 discount = maxDiscountAmount;
             }
         } else {
-            discount = discountValue;
+            discount = discountValue != null ? discountValue : 0;
         }
-        return Math.min(discount, baseAmount);
+        return Math.max(0, Math.min(discount, baseAmount));
     }
 }

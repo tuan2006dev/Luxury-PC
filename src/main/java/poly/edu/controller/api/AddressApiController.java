@@ -42,9 +42,15 @@ public class AddressApiController {
         }
         Object principal = authentication.getPrincipal();
         String emailOrUsername = null;
-        if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
+        if (principal instanceof poly.edu.security.CustomOAuth2User customOAuth2User) {
+            if (customOAuth2User.getEmail() != null && !customOAuth2User.getEmail().isBlank()) {
+                emailOrUsername = customOAuth2User.getEmail();
+            }
+        }
+        if (emailOrUsername == null && principal instanceof org.springframework.security.core.userdetails.User userDetails) {
             emailOrUsername = userDetails.getUsername();
-        } else if (principal instanceof OAuth2User oauth2User) {
+        }
+        if (emailOrUsername == null && principal instanceof OAuth2User oauth2User) {
             Object email = oauth2User.getAttribute("email");
             if (email != null) {
                 emailOrUsername = email.toString();

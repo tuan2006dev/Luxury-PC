@@ -109,6 +109,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 user.setGoogleId(providerId);
             }
 
+            user.setForceChangePassword(true);
             user = userRepository.save(user);
 
             // Assign default USER role

@@ -1,5 +1,6 @@
 package poly.edu.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -10,7 +11,10 @@ import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+    private final ForcePasswordChangeInterceptor forcePasswordChangeInterceptor;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -39,8 +43,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:" + uploadPath, classpathLocation)
                 .setCacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic());
     }
+
     @Override
     public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
         registry.addInterceptor(new poly.edu.config.profiler.ProfilerInterceptor());
+        registry.addInterceptor(forcePasswordChangeInterceptor);
     }
 }

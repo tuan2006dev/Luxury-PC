@@ -2,6 +2,7 @@ package poly.edu.controller.admin;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Controller
 @RequestMapping("/admin/employees")
 @RequiredArgsConstructor
@@ -35,6 +37,8 @@ public class AdminEmployeeController {
     private final UserRoleDAO userRoleDAO;
     private final PasswordEncoder passwordEncoder;
     private final AdminLogRepository adminLogRepository;
+    private final poly.edu.service.EmailService emailService;
+    private final poly.edu.service.ProfileService profileService;
 
     @GetMapping
     public String index(
@@ -93,6 +97,26 @@ public class AdminEmployeeController {
         boolean isNew = (user.getId() == null);
 
         if (isNew) {
+            // Server-side validation: Chặn hoàn toàn dữ liệu rỗng
+            if (user.getUsername() == null || user.getUsername().isBlank() ||
+                user.getEmail() == null || user.getEmail().isBlank() ||
+                user.getFullName() == null || user.getFullName().isBlank() ||
+                user.getPhone() == null || user.getPhone().isBlank()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng nhập đầy đủ các thông tin bắt buộc (Username, Email, Họ tên, SĐT)!");
+                return "redirect:/admin/employees";
+            }
+            // Check disposable / fake email domain
+            if (user.getEmail() != null) {
+                String emailLower = user.getEmail().toLowerCase().trim();
+                String[] fakeDomains = {"mailinator.com", "yopmail.com", "tempmail.com", "10minutemail.com", "dispostable.com", "guerrillamail.com", "fake.com"};
+                for (String domain : fakeDomains) {
+                    if (emailLower.endsWith("@" + domain)) {
+                        redirectAttributes.addFlashAttribute("errorMessage", "Email không hợp lệ hoặc sử dụng tên miền email rác (" + domain + ")!");
+                        return "redirect:/admin/employees";
+                    }
+                }
+            }
+
             // Check username duplicate
             if (userRepository.findByUsername(user.getUsername()).isPresent()) {
                 redirectAttributes.addFlashAttribute("errorMessage",
@@ -111,16 +135,23 @@ public class AdminEmployeeController {
             if (rawPassword == null || rawPassword.isBlank()) {
                 rawPassword = generateRandomPassword();
                 redirectAttributes.addFlashAttribute("successMessage",
-                        "Đã tạo nhân viên mới! Mật khẩu khởi tạo: " + rawPassword);
+                        "Đã tạo nhân viên mới! Thông tin và mật khẩu khởi tạo đã được gửi tới email " + user.getEmail());
             } else {
-                redirectAttributes.addFlashAttribute("successMessage", "Đã tạo thành công nhân viên mới!");
+                redirectAttributes.addFlashAttribute("successMessage", "Đã tạo thành công nhân viên mới và gửi email thông báo!");
             }
             user.setPassword(passwordEncoder.encode(rawPassword));
             if (user.getStatus() == null)
                 user.setStatus(true);
-            user.setForceChangePassword(false);
+            user.setForceChangePassword(true);
 
             User savedUser = userRepository.save(user);
+
+            // Send email to staff with credentials
+            try {
+                emailService.sendStaffWelcomeEmail(savedUser, rawPassword);
+            } catch (Exception e) {
+                log.error("Lỗi gửi email cấp tài khoản nhân viên: {}", e.getMessage());
+            }
 
             // Assign role
             Role role = roleDAO.findByName(roleName);
@@ -226,6 +257,33 @@ public class AdminEmployeeController {
 
             redirectAttributes.addFlashAttribute("successMessage",
                     "Đã reset mật khẩu cho nhân viên " + u.getUsername() + "! Mật khẩu mới: " + newPlainPassword);
+        }
+
+        return "redirect:/admin/employees";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteEmployee(
+            @PathVariable Integer id,
+            Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
+
+        String currentAdmin = principal != null ? principal.getName() : "ADMIN";
+        String clientIp = getClientIp(request);
+
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isPresent()) {
+            User u = userOpt.get();
+            if (u.getUsername().equalsIgnoreCase(currentAdmin)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa chính tài khoản đang đăng nhập!");
+                return "redirect:/admin/employees";
+            }
+
+            profileService.deleteUserFully(u);
+
+            adminLogRepository.save(new AdminLog(currentAdmin, "Xóa tài khoản nhân viên", clientIp, u.getUsername()));
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xóa vĩnh viễn nhân viên " + u.getUsername() + " thành công!");
         }
 
         return "redirect:/admin/employees";

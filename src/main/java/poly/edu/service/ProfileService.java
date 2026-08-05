@@ -21,6 +21,9 @@ import poly.edu.dao.UserSessionDAO;
 import poly.edu.dao.UserVoucherDAO;
 import poly.edu.dao.ReviewDAO;
 import poly.edu.dao.OrderDAO;
+import poly.edu.dao.CartDAO;
+import poly.edu.dao.CartItemDAO;
+import poly.edu.repository.PasswordResetRepository;
 
 @Service
 public class ProfileService {
@@ -32,6 +35,9 @@ public class ProfileService {
     private final WishlistItemRepository wishlistItemRepository;
     private final ReviewDAO reviewDAO;
     private final OrderDAO orderDAO;
+    private final CartDAO cartDAO;
+    private final CartItemDAO cartItemDAO;
+    private final PasswordResetRepository passwordResetRepo;
 
     public ProfileService(UserRepository userRepository,
             ShippingAddressRepository shippingAddressRepository,
@@ -40,7 +46,10 @@ public class ProfileService {
             UserVoucherDAO userVoucherDAO,
             WishlistItemRepository wishlistItemRepository,
             ReviewDAO reviewDAO,
-            OrderDAO orderDAO) {
+            OrderDAO orderDAO,
+            CartDAO cartDAO,
+            CartItemDAO cartItemDAO,
+            PasswordResetRepository passwordResetRepo) {
         this.userRepository = userRepository;
         this.shippingAddressRepository = shippingAddressRepository;
         this.userRoleDAO = userRoleDAO;
@@ -49,6 +58,9 @@ public class ProfileService {
         this.wishlistItemRepository = wishlistItemRepository;
         this.reviewDAO = reviewDAO;
         this.orderDAO = orderDAO;
+        this.cartDAO = cartDAO;
+        this.cartItemDAO = cartItemDAO;
+        this.passwordResetRepo = passwordResetRepo;
     }
 
     public User getCurrentUser(Authentication authentication) {
@@ -257,20 +269,31 @@ public class ProfileService {
 
     @Transactional
     public void deleteUserFully(User user) {
+        if (user == null || user.getId() == null) return;
         Integer userId = user.getId();
 
-        // 1. Delete dependent records
+        // 1. Delete cart items and cart
+        java.util.Optional<poly.edu.entity.Cart> cartOpt = cartDAO.findByUserId(userId);
+        if (cartOpt.isPresent()) {
+            cartItemDAO.deleteByCartId(cartOpt.get().getId());
+            cartDAO.deleteByUserId(userId);
+        }
+
+        // 2. Delete dependent records
         userRoleDAO.deleteByUserId(userId);
         userSessionDAO.deleteByUserId(userId);
         userVoucherDAO.deleteByUserId(userId);
         wishlistItemRepository.deleteByUserId(userId);
         shippingAddressRepository.deleteByUserId(userId);
+        if (user.getEmail() != null) {
+            passwordResetRepo.findByEmail(user.getEmail()).ifPresent(passwordResetRepo::delete);
+        }
 
-        // 2. Nullify references (keep reviews and orders)
+        // 3. Nullify references (keep reviews and orders history)
         reviewDAO.nullifyUserReferences(userId);
         orderDAO.nullifyUserReferences(userId);
 
-        // 3. Delete the user
+        // 4. Delete the user
         userRepository.delete(user);
     }
 
@@ -440,6 +463,11 @@ public class ProfileService {
 
     private String resolveIdentifier(Authentication authentication) {
         Object principal = authentication.getPrincipal();
+        if (principal instanceof poly.edu.security.CustomOAuth2User customOAuth2User) {
+            if (customOAuth2User.getEmail() != null && !customOAuth2User.getEmail().isBlank()) {
+                return customOAuth2User.getEmail();
+            }
+        }
         if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
             return userDetails.getUsername();
         }

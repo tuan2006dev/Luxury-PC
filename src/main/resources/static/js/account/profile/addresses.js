@@ -3,8 +3,17 @@
 let addressCount = 0;
 
 async function loadAddresses() {
+  const cfg = window.PROFILE_CONFIG || {};
+  if (cfg.forcePasswordLock) {
+    return;
+  }
+
   try {
     const res = await fetch('/api/address');
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) return;
+      throw new Error('HTTP ' + res.status);
+    }
     const data = await res.json();
     const container = document.getElementById('address-list-container');
     if (!container) return;
@@ -66,7 +75,6 @@ async function loadAddresses() {
     });
   } catch (err) {
     console.error('Load addresses error:', err);
-    toast('Không thể tải danh sách địa chỉ.');
   }
 }
 

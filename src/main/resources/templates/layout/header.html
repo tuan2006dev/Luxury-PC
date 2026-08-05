@@ -135,7 +135,7 @@
 
                     const performSearch = (query) => {
                         if (query && query.trim() !== '') {
-                            window.location.href = '/products?search=' + encodeURIComponent(query.trim());
+                            window.location.href = '/products?kw=' + encodeURIComponent(query.trim());
                         }
                     };
 
@@ -172,7 +172,7 @@
                                             `;
                                             });
                                             html += `
-                                            <a href="/products?search=${encodeURIComponent(val)}" style="display:block; text-align:center; padding:12px; font-size:13px; font-weight:600; color:#007bff; text-decoration:none;">Xem tất cả kết quả cho "${val}" <i class="fa-solid fa-arrow-right"></i></a>
+                                            <a href="/products?kw=${encodeURIComponent(val)}" style="display:block; text-align:center; padding:12px; font-size:13px; font-weight:600; color:#007bff; text-decoration:none;">Xem tất cả kết quả cho "${val}" <i class="fa-solid fa-arrow-right"></i></a>
                                         </div>`;
                                             searchResultsContainer.innerHTML = html;
                                         } else {
@@ -195,7 +195,13 @@
                     if (searchTags) {
                         searchTags.forEach(tag => {
                             tag.addEventListener('click', (e) => {
-                                performSearch(e.target.dataset.query);
+                                e.preventDefault();
+                                const query = tag.getAttribute('data-query') || tag.innerText.trim();
+                                if (searchInput) {
+                                    searchInput.value = query;
+                                    searchInput.dispatchEvent(new Event('input'));
+                                }
+                                performSearch(query);
                             });
                         });
                     }

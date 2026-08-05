@@ -20,7 +20,7 @@
 
 <body>
     <!-- LOADING SCREEN -->
-    <div class="loader" id="loader">
+    <!-- <div class="loader" id="loader">
         <div class="loader-inner">
             <div class="loader-glow"></div>
             <div class="loader-logo">LUXURY PC</div>
@@ -35,7 +35,7 @@
             var l = document.getElementById('loader');
             if (l) { l.classList.add('hidden'); setTimeout(function () { l.style.display = 'none'; }, 600); }
         });
-    </script>
+    </script> -->
 
     <!-- HEADER -->
     <div th:replace="~{layout/header :: header}"></div>
@@ -381,7 +381,8 @@
                     <a th:href="@{/news}" class="section-view-all">Xem tất cả ></a>
                 </div>
                 <a class="news-item" th:each="n, iterStat : ${newestNews}" th:if="${iterStat.index < 5}"
-                    th:href="@{/news/{slug}(slug=${n.slug})}" style="text-decoration: none; display: flex; gap: 15px; align-items: center;">
+                    th:href="@{/news/{slug}(slug=${n.slug})}"
+                    style="text-decoration: none; display: flex; gap: 15px; align-items: center;">
                     <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
                         th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';"
                         style="width: 100px; height: 60px; min-width: 100px; max-width: 100px; min-height: 60px; max-height: 60px; object-fit: cover; flex-shrink: 0; border-radius: 6px;" />
@@ -395,7 +396,8 @@
                     <a th:href="@{/news}" class="section-view-all">Xem tất cả ></a>
                 </div>
                 <a class="news-item" th:each="n, iterStat : ${featuredNews}" th:if="${iterStat.index < 5}"
-                    th:href="@{/news/{slug}(slug=${n.slug})}" style="text-decoration: none; display: flex; gap: 15px; align-items: center;">
+                    th:href="@{/news/{slug}(slug=${n.slug})}"
+                    style="text-decoration: none; display: flex; gap: 15px; align-items: center;">
                     <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
                         th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';"
                         style="width: 100px; height: 60px; min-width: 100px; max-width: 100px; min-height: 60px; max-height: 60px; object-fit: cover; flex-shrink: 0; border-radius: 6px;" />

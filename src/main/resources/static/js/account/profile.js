@@ -34,6 +34,15 @@ window.setTab = setTab;
 const tabIds = ['info', 'orders', 'vouchers', 'wishlist', 'security', 'notifications', 'address'];
 function setTab(id, event) {
   if (event) event.preventDefault();
+
+  const cfg = window.PROFILE_CONFIG || {};
+  if (cfg.forcePasswordLock) {
+    if (id !== 'security') {
+      toast("⚠️ Bạn bắt buộc phải đặt/đổi mật khẩu mới trước khi truy cập các mục khác!");
+      id = 'security';
+    }
+  }
+
   tabIds.forEach(t => {
     document.getElementById('sec-' + t)?.classList.toggle('active', t === id);
     document.getElementById('pt-' + t)?.classList.toggle('active', t === id);
@@ -67,23 +76,47 @@ document.addEventListener('DOMContentLoaded', () => {
   if (cfg.securityMessage) toast(cfg.securityMessage);
   if (cfg.notificationMessage) toast(cfg.notificationMessage);
 
-  if (typeof loadAddresses === 'function') {
-    loadAddresses();
-  }
+  if (cfg.forcePasswordLock) {
+    setTab('security');
+    if (typeof togglePasswordForm === 'function') {
+      togglePasswordForm(true);
+    }
+    // Vô hiệu hóa toàn bộ menu sidebar trừ Bảo Mật
+    document.querySelectorAll('.sb-item').forEach(el => {
+      if (!el.getAttribute('onclick')?.includes('security')) {
+        el.style.opacity = '0.35';
+        el.style.cursor = 'not-allowed';
+        el.style.pointerEvents = 'none';
+        el.setAttribute('title', 'Bắt buộc thiết lập mật khẩu mới');
+      }
+    });
+    // Chặn toàn bộ các đường dẫn header, footer, breadcrumb
+    document.querySelectorAll('header a, .breadcrumb a, footer a').forEach(link => {
+      if (link.getAttribute('href') && !link.getAttribute('href').includes('logout')) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          toast("⚠️ Bạn bắt buộc phải thiết lập mật khẩu mới trước khi rời khỏi trang này!");
+        });
+      }
+    });
+  } else {
+    if (typeof loadAddresses === 'function') {
+      loadAddresses();
+    }
 
-  const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    if (tabParam) {
+      setTab(tabParam);
+    }
 
-  const tabParam = params.get('tab');
-  if (tabParam) {
-    setTab(tabParam);
-  }
+    if (params.get('openEdit') === '1' && typeof toggleProfileEditForm === 'function') {
+      toggleProfileEditForm(true);
+    }
 
-  if (params.get('openEdit') === '1' && typeof toggleProfileEditForm === 'function') {
-    toggleProfileEditForm(true);
-  }
-
-  if (params.get('openPasswordForm') === '1' && typeof togglePasswordForm === 'function') {
-    togglePasswordForm(true);
+    if (params.get('openPasswordForm') === '1' && typeof togglePasswordForm === 'function') {
+      togglePasswordForm(true);
+    }
   }
 
   // Cursor hover animations

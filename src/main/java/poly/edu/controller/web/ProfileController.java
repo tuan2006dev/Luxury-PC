@@ -48,6 +48,15 @@ public class ProfileController {
             model.addAllAttributes(profileData);
 
             User user = (User) profileData.get("user");
+            boolean forcePasswordLock = user != null && (Boolean.TRUE.equals(user.getForceChangePassword())
+                    || user.getPassword() == null || user.getPassword().isBlank());
+            model.addAttribute("forcePasswordLock", forcePasswordLock);
+            if (forcePasswordLock && model.getAttribute("securityMessage") == null) {
+                model.addAttribute("securityMessage",
+                        "⚠️ Vui lòng thiết lập/đổi mật khẩu mới để tiếp tục sử dụng hệ thống!");
+                model.addAttribute("securityMessageType", "warning");
+            }
+
             model.addAttribute("profile", user);
             model.addAttribute("name",
                     user.getFullName() != null && !user.getFullName().isEmpty() ? user.getFullName()
@@ -265,6 +274,7 @@ public class ProfileController {
             }
 
             user.setPassword(passwordEncoder.encode(newPassword));
+            user.setForceChangePassword(false);
             profileService.saveUser(user);
 
             // Invalidate all active sessions of the user in SessionRegistry
