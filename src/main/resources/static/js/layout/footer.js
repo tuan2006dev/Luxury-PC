@@ -107,7 +107,7 @@ function toggleChatWindow() {
               const remaining = Math.ceil((30000 - elapsed) / 1000);
               if (inputEl) {
                   inputEl.disabled = true;
-                  inputEl.placeholder = `Vui lÃ²ng Ä‘á»£i ${remaining}s...`;
+                  inputEl.placeholder = `Vui lòng đợi ${remaining}s...`;
               }
               if (sendBtn) sendBtn.disabled = true;
               quickBtns.forEach(btn => btn.disabled = true);
@@ -116,7 +116,7 @@ function toggleChatWindow() {
           } else {
               if (inputEl) {
                   inputEl.disabled = false;
-                  inputEl.placeholder = "Há»i vá» linh kiá»‡n, budget, tÆ°Æ¡ng thÃ­ch...";
+                  inputEl.placeholder = "Hỏi về linh kiện, budget, tương thích...";
               }
               if (sendBtn) sendBtn.disabled = false;
               quickBtns.forEach(btn => btn.disabled = false);
@@ -148,16 +148,16 @@ function toggleChatWindow() {
         appendMessage(text, 'user');
         inputEl.value = '';
 
-        // Hiá»ƒn thá»‹ tráº¡ng thÃ¡i AI Ä‘ang gÃµ...
+        // Hiển thị trạng thái AI đang gõ...
         const area = document.getElementById('chat-messages-area');
         const loadingMsg = document.createElement('div');
         loadingMsg.className = 'chat-bubble bot';
         loadingMsg.id = 'ai-loading-indicator';
-        loadingMsg.innerHTML = '<div class="chat-bubble-icon">ðŸ¤–</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
+        loadingMsg.innerHTML = '<div class="chat-bubble-icon">🤖</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
         area.appendChild(loadingMsg);
         area.scrollTop = area.scrollHeight;
 
-        // Gá»­i request lÃªn Backend Spring Boot
+        // Gửi request lên Backend Spring Boot
         fetch('/api/build/ai-advisor', {
           method: 'POST',
           headers: {
@@ -167,7 +167,7 @@ function toggleChatWindow() {
         })
         .then(response => response.json())
         .then(data => {
-          // XÃ³a chá»‰ bÃ¡o loading
+          // Xóa chỉ báo loading
           const indicator = document.getElementById('ai-loading-indicator');
           if (indicator) indicator.remove();
 
@@ -179,14 +179,14 @@ function toggleChatWindow() {
             
             appendMessage(formattedText, 'bot');
           } else {
-            appendMessage("CÃ³ lá»—i xáº£y ra khi xá»­ lÃ½ pháº£n há»“i tá»« AI.", 'bot');
+            appendMessage("Có lỗi xảy ra khi xử lý phản hồi từ AI.", 'bot');
           }
         })
         .catch(error => {
           const indicator = document.getElementById('ai-loading-indicator');
           if (indicator) indicator.remove();
           console.error('Error:', error);
-          appendMessage("KhÃ´ng thá»ƒ káº¿t ná»‘i Ä‘áº¿n mÃ¡y chá»§ AI. Vui lÃ²ng thá»­ láº¡i sau.", 'bot');
+          appendMessage("Không thể kết nối đến máy chủ AI. Vui lòng thử lại sau.", 'bot');
         });
       }
 
@@ -196,7 +196,7 @@ function toggleChatWindow() {
         const msg = document.createElement('div');
         msg.className = `chat-bubble ${sender}`;
         
-        let icon = sender === 'bot' ? 'ðŸ¤–' : 'ðŸ‘¤';
+        let icon = sender === 'bot' ? '🤖' : '👤';
         let htmlContent = `<div class="chat-bubble-icon">${icon}</div>`;
         htmlContent += `<div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 100%;">`;
         htmlContent += `<div class="chat-bubble-text">${text}</div>`;
@@ -217,7 +217,7 @@ function toggleChatWindow() {
 
       // Action from quick chatbot button to switch directly to live chat
       function triggerConsultantRedirect() {
-        appendMessage("Äang káº¿t ná»‘i báº¡n vá»›i nhÃ¢n viÃªn há»— trá»£ trá»±c tuyáº¿n...", 'bot');
+        appendMessage("Đang kết nối bạn với nhân viên hỗ trợ trực tuyến...", 'bot');
         setTimeout(() => {
           changeMode('live');
         }, 1000);
@@ -232,19 +232,19 @@ function toggleChatWindow() {
         updateAiChatCooldown();
 
         let actualQuery = query;
-        if (query === 'gaming') actualQuery = "TÃ´i cáº§n tÆ° váº¥n cáº¥u hÃ¬nh chiáº¿n game 4K";
-        else if (query === 'graphic') actualQuery = "TÆ° váº¥n cáº¥u hÃ¬nh lÃ m Ä‘á»“ há»a 3D render";
-        else if (query === 'ai') actualQuery = "TÃ´i muá»‘n build mÃ¡y AI Workstation";
-        else if (query === 'cool') actualQuery = "NÃªn chá»n táº£n nÆ°á»›c hay táº£n khÃ­?";
+        if (query === 'gaming') actualQuery = "Tôi cần tư vấn cấu hình chiến game 4K";
+        else if (query === 'graphic') actualQuery = "Tư vấn cấu hình làm đồ họa 3D render";
+        else if (query === 'ai') actualQuery = "Tôi muốn build máy AI Workstation";
+        else if (query === 'cool') actualQuery = "Nên chọn tản nước hay tản khí?";
 
         appendMessage(actualQuery, 'user');
 
-        // Hiá»ƒn thá»‹ tráº¡ng thÃ¡i AI Ä‘ang gÃµ...
+        // Hiển thị trạng thái AI đang gõ...
         const area = document.getElementById('chat-messages-area');
         const loadingMsg = document.createElement('div');
         loadingMsg.className = 'chat-bubble bot';
         loadingMsg.id = 'ai-loading-indicator';
-        loadingMsg.innerHTML = '<div class="chat-bubble-icon">ðŸ¤–</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
+        loadingMsg.innerHTML = '<div class="chat-bubble-icon">🤖</div><div class="chat-bubble-text chat-typing"><span></span><span></span><span></span></div>';
         area.appendChild(loadingMsg);
         area.scrollTop = area.scrollHeight;
 
@@ -268,22 +268,27 @@ function toggleChatWindow() {
             
             appendMessage(formattedText, 'bot');
           } else {
-            appendMessage("KhÃ´ng nháº­n Ä‘Æ°á»£c pháº£n há»“i tá»« cá»‘ váº¥n AI.", 'bot');
+            appendMessage("Không nhận được phản hồi từ cố vấn AI.", 'bot');
           }
         })
         .catch(error => {
           const indicator = document.getElementById('ai-loading-indicator');
           if (indicator) indicator.remove();
           console.error('Error:', error);
-          appendMessage("Lá»—i káº¿t ná»‘i AI.", 'bot');
+          appendMessage("Lỗi kết nối AI.", 'bot');
         });
       }
 
       document.addEventListener('DOMContentLoaded', () => {
-        // Hide default socket button
+        // Hide default socket button ONLY if ai-chat-window exists (e.g. 3D build-pc)
         const socketBtn = document.getElementById('socketChatBtn');
+        const aiWin = document.getElementById('ai-chat-window');
         if (socketBtn) {
-          socketBtn.style.display = 'none';
+          if (aiWin) {
+            socketBtn.style.display = 'none';
+          } else {
+            socketBtn.style.display = 'flex';
+          }
         }
 
         // Setup MutationObserver to mirror notification badge
@@ -297,17 +302,17 @@ function toggleChatWindow() {
           observer.observe(targetBadge, { attributes: true, childList: true, characterData: true });
         }
 
-        // Dynamically inject mode selector tab bar into socket chat window
+        // Dynamically inject mode selector tab bar into socket chat window ONLY IF aiWin exists!
         const socketWin = document.getElementById('socketChatWindow');
-        if (socketWin) {
+        if (socketWin && aiWin) {
           const header = socketWin.querySelector('.socket-chat-header');
-          if (header) {
+          if (header && !socketWin.querySelector('.chatbot-mode-bar')) {
             const modeBar = document.createElement('div');
             modeBar.className = 'chatbot-mode-bar';
             modeBar.innerHTML = `
-              <div class="mode-step" id="socket-tab-ai" style="cursor: none !important;" onclick="changeMode('ai')">ðŸ¤– AI Chat</div>
-              <div class="mode-arrow">â€º</div>
-              <div class="mode-step active" id="socket-tab-live" style="cursor: none !important;" onclick="changeMode('live')">ðŸ’¬ Live Chat</div>
+              <div class="mode-step" id="socket-tab-ai" style="cursor: pointer;" onclick="changeMode('ai')">🤖 AI Chat</div>
+              <div class="mode-arrow">›</div>
+              <div class="mode-step active" id="socket-tab-live" style="cursor: pointer;" onclick="changeMode('live')">💬 Live Chat</div>
             `;
             header.parentNode.insertBefore(modeBar, header.nextSibling);
             
