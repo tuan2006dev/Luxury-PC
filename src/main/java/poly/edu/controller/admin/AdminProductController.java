@@ -64,17 +64,27 @@ public class AdminProductController {
             return "admin/products";
         }
 
+        Product existing = null;
+        if (product.getId() != null) {
+            existing = productService.getProductById(product.getId());
+        }
+
+        boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
+
         if (!imageFile.isEmpty()) {
             String fileName = uploadService.save(imageFile, "products");
             product.setImage(fileName);
-        } else if (product.getId() != null) {
-            // Nếu không upload ảnh mới, kiểm tra xem có nhập URL không
-            Product existing = productService.getProductById(product.getId());
-            if (existing != null) {
-                if (product.getImage() == null || product.getImage().trim().isEmpty()) {
-                    product.setImage(existing.getImage());
-                }
-                product.setCreatedAt(existing.getCreatedAt());
+        } else if (existing != null) {
+            if (product.getImage() == null || product.getImage().trim().isEmpty()) {
+                product.setImage(existing.getImage());
+            }
+        }
+
+        if (existing != null) {
+            product.setCreatedAt(existing.getCreatedAt());
+            // An toàn tài chính: Nếu không phải ADMIN, không cho phép đổi Giá niêm yết sản phẩm
+            if (!isAdmin) {
+                product.setPrice(existing.getPrice());
             }
         }
 

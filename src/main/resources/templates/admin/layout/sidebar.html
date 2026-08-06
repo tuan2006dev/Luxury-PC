@@ -28,7 +28,7 @@
                 <a href="/admin/products" id="nav-products">Sản phẩm</a>
                 <a href="/admin/categories" id="nav-categories">Danh mục</a>
                 <a href="/admin/combos" id="nav-combos">Quản lý Combo</a>
-                <a href="/admin/flash-sales" id="nav-flash-sales">Flash Sale</a>
+                <a href="/admin/flash-sales" id="nav-flash-sales" sec:authorize="hasRole('ADMIN')">Flash Sale</a>
             </div>
         </div>
 
@@ -55,7 +55,7 @@
             <div class="sub-menu" id="userMenu">
                 <a href="/admin/employees" id="nav-employees" sec:authorize="hasRole('ADMIN')">Quản lý Nhân viên</a>
                 <a href="/admin/account" id="nav-account" sec:authorize="hasRole('ADMIN')">Quản lý Khách hàng</a>
-                <a href="/admin/vouchers" id="nav-vouchers">Voucher</a>
+                <a href="/admin/vouchers" id="nav-vouchers" sec:authorize="hasRole('ADMIN')">Voucher</a>
                 <a href="/admin/tickets" id="nav-tickets">Hỗ Trợ (Tickets)</a>
             </div>
         </div>

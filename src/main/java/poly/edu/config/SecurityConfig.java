@@ -42,9 +42,16 @@ public class SecurityConfig {
                                 .securityContext(context -> context
                                                 .securityContextRepository(securityContextRepository()))
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/admin/users/**", "/admin/roles/**",
+                                                .requestMatchers(
+                                                                "/admin/users/**", "/admin/roles/**",
                                                                 "/admin/account/**", "/admin/account",
-                                                                "/admin/employees/**", "/admin/employees")
+                                                                "/admin/employees/**", "/admin/employees",
+                                                                "/admin/vouchers/**", "/admin/vouchers",
+                                                                "/admin/flash-sales/**", "/admin/flash-sales",
+                                                                "/admin/*/delete/**", "/admin/*/*/delete/**",
+                                                                "/admin/orders/approve-refund", "/admin/orders/confirm-refund",
+                                                                "/admin/orders/recall"
+                                                )
                                                 .hasRole("ADMIN")
                                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
                                                  .requestMatchers("/checkout", "/checkout/**", "/cart/checkout", "/cart/checkout/**").authenticated()
