@@ -36,30 +36,70 @@ public class ReviewService {
     @org.springframework.cache.annotation.CacheEvict(value = "latestReviews", allEntries = true)
     @Transactional
     public Review createReview(Authentication authentication, ReviewRequest request) {
-        return createReviewWithMedia(authentication, request.getProductId(), request.getRating(), request.getComment(), null);
+        return createReviewWithMedia(authentication, request.getOrderItemId(), request.getProductId(), request.getRating(), request.getComment(), null);
     }
 
     @org.springframework.cache.annotation.CacheEvict(value = "latestReviews", allEntries = true)
     @Transactional
     public Review createReviewWithMedia(Authentication authentication, Integer productId, Integer rating, String comment, MultipartFile file) {
+        return createReviewWithMedia(authentication, null, productId, rating, comment, file);
+    }
+
+    @org.springframework.cache.annotation.CacheEvict(value = "latestReviews", allEntries = true)
+    @Transactional
+    public Review createReviewWithMedia(Authentication authentication, Integer orderItemId, Integer productId, Integer rating, String comment, MultipartFile file) {
         User user = profileService.getCurrentUser(authentication);
-        Product product = productDAO.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
+        poly.edu.entity.OrderItem targetOrderItem = null;
+        Product product = null;
 
-        // 1. Kiểm tra đơn hàng thành công chứa sản phẩm này
-        long countPurchase = orderItemDAO.countCompletedPurchasesByUserAndProduct(user.getId(), productId);
-        if (countPurchase == 0) {
-            throw new IllegalStateException("Bạn chỉ có thể đánh giá sản phẩm đã mua thành công.");
-        }
+        if (orderItemId != null) {
+            targetOrderItem = orderItemDAO.findById(orderItemId)
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy chi tiết đơn hàng #" + orderItemId));
+            
+            if (targetOrderItem.getOrder() == null || targetOrderItem.getOrder().getUser() == null ||
+                !targetOrderItem.getOrder().getUser().getId().equals(user.getId())) {
+                throw new IllegalStateException("Lượt mua này không thuộc về tài khoản của bạn.");
+            }
 
-        // 2. Kiểm tra xem người dùng đã đánh giá sản phẩm này chưa (chỉ được đánh giá 1 lần)
-        if (reviewDAO.existsByUser_IdAndProduct_Id(user.getId(), productId)) {
-            throw new IllegalStateException("Bạn đã đánh giá sản phẩm này rồi.");
+            String orderStatus = targetOrderItem.getOrder().getStatus();
+            if (!"COMPLETED".equalsIgnoreCase(orderStatus) && !"HOAN_THANH".equalsIgnoreCase(orderStatus)) {
+                throw new IllegalStateException("Bạn chỉ có thể đánh giá lượt mua thuộc đơn hàng đã hoàn thành.");
+            }
+
+            if (reviewDAO.existsByOrderItem_Id(orderItemId)) {
+                throw new IllegalStateException("Lần mua hàng này đã được đánh giá rồi.");
+            }
+
+            product = targetOrderItem.getProduct();
+        } else {
+            if (productId == null) {
+                throw new IllegalArgumentException("Vui lòng cung cấp sản phẩm cần đánh giá.");
+            }
+
+            product = productDAO.findById(productId)
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
+
+            List<poly.edu.entity.OrderItem> userItems = orderItemDAO.findCompletedOrderItemsByUserAndProduct(user.getId(), productId);
+            if (userItems == null || userItems.isEmpty()) {
+                throw new IllegalStateException("Bạn chỉ có thể đánh giá sản phẩm đã mua thành công.");
+            }
+
+            for (poly.edu.entity.OrderItem oi : userItems) {
+                if (!reviewDAO.existsByOrderItem_Id(oi.getId())) {
+                    targetOrderItem = oi;
+                    break;
+                }
+            }
+
+            if (targetOrderItem == null) {
+                throw new IllegalStateException("Tất cả các lượt mua sản phẩm này của bạn đều đã được đánh giá rồi.");
+            }
         }
 
         Review review = new Review();
         review.setUser(user);
         review.setProduct(product);
+        review.setOrderItem(targetOrderItem);
         review.setStars(rating != null ? rating : 5);
         review.setContent(comment == null ? "" : comment.trim());
 

@@ -337,6 +337,7 @@ public class ProfileService {
                 .collect(java.util.stream.Collectors.toList());
         data.put("vouchers", validVouchers);
         data.put("reviewedProductIds", reviewDAO.findReviewedProductIdsByUserId(user.getId()));
+        data.put("reviewedOrderItemIds", reviewDAO.findReviewedOrderItemIdsByUserId(user.getId()));
 
         return data;
     }

@@ -308,6 +308,7 @@ public class ProductPageController {
     @org.springframework.web.bind.annotation.ResponseBody
     public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> addReview(
             @PathVariable("id") Integer id,
+            @RequestParam(value = "orderItemId", required = false) Integer orderItemId,
             @RequestParam("stars") Integer stars,
             @RequestParam("content") String content,
             @RequestParam(value = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
@@ -357,17 +358,58 @@ public class ProductPageController {
         }
 
         // Kiem tra quyen danh gia
-        long countPurchase = orderItemDAO.countCompletedPurchasesByUserAndProduct(uOpt.get().getId(), id);
-        if (countPurchase == 0) {
-            response.put("success", false);
-            response.put("message",
-                    "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
-            return org.springframework.http.ResponseEntity.status(403).body(response);
+        poly.edu.entity.OrderItem targetOrderItem = null;
+        if (orderItemId != null) {
+            Optional<poly.edu.entity.OrderItem> oiOpt = orderItemDAO.findById(orderItemId);
+            if (oiOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Không tìm thấy chi tiết đơn hàng.");
+                return org.springframework.http.ResponseEntity.status(404).body(response);
+            }
+            targetOrderItem = oiOpt.get();
+            if (targetOrderItem.getOrder() == null || targetOrderItem.getOrder().getUser() == null ||
+                !targetOrderItem.getOrder().getUser().getId().equals(uOpt.get().getId())) {
+                response.put("success", false);
+                response.put("message", "Lượt mua này không thuộc về tài khoản của bạn.");
+                return org.springframework.http.ResponseEntity.status(403).body(response);
+            }
+            String st = targetOrderItem.getOrder().getStatus();
+            if (!"COMPLETED".equalsIgnoreCase(st) && !"HOAN_THANH".equalsIgnoreCase(st)) {
+                response.put("success", false);
+                response.put("message", "Đơn hàng phải ở trạng thái hoàn thành để đánh giá.");
+                return org.springframework.http.ResponseEntity.status(403).body(response);
+            }
+            if (reviewDAO.existsByOrderItem_Id(orderItemId)) {
+                response.put("success", false);
+                response.put("message", "Lần mua hàng này đã được đánh giá rồi.");
+                return org.springframework.http.ResponseEntity.status(400).body(response);
+            }
+        } else {
+            java.util.List<poly.edu.entity.OrderItem> userItems = orderItemDAO.findCompletedOrderItemsByUserAndProduct(uOpt.get().getId(), id);
+            if (userItems == null || userItems.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
+                return org.springframework.http.ResponseEntity.status(403).body(response);
+            }
+
+            for (poly.edu.entity.OrderItem oi : userItems) {
+                if (!reviewDAO.existsByOrderItem_Id(oi.getId())) {
+                    targetOrderItem = oi;
+                    break;
+                }
+            }
+
+            if (targetOrderItem == null) {
+                response.put("success", false);
+                response.put("message", "Tất cả các lượt mua sản phẩm này của bạn đều đã được đánh giá rồi.");
+                return org.springframework.http.ResponseEntity.status(400).body(response);
+            }
         }
 
         Review r = new Review();
         r.setUser(uOpt.get());
         r.setProduct(p);
+        r.setOrderItem(targetOrderItem);
         r.setStars(stars);
         r.setContent(cleanContent);
 

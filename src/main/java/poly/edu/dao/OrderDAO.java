@@ -62,6 +62,8 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
 
     Optional<Order> findByOrderCode(String orderCode);
 
+    Optional<Order> findByTrackingCode(String trackingCode);
+
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT o FROM Order o WHERE o.orderCode = :orderCode")

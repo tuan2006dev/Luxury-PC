@@ -90,11 +90,14 @@ function handleReviewFileSelect(input) {
   }
 }
 
-function openReviewModal(productId, productName) {
+function openReviewModal(productId, productName, orderItemId) {
   orderModalState.stars = 0;
   updateStarUI(0);
-  document.getElementById('review-product-id').value = productId;
-  document.getElementById('review-product-name').value = productName;
+  document.getElementById('review-product-id').value = productId || '';
+  document.getElementById('review-product-name').value = productName || '';
+  if (document.getElementById('review-order-item-id')) {
+    document.getElementById('review-order-item-id').value = orderItemId || '';
+  }
   document.getElementById('review-comment').value = '';
   const fileInput = document.getElementById('reviewMediaFile');
   if (fileInput) fileInput.value = '';
@@ -137,16 +140,18 @@ function submitReview() {
   const comment = document.getElementById('review-comment')?.value.trim() || '';
   const productId = document.getElementById('review-product-id')?.value || '';
   const productName = document.getElementById('review-product-name')?.value || '';
+  const orderItemId = document.getElementById('review-order-item-id')?.value || '';
   const fileInput = document.getElementById('reviewMediaFile');
   const mediaFile = fileInput && fileInput.files && fileInput.files[0];
 
-  if (!productId || orderModalState.stars < 1 || orderModalState.stars > 5) {
+  if ((!productId && !orderItemId) || orderModalState.stars < 1 || orderModalState.stars > 5) {
     toast('❗ Dữ liệu không hợp lệ.');
     return;
   }
 
   const formData = new FormData();
-  formData.append('productId', productId);
+  if (productId) formData.append('productId', productId);
+  if (orderItemId) formData.append('orderItemId', orderItemId);
   formData.append('rating', orderModalState.stars);
   formData.append('comment', comment);
   if (mediaFile) {

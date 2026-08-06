@@ -45,12 +45,13 @@ public class ReviewApiController {
     @PostMapping
     public ResponseEntity<ApiResponse<Map<String, Object>>> createReview(
             Authentication authentication,
-            @org.springframework.web.bind.annotation.RequestParam("productId") Integer productId,
+            @org.springframework.web.bind.annotation.RequestParam(value = "orderItemId", required = false) Integer orderItemId,
+            @org.springframework.web.bind.annotation.RequestParam(value = "productId", required = false) Integer productId,
             @org.springframework.web.bind.annotation.RequestParam("rating") Integer rating,
             @org.springframework.web.bind.annotation.RequestParam(value = "comment", required = false) String comment,
             @org.springframework.web.bind.annotation.RequestParam(value = "file", required = false) org.springframework.web.multipart.MultipartFile file) {
         try {
-            Review review = reviewService.createReviewWithMedia(authentication, productId, rating, comment, file);
+            Review review = reviewService.createReviewWithMedia(authentication, orderItemId, productId, rating, comment, file);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success("Đã lưu đánh giá sản phẩm.", reviewData(review)));
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -93,6 +94,9 @@ public class ReviewApiController {
         m.put("repliedAt", review.getRepliedAt());
         m.put("repliedBy", review.getRepliedBy());
         m.put("createdAt", review.getCreatedAt());
+        if (review.getOrderItem() != null) {
+            m.put("orderItemId", review.getOrderItem().getId());
+        }
         if (review.getProduct() != null) {
             m.put("productId", review.getProduct().getId());
             m.put("productName", review.getProduct().getName());

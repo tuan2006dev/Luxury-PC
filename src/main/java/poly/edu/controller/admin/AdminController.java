@@ -27,6 +27,7 @@ public class AdminController {
     private final SupportTicketRepository ticketRepo;
     private final UserRepository userRepository;
     private final AdminLogRepository adminLogRepository;
+    private final poly.edu.service.OrderService orderService;
 
     @GetMapping({ "", "/dashboard" })
     public String dashboard(Model model) {
@@ -87,6 +88,13 @@ public class AdminController {
         adminService.updateOrderStatus(orderId, status);
         logAction(principal, request, "Cập nhật trạng thái đơn hàng: " + status, "Đơn hàng #" + orderId);
 
+        return "redirect:/admin/orders";
+    }
+
+    @PostMapping("/orders/confirm-shipping")
+    public String confirmShipping(@RequestParam Integer orderId, Principal principal, HttpServletRequest request) {
+        poly.edu.entity.Order order = orderService.confirmOrderAndCreateShipping(orderId);
+        logAction(principal, request, "Tạo vận đơn Lalamove: " + order.getTrackingCode(), "Đơn hàng #" + orderId);
         return "redirect:/admin/orders";
     }
 
