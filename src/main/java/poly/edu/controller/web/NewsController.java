@@ -16,6 +16,7 @@ import poly.edu.service.NewsService;
 
 import java.util.List;
 import java.util.Optional;
+import poly.edu.dto.NewsSummaryDto;
 
 @Controller
 @RequestMapping("/news")
@@ -33,10 +34,10 @@ public class NewsController {
                         @RequestParam(name = "category", required = false) Integer categoryId) {
         
         int size = 9; // 9 bài một trang
-        Page<poly.edu.dto.NewsSummaryDto> newsPage = newsService.getPublishedNews(page, size, keyword, categoryId);
+        Page<NewsSummaryDto> newsPage = newsService.getPublishedNews(page, size, keyword, categoryId);
         
         List<NewsCategory> categories = newsCategoryService.getActiveCategories();
-        List<poly.edu.dto.NewsSummaryDto> topViewed = newsService.getTop5MostViewedNews();
+        List<NewsSummaryDto> topViewed = newsService.getTop5MostViewedNews();
 
         model.addAttribute("newsPage", newsPage);
         model.addAttribute("categories", categories);
@@ -60,12 +61,12 @@ public class NewsController {
             model.addAttribute("categories", categories);
             
             // Bài viết xem nhiều
-            List<poly.edu.dto.NewsSummaryDto> topViewed = newsService.getTop5MostViewedNews();
+            List<NewsSummaryDto> topViewed = newsService.getTop5MostViewedNews();
             model.addAttribute("topViewed", topViewed);
             
             // Bài viết liên quan
             Integer catId = news.getCategory() != null ? news.getCategory().getId() : null;
-            List<poly.edu.dto.NewsSummaryDto> related = newsService.getRelatedNews(catId, news.getId());
+            List<NewsSummaryDto> related = newsService.getRelatedNews(catId, news.getId());
             model.addAttribute("relatedNews", related);
             
             return "news/detail";

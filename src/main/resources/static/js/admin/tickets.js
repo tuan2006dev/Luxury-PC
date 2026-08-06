@@ -61,6 +61,13 @@ function connectTicketWs(ticketId) {
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
+                
+                if (data.type === 'SYSTEM' && data.event === 'USER_REQUESTED_CLOSE') {
+                    const content = data.content || 'Khách hàng yêu cầu đóng cuộc trò chuyện.';
+                    appendSystemConfirmClose(ticketId, content);
+                    return;
+                }
+
                 // Only process CUSTOMER messages (admin messages are already shown on send)
                 if (data.sender === 'CUSTOMER' || (data.senderName && data.sender !== 'ADMIN')) {
                     const content = data.content || data.message || '';
@@ -135,6 +142,38 @@ function appendChatBubble(ticketId, senderName, content, time, isAdmin) {
     // Auto-scroll
     const isNearBottom = msgContainer.scrollHeight - msgContainer.clientHeight - msgContainer.scrollTop < 60;
     if (isNearBottom) {
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+    }
+}
+
+function appendSystemConfirmClose(ticketId, content) {
+    const msgContainer = document.getElementById('chat-messages-' + ticketId);
+    if (!msgContainer) return;
+
+    const html = `
+        <div class="chat-bubble-wrapper system-msg" style="text-align: center; margin: 10px 0; width: 100%;">
+            <div style="background:#fff3cd; color:#856404; padding: 12px; border-radius: 8px; font-size: 0.9em; border: 1px solid #ffeeba; display: inline-block; max-width: 80%;">
+                <strong>⚠️ Yêu cầu từ khách hàng</strong><br/>
+                ${escapeHtml(content)}<br/>
+                <button onclick="confirmCloseTicket(${ticketId})" style="margin-top: 10px; background:#dc3545; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:600;">Xác nhận đóng</button>
+            </div>
+        </div>
+    `;
+
+    msgContainer.insertAdjacentHTML('beforeend', html);
+    msgContainer.scrollTop = msgContainer.scrollHeight;
+}
+
+function confirmCloseTicket(id) {
+    updateTicketStatus(id, 'CLOSED');
+    
+    const msgContainer = document.getElementById('chat-messages-' + id);
+    if (msgContainer) {
+        msgContainer.insertAdjacentHTML('beforeend', `
+            <div style="text-align: center; margin: 15px 0; color: #28a745; font-size: 0.9em; font-weight: bold;">
+                <i class="fa-solid fa-check-circle"></i> Đã đóng cuộc trò chuyện thành công.
+            </div>
+        `);
         msgContainer.scrollTop = msgContainer.scrollHeight;
     }
 }

@@ -228,11 +228,66 @@
             </div>
         </div>
         <!-- ============================================== -->
-        <!-- Script for custom confirm/alert popups -->
+        <!-- STATIC HTML FOR SOCKET CHAT V2 (Prevents FOUC on reload) -->
+        <script>
+            if (localStorage.getItem('socket_chat_isOpen') === 'true') {
+                document.documentElement.classList.add('socket-chat-open');
+            }
+        </script>
+        <style>
+            html.socket-chat-open #socketChatBtn { display: none !important; }
+            html.socket-chat-open #socketChatWindow { opacity: 1 !important; transform: translateY(0) scale(1) !important; pointer-events: auto !important; }
+            html:not(.socket-chat-open) #socketChatWindow:not(.open) { opacity: 0 !important; transform: translateY(20px) scale(0.95) !important; pointer-events: none !important; }
+        </style>
+
+        <div class="socket-chat-btn" id="socketChatBtn" title="Hỗ trợ trực tuyến">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+            </svg>
+            <div class="socket-chat-badge" id="socketChatBadge"></div>
+        </div>
+        <div class="socket-chat-window" id="socketChatWindow">
+            <div class="socket-chat-header">
+                <div class="socket-chat-title">
+                    <div class="socket-chat-status" id="socketChatStatus"></div>
+                    LUXURY · <span>HỖ TRỢ</span>
+                </div>
+                <button class="socket-chat-close" id="socketChatClose">✕</button>
+            </div>
+            <div class="socket-chat-ticket-bar" id="socketChatTicketBar" style="display:none; justify-content: space-between; align-items: center;">
+                <span id="socketChatTicketLabel">Ticket #—</span>
+                <div style="display: flex; gap: 12px;">
+                    <span class="new-chat-link" id="socketChatCloseTicketBtn" style="color: #ef4444; font-weight: 500;">Đóng cuộc trò chuyện</span>
+                    <span class="new-chat-link" id="socketChatNewBtn">Tạo mới</span>
+                </div>
+            </div>
+            <div class="socket-chat-setup" id="socketChatSetup">
+                <p>Vui lòng nhập thông tin để bắt đầu cuộc trò chuyện hỗ trợ.</p>
+                <input type="text" class="socket-chat-setup-input" id="socketChatNameInput" placeholder="Họ và tên..." maxlength="30" />
+                <input type="email" class="socket-chat-setup-input" id="socketChatEmailInput" placeholder="Email liên hệ (tuỳ chọn)..." maxlength="50" />
+                <button class="socket-chat-setup-btn" id="socketChatStartBtn">Bắt Đầu Chat</button>
+            </div>
+            <div class="socket-chat-waiting-state" id="socketChatWaitingState">
+                <div class="socket-chat-waiting-title">🟡 Đang tìm nhân viên hỗ trợ...</div>
+                <div class="socket-chat-waiting-subtitle" id="socketChatWaitingSubtitle">Vui lòng chờ trong giây lát.</div>
+                <div class="socket-chat-timer" id="socketChatTimer">00:00</div>
+            </div>
+            <div class="socket-chat-messages" id="socketChatMessages" style="display: none;">
+                <!-- Messages will appear here -->
+            </div>
+            <div class="socket-chat-input-area" id="socketChatInputArea" style="display: none;">
+                <input type="text" class="socket-chat-input" id="socketChatMsgInput" placeholder="Nhập tin nhắn..." autocomplete="off" />
+                <button class="socket-chat-send-btn" id="socketChatSendBtn">GỬI</button>
+            </div>
+        </div>
+        <!-- ============================================== -->
+        <!-- SweetAlert2 (Global for all confirm popups) -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- Script for confirm/alert popups -->
         <script th:src="@{/js/confirm-popup.js}"></script>
 
         <!-- Script for Live Chat Box -->
-        <script th:src="@{/js/socket-chat-v2.js}"></script>
+        <script th:src="@{/js/socket-chat-v2.js?v=17}"></script>
 
         <!-- Script for footer features (modals, etc) -->
         <script th:src="@{/js/layout/footer.js}"></script>

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.SupportTicket;
 import poly.edu.entity.ChatMessage;
 import poly.edu.entity.AdminLog;
+import poly.edu.entity.User;
 import poly.edu.repository.SupportTicketRepository;
 import poly.edu.repository.UserRepository;
 import poly.edu.repository.ChatMessageRepository;
@@ -33,6 +34,23 @@ public class SupportTicketController {
     private final ChatWebSocketHandler chatWebSocketHandler;
 
     // ========================
+    // CUSTOMER: Get available staffs for chat
+    // ========================
+    @GetMapping("/api/tickets/staffs")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, String>>> getStaffs() {
+        List<User> staffs = userRepo.findAllEmployees();
+        List<Map<String, String>> result = new ArrayList<>();
+        for (User u : staffs) {
+            Map<String, String> map = new HashMap<>();
+            map.put("username", u.getUsername());
+            map.put("fullName", u.getFullName() != null ? u.getFullName() : u.getUsername());
+            result.add(map);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // ========================
     // CUSTOMER: Submit ticket via API (from 3D builder modal)
     // ========================
     @PostMapping("/api/tickets/submit")
@@ -50,6 +68,10 @@ public class SupportTicketController {
         ticket.setCategory(body.getOrDefault("category", "GENERAL"));
         ticket.setBuildConfig(body.getOrDefault("buildConfig", null));
         ticket.setStatus("OPEN");
+
+        if (body.containsKey("assignedAdmin") && !body.get("assignedAdmin").trim().isEmpty()) {
+            ticket.setAssignedAdmin(body.get("assignedAdmin").trim());
+        }
 
         // Link to logged-in user if authenticated
         if (auth != null && auth.isAuthenticated()) {
@@ -72,6 +94,35 @@ public class SupportTicketController {
         res.put("success", true);
         res.put("ticketId", ticket.getId());
         res.put("message", "Ticket #" + ticket.getId() + " đã được ghi nhận! Nhân viên sẽ liên hệ với bạn trong 30 phút.");
+        return ResponseEntity.ok(res);
+    }
+
+    // ========================
+    // CUSTOMER: Assign staff to ticket
+    // ========================
+    @PostMapping("/api/tickets/{ticketId}/assign")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> assignTicket(
+            @PathVariable Integer ticketId,
+            @RequestBody Map<String, String> body) {
+        
+        Map<String, Object> res = new HashMap<>();
+        SupportTicket ticket = ticketRepo.findById(ticketId).orElse(null);
+        if (ticket == null) {
+            res.put("success", false);
+            res.put("message", "Ticket not found");
+            return ResponseEntity.badRequest().body(res);
+        }
+
+        if (body.containsKey("assignedAdmin") && !body.get("assignedAdmin").trim().isEmpty()) {
+            ticket.setAssignedAdmin(body.get("assignedAdmin").trim());
+            ticketRepo.save(ticket);
+            res.put("success", true);
+            res.put("message", "Ticket assigned");
+        } else {
+            res.put("success", false);
+            res.put("message", "Missing assignedAdmin");
+        }
         return ResponseEntity.ok(res);
     }
 
@@ -249,7 +300,7 @@ public class SupportTicketController {
         SupportTicket ticket = opt.get();
         
         // Prevent race condition: if already assigned to someone else
-        if (ticket.getAssignedAdmin() != null) {
+        if (ticket.getAssignedAdmin() != null && !ticket.getAssignedAdmin().equals(auth.getName())) {
             res.put("success", false);
             res.put("message", "Ticket đã được nhân viên khác nhận.");
             return ResponseEntity.status(409).body(res);
@@ -291,7 +342,28 @@ public class SupportTicketController {
             ticket.setStatus(newStatus);
             ticketRepo.save(ticket);
             logAction(auth, request, "Cập nhật trạng thái Ticket: " + newStatus, "Ticket #" + id);
+            
+            if ("CLOSED".equals(newStatus)) {
+                chatWebSocketHandler.broadcastSystemEventToTicket(id, "TICKET_CLOSED", "Cuộc trò chuyện đã được đóng hoàn toàn.", "Hệ thống");
+            }
         });
+        res.put("success", true);
+        return ResponseEntity.ok(res);
+    }
+
+    // ========================
+    // CUSTOMER: Request to close ticket
+    // ========================
+    @PostMapping("/api/tickets/{ticketId}/request-close")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> requestCloseTicket(@PathVariable Integer ticketId) {
+        Map<String, Object> res = new HashMap<>();
+        chatWebSocketHandler.broadcastSystemEventToTicket(
+            ticketId,
+            "USER_REQUESTED_CLOSE",
+            "Khách hàng muốn kết thúc cuộc trò chuyện.",
+            "Hệ thống"
+        );
         res.put("success", true);
         return ResponseEntity.ok(res);
     }
@@ -299,12 +371,14 @@ public class SupportTicketController {
     // ========================
     // ADMIN: Delete ticket (Form Submission)
     // ========================
+    @org.springframework.transaction.annotation.Transactional
     @PostMapping("/admin/tickets/delete/{id}")
     public String deleteTicketByPath(
             @PathVariable("id") Integer id,
             Authentication auth,
             HttpServletRequest request) {
-
+            
+        chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(id));
         ticketRepo.deleteById(id);
         logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
 
@@ -314,6 +388,7 @@ public class SupportTicketController {
     // ========================
     // ADMIN: Delete ticket (API AJAX)
     // ========================
+    @org.springframework.transaction.annotation.Transactional
     @PostMapping("/admin/tickets/delete")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> deleteTicket(
@@ -323,6 +398,7 @@ public class SupportTicketController {
 
         Integer id = body.get("id");
         if (id != null) {
+            chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(id));
             ticketRepo.deleteById(id);
             logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
         }
