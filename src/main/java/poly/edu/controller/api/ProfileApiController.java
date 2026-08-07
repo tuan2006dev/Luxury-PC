@@ -274,4 +274,29 @@ public class ProfileApiController {
         response.put("message", "Tài khoản của bạn đã được xóa thành công.");
         return ResponseEntity.ok(response);
     }
+
+    @org.springframework.web.bind.annotation.PostMapping("/check-current-password")
+    public ResponseEntity<Map<String, Object>> checkCurrentPassword(
+            Authentication authentication,
+            @org.springframework.web.bind.annotation.RequestParam("currentPassword") String currentPassword,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+        Map<String, Object> response = new java.util.HashMap<>();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            response.put("valid", false);
+            response.put("message", "Chưa đăng nhập.");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        User user = resolveUser(authentication);
+        if (user == null || user.getPassword() == null) {
+            response.put("valid", false);
+            response.put("message", "Tài khoản chưa khởi tạo mật khẩu.");
+            return ResponseEntity.ok(response);
+        }
+
+        boolean matches = passwordEncoder.matches(currentPassword.trim(), user.getPassword());
+        response.put("valid", matches);
+        response.put("message", matches ? "Mật khẩu chính xác." : "Mật khẩu hiện tại không chính xác.");
+        return ResponseEntity.ok(response);
+    }
 }

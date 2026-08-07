@@ -126,7 +126,7 @@
       bars.forEach(b => b.className = 'pw-bar');
       if (!pw) { lbl.textContent = 'Nhập mật khẩu'; return; }
       let score = 0;
-      if (pw.length >= 8) score++; if (/[A-Z]/.test(pw)) score++; if (/[0-9]/.test(pw)) score++; if (/[^A-Za-z0-9]/.test(pw)) score++;
+      if (pw.length >= 6) score++; if (/[A-Z]/.test(pw)) score++; if (/[0-9]/.test(pw)) score++; if (/[^A-Za-z0-9]/.test(pw)) score++;
       const cls = score <= 1 ? 'weak' : score === 2 ? 'medium' : 'strong';
       for (let i = 0; i < score; i++)bars[i].classList.add(cls);
       lbl.textContent = ['', 'Yếu', 'Yếu', 'Trung bình', 'Mạnh'][score] || '';
@@ -139,7 +139,7 @@
       const pw = document.getElementById('new-pw');
       const pw2 = document.getElementById('new-pw2');
       let ok = true;
-      if (!pw.value || pw.value.length < 8) { pw.classList.add('error'); document.getElementById('err-newpw').classList.add('show'); ok = false; } else { pw.classList.remove('error'); document.getElementById('err-newpw').classList.remove('show'); }
+      if (!pw.value || pw.value.length < 6) { pw.classList.add('error'); document.getElementById('err-newpw').classList.add('show'); ok = false; } else { pw.classList.remove('error'); document.getElementById('err-newpw').classList.remove('show'); }
       if (pw2.value !== pw.value) { pw2.classList.add('error'); document.getElementById('err-newpw2').classList.add('show'); ok = false; } else { pw2.classList.remove('error'); document.getElementById('err-newpw2').classList.remove('show'); }
 
       if (ok) {

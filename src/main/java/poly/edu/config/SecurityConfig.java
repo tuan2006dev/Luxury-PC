@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
@@ -24,11 +22,6 @@ public class SecurityConfig {
         private final poly.edu.security.CustomAuthenticationSuccessHandler successHandler;
 
         private final poly.edu.service.AuthService authService;
-
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
 
         @Bean
         public SecurityContextRepository securityContextRepository() {
@@ -49,15 +42,18 @@ public class SecurityConfig {
                                                                 "/admin/vouchers/**", "/admin/vouchers",
                                                                 "/admin/flash-sales/**", "/admin/flash-sales",
                                                                 "/admin/*/delete/**", "/admin/*/*/delete/**",
-                                                                "/admin/orders/approve-refund", "/admin/orders/confirm-refund",
-                                                                "/admin/orders/recall"
-                                                )
+                                                                "/admin/orders/approve-refund",
+                                                                "/admin/orders/confirm-refund",
+                                                                "/admin/orders/recall")
                                                 .hasRole("ADMIN")
                                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
-                                                 .requestMatchers("/checkout", "/checkout/**", "/cart/checkout", "/cart/checkout/**").authenticated()
+                                                .requestMatchers("/checkout", "/checkout/**", "/cart/checkout",
+                                                                "/cart/checkout/**")
+                                                .authenticated()
                                                 .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp",
                                                                 "/api/forgot-password/**", "/api/newsletter/**",
-                                                                "/api/voucher/**", "/api/user-voucher/**", "/api/cart", "/api/cart/add",
+                                                                "/api/voucher/**", "/api/user-voucher/**", "/api/cart",
+                                                                "/api/cart/add",
                                                                 "/api/products", "/api/products/**", "/api/build/**",
                                                                 "/build-pc/**", "/api/tickets/**",
                                                                 "/api/reviews/**", "/api/wishlist/**",
@@ -107,11 +103,14 @@ public class SecurityConfig {
                 return (request, response, exception) -> {
                         String errorParam = "bad_credentials";
                         Throwable cause = exception.getCause() != null ? exception.getCause() : exception;
-                        String msg = cause != null && cause.getMessage() != null ? cause.getMessage().toLowerCase() : "";
+                        String msg = cause != null && cause.getMessage() != null ? cause.getMessage().toLowerCase()
+                                        : "";
 
                         if (exception instanceof org.springframework.security.authentication.DisabledException ||
-                            exception instanceof org.springframework.security.authentication.LockedException ||
-                            msg.contains("khóa") || msg.contains("vô hiệu hóa") || msg.contains("locked") || msg.contains("disabled")) {
+                                        exception instanceof org.springframework.security.authentication.LockedException
+                                        ||
+                                        msg.contains("khóa") || msg.contains("vô hiệu hóa") || msg.contains("locked")
+                                        || msg.contains("disabled")) {
                                 errorParam = "disabled";
                         }
                         response.sendRedirect("/auth/login?error=" + errorParam);

@@ -23,7 +23,7 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
     @Query("SELECT p FROM Product p JOIN FETCH p.category ORDER BY p.createdAt DESC, p.id DESC")
     List<Product> findTopProducts(org.springframework.data.domain.Pageable pageable);
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.category ORDER BY (SELECT COALESCE(AVG(r.stars), 0.0) FROM Review r WHERE r.product = p) DESC, p.id DESC")
+    @Query("SELECT p FROM Product p JOIN FETCH p.category ORDER BY (SELECT COALESCE(AVG(r.stars), 0.0) FROM Review r WHERE r.product = p) DESC, (SELECT COALESCE(SUM(oi.quantity), 0) FROM OrderItem oi WHERE oi.product = p) DESC, p.id DESC")
     List<Product> findFeaturedProducts(org.springframework.data.domain.Pageable pageable);
 
     @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.stock < 10")

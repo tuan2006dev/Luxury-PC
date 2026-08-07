@@ -14,8 +14,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final ForcePasswordChangeInterceptor forcePasswordChangeInterceptor;
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         exposeDirectory("src/main/resources/static/uploads", "/uploads/**", registry);
@@ -47,6 +45,5 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
         registry.addInterceptor(new poly.edu.config.profiler.ProfilerInterceptor());
-        registry.addInterceptor(forcePasswordChangeInterceptor);
     }
 }

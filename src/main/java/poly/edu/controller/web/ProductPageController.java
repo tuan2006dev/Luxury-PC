@@ -108,15 +108,20 @@ public class ProductPageController {
         model.addAttribute("flashSaleMap", flashSaleMap);
 
         // Sorting
-        org.springframework.data.domain.Sort sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id");
+        org.springframework.data.domain.Sort sortObj = org.springframework.data.domain.Sort
+                .by(org.springframework.data.domain.Sort.Direction.DESC, "id");
         if ("price_asc".equalsIgnoreCase(sort)) {
-            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "price");
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC,
+                    "price");
         } else if ("price_desc".equalsIgnoreCase(sort)) {
-            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "price");
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
+                    "price");
         } else if ("name_asc".equalsIgnoreCase(sort)) {
-            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "name");
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC,
+                    "name");
         } else if ("name_desc".equalsIgnoreCase(sort)) {
-            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "name");
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
+                    "name");
         }
 
         int pageSize = 100;
@@ -128,15 +133,18 @@ public class ProductPageController {
         long totalProducts;
 
         if (Boolean.TRUE.equals(flashSale)) {
-            org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.PageRequest.of(0, 10000, sortObj);
-            List<Product> allMatches = productService.searchProductsPage(cid, min, max, kw, brand, unpaged).getContent();
+            org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.PageRequest.of(0, 10000,
+                    sortObj);
+            List<Product> allMatches = productService.searchProductsPage(cid, min, max, kw, brand, unpaged)
+                    .getContent();
             List<Product> filtered = allMatches.stream()
                     .filter(p -> p != null && flashSaleMap.containsKey(p.getId()))
                     .collect(java.util.stream.Collectors.toList());
 
             totalProducts = filtered.size();
             totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-            if (totalPages < 1) totalPages = 1;
+            if (totalPages < 1)
+                totalPages = 1;
 
             int fromIndex = pageIndex * pageSize;
             int toIndex = Math.min(fromIndex + pageSize, (int) totalProducts);
@@ -146,12 +154,15 @@ public class ProductPageController {
                 products = java.util.Collections.emptyList();
             }
         } else {
-            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(pageIndex, pageSize, sortObj);
-            org.springframework.data.domain.Page<Product> productPage = productService.searchProductsPage(cid, min, max, kw, brand, pageable);
+            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest
+                    .of(pageIndex, pageSize, sortObj);
+            org.springframework.data.domain.Page<Product> productPage = productService.searchProductsPage(cid, min, max,
+                    kw, brand, pageable);
             products = productPage.getContent();
             totalPages = productPage.getTotalPages();
             totalProducts = productPage.getTotalElements();
-            if (totalPages < 1) totalPages = 1;
+            if (totalPages < 1)
+                totalPages = 1;
         }
 
         model.addAttribute("allProducts", products);
@@ -368,7 +379,7 @@ public class ProductPageController {
             }
             targetOrderItem = oiOpt.get();
             if (targetOrderItem.getOrder() == null || targetOrderItem.getOrder().getUser() == null ||
-                !targetOrderItem.getOrder().getUser().getId().equals(uOpt.get().getId())) {
+                    !targetOrderItem.getOrder().getUser().getId().equals(uOpt.get().getId())) {
                 response.put("success", false);
                 response.put("message", "Lượt mua này không thuộc về tài khoản của bạn.");
                 return org.springframework.http.ResponseEntity.status(403).body(response);
@@ -385,10 +396,12 @@ public class ProductPageController {
                 return org.springframework.http.ResponseEntity.status(400).body(response);
             }
         } else {
-            java.util.List<poly.edu.entity.OrderItem> userItems = orderItemDAO.findCompletedOrderItemsByUserAndProduct(uOpt.get().getId(), id);
+            java.util.List<poly.edu.entity.OrderItem> userItems = orderItemDAO
+                    .findCompletedOrderItemsByUserAndProduct(uOpt.get().getId(), id);
             if (userItems == null || userItems.isEmpty()) {
                 response.put("success", false);
-                response.put("message", "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
+                response.put("message",
+                        "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
                 return org.springframework.http.ResponseEntity.status(403).body(response);
             }
 
