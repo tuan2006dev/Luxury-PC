@@ -30,6 +30,7 @@
     let currentTicketId = parseInt(localStorage.getItem('socket_chat_ticket_id')) || null;
     let ticketSystemAvailable = null; // null = unknown, true/false after first call
     let availableStaffs = [];
+    let adminJoined = false;
 
     // Fetch staffs and save to variable
     fetch('/api/tickets/staffs')
@@ -124,6 +125,7 @@
         messagesDiv.innerHTML = '';
         ticketBar.style.display = 'none';
         stopWaitingTimer();
+        adminJoined = false;
 
         if (ws) {
             ws.close();
@@ -146,6 +148,7 @@
         messagesDiv.innerHTML = '';
         ticketBar.style.display = 'none';
         stopWaitingTimer();
+        adminJoined = false;
         
         // Close existing WebSocket
         if (ws) {
@@ -304,10 +307,33 @@
             if (!response.ok) return;
 
             const messages = await response.json();
-            if (!messages || messages.length === 0) return;
+            if (!messages || messages.length === 0) {
+                if (!adminJoined) {
+                    setTimeout(() => {
+                        if (!messagesDiv.innerHTML.includes('Trợ lý ảo Luxury PC')) {
+                            appendWelcomeMenu();
+                        }
+                    }, 100);
+                }
+                return;
+            }
 
             // Clear existing messages and re-render from DB
             messagesDiv.innerHTML = '';
+            
+            // Determine adminJoined status first
+            messages.forEach(msg => {
+                if (msg.sender === 'ADMIN' && msg.senderName !== 'Luxe Support Bot 🤖' && msg.senderName !== 'AI Assistant' && msg.senderName !== 'Luxury Bot 🤖') {
+                    adminJoined = true;
+                }
+            });
+
+            // Append welcome menu at the TOP if admin hasn't joined
+            if (!adminJoined) {
+                appendWelcomeMenu();
+            }
+            
+            // Append all actual messages below the welcome menu
             messages.forEach(msg => {
                 const isOutgoing = msg.sender === 'CUSTOMER';
                 appendMessage(
@@ -354,16 +380,20 @@
                 // Handle system messages (e.g., ADMIN_JOINED)
                 if (data.type === 'SYSTEM') {
                     if (data.event === 'ADMIN_JOINED') {
+                        adminJoined = true;
                         stopWaitingTimer();
                         appendSystemMessage(data.content || `Nhân viên ${data.adminName || 'hỗ trợ'} đã tham gia cuộc trò chuyện.`);
                     } else if (data.event === 'TICKET_CLOSED') {
+                        adminJoined = false;
                         appendSystemMessage(data.content || 'Cuộc trò chuyện đã được đóng hoàn toàn.');
                         setTimeout(() => {
                             closeChatLocally();
                             if(typeof showToast === 'function') { showToast('Đã kết thúc và đóng cuộc trò chuyện.'); } else { alert('Đã kết thúc và đóng cuộc trò chuyện.'); }
                         }, 2000);
                     } else if (data.event === 'AI_WAITING') {
-                        appendSystemMessage(data.content);
+                        document.querySelector('.socket-chat-waiting-title').textContent = '🤖 Đang kết nối AI...';
+                        document.getElementById('socketChatWaitingSubtitle').textContent = data.content;
+                        startWaitingTimer();
                     } else if (data.content && !data.content.includes('đã tham gia')) {
                         appendSystemMessage(data.content);
                     }
@@ -372,7 +402,7 @@
 
                 if (data.type === 'AI_REPLY') {
                     stopWaitingTimer();
-                    appendMessage(data.adminName || 'AI Assistant', data.content, false);
+                    appendMessage(data.adminName || 'Luxury Bot 🤖', data.content, false);
                     return;
                 }
 
@@ -420,46 +450,8 @@
         }, 3000);
     }
 
-    function triggerIndexChatBotReply(userMessage) {
-        setTimeout(async () => {
-            let botReply = '';
-            const msg = userMessage.toLowerCase();
-            
-            if (msg.includes('giá') || msg.includes('bao nhiêu') || msg.includes('tiền') || msg.includes('rẻ') || msg.includes('đắt')) {
-                botReply = 'Dạ chào bạn, bảng giá linh kiện đã được tối ưu tốt nhất. Bạn có nhu cầu thương lượng thêm hoặc cần chiết khấu cho đơn hàng lớn vui lòng liên hệ hotline 1900 8888 hoặc để lại SĐT nha! 💰';
-            } else if (msg.includes('ship') || msg.includes('vận chuyển') || msg.includes('giao hàng') || msg.includes('ship COD')) {
-                botReply = 'Dạ Luxury PC hỗ trợ miễn phí vận chuyển (Free Ship) toàn quốc cho mọi cấu hình PC build và linh kiện trên 1 triệu đồng ạ! ✈️';
-            } else if (msg.includes('bảo hành') || msg.includes('hỏng') || msg.includes('sửa') || msg.includes('lỗi')) {
-                botReply = 'Tất cả linh kiện tại Luxury PC đều là hàng chính hãng và được bảo hành từ 36 tháng. Lỗi 1 đổi 1 trong 30 ngày đầu tiên nếu có lỗi phần cứng từ nhà sản xuất! 🛡️';
-            } else if (msg.includes('địa chỉ') || msg.includes('ở đâu') || msg.includes('cửa hàng') || msg.includes('showroom')) {
-                botReply = 'Showroom chính thức của Luxury PC đặt tại: Số 12 Trịnh Văn Bô, Nam Từ Liêm, Hà Nội. Mở cửa từ 8h00 - 21h30 tất cả các ngày trong tuần. Rất hân hạnh được đón tiếp bạn! 📍';
-            } else if (msg.includes('còn hàng') || msg.includes('hết hàng') || msg.includes('stock')) {
-                botReply = 'Dạ hầu hết các linh kiện hiển thị trên website đều có sẵn hàng. Nhân viên sẽ check kho thực tế và liên hệ chốt đơn với bạn ngay sau khi bạn tạo yêu cầu ạ. 📦';
-            } else {
-                botReply = 'Cảm ơn bạn đã nhắn tin cho ban hỗ trợ khách hàng Luxury PC. Nhân viên tư vấn đang kiểm tra thông tin và sẽ phản hồi chi tiết tới bạn trong giây lát! Bạn vui lòng đợi 1-2 phút nhé. 💬';
-            }
-
-            // Append directly to the UI
-            appendMessage('Luxe Support Bot 🤖', botReply, false);
-
-            // Persist to DB if ticket is available
-            if (currentTicketId && ticketSystemAvailable) {
-                try {
-                    await fetch(`/api/tickets/${currentTicketId}/messages`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            sender: 'ADMIN',
-                            senderName: 'Luxe Support Bot 🤖',
-                            message: botReply
-                        })
-                    });
-                } catch (e) {
-                    console.error('[socket-chat] Error saving bot response:', e);
-                }
-            }
-        }, 1200); // 1.2s delay for natural response
-    }
+    // Mock AI has been removed to avoid duplicate AI messages.
+    // The backend Gemini AI handles all AI inquiries.
 
     // Send Message
     sendBtn.addEventListener('click', sendMessage);
@@ -524,7 +516,7 @@
             senderName: username,
             content: text,
             type: 'CHAT',
-            isAiRequest: true // <--- Always trigger AI for now
+            isAiRequest: !adminJoined
         };
 
         ws.send(JSON.stringify(msgPayload));
@@ -553,13 +545,18 @@
     
     function handleQuickReplyClick(text, isAiReq) {
         if (text === '🧑‍💻 Gặp nhân viên hỗ trợ') {
-            appendMessage(username, text, true);
-            
+            if (adminJoined) {
+                if(typeof showToast === 'function') { showToast('Nhân viên đã tham gia cuộc trò chuyện rồi ạ.'); } else { alert('Nhân viên đã tham gia cuộc trò chuyện rồi ạ.'); }
+                return;
+            }
+            if (waitingStateDiv.classList.contains('active') && text === '🧑‍💻 Gặp nhân viên hỗ trợ') {
+                if(typeof showToast === 'function') { showToast('Yêu cầu của bạn đang được kết nối, vui lòng chờ.'); } else { alert('Yêu cầu của bạn đang được kết nối, vui lòng chờ.'); }
+                return;
+            }
             document.querySelector('.socket-chat-waiting-title').textContent = '🟡 Đang tìm nhân viên...';
             document.getElementById('socketChatWaitingSubtitle').textContent = 'Vui lòng chờ trong giây lát.';
             startWaitingTimer();
             appendSystemMessage('Đã gửi yêu cầu đến nhân viên hỗ trợ. Vui lòng chờ trong giây lát...');
-            return;
         }
         
         // Send as normal message
@@ -573,7 +570,7 @@
                 senderName: username,
                 content: text,
                 type: 'CHAT',
-                isAiRequest: isAiReq
+                isAiRequest: adminJoined ? false : isAiReq
             };
             ws.send(JSON.stringify(msgPayload));
             
@@ -589,9 +586,7 @@
                 }).catch(() => {});
             }
             
-            if (!isAiReq) {
-                triggerIndexChatBotReply(text);
-            }
+            // Removed redundant mock AI trigger
         }
     }
 
@@ -607,9 +602,9 @@
                 </div>
                 <div style="display:flex; flex-direction:column; gap:5px;">
                     <button class="welcome-menu-btn" data-ai="true" data-text="🤖 Nhờ AI Tư vấn Cấu hình" style="border: 1px solid #10b981; color: #10b981; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">🤖 Nhờ AI Tư vấn Cấu hình</button>
-                    <button class="welcome-menu-btn" data-ai="false" data-text="Tư vấn cấu hình PC" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Tư vấn cấu hình PC</button>
-                    <button class="welcome-menu-btn" data-ai="false" data-text="Hỏi về chính sách bảo hành" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Hỏi về chính sách bảo hành</button>
-                    <button class="welcome-menu-btn" data-ai="false" data-text="Trợ giúp giao hàng, vận chuyển" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Trợ giúp giao hàng, vận chuyển</button>
+                    <button class="welcome-menu-btn" data-ai="true" data-text="Tư vấn cấu hình PC" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Tư vấn cấu hình PC</button>
+                    <button class="welcome-menu-btn" data-ai="true" data-text="Hỏi về chính sách bảo hành" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Hỏi về chính sách bảo hành</button>
+                    <button class="welcome-menu-btn" data-ai="true" data-text="Trợ giúp giao hàng, vận chuyển" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Trợ giúp giao hàng, vận chuyển</button>
                     <button class="welcome-menu-btn" data-ai="false" data-text="🧑‍💻 Gặp nhân viên hỗ trợ" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">🧑‍💻 Gặp nhân viên hỗ trợ</button>
                 </div>
             </div>
@@ -640,7 +635,7 @@
     function appendMessage(sender, content, isOutgoing, timestamp) {
         const msgEl = document.createElement('div');
         msgEl.className = `socket-chat-msg ${isOutgoing ? 'outgoing' : 'incoming'}`;
-        if (sender === 'AI Assistant') {
+        if (sender === 'AI Assistant' || sender === 'Luxury Bot 🤖' || sender === 'Luxe Support Bot 🤖') {
             msgEl.style.border = '1px solid #10b981';
             msgEl.style.backgroundColor = '#f0fdf4';
         }

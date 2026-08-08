@@ -121,7 +121,7 @@
                     <div class="input-group full" th:if="${product.image != null}">
                         <label>Ảnh hiện tại:</label>
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <img th:src="@{${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}}"
+                            <img th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}"
                                 th:alt="${product.name}"
                                 onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';"
                                 style="width:100px; height:100px; object-fit:contain; border:1px solid var(--gold); border-radius:4px; padding:2px; background:#fff;">
@@ -157,7 +157,7 @@
                             <td>
                                 <div class="product-img">
                                     <img th:if="${p.image != null}"
-                                        th:src="@{${p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image}}"
+                                        th:src="${p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image}"
                                         th:alt="${p.name}"
                                         onerror="this.onerror=null; this.src='https://placehold.co/50x50/111/c9a84c?text=Error';"
                                         style="width:100%; height:100%; object-fit:contain; border-radius:inherit; border:none; padding:2px;">

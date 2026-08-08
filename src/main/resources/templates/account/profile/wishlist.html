@@ -11,7 +11,7 @@
             <div class="wl-card" th:each="wishitem : ${wishlistItems}">
               <div class="wl-img">
                 <img
-                  th:src="@{${(wishitem.product.image != null && !wishitem.product.image.isEmpty()) ? (wishitem.product.image.startsWith('http') ? wishitem.product.image : '/images/products/' + wishitem.product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}}"
+                  th:src="${(wishitem.product.image != null && !wishitem.product.image.isEmpty()) ? (wishitem.product.image.startsWith('http') ? wishitem.product.image : '/images/products/' + wishitem.product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}"
                   th:alt="${wishitem.product.name}"
                   onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';"
                   style="width: 100%; height: 100%; object-fit: contain; padding: 10px;" />

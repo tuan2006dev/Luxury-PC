@@ -9,7 +9,13 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, In
 
     List<SupportTicket> findAllByOrderByCreatedAtDesc();
 
-    List<SupportTicket> findByStatusOrderByCreatedAtDesc(String status);
+    List<SupportTicket> findTop100ByOrderByCreatedAtDesc();
+
+    List<SupportTicket> findTop100ByStatusOrderByCreatedAtDesc(String status);
+    
+    List<SupportTicket> findTop100ByStatusInOrderByCreatedAtDesc(List<String> statuses);
+
+    List<SupportTicket> findByStatusInAndCreatedAtBefore(List<String> statuses, java.time.LocalDateTime date);
 
     List<SupportTicket> findByCustomerEmailOrderByCreatedAtDesc(String email);
 

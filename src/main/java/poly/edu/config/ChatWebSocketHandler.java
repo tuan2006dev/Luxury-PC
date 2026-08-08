@@ -13,6 +13,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import poly.edu.repository.ChatMessageRepository;
+import poly.edu.entity.ChatMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Autowired
     private GeminiAIService geminiAIService;
+
+    @Autowired
+    private ChatMessageRepository chatMessageRepo;
+
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -73,17 +82,26 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             final String query = userContent;
             
             // Send waiting status to user
-            broadcastSystemEventToTicket(finalTicketId, "AI_WAITING", "🤖 AI đang suy nghĩ...", "AI Assistant");
+            broadcastSystemEventToTicket(finalTicketId, "AI_WAITING", "🤖 AI đang suy nghĩ...", "Luxury Bot 🤖");
             
-            new Thread(() -> {
+            executorService.submit(() -> {
                 String aiReply = geminiAIService.getPCAdvice(query);
                 
                 try {
+                    if (finalTicketId != null) {
+                        ChatMessage aiMsg = new ChatMessage();
+                        aiMsg.setTicketId(finalTicketId);
+                        aiMsg.setSender("ADMIN");
+                        aiMsg.setSenderName("Luxury Bot 🤖");
+                        aiMsg.setMessage(aiReply);
+                        chatMessageRepo.save(aiMsg);
+                    }
+
                     Map<String, Object> replyMap = new java.util.HashMap<>();
                     replyMap.put("type", "AI_REPLY");
                     replyMap.put("content", aiReply);
                     replyMap.put("ticketId", finalTicketId);
-                    replyMap.put("adminName", "AI Assistant");
+                    replyMap.put("adminName", "Luxury Bot 🤖");
                     
                     String replyPayload = objectMapper.writeValueAsString(replyMap);
                     TextMessage replyMessage = new TextMessage(replyPayload);
@@ -105,21 +123,23 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 } catch (Exception e) {
                     log.error("Error creating AI reply payload", e);
                 }
-            }).start();
+            });
             // Don't return here so the user's message is still broadcasted to the room
         }
         
         // Broadcast the message to all matching sessions (including the sender's other tabs)
+        broadcastToTicket(msgTicketId, new TextMessage(payload));
+    }
+
+    private void broadcastToTicket(Integer ticketId, TextMessage msg) {
+        if (ticketId == null) return;
         synchronized (sessions) {
             for (WebSocketSession s : sessions) {
                 if (s.isOpen()) {
                     Integer sTicketId = (Integer) s.getAttributes().get("ticketId");
-                    
-                    // If ticketId is present, send only to matching ticketId sessions.
-                    // If ticketId is null, send only to other general chat sessions.
-                    if (Objects.equals(sTicketId, msgTicketId)) {
+                    if (Objects.equals(sTicketId, ticketId)) {
                         try {
-                            s.sendMessage(new TextMessage(payload));
+                            s.sendMessage(msg);
                         } catch (IOException e) {
                             log.error("Error broadcasting text message", e);
                         }

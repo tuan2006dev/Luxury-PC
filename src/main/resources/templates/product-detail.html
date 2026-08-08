@@ -41,11 +41,11 @@
                             Hàng</span>
                     </div>
                     <img id="main-image"
-                        th:src="@{${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}}"
+                        th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}"
                         th:alt="${product.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                 </div>
                 <div class="pd-thumbnails">
-                    <img th:src="@{${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}}"
+                    <img th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}"
                         class="active" onclick="changeMainImage(this.src, this)"
                         onerror="this.onerror=null; this.src='/images/placeholder.png';">
                 </div>
@@ -376,7 +376,7 @@
                 style="height: 350px; display: flex; flex-direction: column; background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.2s; box-sizing: border-box;">
                 <div class="product-card-img"
                     style="height: 130px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; flex-shrink: 0;">
-                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                    <img th:src="${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}"
                         th:alt="${p.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;"
                         onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                 </div>
