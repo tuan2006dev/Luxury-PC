@@ -5,6 +5,9 @@ import poly.edu.entity.Review;
 import java.util.List;
 
 public interface ReviewDAO extends JpaRepository<Review, Integer> {
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"user", "product", "orderItem"})
+    List<Review> findAllByOrderByCreatedAtDesc();
+
     @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"user"})
     List<Review> findTop10ByOrderByCreatedAtDesc();
     List<Review> findByProductIdOrderByCreatedAtDesc(Integer productId);

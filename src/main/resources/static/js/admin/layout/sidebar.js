@@ -37,7 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
             '/admin/orders': 'nav-orders',
             '/admin/account': 'nav-account',
             '/admin/vouchers': 'nav-vouchers',
-            '/admin/tickets': 'nav-tickets'
+            '/admin/tickets': 'nav-tickets',
+            '/admin/reviews': 'nav-reviews'
         };
 
         let activeId = null;

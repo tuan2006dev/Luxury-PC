@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Đánh Giá — Luxury PC Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/reviews.css}" />
+</head>
+
+<body>
+    <!-- SIDEBAR -->
+    <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
+            <div class="title">
+                <h1 style="font-size: 1.6rem; margin: 0; color: #0f172a;">
+                    <i class="fa-solid fa-star" style="color:#f59e0b; margin-right:0.6rem;"></i>
+                    <span>Quản Lý Đánh Giá Sản Phẩm</span>
+                </h1>
+                <p style="color: var(--muted); font-size: 0.85rem; margin: 4px 0 0 0;">Xem, phản hồi và quản lý phản hồi
+                    đánh giá của khách hàng</p>
+            </div>
+            <div th:replace="~{admin/layout/header :: adminProfile}"></div>
+        </div>
+
+        <!-- Notification Banners -->
+        <div th:if="${message}"
+            style="padding: 12px 16px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; border-radius: 8px; margin-bottom: 1.25rem; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-circle-check"></i> <span th:text="${message}">Thông báo</span>
+        </div>
+        <div th:if="${error}"
+            style="padding: 12px 16px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; border-radius: 8px; margin-bottom: 1.25rem; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${error}">Thông báo lỗi</span>
+        </div>
+
+        <!-- Reviews Table Card -->
+        <div class="table-card">
+            <div class="table-h"
+                style="display: flex; flex-direction: column; gap: 0.85rem; padding: 1.1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+
+                <!-- Row 1: Title + Count + Inline Stats Chips (Left) AND Search Bar (Right) -->
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 1rem;">
+                    <!-- Left Side: Title & Inline Stats Chips -->
+                    <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
+                        <h2
+                            style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #0f172a; white-space: nowrap;">
+                            Danh Sách Đánh Giá
+                        </h2>
+                        <span style="font-size: 0.82rem; color: #64748b; white-space: nowrap;">
+                            (Tìm thấy <strong th:text="${reviews.size()}">0</strong> đánh giá)
+                        </span>
+
+                        <!-- Inline Stats Chips -->
+                        <div class="review-stats-inline" style="margin-left: 0.25rem;">
+                            <div class="rstat-chip total" title="Tổng số bài đánh giá">
+                                <i class="fa-solid fa-comments"></i>
+                                <span>Tổng: <strong th:text="${totalReviews}">0</strong></span>
+                            </div>
+                            <div class="rstat-chip rating" title="Điểm đánh giá trung bình">
+                                <i class="fa-solid fa-star"></i>
+                                <span>ĐTB: <strong th:text="${avgRating}">0.0</strong> ★</span>
+                            </div>
+                            <div class="rstat-chip pending" title="Bài đánh giá chưa phản hồi">
+                                <i class="fa-solid fa-clock"></i>
+                                <span>Chờ: <strong th:text="${pendingCount}">0</strong></span>
+                            </div>
+                            <div class="rstat-chip replied" title="Bài đánh giá đã phản hồi">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Đã xong: <strong th:text="${repliedCount}">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Search Bar Component -->
+                    <div style="width: 320px; max-width: 100%;">
+                        <div
+                            th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/reviews', keyword=${keyword})}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Filter Tabs Bar (Full Width across bottom) -->
+                <div style="width: 100%; display: flex; align-items: center;">
+                    <div class="filter-bar"
+                        style="margin-bottom: 0; padding: 0.35rem 0.5rem; box-shadow: none; border-radius: 8px; width: 100%; justify-content: flex-start;">
+                        <!-- Status filters -->
+                        <a th:href="@{/admin/reviews(status='ALL', keyword=${keyword}, star=${selectedStar})}"
+                            class="filter-tab"
+                            th:classappend="${selectedStatus == 'ALL' or selectedStatus == null} ? 'active' : ''">
+                            <i class="fa-solid fa-list"></i> <span>Tất cả</span>
+                        </a>
+                        <a th:href="@{/admin/reviews(status='PENDING', keyword=${keyword}, star=${selectedStar})}"
+                            class="filter-tab" th:classappend="${selectedStatus == 'PENDING'} ? 'active' : ''">
+                            <i class="fa-solid fa-clock"></i> <span>Chờ (<span
+                                    th:text="${pendingCount}">0</span>)</span>
+                        </a>
+                        <a th:href="@{/admin/reviews(status='REPLIED', keyword=${keyword}, star=${selectedStar})}"
+                            class="filter-tab" th:classappend="${selectedStatus == 'REPLIED'} ? 'active' : ''">
+                            <i class="fa-solid fa-reply"></i> <span>Đã phản hồi (<span
+                                    th:text="${repliedCount}">0</span>)</span>
+                        </a>
+
+                        <div class="filter-divider"></div>
+
+                        <!-- Star rating filters -->
+                        <a th:href="@{/admin/reviews(star=5, status=${selectedStatus}, keyword=${keyword})}"
+                            class="filter-tab" th:classappend="${selectedStar == 5} ? 'active' : ''">
+                            <span>5 ★</span> (<span th:text="${star5Count}">0</span>)
+                        </a>
+                        <a th:href="@{/admin/reviews(star=4, status=${selectedStatus}, keyword=${keyword})}"
+                            class="filter-tab" th:classappend="${selectedStar == 4} ? 'active' : ''">
+                            <span>4 ★</span> (<span th:text="${star4Count}">0</span>)
+                        </a>
+                        <a th:href="@{/admin/reviews(star=3, status=${selectedStatus}, keyword=${keyword})}"
+                            class="filter-tab" th:classappend="${selectedStar == 3} ? 'active' : ''">
+                            <span>3 ★</span> (<span th:text="${star3Count}">0</span>)
+                        </a>
+                        <a th:href="@{/admin/reviews(star=2, status=${selectedStatus}, keyword=${keyword})}"
+                            class="filter-tab" th:classappend="${selectedStar == 2} ? 'active' : ''">
+                            <span>2 ★</span> (<span th:text="${star2Count}">0</span>)
+                        </a>
+                        <a th:href="@{/admin/reviews(star=1, status=${selectedStatus}, keyword=${keyword})}"
+                            class="filter-tab" th:classappend="${selectedStar == 1} ? 'active' : ''">
+                            <span>1 ★</span> (<span th:text="${star1Count}">0</span>)
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="width: 6%;">Mã</th>
+                            <th style="width: 14%;">Khách Hàng</th>
+                            <th style="width: 20%;">Sản Phẩm</th>
+                            <th style="width: 28%;">Đánh Giá & Nội Dung</th>
+                            <th style="width: 15%;">Trạng Thái & Phản Hồi</th>
+                            <th style="width: 8%; text-align: center;">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${reviews == null or reviews.empty}">
+                            <td colspan="6" style="text-align: center; padding: 3rem 1rem !important; color: #64748b;">
+                                <i class="fa-solid fa-inbox"
+                                    style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #cbd5e1; display: block;"></i>
+                                Không có đánh giá nào phù hợp với bộ lọc.
+                            </td>
+                        </tr>
+                        <tr th:each="r : ${reviews}">
+                            <!-- ID & Date -->
+                            <td>
+                                <div style="font-weight: 700; color: #0f172a;" th:text="'#' + ${r.id}">#1</div>
+                                <div style="font-size: 0.72rem; color: #64748b; margin-top: 2px;"
+                                    th:text="${r.createdAt != null ? #temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm') : '—'}">
+                                    01/01/2026
+                                </div>
+                            </td>
+
+                            <!-- User Info -->
+                            <td>
+                                <div class="user-info-box">
+                                    <div class="user-avatar"
+                                        th:text="${r.user != null and r.user.fullName != null and !r.user.fullName.isBlank() ? #strings.substring(r.user.fullName, 0, 1) : (r.user != null ? #strings.substring(r.user.username, 0, 1) : 'K')}">
+                                        U
+                                    </div>
+                                    <div class="user-details">
+                                        <div class="name"
+                                            th:text="${r.user != null ? (r.user.fullName != null and !r.user.fullName.isBlank() ? r.user.fullName : r.user.username) : 'Khách Ẩn Danh'}">
+                                            Guest</div>
+                                        <div class="sub"
+                                            th:text="${r.user != null and r.user.email != null ? r.user.email : '—'}">
+                                            user@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Product Info -->
+                            <td>
+                                <div class="product-info-box">
+                                    <img th:src="${r.product != null and r.product.image != null ? r.product.image : '/images/logo.svg'}"
+                                        class="product-thumb" alt="Product" onerror="this.src='/images/logo.svg';" />
+                                    <a th:href="${r.product != null ? '/product/' + r.product.id : '#'}" target="_blank"
+                                        class="product-name-link"
+                                        th:text="${r.product != null ? r.product.name : 'Sản phẩm đã xóa'}">
+                                        Tên sản phẩm
+                                    </a>
+                                </div>
+                            </td>
+
+                            <!-- Star Rating & Review Content -->
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <div class="star-rating">
+                                        <i th:each="i : ${#numbers.sequence(1, 5)}" class="fa-solid fa-star"
+                                            th:style="${i <= (r.stars != null ? r.stars : 5)} ? 'color:#f59e0b;' : 'color:#e2e8f0;'"></i>
+                                    </div>
+                                    <span class="star-score-badge"
+                                        th:text="${r.stars != null ? r.stars + ' / 5' : '5 / 5'}">5 / 5</span>
+                                </div>
+
+                                <div class="review-text"
+                                    th:text="${r.content != null and !r.content.isBlank() ? r.content : '(Khách hàng không để lại nhận xét bằng lời)'}">
+                                    Nội dung đánh giá...
+                                </div>
+
+                                <!-- Attachments (Image / Video) -->
+                                <div class="review-media-group"
+                                    th:if="${(r.image != null and !r.image.isBlank()) or (r.video != null and !r.video.isBlank())}">
+                                    <button type="button" class="media-preview-btn"
+                                        th:if="${r.image != null and !r.image.isBlank()}"
+                                        th:attr="onclick='showImageModal(\'' + ${r.image} + '\')'"
+                                        title="Xem ảnh đính kèm">
+                                        <img th:src="${r.image}" alt="Attached" />
+                                    </button>
+
+                                    <a th:href="${r.video}" target="_blank" class="media-preview-btn video-btn"
+                                        th:if="${r.video != null and !r.video.isBlank()}" title="Xem video đính kèm">
+                                        <i class="fa-solid fa-circle-play" style="font-size: 1.2rem;"></i> Video
+                                    </a>
+                                </div>
+                            </td>
+
+                            <!-- Status & Admin Reply Box -->
+                            <td>
+                                <div th:if="${r.replyContent != null and !r.replyContent.isBlank()}">
+                                    <span class="status-chip replied"><i class="fa-solid fa-check"></i> Đã phản
+                                        hồi</span>
+                                    <div class="admin-reply-box">
+                                        <div class="admin-reply-meta">
+                                            <span class="admin-reply-author"
+                                                th:text="${r.repliedBy != null ? r.repliedBy : 'Staff'}">Admin</span>
+                                            <span class="admin-reply-time"
+                                                th:text="${r.repliedAt != null ? #temporals.format(r.repliedAt, 'dd/MM HH:mm') : ''}">12/05</span>
+                                        </div>
+                                        <div class="admin-reply-text" th:text="${r.replyContent}">Nội dung phản hồi...
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div th:if="${r.replyContent == null or r.replyContent.isBlank()}">
+                                    <span class="status-chip pending"><i class="fa-solid fa-clock"></i> Chờ phản
+                                        hồi</span>
+                                    <div
+                                        style="font-size: 0.78rem; color: #94a3b8; margin-top: 6px; font-style: italic;">
+                                        Chưa có phản hồi từ shop</div>
+                                </div>
+                            </td>
+
+                            <!-- Action Buttons -->
+                            <td>
+                                <div class="btn-action-group">
+                                    <button type="button" class="btn-reply"
+                                        th:attr="data-id=${r.id}, data-name=${r.user != null ? (r.user.fullName != null ? r.user.fullName : r.user.username) : 'Khách'}, data-stars=${r.stars}, data-content=${r.content}, data-reply=${r.replyContent}"
+                                        onclick="openReplyModal(this)"
+                                        th:title="${r.replyContent != null and !r.replyContent.isBlank()} ? 'Chỉnh sửa phản hồi' : 'Gửi phản hồi'">
+                                        <i class="fa-solid fa-reply"></i>
+                                        <span
+                                            th:text="${r.replyContent != null and !r.replyContent.isBlank()} ? 'Sửa' : 'Trả lời'">Trả
+                                            lời</span>
+                                    </button>
+
+                                    <form th:action="@{/admin/reviews/delete/{id}(id=${r.id})}" method="post"
+                                        onsubmit="return window.confirmDelete(this, 'Xác nhận xoá đánh giá này? Hành động này không thể hoàn tác.');"
+                                        style="display: inline-block; margin: 0;">
+                                        <button type="submit" class="btn-delete-icon" title="Xóa bài đánh giá">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Modal -->
+    <div id="replyModal" class="modal-overlay"
+        style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="reply-modal-content">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; margin-bottom: 1rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 0;" id="modalTitle">
+                    <i class="fa-solid fa-reply" style="color: #0066CC; margin-right: 6px;"></i> Phản Hồi Đánh Giá
+                </h3>
+                <button type="button" onclick="closeReplyModal()"
+                    style="background: none; border: none; font-size: 1.3rem; color: #94a3b8; cursor: pointer;">&times;</button>
+            </div>
+
+            <!-- Customer Comment Summary Box -->
+            <div
+                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 4px;">
+                    <span id="modalCustomerName">Khách hàng</span> • <span id="modalStarScore" style="color: #f59e0b;">5
+                        ★</span>
+                </div>
+                <div id="modalCustomerComment" style="font-size: 0.85rem; color: #1e293b; font-style: italic;">"Nội dung
+                    nhận xét..."</div>
+            </div>
+
+            <!-- Reply Form -->
+            <form th:action="@{/admin/reviews/reply}" method="post" id="replyForm">
+                <input type="hidden" name="reviewId" id="modalReviewId" value="" />
+
+                <label
+                    style="display: block; font-weight: 600; font-size: 0.85rem; color: #334155; margin-bottom: 4px;">
+                    Nội dung phản hồi từ Shop:
+                </label>
+
+                <!-- Quick Response Templates -->
+                <div class="quick-templates">
+                    <button type="button" class="template-btn"
+                        onclick="applyTemplate('Cảm ơn bạn đã tin tưởng và mua sắm tại Luxury PC! Rất mong được phục vụ quý khách trong những lần sau. ❤️')">
+                        ✨ Cảm ơn tin tưởng
+                    </button>
+                    <button type="button" class="template-btn"
+                        onclick="applyTemplate('Luxury PC xin chân thành cảm ơn phản hồi từ bạn. Chúc bạn có trải nghiệm tuyệt vời cùng sản phẩm!')">
+                        🌟 Trải nghiệm sản phẩm
+                    </button>
+                    <button type="button" class="template-btn"
+                        onclick="applyTemplate('Luxury PC rất tiếc vì trải nghiệm chưa hoàn hảo này. Bộ phận CSKH sẽ chủ động liên hệ để hỗ trợ bạn ngay ạ!')">
+                        ⚠️ Hỗ trợ sự cố
+                    </button>
+                </div>
+
+                <textarea name="replyContent" id="modalReplyTextarea" rows="4" required
+                    placeholder="Nhập câu trả lời phản hồi cho khách hàng..."
+                    style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 0.875rem; color: #0f172a; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.25rem;">
+                    <button type="button" onclick="closeReplyModal()"
+                        style="padding: 8px 16px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">
+                        Hủy
+                    </button>
+                    <button type="submit"
+                        style="padding: 8px 20px; border: none; background: #0066CC; color: #ffffff; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-paper-plane"></i> <span>Gửi phản hồi</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image Lightbox Modal -->
+    <div id="imageModal"
+        style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 10000; align-items: center; justify-content: center; cursor: pointer;"
+        onclick="closeImageModal()">
+        <img id="imageModalTarget" src="" alt="Full view"
+            style="max-width: 90%; max-height: 90vh; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+    </div>
+
+    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
+
+    <script>
+        function openReplyModal(btn) {
+            const id = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name') || 'Khách hàng';
+            const stars = btn.getAttribute('data-stars') || '5';
+            const content = btn.getAttribute('data-content') || '(Khách không để lại lời nhắn)';
+            const reply = btn.getAttribute('data-reply') || '';
+
+            document.getElementById('modalReviewId').value = id;
+            document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-reply" style="color: #0066CC; margin-right: 6px;"></i> Phản Hồi Đánh Giá #' + id;
+            document.getElementById('modalCustomerName').textContent = name;
+            document.getElementById('modalStarScore').textContent = stars + ' ★';
+            document.getElementById('modalCustomerComment').textContent = '"' + content + '"';
+            document.getElementById('modalReplyTextarea').value = reply;
+
+            const modal = document.getElementById('replyModal');
+            modal.style.display = 'flex';
+            document.getElementById('modalReplyTextarea').focus();
+        }
+
+        function closeReplyModal() {
+            document.getElementById('replyModal').style.display = 'none';
+        }
+
+        function applyTemplate(text) {
+            const textarea = document.getElementById('modalReplyTextarea');
+            textarea.value = text;
+            textarea.focus();
+        }
+
+        function showImageModal(src) {
+            document.getElementById('imageModalTarget').src = src;
+            document.getElementById('imageModal').style.display = 'flex';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Close reply modal when clicking outside content
+        document.getElementById('replyModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeReplyModal();
+            }
+        });
+    </script>
+</body>
+
+</html>
