@@ -103,12 +103,10 @@
                     <div th:text="${p.brand != null ? p.brand : 'Chính hãng'}">Hãng</div>
                 </div>
                 <h4 class="promo-title" th:text="${p.name}">Tên sản phẩm</h4>
-                <div class="promo-price-row">
+                <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; width: 100%; padding-top: 8px;">
                     <span class="promo-price-new"
                         th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'">Giá</span>
-                </div>
-                <div style="display:flex; justify-content:flex-end; align-items:center;">
-                    <button class="btn-cart-small" style="position:static; width:28px; height:28px; font-size:12px;"
+                    <button class="btn-cart-small" style="position:static; width:28px; height:28px; font-size:12px; cursor:pointer;"
                         th:onclick="'addToCart(' + ${p.id} + ', 1); event.stopPropagation();'"><i
                             class="fa-solid fa-cart-shopping"></i></button>
                 </div>

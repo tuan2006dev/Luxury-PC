@@ -6,11 +6,13 @@
 document.addEventListener('DOMContentLoaded', function () {
     initUserFormState();
     bindValidationEvents();
+    initStaffLogSearch();
 });
 
 document.addEventListener('spa:load', function () {
     initUserFormState();
     bindValidationEvents();
+    initStaffLogSearch();
 });
 
 // =====================================
@@ -320,11 +322,47 @@ function initUserFormState() {
     if (form && form.classList.contains('active')) {
         updateToggleButtonState(true);
     }
+    initStaffLogSearch();
 }
 
 // =====================================
-// 5. Bộ lọc thời gian cho Nhật Ký Thao Tác (Staff Audit Logs)
+// 5. Bộ lọc thời gian & Tìm kiếm tên cho Nhật Ký Thao Tác (Staff Audit Logs)
 // =====================================
+let currentLogRange = 'all';
+let customStartDate = '';
+let customEndDate = '';
+let currentSearchKeyword = '';
+
+function initStaffLogSearch() {
+    const searchContainer = document.getElementById('staffLogsSearchContainer') || document.querySelector('#logsTableBody')?.closest('.card');
+    if (!searchContainer) return;
+
+    const searchInput = searchContainer.querySelector('input[name="keyword"]');
+    const searchForm = searchContainer.querySelector('form');
+
+    if (searchInput) {
+        searchInput.placeholder = "Tìm theo tên nhân viên...";
+        // Tự động khôi phục khi xóa hết từ khóa trong ô nhập
+        searchInput.addEventListener('input', function () {
+            if (this.value.trim() === '' && currentSearchKeyword !== '') {
+                currentSearchKeyword = '';
+                applyStaffLogFilters();
+            }
+        });
+    }
+
+    if (searchForm) {
+        searchForm.onsubmit = function (e) {
+            e.preventDefault();
+            if (searchInput) {
+                currentSearchKeyword = searchInput.value.trim().toLowerCase();
+            }
+            applyStaffLogFilters();
+            return false;
+        };
+    }
+}
+
 function filterStaffLogs(range, btn) {
     // Hide custom date popover if open
     const box = document.getElementById('customLogDateBox');
@@ -341,45 +379,8 @@ function filterStaffLogs(range, btn) {
         btn.style.fontWeight = '600';
     }
 
-    const rows = document.querySelectorAll('.log-row');
-    const now = new Date();
-    const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    let visibleCount = 0;
-
-    rows.forEach(row => {
-        const rowTime = parseInt(row.getAttribute('data-timestamp') || '0');
-        const rowDate = row.getAttribute('data-date') || '';
-        let show = false;
-
-        if (range === 'all') {
-            show = true;
-        } else if (range === 'today') {
-            show = (rowDate === todayStr);
-        } else if (range === '7d') {
-            const diffDays = (now.getTime() - rowTime) / (1000 * 3600 * 24);
-            show = (diffDays <= 7);
-        } else if (range === '30d') {
-            const diffDays = (now.getTime() - rowTime) / (1000 * 3600 * 24);
-            show = (diffDays <= 30);
-        }
-
-        if (show) {
-            row.style.display = '';
-            visibleCount++;
-        } else {
-            row.style.display = 'none';
-        }
-    });
-
-    const noRow = document.getElementById('noFilteredLogsRow');
-    if (noRow) {
-        noRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
-    }
-
-    const countBadge = document.getElementById('logCountBadge');
-    if (countBadge) {
-        countBadge.innerHTML = `<i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị ${visibleCount} nhật ký`;
-    }
+    currentLogRange = range;
+    applyStaffLogFilters();
 }
 
 function toggleLogCustomRange(btn) {
@@ -415,23 +416,70 @@ function applyCustomLogFilter() {
         customBtn.style.fontWeight = '600';
     }
 
+    currentLogRange = 'custom';
+    customStartDate = startVal;
+    customEndDate = endVal;
+    applyStaffLogFilters();
+}
+
+function removeVietnameseTones(str) {
+    if (!str) return '';
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    str = str.replace(/đ/g, "d");
+    str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+    str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+    str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+    str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+    str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+    str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+    str = str.replace(/Đ/g, "D");
+    return str;
+}
+
+function applyStaffLogFilters() {
     const rows = document.querySelectorAll('.log-row');
-    let visibleCount = 0;
+    const now = new Date();
+    const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    
+    let matchingCount = 0;
+
+    const normalizedKeyword = removeVietnameseTones(currentSearchKeyword);
 
     rows.forEach(row => {
-        const rowDateStr = row.getAttribute('data-date') || ''; // YYYY-MM-DD
-        let show = true;
+        const rowTime = parseInt(row.getAttribute('data-timestamp') || '0');
+        const rowDate = row.getAttribute('data-date') || '';
+        let dateMatch = false;
 
-        if (startVal && rowDateStr < startVal) {
-            show = false;
-        }
-        if (endVal && rowDateStr > endVal) {
-            show = false;
+        if (currentLogRange === 'all') {
+            dateMatch = true;
+        } else if (currentLogRange === 'today') {
+            dateMatch = (rowDate === todayStr);
+        } else if (currentLogRange === '7d') {
+            const diffDays = (now.getTime() - rowTime) / (1000 * 3600 * 24);
+            dateMatch = (diffDays <= 7);
+        } else if (currentLogRange === '30d') {
+            const diffDays = (now.getTime() - rowTime) / (1000 * 3600 * 24);
+            dateMatch = (diffDays <= 30);
+        } else if (currentLogRange === 'custom') {
+            dateMatch = true;
+            if (customStartDate && rowDate < customStartDate) dateMatch = false;
+            if (customEndDate && rowDate > customEndDate) dateMatch = false;
         }
 
-        if (show) {
+        let searchMatch = true;
+        if (normalizedKeyword) {
+            const rowText = removeVietnameseTones(row.textContent || '').toLowerCase();
+            searchMatch = rowText.includes(normalizedKeyword);
+        }
+
+        if (dateMatch && searchMatch) {
             row.style.display = '';
-            visibleCount++;
+            matchingCount++;
         } else {
             row.style.display = 'none';
         }
@@ -439,11 +487,11 @@ function applyCustomLogFilter() {
 
     const noRow = document.getElementById('noFilteredLogsRow');
     if (noRow) {
-        noRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+        noRow.style.display = (matchingCount === 0 && rows.length > 0) ? '' : 'none';
     }
 
     const countBadge = document.getElementById('logCountBadge');
     if (countBadge) {
-        countBadge.innerHTML = `<i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị ${visibleCount} nhật ký`;
+        countBadge.innerHTML = `<i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị ${matchingCount} nhật ký`;
     }
 }

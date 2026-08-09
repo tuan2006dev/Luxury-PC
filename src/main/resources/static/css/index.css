@@ -89,6 +89,9 @@
     padding: 15px;
     position: relative;
     transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .promo-card:hover {
@@ -567,8 +570,13 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.hero-prev { left: 12px; }
-.hero-next { right: 12px; }
+.hero-prev {
+    left: 12px;
+}
+
+.hero-next {
+    right: 12px;
+}
 
 .hero-carousel-dots {
     position: absolute;
@@ -823,4 +831,4 @@
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
-}
+}

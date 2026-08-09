@@ -24,16 +24,16 @@ public class VietQrPaymentSession {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(name = "qr_created_at", nullable = false)
+    @Column(name = "qr_created_at", nullable = false, columnDefinition = "datetime")
     private Instant qrCreatedAt;
 
-    @Column(name = "qr_expires_at", nullable = false)
+    @Column(name = "qr_expires_at", nullable = false, columnDefinition = "datetime")
     private Instant qrExpiresAt;
 
-    @Column(name = "paid_at")
+    @Column(name = "paid_at", columnDefinition = "datetime")
     private Instant paidAt;
 
-    @Column(name = "expired_at")
+    @Column(name = "expired_at", columnDefinition = "datetime")
     private Instant expiredAt;
 
     public Long getId() {

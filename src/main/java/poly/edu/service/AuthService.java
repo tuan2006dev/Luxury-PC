@@ -57,7 +57,7 @@ public class AuthService implements UserDetailsService {
         boolean isLocked = !Boolean.TRUE.equals(user.getStatus());
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
+                .username(user.getEmail() != null && !user.getEmail().isBlank() ? user.getEmail() : user.getUsername())
                 .password(user.getPassword() != null ? user.getPassword() : "")
                 .disabled(isLocked)
                 .roles(roles.toArray(new String[0]))

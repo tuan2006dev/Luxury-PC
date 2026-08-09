@@ -25,6 +25,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final poly.edu.service.CartService cartService;
 
+    private final poly.edu.repository.AdminLogRepository adminLogRepository;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
@@ -41,9 +43,38 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             }
         }
 
-        User user = userDAO.findByEmail(emailOrUsername);
-        if (user == null) {
-            user = userDAO.findByUsername(emailOrUsername);
+        User user = null;
+        if (emailOrUsername != null && !emailOrUsername.isBlank()) {
+            user = userDAO.findByEmailWithRoles(emailOrUsername);
+            if (user == null) {
+                user = userDAO.findByUsernameWithRoles(emailOrUsername);
+            }
+        }
+
+        // Ghi nhận Audit Log Đăng nhập cho Nhân viên (STAFF) và Admin
+        if (user != null) {
+            boolean isStaffOrAdmin = user.getUserRoles() != null && user.getUserRoles().stream()
+                    .anyMatch(ur -> ur.getRole() != null &&
+                            ("STAFF".equalsIgnoreCase(ur.getRole().getName()) || "ADMIN".equalsIgnoreCase(ur.getRole().getName())));
+            if (isStaffOrAdmin) {
+                String clientIp = request.getHeader("X-Forwarded-For");
+                if (clientIp == null || clientIp.isBlank() || "unknown".equalsIgnoreCase(clientIp)) {
+                    clientIp = request.getRemoteAddr();
+                }
+                String roleStr = user.getUserRoles().stream()
+                        .map(ur -> ur.getRole() != null ? ur.getRole().getName() : "")
+                        .filter(r -> !r.isBlank())
+                        .collect(java.util.stream.Collectors.joining(", "));
+                try {
+                    String usernameToLog = user.getUsername() != null && !user.getUsername().isBlank() ? user.getUsername() : user.getEmail();
+                    adminLogRepository.save(new poly.edu.entity.AdminLog(
+                            usernameToLog != null ? usernameToLog : "unknown",
+                            "Đăng nhập hệ thống (Role: " + (roleStr.isBlank() ? "STAFF" : roleStr) + ")",
+                            clientIp,
+                            usernameToLog
+                    ));
+                } catch (Exception ignored) {}
+            }
         }
 
         // 1. Kiểm tra tài khoản bị khóa/vô hiệu hóa

@@ -23,6 +23,8 @@ public class SecurityConfig {
 
         private final poly.edu.service.AuthService authService;
 
+        private final poly.edu.repository.AdminLogRepository adminLogRepository;
+
         @Bean
         public SecurityContextRepository securityContextRepository() {
                 return new HttpSessionSecurityContextRepository();
@@ -88,6 +90,23 @@ public class SecurityConfig {
 
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
+                                                .addLogoutHandler((request, response, authentication) -> {
+                                                        if (authentication != null && authentication.getName() != null) {
+                                                                String username = authentication.getName();
+                                                                String clientIp = request.getHeader("X-Forwarded-For");
+                                                                if (clientIp == null || clientIp.isBlank() || "unknown".equalsIgnoreCase(clientIp)) {
+                                                                        clientIp = request.getRemoteAddr();
+                                                                }
+                                                                try {
+                                                                        adminLogRepository.save(new poly.edu.entity.AdminLog(
+                                                                                        username,
+                                                                                        "Đăng xuất khỏi hệ thống",
+                                                                                        clientIp,
+                                                                                        username
+                                                                        ));
+                                                                } catch (Exception ignored) {}
+                                                        }
+                                                })
                                                 .logoutSuccessUrl("/auth/login"))
 
                                 .csrf(csrf -> csrf.disable())
@@ -101,6 +120,7 @@ public class SecurityConfig {
         @Bean
         public org.springframework.security.web.authentication.AuthenticationFailureHandler authenticationFailureHandler() {
                 return (request, response, exception) -> {
+                        String username = request.getParameter("username");
                         String errorParam = "bad_credentials";
                         Throwable cause = exception.getCause() != null ? exception.getCause() : exception;
                         String msg = cause != null && cause.getMessage() != null ? cause.getMessage().toLowerCase()
@@ -113,6 +133,22 @@ public class SecurityConfig {
                                         || msg.contains("disabled")) {
                                 errorParam = "disabled";
                         }
+
+                        if (username != null && !username.isBlank()) {
+                                String clientIp = request.getHeader("X-Forwarded-For");
+                                if (clientIp == null || clientIp.isBlank() || "unknown".equalsIgnoreCase(clientIp)) {
+                                        clientIp = request.getRemoteAddr();
+                                }
+                                try {
+                                        adminLogRepository.save(new poly.edu.entity.AdminLog(
+                                                        username,
+                                                        "Đăng nhập thất bại (" + ("disabled".equals(errorParam) ? "Tài khoản bị khóa" : "Sai mật khẩu") + ")",
+                                                        clientIp,
+                                                        username
+                                        ));
+                                } catch (Exception ignored) {}
+                        }
+
                         response.sendRedirect("/auth/login?error=" + errorParam);
                 };
         }

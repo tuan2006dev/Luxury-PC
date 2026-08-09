@@ -49,6 +49,45 @@
             min-height: 16px;
             font-weight: 500;
         }
+
+        .audit-log-search {
+            display: inline-flex !important;
+            align-items: center !important;
+            flex-shrink: 0 !important;
+        }
+
+        .audit-log-search .search-bar-container {
+            display: inline-block !important;
+            width: auto !important;
+        }
+
+        .audit-log-search .search-bar-container form {
+            display: flex !important;
+            align-items: center !important;
+            max-width: none !important;
+            width: auto !important;
+            gap: 6px !important;
+            margin: 0 !important;
+        }
+
+        .audit-log-search .search-bar-container input {
+            width: 170px !important;
+            padding: 5px 10px !important;
+            font-size: 0.78rem !important;
+            height: 32px !important;
+            box-sizing: border-box !important;
+            border-radius: 6px !important;
+        }
+
+        .audit-log-search .search-bar-container .btn {
+            padding: 0 12px !important;
+            font-size: 0.78rem !important;
+            height: 32px !important;
+            box-sizing: border-box !important;
+            border-radius: 6px !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+        }
     </style>
 </head>
 
@@ -109,7 +148,7 @@
                     <i class="fa-solid fa-user-plus" style="margin-right: 6px;"></i> <span>Thêm Nhân Viên Mới</span>
                 </button>
 
-                <form method="get" th:action="@{/admin/employees}"
+                <!-- <form method="get" th:action="@{/admin/employees}"
                     style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0;">
                     <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo Tên, Email, SĐT..."
                         style="margin: 0 !important; height: 38px; background: var(--mid); border: 1px solid #cbd5e1; color: var(--white); padding: 0 12px; border-radius: 6px; font-size: 0.88rem; min-width: 220px; box-sizing: border-box; outline: none;">
@@ -130,7 +169,7 @@
                         style="margin: 0 !important; height: 38px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; box-sizing: border-box; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; font-weight: 500;">
                         <i class="fa-solid fa-rotate-left" style="margin-right: 6px;"></i> Đặt lại
                     </a>
-                </form>
+                </form> -->
             </div>
         </div>
 
@@ -216,8 +255,16 @@
 
         <!-- Employee Table Card -->
         <div class="card">
-            <h2><i class="fa-solid fa-list-check" style="color: var(--gold); margin-right: 8px;"></i> Danh Sách Nhân
-                Viên</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-list-check" style="color: var(--gold);"></i>
+                    Danh Sách Nhân Viên
+                </h2>
+
+                <div class="employee-list-search" style="display: inline-flex; align-items: center;">
+                    <div th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/employees', keyword=${keyword})}"></div>
+                </div>
+            </div>
 
             <div class="table-wrapper"
                 style="width: 100%; max-height: 450px; overflow-y: auto; overflow-x: auto; border-radius: 8px;">
@@ -246,9 +293,16 @@
                             <td style="padding: 12px 10px; text-align: center; font-weight: 700; color: #94a3b8;"
                                 th:text="${'#' + iterStat.count}">#1</td>
                             <td style="padding: 12px 10px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div
-                                        style="width: 34px; height: 34px; border-radius: 50%; background: #047857; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; flex-shrink: 0;">
+                                <div th:with="isAdmin=${u.userRoles != null and #lists.size(u.userRoles.?[role.name == 'ADMIN']) > 0}"
+                                    style="display: flex; align-items: center; gap: 10px;">
+                                    <div th:if="${isAdmin}"
+                                        style="width: 34px; height: 34px; border-radius: 50%; background: #2563eb; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; flex-shrink: 0;"
+                                        title="Quản trị viên (ADMIN)">
+                                        <i class="fa-solid fa-user-shield"></i>
+                                    </div>
+                                    <div th:if="${!isAdmin}"
+                                        style="width: 34px; height: 34px; border-radius: 50%; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; flex-shrink: 0;"
+                                        title="Nhân viên (STAFF)">
                                         <i class="fa-solid fa-user-gear"></i>
                                     </div>
                                     <div>
@@ -279,7 +333,7 @@
                             <td>
                                 <span th:each="ur : ${u.userRoles}">
                                     <span th:if="${ur.role.name == 'ADMIN'}" class="badge"
-                                        style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 600;"><i
+                                        style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 600;"><i
                                             class="fa-solid fa-shield"></i> ADMIN</span>
                                     <span th:if="${ur.role.name == 'STAFF'}" class="badge"
                                         style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 600;"><i
@@ -354,47 +408,70 @@
 
         <!-- Audit Logs Card -->
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
-                <h2 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+                <h2
+                    style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-clock-rotate-left" style="color: var(--gold);"></i>
                     Nhật Ký Thao Tác Nhân Viên (Staff Audit Logs)
                 </h2>
 
-                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; position: relative;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; position: relative;">
                     <!-- Filter Preset Buttons -->
-                    <div class="preset-group" style="display: inline-flex; background: #f1f5f9; padding: 3px; border-radius: 8px; gap: 2px;">
-                        <button type="button" class="log-filter-btn active" data-range="all" onclick="filterStaffLogs('all', this)"
-                            style="border: none; background: #3b82f6; color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Tất cả</button>
-                        <button type="button" class="log-filter-btn" data-range="today" onclick="filterStaffLogs('today', this)"
-                            style="border: none; background: transparent; color: #64748b; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">Hôm nay</button>
-                        <button type="button" class="log-filter-btn" data-range="7d" onclick="filterStaffLogs('7d', this)"
-                            style="border: none; background: transparent; color: #64748b; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">7 ngày qua</button>
-                        <button type="button" class="log-filter-btn" data-range="30d" onclick="filterStaffLogs('30d', this)"
-                            style="border: none; background: transparent; color: #64748b; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">30 ngày qua</button>
-                        <button type="button" class="log-filter-btn" id="customLogDateBtn" onclick="toggleLogCustomRange(this)"
-                            style="border: none; background: transparent; color: #64748b; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                    <div class="preset-group"
+                        style="display: inline-flex; background: #f1f5f9; padding: 3px; border-radius: 8px; gap: 2px;">
+                        <button type="button" class="log-filter-btn active" data-range="all"
+                            onclick="filterStaffLogs('all', this)"
+                            style="border: none; background: #3b82f6; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Tất
+                            cả</button>
+                        <button type="button" class="log-filter-btn" data-range="today"
+                            onclick="filterStaffLogs('today', this)"
+                            style="border: none; background: transparent; color: #64748b; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">Hôm
+                            nay</button>
+                        <button type="button" class="log-filter-btn" data-range="7d"
+                            onclick="filterStaffLogs('7d', this)"
+                            style="border: none; background: transparent; color: #64748b; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">7
+                            ngày qua</button>
+                        <button type="button" class="log-filter-btn" data-range="30d"
+                            onclick="filterStaffLogs('30d', this)"
+                            style="border: none; background: transparent; color: #64748b; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">30
+                            ngày qua</button>
+                        <button type="button" class="log-filter-btn" id="customLogDateBtn"
+                            onclick="toggleLogCustomRange(this)"
+                            style="border: none; background: transparent; color: #64748b; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
                             <i class="fa-solid fa-calendar-days" style="margin-right: 4px;"></i> Tùy chọn ngày
                         </button>
                     </div>
 
+                    <div class="audit-log-search" id="staffLogsSearchContainer" style="display: inline-flex; align-items: center;">
+                        <div
+                            th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='javascript:void(0);', keyword='')}">
+                        </div>
+                    </div>
+
                     <!-- Custom Log Date Popover -->
-                    <div id="customLogDateBox" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; z-index: 100; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); align-items: center; gap: 8px;">
+                    <div id="customLogDateBox"
+                        style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; z-index: 100; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); align-items: center; gap: 8px;">
                         <span style="font-size: 0.78rem; color: #475569; font-weight: 600;">Từ:</span>
-                        <input type="date" id="logStartDate" style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
+                        <input type="date" id="logStartDate"
+                            style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
                         <span style="font-size: 0.78rem; color: #475569; font-weight: 600;">Đến:</span>
-                        <input type="date" id="logEndDate" style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
-                        <button type="button" onclick="applyCustomLogFilter()" style="background: #2563eb; color: #ffffff; border: none; padding: 5px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        <input type="date" id="logEndDate"
+                            style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
+                        <button type="button" onclick="applyCustomLogFilter()"
+                            style="background: #2563eb; color: #ffffff; border: none; padding: 5px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
                             <i class="fa-solid fa-check"></i> Áp dụng
                         </button>
                     </div>
 
                     <span class="badge" id="logCountBadge"
                         style="background: #e2e8f0; color: #475569; font-weight: 600; font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; white-space: nowrap;">
-                        <i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị <span th:text="${recentLogs != null ? recentLogs.size() : 0}">0</span> nhật ký
+                        <i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị <span
+                            th:text="${recentLogs != null ? recentLogs.size() : 0}">0</span> nhật ký
                     </span>
                 </div>
             </div>
-            <div class="table-wrapper"
+            <div class="table-wrapper" id="staffLogsWrapper"
                 style="width: 100% !important; max-height: 400px !important; overflow-y: auto !important; overflow-x: hidden !important; border-radius: 8px;">
                 <table class="admin-table"
                     style="width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important;">
@@ -428,9 +505,16 @@
                                     08:30:00</span>
                             </td>
                             <td style="padding: 10px 8px;">
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <div
-                                        style="width: 32px; height: 32px; border-radius: 50%; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0;">
+                                <div th:with="isLogAdmin=${log.adminUsername != null and (#strings.containsIgnoreCase(log.adminUsername, 'leecookcu') or #strings.containsIgnoreCase(log.adminUsername, 'admin'))}"
+                                    style="display: flex; align-items: center; gap: 8px;">
+                                    <div th:if="${isLogAdmin}"
+                                        style="width: 32px; height: 32px; border-radius: 50%; background: #2563eb; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.88rem; flex-shrink: 0;"
+                                        title="Quản trị viên (ADMIN)">
+                                        <i class="fa-solid fa-user-shield"></i>
+                                    </div>
+                                    <div th:if="${!isLogAdmin}"
+                                        style="width: 32px; height: 32px; border-radius: 50%; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.88rem; flex-shrink: 0;"
+                                        title="Nhân viên (STAFF)">
                                         <i class="fa-solid fa-user-gear"></i>
                                     </div>
                                     <span th:text="${log.adminUsername}"
@@ -438,20 +522,32 @@
                                 </div>
                             </td>
                             <td style="padding: 10px 8px;">
+                                <span th:if="${#strings.containsIgnoreCase(log.action, 'thất bại')}"
+                                    style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    <span th:text="${log.action}">Đăng nhập thất bại</span>
+                                </span>
                                 <span
-                                    th:if="${#strings.containsIgnoreCase(log.action, 'Xóa') or #strings.containsIgnoreCase(log.action, 'Hủy') or #strings.containsIgnoreCase(log.action, 'Khóa')}"
+                                    th:if="${!#strings.containsIgnoreCase(log.action, 'thất bại') and (#strings.containsIgnoreCase(log.action, 'Đăng nhập') or #strings.containsIgnoreCase(log.action, 'Đăng xuất'))}"
+                                    style="background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i
+                                        th:class="${#strings.containsIgnoreCase(log.action, 'Đăng xuất') ? 'fa-solid fa-right-from-bracket' : 'fa-solid fa-right-to-bracket'}"></i>
+                                    <span th:text="${log.action}">Đăng nhập hệ thống</span>
+                                </span>
+                                <span
+                                    th:if="${!#strings.containsIgnoreCase(log.action, 'Đăng nhập') and !#strings.containsIgnoreCase(log.action, 'Đăng xuất') and !#strings.containsIgnoreCase(log.action, 'thất bại') and (#strings.containsIgnoreCase(log.action, 'Xóa') or #strings.containsIgnoreCase(log.action, 'Hủy') or #strings.containsIgnoreCase(log.action, 'Khóa'))}"
                                     style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
                                     <i class="fa-solid fa-trash-can"></i>
                                     <span th:text="${log.action}">Xóa sản phẩm</span>
                                 </span>
                                 <span
-                                    th:if="${#strings.containsIgnoreCase(log.action, 'Thêm') or #strings.containsIgnoreCase(log.action, 'Tạo')}"
+                                    th:if="${!#strings.containsIgnoreCase(log.action, 'Đăng nhập') and !#strings.containsIgnoreCase(log.action, 'Đăng xuất') and !#strings.containsIgnoreCase(log.action, 'thất bại') and (#strings.containsIgnoreCase(log.action, 'Thêm') or #strings.containsIgnoreCase(log.action, 'Tạo'))}"
                                     style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
                                     <i class="fa-solid fa-plus-circle"></i>
                                     <span th:text="${log.action}">Thêm mới</span>
                                 </span>
                                 <span
-                                    th:if="${!#strings.containsIgnoreCase(log.action, 'Xóa') and !#strings.containsIgnoreCase(log.action, 'Hủy') and !#strings.containsIgnoreCase(log.action, 'Khóa') and !#strings.containsIgnoreCase(log.action, 'Thêm') and !#strings.containsIgnoreCase(log.action, 'Tạo')}"
+                                    th:if="${!#strings.containsIgnoreCase(log.action, 'Đăng nhập') and !#strings.containsIgnoreCase(log.action, 'Đăng xuất') and !#strings.containsIgnoreCase(log.action, 'thất bại') and !#strings.containsIgnoreCase(log.action, 'Xóa') and !#strings.containsIgnoreCase(log.action, 'Hủy') and !#strings.containsIgnoreCase(log.action, 'Khóa') and !#strings.containsIgnoreCase(log.action, 'Thêm') and !#strings.containsIgnoreCase(log.action, 'Tạo')}"
                                     style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <span th:text="${log.action}">Cập nhật</span>
@@ -469,7 +565,8 @@
                         </tr>
                         <tr id="noFilteredLogsRow" style="display: none;">
                             <td colspan="6" style="text-align: center; color: #94a3b8; padding: 2rem 0;">
-                                <i class="fa-solid fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 8px; color: #cbd5e1;"></i><br>
+                                <i class="fa-solid fa-calendar-xmark"
+                                    style="font-size: 2rem; margin-bottom: 8px; color: #cbd5e1;"></i><br>
                                 <span>Không có nhật ký thao tác nào trong khoảng thời gian đã chọn.</span>
                             </td>
                         </tr>
