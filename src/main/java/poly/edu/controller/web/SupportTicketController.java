@@ -127,6 +127,18 @@ public class SupportTicketController {
     }
 
     // ========================
+    // ADMIN: Check for new OPEN tickets
+    // ========================
+    @GetMapping("/api/tickets/count/open")
+    @ResponseBody
+    public ResponseEntity<Map<String, Long>> getOpenTicketCount() {
+        long count = ticketRepo.countOpenTickets();
+        Map<String, Long> res = new HashMap<>();
+        res.put("count", count);
+        return ResponseEntity.ok(res);
+    }
+
+    // ========================
     // CUSTOMER: Track ticket status
     // ========================
     @GetMapping("/api/tickets/track")
@@ -221,13 +233,20 @@ public class SupportTicketController {
     public String adminTickets(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String priority,
             Model model) {
 
+        if (status == null || status.isEmpty()) {
+            status = "ACTIVE";
+        }
+
         List<SupportTicket> tickets;
-        if (status != null && !status.isEmpty()) {
-            tickets = ticketRepo.findByStatusOrderByCreatedAtDesc(status);
+        if ("ACTIVE".equals(status)) {
+            tickets = ticketRepo.findTop100ByStatusInOrderByCreatedAtDesc(java.util.Arrays.asList("OPEN", "IN_PROGRESS"));
+        } else if ("ALL".equals(status)) {
+            tickets = ticketRepo.findTop100ByOrderByCreatedAtDesc();
         } else {
-            tickets = ticketRepo.findAllByOrderByCreatedAtDesc();
+            tickets = ticketRepo.findTop100ByStatusOrderByCreatedAtDesc(status);
         }
 
         model.addAttribute("tickets", tickets);
@@ -358,12 +377,26 @@ public class SupportTicketController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> requestCloseTicket(@PathVariable Integer ticketId) {
         Map<String, Object> res = new HashMap<>();
-        chatWebSocketHandler.broadcastSystemEventToTicket(
-            ticketId,
-            "USER_REQUESTED_CLOSE",
-            "Khách hàng muốn kết thúc cuộc trò chuyện.",
-            "Hệ thống"
-        );
+        
+        ticketRepo.findById(ticketId).ifPresent(ticket -> {
+            if ("OPEN".equals(ticket.getStatus()) || ticket.getAssignedAdmin() == null) {
+                // Nếu ticket chưa xử lý, xóa hoàn toàn để tránh rác
+                chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(ticketId));
+                ticketRepo.deleteById(ticketId);
+            } else {
+                // Nếu đã xử lý, đổi trạng thái thành CLOSED thay vì chỉ gửi thông báo
+                ticket.setStatus("CLOSED");
+                ticketRepo.save(ticket);
+                
+                chatWebSocketHandler.broadcastSystemEventToTicket(
+                    ticketId,
+                    "USER_REQUESTED_CLOSE",
+                    "Khách hàng đã kết thúc và đóng cuộc trò chuyện.",
+                    "Hệ thống"
+                );
+            }
+        });
+        
         res.put("success", true);
         return ResponseEntity.ok(res);
     }
@@ -381,6 +414,9 @@ public class SupportTicketController {
         chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(id));
         ticketRepo.deleteById(id);
         logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+        
+        // Broadcast to customer so they don't get stuck in a ghost chat
+        chatWebSocketHandler.broadcastSystemEventToTicket(id, "TICKET_CLOSED", "Cuộc trò chuyện đã bị xóa bởi quản trị viên.", "Hệ thống");
 
         return "redirect:/admin/tickets";
     }
@@ -401,6 +437,9 @@ public class SupportTicketController {
             chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(id));
             ticketRepo.deleteById(id);
             logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+            
+            // Broadcast to customer so they don't get stuck in a ghost chat
+            chatWebSocketHandler.broadcastSystemEventToTicket(id, "TICKET_CLOSED", "Cuộc trò chuyện đã bị xóa bởi quản trị viên.", "Hệ thống");
         }
 
         Map<String, Object> res = new HashMap<>();

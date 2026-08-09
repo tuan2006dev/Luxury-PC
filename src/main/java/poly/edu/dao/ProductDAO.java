@@ -20,13 +20,13 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
     @org.springframework.lang.NonNull
     List<Product> findAll();
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.category ORDER BY p.createdAt DESC, p.id DESC")
+    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.image IS NOT NULL AND p.image != '' ORDER BY p.createdAt DESC, p.id DESC")
     List<Product> findTopProducts(org.springframework.data.domain.Pageable pageable);
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.category ORDER BY (SELECT COALESCE(AVG(r.stars), 0.0) FROM Review r WHERE r.product = p) DESC, (SELECT COALESCE(SUM(oi.quantity), 0) FROM OrderItem oi WHERE oi.product = p) DESC, p.id DESC")
+    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.image IS NOT NULL AND p.image != '' ORDER BY (SELECT COALESCE(AVG(r.stars), 0.0) FROM Review r WHERE r.product = p) DESC, (SELECT COALESCE(SUM(oi.quantity), 0) FROM OrderItem oi WHERE oi.product = p) DESC, p.id DESC")
     List<Product> findFeaturedProducts(org.springframework.data.domain.Pageable pageable);
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.stock < 10")
+    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.stock < 10 AND p.image IS NOT NULL AND p.image != ''")
     List<Product> findFlashSaleProducts();
 
     List<Product> findByCategoryId(Integer categoryId);
@@ -36,16 +36,16 @@ public interface ProductDAO extends JpaRepository<Product, Integer> {
 
     org.springframework.data.domain.Page<Product> findByNameContainingIgnoreCase(String name, org.springframework.data.domain.Pageable pageable);
 
-    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category", countQuery = "SELECT COUNT(p) FROM Product p")
+    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category WHERE p.image IS NOT NULL AND p.image != ''", countQuery = "SELECT COUNT(p) FROM Product p WHERE p.image IS NOT NULL AND p.image != ''")
     org.springframework.data.domain.Page<Product> findAllWithCategory(org.springframework.data.domain.Pageable pageable);
 
-    @Query(value = "SELECT p FROM Product p WHERE " +
+    @Query(value = "SELECT p FROM Product p WHERE p.image IS NOT NULL AND p.image != '' AND " +
             "(:cid IS NULL OR p.category.id = :cid) AND " +
             "(:min IS NULL OR p.price >= :min) AND " +
             "(:max IS NULL OR p.price <= :max) AND " +
             "(:kw IS NULL OR p.name LIKE %:kw% OR p.description LIKE %:kw%) AND " +
             "(:brand IS NULL OR p.brand = :brand OR LOWER(p.name) LIKE LOWER(CONCAT('%', :brand, '%')))",
-            countQuery = "SELECT COUNT(p) FROM Product p WHERE " +
+            countQuery = "SELECT COUNT(p) FROM Product p WHERE p.image IS NOT NULL AND p.image != '' AND " +
             "(:cid IS NULL OR p.category.id = :cid) AND " +
             "(:min IS NULL OR p.price >= :min) AND " +
             "(:max IS NULL OR p.price <= :max) AND " +

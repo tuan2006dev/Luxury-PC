@@ -95,7 +95,7 @@
             <div class="promo-card promo-card-item" th:each="p : ${featuredProducts}"
                 th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor:pointer;">
                 <div class="promo-card-img">
-                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                    <img th:src="${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}"
                         th:alt="${p.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                 </div>
                 <div class="promo-specs">
@@ -159,7 +159,7 @@
                         style="position:absolute; top:10px; left:10px; background:#ef4444; color:white; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:bold; z-index:2;">
                         Flash Sale</div>
                     <div class="product-card-img" style="height: 140px; flex-shrink: 0;">
-                        <img th:src="@{${item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}}"
+                        <img th:src="${item.product.image != null ? (item.product.image.startsWith('http') || item.product.image.startsWith('/') ? item.product.image : '/images/products/' + item.product.image) : '/images/placeholder.png'}"
                             th:alt="${item.product.name}"
                             onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                     </div>
@@ -226,7 +226,7 @@
                         style="position:absolute; top:10px; left:10px; background:#f59e0b; color:white; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:bold; z-index:2;">
                         Sắp hết hàng</div>
                     <div class="product-card-img" style="height: 140px; flex-shrink: 0;">
-                        <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                        <img th:src="${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}"
                             th:alt="${p.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                     </div>
                     <h4 class="product-card-title"
@@ -287,7 +287,7 @@
                 th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|"
                 style="display: flex; flex-direction: column; height: 100%; cursor: pointer;">
                 <div class="product-card-img" style="height: 140px;">
-                    <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                    <img th:src="${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}"
                         th:alt="${p.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                 </div>
                 <h4 class="product-card-title" style="font-size:14px;" th:text="${p.name}">Tên sản phẩm</h4>
@@ -381,7 +381,7 @@
                 <a class="news-item" th:each="n, iterStat : ${newestNews}" th:if="${iterStat.index < 5}"
                     th:href="@{/news/{slug}(slug=${n.slug})}"
                     style="text-decoration: none; display: flex; gap: 15px; align-items: center;">
-                    <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
+                    <img th:src="${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}"
                         th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';"
                         style="width: 100px; height: 60px; min-width: 100px; max-width: 100px; min-height: 60px; max-height: 60px; object-fit: cover; flex-shrink: 0; border-radius: 6px;" />
                     <h4 th:text="${n.title}" style="flex: 1; min-width: 0;">Tiêu đề tin tức</h4>
@@ -396,7 +396,7 @@
                 <a class="news-item" th:each="n, iterStat : ${featuredNews}" th:if="${iterStat.index < 5}"
                     th:href="@{/news/{slug}(slug=${n.slug})}"
                     style="text-decoration: none; display: flex; gap: 15px; align-items: center;">
-                    <img th:src="@{${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}}"
+                    <img th:src="${n.thumbnail != null ? (n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail) : '/images/placeholder.png'}"
                         th:alt="${n.title}" onerror="this.onerror=null; this.src='/images/placeholder.png';"
                         style="width: 100px; height: 60px; min-width: 100px; max-width: 100px; min-height: 60px; max-height: 60px; object-fit: cover; flex-shrink: 0; border-radius: 6px;" />
                     <h4 th:text="${n.title}" style="flex: 1; min-width: 0;">Tiêu đề tin tức</h4>

@@ -158,7 +158,7 @@
                             </div>
 
                             <div class="product-card-img">
-                                <img th:src="@{${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}}"
+                                <img th:src="${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}"
                                     th:alt="${p.name}"
                                     onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                             </div>

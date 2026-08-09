@@ -194,7 +194,7 @@
                             <div class="order-item" th:each="item : ${cartItems}">
                                 <div class="order-img">
                                     <img th:if="${item.image != null and item.image != ''}"
-                                        th:src="@{${item.image != null ? (item.image.startsWith('http') || item.image.startsWith('/') ? item.image : '/images/products/' + item.image) : '/images/placeholder.png'}}"
+                                        th:src="${item.image != null ? (item.image.startsWith('http') || item.image.startsWith('/') ? item.image : '/images/products/' + item.image) : '/images/placeholder.png'}"
                                         alt="Img">
                                 </div>
                                 <div class="order-info">

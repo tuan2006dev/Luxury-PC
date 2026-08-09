@@ -68,7 +68,7 @@
                             <td style="color:var(--muted);" th:text="${fs.id}">#1</td>
                             <td>
                                 <img th:if="${fs.bannerImage != null and !fs.bannerImage.isEmpty()}"
-                                    th:src="@{${fs.bannerImage.startsWith('http') ? fs.bannerImage : '/images/flashsale/' + fs.bannerImage}}"
+                                    th:src="${fs.bannerImage.startsWith('http') ? fs.bannerImage : '/images/flashsale/' + fs.bannerImage}"
                                     onerror="this.src='/images/placeholder.png'"
                                     style="height: 45px; width: 120px; object-fit: cover; border-radius: 4px;"
                                     alt="Banner">
