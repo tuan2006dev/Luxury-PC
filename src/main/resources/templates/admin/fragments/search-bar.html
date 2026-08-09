@@ -3,7 +3,7 @@
 
 <body>
     <div th:fragment="searchBar(actionUrl, keyword)" class="search-bar-container">
-        <link rel="stylesheet" th:href="@{/css/admin/search-bar.css}" />
+        <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/search-bar.css}" />
         <form th:action="${actionUrl}" method="get" style="display: flex; gap: 10px; max-width: 500px;">
             <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm theo tên hoặc mã..."
                 class="form-control"

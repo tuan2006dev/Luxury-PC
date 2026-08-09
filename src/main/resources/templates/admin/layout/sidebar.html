@@ -1,6 +1,6 @@
 <div class="sidebar" th:fragment="sidebar">
 
-    <link rel="stylesheet" th:href="@{/css/admin/layout/sidebar.css(v=4.0)}" />
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/layout/sidebar.css(v=4.0)}" />
 
     <!-- Sidebar Header with Logo and Collapse/Expand Toggle Button -->
     <div class="sidebar-header">
@@ -89,13 +89,13 @@
 
 
     <!-- Flatpickr for Date Time Inputs -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.css">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
 
     <script th:src="@{/js/cursor.js}"></script>
-    <style>
+    <style data-pjax-track="true">
         body {
             display: block !important;
             height: auto !important;

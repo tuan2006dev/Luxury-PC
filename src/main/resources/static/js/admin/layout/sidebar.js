@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else if (oldStyle.tagName === 'STYLE') {
                             exists = newStyles.some(newS => newS.tagName === 'STYLE' && newS.innerHTML.trim() === oldStyle.innerHTML.trim());
                         }
-                        if (!exists && oldStyle.id !== 'sweetalert2-cdn') {
+                        if (!exists && oldStyle.hasAttribute('data-pjax-track')) {
                             oldStyle.remove();
                         }
                     });
