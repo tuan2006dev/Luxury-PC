@@ -48,14 +48,6 @@ public class ProfileController {
             model.addAllAttributes(profileData);
 
             User user = (User) profileData.get("user");
-            boolean forcePasswordLock = user != null && (Boolean.TRUE.equals(user.getForceChangePassword())
-                    || user.getPassword() == null || user.getPassword().isBlank());
-            model.addAttribute("forcePasswordLock", forcePasswordLock);
-            if (forcePasswordLock && model.getAttribute("securityMessage") == null) {
-                model.addAttribute("securityMessage",
-                        "⚠️ Vui lòng thiết lập/đổi mật khẩu mới để tiếp tục sử dụng hệ thống!");
-                model.addAttribute("securityMessageType", "warning");
-            }
 
             model.addAttribute("profile", user);
             model.addAttribute("name",
@@ -251,8 +243,8 @@ public class ProfileController {
             User user = profileService.getCurrentUser(authentication);
             String currentPasswordHash = user.getPassword();
 
-            if (newPassword == null || newPassword.trim().length() < 8) {
-                redirectAttributes.addFlashAttribute("securityMessage", "Mật khẩu mới phải có ít nhất 8 ký tự.");
+            if (newPassword == null || newPassword.trim().length() < 6) {
+                redirectAttributes.addFlashAttribute("securityMessage", "Mật khẩu mới phải có ít nhất 6 ký tự.");
                 redirectAttributes.addFlashAttribute("securityMessageType", "error");
                 return "redirect:/profile?tab=security&openPasswordForm=1";
             }

@@ -321,3 +321,129 @@ function initUserFormState() {
         updateToggleButtonState(true);
     }
 }
+
+// =====================================
+// 5. Bộ lọc thời gian cho Nhật Ký Thao Tác (Staff Audit Logs)
+// =====================================
+function filterStaffLogs(range, btn) {
+    // Hide custom date popover if open
+    const box = document.getElementById('customLogDateBox');
+    if (box) box.style.display = 'none';
+
+    document.querySelectorAll('.log-filter-btn').forEach(b => {
+        b.style.background = 'transparent';
+        b.style.color = '#64748b';
+        b.style.fontWeight = '500';
+    });
+    if (btn) {
+        btn.style.background = '#3b82f6';
+        btn.style.color = '#ffffff';
+        btn.style.fontWeight = '600';
+    }
+
+    const rows = document.querySelectorAll('.log-row');
+    const now = new Date();
+    const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const rowTime = parseInt(row.getAttribute('data-timestamp') || '0');
+        const rowDate = row.getAttribute('data-date') || '';
+        let show = false;
+
+        if (range === 'all') {
+            show = true;
+        } else if (range === 'today') {
+            show = (rowDate === todayStr);
+        } else if (range === '7d') {
+            const diffDays = (now.getTime() - rowTime) / (1000 * 3600 * 24);
+            show = (diffDays <= 7);
+        } else if (range === '30d') {
+            const diffDays = (now.getTime() - rowTime) / (1000 * 3600 * 24);
+            show = (diffDays <= 30);
+        }
+
+        if (show) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    const noRow = document.getElementById('noFilteredLogsRow');
+    if (noRow) {
+        noRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+    }
+
+    const countBadge = document.getElementById('logCountBadge');
+    if (countBadge) {
+        countBadge.innerHTML = `<i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị ${visibleCount} nhật ký`;
+    }
+}
+
+function toggleLogCustomRange(btn) {
+    const box = document.getElementById('customLogDateBox');
+    if (!box) return;
+    const isVisible = (box.style.display === 'flex');
+    box.style.display = isVisible ? 'none' : 'flex';
+}
+
+function applyCustomLogFilter() {
+    const startVal = document.getElementById('logStartDate').value; // YYYY-MM-DD
+    const endVal = document.getElementById('logEndDate').value;     // YYYY-MM-DD
+
+    if (!startVal && !endVal) {
+        alert('Vui lòng chọn Từ ngày hoặc Đến ngày!');
+        return;
+    }
+
+    // Hide popover
+    const box = document.getElementById('customLogDateBox');
+    if (box) box.style.display = 'none';
+
+    // Highlight custom button
+    const customBtn = document.getElementById('customLogDateBtn');
+    document.querySelectorAll('.log-filter-btn').forEach(b => {
+        b.style.background = 'transparent';
+        b.style.color = '#64748b';
+        b.style.fontWeight = '500';
+    });
+    if (customBtn) {
+        customBtn.style.background = '#3b82f6';
+        customBtn.style.color = '#ffffff';
+        customBtn.style.fontWeight = '600';
+    }
+
+    const rows = document.querySelectorAll('.log-row');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const rowDateStr = row.getAttribute('data-date') || ''; // YYYY-MM-DD
+        let show = true;
+
+        if (startVal && rowDateStr < startVal) {
+            show = false;
+        }
+        if (endVal && rowDateStr > endVal) {
+            show = false;
+        }
+
+        if (show) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    const noRow = document.getElementById('noFilteredLogsRow');
+    if (noRow) {
+        noRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+    }
+
+    const countBadge = document.getElementById('logCountBadge');
+    if (countBadge) {
+        countBadge.innerHTML = `<i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị ${visibleCount} nhật ký`;
+    }
+}

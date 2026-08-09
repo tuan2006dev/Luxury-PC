@@ -20,6 +20,11 @@ public interface OrderItemDAO extends JpaRepository<OrderItem, Integer> {
                      @Param("userId") Integer userId,
                      @Param("productId") Integer productId);
 
+       @Query("SELECT oi FROM OrderItem oi WHERE oi.order.user.id = :userId AND oi.product.id = :productId AND oi.order.status IN ('COMPLETED', 'HOAN_THANH') ORDER BY oi.id DESC")
+       List<OrderItem> findCompletedOrderItemsByUserAndProduct(
+                     @Param("userId") Integer userId,
+                     @Param("productId") Integer productId);
+
        /**
         * Đếm tổng số sản phẩm flash-sale mà user đã mua trong một đợt flash sale (mọi
         * trạng thái đơn trừ CANCELLED)

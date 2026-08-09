@@ -46,6 +46,34 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             user = userDAO.findByUsername(emailOrUsername);
         }
 
+        // 1. Kiểm tra tài khoản bị khóa/vô hiệu hóa
+        if (user != null && Boolean.FALSE.equals(user.getStatus())) {
+            SecurityContextHolder.clearContext();
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.removeAttribute("SPRING_SECURITY_CONTEXT");
+                session.invalidate();
+            }
+            response.sendRedirect("/auth/login?error=disabled");
+            return;
+        }
+
+        // 2. Yêu cầu khởi tạo mật khẩu lần đầu qua Google/Facebook
+        if (user != null && (Boolean.TRUE.equals(user.getForceChangePassword()) || user.getPassword() == null || user.getPassword().isBlank())) {
+            HttpSession session = request.getSession();
+            session.setAttribute("pendingSetPasswordEmail", user.getEmail());
+
+            // Xóa triệt để SecurityContext khỏi Thread và Session
+            SecurityContextHolder.clearContext();
+            session.removeAttribute("SPRING_SECURITY_CONTEXT");
+            session.removeAttribute("SPRING_SECURITY_CONTEXT_SAVED");
+
+            // Điều hướng sang trang Khởi tạo mật khẩu (/auth/set-password)
+            response.sendRedirect("/auth/set-password");
+            return;
+        }
+
+        // 3. Đã có mật khẩu - Tiến hành gộp giỏ hàng
         if (user != null) {
             HttpSession session = request.getSession();
             @SuppressWarnings("unchecked")
@@ -56,20 +84,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             session.setAttribute("cart", mergedCart);
         }
 
-        if (user != null && (Boolean.TRUE.equals(user.getForceChangePassword()) || user.getPassword() == null || user.getPassword().isBlank())) {
-            // Đăng nhập lần đầu tiên hoặc chưa có mật khẩu local - Bắt buộc đặt mật khẩu!
-            response.sendRedirect("/profile?tab=security&openPasswordForm=1&firstLogin=true");
-            return;
-        }
-
         if (user != null && Boolean.TRUE.equals(user.getTwoFactorEnabled())) {
             // 2FA is enabled!
             HttpSession session = request.getSession();
             final String userEmail = user.getEmail();
             session.setAttribute("twoFactorUserEmail", userEmail);
 
-            // Generate and send OTP via email asynchronously in background thread to
-            // prevent redirect delay!
+            // Generate and send OTP via email asynchronously in background thread to prevent redirect delay!
             java.util.concurrent.CompletableFuture.runAsync(() -> {
                 try {
                     emailService.sendOtpEmail(userEmail, userEmail);
@@ -78,9 +99,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 }
             });
 
-            // Log out user for now (clear security context) so they aren't fully
-            // authenticated
+            // Log out user for now (clear security context) so they aren't fully authenticated
             SecurityContextHolder.clearContext();
+            session.removeAttribute("SPRING_SECURITY_CONTEXT");
 
             // Redirect to 2FA verification page
             response.sendRedirect("/auth/login-2fa");

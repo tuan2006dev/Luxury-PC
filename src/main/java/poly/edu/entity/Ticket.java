@@ -40,6 +40,9 @@ public class Ticket {
     @Column(name = "created_at")
     private Date createdAt;
 
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<TicketMessage> messages = new java.util.ArrayList<>();
+
     public Ticket() {}
 
     @PrePersist
@@ -141,5 +144,13 @@ public class Ticket {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public java.util.List<TicketMessage> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(java.util.List<TicketMessage> messages) {
+        this.messages = messages;
     }
 }

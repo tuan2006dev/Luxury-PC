@@ -25,6 +25,6 @@ public interface AdminLogRepository extends JpaRepository<AdminLog, Integer> {
     List<AdminLog> findStaffLogsTop50(org.springframework.data.domain.Pageable pageable);
 
     default List<AdminLog> findStaffLogsTop50() {
-        return findStaffLogsTop50(org.springframework.data.domain.PageRequest.of(0, 50));
+        return findStaffLogsTop50(org.springframework.data.domain.PageRequest.of(0, 500));
     }
 }

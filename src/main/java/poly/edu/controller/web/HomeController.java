@@ -20,6 +20,7 @@ import poly.edu.service.BrandService;
 import poly.edu.service.CategoryService;
 import poly.edu.service.NewsCategoryService;
 
+import poly.edu.dto.NewsSummaryDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -116,8 +117,8 @@ public class HomeController {
         long t4 = System.nanoTime();
 
         // Tin tức ở trang chủ: 2 mục "Tin tức mới nhất" và "Tin tức nổi bật"
-        List<poly.edu.dto.NewsSummaryDto> newestNews = newsService.getTop5LatestNews();
-        List<poly.edu.dto.NewsSummaryDto> featuredNews = newsService.getTop5MostViewedNews();
+        List<NewsSummaryDto> newestNews = newsService.getTop5LatestNews();
+        List<NewsSummaryDto> featuredNews = newsService.getTop5MostViewedNews();
 
         model.addAttribute("newestNews", newestNews);
         model.addAttribute("featuredNews", featuredNews);

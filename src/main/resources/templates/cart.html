@@ -67,7 +67,7 @@
                     th:data-stock="${item.stock}" th:data-name="${item.name}">
                     <div class="cart-item-img">
                         <img th:if="${item.image != null and item.image != ''}"
-                            th:src="@{${item.image != null ? (item.image.startsWith('http') || item.image.startsWith('/') ? item.image : '/images/products/' + item.image) : '/images/placeholder.png'}}"
+                            th:src="${item.image != null ? (item.image.startsWith('http') || item.image.startsWith('/') ? item.image : '/images/products/' + item.image) : '/images/placeholder.png'}"
                             th:alt="${item.name}">
                         <i th:unless="${item.image != null and item.image != ''}" class="fa-solid fa-computer"
                             style="font-size: 40px; color: #ccc;"></i>

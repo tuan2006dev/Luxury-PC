@@ -80,6 +80,9 @@
                                     style="font-size:0.72rem; color:#64748b"
                                     th:text="${#numbers.formatDecimal(o.shippingFee, 0, 'COMMA', 0, 'POINT')} + '₫'">
                                     50.000₫</div>
+                                <div th:if="${o.trackingCode != null}" style="font-size:0.7rem; color:#0284c7; font-family:monospace; font-weight:700; margin-top:2px;">
+                                    <i class="fa-solid fa-truck"></i> <span th:text="${o.trackingCode}">LLM123</span>
+                                </div>
                             </td>
                             <td>
                                 <div th:text="${o.voucherCode != null ? o.voucherCode : '-'}"
@@ -116,6 +119,33 @@
                                     <div class="action-panel">
                                         <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}"
                                             class="admin-note">Đơn đã kết thúc xử lý.</span>
+
+                                        <!-- Form tạo vận đơn Lalamove nếu chưa có -->
+                                        <form novalidate autocomplete="off"
+                                            th:if="${o.trackingCode == null and o.status != 'DA_HUY' and o.status != 'CANCELLED' and o.status != 'DA_HOAN_TIEN' and o.status != 'THU_HOI'}"
+                                            th:action="@{/admin/orders/confirm-shipping}" method="post"
+                                            class="action-form">
+                                            <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                            <button type="submit" class="update-btn" style="background:#0284c7; color:#fff;">
+                                                <i class="fa-solid fa-truck-fast"></i> Tạo Vận Đơn Lalamove
+                                            </button>
+                                        </form>
+
+                                        <!-- Panel Lalamove Simulator nếu đã có trackingCode -->
+                                        <div th:if="${o.trackingCode != null}" class="lalamove-simulator-box" style="margin-top: 6px; padding: 8px; background: #0f172a; border-radius: 6px; color: #fff; text-align: left;">
+                                            <div style="font-weight: 700; color: #38bdf8; font-size: 0.75rem; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                                                <span><i class="fa-solid fa-truck-fast"></i> Lalamove Simulator</span>
+                                                <small style="color: #94a3b8; font-family: monospace;" th:text="${o.trackingCode}">LLM123</small>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px;">
+                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="ASSIGN_DRIVER" style="background:#0284c7; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟦 Driver Accepted</button>
+                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="PICKED_UP" style="background:#eab308; color:#000; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟨 Picked Up</button>
+                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="ON_DELIVERY" style="background:#f97316; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟧 On Delivery</button>
+                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="DELIVERED" style="background:#22c55e; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟩 Delivered</button>
+                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="CANCELLED" style="background:#ef4444; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem; grid-column: span 2;">🟥 Cancel Order</button>
+                                            </div>
+                                        </div>
+
                                         <form novalidate autocomplete="off"
                                             th:if="${(o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PENDING' or o.status == 'CHO_THANH_TOAN' or o.status == 'CHO_XAC_NHAN_THANH_TOAN')}"
                                             th:action="@{/admin/orders/update-status}" method="post"
@@ -216,6 +246,41 @@
                 }
             });
         });
+
+        function sendLalamoveWebhook(btn) {
+            const trackingCode = btn.getAttribute('data-tracking');
+            const event = btn.getAttribute('data-event');
+            btn.disabled = true;
+            const originalText = btn.innerText;
+            btn.innerText = 'Sending...';
+
+            fetch('/api/webhook/lalamove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    trackingCode: trackingCode,
+                    event: event
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Lỗi Webhook: ' + (data.message || 'Thao tác không thành công'));
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Lỗi kết nối đến Webhook!');
+                btn.disabled = false;
+                btn.innerText = originalText;
+            });
+        }
     </script>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

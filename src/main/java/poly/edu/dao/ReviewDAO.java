@@ -11,6 +11,11 @@ public interface ReviewDAO extends JpaRepository<Review, Integer> {
     List<Review> findByUser_IdOrderByCreatedAtDesc(Integer userId);
 
     boolean existsByUser_IdAndProduct_Id(Integer userId, Integer productId);
+    boolean existsByOrderItem_Id(Integer orderItemId);
+    java.util.Optional<Review> findByOrderItem_Id(Integer orderItemId);
+
+    @org.springframework.data.jpa.repository.Query("SELECT r.orderItem.id FROM Review r WHERE r.user.id = :userId AND r.orderItem.id IS NOT NULL")
+    List<Integer> findReviewedOrderItemIdsByUserId(@org.springframework.data.repository.query.Param("userId") Integer userId);
 
     @org.springframework.data.jpa.repository.Query("SELECT r.product.id FROM Review r WHERE r.user.id = :userId AND r.product.id IS NOT NULL")
     List<Integer> findReviewedProductIdsByUserId(@org.springframework.data.repository.query.Param("userId") Integer userId);

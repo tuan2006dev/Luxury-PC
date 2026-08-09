@@ -30,20 +30,77 @@ window.closeSessionsModal = closeSessionsModal;
 window.revokeSession = revokeSession;
 window.deleteAccount = deleteAccount;
 
+let isCurrentPwValid = true;
+
+function verifyCurrentPasswordApi(val, input) {
+  if (!val) return;
+  const group = input.closest('.form-group');
+  const errSpan = group ? group.querySelector('.error-message') : null;
+  const formData = new URLSearchParams();
+  formData.append('currentPassword', val);
+
+  fetch('/api/profile/check-current-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formData.toString()
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.valid === false) {
+        isCurrentPwValid = false;
+        input.classList.add('is-invalid');
+        if (errSpan) {
+          errSpan.innerText = 'Mật khẩu hiện tại không chính xác!';
+          errSpan.style.display = 'block';
+        }
+      } else {
+        isCurrentPwValid = true;
+        input.classList.remove('is-invalid');
+        if (errSpan) {
+          errSpan.style.display = 'none';
+          errSpan.innerText = '';
+        }
+      }
+    })
+    .catch(err => console.error(err));
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   const pwPanel = document.getElementById('password-change-panel');
   if (pwPanel) {
+    const currentPwInput = pwPanel.querySelector('input[name="currentPassword"]');
+    if (currentPwInput) {
+      let checkTimer;
+      currentPwInput.addEventListener('input', function () {
+        clearTimeout(checkTimer);
+        const val = this.value.trim();
+        if (!val) return;
+        checkTimer = setTimeout(() => {
+          verifyCurrentPasswordApi(val, currentPwInput);
+        }, 400);
+      });
+
+      currentPwInput.addEventListener('blur', function () {
+        const val = this.value.trim();
+        if (val) {
+          verifyCurrentPasswordApi(val, currentPwInput);
+        }
+      });
+    }
+
     // Dynamic removal of error state when user types into any input field
     pwPanel.querySelectorAll('input').forEach(input => {
       input.addEventListener('input', function () {
         if (this.value.trim() !== '') {
-          this.classList.remove('is-invalid');
-          const group = this.closest('.form-group');
-          if (group) {
-            const errSpan = group.querySelector('.error-message');
-            if (errSpan) {
-              errSpan.style.display = 'none';
-              errSpan.innerText = '';
+          if (this.name !== 'currentPassword' || isCurrentPwValid) {
+            this.classList.remove('is-invalid');
+            const group = this.closest('.form-group');
+            if (group) {
+              const errSpan = group.querySelector('.error-message');
+              if (errSpan) {
+                errSpan.style.display = 'none';
+                errSpan.innerText = '';
+              }
             }
           }
         }
@@ -95,13 +152,15 @@ function validateChangePassword(e) {
   // 1. Mật khẩu hiện tại
   if (!currentPwInput || !currentPwInput.value) {
     showFieldError(currentPwInput, 'Vui lòng nhập mật khẩu hiện tại!');
+  } else if (!isCurrentPwValid) {
+    showFieldError(currentPwInput, 'Mật khẩu hiện tại không chính xác!');
   }
 
   // 2. Mật khẩu mới
   if (!newPwInput || !newPwInput.value) {
     showFieldError(newPwInput, 'Vui lòng nhập mật khẩu mới!');
-  } else if (newPwInput.value.length < 8) {
-    showFieldError(newPwInput, 'Mật khẩu mới phải có ít nhất 8 ký tự!');
+  } else if (newPwInput.value.length < 6) {
+    showFieldError(newPwInput, 'Mật khẩu mới phải có ít nhất 6 ký tự!');
   } else if (currentPwInput && currentPwInput.value && newPwInput.value === currentPwInput.value) {
     showFieldError(newPwInput, 'Mật khẩu mới không được trùng với mật khẩu hiện tại!');
   }

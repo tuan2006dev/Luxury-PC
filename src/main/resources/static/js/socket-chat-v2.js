@@ -1,425 +1,5 @@
 (function() {
-    // 1. INJECT CSS STYLES
-    const css = `
-        .socket-chat-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #0066CC, #0088FF);
-            border-radius: 50%;
-            box-shadow: 0 4px 20px rgba(0, 102, 204, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 9998;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
-        }
-        .socket-chat-btn:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 6px 25px rgba(0, 102, 204, 0.6);
-        }
-        .socket-chat-btn svg {
-            width: 28px;
-            height: 28px;
-            fill: #ffffff;
-        }
-        .socket-chat-badge {
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            width: 18px;
-            height: 18px;
-            background: #ef4444;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: #fff;
-        }
-        .socket-chat-window {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 320px;
-            height: 460px;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            z-index: 9998;
-            overflow: hidden;
-            transform: translateY(20px) scale(0.95);
-            transform-origin: bottom right;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-        }
-        .socket-chat-window.open {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .socket-chat-header {
-            background: #0066CC;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .socket-chat-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #ffffff;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .socket-chat-status {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #e2e8f0;
-            transition: background 0.3s;
-        }
-        .socket-chat-status.connected {
-            background: #22c55e;
-            box-shadow: 0 0 8px #22c55e;
-        }
-        .socket-chat-title span {
-            color: #E0F2FE;
-            font-weight: 300;
-        }
-        .socket-chat-close {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .socket-chat-close:hover {
-            color: #ffffff;
-        }
-        .socket-chat-ticket-bar {
-            background: #F8FAFC;
-            border-bottom: 1px solid #E5E7EB;
-            padding: 6px 20px;
-            font-size: 0.7rem;
-            color: #666666;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .socket-chat-ticket-bar .new-chat-link {
-            color: #0066CC;
-            cursor: pointer;
-            font-size: 0.65rem;
-            text-decoration: underline;
-            transition: color 0.2s;
-        }
-        .socket-chat-ticket-bar .new-chat-link:hover {
-            color: #004d99;
-        }
-        .socket-chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background: #F9F9F9;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(0, 102, 204, 0.2) transparent;
-        }
-        .socket-chat-messages::-webkit-scrollbar {
-            width: 4px;
-        }
-        .socket-chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(0, 102, 204, 0.2);
-            border-radius: 2px;
-        }
-        .socket-chat-msg {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            word-break: break-word;
-            position: relative;
-            animation: msgFadeIn 0.25s ease;
-        }
-        @keyframes msgFadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .socket-chat-msg.incoming {
-            background: #FFFFFF;
-            border: 1px solid #E5E7EB;
-            color: #333333;
-            align-self: flex-start;
-            border-top-left-radius: 2px;
-        }
-        .socket-chat-msg.outgoing {
-            background: #0066CC;
-            border: 1px solid #005bb5;
-            color: #ffffff;
-            align-self: flex-end;
-            border-top-right-radius: 2px;
-        }
-        .socket-chat-sender {
-            font-size: 0.7rem;
-            color: #0066CC;
-            margin-bottom: 4px;
-            font-weight: bold;
-        }
-        .socket-chat-msg.outgoing .socket-chat-time {
-            color: rgba(255,255,255,0.7);
-        }
-        .socket-chat-msg.incoming .socket-chat-time {
-            color: #999999;
-        }
-        .socket-chat-time {
-            font-size: 0.6rem;
-            margin-top: 4px;
-            text-align: right;
-        }
-        .socket-chat-system {
-            font-size: 0.75rem;
-            color: #666666;
-            text-align: center;
-            align-self: center;
-            font-style: italic;
-            background: #E5E7EB;
-            padding: 4px 10px;
-            border-radius: 10px;
-        }
-        .socket-chat-input-area {
-            padding: 15px 20px;
-            background: #FFFFFF;
-            border-top: 1px solid #E5E7EB;
-            display: flex;
-            gap: 10px;
-        }
-        .socket-chat-input {
-            flex: 1;
-            background: #F9F9F9;
-            border: 1px solid #E5E7EB;
-            color: #333333;
-            padding: 10px 14px;
-            border-radius: 4px;
-            outline: none;
-            font-size: 0.85rem;
-            transition: border-color 0.2s;
-        }
-        .socket-chat-input:focus {
-            border-color: #0066CC;
-        }
-        .socket-chat-send-btn {
-            background: #0066CC;
-            color: #ffffff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .socket-chat-send-btn:hover {
-            background: #005bb5;
-        }
-        .socket-chat-setup {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            text-align: center;
-            gap: 12px;
-            background: #FFFFFF;
-        }
-        .socket-chat-setup p {
-            font-size: 0.85rem;
-            color: #666666;
-            line-height: 1.5;
-        }
-        .socket-chat-setup-input {
-            width: 100%;
-            background: #F9F9F9;
-            border: 1px solid #E5E7EB;
-            color: #333333;
-            padding: 12px;
-            border-radius: 4px;
-            outline: none;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        .socket-chat-setup-input:focus {
-            border-color: #0066CC;
-        }
-        .socket-chat-setup-btn {
-            width: 100%;
-            background: #0066CC;
-            color: #ffffff;
-            border: none;
-            padding: 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.85rem;
-        }
-        .socket-chat-setup-btn:hover {
-            background: #005bb5;
-        }
-        .socket-chat-setup-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .socket-chat-waiting-state {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            text-align: center;
-            background: #fffbe6;
-            border-bottom: 1px solid #fef3c7;
-        }
-        .socket-chat-waiting-state.active {
-            display: flex;
-        }
-        .socket-chat-waiting-title {
-            font-size: 0.9rem;
-            color: #d97706;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        .socket-chat-waiting-subtitle {
-            font-size: 0.8rem;
-            color: #92400e;
-        }
-        .socket-chat-timer {
-            font-family: monospace;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 8px;
-            color: #b45309;
-        }
-        .socket-chat-quick-replies {
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            padding: 15px 20px;
-            background: #F9F9F9;
-            border-bottom: 1px solid #E5E7EB;
-        }
-        .socket-chat-quick-replies.active {
-            display: flex;
-        }
-        .quick-reply-btn {
-            background: #ffffff;
-            border: 1px solid #0066CC;
-            color: #0066CC;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-        }
-        .quick-reply-btn:hover {
-            background: #0066CC;
-            color: #ffffff;
-        }
-        .quick-reply-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #f1f5f9;
-            color: #94a3b8;
-            border-color: #cbd5e1;
-        }
-
-    `;
-
-    const styleEl = document.createElement('style');
-    styleEl.innerHTML = css;
-    document.head.appendChild(styleEl);
-
-    // 2. INJECT HTML MARKUP
-    const chatHtml = `
-        <div class="socket-chat-btn" id="socketChatBtn" title="Hỗ trợ trực tuyến">
-            <svg viewBox="0 0 24 24">
-                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
-            </svg>
-            <div class="socket-chat-badge" id="socketChatBadge"></div>
-        </div>
-        <div class="socket-chat-window" id="socketChatWindow">
-            <div class="socket-chat-header">
-                <div class="socket-chat-title">
-                    <div class="socket-chat-status" id="socketChatStatus"></div>
-                    LUXURY · <span>HỖ TRỢ</span>
-                </div>
-                <button class="socket-chat-close" id="socketChatClose">✕</button>
-            </div>
-            
-            <div class="socket-chat-ticket-bar" id="socketChatTicketBar" style="display:none; justify-content: space-between; align-items: center;">
-                <span id="socketChatTicketLabel">Ticket #—</span>
-                <div style="display: flex; gap: 12px;">
-                    <span class="new-chat-link" id="socketChatCloseTicketBtn" style="color: #ef4444; font-weight: 500;">Đóng cuộc trò chuyện</span>
-                    <span class="new-chat-link" id="socketChatNewBtn">Tạo mới</span>
-                </div>
-            </div>
-
-            <div class="socket-chat-setup" id="socketChatSetup">
-                <p>Vui lòng nhập thông tin để bắt đầu cuộc trò chuyện hỗ trợ.</p>
-                <input type="text" class="socket-chat-setup-input" id="socketChatNameInput" placeholder="Họ và tên..." maxlength="30" />
-                <input type="email" class="socket-chat-setup-input" id="socketChatEmailInput" placeholder="Email liên hệ (tuỳ chọn)..." maxlength="50" />
-                <button class="socket-chat-setup-btn" id="socketChatStartBtn">Bắt Đầu Chat</button>
-            </div>
-
-            <div class="socket-chat-waiting-state" id="socketChatWaitingState">
-                <div class="socket-chat-waiting-title">🟡 Đang tìm nhân viên hỗ trợ...</div>
-                <div class="socket-chat-waiting-subtitle" id="socketChatWaitingSubtitle">Vui lòng chờ trong giây lát.</div>
-                <div class="socket-chat-timer" id="socketChatTimer">00:00</div>
-            </div>
-
-            <div class="socket-chat-quick-replies" id="socketChatQuickReplies">
-                <button class="quick-reply-btn">Tư vấn cấu hình PC</button>
-                <button class="quick-reply-btn">Hỏi về chính sách bảo hành</button>
-                <button class="quick-reply-btn">Trợ giúp giao hàng, vận chuyển</button>
-                <button class="quick-reply-btn">Báo lỗi / Hỗ trợ kỹ thuật</button>
-            </div>
-
-            <div class="socket-chat-messages" id="socketChatMessages" style="display: none;">
-                <!-- Messages will appear here -->
-            </div>
-            
-            <div class="socket-chat-input-area" id="socketChatInputArea" style="display: none;">
-                <input type="text" class="socket-chat-input" id="socketChatMsgInput" placeholder="Nhập tin nhắn..." autocomplete="off" />
-                <button class="socket-chat-send-btn" id="socketChatSendBtn">GỬI</button>
-            </div>
-        </div>
-    `;
-
-    const chatContainer = document.createElement('div');
-    chatContainer.innerHTML = chatHtml;
-    document.body.appendChild(chatContainer);
-
-    // 3. CODE LOGIC
+    // 1. GET DOM ELEMENTS (HTML is now embedded statically in footer.html)
     const btn = document.getElementById('socketChatBtn');
     const win = document.getElementById('socketChatWindow');
     const closeBtn = document.getElementById('socketChatClose');
@@ -449,6 +29,18 @@
     let userEmail = localStorage.getItem('socket_chat_email') || '';
     let currentTicketId = parseInt(localStorage.getItem('socket_chat_ticket_id')) || null;
     let ticketSystemAvailable = null; // null = unknown, true/false after first call
+    let availableStaffs = [];
+    let adminJoined = false;
+
+    // Fetch staffs and save to variable
+    fetch('/api/tickets/staffs')
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                availableStaffs = data;
+            }
+        })
+        .catch(err => console.log('Cannot fetch staffs', err));
 
     // Custom cursor hovering for chat buttons is now handled globally by cursor.js
 
@@ -471,9 +63,13 @@
         if (isOpen) {
             win.classList.remove('open');
             btn.style.display = 'flex';
+            localStorage.removeItem('socket_chat_isOpen');
+            document.documentElement.classList.remove('socket-chat-open');
         } else {
             win.classList.add('open');
             btn.style.display = 'none';
+            localStorage.setItem('socket_chat_isOpen', 'true');
+            document.documentElement.classList.add('socket-chat-open');
             if (username && currentTicketId && !ws) {
                 connectWebSocket();
                 loadChatHistory();
@@ -483,27 +79,53 @@
         }
     });
 
+    // Auto open if it was open before reload
+    if (localStorage.getItem('socket_chat_isOpen') === 'true') {
+        win.classList.add('open');
+        btn.style.display = 'none';
+        document.documentElement.classList.add('socket-chat-open');
+        if (username && currentTicketId && !ws) {
+            connectWebSocket();
+            loadChatHistory();
+        }
+    }
+
     closeBtn.addEventListener('click', () => {
         win.classList.remove('open');
         btn.style.display = 'flex';
+        localStorage.removeItem('socket_chat_isOpen');
+        document.documentElement.classList.remove('socket-chat-open');
     });
 
     // Close ticket button (Customer ends conversation)
     closeTicketBtn.addEventListener('click', async () => {
-        if (!confirm('Bạn có chắc chắn muốn đóng cuộc trò chuyện hỗ trợ này không?')) return;
+        const ok = await window.showConfirm('Bạn có chắc chắn muốn đóng cuộc trò chuyện hỗ trợ này không?', 'Đóng cuộc trò chuyện');
+        if (!ok) return;
 
         if (currentTicketId) {
             try {
-                await fetch(`/api/tickets/${currentTicketId}/close`, { method: 'POST' });
+                // Keep sending the request so admin knows, but don't wait for it
+                fetch(`/api/tickets/${currentTicketId}/request-close`, { method: 'POST' }).catch(e => console.error(e));
+                
+                // Immediately close it locally for the customer
+                closeChatLocally();
+                if(typeof showToast === 'function') { showToast('Đã đóng cuộc trò chuyện hiện tại.'); }
             } catch (e) {
-                console.error('[socket-chat] Error closing ticket:', e);
+                console.error('[socket-chat] Error requesting ticket close:', e);
             }
+        } else {
+            closeChatLocally();
+            if(typeof showToast === 'function') { showToast('Đã kết thúc và đóng cuộc trò chuyện.'); } else { alert('Đã kết thúc và đóng cuộc trò chuyện.'); }
         }
+    });
 
+    function closeChatLocally() {
         currentTicketId = null;
         localStorage.removeItem('socket_chat_ticket_id');
         messagesDiv.innerHTML = '';
         ticketBar.style.display = 'none';
+        stopWaitingTimer();
+        adminJoined = false;
 
         if (ws) {
             ws.close();
@@ -515,17 +137,18 @@
         inputArea.style.display = 'none';
         nameInput.value = username;
         emailInput.value = userEmail;
-
-        if(typeof showToast === 'function') { showToast('Đã kết thúc và đóng cuộc trò chuyện.'); } else { alert('Đã kết thúc và đóng cuộc trò chuyện.'); }
-    });
+    }
 
     // New Chat button - reset ticket to start a new conversation
-    newChatBtn.addEventListener('click', () => {
-        if (!confirm('Bạn có muốn tạo cuộc trò chuyện mới không? Lịch sử chat hiện tại sẽ vẫn được lưu lại.')) return;
+    newChatBtn.addEventListener('click', async () => {
+        const ok = await window.showConfirm('Bạn có muốn tạo cuộc trò chuyện mới không? Lịch sử chat hiện tại sẽ vẫn được lưu lại.', 'Tạo cuộc trò chuyện mới');
+        if (!ok) return;
         currentTicketId = null;
         localStorage.removeItem('socket_chat_ticket_id');
         messagesDiv.innerHTML = '';
         ticketBar.style.display = 'none';
+        stopWaitingTimer();
+        adminJoined = false;
         
         // Close existing WebSocket
         if (ws) {
@@ -553,11 +176,12 @@
     let waitingInterval = null;
     let waitingSeconds = 0;
 
-    function startWaitingTimer() {
+    function startWaitingTimer(hideMessages = false) {
         waitingSeconds = 0;
         waitingStateDiv.classList.add('active');
-        quickRepliesDiv.classList.add('active');
-        messagesDiv.style.display = 'none';
+        if (hideMessages) {
+            messagesDiv.style.display = 'none';
+        }
         
         waitingTimer.textContent = '00:00';
         
@@ -579,7 +203,6 @@
     function stopWaitingTimer() {
         if (waitingInterval) clearInterval(waitingInterval);
         waitingStateDiv.classList.remove('active');
-        quickRepliesDiv.classList.remove('active');
         messagesDiv.style.display = 'flex';
     }
 
@@ -617,8 +240,8 @@
         inputArea.style.display = 'flex';
         
         if (currentTicketId && ticketSystemAvailable) {
-            // New ticket always starts as OPEN and waiting
-            startWaitingTimer();
+            // Do not show waiting state initially
+            messagesDiv.style.display = 'flex';
         } else {
             messagesDiv.style.display = 'flex';
         }
@@ -632,7 +255,12 @@
         startBtn.textContent = 'Bắt Đầu Chat';
 
         connectWebSocket();
-        setTimeout(() => msgInput.focus(), 200);
+        setTimeout(() => {
+            msgInput.focus();
+            if (!messagesDiv.innerHTML.includes('Trợ lý ảo Luxury PC')) {
+                appendWelcomeMenu();
+            }
+        }, 300);
     }
 
     /**
@@ -679,10 +307,33 @@
             if (!response.ok) return;
 
             const messages = await response.json();
-            if (!messages || messages.length === 0) return;
+            if (!messages || messages.length === 0) {
+                if (!adminJoined) {
+                    setTimeout(() => {
+                        if (!messagesDiv.innerHTML.includes('Trợ lý ảo Luxury PC')) {
+                            appendWelcomeMenu();
+                        }
+                    }, 100);
+                }
+                return;
+            }
 
             // Clear existing messages and re-render from DB
             messagesDiv.innerHTML = '';
+            
+            // Determine adminJoined status first
+            messages.forEach(msg => {
+                if (msg.sender === 'ADMIN' && msg.senderName !== 'Luxe Support Bot 🤖' && msg.senderName !== 'AI Assistant' && msg.senderName !== 'Luxury Bot 🤖') {
+                    adminJoined = true;
+                }
+            });
+
+            // Append welcome menu at the TOP if admin hasn't joined
+            if (!adminJoined) {
+                appendWelcomeMenu();
+            }
+            
+            // Append all actual messages below the welcome menu
             messages.forEach(msg => {
                 const isOutgoing = msg.sender === 'CUSTOMER';
                 appendMessage(
@@ -715,8 +366,10 @@
         
         ws.onopen = () => {
             statusDot.classList.add('connected');
-            if (!waitingStateDiv.classList.contains('active')) {
+            if (waitingStateDiv.classList.contains('active')) {
                 appendSystemMessage('Đã kết nối! Nhân viên hỗ trợ sẽ phản hồi bạn trong giây lát.');
+            } else if (!messagesDiv.innerHTML.includes('Đã kết nối')) {
+                appendSystemMessage('Đã kết nối thành công!');
             }
         };
         
@@ -727,11 +380,29 @@
                 // Handle system messages (e.g., ADMIN_JOINED)
                 if (data.type === 'SYSTEM') {
                     if (data.event === 'ADMIN_JOINED') {
+                        adminJoined = true;
                         stopWaitingTimer();
                         appendSystemMessage(data.content || `Nhân viên ${data.adminName || 'hỗ trợ'} đã tham gia cuộc trò chuyện.`);
+                    } else if (data.event === 'TICKET_CLOSED') {
+                        adminJoined = false;
+                        appendSystemMessage(data.content || 'Cuộc trò chuyện đã được đóng hoàn toàn.');
+                        setTimeout(() => {
+                            closeChatLocally();
+                            if(typeof showToast === 'function') { showToast('Đã kết thúc và đóng cuộc trò chuyện.'); } else { alert('Đã kết thúc và đóng cuộc trò chuyện.'); }
+                        }, 2000);
+                    } else if (data.event === 'AI_WAITING') {
+                        document.querySelector('.socket-chat-waiting-title').textContent = '🤖 Đang kết nối AI...';
+                        document.getElementById('socketChatWaitingSubtitle').textContent = data.content;
+                        startWaitingTimer();
                     } else if (data.content && !data.content.includes('đã tham gia')) {
                         appendSystemMessage(data.content);
                     }
+                    return;
+                }
+
+                if (data.type === 'AI_REPLY') {
+                    stopWaitingTimer();
+                    appendMessage(data.adminName || 'Luxury Bot 🤖', data.content, false);
                     return;
                 }
 
@@ -740,6 +411,10 @@
                 const isOutgoing = (data.sender === 'CUSTOMER' && senderName === username) 
                                 || senderName === username;
                 const content = data.content || data.message || '';
+                
+                if (!isOutgoing) {
+                    stopWaitingTimer();
+                }
 
                 appendMessage(senderName, content, isOutgoing);
             } catch (e) {
@@ -775,46 +450,8 @@
         }, 3000);
     }
 
-    function triggerIndexChatBotReply(userMessage) {
-        setTimeout(async () => {
-            let botReply = '';
-            const msg = userMessage.toLowerCase();
-            
-            if (msg.includes('giá') || msg.includes('bao nhiêu') || msg.includes('tiền') || msg.includes('rẻ') || msg.includes('đắt')) {
-                botReply = 'Dạ chào bạn, bảng giá linh kiện đã được tối ưu tốt nhất. Bạn có nhu cầu thương lượng thêm hoặc cần chiết khấu cho đơn hàng lớn vui lòng liên hệ hotline 1900 8888 hoặc để lại SĐT nha! 💰';
-            } else if (msg.includes('ship') || msg.includes('vận chuyển') || msg.includes('giao hàng') || msg.includes('ship COD')) {
-                botReply = 'Dạ Luxury PC hỗ trợ miễn phí vận chuyển (Free Ship) toàn quốc cho mọi cấu hình PC build và linh kiện trên 1 triệu đồng ạ! ✈️';
-            } else if (msg.includes('bảo hành') || msg.includes('hỏng') || msg.includes('sửa') || msg.includes('lỗi')) {
-                botReply = 'Tất cả linh kiện tại Luxury PC đều là hàng chính hãng và được bảo hành từ 36 tháng. Lỗi 1 đổi 1 trong 30 ngày đầu tiên nếu có lỗi phần cứng từ nhà sản xuất! 🛡️';
-            } else if (msg.includes('địa chỉ') || msg.includes('ở đâu') || msg.includes('cửa hàng') || msg.includes('showroom')) {
-                botReply = 'Showroom chính thức của Luxury PC đặt tại: Số 12 Trịnh Văn Bô, Nam Từ Liêm, Hà Nội. Mở cửa từ 8h00 - 21h30 tất cả các ngày trong tuần. Rất hân hạnh được đón tiếp bạn! 📍';
-            } else if (msg.includes('còn hàng') || msg.includes('hết hàng') || msg.includes('stock')) {
-                botReply = 'Dạ hầu hết các linh kiện hiển thị trên website đều có sẵn hàng. Nhân viên sẽ check kho thực tế và liên hệ chốt đơn với bạn ngay sau khi bạn tạo yêu cầu ạ. 📦';
-            } else {
-                botReply = 'Cảm ơn bạn đã nhắn tin cho ban hỗ trợ khách hàng Luxury PC. Nhân viên tư vấn đang kiểm tra thông tin và sẽ phản hồi chi tiết tới bạn trong giây lát! Bạn vui lòng đợi 1-2 phút nhé. 💬';
-            }
-
-            // Append directly to the UI
-            appendMessage('Luxe Support Bot 🤖', botReply, false);
-
-            // Persist to DB if ticket is available
-            if (currentTicketId && ticketSystemAvailable) {
-                try {
-                    await fetch(`/api/tickets/${currentTicketId}/messages`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            sender: 'ADMIN',
-                            senderName: 'Luxe Support Bot 🤖',
-                            message: botReply
-                        })
-                    });
-                } catch (e) {
-                    console.error('[socket-chat] Error saving bot response:', e);
-                }
-            }
-        }, 1200); // 1.2s delay for natural response
-    }
+    // Mock AI has been removed to avoid duplicate AI messages.
+    // The backend Gemini AI handles all AI inquiries.
 
     // Send Message
     sendBtn.addEventListener('click', sendMessage);
@@ -878,7 +515,8 @@
             sender: 'CUSTOMER',
             senderName: username,
             content: text,
-            type: 'CHAT'
+            type: 'CHAT',
+            isAiRequest: !adminJoined
         };
 
         ws.send(JSON.stringify(msgPayload));
@@ -898,59 +536,109 @@
             });
         }
 
-        // Trigger bot auto-reply
-        triggerIndexChatBotReply(text);
+        // Hide quick replies to prevent UI overlap
+        if (quickRepliesDiv) quickRepliesDiv.style.display = 'none';
 
         msgInput.value = '';
         msgInput.focus();
     }
     
-    // Quick Reply Buttons Logic
-    quickReplyBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const text = btn.textContent;
-            
-            // Disable all quick replies to prevent spam
-            quickReplyBtns.forEach(b => b.disabled = true);
-            
-            // Send as normal message
-            if (!ws || ws.readyState !== WebSocket.OPEN) {
-                appendSystemMessage('Đang kết nối lại...');
-                connectWebSocket();
-            } else {
-                const msgPayload = {
-                    ticketId: currentTicketId,
-                    sender: 'CUSTOMER',
-                    senderName: username,
-                    content: text,
-                    type: 'CHAT'
-                };
-                ws.send(JSON.stringify(msgPayload));
-                
-                if (currentTicketId && ticketSystemAvailable) {
-                    fetch(`/api/tickets/${currentTicketId}/messages`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            sender: 'CUSTOMER',
-                            senderName: username,
-                            message: text
-                        })
-                    }).catch(() => {});
-                }
-                
-                appendMessage(username, text, true);
-                triggerIndexChatBotReply(text);
-                
-                // Keep the waiting timer, just hide the quick replies
-                quickRepliesDiv.style.display = 'none';
+    function handleQuickReplyClick(text, isAiReq) {
+        if (text === '🧑‍💻 Gặp nhân viên hỗ trợ') {
+            if (adminJoined) {
+                if(typeof showToast === 'function') { showToast('Nhân viên đã tham gia cuộc trò chuyện rồi ạ.'); } else { alert('Nhân viên đã tham gia cuộc trò chuyện rồi ạ.'); }
+                return;
             }
+            if (waitingStateDiv.classList.contains('active') && text === '🧑‍💻 Gặp nhân viên hỗ trợ') {
+                if(typeof showToast === 'function') { showToast('Yêu cầu của bạn đang được kết nối, vui lòng chờ.'); } else { alert('Yêu cầu của bạn đang được kết nối, vui lòng chờ.'); }
+                return;
+            }
+            document.querySelector('.socket-chat-waiting-title').textContent = '🟡 Đang tìm nhân viên...';
+            document.getElementById('socketChatWaitingSubtitle').textContent = 'Vui lòng chờ trong giây lát.';
+            startWaitingTimer();
+            appendSystemMessage('Đã gửi yêu cầu đến nhân viên hỗ trợ. Vui lòng chờ trong giây lát...');
+        }
+        
+        // Send as normal message
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            appendSystemMessage('Đang kết nối lại...');
+            connectWebSocket();
+        } else {
+            const msgPayload = {
+                ticketId: currentTicketId,
+                sender: 'CUSTOMER',
+                senderName: username,
+                content: text,
+                type: 'CHAT',
+                isAiRequest: adminJoined ? false : isAiReq
+            };
+            ws.send(JSON.stringify(msgPayload));
+            
+            if (currentTicketId && ticketSystemAvailable) {
+                fetch(`/api/tickets/${currentTicketId}/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender: 'CUSTOMER',
+                        senderName: username,
+                        message: text
+                    })
+                }).catch(() => {});
+            }
+            
+            // Removed redundant mock AI trigger
+        }
+    }
+
+    function appendWelcomeMenu() {
+        const msgEl = document.createElement('div');
+        msgEl.className = 'socket-chat-msg system-msg';
+        
+        const html = `
+            <div style="background:#f1f5f9; padding: 10px; border-radius: 8px; font-size: 0.9em; color:#334155; margin-bottom: 10px; text-align: left; width: 100%;">
+                <div style="margin-bottom: 10px;">
+                    <strong style="color:#0f172a;">Trợ lý ảo Luxury PC 🤖</strong><br/>
+                    Xin chào! Để được hỗ trợ nhanh nhất, bạn vui lòng chọn một chủ đề dưới đây 👇
+                </div>
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <button class="welcome-menu-btn" data-ai="true" data-text="🤖 Nhờ AI Tư vấn Cấu hình" style="border: 1px solid #10b981; color: #10b981; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">🤖 Nhờ AI Tư vấn Cấu hình</button>
+                    <button class="welcome-menu-btn" data-ai="true" data-text="Tư vấn cấu hình PC" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Tư vấn cấu hình PC</button>
+                    <button class="welcome-menu-btn" data-ai="true" data-text="Hỏi về chính sách bảo hành" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Hỏi về chính sách bảo hành</button>
+                    <button class="welcome-menu-btn" data-ai="true" data-text="Trợ giúp giao hàng, vận chuyển" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">Trợ giúp giao hàng, vận chuyển</button>
+                    <button class="welcome-menu-btn" data-ai="false" data-text="🧑‍💻 Gặp nhân viên hỗ trợ" style="border: 1px solid #cbd5e1; color: #334155; background: transparent; padding: 6px 12px; border-radius: 20px; cursor: pointer; text-align: left;">🧑‍💻 Gặp nhân viên hỗ trợ</button>
+                </div>
+            </div>
+        `;
+        msgEl.innerHTML = html;
+        messagesDiv.appendChild(msgEl);
+        scrollToBottom();
+
+        const btns = msgEl.querySelectorAll('.welcome-menu-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Tạm thời disable để chống spam click
+                btns.forEach(b => {
+                    b.disabled = true;
+                });
+                
+                setTimeout(() => {
+                    btns.forEach(b => { b.disabled = false; });
+                }, 2000);
+                
+                const text = btn.getAttribute('data-text');
+                const isAiReq = btn.getAttribute('data-ai') === 'true';
+                handleQuickReplyClick(text, isAiReq);
+            });
         });
-    });
+    }
 
     function appendMessage(sender, content, isOutgoing, timestamp) {
         const msgEl = document.createElement('div');
         msgEl.className = `socket-chat-msg ${isOutgoing ? 'outgoing' : 'incoming'}`;
+        if (sender === 'AI Assistant' || sender === 'Luxury Bot 🤖' || sender === 'Luxe Support Bot 🤖') {
+            msgEl.style.border = '1px solid #10b981';
+            msgEl.style.backgroundColor = '#f0fdf4';
+        }
         
         let html = '';
         if (!isOutgoing) {
@@ -969,6 +657,12 @@
     }
 
     function appendSystemMessage(content) {
+        // Chống spam lặp lại cùng 1 thông báo hệ thống liên tục
+        const lastMsg = messagesDiv.lastElementChild;
+        if (lastMsg && lastMsg.className === 'socket-chat-system' && lastMsg.textContent === content) {
+            return;
+        }
+        
         const msgEl = document.createElement('div');
         msgEl.className = 'socket-chat-system';
         msgEl.textContent = content;

@@ -54,7 +54,11 @@
 
         <!-- Filter Tabs -->
         <div class="filter-bar">
-            <a th:href="@{/admin/tickets}" th:classappend="${filterStatus == null} ? 'active' : ''" class="filter-tab"
+            <a th:href="@{/admin/tickets}" th:classappend="${filterStatus == 'ACTIVE'} ? 'active' : ''" class="filter-tab open-tab"
+                onclick="if(this.classList.contains('active')) event.preventDefault();">
+                <i class="fa-solid fa-bolt"></i> <span>Đang hoạt động</span>
+            </a>
+            <a th:href="@{/admin/tickets(status='ALL')}" th:classappend="${filterStatus == 'ALL'} ? 'active' : ''" class="filter-tab"
                 onclick="if(this.classList.contains('active')) event.preventDefault();">
                 <i class="fa-solid fa-list"></i> <span>Tất cả</span>
             </a>
@@ -244,6 +248,9 @@
                 </div>
             </div>
         </div>
+        <script th:inline="javascript">
+            var adminUsername = /*[[${(currentUser != null && currentUser.fullName != null && !currentUser.fullName.isEmpty()) ? currentUser.fullName : #authentication.name}]]*/ 'Admin';
+        </script>
         <script th:src="@{/js/admin/tickets.js}"></script>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>

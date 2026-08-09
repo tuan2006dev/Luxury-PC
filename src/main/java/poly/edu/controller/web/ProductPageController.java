@@ -108,15 +108,20 @@ public class ProductPageController {
         model.addAttribute("flashSaleMap", flashSaleMap);
 
         // Sorting
-        org.springframework.data.domain.Sort sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id");
+        org.springframework.data.domain.Sort sortObj = org.springframework.data.domain.Sort
+                .by(org.springframework.data.domain.Sort.Direction.DESC, "id");
         if ("price_asc".equalsIgnoreCase(sort)) {
-            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "price");
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC,
+                    "price");
         } else if ("price_desc".equalsIgnoreCase(sort)) {
-            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "price");
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
+                    "price");
         } else if ("name_asc".equalsIgnoreCase(sort)) {
-            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "name");
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC,
+                    "name");
         } else if ("name_desc".equalsIgnoreCase(sort)) {
-            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "name");
+            sortObj = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
+                    "name");
         }
 
         int pageSize = 100;
@@ -128,15 +133,18 @@ public class ProductPageController {
         long totalProducts;
 
         if (Boolean.TRUE.equals(flashSale)) {
-            org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.PageRequest.of(0, 10000, sortObj);
-            List<Product> allMatches = productService.searchProductsPage(cid, min, max, kw, brand, unpaged).getContent();
+            org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.PageRequest.of(0, 10000,
+                    sortObj);
+            List<Product> allMatches = productService.searchProductsPage(cid, min, max, kw, brand, unpaged)
+                    .getContent();
             List<Product> filtered = allMatches.stream()
                     .filter(p -> p != null && flashSaleMap.containsKey(p.getId()))
                     .collect(java.util.stream.Collectors.toList());
 
             totalProducts = filtered.size();
             totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-            if (totalPages < 1) totalPages = 1;
+            if (totalPages < 1)
+                totalPages = 1;
 
             int fromIndex = pageIndex * pageSize;
             int toIndex = Math.min(fromIndex + pageSize, (int) totalProducts);
@@ -146,12 +154,15 @@ public class ProductPageController {
                 products = java.util.Collections.emptyList();
             }
         } else {
-            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(pageIndex, pageSize, sortObj);
-            org.springframework.data.domain.Page<Product> productPage = productService.searchProductsPage(cid, min, max, kw, brand, pageable);
+            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest
+                    .of(pageIndex, pageSize, sortObj);
+            org.springframework.data.domain.Page<Product> productPage = productService.searchProductsPage(cid, min, max,
+                    kw, brand, pageable);
             products = productPage.getContent();
             totalPages = productPage.getTotalPages();
             totalProducts = productPage.getTotalElements();
-            if (totalPages < 1) totalPages = 1;
+            if (totalPages < 1)
+                totalPages = 1;
         }
 
         model.addAttribute("allProducts", products);
@@ -308,6 +319,7 @@ public class ProductPageController {
     @org.springframework.web.bind.annotation.ResponseBody
     public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> addReview(
             @PathVariable("id") Integer id,
+            @RequestParam(value = "orderItemId", required = false) Integer orderItemId,
             @RequestParam("stars") Integer stars,
             @RequestParam("content") String content,
             @RequestParam(value = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
@@ -357,17 +369,60 @@ public class ProductPageController {
         }
 
         // Kiem tra quyen danh gia
-        long countPurchase = orderItemDAO.countCompletedPurchasesByUserAndProduct(uOpt.get().getId(), id);
-        if (countPurchase == 0) {
-            response.put("success", false);
-            response.put("message",
-                    "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
-            return org.springframework.http.ResponseEntity.status(403).body(response);
+        poly.edu.entity.OrderItem targetOrderItem = null;
+        if (orderItemId != null) {
+            Optional<poly.edu.entity.OrderItem> oiOpt = orderItemDAO.findById(orderItemId);
+            if (oiOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Không tìm thấy chi tiết đơn hàng.");
+                return org.springframework.http.ResponseEntity.status(404).body(response);
+            }
+            targetOrderItem = oiOpt.get();
+            if (targetOrderItem.getOrder() == null || targetOrderItem.getOrder().getUser() == null ||
+                    !targetOrderItem.getOrder().getUser().getId().equals(uOpt.get().getId())) {
+                response.put("success", false);
+                response.put("message", "Lượt mua này không thuộc về tài khoản của bạn.");
+                return org.springframework.http.ResponseEntity.status(403).body(response);
+            }
+            String st = targetOrderItem.getOrder().getStatus();
+            if (!"COMPLETED".equalsIgnoreCase(st) && !"HOAN_THANH".equalsIgnoreCase(st)) {
+                response.put("success", false);
+                response.put("message", "Đơn hàng phải ở trạng thái hoàn thành để đánh giá.");
+                return org.springframework.http.ResponseEntity.status(403).body(response);
+            }
+            if (reviewDAO.existsByOrderItem_Id(orderItemId)) {
+                response.put("success", false);
+                response.put("message", "Lần mua hàng này đã được đánh giá rồi.");
+                return org.springframework.http.ResponseEntity.status(400).body(response);
+            }
+        } else {
+            java.util.List<poly.edu.entity.OrderItem> userItems = orderItemDAO
+                    .findCompletedOrderItemsByUserAndProduct(uOpt.get().getId(), id);
+            if (userItems == null || userItems.isEmpty()) {
+                response.put("success", false);
+                response.put("message",
+                        "Bạn cần mua sản phẩm này và đơn hàng phải được giao thành công để có thể đánh giá.");
+                return org.springframework.http.ResponseEntity.status(403).body(response);
+            }
+
+            for (poly.edu.entity.OrderItem oi : userItems) {
+                if (!reviewDAO.existsByOrderItem_Id(oi.getId())) {
+                    targetOrderItem = oi;
+                    break;
+                }
+            }
+
+            if (targetOrderItem == null) {
+                response.put("success", false);
+                response.put("message", "Tất cả các lượt mua sản phẩm này của bạn đều đã được đánh giá rồi.");
+                return org.springframework.http.ResponseEntity.status(400).body(response);
+            }
         }
 
         Review r = new Review();
         r.setUser(uOpt.get());
         r.setProduct(p);
+        r.setOrderItem(targetOrderItem);
         r.setStars(stars);
         r.setContent(cleanContent);
 

@@ -27,6 +27,9 @@ public class AdminController {
     private final SupportTicketRepository ticketRepo;
     private final UserRepository userRepository;
     private final AdminLogRepository adminLogRepository;
+    private final poly.edu.service.OrderService orderService;
+    private final poly.edu.dao.OrderDAO orderDAO;
+    private final poly.edu.dao.ProductDAO productDAO;
 
     @GetMapping({ "", "/dashboard" })
     public String dashboard(Model model) {
@@ -84,9 +87,24 @@ public class AdminController {
             Principal principal,
             HttpServletRequest request) {
 
+        poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
+        String targetInfo = "Đơn hàng #" + orderId;
+        String oldStatus = "";
+        if (order != null) {
+            oldStatus = order.getStatus() != null ? order.getStatus() : "";
+            targetInfo = "Đơn hàng #" + orderId + (order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "") + (order.getFullName() != null ? " - " + order.getFullName() : "");
+        }
         adminService.updateOrderStatus(orderId, status);
-        logAction(principal, request, "Cập nhật trạng thái đơn hàng: " + status, "Đơn hàng #" + orderId);
+        logAction(principal, request, "Cập nhật trạng thái đơn hàng: " + (oldStatus.isBlank() ? "" : oldStatus + " ➔ ") + status, targetInfo);
 
+        return "redirect:/admin/orders";
+    }
+
+    @PostMapping("/orders/confirm-shipping")
+    public String confirmShipping(@RequestParam Integer orderId, Principal principal, HttpServletRequest request) {
+        poly.edu.entity.Order order = orderService.confirmOrderAndCreateShipping(orderId);
+        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        logAction(principal, request, "Tạo vận đơn Lalamove: " + (order != null ? order.getTrackingCode() : ""), targetInfo);
         return "redirect:/admin/orders";
     }
 
@@ -104,7 +122,9 @@ public class AdminController {
             HttpServletRequest request) {
 
         adminService.requestRefund(orderId, formatNoteWithRole(note, request));
-        logAction(principal, request, "Yêu cầu hoàn tiền", "Đơn hàng #" + orderId);
+        poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
+        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        logAction(principal, request, "Yêu cầu hoàn tiền", targetInfo);
 
         return "redirect:/admin/orders";
     }
@@ -117,7 +137,9 @@ public class AdminController {
             HttpServletRequest request) {
 
         adminService.approveCustomerRefund(orderId, formatNoteWithRole(note, request));
-        logAction(principal, request, "Duyệt yêu cầu hoàn tiền", "Đơn hàng #" + orderId);
+        poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
+        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        logAction(principal, request, "Duyệt yêu cầu hoàn tiền", targetInfo);
 
         return "redirect:/admin/orders";
     }
@@ -130,7 +152,9 @@ public class AdminController {
             HttpServletRequest request) {
 
         adminService.rejectCustomerRefund(orderId, formatNoteWithRole(note, request));
-        logAction(principal, request, "Từ chối hoàn tiền", "Đơn hàng #" + orderId);
+        poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
+        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        logAction(principal, request, "Từ chối hoàn tiền", targetInfo);
 
         return "redirect:/admin/orders";
     }
@@ -143,7 +167,9 @@ public class AdminController {
             HttpServletRequest request) {
 
         adminService.confirmRefund(orderId, formatNoteWithRole(note, request));
-        logAction(principal, request, "Xác nhận đã hoàn tiền", "Đơn hàng #" + orderId);
+        poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
+        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        logAction(principal, request, "Xác nhận đã hoàn tiền", targetInfo);
 
         return "redirect:/admin/orders";
     }
@@ -156,7 +182,9 @@ public class AdminController {
             HttpServletRequest request) {
 
         adminService.recallOrder(orderId, formatNoteWithRole(note, request));
-        logAction(principal, request, "Thu hồi đơn hàng", "Đơn hàng #" + orderId);
+        poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
+        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        logAction(principal, request, "Thu hồi đơn hàng", targetInfo);
 
         return "redirect:/admin/orders";
     }
@@ -181,7 +209,7 @@ public class AdminController {
                     .filter(inv -> (inv.getProduct() != null && inv.getProduct().getName() != null
                             && inv.getProduct().getName().toLowerCase().contains(kw)) ||
                             (inv.getProduct() != null && inv.getProduct().getId() != null
-                                    && String.valueOf(inv.getProduct().getId()).contains(kw))
+                                     && String.valueOf(inv.getProduct().getId()).contains(kw))
                             ||
                             (inv.getProduct() != null && inv.getProduct().getCategory() != null
                                     && inv.getProduct().getCategory().getName() != null
@@ -204,7 +232,10 @@ public class AdminController {
 
         if (quantity != null && quantity > 0) {
             adminService.adjustStock(productId, quantity, type, note);
-            logAction(principal, request, "Điều chỉnh kho (" + type + " " + quantity + ")", "ProductID #" + productId);
+            poly.edu.entity.Product p = productDAO.findById(productId).orElse(null);
+            String pName = p != null ? p.getName() : "ProductID #" + productId;
+            String typeLabel = "IMPORT".equalsIgnoreCase(type) ? "Nhập kho" : "Xuất kho";
+            logAction(principal, request, "Điều chỉnh kho (" + typeLabel + " " + quantity + " SP)", pName + " (ID: #" + productId + ")");
         }
         return "redirect:/admin/inventory";
     }

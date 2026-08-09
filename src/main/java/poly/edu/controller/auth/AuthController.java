@@ -105,11 +105,14 @@ public class AuthController {
             }
 
             User user = new User();
-            user.setFullName(firstName + " " + lastName);
+            user.setFullName(((firstName != null ? firstName.trim() : "") + " " + (lastName != null ? lastName.trim() : "")).trim());
             user.setEmail(cleanEmail);
             user.setUsername(cleanEmail); 
-            user.setPassword(encoder.encode(password)); // Only hash once here
-            user.setPhone(phone);
+            user.setPassword(encoder.encode(password));
+            user.setPhone(phone != null ? phone.trim() : null);
+            user.setAuthProvider(User.AuthProvider.LOCAL);
+            user.setStatus(true);
+            user.setForceChangePassword(false);
 
             User savedUser = userRepo.save(user);
 
