@@ -139,19 +139,21 @@ function appendChatBubble(ticketId, senderName, content, time, isAdmin) {
 
     msgContainer.insertAdjacentHTML('beforeend', html);
 
-    // Auto-scroll
-    const isNearBottom = msgContainer.scrollHeight - msgContainer.clientHeight - msgContainer.scrollTop < 60;
-    if (isNearBottom) {
+    // Auto-scroll (Force scroll to bottom so admin always sees the latest message)
+    setTimeout(() => {
         msgContainer.scrollTop = msgContainer.scrollHeight;
-    }
+    }, 50);
 }
 
 function appendSystemConfirmClose(ticketId, content) {
     const msgContainer = document.getElementById('chat-messages-' + ticketId);
     if (!msgContainer) return;
 
+    // Prevent duplicate close request bubbles
+    if (msgContainer.querySelector('.system-close-request')) return;
+
     const html = `
-        <div class="chat-bubble-wrapper system-msg" style="text-align: center; margin: 10px 0; width: 100%;">
+        <div class="chat-bubble-wrapper system-msg system-close-request" style="text-align: center; margin: 10px 0; width: 100%;">
             <div style="background:#fff3cd; color:#856404; padding: 12px; border-radius: 8px; font-size: 0.9em; border: 1px solid #ffeeba; display: inline-block; max-width: 80%;">
                 <strong>⚠️ Yêu cầu từ khách hàng</strong><br/>
                 ${escapeHtml(content)}<br/>
@@ -169,12 +171,27 @@ function confirmCloseTicket(id) {
     
     const msgContainer = document.getElementById('chat-messages-' + id);
     if (msgContainer) {
+        // Remove the close request box so it can't be clicked again
+        const closeRequest = msgContainer.querySelector('.system-close-request');
+        if (closeRequest) closeRequest.remove();
+        
+        // Prevent duplicate "Đã đóng" messages
+        if (msgContainer.querySelector('.system-close-success')) return;
+
         msgContainer.insertAdjacentHTML('beforeend', `
-            <div style="text-align: center; margin: 15px 0; color: #28a745; font-size: 0.9em; font-weight: bold;">
+            <div class="system-close-success" style="text-align: center; margin: 15px 0; color: #28a745; font-size: 0.9em; font-weight: bold;">
                 <i class="fa-solid fa-check-circle"></i> Đã đóng cuộc trò chuyện thành công.
             </div>
         `);
         msgContainer.scrollTop = msgContainer.scrollHeight;
+
+        // Auto-collapse the ticket cleanly after 1.5s for better UX
+        setTimeout(() => {
+            const detail = document.getElementById('detail-' + id);
+            if (detail && detail.style.display !== 'none') {
+                toggleTicket(id);
+            }
+        }, 1500);
     }
 }
 
@@ -253,21 +270,13 @@ function sendAdminMessage(id) {
     })
         .then(res => res.json())
         .then(saved => {
-            // Append the admin message immediately to the UI
+            // Append the admin message immediately to the UI using the real name from server
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            appendChatBubble(id, 'Admin', message, time, true);
+            appendChatBubble(id, saved.senderName || 'Bạn', message, time, true);
 
-            // Also broadcast via WebSocket so customer client sees it instantly
-            const ws = adminWsConnections[id];
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    ticketId: parseInt(id),
-                    sender: 'ADMIN',
-                    senderName: 'Admin',
-                    content: message,
-                    type: 'CHAT'
-                }));
-            }
+            // Note: We no longer broadcast via WebSocket here. 
+            // The Server (SupportTicketController) now automatically broadcasts 
+            // the saved message with the correct real Admin Name to guarantee consistency.
         })
         .catch(err => {
             console.error("Error sending admin message:", err);

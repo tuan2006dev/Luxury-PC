@@ -203,25 +203,47 @@ public class SupportTicketController {
         // Update ticket status or assignedAdmin
         ticketRepo.findById(ticketId).ifPresent(ticket -> {
             boolean updated = false;
+            
+            // Always update the 'updatedAt' field to reflect the latest activity timestamp
+            ticket.setUpdatedAt(new java.util.Date());
+            updated = true;
+
             if ("ADMIN".equalsIgnoreCase(sender)) {
                 if ("OPEN".equals(ticket.getStatus())) {
                     ticket.setStatus("IN_PROGRESS");
-                    updated = true;
                 }
                 if (auth != null && ticket.getAssignedAdmin() == null) {
                     ticket.setAssignedAdmin(auth.getName());
-                    updated = true;
                 }
             } else {
                 if ("RESOLVED".equals(ticket.getStatus()) || "CLOSED".equals(ticket.getStatus())) {
                     ticket.setStatus("IN_PROGRESS");
-                    updated = true;
                 }
             }
             if (updated) {
                 ticketRepo.save(ticket);
             }
         });
+
+        // Broadcast via WebSocket ONLY if the message was sent by an Admin.
+        // Customer messages are already broadcasted client-side via ws.send() in socket-chat-v2.js.
+        if ("ADMIN".equalsIgnoreCase(sender)) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("sender", msg.getSender());
+                payload.put("senderName", msg.getSenderName());
+                payload.put("message", msg.getMessage());
+                payload.put("ticketId", msg.getTicketId());
+                if (msg.getCreatedAt() != null) {
+                    payload.put("createdAt", msg.getCreatedAt().toString());
+                }
+                org.springframework.web.socket.TextMessage textMsg = new org.springframework.web.socket.TextMessage(mapper.writeValueAsString(payload));
+                chatWebSocketHandler.broadcastToTicket(ticketId, textMsg);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
 
         return ResponseEntity.ok(msg);
     }

@@ -21,6 +21,44 @@ public class TicketCleanupService {
 
     private final SupportTicketRepository ticketRepo;
     private final ChatMessageRepository chatMessageRepo;
+    private final poly.edu.config.ChatWebSocketHandler chatWebSocketHandler;
+    
+    // Set to 1 minute for testing purposes as requested. Change to 15 later.
+    private static final int IDLE_TIMEOUT_MINUTES = 1;
+
+    /**
+     * Runs every minute to auto-close open or in-progress tickets that have been idle.
+     */
+    @Scheduled(fixedRate = 60000)
+    @Transactional
+    public void cleanupIdleTickets() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(java.util.Calendar.MINUTE, -IDLE_TIMEOUT_MINUTES);
+        java.util.Date cutoffDate = cal.getTime();
+
+        List<SupportTicket> idleTickets = ticketRepo.findByStatusInAndUpdatedAtBefore(
+                Arrays.asList("OPEN", "IN_PROGRESS"), cutoffDate);
+
+        if (!idleTickets.isEmpty()) {
+            log.info("Found {} idle tickets older than {} minutes. Auto-closing...", idleTickets.size(), IDLE_TIMEOUT_MINUTES);
+            
+            for (SupportTicket ticket : idleTickets) {
+                ticket.setStatus("CLOSED");
+                ticket.setAdminReply("Hệ thống tự động đóng do ngưng hoạt động.");
+                ticketRepo.save(ticket);
+
+                // Broadcast closed event to UI so frontend can update
+                chatWebSocketHandler.broadcastSystemEventToTicket(
+                        ticket.getId(), 
+                        "TICKET_CLOSED", 
+                        "Phiên hỗ trợ đã tự động kết thúc do ngưng hoạt động quá " + IDLE_TIMEOUT_MINUTES + " phút.", 
+                        "Hệ thống"
+                );
+                
+                log.info("Auto-closed ticket #{}", ticket.getId());
+            }
+        }
+    }
 
     /**
      * Runs every day at 3:00 AM to clean up closed and resolved tickets

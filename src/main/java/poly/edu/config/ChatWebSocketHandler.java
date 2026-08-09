@@ -131,7 +131,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         broadcastToTicket(msgTicketId, new TextMessage(payload));
     }
 
-    private void broadcastToTicket(Integer ticketId, TextMessage msg) {
+    public void broadcastToTicket(Integer ticketId, TextMessage msg) {
         if (ticketId == null) return;
         synchronized (sessions) {
             for (WebSocketSession s : sessions) {

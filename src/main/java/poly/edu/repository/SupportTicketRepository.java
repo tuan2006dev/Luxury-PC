@@ -17,6 +17,8 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, In
 
     List<SupportTicket> findByStatusInAndCreatedAtBefore(List<String> statuses, java.time.LocalDateTime date);
 
+    List<SupportTicket> findByStatusInAndUpdatedAtBefore(List<String> statuses, java.util.Date date);
+
     List<SupportTicket> findByCustomerEmailOrderByCreatedAtDesc(String email);
 
     @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.status = 'OPEN'")
