@@ -25,6 +25,8 @@ public class SecurityConfig {
 
         private final poly.edu.repository.AdminLogRepository adminLogRepository;
 
+        private final poly.edu.security.UserStatusCheckFilter userStatusCheckFilter;
+
         @Bean
         public SecurityContextRepository securityContextRepository() {
                 return new HttpSessionSecurityContextRepository();
@@ -34,6 +36,7 @@ public class SecurityConfig {
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
                                 .userDetailsService(authService)
+                                .addFilterAfter(userStatusCheckFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                                 .securityContext(context -> context
                                                 .securityContextRepository(securityContextRepository()))
                                 .authorizeHttpRequests(auth -> auth
@@ -53,6 +56,7 @@ public class SecurityConfig {
                                                                 "/cart/checkout/**")
                                                 .authenticated()
                                                 .requestMatchers("/", "/auth/**", "/api/register", "/api/send-otp",
+                                                                "/api/auth/check-status",
                                                                 "/api/forgot-password/**", "/api/newsletter/**",
                                                                 "/api/voucher/**", "/api/user-voucher/**", "/api/cart",
                                                                 "/api/cart/add",

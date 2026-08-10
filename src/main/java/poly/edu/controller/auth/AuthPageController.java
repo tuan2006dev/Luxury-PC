@@ -78,7 +78,10 @@ public class AuthPageController {
         }
 
         // Authenticate programmatically
-        java.util.Optional<poly.edu.entity.User> uOpt = userRepo.findByEmail(email);
+        java.util.Optional<poly.edu.entity.User> uOpt = userRepo.findByEmailIgnoreCase(email);
+        if (uOpt.isEmpty()) {
+            uOpt = userRepo.findByUsernameIgnoreCase(email);
+        }
         if (uOpt.isEmpty()) {
             return "redirect:/auth/login";
         }
@@ -173,7 +176,10 @@ public class AuthPageController {
         }
 
         // Find user, set BCrypt password & remove forceChangePassword flag
-        java.util.Optional<poly.edu.entity.User> uOpt = userRepo.findByEmail(email);
+        java.util.Optional<poly.edu.entity.User> uOpt = userRepo.findByEmailIgnoreCase(email);
+        if (uOpt.isEmpty()) {
+            uOpt = userRepo.findByUsernameIgnoreCase(email);
+        }
         if (uOpt.isEmpty()) {
             return "redirect:/auth/login";
         }

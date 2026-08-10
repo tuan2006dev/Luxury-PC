@@ -299,4 +299,48 @@ public class ProfileApiController {
         response.put("message", matches ? "Mật khẩu chính xác." : "Mật khẩu hiện tại không chính xác.");
         return ResponseEntity.ok(response);
     }
+
+    @org.springframework.web.bind.annotation.PostMapping("/verify-phone")
+    public ResponseEntity<Map<String, Object>> verifyAndSavePhone(
+            Authentication authentication,
+            @org.springframework.web.bind.annotation.RequestParam("phone") String phone) {
+        Map<String, Object> response = new java.util.HashMap<>();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            response.put("success", false);
+            response.put("message", "Chưa đăng nhập.");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        User user = resolveUser(authentication);
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "Không tìm thấy người dùng.");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        String cleanPhone = phone != null ? phone.trim().replaceAll("\\s+", "") : "";
+        if (cleanPhone.startsWith("+84")) {
+            cleanPhone = "0" + cleanPhone.substring(3);
+        }
+        if (!cleanPhone.matches("^0(3|5|7|8|9)[0-9]{8}$")) {
+            response.put("success", false);
+            response.put("message", "Số điện thoại không đúng định dạng Việt Nam!");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        java.util.Optional<User> existingUser = userRepository.findByPhone(cleanPhone);
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
+            response.put("success", false);
+            response.put("message", "Số điện thoại này đã được liên kết với một tài khoản khác!");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        user.setPhone(cleanPhone);
+        userRepository.save(user);
+
+        response.put("success", true);
+        response.put("message", "Xác thực qua SMS và cập nhật Số điện thoại thành công!");
+        response.put("phone", cleanPhone);
+        return ResponseEntity.ok(response);
+    }
 }

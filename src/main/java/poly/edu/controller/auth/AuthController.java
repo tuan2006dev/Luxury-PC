@@ -157,11 +157,13 @@ public class AuthController {
     @PostMapping("/forgot-password/send-otp")
     @ResponseBody
     public String sendForgotPasswordOtp(@RequestParam String email) {
-        email = email.trim().toLowerCase();
-        if(userRepo.findByEmail(email).isEmpty()) return "error_not_found";
+        String cleanEmail = email != null ? email.trim().toLowerCase() : "";
+        User user = userRepo.findByEmailIgnoreCase(cleanEmail).orElseGet(() -> userRepo.findByUsernameIgnoreCase(cleanEmail).orElse(null));
+        if (user == null) return "error_not_found";
+        if (Boolean.FALSE.equals(user.getStatus())) return "error_locked";
         
         try {
-            emailService.sendForgotPasswordOtpEmail(email, email);
+            emailService.sendForgotPasswordOtpEmail(user.getEmail(), user.getEmail());
             return "success";
         } catch(Exception e) {
             log.error("[Auth] Password reset error", e);
@@ -174,18 +176,22 @@ public class AuthController {
     public String resetPassword(@RequestParam String email,
                                 @RequestParam String otp,
                                 @RequestParam String newPassword) {
-        email = email.trim().toLowerCase();
+        String cleanEmail = email != null ? email.trim().toLowerCase() : "";
         
-        if(!emailService.verifyForgotPasswordOtp(email, otp)) {
+        if(!emailService.verifyForgotPasswordOtp(cleanEmail, otp)) {
             return "error_otp";
         }
         
-        User user = userRepo.findByEmail(email).orElse(null);
+        User user = userRepo.findByEmailIgnoreCase(cleanEmail).orElseGet(() -> userRepo.findByUsernameIgnoreCase(cleanEmail).orElse(null));
         if (user == null) {
             return "error_not_found";
         }
+        if (Boolean.FALSE.equals(user.getStatus())) {
+            return "error_locked";
+        }
         
         user.setPassword(encoder.encode(newPassword));
+        user.setForceChangePassword(false);
         userRepo.save(user);
         
         return "success";

@@ -228,8 +228,9 @@
             </div>
         </div>
         <!-- ============================================== -->
-        <!-- STATIC HTML FOR SOCKET CHAT V2 (Prevents FOUC on reload) -->
-        <th:block sec:authorize="!hasAnyRole('ADMIN', 'STAFF')">
+        <!-- ============================================== -->
+        <!-- STATIC HTML FOR SOCKET CHAT V2 (Only for Authenticated Users) -->
+        <th:block sec:authorize="isAuthenticated() and !hasAnyRole('ADMIN', 'STAFF')">
         <script>
             if (localStorage.getItem('socket_chat_isOpen') === 'true') {
                 document.documentElement.classList.add('socket-chat-open');
@@ -262,7 +263,7 @@
                     <span class="new-chat-link" id="socketChatNewBtn">Tạo mới</span>
                 </div>
             </div>
-            <div class="socket-chat-setup" id="socketChatSetup">
+            <div class="socket-chat-setup" id="socketChatSetup" style="display: none;">
                 <p>Vui lòng nhập thông tin để bắt đầu cuộc trò chuyện hỗ trợ.</p>
                 <input type="text" class="socket-chat-setup-input" id="socketChatNameInput" placeholder="Họ và tên..." maxlength="30" />
                 <input type="email" class="socket-chat-setup-input" id="socketChatEmailInput" placeholder="Email liên hệ (tuỳ chọn)..." maxlength="50" />
@@ -289,8 +290,8 @@
         <script th:src="@{/js/confirm-popup.js}"></script>
 
         <!-- Script for Live Chat Box -->
-        <th:block sec:authorize="!hasAnyRole('ADMIN', 'STAFF')">
-        <script th:src="@{/js/socket-chat-v2.js?v=17}"></script>
+        <th:block sec:authorize="isAuthenticated() and !hasAnyRole('ADMIN', 'STAFF')">
+        <script th:src="@{/js/socket-chat-v2.js?v=18}"></script>
         </th:block>
 
         <!-- Script for footer features (modals, etc) -->

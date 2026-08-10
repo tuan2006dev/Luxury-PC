@@ -182,10 +182,6 @@ function executeClearAll() {
     renderBuildComponents();
     calculateTotals();
 
-    // Reset specific UI elements if needed
-    const grid = document.getElementById('build-components-list');
-    if (grid) grid.innerHTML = '';
-
     closeConfirmClear();
     showToast('Đã xóa tất cả linh kiện!');
 }
@@ -193,8 +189,10 @@ function executeClearAll() {
 function clearAll() {
     if (confirm('Bạn có chắc chắn muốn xóa tất cả linh kiện đã chọn?')) {
         currentBuild = {};
+        localStorage.removeItem('luxury_saved_build');
         renderBuildComponents();
         calculateTotals();
+        showToast('Đã xóa tất cả linh kiện!');
     }
 }
 
@@ -1119,3 +1117,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 1000);
 });
+
+// Consultation Support Handler - Opens Socket Chatbox according to permissions & predefined structure
+function openConsultationSupport() {
+    let initialMsg = '';
+    if (typeof currentBuild !== 'undefined' && currentBuild && Object.keys(currentBuild).length > 0) {
+        const compList = [];
+        for (const [slotId, prod] of Object.entries(currentBuild)) {
+            if (prod && prod.name) {
+                compList.push(`${slotId.toUpperCase()}: ${prod.name}`);
+            }
+        }
+        if (compList.length > 0) {
+            initialMsg = 'Tôi cần hỗ trợ tư vấn cấu hình PC đang chọn: ' + compList.join(', ');
+        }
+    }
+
+    if (typeof window.openSocketChatWindow === 'function') {
+        window.openSocketChatWindow(initialMsg);
+    } else {
+        const socketChatBtn = document.getElementById('socketChatBtn');
+        if (socketChatBtn) {
+            socketChatBtn.click();
+            if (initialMsg) {
+                const msgInput = document.getElementById('socketChatMsgInput');
+                if (msgInput) msgInput.value = initialMsg;
+            }
+        } else {
+            if (typeof showToast === 'function') {
+                showToast('Tài khoản Quản trị/Nhân viên quản lý tư vấn tại trang Quản Lý Tickets Admin.');
+            } else {
+                alert('Tài khoản Quản trị/Nhân viên quản lý tư vấn tại trang Quản Lý Tickets Admin.');
+            }
+        }
+    }
+}

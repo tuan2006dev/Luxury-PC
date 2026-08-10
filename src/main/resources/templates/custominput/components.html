@@ -12,7 +12,7 @@
         style="margin-bottom: 20px;">
         <div class="floating-group">
             <input th:type="${type != null ? type : 'text'}" th:name="${name}" th:id="${id}" th:value="${value}"
-                th:required="${required}" placeholder=" ">
+                th:required="${required}" th:autocomplete="${type == 'password' ? 'current-password' : (name == 'username' || name == 'email' ? 'username' : 'on')}" placeholder=" ">
             <label th:text="${label}">Label</label>
         </div>
         <span class="error-message"></span>

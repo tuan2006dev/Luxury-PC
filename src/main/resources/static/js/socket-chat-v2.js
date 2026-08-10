@@ -32,6 +32,25 @@
     let availableStaffs = [];
     let adminJoined = false;
 
+    // Auto fetch logged-in user info to bypass setup form
+    fetch('/api/auth/check-status')
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.authenticated && (data.fullName || data.username)) {
+                username = data.fullName || data.username;
+                userEmail = data.email || '';
+                localStorage.setItem('socket_chat_username', username);
+                if (userEmail) localStorage.setItem('socket_chat_email', userEmail);
+                if (nameInput) nameInput.value = username;
+                if (emailInput) emailInput.value = userEmail;
+
+                if (win && win.classList.contains('open') && !currentTicketId) {
+                    startChat();
+                }
+            }
+        })
+        .catch(err => console.log('Cannot fetch auth status for chat', err));
+
     // Fetch staffs and save to variable
     fetch('/api/tickets/staffs')
         .then(res => res.json())
@@ -42,8 +61,6 @@
         })
         .catch(err => console.log('Cannot fetch staffs', err));
 
-    // Custom cursor hovering for chat buttons is now handled globally by cursor.js
-
     // If already has username and ticketId, bypass setup screen
     if (username && currentTicketId) {
         setupDiv.style.display = 'none';
@@ -51,10 +68,10 @@
         inputArea.style.display = 'flex';
         ticketBar.style.display = 'flex';
         ticketLabel.textContent = 'Ticket #' + currentTicketId;
-    } else if (username) {
-        // Has username but no ticket – might be first time after update
-        nameInput.value = username;
-        emailInput.value = userEmail;
+    } else if (username && !currentTicketId) {
+        setupDiv.style.display = 'none';
+        messagesDiv.style.display = 'flex';
+        inputArea.style.display = 'flex';
     }
 
     // Toggle Chat window
@@ -73,11 +90,38 @@
             if (username && currentTicketId && !ws) {
                 connectWebSocket();
                 loadChatHistory();
-            } else if (!username || !currentTicketId) {
+            } else if (username && !currentTicketId) {
+                startChat();
+            } else if (!username) {
                 nameInput.focus();
             }
         }
     });
+
+    // Expose global helper to open chatbox window with optional prefilled message
+    window.openSocketChatWindow = function(initialMsg) {
+        if (!win) return;
+        if (!win.classList.contains('open')) {
+            win.classList.add('open');
+            if (btn) btn.style.display = 'none';
+            localStorage.setItem('socket_chat_isOpen', 'true');
+            document.documentElement.classList.add('socket-chat-open');
+            if (username && currentTicketId && !ws) {
+                connectWebSocket();
+                loadChatHistory();
+            } else if (username && !currentTicketId) {
+                startChat();
+            } else if (!username) {
+                if (nameInput) nameInput.focus();
+            }
+        }
+        if (initialMsg) {
+            if (msgInput) {
+                msgInput.value = initialMsg;
+                msgInput.focus();
+            }
+        }
+    };
 
     // Auto open if it was open before reload
     if (localStorage.getItem('socket_chat_isOpen') === 'true') {
@@ -207,16 +251,15 @@
     }
 
     async function startChat() {
-        const name = nameInput.value.trim();
+        const name = (nameInput.value || username || localStorage.getItem('socket_chat_username') || '').trim();
         if (!name) {
-            if(typeof showToast === 'function') { showToast('Vui lòng nhập tên!'); } else { alert('Vui lòng nhập tên!'); }
             nameInput.focus();
             return;
         }
         username = name;
-        userEmail = emailInput.value.trim();
+        userEmail = (emailInput.value || userEmail || localStorage.getItem('socket_chat_email') || '').trim();
         localStorage.setItem('socket_chat_username', username);
-        localStorage.setItem('socket_chat_email', userEmail);
+        if (userEmail) localStorage.setItem('socket_chat_email', userEmail);
         
         startBtn.disabled = true;
         startBtn.textContent = 'Đang kết nối...';

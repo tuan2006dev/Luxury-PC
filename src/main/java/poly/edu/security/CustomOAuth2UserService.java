@@ -47,6 +47,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private User processOAuth2User(CustomOAuth2User oauth2User, String registrationId) {
         String email = oauth2User.getEmail();
+        if (email != null) {
+            email = email.trim().toLowerCase();
+        }
 
         // Fix ClassCastException by safely converting the attributes to String
         Object subObj = oauth2User.getAttribute("sub");
@@ -55,7 +58,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // First, try to find user by provider specific ID
         Optional<User> userOptional = Optional.empty();
-        if (providerId != null) {
+        if (providerId != null && !providerId.isBlank()) {
             if ("facebook".equalsIgnoreCase(registrationId)) {
                 userOptional = userRepository.findByFacebookId(providerId);
             } else {
@@ -63,9 +66,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
         }
 
-        // If not found by OAuth ID, try by email (if email is not null)
-        if (!userOptional.isPresent() && email != null) {
-            userOptional = userRepository.findByEmail(email);
+        // If not found by OAuth ID, try by email (case-insensitive) or username (case-insensitive)
+        if (!userOptional.isPresent() && email != null && !email.isBlank()) {
+            userOptional = userRepository.findByEmailIgnoreCase(email);
+            if (!userOptional.isPresent()) {
+                userOptional = userRepository.findByUsernameIgnoreCase(email);
+            }
         }
 
         User user;
@@ -88,15 +94,21 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user = new User();
 
             // If email is null (e.g., from Facebook), generate a fallback email
-            if (email == null) {
+            if (email == null || email.isBlank()) {
                 String fallbackId = providerId != null ? providerId : "user_" + System.currentTimeMillis();
                 email = fallbackId + "@" + registrationId.toLowerCase() + ".com";
             }
             user.setEmail(email);
 
-            // Extract username from email
+            // Extract unique baseUsername
             String baseUsername = email.split("@")[0];
-            user.setUsername(baseUsername);
+            String uniqueUsername = baseUsername;
+            int counter = 1;
+            while (userRepository.findByUsernameIgnoreCase(uniqueUsername).isPresent()) {
+                uniqueUsername = baseUsername + counter;
+                counter++;
+            }
+            user.setUsername(uniqueUsername);
 
             Object nameObj = oauth2User.getAttribute("name");
             String name = nameObj != null ? String.valueOf(nameObj) : baseUsername;

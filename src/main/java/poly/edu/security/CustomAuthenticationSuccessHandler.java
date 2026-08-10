@@ -45,7 +45,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         User user = null;
         if (emailOrUsername != null && !emailOrUsername.isBlank()) {
-            user = userDAO.findByEmailWithRoles(emailOrUsername);
+            String cleanEmailOrUsername = emailOrUsername.trim().toLowerCase();
+            user = userDAO.findByEmailWithRoles(cleanEmailOrUsername);
+            if (user == null) {
+                user = userDAO.findByUsernameWithRoles(cleanEmailOrUsername);
+            }
+            if (user == null) {
+                user = userDAO.findByEmailWithRoles(emailOrUsername);
+            }
             if (user == null) {
                 user = userDAO.findByUsernameWithRoles(emailOrUsername);
             }

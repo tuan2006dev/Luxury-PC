@@ -161,6 +161,36 @@ public class AccountController {
 
     private final poly.edu.service.ProfileService profileService;
 
+    private final org.springframework.security.core.session.SessionRegistry sessionRegistry;
+
+    private void invalidateUserSessions(User user) {
+        if (user == null || sessionRegistry == null) return;
+        try {
+            String targetEmail = user.getEmail() != null ? user.getEmail().trim().toLowerCase() : "";
+            String targetUsername = user.getUsername() != null ? user.getUsername().trim().toLowerCase() : "";
+
+            for (Object principal : sessionRegistry.getAllPrincipals()) {
+                String pName = "";
+                if (principal instanceof org.springframework.security.core.userdetails.UserDetails ud) {
+                    pName = ud.getUsername();
+                } else if (principal instanceof poly.edu.security.CustomOAuth2User oauthUser) {
+                    pName = oauthUser.getEmail();
+                } else {
+                    pName = String.valueOf(principal);
+                }
+
+                if (pName != null && !pName.isBlank()) {
+                    String cleanPName = pName.trim().toLowerCase();
+                    if (cleanPName.equals(targetEmail) || cleanPName.equals(targetUsername)) {
+                        for (org.springframework.security.core.session.SessionInformation sess : sessionRegistry.getAllSessions(principal, false)) {
+                            sess.expireNow();
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+    }
+
     // ===============================
     // khóa user
     // ===============================
@@ -172,6 +202,7 @@ public class AccountController {
             User user = userOptional.get();
             user.setStatus(false);
             userRepository.save(user);
+            invalidateUserSessions(user);
             ra.addFlashAttribute("message", "Đã khóa tài khoản " + user.getUsername());
         } else {
             ra.addFlashAttribute("error", "Không tìm thấy tài khoản.");

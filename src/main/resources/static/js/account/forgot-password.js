@@ -48,11 +48,15 @@
 
           if (data === 'success') {
             document.getElementById('sent-email').textContent = email.value;
+            const hiddenUser = document.getElementById('fp-username-hidden');
+            if (hiddenUser) hiddenUser.value = email.value;
             toast('✓ Mã OTP đã được gửi đến ' + email.value);
             goStep(2);
             startOTPTimer(300);
           } else if (data === 'error_not_found') {
             toast('❌ Tài khoản không tồn tại trong hệ thống!');
+          } else if (data === 'error_locked') {
+            toast('🔒 Tài khoản của bạn đã bị khóa bởi Quản trị viên!');
           } else {
             toast('⚠️ Có lỗi xảy ra, vui lòng thử lại.');
           }
