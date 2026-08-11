@@ -200,9 +200,9 @@
                                 const query = tag.getAttribute('data-query') || tag.innerText.trim();
                                 if (searchInput) {
                                     searchInput.value = query;
+                                    searchInput.focus();
                                     searchInput.dispatchEvent(new Event('input'));
                                 }
-                                performSearch(query);
                             });
                         });
                     }
