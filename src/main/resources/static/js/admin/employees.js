@@ -341,8 +341,8 @@ function initStaffLogSearch() {
     const searchForm = searchContainer.querySelector('form');
 
     if (searchInput) {
-        searchInput.placeholder = "Tìm theo tên nhân viên...";
-        // Tự động khôi phục khi xóa hết từ khóa trong ô nhập
+        searchInput.placeholder = "Tìm theo tên nhân viên, hành động...";
+        // Tự động khôi phục danh sách khi người dùng xóa hết chữ trong ô nhập
         searchInput.addEventListener('input', function () {
             if (this.value.trim() === '' && currentSearchKeyword !== '') {
                 currentSearchKeyword = '';
@@ -354,12 +354,36 @@ function initStaffLogSearch() {
     if (searchForm) {
         searchForm.onsubmit = function (e) {
             e.preventDefault();
+            e.stopPropagation();
             if (searchInput) {
                 currentSearchKeyword = searchInput.value.trim().toLowerCase();
             }
             applyStaffLogFilters();
             return false;
         };
+
+        const submitBtn = searchForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (searchInput) {
+                    currentSearchKeyword = searchInput.value.trim().toLowerCase();
+                }
+                applyStaffLogFilters();
+            });
+        }
+    }
+
+    const clearBtn = searchContainer.querySelector('a');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (searchInput) searchInput.value = '';
+            currentSearchKeyword = '';
+            applyStaffLogFilters();
+        });
     }
 }
 
@@ -389,6 +413,15 @@ function toggleLogCustomRange(btn) {
     const isVisible = (box.style.display === 'flex');
     box.style.display = isVisible ? 'none' : 'flex';
 }
+
+document.addEventListener('click', function (e) {
+    const box = document.getElementById('customLogDateBox');
+    const btn = document.getElementById('customLogDateBtn');
+    if (!box || box.style.display !== 'flex') return;
+    if (!box.contains(e.target) && (!btn || !btn.contains(e.target))) {
+        box.style.display = 'none';
+    }
+});
 
 function applyCustomLogFilter() {
     const startVal = document.getElementById('logStartDate').value; // YYYY-MM-DD

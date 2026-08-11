@@ -37,6 +37,11 @@ public class SecurityConfig {
                 http
                                 .userDetailsService(authService)
                                 .addFilterAfter(userStatusCheckFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+                                .headers(headers -> headers
+                                                .crossOriginEmbedderPolicy(coep -> coep.policy(org.springframework.security.web.header.writers.CrossOriginEmbedderPolicyHeaderWriter.CrossOriginEmbedderPolicy.UNSAFE_NONE))
+                                                .crossOriginResourcePolicy(corp -> corp.policy(org.springframework.security.web.header.writers.CrossOriginResourcePolicyHeaderWriter.CrossOriginResourcePolicy.CROSS_ORIGIN))
+                                                .crossOriginOpenerPolicy(coop -> coop.policy(org.springframework.security.web.header.writers.CrossOriginOpenerPolicyHeaderWriter.CrossOriginOpenerPolicy.SAME_ORIGIN_ALLOW_POPUPS))
+                                                .frameOptions(frame -> frame.disable()))
                                 .securityContext(context -> context
                                                 .securityContextRepository(securityContextRepository()))
                                 .authorizeHttpRequests(auth -> auth
@@ -67,7 +72,8 @@ public class SecurityConfig {
                                                                 "/api/shipping/**", "/api/test-login-debug",
                                                                 "/api/sepay/webhook", "/api/webhook/**",
                                                                 "/css/**", "/js/**", "/images/**", "/*.png", "/*.jpg",
-                                                                "/*.jpeg", "/*.svg", "/error", "/testdb",
+                                                                "/*.jpeg", "/*.svg", "/error", "/testdb", "/favicon.ico",
+                                                                "/.well-known/**",
                                                                 "/cart", "/cart/**",
                                                                 "/products", "/products/**", "/product/**",
                                                                 "/promotions", "/news", "/news/**",

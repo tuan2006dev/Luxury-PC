@@ -24,9 +24,18 @@ public class AdminNewsCategoryController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(name = "keyword", defaultValue = "") String keyword) {
         List<NewsCategory> categories = newsCategoryService.getAllCategories();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            categories = categories.stream()
+                    .filter(c -> (c.getName() != null && c.getName().toLowerCase().contains(kw)) ||
+                            (c.getSlug() != null && c.getSlug().toLowerCase().contains(kw)) ||
+                            (c.getId() != null && String.valueOf(c.getId()).contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
         model.addAttribute("categories", categories);
+        model.addAttribute("keyword", keyword);
         return "admin/newscategory/index";
     }
 

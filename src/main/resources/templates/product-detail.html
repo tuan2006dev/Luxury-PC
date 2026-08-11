@@ -42,11 +42,12 @@
                     </div>
                     <img id="main-image"
                         th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}"
-                        th:alt="${product.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                        th:alt="${product.name}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                 </div>
                 <div class="pd-thumbnails">
                     <img th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}"
                         class="active" onclick="changeMainImage(this.src, this)"
+                        referrerpolicy="no-referrer"
                         onerror="this.onerror=null; this.src='/images/placeholder.png';">
                 </div>
             </div>

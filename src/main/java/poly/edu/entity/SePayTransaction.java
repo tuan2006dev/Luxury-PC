@@ -39,7 +39,7 @@ public class SePayTransaction {
     @Column(name = "processing_status", nullable = false, length = 64)
     private String processingStatus;
 
-    @Column(name = "raw_payload", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "raw_payload", nullable = false, columnDefinition = "NVARCHAR(MAX)")
     private String rawPayload;
 
     @Column(name = "received_at", nullable = false, columnDefinition = "datetime")

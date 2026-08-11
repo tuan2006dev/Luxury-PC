@@ -422,12 +422,57 @@ document.addEventListener('spa:load', function() {
     }
 });
 
-// Prevent reloading data when clicking an already active filter tab
+// In-place AJAX loading for filter tabs (prevents menu tab bar & page reload)
 document.addEventListener('click', function(e) {
-    const tab = e.target.closest('.filter-tab');
-    if (tab && tab.classList.contains('active')) {
-        e.preventDefault();
-        e.stopPropagation();
+    const tab = e.target.closest('.filter-bar .filter-tab');
+    if (!tab) return;
+
+    const url = tab.getAttribute('href');
+    if (!url || url === '#' || url.startsWith('javascript')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (tab.classList.contains('active')) return;
+
+    // Update active class on filter tabs
+    const filterBar = tab.closest('.filter-bar');
+    if (filterBar) {
+        filterBar.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
     }
+    tab.classList.add('active');
+
+    const wrap = document.querySelector('.tickets-table-wrap');
+    if (wrap) {
+        wrap.style.transition = 'opacity 0.2s ease';
+        wrap.style.opacity = '0.35';
+    }
+
+    fetch(url)
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // 1. Replace tickets list container
+            const newWrap = doc.querySelector('.tickets-table-wrap');
+            if (newWrap && wrap) {
+                wrap.innerHTML = newWrap.innerHTML;
+            }
+
+            // 2. Update stats cards counters if present
+            const newStats = doc.querySelector('.ticket-stats');
+            const currentStats = document.querySelector('.ticket-stats');
+            if (newStats && currentStats) {
+                currentStats.innerHTML = newStats.innerHTML;
+            }
+
+            // 3. Update history URL
+            window.history.pushState({}, '', url);
+        })
+        .catch(err => console.error('Error fetching ticket data:', err))
+        .finally(() => {
+            if (wrap) wrap.style.opacity = '1';
+        });
 }, true);
 

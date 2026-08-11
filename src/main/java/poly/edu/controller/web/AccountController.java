@@ -1,23 +1,23 @@
 package poly.edu.controller.web;
 
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import poly.edu.entity.User;
-import poly.edu.repository.UserRepository;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import poly.edu.dao.RoleDAO;
 import poly.edu.dao.UserRoleDAO;
 import poly.edu.entity.Role;
+import poly.edu.entity.User;
 import poly.edu.entity.UserRole;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
+import poly.edu.repository.UserRepository;
+import poly.edu.service.ProfileService;
 
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/account")
@@ -25,29 +25,36 @@ import java.util.Optional;
 public class AccountController {
 
     private final UserRepository userRepository;
-
     private final RoleDAO roleDAO;
-
     private final UserRoleDAO userRoleDAO;
-
+    private final ProfileService profileService;
+    private final SessionRegistry sessionRegistry;
 
     // ===============================
     // hiển thị form + danh sách user
     // ===============================
     @GetMapping
-    public String users(Model model){
+    public String users(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
 
         model.addAttribute("user", new User());
 
-        model.addAttribute(
-                "users",
-                userRepository.findAllCustomers()
-        );
+        List<User> users = userRepository.findAllCustomers();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            users = users.stream()
+                    .filter(u -> (u.getId() != null && String.valueOf(u.getId()).contains(kw)) ||
+                            (u.getUsername() != null && u.getUsername().toLowerCase().contains(kw)) ||
+                            (u.getEmail() != null && u.getEmail().toLowerCase().contains(kw)) ||
+                            (u.getFullName() != null && u.getFullName().toLowerCase().contains(kw)) ||
+                            (u.getPhone() != null && u.getPhone().contains(kw)))
+                    .collect(Collectors.toList());
+        }
+
+        model.addAttribute("users", users);
+        model.addAttribute("keyword", keyword);
 
         return "admin/account";
     }
-
-
 
     // ===============================
     // lưu user (thêm hoặc update)
@@ -57,14 +64,14 @@ public class AccountController {
     public String saveUser(
             @ModelAttribute User user,
             @RequestParam(value = "roleName", defaultValue = "USER") String roleName,
-            RedirectAttributes redirectAttributes
-    ){
+            RedirectAttributes redirectAttributes) {
         // 1. Kiểm tra validation phía Backend (Server-side)
         if (user.getUsername() == null || user.getUsername().isBlank() ||
-            user.getEmail() == null || user.getEmail().isBlank() ||
-            user.getFullName() == null || user.getFullName().isBlank() ||
-            user.getPhone() == null || user.getPhone().isBlank()) {
-            redirectAttributes.addFlashAttribute("error", "Vui lòng nhập đầy đủ các thông tin bắt buộc (Username, Email, Họ tên, SĐT)!");
+                user.getEmail() == null || user.getEmail().isBlank() ||
+                user.getFullName() == null || user.getFullName().isBlank() ||
+                user.getPhone() == null || user.getPhone().isBlank()) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Vui lòng nhập đầy đủ các thông tin bắt buộc (Username, Email, Họ tên, SĐT)!");
             return "redirect:/admin/account";
         }
 
@@ -88,7 +95,8 @@ public class AccountController {
             // Kiểm tra trùng Email với người dùng khác khi cập nhật
             Optional<User> existingEmailUser = userRepository.findByEmail(email);
             if (existingEmailUser.isPresent() && !existingEmailUser.get().getId().equals(user.getId())) {
-                redirectAttributes.addFlashAttribute("error", "Email '" + email + "' đã được sử dụng bởi tài khoản khác!");
+                redirectAttributes.addFlashAttribute("error",
+                        "Email '" + email + "' đã được sử dụng bởi tài khoản khác!");
                 return "redirect:/admin/account";
             }
             redirectAttributes.addFlashAttribute("message", "Cập nhật thông tin khách hàng thành công!");
@@ -105,7 +113,7 @@ public class AccountController {
         }
 
         user = userRepository.save(user);
-        
+
         Role role = roleDAO.findByName(roleName);
         if (role != null) {
             userRoleDAO.deleteByUserId(user.getId());
@@ -118,14 +126,13 @@ public class AccountController {
         return "redirect:/admin/account";
     }
 
-
-
     // ===============================
     // load user lên form để sửa
     // ===============================
     @GetMapping("/edit/{id}")
     public String editUser(
             @PathVariable Integer id,
+            @RequestParam(name = "keyword", required = false) String keyword,
             Model model
     ){
 
@@ -149,19 +156,25 @@ public class AccountController {
             );
         }
 
-        model.addAttribute(
-                "users",
-                userRepository.findAll()
-        );
+        List<User> users = userRepository.findAllCustomers();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            users = users.stream()
+                    .filter(u -> (u.getId() != null && String.valueOf(u.getId()).contains(kw)) ||
+                            (u.getUsername() != null && u.getUsername().toLowerCase().contains(kw)) ||
+                            (u.getEmail() != null && u.getEmail().toLowerCase().contains(kw)) ||
+                            (u.getFullName() != null && u.getFullName().toLowerCase().contains(kw)) ||
+                            (u.getPhone() != null && u.getPhone().contains(kw)))
+                    .collect(Collectors.toList());
+        }
+
+        model.addAttribute("users", users);
+        model.addAttribute("keyword", keyword);
 
         return "admin/account";
     }
 
 
-
-    private final poly.edu.service.ProfileService profileService;
-
-    private final org.springframework.security.core.session.SessionRegistry sessionRegistry;
 
     private void invalidateUserSessions(User user) {
         if (user == null || sessionRegistry == null) return;
@@ -196,9 +209,9 @@ public class AccountController {
     // ===============================
     @RequestMapping(value = "/lock/{id}", method = {RequestMethod.GET, RequestMethod.POST})
     @Transactional
-    public String lockUser(@PathVariable Integer id, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+    public String lockUser(@PathVariable Integer id, RedirectAttributes ra) {
         Optional<User> userOptional = userRepository.findById(id);
-        if(userOptional.isPresent()){
+        if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setStatus(false);
             userRepository.save(user);
@@ -215,9 +228,9 @@ public class AccountController {
     // ===============================
     @RequestMapping(value = "/unlock/{id}", method = {RequestMethod.GET, RequestMethod.POST})
     @Transactional
-    public String unlockUser(@PathVariable Integer id, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+    public String unlockUser(@PathVariable Integer id, RedirectAttributes ra) {
         Optional<User> userOptional = userRepository.findById(id);
-        if(userOptional.isPresent()){
+        if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setStatus(true);
             userRepository.save(user);
@@ -233,9 +246,9 @@ public class AccountController {
     // ===============================
     @RequestMapping(value = "/delete/{id}", method = {RequestMethod.GET, RequestMethod.POST})
     @Transactional
-    public String deleteUser(@PathVariable Integer id, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+    public String deleteUser(@PathVariable Integer id, RedirectAttributes ra) {
         Optional<User> userOptional = userRepository.findById(id);
-        if(userOptional.isPresent()){
+        if (userOptional.isPresent()) {
             try {
                 profileService.deleteUserFully(userOptional.get());
                 ra.addFlashAttribute("message", "Đã xóa người dùng thành công.");

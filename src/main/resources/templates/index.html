@@ -96,7 +96,7 @@
                 th:onclick="|location.href='@{/product/{id}(id=${p.id})}'|" style="cursor:pointer;">
                 <div class="promo-card-img">
                     <img th:src="${p.image != null ? (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image) : '/images/placeholder.png'}"
-                        th:alt="${p.name}" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
+                        th:alt="${p.name}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                 </div>
                 <div class="promo-specs">
                     <div th:text="${p.category != null ? p.category.name : 'Linh kiện'}">Danh mục</div>

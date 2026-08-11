@@ -1101,81 +1101,6 @@ ALTER TABLE mainboard_specs ADD CONSTRAINT FK_mainboard_specs_products FOREIGN K
 GO
 
 ALTER TABLE mainboardspec_specs ADD CONSTRAINT FK_mainboardspec_specs_products FOREIGN KEY (product_id) REFERENCES products (id);
-GO
-
-ALTER TABLE psu_specs ADD CONSTRAINT FK_psu_specs_products FOREIGN KEY (product_id) REFERENCES products (id);
-GO
-
-ALTER TABLE psuspec_specs ADD CONSTRAINT FK_psuspec_specs_products FOREIGN KEY (product_id) REFERENCES products (id);
-GO
-
-ALTER TABLE ram_specs ADD CONSTRAINT FK_ram_specs_products FOREIGN KEY (product_id) REFERENCES products (id);
-GO
-
-ALTER TABLE ramspec_specs ADD CONSTRAINT FK_ramspec_specs_products FOREIGN KEY (product_id) REFERENCES products (id);
-GO
-
-ALTER TABLE storage_specs ADD CONSTRAINT FK_storage_specs_products FOREIGN KEY (product_id) REFERENCES products (id);
-GO
-
-ALTER TABLE storagespec_specs ADD CONSTRAINT FK_storagespec_specs_products FOREIGN KEY (product_id) REFERENCES products (id);
-GO
-
-
--- ======================================================
--- SQL Server Seed Data (INSERT INTO)
--- Ordered Topologically
--- Date: 2026-07-19
--- --------------------------------------------------
--- CLEAN EXISTING DATA BEFORE INSERTING TO AVOID PK VIOLATION
--- --------------------------------------------------
-EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
-GO
-EXEC sp_MSforeachtable 'DELETE FROM ?';
-GO
-EXEC sp_MSforeachtable 'IF OBJECTPROPERTY(OBJECT_ID(''?''), ''TableHasIdentity'') = 1 DBCC CHECKIDENT (''?'', RESEED, 0)';
-GO
-EXEC sp_MSforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL';
-GO
-
--- --------------------------------------------------
--- CLEAN EXISTING DATA BEFORE INSERTING TO AVOID PK VIOLATION
--- --------------------------------------------------
-EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
-GO
-EXEC sp_MSforeachtable 'DELETE FROM ?';
-GO
-EXEC sp_MSforeachtable 'IF OBJECTPROPERTY(OBJECT_ID(''?''), ''TableHasIdentity'') = 1 DBCC CHECKIDENT (''?'', RESEED, 0)';
-GO
-EXEC sp_MSforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL';
-GO
-
--- --------------------------------------------------
--- CLEAN EXISTING DATA BEFORE INSERTING TO AVOID PK VIOLATION
--- --------------------------------------------------
-EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
-GO
-EXEC sp_MSforeachtable 'DELETE FROM ?';
-GO
-EXEC sp_MSforeachtable 'IF OBJECTPROPERTY(OBJECT_ID(''?''), ''TableHasIdentity'') = 1 DBCC CHECKIDENT (''?'', RESEED, 0)';
-GO
-EXEC sp_MSforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL';
-GO
-
--- ======================================================
-
--- Dumping data for table flyway_schema_history
-INSERT INTO flyway_schema_history (installed_rank, version, description, type, script, checksum, installed_by, installed_on, execution_time, success) VALUES (1, '0', '<< Flyway Baseline >>', 'BASELINE', '<< Flyway Baseline >>', NULL, 'postgres', '2026-07-16 06:53:57.288009', 0, 1);
-INSERT INTO flyway_schema_history (installed_rank, version, description, type, script, checksum, installed_by, installed_on, execution_time, success) VALUES (2, '1', 'remove obsolete news published', 'SQL', 'V1__remove_obsolete_news_published.sql', -1979696205, 'postgres', '2026-07-16 06:53:59.541866', 880, 1);
-GO
-
-
--- Dumping data for table sepay_transactions
-SET IDENTITY_INSERT sepay_transactions ON;
-INSERT INTO sepay_transactions (id, account_number, order_code, payment_code, processed_at, processing_status, raw_payload, received_at, sepay_transaction_id, transfer_amount, transfer_type) VALUES (1, '104887314781', 'DH44', 'DH44', '2026-07-14 15:10:59.510244', 'PAID', '{"gateway":"VietinBank","transactionDate":"2026-07-14 22:10:56","accountNumber":"104887314781","subAccount":null,"code":null,"content":"ZP7D3OQQSLSG SEVQR DH44","transferType":"in","description":"BankAPINotify ZP7D3OQQSLSG SEVQR DH44","transferAmount":10000,"referenceCode":"1CFPa-8Ab3YRI1i","accumulated":40000,id:68246082}', '2026-07-14 15:10:59.028077', 68246082, 10000, 'in');
-INSERT INTO sepay_transactions (id, account_number, order_code, payment_code, processed_at, processing_status, raw_payload, received_at, sepay_transaction_id, transfer_amount, transfer_type) VALUES (2, '104887314781', 'DH45', 'DH45', '2026-07-14 15:15:21.42561', 'PAID', '{"gateway":"VietinBank","transactionDate":"2026-07-14 22:15:19","accountNumber":"104887314781","subAccount":null,"code":null,"content":"CT DEN:948T2670NEMHZAZR SEVQR DH45","transferType":"in","description":"BankAPINotify CT DEN:948T2670NEMHZAZR SEVQR DH45","transferAmount":10000,"referenceCode":"948T2670NEMHZAZR","accumulated":10000,id:68246628}', '2026-07-14 15:15:21.138344', 68246628, 10000, 'in');
-SET IDENTITY_INSERT sepay_transactions OFF;
-GO
 
 -- Dumping data for table roles
 SET IDENTITY_INSERT roles ON;
@@ -1183,20 +1108,127 @@ INSERT INTO roles (id, name) VALUES (1, 'ADMIN');
 INSERT INTO roles (id, name) VALUES (2, 'USER');
 INSERT INTO roles (id, name) VALUES (3, 'STAFF');
 SET IDENTITY_INSERT roles OFF;
+DBCC CHECKIDENT ('roles', RESEED, 3);
 GO
 
-SELECT * FROM users;
-GO
 
-DELETE FROM users;
-GO
 
 -- Dumping data for table users
 SET IDENTITY_INSERT users ON;
-INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (1, 'phamcongthanh.8311@gmail.com', 'phamcongthanh.8311@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Thanh', '0902208461', NULL, 1, 'GOOGLE', '112307932430374029161', NULL, '/uploads/avatars/user_41_1783933303213.webp', NULL, NULL, 0, 1, 0, 1, 1, 0, '2026-07-13 16:00:58.778');
-INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (2, 'leecookcu@gmail.com', 'leecookcu@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Bá Bá', '0936629311', NULL, 1, 'LOCAL', NULL, NULL, '/uploads/avatars/user_29_1783932198527.jpg', '2006-12-12 00:00:00', 1, 1, 1, 1, 0, 1, 0, '2026-06-12 18:47:49.406');
-INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (3, 'ditmemaygogle113', 'ditmemaygogle113@gmail.com', '$2a$10$ceBXGEZmWVqVhpH48b2TZuuMNgdGPxYTq4ydS.7erOj7cpOHhaB2y', N'Yến Trần', NULL, NULL, 1, 'LOCAL', '102325764378749092956', NULL, NULL, NULL, NULL, 0, 1, 1, 1, 1, 0, '2026-07-14 11:06:11.866');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (1, 'phamcongthanh.8311@gmail.com', 'phamcongthanh.8311@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Thanh', '0902208461', NULL, 1, 'GOOGLE', '112307932430374029161', NULL, '/uploads/avatars/user_41_1783933303213.webp', NULL, 1, 1, 1, 1, 1, 1, 0, '2026-07-13 16:00:58.778');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (2, 'leecookcu@gmail.com', 'leecookcu@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Bá Bá', '0936629311', NULL, 1, 'LOCAL', NULL, NULL, '/uploads/avatars/user_2_1785405662243.webp', '2006-12-12 00:00:00.000', 1, 1, 1, 1, 0, 1, 0, '2026-06-12 18:47:49.406');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (3, 'nguyentruongq169@gmail.com', 'nguyentruongq169@gmail.com', '$2a$10$6jnKeBpO81iMJuB6m2g0zesK.ohW0RzD1rYCdqAdzkcOQycji6VR6', 'LuxuryPC Admin', NULL, NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 0, 1, 1, 0, '2026-07-30 18:52:10.378');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (4, 'luxury.pc.noreply', 'luxury.pc.noreply@gmail.com', '$2a$10$t/AZM6s9xgGC91gFze0Ahuk/0YWzPHgerZLjCZgJ23XftEAHnYECG', 'PC Luxury', '0859590337', NULL, 1, 'GOOGLE', '107274161111586387548', NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 0, '2026-08-07 15:17:07.539');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (5, 'tranthivy@gmail.com', 'tranthivy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Thị Vy', '0983746152', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.100');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (6, 'leminhtuan@gmail.com', 'leminhtuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Minh Tuấn', '0976152437', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.106');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (7, 'phamanhhung@gmail.com', 'phamanhhung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Anh Hùng', '0909283746', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.106');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (8, 'hoangducduy@gmail.com', 'hoangducduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Đức Duy', '0938475610', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.106');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (9, 'phanhuuson@gmail.com', 'phanhuuson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Hữu Sơn', '0965748392', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.106');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (10, 'vuquanghai@gmail.com', 'vuquanghai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Quang Hải', '0947382910', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.106');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (11, 'vongoclinh@gmail.com', 'vongoclinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Ngọc Linh', '0918273645', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.110');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (12, 'dangthanhson@gmail.com', 'dangthanhson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Thanh Sơn', '0928374615', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.110');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (13, 'buikhanhtrang@gmail.com', 'buikhanhtrang@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Khánh Trang', '0981726354', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.110');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (14, 'nguyenvanhuong@gmail.com', 'nguyenvanhuong@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Văn Hương', '0972345678', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.110');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (15, 'tranthinam@gmail.com', 'tranthinam@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Thị Nam', '0903456789', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.110');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (16, 'leminhvy@gmail.com', 'leminhvy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Minh Vy', '0934567890', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.110');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (17, 'phamanhtuan@gmail.com', 'phamanhtuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Anh Tuấn', '0945678901', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.110');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (18, 'hoangduchung@gmail.com', 'hoangduchung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Đức Hùng', '0956789012', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.110');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (19, 'phanhuuduy@gmail.com', 'phanhuuduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Hữu Duy', '0967890123', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.113');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (20, 'vuquanglinh@gmail.com', 'vuquanglinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Quang Linh', '0978901234', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.113');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (21, 'vongocson@gmail.com', 'vongocson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Ngọc Sơn', '0989012345', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.113');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (22, 'dangthanhhai@gmail.com', 'dangthanhhai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Thanh Hải', '0990123456', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.113');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (23, 'buikhanhlinh@gmail.com', 'buikhanhlinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Khánh Linh', '0901234567', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.113');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (24, 'nguyenthitrang@gmail.com', 'nguyenthitrang@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Thị Trang', '0912345001', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.113');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (25, 'tranminhnam@gmail.com', 'tranminhnam@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Minh Nam', '0923456002', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.113');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (26, 'leanhvy@gmail.com', 'leanhvy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Anh Vy', '0934567003', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.113');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (27, 'phamductuan@gmail.com', 'phamductuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Đức Tuấn', '0945678004', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.116');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (28, 'hoanghuuhung@gmail.com', 'hoanghuuhung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Hữu Hùng', '0956789005', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.116');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (29, 'phanquangduy@gmail.com', 'phanquangduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', 'Phan Quang Duy', '0967890006', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.116');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (30, 'vungoclinh2@gmail.com', 'vungoclinh2@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Ngọc Linh', '0978901007', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.116');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (31, 'vothanhson@gmail.com', 'vothanhson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Thanh Sơn', '0989012008', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.116');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (32, 'dangkhanhhai@gmail.com', 'dangkhanhhai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Khánh Hải', '0990123009', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.116');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (33, 'buivantrang@gmail.com', 'buivantrang@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Văn Trang', '0901234010', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.120');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (34, 'nguyenanhhuong@gmail.com', 'nguyenanhhuong@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Anh Hương', '0912345011', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.120');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (35, 'tranducvy@gmail.com', 'tranducvy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Đức Vy', '0923456012', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.123');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (36, 'lehuutuan@gmail.com', 'lehuutuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Hữu Tuấn', '0934567013', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (37, 'phamquanghung@gmail.com', 'phamquanghung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Quang Hùng', '0945678014', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (38, 'hoangngocduy@gmail.com', 'hoangngocduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Ngọc Duy', '0956789015', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (39, 'phanthanhson@gmail.com', 'phanthanhson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Thanh Sơn', '0967890016', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (40, 'vukhanhhai@gmail.com', 'vukhanhhai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Khánh Hải', '0978901017', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (41, 'vovanlinh@gmail.com', 'vovanlinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Văn Linh', '0989012018', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (42, 'dangthinam@gmail.com', 'dangthinam@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Thị Nam', '0990123019', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (43, 'buiminhvy@gmail.com', 'buiminhvy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Minh Vy', '0901234020', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (44, 'nguyenanhtuan@gmail.com', 'nguyenanhtuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Anh Tuấn', '0912345021', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (45, 'tranduchung@gmail.com', 'tranduchung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Đức Hùng', '0923456022', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.126');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (46, 'lehuuduy@gmail.com', 'lehuuduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Hữu Duy', '0934567023', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (47, 'phamquangson2@gmail.com', 'phamquangson2@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Quang Sơn', '0945678024', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (48, 'hoangngochai@gmail.com', 'hoangngochai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Ngọc Hải', '0956789025', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (49, 'phanthanhlinh@gmail.com', 'phanthanhlinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', 'Phan Thanh Linh', '0967890026', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (50, 'vukhanhson@gmail.com', 'vukhanhson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Khánh Sơn', '0978901027', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (51, 'vovanhai@gmail.com', 'vovanhai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Văn Hải', '0989012028', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (52, 'dangthilinh@gmail.com', 'dangthilinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Thị Linh', '0990123028', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (53, 'buiminhson@gmail.com', 'buiminhson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Minh Sơn', '0901234028', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (54, 'nguyenhuunam@gmail.com', 'nguyenhuunam@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Hữu Nam', '0912345051', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (55, 'tranquangvy@gmail.com', 'tranquangvy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Quang Vy', '0923456052', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (56, 'lengoctuan@gmail.com', 'lengoctuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Ngọc Tuấn', '0934567053', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (57, 'phamthanhhung@gmail.com', 'phamthanhhung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Thanh Hùng', '0945678054', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (58, 'hoangkhanhduy@gmail.com', 'hoangkhanhduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Khánh Duy', '0956789055', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (59, 'phanvanson@gmail.com', 'phanvanson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Văn Sơn', '0967890056', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (60, 'vuthihai@gmail.com', 'vuthihai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Thị Hải', '0978901057', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.130');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (61, 'vominhlinh@gmail.com', 'vominhlinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Minh Linh', '0989012058', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (62, 'danganhson@gmail.com', 'danganhson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Anh Sơn', '0990123058', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (63, 'buiduchai@gmail.com', 'buiduchai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Đức Hải', '0901234058', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (64, 'nguyenhuuvy@gmail.com', 'nguyenhuuvy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Hữu Vy', '0912345061', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (65, 'tranngocnam@gmail.com', 'tranngocnam@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Ngọc Nam', '0923456062', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (66, 'lequangtuan@gmail.com', 'lequangtuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Quang Tuấn', '0934567063', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (67, 'phamminhhung@gmail.com', 'phamminhhung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Minh Hùng', '0945678064', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (68, 'hoangthanhduy@gmail.com', 'hoangthanhduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Thanh Duy', '0956789065', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (69, 'phankhanhson@gmail.com', 'phankhanhson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Khánh Sơn', '0967890066', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (70, 'vuanhhai@gmail.com', 'vuanhhai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Anh Hải', '0978901067', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (71, 'vongoctrang@gmail.com', 'vongoctrang@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Ngọc Trang', '0989012068', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (72, 'dangduclinh@gmail.com', 'dangduclinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Đức Linh', '0990123068', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (73, 'buihuuson@gmail.com', 'buihuuson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Hữu Sơn', '0901234068', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (74, 'nguyenquangvy@gmail.com', 'nguyenquangvy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Quang Vy', '0912345071', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.133');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (75, 'tranngoctuan@gmail.com', 'tranngoctuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Ngọc Tuấn', '0923456072', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (76, 'lehuuhung@gmail.com', 'lehuuhung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Hữu Hùng', '0934567073', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (77, 'phamminhduy@gmail.com', 'phamminhduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Minh Duy', '0945678074', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (78, 'hoangthanhhung@gmail.com', 'hoangthanhhung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Thanh Hùng', '0956789075', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (79, 'phankhanhduy2@gmail.com', 'phankhanhduy2@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Khánh Duy', '0967890076', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (80, 'vuhuuson@gmail.com', 'vuhuuson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Hữu Sơn', '0978901077', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (81, 'voanhhai@gmail.com', 'voanhhai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Anh Hải', '0989012078', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (82, 'dangquanglinh@gmail.com', 'dangquanglinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Quang Linh', '0990123078', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (83, 'buingocson@gmail.com', 'buingocson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Ngọc Sơn', '0901234078', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (84, 'nguyenngocnam@gmail.com', 'nguyenngocnam@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Ngọc Nam', '0912345081', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (85, 'tranquangnam@gmail.com', 'tranquangnam@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Quang Nam', '0923456082', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (86, 'lethanhtuan@gmail.com', 'lethanhtuan@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Thanh Tuấn', '0934567083', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (87, 'phamhuuhung@gmail.com', 'phamhuuhung@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Hữu Hùng', '0945678084', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.136');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (88, 'hoangvanduy@gmail.com', 'hoangvanduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Văn Duy', '0956789085', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (89, 'phanducson@gmail.com', 'phanducson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Đức Sơn', '0967890086', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (90, 'vuthivy@gmail.com', 'vuthivy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Thị Vy', '0978901087', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (91, 'vohuulinh@gmail.com', 'vohuulinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Hữu Linh', '0989012088', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (92, 'dangngochai@gmail.com', 'dangngochai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Ngọc Hải', '0990123089', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (93, 'buiquangtrang@gmail.com', 'buiquangtrang@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Quang Trang', '0901234090', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (94, 'nguyenhuulinh@gmail.com', 'nguyenhuulinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Hữu Linh', '0912345091', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (95, 'tranminhson@gmail.com', 'tranminhson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Minh Sơn', '0923456092', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (96, 'lekhanhlinh@gmail.com', 'lekhanhlinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Khánh Linh', '0934567093', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (97, 'phamvanhai@gmail.com', 'phamvanhai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Văn Hải', '0945678094', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (98, 'hoangminhvy@gmail.com', 'hoangminhvy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Minh Vy', '0956789095', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (99, 'phanngoctrang@gmail.com', 'phanngoctrang@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Ngọc Trang', '0967890096', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (100, 'vuhuuduy@gmail.com', 'vuhuuduy@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Hữu Duy', '0978901097', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (101, 'voquanglinh@gmail.com', 'voquanglinh@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Quang Linh', '0989012098', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (102, 'danghuuson@gmail.com', 'danghuuson@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Hữu Sơn', '0990123099', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (103, 'buingochai@gmail.com', 'buingochai@gmail.com', '$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Ngọc Hải', '0901234100', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 0, '2026-08-09 15:03:56.140');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (104, 'balittedutphieukhang@gmail.com', 'balittedutphieukhang@gmail.com', '$2a$10$ceBXGEZmWVqVhpH48b2TZuuMNgdGPxYTq4ydS.7erOj7cpOHhaB2y', N'Nguyễn khang', '+84859590337', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2026-03-28 15:19:21.008');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (105, 'ditmemaygogle113@gmail.com', 'ditmemaygogle113@gmail.com', '$2a$10$/XRdhZRo3KLXI0FZbAu1e.ycsE.ZyAjy3mQhZE5mJcOz/yQHo/Bbi', N'Thanh Phạm', '0936629311', NULL, 1, 'LOCAL', '102325764378749092956', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-06-02 20:52:04.049');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (106, 'admin', 'admin@luxurypc.com', '$2a$10$F76h/W85bFv9Kp040CV4ju4N/jhKpRhXaWgWzewsDa8kDzkHtfXhS', 'Admin LuxuryPC', NULL, NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 0, '2026-06-08 15:23:54.309');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (107, 'mazack707', 'mazack707@gmail.com', NULL, 'Zack Ma', NULL, NULL, 1, 'GOOGLE', '115229939720924175799', NULL, NULL, NULL, NULL, 1, 1, 0, 1, 1, 0, '2026-06-13 20:27:12.538');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (108, 'tuan9bledinhchinh@gmail.com', 'tuan9bledinhchinh@gmail.com', '$2a$10$3wA6X7TEsnW5ymYdePRokuIN/FLZ.eIRMD4UQBh8PIyh/3z.LLn0q', 'nguyen tuan', '+84905338411', NULL, 1, 'LOCAL', NULL, NULL, NULL, '1995-10-18 00:00:00.000', 1, 1, 1, 0, 1, 1, 0, '2026-03-28 15:59:09.715');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (109, 'djtmefacebook9@gmail.com', 'djtmefacebook9@gmail.com', '$2a$10$KAKrL.51KRhIot0lbCfGzeTyNcE.NAKLH7OFlKm7XULtfxWoqXari', N'Thanh Phạm', '0933456789', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 0, 1, 1, 0, '2026-06-12 21:16:32.031');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (110, 'ngochai2007nt@gmail.com', 'ngochai2007nt@gmail.com', '$2a$10$1soqIA9YDYg0ggZoYV0Cm.OHY81wkRw2GF8dlFtvIRUcU8Pa5Si0u', N'Hải Nguyễn Ngọc', '+84384333382', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 0, '2026-06-14 19:11:56.269');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (111, 'tuannguyennasani@gmail.com', 'tuannguyennasani@gmail.com', '$2a$10$rcVvRAGy83rllwo8olMgpurZQeAGrgZsObzerd.OrxPWxIk2egiom', N'Thanh Phạm', '0923456789', NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 1, 1, 0, 1, 1, 0, '2026-06-12 20:33:46.571');
+INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, created_at) VALUES (112, 'system_user1', 'user1_system@luxurypc.com', NULL, N'Người Dùng Hệ Thống', NULL, NULL, 1, 'LOCAL', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL);
 SET IDENTITY_INSERT users OFF;
+DBCC CHECKIDENT ('users', RESEED, 112);
 GO
 
 -- Dumping data for table categories
@@ -1221,44 +1253,9 @@ INSERT INTO categories (id, name, display, slug) VALUES (17, 'Mouse', NULL, NULL
 INSERT INTO categories (id, name, display, slug) VALUES (18, 'Headset', NULL, NULL);
 
 SET IDENTITY_INSERT categories OFF;
+DBCC CHECKIDENT ('categories', RESEED, 18);
 GO
-DELETE FROM categories;
-GO
-DELETE FROM user_vouchers;
-GO
-DELETE FROM vouchers;
-GO
-DELETE FROM cart_items;
-DELETE FROM wishlist_items;
 
-DELETE FROM case_specs;
-DELETE FROM casespec_specs;
-
-DELETE FROM cpu_specs;
-DELETE FROM cpuspec_specs;
-
-DELETE FROM cooler_specs;
-DELETE FROM coolerspec_specs;
-
-DELETE FROM gpu_specs;
-DELETE FROM gpuspec_specs;
-
-DELETE FROM mainboard_specs;
-DELETE FROM mainboardspec_specs;
-
-DELETE FROM psu_specs;
-DELETE FROM psuspec_specs;
-
-DELETE FROM ram_specs;
-DELETE FROM ramspec_specs;
-
-DELETE FROM storage_specs;
-DELETE FROM storagespec_specs;
-
-DELETE FROM products;
-DELETE FROM reviews;
-GO
-DELETE FROM categories;
 -- Dumping data for table news_categories
 SET IDENTITY_INSERT news_categories ON;
 INSERT INTO news_categories (id, created_at, description, name, slug, status, updated_at) VALUES (1, '2026-07-13 21:32:29.98', N'mô tả nội dung', N'Tin Tức', 'tin-tuc', 'ACTIVE', '2026-07-13 21:32:29.98');
@@ -1273,6 +1270,7 @@ INSERT INTO news_categories (id, created_at, description, name, slug, status, up
 INSERT INTO news_categories (id, created_at, description, name, slug, status, updated_at) VALUES (10, '2026-07-16 11:25:30.497', N'Gợi ý cấu hình tối ưu cho các tựa game hot (VD: "Cấu hình chơi mượt Valorant/GTA V/Cyberpunk 2077").', N'Cấu hình chơi game', 'cau-hinh-choi-game', 'ACTIVE', '2026-07-16 11:25:30.497');
 INSERT INTO news_categories (id, created_at, description, name, slug, status, updated_at) VALUES (11, '2026-07-16 11:25:44.293', N'Giới thiệu các tựa game mới hoặc các công cụ hỗ trợ công việc/giải trí.', N'Review Game & Phần mềm', 'review-game-phan-mem', 'ACTIVE', '2026-07-16 11:25:44.293');
 SET IDENTITY_INSERT news_categories OFF;
+DBCC CHECKIDENT ('news_categories', RESEED, 11);
 GO
 
 -- Dumping data for table flash_sales
@@ -1280,6 +1278,7 @@ SET IDENTITY_INSERT flash_sales ON;
 INSERT INTO flash_sales (id, active, created_at, end_time, name, start_time) VALUES (1, 0, '2026-06-22 08:58:57.04', '2026-07-08 12:00:00', 'SALE7/7', '2026-07-07 12:00:00');
 INSERT INTO flash_sales (id, active, created_at, end_time, name, start_time) VALUES (2, 1, '2026-06-22 08:58:57.075', '2026-08-08 12:00:00', 'SALE8/7', '2026-07-07 12:00:00');
 SET IDENTITY_INSERT flash_sales OFF;
+DBCC CHECKIDENT ('flash_sales', RESEED, 2);
 GO
 
 -- Dumping data for table pc_combos
@@ -1292,6 +1291,7 @@ INSERT INTO pc_combos (id, badge, badge_color, description, image, name, price) 
 INSERT INTO pc_combos (id, badge, badge_color, description, image, name, price) VALUES (6, 'ULTIMATE', 'var(--gold)', NULL, '/images/combo2.jpg', 'Combo 6: LXR AMD Ryzen 9 / RTX 5090', 120000000);
 INSERT INTO pc_combos (id, badge, badge_color, description, image, name, price) VALUES (7, 'CREATOR', '#a855f7', NULL, '/images/combo1.jpg', 'Combo 7: LXR Studio / RTX 5080', 85000000);
 SET IDENTITY_INSERT pc_combos OFF;
+DBCC CHECKIDENT ('pc_combos', RESEED, 7);
 GO
 
 -- Dumping data for table spring_session
@@ -1300,11 +1300,123 @@ GO
 
 -- Dumping data for table user_roles
 SET IDENTITY_INSERT user_roles ON;
-INSERT INTO user_roles (user_id, role_id, id) VALUES (1, 2, 1);
-INSERT INTO user_roles (user_id, role_id, id) VALUES (2, 1, 2);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (1, 1, 1);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (2, 2, 2);
 INSERT INTO user_roles (user_id, role_id, id) VALUES (3, 2, 3);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (4, 2, 4);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (5, 2, 5);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (6, 2, 6);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (7, 2, 7);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (8, 2, 8);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (9, 2, 9);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (10, 2, 10);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (11, 2, 11);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (12, 2, 12);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (13, 2, 13);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (14, 2, 14);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (15, 2, 15);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (16, 2, 16);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (17, 2, 17);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (18, 2, 18);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (19, 2, 19);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (20, 2, 20);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (21, 2, 21);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (22, 2, 22);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (23, 2, 23);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (24, 2, 24);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (25, 2, 25);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (26, 2, 26);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (27, 2, 27);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (28, 2, 28);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (29, 2, 29);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (30, 2, 30);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (31, 2, 31);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (32, 2, 32);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (33, 2, 33);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (34, 2, 34);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (35, 2, 35);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (36, 2, 36);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (37, 2, 37);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (38, 2, 38);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (39, 2, 39);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (40, 2, 40);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (41, 2, 41);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (42, 2, 42);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (43, 2, 43);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (44, 2, 44);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (45, 2, 45);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (46, 2, 46);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (47, 2, 47);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (48, 2, 48);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (49, 2, 49);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (50, 2, 50);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (51, 2, 51);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (52, 2, 52);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (53, 2, 53);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (54, 2, 54);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (55, 2, 55);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (56, 2, 56);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (57, 2, 57);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (58, 2, 58);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (59, 2, 59);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (60, 2, 60);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (61, 2, 61);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (62, 2, 62);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (63, 2, 63);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (64, 2, 64);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (65, 2, 65);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (66, 2, 66);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (67, 2, 67);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (68, 2, 68);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (69, 2, 69);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (70, 2, 70);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (71, 2, 71);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (72, 2, 72);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (73, 2, 73);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (74, 2, 74);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (75, 2, 75);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (76, 2, 76);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (77, 2, 77);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (78, 2, 78);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (79, 2, 79);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (80, 2, 80);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (81, 2, 81);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (82, 2, 82);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (83, 2, 83);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (84, 2, 84);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (85, 2, 85);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (86, 2, 86);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (87, 2, 87);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (88, 2, 88);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (89, 2, 89);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (90, 2, 90);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (91, 2, 91);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (92, 2, 92);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (93, 2, 93);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (94, 2, 94);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (95, 2, 95);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (96, 2, 96);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (97, 2, 97);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (98, 2, 98);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (99, 2, 99);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (100, 2, 100);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (101, 2, 101);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (102, 2, 102);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (103, 2, 103);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (104, 2, 104);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (105, 2, 105);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (106, 1, 106);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (107, 2, 107);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (108, 2, 108);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (109, 2, 109);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (110, 2, 110);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (111, 2, 111);
+INSERT INTO user_roles (user_id, role_id, id) VALUES (112, 2, 112);
 SET IDENTITY_INSERT user_roles OFF;
+DBCC CHECKIDENT ('user_roles', RESEED, 112);
 GO
+
+
 
 -- Dumping data for table user_sessions
 SET IDENTITY_INSERT user_sessions ON;
@@ -1369,6 +1481,7 @@ INSERT INTO shipping_addresses (id, address, city, is_default, district, phone, 
 INSERT INTO shipping_addresses (id, address, city, is_default, district, phone, recipient_name, user_id) VALUES (3, 'Q122', N'02 - Thành phố Hồ Chí Minh', 0, 'Q12', '0902208461', N'Bá Khang', 5);
 INSERT INTO shipping_addresses (id, address, city, is_default, district, phone, recipient_name, user_id) VALUES (7, 'KonTum', 'KonTum', 1, 'TumKon', '0901560861', N'Bá Bá', 5);
 SET IDENTITY_INSERT shipping_addresses OFF;
+DBCC CHECKIDENT ('shipping_addresses', RESEED, 7);
 GO
 
 -- Dumping data for table support_tickets
@@ -1380,16 +1493,8 @@ INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, cate
 INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (5, NULL, NULL, NULL, 'GENERAL', '2026-07-14 17:19:18.965', 'tuan9bledinhchinh@gmail.com', '36', '', N'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'OPEN', N'Chat hỗ trợ trực tuyến', '2026-07-14 17:19:18.965', 2);
 INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (6, NULL, NULL, NULL, 'GENERAL', '2026-07-15 10:47:51.665', 'phamcongthanh.8311@gmail.com', 'Thanh', '', N'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'OPEN', N'Chat hỗ trợ trực tuyến', '2026-07-15 10:47:51.665', 5);
 SET IDENTITY_INSERT support_tickets OFF;
+DBCC CHECKIDENT ('support_tickets', RESEED, 1);
 GO
-DELETE FROM products;
-DELETE FROM inventory;
-DELETE FROM order_items;
-DELETE FROM pc_combo_details;
-DELETE FROM stock_movements;
-DELETE FROM flash_sale_items;
-DELETE FROM wishlist_items;
-DELETE FROM cart_items;
-
 -- Dumping data for table products
 SET IDENTITY_INSERT products ON;
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (257, N'Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz (TRAY) - CHÍNH HÃNG', 2500000, 'TDP: 65W', 'i9_14900k.jpg', 1, 99, '2026-06-27 12:52:50.064', NULL);
@@ -1958,7 +2063,7 @@ INSERT INTO products (id, name, price, description, image, category_id, stock, c
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (17, N'Intel Core i5-14400F', 5600000, N'10 Cores, Efficient Gaming', N'https://microless.com/cdn/products/30c01bcc173314e1a756151858871162-hi.jpg', 1, 65, '4/6/2026 1:46:29 PM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (18, N'AMD Ryzen 5 8600G', 6200000, N'AI Engine, Radeon 760M', N'https://images.versus.io/objects/amd-ryzen-5-8600g.front.master2x.1704766286597.webp', 1, 35, '4/6/2026 1:46:29 PM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (19, N'Intel Core i7-12700K', 7200000, N'12 Cores, LGA 1700', N'https://product.hstatic.net/200000680839/product/hz__25mb__12_cores_20_threads__0703223b7ae44a9ca2dd97b79516fa6f_master_de0749de4f2f4df687f7940d2cd121d9_1024x1024.jpg', 1, 34, '4/6/2026 1:46:29 PM', NULL);
-INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (20, N'AMD Ryzen 7 7700', 7800000, N'8 Cores, Low Power 65W', N'https://www.ryans.com/storage/products/main/amd-ryzen-7-7700-38ghz-53ghz-8-core-40mb-cache-11696328242.webp', 1, 28, '4/6/2026 1:46:29 PM', NULL);
+INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (20, N'AMD Ryzen 7 7700', 7800000, N'8 Cores, Low Power 65W', N'https://images.versus.io/objects/amd-ryzen-7-7700.front.master2x.1704766286597.webp', 1, 28, '4/6/2026 1:46:29 PM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (21, N'Intel Core i5-11400F', 2800000, N'Old Gen Budget King', N'https://www.techpowerup.com/cpu-specs/images/chips/2407-front.jpg', 1, 50, '4/6/2026 1:46:29 PM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (22, N'AMD Ryzen 5 4500', 1950000, N'Super Budget 6 Cores', N'https://m.media-amazon.com/images/I/91OZjLdueYL._AC_SL1500_.jpg', 1, 94, '4/6/2026 1:46:29 PM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (23, N'Intel Core i9-11900K', 6500000, N'Legacy Flagship LGA 1200', N'https://www.notebookcheck.com/fileadmin/Notebooks/Sonstiges/Intel/Rocket_Lake_S/Rocket_Lake_S_6.jpg', 1, 10, '4/6/2026 1:46:29 PM', NULL);
@@ -2511,44 +2616,6 @@ GO
 ALTER TABLE orders ADD shipping_fee FLOAT NOT NULL DEFAULT 0;
 
 -- Thêm cột lưu tên phương thức vận chuyển (vd: Giao hàng hỏa tốc, Tiêu chuẩn)
-ALTER TABLE orders ADD shipping_method_name NVARCHAR(255);
-
-SELECT * FROM orders;
-GO
-
-DELETE FROM orders;
-DELETE FROM order_items;
-DELETE FROM orders;
-DELETE FROM vouchers;
-DELETE FROM user_vouchers;
-DBCC CHECKIDENT ('order_items', RESEED, 0);
-DBCC CHECKIDENT ('orders', RESEED, 0);
-
-DELETE FROM orders;
-GO
-
-SELECT
-    fk.name AS ForeignKey,
-    OBJECT_NAME(fkc.parent_object_id) AS ChildTable,
-    c.name AS ChildColumn
-FROM sys.foreign_keys fk
-JOIN sys.foreign_key_columns fkc
-    ON fk.object_id = fkc.constraint_object_id
-JOIN sys.columns c
-    ON c.object_id = fkc.parent_object_id
-   AND c.column_id = fkc.parent_column_id
-WHERE OBJECT_NAME(fkc.referenced_object_id) = 'orders';
-
-BEGIN TRANSACTION;
-
-DELETE FROM sepay_payment_sessions;
-
-DELETE FROM order_items;
-
-DELETE FROM orders;
-
-COMMIT;
-
 -- Dumping data for table orders
 SET IDENTITY_INSERT orders ON;
 INSERT INTO orders (id, user_id, total_price, status, order_code, full_name, email, phone, address, city, discount_amount, voucher_code, installment_bank, installment_fee, installment_term, payment_method, admin_note, refund_previous_status, refund_reason, stock_deducted, stock_restored, created_at) VALUES (26, NULL, 31000000, 'Chờ thanh toán', 'DH26', 'md', NULL, '0905338411', 'thon tan quang', NULL, 0, NULL, NULL, 0.00, NULL, 'VIETQR', NULL, NULL, NULL, NULL, NULL, '2026-07-07 11:21:45.734');
@@ -3372,6 +3439,7 @@ IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 4) INSERT INTO news_cate
 IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 5) INSERT INTO news_categories (id, name, slug, status) VALUES (5, N'Lưu Trữ (SSD/HDD)', 'luu-tru-ssd-hdd', 'ACTIVE');
 IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 6) INSERT INTO news_categories (id, name, slug, status) VALUES (6, N'Mẹo & Thủ Thuật', 'meo-thu-thuat', 'ACTIVE');
 SET IDENTITY_INSERT news_categories OFF;
+DBCC CHECKIDENT ('news_categories', RESEED, 11);
 GO
 
 -- ----------------------------
@@ -3428,7 +3496,7 @@ VALUES
 (N'Kingston', N'/images/ui-new/kingston.svg', N'/products?brand=Kingston', 7),
 (N'Cooler Master', N'/images/ui-new/coolermaster.svg', N'/products?brand=Cooler Master', 8);
 GO
-DELETE FROM brands;
+DBCC CHECKIDENT ('brands', RESEED, 8);
 GO
 
 -- Manual SQL Server migration for the ten-minute VietQR payment-session lifecycle.
@@ -3795,635 +3863,7 @@ END CATCH;
 
 
 
--- thêm dữ liệu người dùng
-
--- =========================================================================
--- MỤC ĐÍCH: Khởi tạo dữ liệu mẫu gồm 100 người dùng (Khách hàng) thực tế
--- NGƯỜI THỰC HIỆN: Cập nhật bởi Nhà Phát Triển (Developer)
--- NGÀY TẠO: 08/08/2026
---
--- CHI TIẾT DỮ LIỆU:
---   1. Tạo 100 tài khoản khách hàng với Họ Tên tiếng Việt tự nhiên và Email dạng không dấu.
---   2. Mật khẩu đăng nhập mặc định cho toàn bộ 100 tài khoản là: 123456
---      (Được băm bằng thuật toán BCrypt trong trường [password]).
---   3. Gán tự động vai trò USER (role_id = 2) tương ứng trong bảng [user_roles].
---   4. Trạng thái các tài khoản: Hoạt động (enabled = 1, status = 1) và bật đầy đủ thông báo.
---
--- CÁCH DÙNG: Copy toàn bộ Script dưới đây và chạy trực tiếp trong SSMS trên database LUXURYPC.
--- =========================================================================
-
-USE [LUXURYPC]; 
-GO
-
-INSERT INTO dbo.roles (id, name) 
-VALUES 
-(1, 'ADMIN'),
-(2, 'USER'),
-(3, 'STAFF');
-
--- Tắt chế độ chèn cột Identity
-SET IDENTITY_INSERT dbo.roles OFF;
-GO
-
--- 1. Nguyễn Văn Nam
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenvannam@gmail.com', N'nguyenvannam@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Văn Nam', N'0912837461', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 2. Trần Thị Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranthivy@gmail.com', N'tranthivy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Thị Vy', N'0983746152', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 3. Lê Minh Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'leminhtuan@gmail.com', N'leminhtuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Minh Tuấn', N'0976152437', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 4. Phạm Anh Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamanhhung@gmail.com', N'phamanhhung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Anh Hùng', N'0909283746', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 5. Hoàng Đức Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangducduy@gmail.com', N'hoangducduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Đức Duy', N'0938475610', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 6. Phan Hữu Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phanhuuson@gmail.com', N'phanhuuson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Hữu Sơn', N'0965748392', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 7. Vũ Quang Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vuquanghai@gmail.com', N'vuquanghai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Quang Hải', N'0947382910', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 8. Võ Ngọc Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vongoclinh@gmail.com', N'vongoclinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Ngọc Linh', N'0918273645', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 9. Đặng Thanh Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'dangthanhson@gmail.com', N'dangthanhson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Thanh Sơn', N'0928374615', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 10. Bùi Khánh Trang
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buikhanhtrang@gmail.com', N'buikhanhtrang@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Khánh Trang', N'0981726354', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 11. Nguyễn Văn Hương
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenvanhuong@gmail.com', N'nguyenvanhuong@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Văn Hương', N'0972345678', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 12. Trần Thị Nam
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranthinam@gmail.com', N'tranthinam@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Thị Nam', N'0903456789', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 13. Lê Minh Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'leminhvy@gmail.com', N'leminhvy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Minh Vy', N'0934567890', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 14. Phạm Anh Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamanhtuan@gmail.com', N'phamanhtuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Anh Tuấn', N'0945678901', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 15. Hoàng Đức Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangduchung@gmail.com', N'hoangduchung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Đức Hùng', N'0956789012', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 16. Phan Hữu Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phanhuuduy@gmail.com', N'phanhuuduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Hữu Duy', N'0967890123', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 17. Vũ Quang Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vuquanglinh@gmail.com', N'vuquanglinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Quang Linh', N'0978901234', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 18. Võ Ngọc Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vongocson@gmail.com', N'vongocson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Ngọc Sơn', N'0989012345', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 19. Đặng Thanh Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'dangthanhhai@gmail.com', N'dangthanhhai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Thanh Hải', N'0990123456', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 20. Bùi Khánh Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buikhanhlinh@gmail.com', N'buikhanhlinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Khánh Linh', N'0901234567', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 21. Nguyễn Thị Trang
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenthitrang@gmail.com', N'nguyenthitrang@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Thị Trang', N'0912345001', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 22. Trần Minh Nam
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranminhnam@gmail.com', N'tranminhnam@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Minh Nam', N'0923456002', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 23. Lê Anh Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'leanhvy@gmail.com', N'leanhvy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Anh Vy', N'0934567003', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 24. Phạm Đức Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamductuan@gmail.com', N'phamductuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Đức Tuấn', N'0945678004', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 25. Hoàng Hữu Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoanghuuhung@gmail.com', N'hoanghuuhung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Hữu Hùng', N'0956789005', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 26. Phan Quang Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phanquangduy@gmail.com', N'phanquangduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Quang Duy', N'0967890006', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 27. Vũ Ngọc Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vungoclinh2@gmail.com', N'vungoclinh2@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Ngọc Linh', N'0978901007', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 28. Võ Thanh Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vothanhson@gmail.com', N'vothanhson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Thanh Sơn', N'0989012008', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 29. Đặng Khánh Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'dangkhanhhai@gmail.com', N'dangkhanhhai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Khánh Hải', N'0990123009', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 30. Bùi Văn Trang
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buivantrang@gmail.com', N'buivantrang@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Văn Trang', N'0901234010', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 31. Nguyễn Anh Hương
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenanhhuong@gmail.com', N'nguyenanhhuong@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Anh Hương', N'0912345011', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 32. Trần Đức Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranducvy@gmail.com', N'tranducvy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Đức Vy', N'0923456012', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 33. Lê Hữu Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'lehuutuan@gmail.com', N'lehuutuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Hữu Tuấn', N'0934567013', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 34. Phạm Quang Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamquanghung@gmail.com', N'phamquanghung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Quang Hùng', N'0945678014', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 35. Hoàng Ngọc Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangngocduy@gmail.com', N'hoangngocduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Ngọc Duy', N'0956789015', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 36. Phan Thanh Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phanthanhson@gmail.com', N'phanthanhson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Thanh Sơn', N'0967890016', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 37. Vũ Khánh Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vukhanhhai@gmail.com', N'vukhanhhai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Khánh Hải', N'0978901017', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 38. Võ Văn Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vovanlinh@gmail.com', N'vovanlinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Văn Linh', N'0989012018', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 39. Đặng Thị Nam
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'dangthinam@gmail.com', N'dangthinam@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Thị Nam', N'0990123019', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 40. Bùi Minh Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buiminhvy@gmail.com', N'buiminhvy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Minh Vy', N'0901234020', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 41. Nguyễn Anh Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenanhtuan@gmail.com', N'nguyenanhtuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Anh Tuấn', N'0912345021', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 42. Trần Đức Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranduchung@gmail.com', N'tranduchung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Đức Hùng', N'0923456022', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 43. Lê Hữu Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'lehuuduy@gmail.com', N'lehuuduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Hữu Duy', N'0934567023', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 44. Phạm Quang Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamquangson2@gmail.com', N'phamquangson2@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Quang Sơn', N'0945678024', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 45. Hoàng Ngọc Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangngochai@gmail.com', N'hoangngochai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Ngọc Hải', N'0956789025', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 46. Phan Thanh Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phanthanhlinh@gmail.com', N'phanthanhlinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Thanh Linh', N'0967890026', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 47. Vũ Khánh Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vukhanhson@gmail.com', N'vukhanhson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Khánh Sơn', N'0978901027', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 48. Võ Văn Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vovanhai@gmail.com', N'vovanhai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Văn Hải', N'0989012028', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 49. Đặng Thị Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'dangthilinh@gmail.com', N'dangthilinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Thị Linh', N'0990123028', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 50. Bùi Minh Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buiminhson@gmail.com', N'buiminhson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Minh Sơn', N'0901234028', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 51. Nguyễn Hữu Nam
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenhuunam@gmail.com', N'nguyenhuunam@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Hữu Nam', N'0912345051', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 52. Trần Quang Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranquangvy@gmail.com', N'tranquangvy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Quang Vy', N'0923456052', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 53. Lê Ngọc Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'lengoctuan@gmail.com', N'lengoctuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Ngọc Tuấn', N'0934567053', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 54. Phạm Thanh Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamthanhhung@gmail.com', N'phamthanhhung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Thanh Hùng', N'0945678054', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 55. Hoàng Khánh Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangkhanhduy@gmail.com', N'hoangkhanhduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Khánh Duy', N'0956789055', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 56. Phan Văn Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phanvanson@gmail.com', N'phanvanson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Văn Sơn', N'0967890056', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 57. Vũ Thị Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vuthihai@gmail.com', N'vuthihai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Thị Hải', N'0978901057', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 58. Võ Minh Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vominhlinh@gmail.com', N'vominhlinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Minh Linh', N'0989012058', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 59. Đặng Anh Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'danganhson@gmail.com', N'danganhson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Anh Sơn', N'0990123058', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 60. Bùi Đức Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buiduchai@gmail.com', N'buiduchai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Đức Hải', N'0901234058', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 61. Nguyễn Hữu Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenhuuvy@gmail.com', N'nguyenhuuvy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Hữu Vy', N'0912345061', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 62. Trần Ngọc Nam
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranngocnam@gmail.com', N'tranngocnam@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Ngọc Nam', N'0923456062', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 63. Lê Quang Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'lequangtuan@gmail.com', N'lequangtuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Quang Tuấn', N'0934567063', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 64. Phạm Minh Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamminhhung@gmail.com', N'phamminhhung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Minh Hùng', N'0945678064', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 65. Hoàng Thanh Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangthanhduy@gmail.com', N'hoangthanhduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Thanh Duy', N'0956789065', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 66. Phan Khánh Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phankhanhson@gmail.com', N'phankhanhson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Khánh Sơn', N'0967890066', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 67. Vũ Anh Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vuanhhai@gmail.com', N'vuanhhai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Anh Hải', N'0978901067', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 68. Võ Ngọc Trang
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vongoctrang@gmail.com', N'vongoctrang@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Ngọc Trang', N'0989012068', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 69. Đặng Đức Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'dangduclinh@gmail.com', N'dangduclinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Đức Linh', N'0990123068', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 70. Bùi Hữu Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buihuuson@gmail.com', N'buihuuson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Hữu Sơn', N'0901234068', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 71. Nguyễn Quang Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenquangvy@gmail.com', N'nguyenquangvy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Quang Vy', N'0912345071', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 72. Trần Ngọc Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranngoctuan@gmail.com', N'tranngoctuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Ngọc Tuấn', N'0923456072', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 73. Lê Hữu Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'lehuuhung@gmail.com', N'lehuuhung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Hữu Hùng', N'0934567073', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 74. Phạm Minh Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamminhduy@gmail.com', N'phamminhduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Minh Duy', N'0945678074', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 75. Hoàng Thanh Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangthanhhung@gmail.com', N'hoangthanhhung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Thanh Hùng', N'0956789075', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 76. Phan Khánh Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phankhanhduy2@gmail.com', N'phankhanhduy2@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Khánh Duy', N'0967890076', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 77. Vũ Hữu Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vuhuuson@gmail.com', N'vuhuuson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Hữu Sơn', N'0978901077', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 78. Võ Anh Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'voanhhai@gmail.com', N'voanhhai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Anh Hải', N'0989012078', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 79. Đặng Quang Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'dangquanglinh@gmail.com', N'dangquanglinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Quang Linh', N'0990123078', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 80. Bùi Ngọc Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buingocson@gmail.com', N'buingocson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Ngọc Sơn', N'0901234078', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 81. Nguyễn Ngọc Nam
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenngocnam@gmail.com', N'nguyenngocnam@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Ngọc Nam', N'0912345081', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 82. Trần Quang Nam
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranquangnam@gmail.com', N'tranquangnam@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Quang Nam', N'0923456082', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 83. Lê Thanh Tuấn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'lethanhtuan@gmail.com', N'lethanhtuan@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Thanh Tuấn', N'0934567083', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 84. Phạm Hữu Hùng
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamhuuhung@gmail.com', N'phamhuuhung@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Hữu Hùng', N'0945678084', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 85. Hoàng Văn Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangvanduy@gmail.com', N'hoangvanduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Văn Duy', N'0956789085', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 86. Phan Đức Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phanducson@gmail.com', N'phanducson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Đức Sơn', N'0967890086', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 87. Vũ Thị Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vuthivy@gmail.com', N'vuthivy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Thị Vy', N'0978901087', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 88. Võ Hữu Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vohuulinh@gmail.com', N'vohuulinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Hữu Linh', N'0989012088', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 89. Đặng Ngọc Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'dangngochai@gmail.com', N'dangngochai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Ngọc Hải', N'0990123089', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 90. Bùi Quang Trang
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buiquangtrang@gmail.com', N'buiquangtrang@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Quang Trang', N'0901234090', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 91. Nguyễn Hữu Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'nguyenhuulinh@gmail.com', N'nguyenhuulinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Nguyễn Hữu Linh', N'0912345091', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 92. Trần Minh Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'tranminhson@gmail.com', N'tranminhson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Trần Minh Sơn', N'0923456092', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 93. Lê Khánh Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'lekhanhlinh@gmail.com', N'lekhanhlinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Lê Khánh Linh', N'0934567093', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 94. Phạm Văn Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phamvanhai@gmail.com', N'phamvanhai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phạm Văn Hải', N'0945678094', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 95. Hoàng Minh Vy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'hoangminhvy@gmail.com', N'hoangminhvy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Hoàng Minh Vy', N'0956789095', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 96. Phan Ngọc Trang
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'phanngoctrang@gmail.com', N'phanngoctrang@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Phan Ngọc Trang', N'0967890096', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 97. Vũ Hữu Duy
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'vuhuuduy@gmail.com', N'vuhuuduy@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Vũ Hữu Duy', N'0978901097', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 98. Võ Quang Linh
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'voquanglinh@gmail.com', N'voquanglinh@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Võ Quang Linh', N'0989012098', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 99. Đặng Hữu Sơn
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'danghuuson@gmail.com', N'danghuuson@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Đặng Hữu Sơn', N'0990123099', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- 100. Bùi Ngọc Hải
-INSERT INTO dbo.users (username, email, password, full_name, phone, enabled, auth_provider, created_at, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter) 
-VALUES (N'buingochai@gmail.com', N'buingochai@gmail.com', N'$2a$10$IQoMLrNNl.onPqZoiXBeaOaYPmaFdaLn0LJhMA0gQFJB13peWyKhi', N'Bùi Ngọc Hải', N'0901234100', 1, N'LOCAL', GETDATE(), 1, 1, 1, 1, 1);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-GO
-
-
-
--- 10 use cũ
-
-USE [LUXURYPC]; -- Thay bằng [newlux] nếu chạy trên newlux
-GO
-
--- 1. Chèn người dùng mới (SQL Server tự sinh ID từ 101 trở đi)
--- Lưu ý: Chúng ta bỏ cột ID để hệ thống tự tăng.
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-03-28 15:19:21.008', 'balittedutphieukhang@gmail.com', N'Nguyễn khang', '$2a$10$ceBXGEZmWVqVhpH48b2TZuuMNgdGPxYTq4ydS.7erOj7cpOHhaB2y', '+84859590337', NULL, 'balittedutphieukhang@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-06-02 19:06:27.115', 'phamcongthanh.8311@gmail.com', N'Thanh Phạm', '$2a$10$K/JwYrKJtJx2PQFJZ9tPJ..HY0dfEZA3h4zxXH4VJLNsCyGzVGWkG', '0902208461', NULL, 'phamcongthanh.8311@gmail.com', NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-06-02 20:52:04.049', 'ditmemaygogle113@gmail.com', N'Thanh Phạm', '$2a$10$/XRdhZRo3KLXI0FZbAu1e.ycsE.ZyAjy3mQhZE5mJcOz/yQHo/Bbi', '0936629311', NULL, 'ditmemaygogle113@gmail.com', NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
--- Tài khoản Admin LuxuryPC
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-06-08 15:23:54.309', 'admin@luxurypc.com', N'Admin LuxuryPC', '$2a$10$F76h/W85bFv9Kp040CV4ju4N/jhKpRhXaWgWzewsDa8kDzkHtfXhS', NULL, NULL, 'admin', NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 1); -- Gán quyền ADMIN (role_id = 1)
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'GOOGLE', '2026-06-08 15:14:14.918', 'nguyentruongq169@gmail.com', N'Quân Nguyễn Trường', '$2a$10$JKkTGHPr.EWsXIr0/PPgzuq4pFp/QDiBLkQ0n0b/XSQbGouVpIlJ.', NULL, '113506180708155747249', 'nguyentruongq169', NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'GOOGLE', '2026-06-13 20:27:12.538', 'mazack707@gmail.com', N'Zack Ma', NULL, NULL, '115229939720924175799', 'mazack707', NULL, NULL, NULL, 1, 1, 0, 1, 1, 0);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-03-28 15:59:09.715', 'tuan9bledinhchinh@gmail.com', N'nguyen tuan', '$2a$10$3wA6X7TEsnW5ymYdePRokuIN/FLZ.eIRMD4UQBh8PIyh/3z.LLn0q', '+84905338411', NULL, 'tuan9bledinhchinh@gmail.com', NULL, '1995-10-18 00:00:00', 1, 1, 1, 0, 1, 1, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-06-12 21:16:32.031', 'djtmefacebook9@gmail.com', N'Thanh Phạm', '$2a$10$KAKrL.51KRhIot0lbCfGzeTyNcE.NAKLH7OFlKm7XULtfxWoqXari', '0933456789', NULL, 'djtmefacebook9@gmail.com', NULL, NULL, NULL, 0, 1, 0, 1, 1, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-06-12 18:47:49.406', 'leecookcu@gmail.com', N'Thanh Phạmm', '$2a$10$gEGST5TNSwFEkZU/t3k0nutrVNuHGrwBzL19cePuf.BWmRb7UYMc.', '0952525252', NULL, 'leecookcu@gmail.com', '/uploads/avatars/user_29_1781273025577.jpg', NULL, 1, 1, 0, 0, 1, 1, 0);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 1);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-06-14 19:11:56.269', 'ngochai2007nt@gmail.com', N'Hải Nguyễn Ngọc', '$2a$10$1soqIA9YDYg0ggZoYV0Cm.OHY81wkRw2GF8dlFtvIRUcU8Pa5Si0u', '+84384333382', NULL, 'ngochai2007nt@gmail.com', NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', '2026-06-12 20:33:46.571', 'tuannguyennasani@gmail.com', N'Thanh Phạm', '$2a$10$rcVvRAGy83rllwo8olMgpurZQeAGrgZsObzerd.OrxPWxIk2egiom', '0923456789', NULL, 'tuannguyennasani@gmail.com', NULL, NULL, NULL, 1, 1, 0, 1, 1, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-
-INSERT INTO users (address, auth_provider, created_at, email, full_name, password, phone, google_id, username, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled) 
-VALUES (NULL, 'LOCAL', NULL, 'user1_system@luxurypc.com', N'Người Dùng Hệ Thống', NULL, NULL, NULL, 'system_user1', NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO dbo.user_roles (user_id, role_id) VALUES (SCOPE_IDENTITY(), 2);
-GO
-
-
-SELECT COUNT(*) AS [Tong_So_San_Pham] FROM dbo.products;
-
-
-
-
-
-
--- =========================================================================
--- MỤC ĐÍCH: Tự động tạo đồng bộ Đơn hàng COMPLETED và Đánh giá liên kết 
--- QUY MÔ: 25 sản phẩm (ID 1 - 25), mỗi sản phẩm có từ 2 đến 4 đánh giá ngẫu nhiên
--- ĐIỂM ĐÁNH GIÁ: 3 đến 5 sao kèm nhận xét tương ứng
--- =========================================================================
-
-USE [LUXURYPC]; -- Thay bằng [newlux] hoặc tên database của bạn
-GO
-
--- 1. XÓA DỮ LIỆU CŨ ĐỂ ĐỒNG BỘ MỚI
-DELETE FROM dbo.reviews WHERE product_id BETWEEN 1 AND 25;
-DELETE FROM dbo.order_items WHERE product_id BETWEEN 1 AND 25;
-DELETE FROM dbo.orders WHERE admin_note = N'Đơn hàng mẫu phục vụ đánh giá';
-GO
-
--- 2. ĐỊNH NGHĨA DANH SÁCH BÌNH LUẬN MẪU
-DECLARE @BinhLuan TABLE (Id INT IDENTITY(1,1), NoiDung NVARCHAR(255), TieuDe NVARCHAR(100), Stars INT);
-INSERT INTO @BinhLuan (NoiDung, TieuDe, Stars) VALUES 
-(N'Sản phẩm dùng rất tốt, đúng như mô tả. Đóng gói cẩn thận!', N'Rất hài lòng', 5),
-(N'Giao hàng siêu nhanh, lắp vào chạy mượt mà. Đáng tiền!', N'Giao hàng nhanh', 5),
-(N'Hiệu năng cực kỳ mạnh mẽ trong tầm giá, test game rất mượt.', N'Tuyệt vời', 5),
-(N'Card chạy rất mát và êm, không tiếng ồn. Cửa hàng tư vấn nhiệt tình.', N'Chất lượng tốt', 4),
-(N'Hàng chính hãng fullbox, bảo hành đầy đủ. Cho shop 5 sao!', N'Chính hãng 100%', 5),
-(N'Lắp ráp dễ dàng, hoạt động ổn định. Sẽ tiếp tục ủng hộ shop.', N'Khuyên mua', 4),
-(N'Chất lượng hoàn thiện tốt, thiết kế đẹp và sang trọng.', N'Đẹp mắt', 5),
-(N'Sử dụng một tuần chưa thấy lỗi gì, hiệu năng ổn định đúng quảng cáo.', N'Đáng tin cậy', 4),
-(N'Sản phẩm dùng tạm ổn, đóng gói hơi móp méo chút nhưng shop nhiệt tình.', N'Tạm ổn', 3),
-(N'Giao hàng hơi chậm so với dự kiến nhưng bù lại sản phẩm rất tốt.', N'Giao chậm nhưng chất lượng', 3),
-(N'Hiệu năng ổn định nhưng phần mềm chỉnh LED hơi khó sử dụng.', N'Tạm được', 3);
-
+-- Thêm dữ liệu đánh giá và đơn hàng mẫu
 -- 3. LẤY DANH SÁCH 25 SẢN PHẨM
 DECLARE @SanPham TABLE (RowId INT IDENTITY(1,1), ProductId INT, Price DECIMAL(18,2));
 INSERT INTO @SanPham (ProductId, Price)

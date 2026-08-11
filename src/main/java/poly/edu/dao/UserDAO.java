@@ -19,10 +19,9 @@ public interface UserDAO extends JpaRepository<User, Integer>{
      * Use this in security/auth context to avoid LazyInitializationException
      * after switching userRoles from EAGER to LAZY.
      */
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE LOWER(u.email) = LOWER(:email)")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE LOWER(u.email) = LOWER(:email)")
     User findByEmailWithRoles(@Param("email") String email);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE LOWER(u.username) = LOWER(:username)")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE LOWER(u.username) = LOWER(:username)")
     User findByUsernameWithRoles(@Param("username") String username);
-//Stashed changes
 }

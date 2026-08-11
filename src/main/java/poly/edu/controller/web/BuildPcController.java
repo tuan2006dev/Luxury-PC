@@ -81,10 +81,10 @@ public class BuildPcController {
                 })
                 .collect(Collectors.toList());
             String jsCat = cat.toLowerCase();
-            if (jsCat.equals("storage")) {
-                jsCat = "ssd";
-            }
             productsData.put(jsCat, catProducts);
+            if (jsCat.equals("storage")) {
+                productsData.put("ssd", catProducts);
+            }
         }
         
         List<Map<String, Object>> combosData = combos.stream().map(c -> {

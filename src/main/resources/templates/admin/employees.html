@@ -419,7 +419,7 @@
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; position: relative;">
                     <!-- Filter Preset Buttons -->
                     <div class="preset-group"
-                        style="display: inline-flex; background: #f1f5f9; padding: 3px; border-radius: 8px; gap: 2px;">
+                        style="display: inline-flex; background: #f1f5f9; padding: 3px; border-radius: 8px; gap: 2px; position: relative;">
                         <button type="button" class="log-filter-btn active" data-range="all"
                             onclick="filterStaffLogs('all', this)"
                             style="border: none; background: #3b82f6; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Tất
@@ -441,27 +441,27 @@
                             style="border: none; background: transparent; color: #64748b; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
                             <i class="fa-solid fa-calendar-days" style="margin-right: 4px;"></i> Tùy chọn ngày
                         </button>
+
+                        <!-- Custom Log Date Popover -->
+                        <div id="customLogDateBox"
+                            style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; z-index: 100; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); align-items: center; gap: 8px; white-space: nowrap;">
+                            <span style="font-size: 0.78rem; color: #475569; font-weight: 600;">Từ:</span>
+                            <input type="date" id="logStartDate"
+                                style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
+                            <span style="font-size: 0.78rem; color: #475569; font-weight: 600;">Đến:</span>
+                            <input type="date" id="logEndDate"
+                                style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
+                            <button type="button" onclick="applyCustomLogFilter()"
+                                style="background: #2563eb; color: #ffffff; border: none; padding: 5px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa-solid fa-check"></i> Áp dụng
+                            </button>
+                        </div>
                     </div>
 
                     <div class="audit-log-search" id="staffLogsSearchContainer" style="display: inline-flex; align-items: center;">
                         <div
                             th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='javascript:void(0);', keyword='')}">
                         </div>
-                    </div>
-
-                    <!-- Custom Log Date Popover -->
-                    <div id="customLogDateBox"
-                        style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; z-index: 100; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); align-items: center; gap: 8px;">
-                        <span style="font-size: 0.78rem; color: #475569; font-weight: 600;">Từ:</span>
-                        <input type="date" id="logStartDate"
-                            style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
-                        <span style="font-size: 0.78rem; color: #475569; font-weight: 600;">Đến:</span>
-                        <input type="date" id="logEndDate"
-                            style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
-                        <button type="button" onclick="applyCustomLogFilter()"
-                            style="background: #2563eb; color: #ffffff; border: none; padding: 5px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                            <i class="fa-solid fa-check"></i> Áp dụng
-                        </button>
                     </div>
 
                     <span class="badge" id="logCountBadge"

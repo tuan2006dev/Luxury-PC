@@ -52,7 +52,7 @@
                 </div>
 
                 <!-- Phân trang -->
-                <div class="pagination" th:if="${newsPage.totalPages > 1}">
+                <!-- <div class="pagination" th:if="${newsPage.totalPages > 1}">
                     <a th:if="${newsPage.hasPrevious()}"
                         th:href="@{/news(page=${newsPage.number - 1}, keyword=${keyword}, category=${currentCategoryId})}">&laquo;</a>
                     <th:block th:each="i : ${#numbers.sequence(0, newsPage.totalPages - 1)}">
@@ -61,7 +61,7 @@
                     </th:block>
                     <a th:if="${newsPage.hasNext()}"
                         th:href="@{/news(page=${newsPage.number + 1}, keyword=${keyword}, category=${currentCategoryId})}">&raquo;</a>
-                </div>
+                </div> -->
             </div>
 
             <!-- Cột Sidebar -->

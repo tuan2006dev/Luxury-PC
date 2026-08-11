@@ -211,6 +211,12 @@
                                 </form>
                             </td>
                         </tr>
+                        <tr th:if="${users == null or users.empty}">
+                            <td colspan="7" style="text-align: center; padding: 2.5rem 1rem !important; color: #64748b;">
+                                <i class="fa-solid fa-user-slash" style="font-size: 2rem; margin-bottom: 0.5rem; color: #cbd5e1; display: block;"></i>
+                                Không tìm thấy tài khoản khách hàng nào phù hợp.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

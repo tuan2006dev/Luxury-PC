@@ -97,20 +97,24 @@
         </div>
       </div>
 
-      <div style="font-size: 26px; font-weight: 800; color: #0f172a; margin-top: 6px;"
-        th:text="${totalSpent >= 1000000 ? #numbers.formatDecimal(totalSpent / 1000000, 1, 'COMMA', 0, 'POINT') + 'M₫' : #numbers.formatDecimal(totalSpent, 1, 'COMMA', 0, 'POINT') + '₫'}">
-        373M₫</div>
+      <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 6px;"
+        th:text="${#numbers.formatDecimal(totalSpent, 1, 'COMMA', 0, 'POINT')} + ' đ'">
+        1,000,000 đ</div>
 
       <!-- Progress Bar & Subtext -->
       <div style="margin-top: 10px; width: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 5px;">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 5px;">
           <span th:if="${nextRank != 'MAX'}" th:text="${'Lên ' + nextRank}">Lên Platinum</span>
           <span th:if="${nextRank == 'MAX'}" style="color: #0284c7; font-weight: 700;">Hạng tối cao 🏆</span>
           <span style="color: #0284c7; font-weight: 700;"
             th:text="${#numbers.formatDecimal(rankProgress != null ? rankProgress : 0, 1, 0) + '%'}">59%</span>
         </div>
-        <div style="width: 100%; height: 8px; background: #cbd5e1; border-radius: 4px; overflow: hidden; position: relative;">
-          <div th:style="'width: ' + ${#numbers.formatDecimal(rankProgress != null ? rankProgress : 0, 1, 0)} + '%; height: 100%; background: #0284c7; border-radius: 4px; transition: width 0.5s ease;'"></div>
+        <div
+          style="width: 100%; height: 8px; background: #cbd5e1; border-radius: 4px; overflow: hidden; position: relative;">
+          <div
+            th:style="'width: ' + ${#numbers.formatDecimal(rankProgress != null ? rankProgress : 0, 1, 0)} + '%; height: 100%; background: #0284c7; border-radius: 4px; transition: width 0.5s ease;'">
+          </div>
         </div>
       </div>
     </div>
@@ -178,10 +182,15 @@
     </div>
     <div class="info-card">
       <label>Số điện thoại</label>
-      <div class="form-val" id="profile-phone-display" th:text="${user != null && user.phone != null ? user.phone : 'Chưa cập nhật'}">Chưa cập nhật</div>
-      <div class="ic-sub" th:if="${user != null && user.phone != null && !user.phone.isEmpty()}" style="color: #10b981; font-weight: 600;">✓ Đã liên kết</div>
-      <div class="ic-sub" th:if="${user == null || user.phone == null || user.phone.isEmpty()}" style="color: #64748b;">✗ Chưa liên kết</div>
-      <button type="button" class="btn-save" style="margin-top: 8px; font-size: 11px; padding: 4px 10px; background: #000; border-radius: 4px; border: none; cursor: pointer; color: #fff;" onclick="openFirebasePhoneModal()">
+      <div class="form-val" id="profile-phone-display"
+        th:text="${user != null && user.phone != null ? user.phone : 'Chưa cập nhật'}">Chưa cập nhật</div>
+      <div class="ic-sub" th:if="${user != null && user.phone != null && !user.phone.isEmpty()}"
+        style="color: #10b981; font-weight: 600;">✓ Đã liên kết</div>
+      <div class="ic-sub" th:if="${user == null || user.phone == null || user.phone.isEmpty()}" style="color: #64748b;">
+        ✗ Chưa liên kết</div>
+      <button type="button" class="btn-save"
+        style="margin-top: 8px; font-size: 11px; padding: 4px 10px; background: #000; border-radius: 4px; border: none; cursor: pointer; color: #fff;"
+        onclick="openFirebasePhoneModal()">
         <i class="fa-solid fa-mobile-screen-button"></i> Xác thực SĐT (Firebase SMS)
       </button>
     </div>

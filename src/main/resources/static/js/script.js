@@ -376,4 +376,14 @@ document.addEventListener('click', function (e) {
     window.addEventListener('focus', checkAccountStatus);
 })();
 
+// Global fallback for toggleForm
+if (typeof window.toggleForm === 'undefined') {
+    window.toggleForm = function () {
+        const form = document.querySelector('.add-form-container, .form-container, #productForm, #employeeForm, #categoryForm, #accountForm');
+        if (form) {
+            form.classList.toggle('active');
+        }
+    };
+}
+
 

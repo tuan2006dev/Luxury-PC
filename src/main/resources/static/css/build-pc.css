@@ -162,6 +162,13 @@
     min-height: 36px;
 }
 
+.combo-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
 .combo-price {
     font-size: 18px;
     font-weight: 700;
@@ -174,7 +181,7 @@
     color: #059669;
     font-weight: 600;
     text-align: left;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .combo-specs {

@@ -153,7 +153,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="p : ${products}">
+                        <tr th:each="p, stat : ${products}">
                             <td>
                                 <div class="product-img">
                                     <img th:if="${p.image != null}"
@@ -166,7 +166,7 @@
                                 </div>
                                 <div class="product-info">
                                     <div class="product-name" th:text="${p.name}">Intel Core i9-14900K</div>
-                                    <div class="product-cat" th:text="'ID: ' + ${p.id}">ID: 102</div>
+                                    <div class="product-cat" th:text="'STT: #' + ${stat.count}">STT: #1</div>
                                 </div>
                             </td>
                             <td th:text="${p.category != null ? p.category.name : 'Chưa phân loại'}">CPU</td>

@@ -473,6 +473,11 @@
                 const noDataNotice = document.getElementById('revenueNoData');
                 if (!ctx) return;
 
+                if (typeof Chart === 'undefined') {
+                    setTimeout(() => updateRevenueChart(dailyRevenue), 150);
+                    return;
+                }
+
                 const labels = dailyRevenue.map(item => item.date);
                 const values = dailyRevenue.map(item => item.revenue);
 
@@ -526,6 +531,11 @@
                 const noDataNotice = document.getElementById('orderStatusNoData');
                 if (!ctx) return;
 
+                if (typeof Chart === 'undefined') {
+                    setTimeout(() => updateOrderStatusChart(orderStatus), 150);
+                    return;
+                }
+
                 const labels = orderStatus.map(item => statusLabels[item.status] || item.status);
                 const values = orderStatus.map(item => item.count);
                 const bgColors = orderStatus.map(item => statusColors[item.status] || '#888');
@@ -568,6 +578,11 @@
                 const ctx = document.getElementById('newUsersChart');
                 const noDataNotice = document.getElementById('newUsersNoData');
                 if (!ctx) return;
+
+                if (typeof Chart === 'undefined') {
+                    setTimeout(() => updateNewUsersChart(newUsers), 150);
+                    return;
+                }
 
                 const labels = newUsers.map(item => item.date);
                 const values = newUsers.map(item => item.count);

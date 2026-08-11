@@ -1,6 +1,8 @@
 package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.CategoryDAO;
@@ -15,7 +17,7 @@ public class CategoryService {
     final CategoryDAO categoryDAO;
     final ProductDAO productDAO;
 
-    @org.springframework.cache.annotation.Cacheable("allCategories")
+    @Cacheable("allCategories")
     public List<Category> getAllCategories() {
         return categoryDAO.findAll();
     }
@@ -25,11 +27,13 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "allCategories", allEntries = true)
     public Category saveCategory(Category category) {
         return categoryDAO.save(category);
     }
 
     @Transactional
+    @CacheEvict(value = "allCategories", allEntries = true)
     public void deleteCategory(Integer id) {
         productDAO.nullifyCategoryReferences(id);
         categoryDAO.deleteById(id);

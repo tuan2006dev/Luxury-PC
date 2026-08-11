@@ -71,8 +71,8 @@
                             <td colspan="6" style="text-align: center; padding: 2rem; color: #888;">Không có Combo nào.
                             </td>
                         </tr>
-                        <tr th:each="c : ${combos}">
-                            <td th:text="${c.id}">1</td>
+                        <tr th:each="c, stat : ${combos}">
+                            <td th:text="${stat.count}">1</td>
                             <td>
                                 <div class="img-preview" style="background-image: url('');"
                                     th:style="'background-image: url(' + ${c.image != null and !c.image.startsWith('http') and !c.image.startsWith('/images') ? '/images/products/' + c.image : (c.image != null ? c.image : '/images/placeholder.jpg')} + ')'">

@@ -34,7 +34,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', addBuildToCart);
     }
+
+    const addMoreBtn = document.querySelector('.btn-add-more');
+    if (addMoreBtn) {
+        addMoreBtn.addEventListener('click', addMoreComponents);
+    }
 });
+
+function addMoreComponents() {
+    const unselectedSlot = slots.find(s => !currentBuild[s.id]);
+    if (unselectedSlot) {
+        openModal(unselectedSlot.id);
+    } else {
+        openModal(slots[0].id);
+    }
+}
 
 function initTabs() {
     const tabs = document.querySelectorAll('.build-tab');
@@ -84,9 +98,11 @@ function renderComboGrid() {
                 <div class="combo-tag">${tag}</div>
                 <h3>${combo.name}</h3>
                 <div class="desc">${combo.description || 'Cấu hình tối ưu'}</div>
-                <div class="combo-price">${formatCurrency(combo.price)}</div>
-                <div class="combo-saving">Tiết kiệm ${formatCurrency(combo.saving)}</div>
-                <button class="btn-apply-combo" onclick="applyCombo(${combo.id})">CHỌN COMBO NÀY</button>
+                <div class="combo-footer">
+                    <div class="combo-price">${formatCurrency(combo.price)}</div>
+                    <div class="combo-saving">Tiết kiệm ${formatCurrency(combo.saving)}</div>
+                    <button class="btn-apply-combo" onclick="applyCombo(${combo.id})">CHỌN COMBO NÀY</button>
+                </div>
             </div>
         `;
     });
@@ -103,7 +119,7 @@ function applyCombo(comboId) {
     if (combo.details) {
         for (const [slotType, prodId] of Object.entries(combo.details)) {
             const catStr = slotType.toLowerCase();
-            const prods = productsData[catStr] || [];
+            const prods = getProductsForCategory(catStr);
             const prod = prods.find(p => p.id === prodId);
             if (prod) {
                 currentBuild[catStr] = prod;
@@ -196,13 +212,27 @@ function clearAll() {
     }
 }
 
+function getProductsForCategory(catId) {
+    if (typeof productsData === 'undefined' || !productsData) return [];
+    if (productsData[catId] && productsData[catId].length > 0) {
+        return productsData[catId];
+    }
+    if ((catId === 'storage' || catId === 'lưu trữ') && productsData['ssd']) {
+        return productsData['ssd'];
+    }
+    if (catId === 'ssd' && productsData['storage']) {
+        return productsData['storage'];
+    }
+    return productsData[catId] || [];
+}
+
 function openModal(catId) {
     currentModalCategory = catId;
     const slot = slots.find(s => s.id === catId);
     document.getElementById('modalTitle').innerText = 'Chọn ' + (slot ? slot.name : 'Linh kiện');
     document.getElementById('modalSearch').value = '';
 
-    renderModalProducts(productsData[catId] || []);
+    renderModalProducts(getProductsForCategory(catId));
     document.getElementById('productModal').classList.add('active');
 }
 
@@ -239,7 +269,7 @@ function renderModalProducts(prods) {
 
 function filterModalProducts() {
     const query = document.getElementById('modalSearch').value.toLowerCase();
-    let prods = productsData[currentModalCategory] || [];
+    let prods = getProductsForCategory(currentModalCategory);
     if (query) {
         prods = prods.filter(p => p.name.toLowerCase().includes(query));
     }
@@ -247,7 +277,7 @@ function filterModalProducts() {
 }
 
 function selectProduct(id) {
-    const prod = (productsData[currentModalCategory] || []).find(p => p.id === id);
+    const prod = getProductsForCategory(currentModalCategory).find(p => p.id === id);
     if (prod) {
         currentBuild[currentModalCategory] = prod;
         renderBuildComponents();

@@ -10,13 +10,22 @@ import org.springframework.stereotype.Service;
 import poly.edu.entity.User;
 import poly.edu.repository.UserRepository;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import poly.edu.dao.UserDAO;
+import poly.edu.entity.UserRole;
+
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+
+    private final UserDAO userDAO;
 
     private final poly.edu.dao.RoleDAO roleDAO;
 
@@ -30,10 +39,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String clientName = userRequest.getClientRegistration().getClientName();
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(oauth2User, clientName);
+        CustomOAuth2User tempCustomOAuth2User = new CustomOAuth2User(oauth2User, clientName);
 
         // Save or update user in our database & return saved User
-        User dbUser = processOAuth2User(customOAuth2User, registrationId);
+        User dbUser = processOAuth2User(tempCustomOAuth2User, registrationId);
 
         // Check if the user account is locked
         if (dbUser != null && !Boolean.TRUE.equals(dbUser.getStatus())) {
@@ -42,7 +51,45 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                             "Tài khoản của bạn đã bị khóa.", null));
         }
 
-        return customOAuth2User;
+        // Fetch DB User with Roles via JOIN FETCH to avoid LazyInitializationException
+        User dbUserWithRoles = null;
+        if (dbUser != null) {
+            try {
+                if (dbUser.getEmail() != null && !dbUser.getEmail().isBlank()) {
+                    dbUserWithRoles = userDAO.findByEmailWithRoles(dbUser.getEmail());
+                }
+                if (dbUserWithRoles == null && dbUser.getUsername() != null) {
+                    dbUserWithRoles = userDAO.findByUsernameWithRoles(dbUser.getUsername());
+                }
+            } catch (Exception e) {
+                System.err.println("Error fetching user roles for OAuth2 login: " + e.getMessage());
+            }
+        }
+        if (dbUserWithRoles == null) {
+            dbUserWithRoles = dbUser;
+        }
+
+        // Map DB user_roles -> Spring Security GrantedAuthorities
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        if (dbUserWithRoles != null && dbUserWithRoles.getUserRoles() != null && !dbUserWithRoles.getUserRoles().isEmpty()) {
+            for (UserRole ur : dbUserWithRoles.getUserRoles()) {
+                if (ur.getRole() != null && ur.getRole().getName() != null) {
+                    String roleName = ur.getRole().getName().trim().toUpperCase();
+                    if (!roleName.startsWith("ROLE_")) {
+                        authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
+                    }
+                    authorities.add(new SimpleGrantedAuthority(roleName));
+                }
+            }
+        }
+
+        // Fallback default authority if no role in DB
+        if (authorities.isEmpty()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            authorities.add(new SimpleGrantedAuthority("USER"));
+        }
+
+        return new CustomOAuth2User(oauth2User, clientName, dbUserWithRoles, authorities);
     }
 
     private User processOAuth2User(CustomOAuth2User oauth2User, String registrationId) {

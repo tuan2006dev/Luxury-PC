@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 import poly.edu.dao.UserDAO;
 import poly.edu.entity.User;
@@ -27,43 +30,51 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final poly.edu.repository.AdminLogRepository adminLogRepository;
 
+    private final RequestCache requestCache = new HttpSessionRequestCache();
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        String emailOrUsername = authentication.getName();
+        
+        User user = null;
         Object principalObj = authentication.getPrincipal();
         if (principalObj instanceof CustomOAuth2User customOAuth2User) {
-            if (customOAuth2User.getEmail() != null) {
-                emailOrUsername = customOAuth2User.getEmail();
+            user = customOAuth2User.getDbUser();
+        }
+
+        if (user == null) {
+            String emailOrUsername = authentication.getName();
+            if (principalObj instanceof CustomOAuth2User customOAuth2User) {
+                if (customOAuth2User.getEmail() != null) {
+                    emailOrUsername = customOAuth2User.getEmail();
+                }
+            } else if (principalObj instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                Object emailAttr = oauth2User.getAttribute("email");
+                if (emailAttr != null) {
+                    emailOrUsername = emailAttr.toString();
+                }
             }
-        } else if (principalObj instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-            Object emailAttr = oauth2User.getAttribute("email");
-            if (emailAttr != null) {
-                emailOrUsername = emailAttr.toString();
+
+            if (emailOrUsername != null && !emailOrUsername.isBlank()) {
+                try {
+                    String cleanEmailOrUsername = emailOrUsername.trim().toLowerCase();
+                    user = userDAO.findByEmailWithRoles(cleanEmailOrUsername);
+                    if (user == null) {
+                        user = userDAO.findByUsernameWithRoles(cleanEmailOrUsername);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error loading user in success handler: " + e.getMessage());
+                }
             }
         }
 
-        User user = null;
-        if (emailOrUsername != null && !emailOrUsername.isBlank()) {
-            String cleanEmailOrUsername = emailOrUsername.trim().toLowerCase();
-            user = userDAO.findByEmailWithRoles(cleanEmailOrUsername);
-            if (user == null) {
-                user = userDAO.findByUsernameWithRoles(cleanEmailOrUsername);
-            }
-            if (user == null) {
-                user = userDAO.findByEmailWithRoles(emailOrUsername);
-            }
-            if (user == null) {
-                user = userDAO.findByUsernameWithRoles(emailOrUsername);
-            }
-        }
+        boolean isStaffOrAdmin = user != null && user.getUserRoles() != null && user.getUserRoles().stream()
+                .anyMatch(ur -> ur.getRole() != null &&
+                        ("STAFF".equalsIgnoreCase(ur.getRole().getName()) || "ADMIN".equalsIgnoreCase(ur.getRole().getName())));
 
-        // Ghi nhận Audit Log Đăng nhập cho Nhân viên (STAFF) và Admin
-        if (user != null) {
-            boolean isStaffOrAdmin = user.getUserRoles() != null && user.getUserRoles().stream()
-                    .anyMatch(ur -> ur.getRole() != null &&
-                            ("STAFF".equalsIgnoreCase(ur.getRole().getName()) || "ADMIN".equalsIgnoreCase(ur.getRole().getName())));
-            if (isStaffOrAdmin) {
+        // 1. Audit Log (wrapped safely)
+        if (isStaffOrAdmin) {
+            try {
                 String clientIp = request.getHeader("X-Forwarded-For");
                 if (clientIp == null || clientIp.isBlank() || "unknown".equalsIgnoreCase(clientIp)) {
                     clientIp = request.getRemoteAddr();
@@ -72,19 +83,19 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                         .map(ur -> ur.getRole() != null ? ur.getRole().getName() : "")
                         .filter(r -> !r.isBlank())
                         .collect(java.util.stream.Collectors.joining(", "));
-                try {
-                    String usernameToLog = user.getUsername() != null && !user.getUsername().isBlank() ? user.getUsername() : user.getEmail();
-                    adminLogRepository.save(new poly.edu.entity.AdminLog(
-                            usernameToLog != null ? usernameToLog : "unknown",
-                            "Đăng nhập hệ thống (Role: " + (roleStr.isBlank() ? "STAFF" : roleStr) + ")",
-                            clientIp,
-                            usernameToLog
-                    ));
-                } catch (Exception ignored) {}
+                String usernameToLog = user.getUsername() != null && !user.getUsername().isBlank() ? user.getUsername() : user.getEmail();
+                adminLogRepository.save(new poly.edu.entity.AdminLog(
+                        usernameToLog != null ? usernameToLog : "unknown",
+                        "Đăng nhập hệ thống (Role: " + (roleStr.isBlank() ? "STAFF" : roleStr) + ")",
+                        clientIp,
+                        usernameToLog
+                ));
+            } catch (Exception e) {
+                System.err.println("Error saving admin audit log: " + e.getMessage());
             }
         }
 
-        // 1. Kiểm tra tài khoản bị khóa/vô hiệu hóa
+        // 2. Check disabled account
         if (user != null && Boolean.FALSE.equals(user.getStatus())) {
             SecurityContextHolder.clearContext();
             HttpSession session = request.getSession(false);
@@ -96,39 +107,41 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             return;
         }
 
-        // 2. Yêu cầu khởi tạo mật khẩu lần đầu qua Google/Facebook
-        if (user != null && (Boolean.TRUE.equals(user.getForceChangePassword()) || user.getPassword() == null || user.getPassword().isBlank())) {
+        // 3. Force password change check (only for regular customer accounts)
+        if (!isStaffOrAdmin && user != null && Boolean.TRUE.equals(user.getForceChangePassword()) && !(principalObj instanceof CustomOAuth2User)) {
             HttpSession session = request.getSession();
             session.setAttribute("pendingSetPasswordEmail", user.getEmail());
 
-            // Xóa triệt để SecurityContext khỏi Thread và Session
             SecurityContextHolder.clearContext();
             session.removeAttribute("SPRING_SECURITY_CONTEXT");
             session.removeAttribute("SPRING_SECURITY_CONTEXT_SAVED");
 
-            // Điều hướng sang trang Khởi tạo mật khẩu (/auth/set-password)
             response.sendRedirect("/auth/set-password");
             return;
         }
 
-        // 3. Đã có mật khẩu - Tiến hành gộp giỏ hàng
+        // 4. Cart merging (wrapped safely)
         if (user != null) {
-            HttpSession session = request.getSession();
-            @SuppressWarnings("unchecked")
-            java.util.Map<Integer, poly.edu.entity.CartItem> sessionCart = (java.util.Map<Integer, poly.edu.entity.CartItem>) session
-                    .getAttribute("cart");
-            java.util.Map<Integer, poly.edu.entity.CartItem> mergedCart = cartService.mergeCartOnLogin(user,
-                    sessionCart);
-            session.setAttribute("cart", mergedCart);
+            try {
+                HttpSession session = request.getSession();
+                @SuppressWarnings("unchecked")
+                java.util.Map<Integer, poly.edu.entity.CartItem> sessionCart = (java.util.Map<Integer, poly.edu.entity.CartItem>) session
+                        .getAttribute("cart");
+                if (sessionCart != null && !sessionCart.isEmpty()) {
+                    java.util.Map<Integer, poly.edu.entity.CartItem> mergedCart = cartService.mergeCartOnLogin(user, sessionCart);
+                    session.setAttribute("cart", mergedCart);
+                }
+            } catch (Exception e) {
+                System.err.println("Error merging cart on login: " + e.getMessage());
+            }
         }
 
+        // 5. 2FA Check
         if (user != null && Boolean.TRUE.equals(user.getTwoFactorEnabled())) {
-            // 2FA is enabled!
             HttpSession session = request.getSession();
             final String userEmail = user.getEmail();
             session.setAttribute("twoFactorUserEmail", userEmail);
 
-            // Generate and send OTP via email asynchronously in background thread to prevent redirect delay!
             java.util.concurrent.CompletableFuture.runAsync(() -> {
                 try {
                     emailService.sendOtpEmail(userEmail, userEmail);
@@ -137,15 +150,27 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 }
             });
 
-            // Log out user for now (clear security context) so they aren't fully authenticated
             SecurityContextHolder.clearContext();
             session.removeAttribute("SPRING_SECURITY_CONTEXT");
-
-            // Redirect to 2FA verification page
             response.sendRedirect("/auth/login-2fa");
-        } else {
-            // 2FA not enabled, proceed to homepage
-            response.sendRedirect("/");
+            return;
         }
+
+        // 6. Check SavedRequest (if user tried to access /admin or /checkout before logging in)
+        SavedRequest savedRequest = requestCache.getRequest(request, response);
+        if (savedRequest != null) {
+            String targetUrl = savedRequest.getRedirectUrl();
+            requestCache.removeRequest(request, response);
+            if (targetUrl != null && !targetUrl.contains(".well-known") && !targetUrl.contains("favicon") && !targetUrl.contains(".json") && !targetUrl.contains("/api/")) {
+                response.sendRedirect(targetUrl);
+                return;
+            }
+        }
+
+        // 7. Default Redirect: Everyone -> / (Trang chủ)
+        response.sendRedirect("/");
     }
 }
+
+
+

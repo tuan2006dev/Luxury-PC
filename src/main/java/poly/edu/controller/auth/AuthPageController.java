@@ -24,13 +24,24 @@ public class AuthPageController {
 
     private final poly.edu.service.CartService cartService;
 
+    private String redirectIfAlreadyLoggedIn(org.springframework.security.core.Authentication auth) {
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
+            return "redirect:/";
+        }
+        return null;
+    }
+
     @GetMapping("/login")
-    public String redirectToCustomLogin() {
+    public String redirectToCustomLogin(org.springframework.security.core.Authentication auth) {
+        String redirect = redirectIfAlreadyLoggedIn(auth);
+        if (redirect != null) return redirect;
         return "redirect:/auth/login";
     }
 
     @GetMapping("/auth/login")
-    public String showAuthPage() {
+    public String showAuthPage(org.springframework.security.core.Authentication auth) {
+        String redirect = redirectIfAlreadyLoggedIn(auth);
+        if (redirect != null) return redirect;
         return "account/login"; // file login.html
     }
 
@@ -39,7 +50,10 @@ public class AuthPageController {
                                    @RequestParam(required = false) String lastName,
                                    @RequestParam(required = false) String email,
                                    @RequestParam(required = false) String phone,
-                                   Model model) {
+                                   Model model,
+                                   org.springframework.security.core.Authentication auth) {
+        String redirect = redirectIfAlreadyLoggedIn(auth);
+        if (redirect != null) return redirect;
         model.addAttribute("firstName", firstName != null ? firstName : "");
         model.addAttribute("lastName", lastName != null ? lastName : "");
         model.addAttribute("email", email != null ? email : "");
@@ -48,7 +62,9 @@ public class AuthPageController {
     }
 
     @GetMapping("/auth/forgot-password")
-    public String showForgotPasswordPage() {
+    public String showForgotPasswordPage(org.springframework.security.core.Authentication auth) {
+        String redirect = redirectIfAlreadyLoggedIn(auth);
+        if (redirect != null) return redirect;
         return "account/forgot-password";
     }
 

@@ -75,15 +75,15 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">ID</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">STT</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tên Danh Mục</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; width: 100px;">Thao
                                 Tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="c : ${categories}">
-                            <td th:text="${c.id}">1</td>
+                        <tr th:each="c, stat : ${categories}">
+                            <td th:text="${stat.count}">1</td>
                             <td th:text="${c.name}" style="font-weight: 600;">CPU</td>
                             <td>
                                 <div class="action-btns">

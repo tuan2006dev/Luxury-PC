@@ -407,6 +407,85 @@
                 closeReplyModal();
             }
         });
+
+        // Intercept filter tab clicks to reload ONLY the data table, without re-rendering menu tabs
+        document.addEventListener('click', function (e) {
+            const filterTab = e.target.closest('.filter-bar .filter-tab');
+            if (!filterTab) return;
+
+            const url = filterTab.getAttribute('href');
+            if (!url || url === '#' || url.startsWith('javascript')) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const isStatusTab = filterTab.querySelector('.fa-list, .fa-clock, .fa-reply');
+            const isStarTab = filterTab.textContent.includes('★');
+
+            if (isStatusTab) {
+                filterTab.closest('.filter-bar').querySelectorAll('.filter-tab').forEach(el => {
+                    if (el.querySelector('.fa-list, .fa-clock, .fa-reply')) {
+                        el.classList.remove('active');
+                    }
+                });
+                filterTab.classList.add('active');
+            } else if (isStarTab) {
+                filterTab.closest('.filter-bar').querySelectorAll('.filter-tab').forEach(el => {
+                    if (el.textContent.includes('★')) {
+                        el.classList.remove('active');
+                    }
+                });
+                filterTab.classList.add('active');
+            }
+
+            const tableWrapper = document.querySelector('.table-wrapper');
+            if (tableWrapper) {
+                tableWrapper.style.transition = 'opacity 0.2s ease';
+                tableWrapper.style.opacity = '0.35';
+            }
+
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // 1. Update Data Table Content
+                    const newTableWrapper = doc.querySelector('.table-wrapper');
+                    if (newTableWrapper && tableWrapper) {
+                        tableWrapper.innerHTML = newTableWrapper.innerHTML;
+                    }
+
+                    // 2. Sync tab counters dynamically
+                    const newFilterBar = doc.querySelector('.filter-bar');
+                    if (newFilterBar) {
+                        const newTabs = newFilterBar.querySelectorAll('.filter-tab');
+                        const currentTabs = document.querySelectorAll('.filter-bar .filter-tab');
+                        currentTabs.forEach((tab, i) => {
+                            if (newTabs[i]) {
+                                const activeState = tab.classList.contains('active');
+                                tab.innerHTML = newTabs[i].innerHTML;
+                                if (activeState) {
+                                    tab.classList.add('active');
+                                } else {
+                                    tab.classList.remove('active');
+                                }
+                            }
+                        });
+                    }
+
+                    // 3. Sync browser URL
+                    window.history.pushState({}, '', url);
+                })
+                .catch(err => {
+                    console.error('Error updating review table:', err);
+                })
+                .finally(() => {
+                    if (tableWrapper) {
+                        tableWrapper.style.opacity = '1';
+                    }
+                });
+        }, true);
     </script>
 </body>
 

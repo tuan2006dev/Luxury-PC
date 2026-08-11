@@ -23,7 +23,7 @@ public class Ticket {
     @Column(nullable = false)
     private String subject;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String message;
 
     private String category = "GENERAL";
@@ -33,7 +33,7 @@ public class Ticket {
     @Column(name = "assigned_admin")
     private String assignedAdmin;
 
-    @Column(name = "build_config", columnDefinition = "TEXT")
+    @Column(name = "build_config", columnDefinition = "NVARCHAR(MAX)")
     private String buildConfig;
 
     @Temporal(TemporalType.TIMESTAMP)

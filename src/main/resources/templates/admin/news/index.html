@@ -6,8 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý tin tức - Admin</title>
-    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/news/index.css}">
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
@@ -24,12 +26,11 @@
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-        <form class="news-search-bar" action="/admin/news" method="get">
-            <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm bài viết..." />
-            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Tìm</button>
-            <a th:href="@{/admin/news/create}" class="btn btn-primary" style="margin-left: auto;"><i
-                    class="fa fa-plus"></i> Thêm bài viết</a>
-        </form>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/news', keyword=${keyword})}">
+            </div>
+            <a th:href="@{/admin/news/create}" class="btn btn-primary"><i class="fa fa-plus"></i> Thêm bài viết</a>
+        </div>
 
         <div class="table-wrapper" style="width: 100%; max-height: 70vh; overflow: auto;">
             <table class="news-table" style="width: 100%;">
@@ -50,7 +51,8 @@
                         <td>
                             <img th:if="${n.thumbnail != null}"
                                 th:src="${n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail}"
-                                alt="Thumb" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;" />
+                                alt="Thumb"
+                                style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;" />
                             <span th:unless="${n.thumbnail != null}">-</span>
                         </td>
                         <td>
@@ -91,7 +93,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="pagination" th:if="${newsPage.totalPages > 1}">
+        <!-- <div class="pagination" th:if="${newsPage.totalPages > 1}">
             <a th:href="@{/admin/news(page=${newsPage.number - 1}, categoryId=${categoryId}, status=${status}, keyword=${keyword})}"
                 th:classappend="${newsPage.first} ? 'disabled' : ''">&laquo; Prev</a>
 
@@ -102,7 +104,7 @@
 
             <a th:href="@{/admin/news(page=${newsPage.number + 1}, categoryId=${categoryId}, status=${status}, keyword=${keyword})}"
                 th:classappend="${newsPage.last} ? 'disabled' : ''">Next &raquo;</a>
-        </div>
+        </div> -->
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

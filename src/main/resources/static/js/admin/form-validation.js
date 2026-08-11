@@ -183,3 +183,113 @@ function showError(el, message) {
         }
     }
 }
+
+// Global fallback for toggleForm to prevent 'Uncaught ReferenceError: toggleForm is not defined'
+if (typeof window.toggleForm === 'undefined') {
+    window.toggleForm = function () {
+        const form = document.getElementById('productForm') 
+                  || document.getElementById('employeeForm') 
+                  || document.getElementById('categoryForm') 
+                  || document.getElementById('accountForm') 
+                  || document.querySelector('.add-form-container') 
+                  || document.querySelector('.form-container');
+        if (!form) return;
+        const isActive = form.classList.toggle('active');
+        const btn = document.getElementById('toggleFormBtn');
+        if (btn) {
+            if (isActive) {
+                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text">Hủy</span>';
+                btn.classList.remove('btn-gold');
+                btn.classList.add('btn-danger');
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i> <span class="btn-text">Thêm Mới</span>';
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-gold');
+            }
+        }
+    };
+}
+
+// Global In-Place AJAX Search for searchBar component across Admin pages
+document.addEventListener('submit', function (e) {
+    const form = e.target.closest('.search-bar-container form, form.news-search-bar, form.news-search-form');
+    if (!form) return;
+
+    const actionAttr = form.getAttribute('action');
+    if (actionAttr === 'javascript:void(0);' || actionAttr === '#' || form.closest('#staffLogsSearchContainer')) {
+        return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const action = actionAttr || window.location.pathname;
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    // Retain existing URL parameters (e.g. status, star, category)
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    for (const [key, val] of currentUrlParams.entries()) {
+        if (!params.has(key)) {
+            params.set(key, val);
+        }
+    }
+
+    const targetUrl = action + (params.toString() ? '?' + params.toString() : '');
+    performInPlaceAdminSearch(targetUrl);
+}, true);
+
+document.addEventListener('click', function (e) {
+    const clearBtn = e.target.closest('.search-bar-container a');
+    if (!clearBtn) return;
+
+    const url = clearBtn.getAttribute('href');
+    if (!url || url === '#' || url.startsWith('javascript') || clearBtn.closest('#staffLogsSearchContainer')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    performInPlaceAdminSearch(url);
+}, true);
+
+function performInPlaceAdminSearch(targetUrl) {
+    const dataContainer = document.querySelector('.table-wrapper, .tickets-table-wrap, .table-card, .table-responsive, .grid-container, .admin-table');
+    if (dataContainer) {
+        dataContainer.style.transition = 'opacity 0.2s ease';
+        dataContainer.style.opacity = '0.35';
+    }
+
+    fetch(targetUrl)
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // 1. Update data table / list container
+            const newDataContainer = doc.querySelector('.table-wrapper, .tickets-table-wrap, .table-card, .table-responsive, .grid-container, .admin-table');
+            if (newDataContainer && dataContainer) {
+                dataContainer.innerHTML = newDataContainer.innerHTML;
+            }
+
+            // 2. Update search bar container cleanly (replaceWith prevents element nesting)
+            const newSearchBar = doc.querySelector('.search-bar-container');
+            const currentSearchBar = document.querySelector('.search-bar-container');
+            if (newSearchBar && currentSearchBar) {
+                currentSearchBar.replaceWith(newSearchBar);
+            }
+
+            // 3. Update stats if present
+            const newStats = doc.querySelector('.ticket-stats, .stats-grid, .rstat-chip-container');
+            const currentStats = document.querySelector('.ticket-stats, .stats-grid, .rstat-chip-container');
+            if (newStats && currentStats) {
+                currentStats.innerHTML = newStats.innerHTML;
+            }
+
+            // 4. Update browser URL
+            window.history.pushState({}, '', targetUrl);
+        })
+        .catch(err => console.error('Error during in-place search:', err))
+        .finally(() => {
+            if (dataContainer) dataContainer.style.opacity = '1';
+        });
+}
