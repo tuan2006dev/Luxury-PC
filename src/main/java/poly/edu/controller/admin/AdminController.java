@@ -30,6 +30,7 @@ public class AdminController {
     private final poly.edu.service.OrderService orderService;
     private final poly.edu.dao.OrderDAO orderDAO;
     private final poly.edu.dao.ProductDAO productDAO;
+    private final poly.edu.dao.InventoryDAO inventoryDAO;
 
     @GetMapping({ "", "/dashboard" })
     public String dashboard(Model model) {
@@ -92,10 +93,13 @@ public class AdminController {
         String oldStatus = "";
         if (order != null) {
             oldStatus = order.getStatus() != null ? order.getStatus() : "";
-            targetInfo = "Đơn hàng #" + orderId + (order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "") + (order.getFullName() != null ? " - " + order.getFullName() : "");
+            targetInfo = "Đơn hàng #" + orderId
+                    + (order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "")
+                    + (order.getFullName() != null ? " - " + order.getFullName() : "");
         }
         adminService.updateOrderStatus(orderId, status);
-        logAction(principal, request, "Cập nhật trạng thái đơn hàng: " + (oldStatus.isBlank() ? "" : oldStatus + " ➔ ") + status, targetInfo);
+        logAction(principal, request,
+                "Cập nhật trạng thái đơn hàng: " + (oldStatus.isBlank() ? "" : oldStatus + " ➔ ") + status, targetInfo);
 
         return "redirect:/admin/orders";
     }
@@ -103,8 +107,10 @@ public class AdminController {
     @PostMapping("/orders/confirm-shipping")
     public String confirmShipping(@RequestParam Integer orderId, Principal principal, HttpServletRequest request) {
         poly.edu.entity.Order order = orderService.confirmOrderAndCreateShipping(orderId);
-        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
-        logAction(principal, request, "Tạo vận đơn Lalamove: " + (order != null ? order.getTrackingCode() : ""), targetInfo);
+        String targetInfo = "Đơn hàng #" + orderId
+                + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        logAction(principal, request, "Tạo vận đơn Lalamove: " + (order != null ? order.getTrackingCode() : ""),
+                targetInfo);
         return "redirect:/admin/orders";
     }
 
@@ -123,7 +129,8 @@ public class AdminController {
 
         adminService.requestRefund(orderId, formatNoteWithRole(note, request));
         poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
-        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        String targetInfo = "Đơn hàng #" + orderId
+                + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
         logAction(principal, request, "Yêu cầu hoàn tiền", targetInfo);
 
         return "redirect:/admin/orders";
@@ -138,7 +145,8 @@ public class AdminController {
 
         adminService.approveCustomerRefund(orderId, formatNoteWithRole(note, request));
         poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
-        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        String targetInfo = "Đơn hàng #" + orderId
+                + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
         logAction(principal, request, "Duyệt yêu cầu hoàn tiền", targetInfo);
 
         return "redirect:/admin/orders";
@@ -153,7 +161,8 @@ public class AdminController {
 
         adminService.rejectCustomerRefund(orderId, formatNoteWithRole(note, request));
         poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
-        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        String targetInfo = "Đơn hàng #" + orderId
+                + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
         logAction(principal, request, "Từ chối hoàn tiền", targetInfo);
 
         return "redirect:/admin/orders";
@@ -168,7 +177,8 @@ public class AdminController {
 
         adminService.confirmRefund(orderId, formatNoteWithRole(note, request));
         poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
-        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        String targetInfo = "Đơn hàng #" + orderId
+                + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
         logAction(principal, request, "Xác nhận đã hoàn tiền", targetInfo);
 
         return "redirect:/admin/orders";
@@ -183,7 +193,8 @@ public class AdminController {
 
         adminService.recallOrder(orderId, formatNoteWithRole(note, request));
         poly.edu.entity.Order order = orderDAO.findById(orderId).orElse(null);
-        String targetInfo = "Đơn hàng #" + orderId + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
+        String targetInfo = "Đơn hàng #" + orderId
+                + (order != null && order.getOrderCode() != null ? " (" + order.getOrderCode() + ")" : "");
         logAction(principal, request, "Thu hồi đơn hàng", targetInfo);
 
         return "redirect:/admin/orders";
@@ -209,7 +220,7 @@ public class AdminController {
                     .filter(inv -> (inv.getProduct() != null && inv.getProduct().getName() != null
                             && inv.getProduct().getName().toLowerCase().contains(kw)) ||
                             (inv.getProduct() != null && inv.getProduct().getId() != null
-                                     && String.valueOf(inv.getProduct().getId()).contains(kw))
+                                    && String.valueOf(inv.getProduct().getId()).contains(kw))
                             ||
                             (inv.getProduct() != null && inv.getProduct().getCategory() != null
                                     && inv.getProduct().getCategory().getName() != null
@@ -228,14 +239,48 @@ public class AdminController {
             @RequestParam String type,
             @RequestParam(required = false) String note,
             Principal principal,
-            HttpServletRequest request) {
+            HttpServletRequest request,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
 
         if (quantity != null && quantity > 0) {
-            adminService.adjustStock(productId, quantity, type, note);
+            if (quantity > 200) {
+                ra.addFlashAttribute("error", "Số lượng nhập/xuất tối đa là 200 sản phẩm cho mỗi lần điều chỉnh!");
+                return "redirect:/admin/inventory";
+            }
+
             poly.edu.entity.Product p = productDAO.findById(productId).orElse(null);
+            if (p != null) {
+                poly.edu.entity.Inventory inv = inventoryDAO.findByProductId(productId).orElse(null);
+                int currentStock = (inv != null && inv.getQuantity() != null) ? inv.getQuantity() : 0;
+
+                if ("IMPORT".equalsIgnoreCase(type)) {
+                    if (currentStock >= 200) {
+                        ra.addFlashAttribute("error", "Sản phẩm '" + p.getName()
+                                + "' đã đạt giới hạn tồn kho tối đa (200/200)! Không thể nhập thêm.");
+                        return "redirect:/admin/inventory";
+                    }
+                    if (currentStock + quantity > 200) {
+                        int maxCanImport = 200 - currentStock;
+                        ra.addFlashAttribute("error",
+                                "Tổng tồn kho không được vượt quá 200! Sản phẩm '" + p.getName() + "' hiện có "
+                                        + currentStock + ", chỉ có thể nhập tối đa thêm " + maxCanImport + " SP.");
+                        return "redirect:/admin/inventory";
+                    }
+                } else if ("EXPORT".equalsIgnoreCase(type)) {
+                    if (quantity > currentStock) {
+                        ra.addFlashAttribute("error", "Số lượng xuất (" + quantity + ") vượt quá tồn kho hiện tại ("
+                                + currentStock + ") của sản phẩm!");
+                        return "redirect:/admin/inventory";
+                    }
+                }
+            }
+
+            adminService.adjustStock(productId, quantity, type, note);
             String pName = p != null ? p.getName() : "ProductID #" + productId;
             String typeLabel = "IMPORT".equalsIgnoreCase(type) ? "Nhập kho" : "Xuất kho";
-            logAction(principal, request, "Điều chỉnh kho (" + typeLabel + " " + quantity + " SP)", pName + " (ID: #" + productId + ")");
+            logAction(principal, request, "Điều chỉnh kho (" + typeLabel + " " + quantity + " SP)",
+                    pName + " (ID: #" + productId + ")");
+            ra.addFlashAttribute("success", "Cập nhật tồn kho thành công!");
         }
         return "redirect:/admin/inventory";
     }

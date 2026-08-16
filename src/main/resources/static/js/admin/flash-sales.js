@@ -137,47 +137,61 @@ function deleteFlashSaleApi(id) {
 }
 
 // Admin Countdown logic
-document.addEventListener('DOMContentLoaded', function() {
+function initAdminCountdown() {
+    updateCountdowns();
+    if (!window._adminCountdownTimer) {
+        window._adminCountdownTimer = setInterval(updateCountdowns, 1000);
+    }
+}
+
+function updateCountdowns() {
     const countdowns = document.querySelectorAll('.admin-countdown');
-    if (countdowns.length > 0) {
-        setInterval(() => {
-            const now = new Date().getTime();
-            countdowns.forEach(el => {
-                const start = parseInt(el.getAttribute('data-start'));
-                const end = parseInt(el.getAttribute('data-end'));
-                
-                if (start === 0 || end === 0) {
-                    el.innerText = '--';
-                    return;
-                }
-                
-                if (now < start) {
-                    const dist = start - now;
-                    el.style.color = '#60a5fa'; // blue
-                    el.innerText = 'Bắt đầu sau: ' + formatDistance(dist);
-                } else if (now >= start && now <= end) {
-                    const dist = end - now;
-                    el.style.color = '#4ade80'; // green
-                    el.innerText = 'Kết thúc trong: ' + formatDistance(dist);
-                } else {
-                    el.style.color = '#f87171'; // red
-                    el.innerText = 'Đã kết thúc';
-                }
-            });
-        }, 1000);
+    if (countdowns.length === 0) {
+        if (window._adminCountdownTimer) {
+            clearInterval(window._adminCountdownTimer);
+            window._adminCountdownTimer = null;
+        }
+        return;
     }
-    
-    function formatDistance(dist) {
-        const days = Math.floor(dist / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((dist % (1000 * 60)) / 1000);
+    const now = new Date().getTime();
+    countdowns.forEach(el => {
+        const start = parseInt(el.getAttribute('data-start') || '0');
+        const end = parseInt(el.getAttribute('data-end') || '0');
         
-        let str = '';
-        if (days > 0) str += days + 'n ';
-        str += (hours < 10 ? '0'+hours : hours) + ':';
-        str += (minutes < 10 ? '0'+minutes : minutes) + ':';
-        str += (seconds < 10 ? '0'+seconds : seconds);
-        return str;
-    }
-});
+        if (!start || !end || start === 0 || end === 0) {
+            el.innerText = '--';
+            return;
+        }
+        
+        if (now < start) {
+            const dist = start - now;
+            el.style.color = '#3b82f6'; // blue
+            el.innerText = 'Bắt đầu sau: ' + formatDistance(dist);
+        } else if (now >= start && now <= end) {
+            const dist = end - now;
+            el.style.color = '#16a34a'; // green
+            el.innerText = 'Còn: ' + formatDistance(dist);
+        } else {
+            el.style.color = '#dc2626'; // red
+            el.innerText = 'Đã kết thúc';
+        }
+    });
+}
+
+function formatDistance(dist) {
+    const days = Math.floor(dist / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((dist % (1000 * 60)) / 1000);
+    
+    let str = '';
+    if (days > 0) str += days + 'n ';
+    str += (hours < 10 ? '0' + hours : hours) + ':';
+    str += (minutes < 10 ? '0' + minutes : minutes) + ':';
+    str += (seconds < 10 ? '0' + seconds : seconds);
+    return str;
+}
+
+document.addEventListener('DOMContentLoaded', initAdminCountdown);
+document.addEventListener('spa:load', initAdminCountdown);
+initAdminCountdown();

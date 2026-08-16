@@ -162,22 +162,22 @@
         <!-- Summary KPI Cards -->
         <div class="stats-grid">
             <div class="stat-card fade-in-up delay-1">
-                <i class="fa-solid fa-wallet stat-icon"></i>
+                <i class="fa-solid fa-wallet stat-icon icon-revenue" style="color: #16a34a !important;"></i>
                 <div class="stat-label">Doanh Thu Trong Kỳ</div>
                 <div class="stat-value" id="stat-revenue">0₫</div>
             </div>
             <div class="stat-card fade-in-up delay-2">
-                <i class="fa-solid fa-cart-shopping stat-icon"></i>
+                <i class="fa-solid fa-cart-shopping stat-icon icon-orders" style="color: #2563eb !important;"></i>
                 <div class="stat-label">Tổng Đơn Hàng</div>
                 <div class="stat-value" id="stat-orders">0</div>
             </div>
             <div class="stat-card fade-in-up delay-3">
-                <i class="fa-solid fa-triangle-exclamation stat-icon"></i>
+                <i class="fa-solid fa-triangle-exclamation stat-icon icon-warning" style="color: #dc2626 !important;"></i>
                 <div class="stat-label">Cảnh Báo Kho</div>
                 <div class="stat-value" th:text="${lowStock} ? ${lowStock.size()} : 0">0</div>
             </div>
             <div class="stat-card fade-in-up delay-4">
-                <i class="fa-solid fa-users stat-icon"></i>
+                <i class="fa-solid fa-users stat-icon icon-customers" style="color: #9333ea !important;"></i>
                 <div class="stat-label">Khách Hàng Mới</div>
                 <div class="stat-value" id="stat-customers">0</div>
             </div>

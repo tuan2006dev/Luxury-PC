@@ -256,10 +256,11 @@ public class SupportTicketController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String priority,
+            @RequestParam(name = "keyword", required = false) String keyword,
             Model model) {
 
         if (status == null || status.isEmpty()) {
-            status = "ACTIVE";
+            status = "ALL";
         }
 
         List<SupportTicket> tickets;
@@ -271,8 +272,21 @@ public class SupportTicketController {
             tickets = ticketRepo.findTop100ByStatusOrderByCreatedAtDesc(status);
         }
 
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            tickets = tickets.stream()
+                    .filter(t -> (t.getId() != null && String.valueOf(t.getId()).contains(kw)) ||
+                            (t.getSubject() != null && t.getSubject().toLowerCase().contains(kw)) ||
+                            (t.getCustomerName() != null && t.getCustomerName().toLowerCase().contains(kw)) ||
+                            (t.getCustomerEmail() != null && t.getCustomerEmail().toLowerCase().contains(kw)) ||
+                            (t.getCustomerPhone() != null && t.getCustomerPhone().contains(kw)) ||
+                            (t.getMessage() != null && t.getMessage().toLowerCase().contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
         model.addAttribute("tickets", tickets);
         model.addAttribute("filterStatus", status);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("openCount", ticketRepo.countOpenTickets());
         model.addAttribute("inProgressCount", ticketRepo.countInProgressTickets());
         model.addAttribute("totalCount", ticketRepo.count());

@@ -156,10 +156,10 @@
                                 Không có đánh giá nào phù hợp với bộ lọc.
                             </td>
                         </tr>
-                        <tr th:each="r : ${reviews}">
+                        <tr th:each="r, iterStat : ${reviews}">
                             <!-- ID & Date -->
                             <td>
-                                <div style="font-weight: 700; color: #0f172a;" th:text="'#' + ${r.id}">#1</div>
+                                <div style="font-weight: 700; color: #0f172a;" th:text="'#' + ${iterStat.count}">#1</div>
                                 <div style="font-size: 0.72rem; color: #64748b; margin-top: 2px;"
                                     th:text="${r.createdAt != null ? #temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm') : '—'}">
                                     01/01/2026
@@ -169,7 +169,13 @@
                             <!-- User Info -->
                             <td>
                                 <div class="user-info-box">
-                                    <div class="user-avatar"
+                                    <img th:if="${r.user != null and r.user.avatar != null and !r.user.avatar.isBlank()}"
+                                        th:src="${r.user.avatar.startsWith('http') || r.user.avatar.startsWith('/') ? r.user.avatar : '/images/avatars/' + r.user.avatar}"
+                                        class="user-avatar-img"
+                                        style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid #e2e8f0; flex-shrink: 0;"
+                                        referrerpolicy="no-referrer" alt="Avatar" />
+                                    <div th:unless="${r.user != null and r.user.avatar != null and !r.user.avatar.isBlank()}"
+                                        class="user-avatar"
                                         th:text="${r.user != null and r.user.fullName != null and !r.user.fullName.isBlank() ? #strings.substring(r.user.fullName, 0, 1) : (r.user != null ? #strings.substring(r.user.username, 0, 1) : 'K')}">
                                         U
                                     </div>

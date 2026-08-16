@@ -6,8 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Sản Phẩm — Luxury PC</title>
-    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/products.css}" />
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
@@ -89,7 +91,7 @@
                                 <span class="file-name">Chọn ảnh tải
                                     lên...</span>
                                 <input autocomplete="off" type="file" name="imageFile" accept="image/*"
-                                    class="file-input-hidden" onchange="
+                                    class="file-input-hidden" style="display: none !important;" onchange="
                                 let name = 'Chọn ảnh tải lên...';
                                 if (this.files && this.files.length > 0) {
                                     name = this.files[0].name;
@@ -114,10 +116,10 @@
                         <input autocomplete="off" type="text" id="imageUrl" th:field="*{image}"
                             placeholder="VD: https://example.com/hinh-anh.jpg">
                     </div>
-                    <div class="input-group">
+                    <!-- <div class="input-group">
                         <label>Số lượng kho</label>
                         <input autocomplete="off" type="number" th:field="*{stock}" min="0">
-                    </div>
+                    </div> -->
                     <div class="input-group full" th:if="${product.image != null}">
                         <label>Ảnh hiện tại:</label>
                         <div style="display:flex; align-items:center; gap:10px;">
@@ -172,7 +174,7 @@
                             <td th:text="${p.category != null ? p.category.name : 'Chưa phân loại'}">CPU</td>
                             <td th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
                                 style="color: var(--gold); font-weight: 600;">18.990.000₫</td>
-                            <td th:text="${p.stock}">0</td>
+                            <td th:text="${(p.stock != null ? p.stock : 0) + ' / 200'}">0 / 200</td>
                             <td>
                                 <div class="action-btns">
                                     <button type="button" class="icon-btn icon-btn-edit" title="Sửa"

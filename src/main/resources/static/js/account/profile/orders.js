@@ -12,10 +12,87 @@ function toggleOrder(orderId) {
 
 window.toggleOrder = toggleOrder;
 window.cancelOrder = cancelOrder;
+window.openRefundModal = openRefundModal;
+window.closeRefundModal = closeRefundModal;
+window.submitRefundRequest = submitRefundRequest;
 window.openReviewModal = openReviewModal;
 window.closeOrderModal = closeOrderModal;
 window.rate = rate;
 window.submitReview = submitReview;
+
+function openRefundModal(orderId, orderCode) {
+  const modal = document.getElementById('refund-modal-backdrop');
+  if (!modal) return;
+  const orderIdInput = document.getElementById('refund-order-id');
+  const orderCodeEl = document.getElementById('refund-order-code');
+  const reasonInput = document.getElementById('refund-reason-input');
+  
+  if (orderIdInput) orderIdInput.value = orderId || '';
+  if (orderCodeEl) orderCodeEl.textContent = orderCode || ('#LUXURY-' + orderId);
+  if (reasonInput) reasonInput.value = '';
+  modal.classList.add('active');
+}
+
+function closeRefundModal() {
+  const modal = document.getElementById('refund-modal-backdrop');
+  if (modal) modal.classList.remove('active');
+}
+
+function submitRefundRequest() {
+  const orderId = document.getElementById('refund-order-id')?.value;
+  const reason = document.getElementById('refund-reason-input')?.value?.trim();
+  const btn = document.getElementById('btn-submit-refund');
+
+  if (!orderId) {
+    toast('⚠️ Không xác định được đơn hàng.');
+    return;
+  }
+  if (!reason || reason.length < 5) {
+    toast('⚠️ Vui lòng nhập lý do thu hồi / đổi trả (tối thiểu 5 ký tự).');
+    document.getElementById('refund-reason-input')?.focus();
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Đang gửi yêu cầu...';
+  }
+
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (typeof csrfHeader !== 'undefined' && typeof csrfToken !== 'undefined' && csrfHeader && csrfToken) {
+    headers[csrfHeader] = csrfToken;
+  }
+
+  fetch('/api/profile/orders/' + orderId + '/request-refund', {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({ reason: reason })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        toast('✓ ' + data.message);
+        closeRefundModal();
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        toast('⚠️ ' + (data.message || 'Không thể gửi yêu cầu lúc này.'));
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Gửi Yêu Cầu Thu Hồi';
+        }
+      }
+    })
+    .catch(err => {
+      console.error('Request refund error:', err);
+      toast('⚠️ Lỗi kết nối khi gửi yêu cầu thu hồi.');
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Gửi Yêu Cầu Thu Hồi';
+      }
+    });
+}
 
 function cancelOrder(btn) {
   const orderId = btn?.dataset?.orderId;

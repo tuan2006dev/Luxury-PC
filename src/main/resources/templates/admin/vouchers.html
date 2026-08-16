@@ -6,8 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Voucher — Luxury PC</title>
-    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/vouchers.css}" />
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/modal-system.css}">
@@ -25,7 +27,8 @@
         </div>
 
         <div th:replace="~{admin/fragments/toast :: toast}"></div>
-
+        <div th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/vouchers', keyword=${keyword})}">
+        </div>
         <div class="table-card">
             <div class="table-h">
                 <span><i class="fa-solid fa-list"></i> Danh Sách Voucher</span>

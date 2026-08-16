@@ -28,12 +28,14 @@ public class ProfileApiController {
     private final EmailService emailService;
     private final poly.edu.service.ProfileService profileService;
     private final poly.edu.service.OrderService orderService;
+    private final poly.edu.service.CustomerOrderService customerOrderService;
 
-    public ProfileApiController(UserRepository userRepository, EmailService emailService, poly.edu.service.ProfileService profileService, poly.edu.service.OrderService orderService) {
+    public ProfileApiController(UserRepository userRepository, EmailService emailService, poly.edu.service.ProfileService profileService, poly.edu.service.OrderService orderService, poly.edu.service.CustomerOrderService customerOrderService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.profileService = profileService;
         this.orderService = orderService;
+        this.customerOrderService = customerOrderService;
     }
 
     private User resolveUser(Authentication authentication) {
@@ -146,6 +148,44 @@ public class ProfileApiController {
         } catch (IllegalStateException | IllegalArgumentException e) {
             response.put("success", false);
             response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @org.springframework.web.bind.annotation.PostMapping({"/orders/{id}/request-refund", "/orders/{id}/refund"})
+    public ResponseEntity<Map<String, Object>> requestRefund(
+            Authentication authentication,
+            @org.springframework.web.bind.annotation.PathVariable("id") Integer id,
+            @org.springframework.web.bind.annotation.RequestBody(required = false) Map<String, String> body) {
+        Map<String, Object> response = new java.util.HashMap<>();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            response.put("success", false);
+            response.put("message", "Vui lòng đăng nhập để thực hiện.");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        User user = resolveUser(authentication);
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "Không tìm thấy thông tin người dùng.");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        String reason = body != null ? body.get("reason") : null;
+        if (reason == null || reason.trim().isBlank()) {
+            response.put("success", false);
+            response.put("message", "Vui lòng nhập lý do yêu cầu thu hồi / hoàn trả.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        boolean success = customerOrderService.requestRefund(id, user, reason.trim());
+        if (success) {
+            response.put("success", true);
+            response.put("message", "Đã gửi yêu cầu thu hồi đơn hàng tới Admin thành công. Vui lòng chờ xét duyệt.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("success", false);
+            response.put("message", "Đơn hàng không đủ điều kiện thu hồi hoặc không thuộc về bạn.");
             return ResponseEntity.badRequest().body(response);
         }
     }

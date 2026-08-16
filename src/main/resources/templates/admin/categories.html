@@ -54,18 +54,58 @@
                         class="fa-solid fa-xmark"></i></button>
             </div>
             <form novalidate class="needs-validation" autocomplete="off" th:action="@{/admin/categories/save}" method="post"
-                th:object="${category}">
+                enctype="multipart/form-data" th:object="${category}">
 
                 <input autocomplete="off" type="hidden" th:field="*{id}">
                 <div class="input-group">
                     <label>Tên Danh Mục *</label>
                     <input autocomplete="off" type="text" th:field="*{name}" required placeholder="VD: Card Màn Hình">
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn btn-gold">Lưu Danh
-                        Mục</button>
-                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'">Hủy / Làm
-                        mới</button>
+                <div class="input-group">
+                    <label>Tải Ảnh Lên</label>
+                    <div class="file-upload-wrapper">
+                        <label class="file-upload-label">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span class="file-name">Chọn ảnh tải lên...</span>
+                            <input autocomplete="off" type="file" name="imageFile" accept="image/*"
+                                class="file-input-hidden" style="display: none !important;" onchange="
+                            let name = 'Chọn ảnh tải lên...';
+                            if (this.files && this.files.length > 0) {
+                                name = this.files[0].name;
+                                if (name.length > 25) {
+                                    const dotIdx = name.lastIndexOf('.');
+                                    const ext = dotIdx !== -1 ? name.substring(dotIdx) : '';
+                                    const base = dotIdx !== -1 ? name.substring(0, dotIdx) : name;
+                                    name = base.substring(0, 18) + '...' + ext;
+                                }
+                            }
+                            const label = this.closest('.file-upload-label');
+                            const textSpan = label.querySelector('.file-name');
+                            if (textSpan) textSpan.innerText = name;
+                            if (this.files && this.files.length > 0) label.classList.add('has-file');
+                            else label.classList.remove('has-file');
+                        ">
+                        </label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Hoặc nhập Link Ảnh (URL)</label>
+                    <input autocomplete="off" type="text" id="imageUrl" th:field="*{image}"
+                        placeholder="VD: https://example.com/hinh-anh.jpg">
+                </div>
+                <div class="input-group full" th:if="${category.id != null}">
+                    <label>Ảnh hiện tại:</label>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <img id="categoryImagePreview" th:src="${category.categoryImage}"
+                            th:alt="${category.name}"
+                            onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';"
+                            style="width:60px; height:60px; object-fit:contain; border:1px solid var(--gold); border-radius:4px; padding:2px; background:#fff;">
+                        <span th:text="${category.image != null ? category.image : 'Tự động theo tên danh mục'}" style="font-size:0.8rem; color:var(--muted);"></span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-gold">Lưu Danh Mục</button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/categories'">Hủy / Làm mới</button>
                 </div>
             </form>
         </div>
@@ -75,20 +115,28 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">STT</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; width: 60px;">STT</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; width: 80px;">Hình Ảnh</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tên Danh Mục</th>
-                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; width: 100px;">Thao
-                                Tác</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; width: 100px;">Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="c, stat : ${categories}">
                             <td th:text="${stat.count}">1</td>
+                            <td>
+                                <div style="width: 44px; height: 44px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 2px; display: flex; align-items: center; justify-content: center;">
+                                    <img th:src="${c.categoryImage}"
+                                        th:alt="${c.name}"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/44x44/111/c9a84c?text=Cat';"
+                                        style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                </div>
+                            </td>
                             <td th:text="${c.name}" style="font-weight: 600;">CPU</td>
                             <td>
                                 <div class="action-btns">
                                     <button type="button" class="icon-btn icon-btn-edit" title="Sửa"
-                                        th:data-id="${c.id}" th:data-name="${c.name}" onclick="editCategory(this)">
+                                        th:data-id="${c.id}" th:data-name="${c.name}" th:data-image="${c.image != null ? c.image : ''}" onclick="editCategory(this)">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <a th:href="@{/admin/categories/delete/{id}(id=${c.id})}"

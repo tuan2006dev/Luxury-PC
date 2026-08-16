@@ -60,6 +60,41 @@
     </div>
   </div>
 
+  <!-- Order Return / Refund Modal -->
+  <div class="lux-modal-backdrop" id="refund-modal-backdrop" onclick="closeRefundModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title" id="modal-refund-title">Yêu Cầu Thu Hồi / Hoàn Trả Đơn Hàng</h3>
+        <button class="lux-modal-close" onclick="closeRefundModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="lux-modal-body">
+        <input type="hidden" id="refund-order-id" />
+        <div style="margin-bottom: 1rem; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem;">
+          <div style="color: #64748b; margin-bottom: 4px;">Đang chọn đơn hàng:</div>
+          <div style="font-weight: 700; color: #0284c7; font-size: 1rem;" id="refund-order-code">#LUXURY-000</div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333; font-weight: 600;">
+            Lý do yêu cầu thu hồi / đổi trả <span style="color: #ef4444;">*</span>
+          </label>
+          <textarea id="refund-reason-input" class="form-input" rows="4"
+            placeholder="Vui lòng mô tả chi tiết lý do (ví dụ: Sản phẩm bị lỗi kỹ thuật, giao nhầm mã sản phẩm, muốn trả hàng...)"
+            style="width: 100%; box-sizing: border-box; background: #fff; color: #000; border: 1px solid #cbd5e1; padding: 12px; border-radius: 4px; resize: none; font-family: inherit; font-size: 0.85rem; line-height: 1.5;"></textarea>
+          <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">Tối thiểu 5 ký tự để Admin dễ dàng kiểm tra và phản hồi.</div>
+        </div>
+
+        <div style="font-size: 0.78rem; color: #64748b; line-height: 1.5; background: #f1f5f9; padding: 10px 12px; border-radius: 6px;">
+          💡 <strong>Lưu ý:</strong> Sau khi gửi yêu cầu, thông tin sẽ được chuyển trực tiếp đến Ban Quản Trị để kiểm tra. Admin sẽ duyệt, liên hệ hỗ trợ thu hồi hoặc phản hồi lại cho quý khách trong thời gian sớm nhất.
+        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeRefundModal()">Đóng</button>
+        <button type="button" id="btn-submit-refund" class="btn btn-primary" style="background: #d97706; border-color: #d97706;" onclick="submitRefundRequest()">Gửi Yêu Cầu Thu Hồi</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 2FA Modal -->
   <div class="lux-modal-backdrop" id="2fa-modal-backdrop" onclick="close2FAModal()">
     <div class="lux-modal-container" onclick="event.stopPropagation()">

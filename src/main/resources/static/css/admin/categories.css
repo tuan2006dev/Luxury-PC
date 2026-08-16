@@ -250,3 +250,61 @@ td {
                 transform: translateY(0);
         }
 }
+
+/* Custom File Upload */
+.file-upload-wrapper {
+        position: relative;
+        width: 100%;
+        margin-top: 5px;
+}
+
+.file-upload-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 1.2rem;
+        background: var(--mid);
+        border: 2px dashed rgba(201, 168, 76, 0.3);
+        border-radius: 6px;
+        cursor: pointer;
+        color: var(--muted);
+        transition: 0.3s;
+        font-family: var(--sans);
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+}
+
+.file-upload-label .file-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
+}
+
+.file-upload-label:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+        background: rgba(201, 168, 76, 0.05);
+}
+
+.file-upload-label i {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+}
+
+.file-input-hidden,
+.input-group input.file-input-hidden,
+input[type="file"].file-input-hidden {
+        display: none !important;
+}
+
+.file-upload-label.has-file {
+        border-color: var(--gold);
+        color: var(--gold);
+        background: rgba(201, 168, 76, 0.05);
+}

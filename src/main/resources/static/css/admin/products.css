@@ -350,8 +350,10 @@ td {
         flex-shrink: 0;
 }
 
-.file-input-hidden {
-        display: none;
+.file-input-hidden,
+.input-group input.file-input-hidden,
+input[type="file"].file-input-hidden {
+        display: none !important;
 }
 
 .file-upload-label.has-file {

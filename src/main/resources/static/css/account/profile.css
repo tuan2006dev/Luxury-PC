@@ -655,10 +655,35 @@ textarea::placeholder {
 }
 
 .status-canceled,
-.status-cancelled {
+.status-cancelled,
+.status-da_huy {
   background: rgba(239, 68, 68, .1);
   color: var(--red);
   border: 1px solid rgba(239, 68, 68, .3);
+}
+
+.status-yeu_cau_hoan_tien {
+  background: rgba(234, 179, 8, .15);
+  color: #ca8a04;
+  border: 1px solid rgba(234, 179, 8, .4);
+}
+
+.status-cho_hoan_tien {
+  background: rgba(59, 130, 246, .15);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, .4);
+}
+
+.status-thu_hoi {
+  background: rgba(139, 92, 246, .15);
+  color: #7c3aed;
+  border: 1px solid rgba(139, 92, 246, .4);
+}
+
+.status-da_hoan_tien {
+  background: rgba(16, 185, 129, .15);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, .4);
 }
 
 .order-total {

@@ -15,6 +15,8 @@ public class Category implements Serializable {
     @Column(unique = true)
     private String name;
 
+    private String image;
+
     public Category() {
     }
 
@@ -39,8 +41,22 @@ public class Category implements Serializable {
         this.name = name;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Transient
     public String getCategoryImage() {
+        if (image != null && !image.isBlank()) {
+            if (image.startsWith("http") || image.startsWith("/")) {
+                return image;
+            }
+            return "/images/categories/" + image;
+        }
         if (name == null)
             return "/images/ui-new/PC.png";
         String n = name.trim().toUpperCase();

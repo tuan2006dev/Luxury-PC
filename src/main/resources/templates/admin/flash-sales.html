@@ -64,8 +64,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="fs : ${flashSales}">
-                            <td style="color:var(--muted);" th:text="${fs.id}">#1</td>
+                        <tr th:each="fs, iterStat : ${flashSales}">
+                            <td style="color:var(--muted); font-weight: 700;" th:text="${'#' + iterStat.count}">#1</td>
                             <td>
                                 <img th:if="${fs.bannerImage != null and !fs.bannerImage.isEmpty()}"
                                     th:src="${fs.bannerImage.startsWith('http') ? fs.bannerImage : '/images/flashsale/' + fs.bannerImage}"

@@ -33,15 +33,31 @@ document.addEventListener('spa:load', initCategoryFormState);
 function editCategory(btn) {
     const id = btn.getAttribute('data-id');
     const name = btn.getAttribute('data-name');
+    const image = btn.getAttribute('data-image') || '';
     
-    document.getElementById('id').value = id;
-    document.getElementById('name').value = name;
+    const idInput = document.getElementById('id');
+    if (idInput) idInput.value = id;
+
+    const nameInput = document.getElementById('name');
+    if (nameInput) nameInput.value = name;
     
+    const imageInput = document.getElementById('imageUrl');
+    if (imageInput) imageInput.value = image;
+
+    const fileNameSpan = document.querySelector('#categoryForm .file-name');
+    if (fileNameSpan) fileNameSpan.innerText = 'Chọn ảnh tải lên...';
+    
+    const fileLabel = document.querySelector('#categoryForm .file-upload-label');
+    if (fileLabel) fileLabel.classList.remove('has-file');
+
+    const fileInput = document.querySelector('#categoryForm input[type="file"]');
+    if (fileInput) fileInput.value = '';
+
     const h2 = document.querySelector('.card-header h2');
     if (h2) h2.innerText = 'Sửa Danh Mục';
     
     const form = document.getElementById('categoryForm');
-    if (!form.classList.contains('active')) {
+    if (form && !form.classList.contains('active')) {
         form.classList.add('active');
         updateToggleButtonState(true);
     }

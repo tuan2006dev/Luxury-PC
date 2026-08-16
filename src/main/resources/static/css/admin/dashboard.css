@@ -104,8 +104,13 @@ body {
 	right: 12px !important;
 	top: 12px !important;
 	font-size: 1.4rem !important;
-	color: #e2e8f0;
+	color: #64748b;
 }
+
+.stat-icon.icon-revenue { color: #16a34a !important; }
+.stat-icon.icon-orders { color: #2563eb !important; }
+.stat-icon.icon-warning { color: #dc2626 !important; }
+.stat-icon.icon-customers { color: #9333ea !important; }
 
 /* Tabs Header */
 .dashboard-tabs {
