@@ -14,6 +14,9 @@ import poly.edu.repository.UserRepository;
 import poly.edu.service.AdminService;
 import poly.edu.service.VietQrManualConfirmationException;
 
+import poly.edu.dto.ApiResponse;
+import poly.edu.dto.admin.AdminOrderDetailDTO;
+
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +82,24 @@ public class AdminController {
         model.addAttribute("orders", orders);
         model.addAttribute("keyword", keyword);
         return "admin/orders";
+    }
+
+    @GetMapping("/orders/{id}/detail")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<AdminOrderDetailDTO>> getOrderDetail(@PathVariable Integer id) {
+        try {
+            AdminOrderDetailDTO detail = adminService.getOrderDetailDTO(id);
+            if (detail == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Không tìm thấy thông tin đơn hàng #" + id));
+            }
+            return ResponseEntity.ok(ApiResponse.success("Lấy thông tin chi tiết đơn hàng thành công", detail));
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(AdminController.class)
+                    .error("[AdminController] Error fetching order detail for id {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Lỗi khi tải thông tin đơn hàng: " + e.getMessage()));
+        }
     }
 
     @PostMapping("/orders/update-status")

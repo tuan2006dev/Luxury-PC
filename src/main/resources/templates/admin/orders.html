@@ -54,8 +54,12 @@
                     </thead>
                     <tbody>
                         <tr th:each="o : ${orders}">
-                            <td style="font-weight: 700; color: #1e293b;"
-                                th:text="${o.orderCode != null ? o.orderCode : 'DH' + o.id}">DH101</td>
+                            <td>
+                                <button type="button" class="order-code-btn"
+                                    th:onclick="'openOrderDetailModal(' + ${o.id} + ')'"
+                                    title="Xem chi tiết đơn hàng"
+                                    th:text="${o.orderCode != null ? o.orderCode : 'DH' + o.id}">DH101</button>
+                            </td>
                             <td>
                                 <div th:text="${o.fullName}" style="font-weight: 600; color: #0f172a;">Guest</div>
                                 <div style="font-size:0.72rem; color:#64748b; word-break: break-all;"
@@ -117,6 +121,12 @@
                                 <details class="action-menu" name="admin-order-action">
                                     <summary>Thao tác</summary>
                                     <div class="action-panel">
+                                        <!-- Xem chi tiết đơn hàng -->
+                                        <button type="button" class="btn-view-detail"
+                                            th:onclick="'openOrderDetailModal(' + ${o.id} + ')'">
+                                            <i class="fa-solid fa-eye"></i> Xem Chi Tiết Đơn
+                                        </button>
+
                                         <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}"
                                             class="admin-note">Đơn đã kết thúc xử lý.</span>
 
@@ -214,7 +224,7 @@
                                                 </option>
                                                 <option value="SHIPPING"
                                                     th:if="${o.status == 'PROCESSING' or o.status == 'DANG_XU_LY'}">Đang
-                                                    giao
+                                                     giao
                                                 </option>
                                                 <option value="PAID"
                                                     th:if="${o.paymentMethod == 'COD' and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO')}">
@@ -237,51 +247,33 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener('click', function (e) {
-            const clickedDetails = e.target.closest('details.action-menu');
-            document.querySelectorAll('details.action-menu[open]').forEach(details => {
-                if (details !== clickedDetails) {
-                    details.removeAttribute('open');
-                }
-            });
-        });
 
-        function sendLalamoveWebhook(btn) {
-            const trackingCode = btn.getAttribute('data-tracking');
-            const event = btn.getAttribute('data-event');
-            btn.disabled = true;
-            const originalText = btn.innerText;
-            btn.innerText = 'Sending...';
+    <!-- Order Detail Modal Component -->
+    <div id="orderDetailModal" class="order-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="orderDetailModalTitle">
+        <div class="order-modal-dialog">
+            <div class="order-modal-header">
+                <h3 id="orderDetailModalTitle">
+                    <i class="fa-solid fa-file-invoice" style="color: #0066CC;"></i> <span>Chi Tiết Đơn Hàng</span>
+                </h3>
+                <button type="button" class="order-modal-close" onclick="closeOrderDetailModal()" title="Đóng modal (Esc)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="order-modal-body" id="orderDetailModalBody">
+                <!-- Content dynamically rendered via orders.js -->
+            </div>
+            <div class="order-modal-footer">
+                <button type="button" class="btn-modal btn-modal-print" onclick="printOrderDetail()">
+                    <i class="fa-solid fa-print"></i> In Đơn Hàng
+                </button>
+                <button type="button" class="btn-modal btn-modal-close" onclick="closeOrderDetailModal()">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
 
-            fetch('/api/webhook/lalamove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    trackingCode: trackingCode,
-                    event: event
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Lỗi Webhook: ' + (data.message || 'Thao tác không thành công'));
-                    btn.disabled = false;
-                    btn.innerText = originalText;
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Lỗi kết nối đến Webhook!');
-                btn.disabled = false;
-                btn.innerText = originalText;
-            });
-        }
-    </script>
+    <script th:src="@{/js/admin/orders.js}"></script>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 

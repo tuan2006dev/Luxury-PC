@@ -69,6 +69,9 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o WHERE o.orderCode = :orderCode")
     Optional<Order> findByOrderCodeForUpdate(@org.springframework.data.repository.query.Param("orderCode") String orderCode);
 
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.product p WHERE o.id = :id")
+    Optional<Order> findByIdWithDetails(@org.springframework.data.repository.query.Param("id") Integer id);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT o FROM Order o WHERE o.id = :id")
     Optional<Order> findByIdForUpdate(@org.springframework.data.repository.query.Param("id") Integer id);

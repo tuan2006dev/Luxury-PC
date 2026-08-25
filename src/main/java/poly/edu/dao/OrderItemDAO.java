@@ -37,6 +37,12 @@ public interface OrderItemDAO extends JpaRepository<OrderItem, Integer> {
        long countFlashSalePurchasesByUser(@Param("userId") Integer userId,
                      @Param("flashSaleId") Integer flashSaleId);
 
+       @Query("SELECT oi FROM OrderItem oi LEFT JOIN FETCH oi.product p WHERE oi.order.id = :orderId")
+       List<OrderItem> findByOrderIdWithProduct(@Param("orderId") Integer orderId);
+
+       @Query("SELECT oi FROM OrderItem oi WHERE oi.order.id = :orderId")
+       List<OrderItem> findByOrderId(@Param("orderId") Integer orderId);
+
        @Modifying
        @Query("DELETE FROM OrderItem oi WHERE oi.order.orderCode LIKE 'DEMO-%'")
        void deleteDemoOrderItems();
