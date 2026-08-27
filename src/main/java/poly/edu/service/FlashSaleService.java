@@ -1,7 +1,6 @@
 package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.FlashSaleDAO;
@@ -13,18 +12,17 @@ import poly.edu.entity.Product;
 
 import java.util.*;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class FlashSaleService {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FlashSaleService.class);
+
     private final FlashSaleDAO flashSaleDAO;
-
     private final FlashSaleItemDAO flashSaleItemDAO;
-
     private final ProductDAO productDAO;
+    private final poly.edu.repository.UserRepository userRepository;
+    private final EmailService emailService;
 
     /**
      * Lấy chương trình Flash Sale đang diễn ra (chỉ đọc, không ghi DB)
@@ -80,7 +78,23 @@ public class FlashSaleService {
 
     @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)
     public FlashSale saveFlashSale(FlashSale flashSale) {
-        return flashSaleDAO.save(flashSale);
+        boolean isNew = (flashSale.getId() == null);
+        FlashSale saved = flashSaleDAO.save(flashSale);
+        if (isNew) {
+            try {
+                List<poly.edu.entity.User> subscribers = userRepository.findFlashSaleSubscribers();
+                if (subscribers != null) {
+                    String title = saved.getName() != null ? saved.getName() : "Flash Sale Siêu Hấp Dẫn";
+                    String content = "Chương trình Flash Sale mới vừa được phát động với rất nhiều linh kiện PC giảm giá sâu.";
+                    for (poly.edu.entity.User user : subscribers) {
+                        emailService.sendFlashSaleNotificationEmail(user, title, content);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Lỗi khi gửi email Flash Sale: {}", e.getMessage());
+            }
+        }
+        return saved;
     }
 
     @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)

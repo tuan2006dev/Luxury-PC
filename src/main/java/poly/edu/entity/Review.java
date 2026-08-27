@@ -25,6 +25,10 @@ public class Review implements Serializable {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_item_id")
+    private OrderItem orderItem;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -70,6 +74,14 @@ public class Review implements Serializable {
         this.product = product;
     }
 
+    public OrderItem getOrderItem() {
+        return orderItem;
+    }
+
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -92,5 +104,38 @@ public class Review implements Serializable {
 
     public void setVideo(String video) {
         this.video = video;
+    }
+
+    @Column(name = "reply_content", length = 2000)
+    private String replyContent;
+
+    @Column(name = "replied_at")
+    private LocalDateTime repliedAt;
+
+    @Column(name = "replied_by")
+    private String repliedBy;
+
+    public String getReplyContent() {
+        return replyContent;
+    }
+
+    public void setReplyContent(String replyContent) {
+        this.replyContent = replyContent;
+    }
+
+    public LocalDateTime getRepliedAt() {
+        return repliedAt;
+    }
+
+    public void setRepliedAt(LocalDateTime repliedAt) {
+        this.repliedAt = repliedAt;
+    }
+
+    public String getRepliedBy() {
+        return repliedBy;
+    }
+
+    public void setRepliedBy(String repliedBy) {
+        this.repliedBy = repliedBy;
     }
 }

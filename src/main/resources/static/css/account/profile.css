@@ -10,6 +10,7 @@
   --white: #ffffff;
   --muted: #888888;
   --red: #ef4444;
+  --blue: #3b82f6;
   --green: #22c55e;
   --serif: 'Outfit', sans-serif;
   --sans: 'Montserrat', sans-serif;
@@ -514,6 +515,16 @@ textarea::placeholder {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
+.form-input.is-invalid {
+  border-color: #ef4444 !important;
+  background-color: #ffffff !important;
+}
+
+.form-input.is-invalid:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15) !important;
+}
+
 .form-input:invalid,
 .form-input:user-invalid,
 .form-input:focus:invalid {
@@ -644,15 +655,40 @@ textarea::placeholder {
 }
 
 .status-canceled,
-.status-cancelled {
+.status-cancelled,
+.status-da_huy {
   background: rgba(239, 68, 68, .1);
   color: var(--red);
   border: 1px solid rgba(239, 68, 68, .3);
 }
 
+.status-yeu_cau_hoan_tien {
+  background: rgba(234, 179, 8, .15);
+  color: #ca8a04;
+  border: 1px solid rgba(234, 179, 8, .4);
+}
+
+.status-cho_hoan_tien {
+  background: rgba(59, 130, 246, .15);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, .4);
+}
+
+.status-thu_hoi {
+  background: rgba(139, 92, 246, .15);
+  color: #7c3aed;
+  border: 1px solid rgba(139, 92, 246, .4);
+}
+
+.status-da_hoan_tien {
+  background: rgba(16, 185, 129, .15);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, .4);
+}
+
 .order-total {
   font-family: var(--serif);
-  color: var(--white) !important;
+  color: var(--blue) !important;
   font-weight: 600;
 }
 

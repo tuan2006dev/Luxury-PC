@@ -2,14 +2,14 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Combo — Luxury PC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/products.css}" />
-    <style>
+    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/products.css}" />
+    <style data-pjax-track="true">
         .select-group select {
             width: 100%;
             padding: 10px;
@@ -25,7 +25,7 @@
             border-color: var(--gold);
         }
     </style>
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
 <body>
@@ -41,7 +41,8 @@
         </div>
 
         <div class="card">
-            <form th:action="@{/admin/combos/save}" method="post" th:object="${combo}" enctype="multipart/form-data">
+            <form class="needs-validation" novalidate th:action="@{/admin/combos/save}" method="post"
+                th:object="${combo}" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{id}">
 
                 <div class="form-grid">

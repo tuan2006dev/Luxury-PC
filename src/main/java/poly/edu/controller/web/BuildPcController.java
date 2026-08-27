@@ -3,7 +3,6 @@ package poly.edu.controller.web;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -82,10 +81,10 @@ public class BuildPcController {
                 })
                 .collect(Collectors.toList());
             String jsCat = cat.toLowerCase();
-            if (jsCat.equals("storage")) {
-                jsCat = "ssd";
-            }
             productsData.put(jsCat, catProducts);
+            if (jsCat.equals("storage")) {
+                productsData.put("ssd", catProducts);
+            }
         }
         
         List<Map<String, Object>> combosData = combos.stream().map(c -> {

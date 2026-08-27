@@ -26,7 +26,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @RestController
 @RequestMapping("/api/address")
-@SuppressWarnings("null")
 public class AddressApiController {
 
     private final UserRepository userRepository;
@@ -43,9 +42,15 @@ public class AddressApiController {
         }
         Object principal = authentication.getPrincipal();
         String emailOrUsername = null;
-        if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
+        if (principal instanceof poly.edu.security.CustomOAuth2User customOAuth2User) {
+            if (customOAuth2User.getEmail() != null && !customOAuth2User.getEmail().isBlank()) {
+                emailOrUsername = customOAuth2User.getEmail();
+            }
+        }
+        if (emailOrUsername == null && principal instanceof org.springframework.security.core.userdetails.User userDetails) {
             emailOrUsername = userDetails.getUsername();
-        } else if (principal instanceof OAuth2User oauth2User) {
+        }
+        if (emailOrUsername == null && principal instanceof OAuth2User oauth2User) {
             Object email = oauth2User.getAttribute("email");
             if (email != null) {
                 emailOrUsername = email.toString();
@@ -54,7 +59,7 @@ public class AddressApiController {
         if (emailOrUsername == null || emailOrUsername.isBlank()) {
             emailOrUsername = authentication.getName();
         }
-        
+
         final String identifier = emailOrUsername;
         return userRepository.findByEmail(identifier)
                 .or(() -> userRepository.findByUsername(identifier))
@@ -71,7 +76,8 @@ public class AddressApiController {
             return ResponseEntity.status(401).body(ApiResponse.error("Chưa đăng nhập.", null));
         }
 
-        List<ShippingAddress> list = shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+        List<ShippingAddress> list = shippingAddressRepository
+                .findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
         List<Map<String, Object>> data = list.stream().map(addr -> {
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("id", addr.getId());
@@ -102,7 +108,8 @@ public class AddressApiController {
 
         ShippingAddress addr = shippingAddressRepository.findById(id).orElse(null);
         if (addr == null || !addr.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy địa chỉ hoặc không có quyền truy cập.", null));
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.error("Không tìm thấy địa chỉ hoặc không có quyền truy cập.", null));
         }
 
         Map<String, Object> m = new LinkedHashMap<>();
@@ -138,7 +145,8 @@ public class AddressApiController {
         }
         String phone = request.getPhone().trim();
         if (!phone.matches("^0(3|5|7|8|9)[0-9]{8}$")) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số (đầu số 03, 05, 07, 08, 09).", null));
+            return ResponseEntity.badRequest().body(ApiResponse.error(
+                    "Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số (đầu số 03, 05, 07, 08, 09).", null));
         }
         if (request.getDetailedAddress() == null || request.getDetailedAddress().isBlank()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng nhập địa chỉ chi tiết.", null));
@@ -147,20 +155,57 @@ public class AddressApiController {
             return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng nhập tỉnh/thành phố.", null));
         }
 
-        long count = shippingAddressRepository.countByUser_Id(user.getId());
-        if (count >= 5) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Bạn chỉ được lưu tối đa 5 địa chỉ giao hàng.", null));
+        List<ShippingAddress> existingList = shippingAddressRepository
+                .findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+
+        String phoneInput = request.getPhone().trim();
+        String detailInput = request.getDetailedAddress().trim();
+        String cityInput = request.getCity().trim();
+        String districtInput = request.getDistrict() != null ? request.getDistrict().trim() : "";
+
+        // Check if user already has an address with identical phone and location
+        ShippingAddress duplicate = null;
+        for (ShippingAddress a : existingList) {
+            boolean samePhone = a.getPhone() != null && a.getPhone().trim().equalsIgnoreCase(phoneInput);
+            boolean sameDetail = a.getAddress() != null && a.getAddress().trim().equalsIgnoreCase(detailInput);
+            boolean sameCity = a.getCity() != null && a.getCity().trim().equalsIgnoreCase(cityInput);
+            String existingDistrict = a.getDistrict() != null ? a.getDistrict().trim() : "";
+            boolean sameDistrict = existingDistrict.equalsIgnoreCase(districtInput);
+
+            if (samePhone && sameDetail && sameCity && sameDistrict) {
+                duplicate = a;
+                break;
+            }
+        }
+
+        if (duplicate != null) {
+            duplicate.setRecipientName(request.getRecipientName().trim());
+            duplicate.setPhone(phoneInput);
+            duplicate.setAddress(detailInput);
+            duplicate.setDistrict(districtInput);
+            duplicate.setCity(cityInput);
+
+            shippingAddressRepository.save(duplicate);
+
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("message", "Địa chỉ và số điện thoại đã tồn tại. Đã tự động cập nhật thông tin địa chỉ này.");
+            return ResponseEntity.ok(ApiResponse.success("Updated", m));
+        }
+
+        if (existingList.size() >= 5) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("Bạn chỉ được lưu tối đa 5 địa chỉ giao hàng.", null));
         }
 
         ShippingAddress addr = new ShippingAddress();
         addr.setUser(user);
         addr.setRecipientName(request.getRecipientName().trim());
-        addr.setPhone(request.getPhone().trim());
-        addr.setAddress(request.getDetailedAddress().trim());
-        addr.setDistrict(request.getDistrict() != null ? request.getDistrict().trim() : "");
-        addr.setCity(request.getCity().trim());
-        
-        addr.setDefault(count == 0);
+        addr.setPhone(phoneInput);
+        addr.setAddress(detailInput);
+        addr.setDistrict(districtInput);
+        addr.setCity(cityInput);
+
+        addr.setDefault(existingList.isEmpty());
 
         shippingAddressRepository.save(addr);
 
@@ -184,7 +229,8 @@ public class AddressApiController {
 
         ShippingAddress addr = shippingAddressRepository.findById(id).orElse(null);
         if (addr == null || !addr.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy địa chỉ hoặc không có quyền sửa.", null));
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.error("Không tìm thấy địa chỉ hoặc không có quyền sửa.", null));
         }
 
         if (request.getRecipientName() == null || request.getRecipientName().isBlank()) {
@@ -195,7 +241,8 @@ public class AddressApiController {
         }
         String phone = request.getPhone().trim();
         if (!phone.matches("^0(3|5|7|8|9)[0-9]{8}$")) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số (đầu số 03, 05, 07, 08, 09).", null));
+            return ResponseEntity.badRequest().body(ApiResponse.error(
+                    "Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số (đầu số 03, 05, 07, 08, 09).", null));
         }
         if (request.getDetailedAddress() == null || request.getDetailedAddress().isBlank()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng nhập địa chỉ chi tiết.", null));
@@ -231,14 +278,16 @@ public class AddressApiController {
 
         ShippingAddress addr = shippingAddressRepository.findById(id).orElse(null);
         if (addr == null || !addr.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy địa chỉ hoặc không có quyền xóa.", null));
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.error("Không tìm thấy địa chỉ hoặc không có quyền xóa.", null));
         }
 
         boolean wasDefault = addr.isDefault();
         shippingAddressRepository.delete(addr);
 
         if (wasDefault) {
-            List<ShippingAddress> rest = shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+            List<ShippingAddress> rest = shippingAddressRepository
+                    .findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
             if (!rest.isEmpty()) {
                 ShippingAddress first = rest.get(0);
                 first.setDefault(true);
@@ -261,7 +310,8 @@ public class AddressApiController {
             return ResponseEntity.status(401).body(ApiResponse.error("Chưa đăng nhập.", null));
         }
 
-        List<ShippingAddress> list = shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+        List<ShippingAddress> list = shippingAddressRepository
+                .findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
         boolean found = false;
         for (ShippingAddress addr : list) {
             boolean isTarget = addr.getId().equals(id);
@@ -272,7 +322,8 @@ public class AddressApiController {
         }
 
         if (!found) {
-            return ResponseEntity.status(404).body(ApiResponse.error("Địa chỉ không tồn tại hoặc không thuộc về bạn.", null));
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.error("Địa chỉ không tồn tại hoặc không thuộc về bạn.", null));
         }
 
         shippingAddressRepository.saveAll(list);

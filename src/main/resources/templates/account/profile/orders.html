@@ -35,7 +35,7 @@
           th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 0, 'POINT')} + '₫'">18.990.000₫</div>
         <div style="text-align: center;">
           <span th:class="'order-status status-' + ${(order.status != null ? order.status : 'PENDING').toLowerCase()}"
-            th:text="${order.status == 'PENDING' ? 'Chờ xử lý' : (order.status == 'PAID' ? 'Đã thanh toán' : (order.status == 'COMPLETED' ? 'Hoàn thành' : (order.status == 'SHIPPING' ? 'Đang giao' : (order.status == 'CANCELED' || order.status == 'CANCELLED' ? 'Đã hủy' : (order.status == 'CHO_XAC_NHAN_THANH_TOAN' ? 'Chờ xác nhận' : (order.status != null ? order.status : 'Chờ xử lý'))))))}">
+            th:text="${order.statusDisplay}">
             Đang xử lý
           </span>
         </div>
@@ -101,9 +101,18 @@
               <div th:text="${oi.quantity} + 'x ' + ${oi.product.name}" style="margin-bottom: 5px;">1x Intel
                 Core
                 i9-14900K</div>
-              <button type="button" th:if="${order.status == 'COMPLETED'}" th:data-product-id="${oi.product.id}"
+              <!-- Đã đánh giá -->
+              <span th:if="${(order.status == 'COMPLETED' or order.status == 'HOAN_THANH') and reviewedOrderItemIds != null and reviewedOrderItemIds.contains(oi.id)}"
+                style="display:inline-flex; align-items:center; gap:4px; font-size:0.65rem; color:#10b981; background:#ecfdf5; border:1px solid #a7f3d0; padding:3px 8px; border-radius:4px; font-weight:600;">
+                <i class="fa-solid fa-circle-check"></i> Đã đánh giá
+              </span>
+
+              <!-- Chưa đánh giá -->
+              <button type="button" th:if="${(order.status == 'COMPLETED' or order.status == 'HOAN_THANH') and (reviewedOrderItemIds == null or !reviewedOrderItemIds.contains(oi.id))}"
+                th:data-product-id="${oi.product.id}"
                 th:data-product-name="${oi.product.name}"
-                onclick="event.stopPropagation(); openReviewModal(this.dataset.productId, this.dataset.productName)"
+                th:data-order-item-id="${oi.id}"
+                onclick="event.stopPropagation(); openReviewModal(this.dataset.productId, this.dataset.productName, this.dataset.orderItemId)"
                 style="display:inline-block; font-size:0.65rem; color:#3b82f6; background:transparent; border:1px solid #cbd5e1; padding:3px 8px; border-radius:3px; transition: 0.3s; cursor:pointer;"
                 onmouseover="this.style.background='#3b82f6'; this.style.color='#fff';"
                 onmouseout="this.style.background='transparent'; this.style.color='#3b82f6';">
@@ -120,6 +129,11 @@
             <span style="color:#3b82f6;"
               th:text="${order.shippingFee != null and order.shippingFee > 0 ? #numbers.formatDecimal(order.shippingFee, 1, 'COMMA', 0, 'POINT') + '₫' : 'Miễn phí'}">0
               ₫</span>
+          </div>
+          <div class="item-mini" th:if="${order.vipDiscount != null and order.vipDiscount > 0}">
+            <span>⭐ Ưu đãi Hạng VIP</span>
+            <span style="color:#d97706;"
+              th:text="'-' + ${#numbers.formatDecimal(order.vipDiscount, 1, 'COMMA', 0, 'POINT')} + '₫'">-0 ₫</span>
           </div>
           <div class="item-mini" th:if="${order.voucherCode != null and order.voucherCode != ''}">
             <span th:text="'Voucher áp dụng (' + ${order.voucherCode} + ')'">Voucher áp dụng</span>
@@ -167,6 +181,50 @@
             </div>
           </div>
         </div>
+        <div th:if="${order.status == 'YEU_CAU_HOAN_TIEN'}"
+          style="margin-top: 15px; padding: 12px 16px; background: #fefce8; border: 1px solid #fef08a; border-radius: 6px; display: flex; align-items: flex-start; gap: 10px;">
+          <span style="font-size: 1.1rem; color: #ca8a04;">⏳</span>
+          <div style="font-size: 0.8rem; color: #854d0e; line-height: 1.5;">
+            <strong>Đã gửi yêu cầu thu hồi / hoàn trả đơn hàng:</strong> Đang chờ Ban Quản Trị xét duyệt.
+            <div th:if="${order.refundReason != null and order.refundReason != ''}" style="margin-top: 4px; color: #713f12; font-style: italic;">
+              Lý do yêu cầu: <span th:text="${order.refundReason}"></span>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="${order.status == 'CHO_HOAN_TIEN'}"
+          style="margin-top: 15px; padding: 12px 16px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; display: flex; align-items: flex-start; gap: 10px;">
+          <span style="font-size: 1.1rem; color: #2563eb;">ℹ️</span>
+          <div style="font-size: 0.8rem; color: #1e40af; line-height: 1.5;">
+            <strong>Admin đã chấp thuận yêu cầu:</strong> Shop đang tiến hành thủ tục thu hồi sản phẩm / hoàn tiền cho quý khách.
+            <div th:if="${order.adminNote != null and order.adminNote != ''}" style="margin-top: 4px; color: #1e3a8a; font-weight: 500;">
+              Ghi chú từ Shop: <span th:text="${order.adminNote}"></span>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="${order.status == 'THU_HOI'}"
+          style="margin-top: 15px; padding: 12px 16px; background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 6px; display: flex; align-items: flex-start; gap: 10px;">
+          <span style="font-size: 1.1rem; color: #7c3aed;">📦</span>
+          <div style="font-size: 0.8rem; color: #5b21b6; line-height: 1.5;">
+            <strong>Đơn hàng đã được thu hồi:</strong> Đơn hàng đã hoàn tất quy trình thu hồi.
+            <div th:if="${order.adminNote != null and order.adminNote != ''}" style="margin-top: 4px; color: #4c1d95;">
+              Ghi chú: <span th:text="${order.adminNote}"></span>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="${order.status == 'DA_HOAN_TIEN'}"
+          style="margin-top: 15px; padding: 12px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; display: flex; align-items: flex-start; gap: 10px;">
+          <span style="font-size: 1.1rem; color: #16a34a;">✅</span>
+          <div style="font-size: 0.8rem; color: #166534; line-height: 1.5;">
+            <strong>Hoàn tất hoàn tiền:</strong> Đơn hàng đã được hoàn trả tiền thành công.
+            <div th:if="${order.adminNote != null and order.adminNote != ''}" style="margin-top: 4px; color: #14532d;">
+              Ghi chú: <span th:text="${order.adminNote}"></span>
+            </div>
+          </div>
+        </div>
+
         <div th:if="${order.paymentMethod == 'VIETQR' and order.status == 'CHO_XAC_NHAN_THANH_TOAN'}"
           style="margin-top: 15px; text-align: right;">
           <a th:href="@{/payment/vietqr(orderCode=${order.orderCode})}"
@@ -183,6 +241,16 @@
             onmouseover="this.style.background='var(--red)'; this.style.color='#000';"
             onmouseout="this.style.background='transparent'; this.style.color='#var(--red)';">
             ⚠️ <span>Hủy Đơn Hàng</span>
+          </button>
+        </div>
+        <div th:if="${order.isCustomerRefundEligible() and order.status != 'YEU_CAU_HOAN_TIEN' and order.status != 'CHO_HOAN_TIEN' and order.status != 'DA_HOAN_TIEN' and order.status != 'THU_HOI' and order.status != 'DA_HUY' and order.status != 'CANCELLED'}"
+          style="margin-top: 15px; text-align: right;">
+          <button type="button" th:data-order-id="${order.id}" th:data-order-code="${order.orderCode != null ? order.orderCode : ('#Luxury-' + order.id)}"
+            onclick="openRefundModal(this.dataset.orderId, this.dataset.orderCode)"
+            style="display:inline-block; font-size:0.75rem; color:#d97706; background:transparent; border:1px solid rgba(217,119,6,0.5); padding:6px 15px; border-radius:3px; transition: 0.3s; cursor:pointer;"
+            onmouseover="this.style.background='#d97706'; this.style.color='#fff';"
+            onmouseout="this.style.background='transparent'; this.style.color='#d97706';">
+            🔄 <span>Yêu Cầu Thu Hồi / Trả Hàng</span>
           </button>
         </div>
       </div>

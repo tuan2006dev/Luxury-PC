@@ -1,7 +1,6 @@
 package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,12 +119,12 @@ public class VoucherService {
             double categoryTotal = 0;
             if (cartItems != null) {
                 for (CartItem item : cartItems) {
-                    Optional<Product> pOpt = productDAO.findById(item.getId());
-                    if (pOpt.isPresent()) {
-                        Product p = pOpt.get();
-                        if (p.getCategory() != null && p.getCategory().getId().equals(voucher.getCategory().getId())) {
-                            categoryTotal += (item.getPrice() * item.getQuantity());
-                        }
+                    Product p = null;
+                    if (item.getId() != null) {
+                        p = productDAO.findById(item.getId()).orElse(null);
+                    }
+                    if (p != null && p.getCategory() != null && p.getCategory().getId().equals(voucher.getCategory().getId())) {
+                        categoryTotal += (item.getPrice() * item.getQuantity());
                     }
                 }
             }

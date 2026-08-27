@@ -14,6 +14,7 @@ public class ReviewRequest {
     private Integer rating;
 
     private Integer productId;
+    private Integer orderItemId;
 
     public ReviewRequest() {}
 
@@ -39,5 +40,13 @@ public class ReviewRequest {
 
     public void setProductId(Integer productId) {
         this.productId = productId;
+    }
+
+    public Integer getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(Integer orderItemId) {
+        this.orderItemId = orderItemId;
     }
 }

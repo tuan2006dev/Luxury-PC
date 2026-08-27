@@ -18,6 +18,7 @@ function togglePasswordForm(force) {
 }
 
 window.togglePasswordForm = togglePasswordForm;
+window.validateChangePassword = validateChangePassword;
 window.open2FAModal = open2FAModal;
 window.close2FAModal = close2FAModal;
 window.verifyAndEnable2FA = verifyAndEnable2FA;
@@ -29,11 +30,164 @@ window.closeSessionsModal = closeSessionsModal;
 window.revokeSession = revokeSession;
 window.deleteAccount = deleteAccount;
 
+let isCurrentPwValid = true;
+
+function verifyCurrentPasswordApi(val, input) {
+  if (!val) return;
+  const group = input.closest('.form-group');
+  const errSpan = group ? group.querySelector('.error-message') : null;
+  const formData = new URLSearchParams();
+  formData.append('currentPassword', val);
+
+  fetch('/api/profile/check-current-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formData.toString()
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.valid === false) {
+        isCurrentPwValid = false;
+        input.classList.add('is-invalid');
+        if (errSpan) {
+          errSpan.innerText = 'Mật khẩu hiện tại không chính xác!';
+          errSpan.style.display = 'block';
+        }
+      } else {
+        isCurrentPwValid = true;
+        input.classList.remove('is-invalid');
+        if (errSpan) {
+          errSpan.style.display = 'none';
+          errSpan.innerText = '';
+        }
+      }
+    })
+    .catch(err => console.error(err));
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const pwPanel = document.getElementById('password-change-panel');
+  if (pwPanel) {
+    const currentPwInput = pwPanel.querySelector('input[name="currentPassword"]');
+    if (currentPwInput) {
+      let checkTimer;
+      currentPwInput.addEventListener('input', function () {
+        clearTimeout(checkTimer);
+        const val = this.value.trim();
+        if (!val) return;
+        checkTimer = setTimeout(() => {
+          verifyCurrentPasswordApi(val, currentPwInput);
+        }, 400);
+      });
+
+      currentPwInput.addEventListener('blur', function () {
+        const val = this.value.trim();
+        if (val) {
+          verifyCurrentPasswordApi(val, currentPwInput);
+        }
+      });
+    }
+
+    // Dynamic removal of error state when user types into any input field
+    pwPanel.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', function () {
+        if (this.value.trim() !== '') {
+          if (this.name !== 'currentPassword' || isCurrentPwValid) {
+            this.classList.remove('is-invalid');
+            const group = this.closest('.form-group');
+            if (group) {
+              const errSpan = group.querySelector('.error-message');
+              if (errSpan) {
+                errSpan.style.display = 'none';
+                errSpan.innerText = '';
+              }
+            }
+          }
+        }
+      });
+    });
+
+    // Form submit listener to block POST when invalid
+    pwPanel.addEventListener('submit', function (e) {
+      if (!validateChangePassword(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    });
+  }
+});
+
+function validateChangePassword(e) {
+  const form = document.getElementById('password-change-panel');
+  if (!form) return true;
+
+  let isValid = true;
+
+  // Reset previous error states
+  form.querySelectorAll('.form-input').forEach(input => input.classList.remove('is-invalid'));
+  form.querySelectorAll('.error-message').forEach(span => {
+    span.style.display = 'none';
+    span.innerText = '';
+  });
+
+  const currentPwInput = form.querySelector('input[name="currentPassword"]');
+  const newPwInput = form.querySelector('input[name="newPassword"]');
+  const confirmPwInput = form.querySelector('input[name="confirmPassword"]');
+
+  const showFieldError = (input, msg) => {
+    if (!input) return;
+    input.classList.add('is-invalid');
+    const group = input.closest('.form-group');
+    if (group) {
+      const errSpan = group.querySelector('.error-message');
+      if (errSpan) {
+        errSpan.innerText = msg;
+        errSpan.style.display = 'block';
+      }
+    }
+    isValid = false;
+  };
+
+  // 1. Mật khẩu hiện tại
+  if (!currentPwInput || !currentPwInput.value) {
+    showFieldError(currentPwInput, 'Vui lòng nhập mật khẩu hiện tại!');
+  } else if (!isCurrentPwValid) {
+    showFieldError(currentPwInput, 'Mật khẩu hiện tại không chính xác!');
+  }
+
+  // 2. Mật khẩu mới
+  if (!newPwInput || !newPwInput.value) {
+    showFieldError(newPwInput, 'Vui lòng nhập mật khẩu mới!');
+  } else if (newPwInput.value.length < 6) {
+    showFieldError(newPwInput, 'Mật khẩu mới phải có ít nhất 6 ký tự!');
+  } else if (currentPwInput && currentPwInput.value && newPwInput.value === currentPwInput.value) {
+    showFieldError(newPwInput, 'Mật khẩu mới không được trùng với mật khẩu hiện tại!');
+  }
+
+  // 3. Xác nhận mật khẩu mới
+  if (!confirmPwInput || !confirmPwInput.value) {
+    showFieldError(confirmPwInput, 'Vui lòng nhập lại mật khẩu mới!');
+  } else if (newPwInput && newPwInput.value && confirmPwInput.value !== newPwInput.value) {
+    showFieldError(confirmPwInput, 'Mật khẩu xác nhận không khớp với mật khẩu mới!');
+  }
+
+  if (!isValid) {
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    return false;
+  }
+
+  return true;
+}
+
 function open2FAModal() {
   toast('✓ Đang gửi mã OTP đến email của bạn...');
   const otpInput = document.getElementById('2fa-otp-input');
   if (otpInput) otpInput.value = '';
-  document.getElementById('2fa-modal-backdrop')?.classList.add('open');
+  document.getElementById('2fa-modal-backdrop')?.classList.add('active');
   setTimeout(() => document.getElementById('2fa-otp-input')?.focus(), 200);
 
   fetch('/api/profile/2fa/send-otp', {
@@ -55,7 +209,7 @@ function open2FAModal() {
 }
 
 function close2FAModal() {
-  document.getElementById('2fa-modal-backdrop')?.classList.remove('open');
+  document.getElementById('2fa-modal-backdrop')?.classList.remove('active');
 }
 
 function verifyAndEnable2FA() {
@@ -110,20 +264,20 @@ function disable2FA() {
 }
 
 function openEmailDetailsModal() {
-  document.getElementById('email-details-modal-backdrop')?.classList.add('open');
+  document.getElementById('email-details-modal-backdrop')?.classList.add('active');
 }
 
 function closeEmailDetailsModal() {
-  document.getElementById('email-details-modal-backdrop')?.classList.remove('open');
+  document.getElementById('email-details-modal-backdrop')?.classList.remove('active');
 }
 
 function openSessionsModal() {
-  document.getElementById('sessions-modal-backdrop')?.classList.add('open');
+  document.getElementById('sessions-modal-backdrop')?.classList.add('active');
   loadSessions();
 }
 
 function closeSessionsModal() {
-  document.getElementById('sessions-modal-backdrop')?.classList.remove('open');
+  document.getElementById('sessions-modal-backdrop')?.classList.remove('active');
 }
 
 function loadSessions() {

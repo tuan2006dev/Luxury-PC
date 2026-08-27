@@ -29,12 +29,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (deleteBtn) {
         deleteBtn.addEventListener('click', confirmClearAll);
     }
-    
+
     const addToCartBtn = document.querySelector('.btn-add-cart-large');
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', addBuildToCart);
     }
+
+    const addMoreBtn = document.querySelector('.btn-add-more');
+    if (addMoreBtn) {
+        addMoreBtn.addEventListener('click', addMoreComponents);
+    }
 });
+
+function addMoreComponents() {
+    const unselectedSlot = slots.find(s => !currentBuild[s.id]);
+    if (unselectedSlot) {
+        openModal(unselectedSlot.id);
+    } else {
+        openModal(slots[0].id);
+    }
+}
 
 function initTabs() {
     const tabs = document.querySelectorAll('.build-tab');
@@ -78,15 +92,17 @@ function renderComboGrid() {
         else if (combo.price < 40000000) tag = 'CỖ MÁY SÁNG TẠO';
         else if (combo.price < 60000000) tag = 'QUÁI VẬT HIỆU NĂNG';
         else tag = 'CHÚA TỂ ĐỒ HỌA';
-        
+
         grid.innerHTML += `
             <div class="combo-card">
                 <div class="combo-tag">${tag}</div>
                 <h3>${combo.name}</h3>
                 <div class="desc">${combo.description || 'Cấu hình tối ưu'}</div>
-                <div class="combo-price">${formatCurrency(combo.price)}</div>
-                <div class="combo-saving">Tiết kiệm ${formatCurrency(combo.saving)}</div>
-                <button class="btn-apply-combo" onclick="applyCombo(${combo.id})">CHỌN COMBO NÀY</button>
+                <div class="combo-footer">
+                    <div class="combo-price">${formatCurrency(combo.price)}</div>
+                    <div class="combo-saving">Tiết kiệm ${formatCurrency(combo.saving)}</div>
+                    <button class="btn-apply-combo" onclick="applyCombo(${combo.id})">CHỌN COMBO NÀY</button>
+                </div>
             </div>
         `;
     });
@@ -103,7 +119,7 @@ function applyCombo(comboId) {
     if (combo.details) {
         for (const [slotType, prodId] of Object.entries(combo.details)) {
             const catStr = slotType.toLowerCase();
-            const prods = productsData[catStr] || [];
+            const prods = getProductsForCategory(catStr);
             const prod = prods.find(p => p.id === prodId);
             if (prod) {
                 currentBuild[catStr] = prod;
@@ -123,7 +139,7 @@ function renderBuildComponents() {
     if (!list) return;
 
     list.innerHTML = '';
-    
+
     slots.forEach(slot => {
         const selectedProd = currentBuild[slot.id];
         let actionBtn = '';
@@ -131,7 +147,7 @@ function renderBuildComponents() {
         let prodDesc = '';
         let prodPrice = '0đ';
         let prodImg = slot.placeholderImg;
-        
+
         if (selectedProd) {
             prodName = selectedProd.name;
             prodDesc = selectedProd.description || 'Đã chọn linh kiện';
@@ -173,14 +189,41 @@ function removeComponent(catId) {
     delete currentBuild[catId];
     renderBuildComponents();
     calculateTotals();
+};
+
+function executeClearAll() {
+    currentBuild = {};
+    localStorage.removeItem('luxury_saved_build');
+
+    renderBuildComponents();
+    calculateTotals();
+
+    closeConfirmClear();
+    showToast('Đã xóa tất cả linh kiện!');
 }
 
 function clearAll() {
     if (confirm('Bạn có chắc chắn muốn xóa tất cả linh kiện đã chọn?')) {
         currentBuild = {};
+        localStorage.removeItem('luxury_saved_build');
         renderBuildComponents();
         calculateTotals();
+        showToast('Đã xóa tất cả linh kiện!');
     }
+}
+
+function getProductsForCategory(catId) {
+    if (typeof productsData === 'undefined' || !productsData) return [];
+    if (productsData[catId] && productsData[catId].length > 0) {
+        return productsData[catId];
+    }
+    if ((catId === 'storage' || catId === 'lưu trữ') && productsData['ssd']) {
+        return productsData['ssd'];
+    }
+    if (catId === 'ssd' && productsData['storage']) {
+        return productsData['storage'];
+    }
+    return productsData[catId] || [];
 }
 
 function openModal(catId) {
@@ -188,13 +231,13 @@ function openModal(catId) {
     const slot = slots.find(s => s.id === catId);
     document.getElementById('modalTitle').innerText = 'Chọn ' + (slot ? slot.name : 'Linh kiện');
     document.getElementById('modalSearch').value = '';
-    
-    renderModalProducts(productsData[catId] || []);
-    document.getElementById('productModal').style.display = 'flex';
+
+    renderModalProducts(getProductsForCategory(catId));
+    document.getElementById('productModal').classList.add('active');
 }
 
 function closeModal() {
-    document.getElementById('productModal').style.display = 'none';
+    document.getElementById('productModal').classList.remove('active');
 }
 
 function renderModalProducts(prods) {
@@ -226,7 +269,7 @@ function renderModalProducts(prods) {
 
 function filterModalProducts() {
     const query = document.getElementById('modalSearch').value.toLowerCase();
-    let prods = productsData[currentModalCategory] || [];
+    let prods = getProductsForCategory(currentModalCategory);
     if (query) {
         prods = prods.filter(p => p.name.toLowerCase().includes(query));
     }
@@ -234,7 +277,7 @@ function filterModalProducts() {
 }
 
 function selectProduct(id) {
-    const prod = (productsData[currentModalCategory] || []).find(p => p.id === id);
+    const prod = getProductsForCategory(currentModalCategory).find(p => p.id === id);
     if (prod) {
         currentBuild[currentModalCategory] = prod;
         renderBuildComponents();
@@ -271,11 +314,11 @@ function calculateTotals() {
     const btnBuy = document.querySelector('.btn-buy-now');
 
     if (count > 0) {
-        if(btnCart) { btnCart.disabled = false; btnCart.style.opacity = '1'; btnCart.style.cursor = 'pointer'; }
-        if(btnBuy) { btnBuy.disabled = false; btnBuy.style.opacity = '1'; btnBuy.style.cursor = 'pointer'; }
+        if (btnCart) { btnCart.disabled = false; btnCart.style.opacity = '1'; btnCart.style.cursor = 'pointer'; }
+        if (btnBuy) { btnBuy.disabled = false; btnBuy.style.opacity = '1'; btnBuy.style.cursor = 'pointer'; }
     } else {
-        if(btnCart) { btnCart.disabled = true; btnCart.style.opacity = '0.5'; btnCart.style.cursor = 'not-allowed'; }
-        if(btnBuy) { btnBuy.disabled = true; btnBuy.style.opacity = '0.5'; btnBuy.style.cursor = 'not-allowed'; }
+        if (btnCart) { btnCart.disabled = true; btnCart.style.opacity = '0.5'; btnCart.style.cursor = 'not-allowed'; }
+        if (btnBuy) { btnBuy.disabled = true; btnBuy.style.opacity = '0.5'; btnBuy.style.cursor = 'not-allowed'; }
     }
 
     checkCompatibility();
@@ -289,25 +332,25 @@ function checkCompatibility() {
     const vga = currentBuild['vga'];
     const psu = currentBuild['psu'];
     const pcCase = currentBuild['case'];
-    
+
     let issues = [];
-    
+
     if (cpu && main) {
         const cpuName = cpu.name.toLowerCase();
         const mainName = main.name.toLowerCase();
         const isIntelCPU = cpuName.includes('intel') || cpuName.includes('i3') || cpuName.includes('i5') || cpuName.includes('i7') || cpuName.includes('i9');
         const isAMDCPU = cpuName.includes('amd') || cpuName.includes('ryzen');
-        
+
         const isIntelMain = mainName.includes('h610') || mainName.includes('b760') || mainName.includes('z790');
         const isAMDMain = mainName.includes('b450') || mainName.includes('b650') || mainName.includes('x670');
-        
+
         if (isIntelCPU && isAMDMain) issues.push("CPU Intel không cắm được trên Mainboard AMD.");
         if (isAMDCPU && isIntelMain) issues.push("CPU AMD không cắm được trên Mainboard Intel.");
     }
 
     const alertBox = document.querySelector('.compat-status');
     const compatList = document.querySelector('.compat-list');
-    
+
     if (alertBox) {
         if (issues.length > 0) {
             alertBox.innerHTML = `
@@ -353,7 +396,7 @@ function updatePerformanceScore() {
     categories.forEach(cat => {
         if (currentBuild[cat]) count++;
     });
-    
+
     let avgScore = (count / 8) * 10;
     let scoreStr = avgScore % 1 === 0 ? avgScore.toString() : avgScore.toFixed(1);
 
@@ -380,7 +423,7 @@ function updatePerformanceScore() {
 
     document.getElementById('bar-gaming').style.width = (avgScore * 10) + '%';
     document.getElementById('val-gaming').innerText = scoreStr + '/10';
-    
+
     document.getElementById('bar-graphic').style.width = (avgScore * 10) + '%';
     document.getElementById('val-graphic').innerText = scoreStr + '/10';
 
@@ -444,11 +487,11 @@ let steamSearchTimeout = null;
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('steam-search-input');
     if (searchInput) {
-        searchInput.addEventListener('input', function(e) {
+        searchInput.addEventListener('input', function (e) {
             clearTimeout(steamSearchTimeout);
             const query = e.target.value.trim();
             const resultsBox = document.getElementById('steam-search-dropdown');
-            
+
             if (query.length < 2) {
                 resultsBox.style.display = 'none';
                 return;
@@ -466,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             resultsBox.innerHTML = '<div style="padding: 10px; color: #666; text-align: center;">Không tìm thấy game</div>';
                             return;
                         }
-                        
+
                         data.items.slice(0, 5).forEach(item => {
                             const div = document.createElement('div');
                             div.style.padding = '10px';
@@ -475,10 +518,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             div.style.gap = '10px';
                             div.style.cursor = 'pointer';
                             div.style.borderBottom = '1px solid #eee';
-                            
+
                             div.onmouseover = () => div.style.backgroundColor = '#f9f9f9';
                             div.onmouseout = () => div.style.backgroundColor = 'transparent';
-                            
+
                             div.onclick = () => {
                                 searchInput.value = '';
                                 resultsBox.style.display = 'none';
@@ -497,23 +540,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
             }, 500);
         });
-        
+
         // Hide dropdown when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.id !== 'steam-search-input' && e.target.id !== 'steam-search-dropdown') {
                 const resultsBox = document.getElementById('steam-search-dropdown');
                 if (resultsBox) resultsBox.style.display = 'none';
             }
         });
     }
-    
+
     // Render default top games
     renderFpsGames();
 });
 
 function addSteamGame(item) {
     if (selectedGames.find(g => g.id === item.id)) return; // Already added
-    
+
     // Create loading placeholder
     const list = document.getElementById('dynamic-fps-list');
     const loadingId = 'game-loading-' + item.id;
@@ -536,7 +579,7 @@ function addSteamGame(item) {
                 item.header_image = appData.header_image;
                 item.req_min = appData.pc_requirements ? appData.pc_requirements.minimum : '';
                 item.req_rec = appData.pc_requirements ? appData.pc_requirements.recommended : '';
-                
+
                 selectedGames.push(item);
                 document.getElementById(loadingId).remove();
                 renderFpsGames();
@@ -555,16 +598,16 @@ function renderFpsGames() {
     const list = document.getElementById('dynamic-fps-list');
     if (!list) return;
     list.innerHTML = '';
-    
+
     if (selectedGames.length === 0) {
         list.innerHTML = '<div style="padding:20px; text-align:center; color:#666; background:#f9f9f9; border-radius:8px;">Hãy dùng thanh tìm kiếm để thêm Game.</div>';
         return;
     }
-    
+
     selectedGames.forEach((game, index) => {
         let estFps = calculateEstFps(game);
         let color = '#000';
-        if(estFps === '?') { estFps = 'Thiếu linh kiện'; color = '#666'; }
+        if (estFps === '?') { estFps = 'Thiếu linh kiện'; color = '#666'; }
         else if (estFps < 60) { estFps = 'Dự kiến ~' + estFps + ' FPS'; color = '#ef4444'; }
         else if (estFps < 120) { estFps = 'Dự kiến ~' + estFps + ' FPS'; color = '#eab308'; }
         else { estFps = 'Dự kiến ' + estFps + '+ FPS'; color = '#10b981'; }
@@ -601,7 +644,7 @@ function recalcAllFps() {
 function calculateEstFps(game) {
     const cpu = currentBuild['cpu'];
     const vga = currentBuild['vga'];
-    
+
     if (!cpu || !vga) return '?';
 
     let pcCpuTier = 2;
@@ -620,21 +663,21 @@ function calculateEstFps(game) {
 
     let reqMinStr = game.req_min ? game.req_min.toLowerCase() : '';
     let reqRecStr = game.req_rec ? game.req_rec.toLowerCase() : '';
-    
+
     function parseTier(text) {
         if (!text) return { cpu: 1, vga: 1 };
-        let gCpu = 3; 
+        let gCpu = 3;
         let gVga = 2;
 
         if (text.includes('i9') || text.includes('ryzen 9')) gCpu = 8;
         else if (text.includes('i7') || text.includes('ryzen 7')) gCpu = 6;
         else if (text.includes('i5') || text.includes('ryzen 5')) gCpu = 4;
-        
+
         if (text.includes('4090') || text.includes('4080') || text.includes('7900')) gVga = 9;
         else if (text.includes('4070') || text.includes('3080') || text.includes('6800')) gVga = 7;
         else if (text.includes('4060') || text.includes('3060') || text.includes('2070')) gVga = 5;
         else if (text.includes('1070') || text.includes('1660') || text.includes('1060') || text.includes('rx 580')) gVga = 3;
-        
+
         return { cpu: gCpu, vga: gVga };
     }
 
@@ -643,19 +686,19 @@ function calculateEstFps(game) {
 
     const targetVga = (recReq.vga > 1) ? recReq.vga : (minReq.vga > 1 ? minReq.vga + 2 : 3);
     const targetCpu = (recReq.cpu > 1) ? recReq.cpu : (minReq.cpu > 1 ? minReq.cpu + 2 : 4);
-    
-    let vgaRatio = pcVgaTier / targetVga; 
+
+    let vgaRatio = pcVgaTier / targetVga;
     let cpuRatio = pcCpuTier / targetCpu;
-    
+
     let performanceScore = (vgaRatio * 0.7) + (cpuRatio * 0.3);
-    
+
     let estFps = performanceScore * 60;
-    
+
     if (estFps > 144) {
         estFps = 144 + ((performanceScore - 2.4) * 50);
     }
-    if (estFps > 350) estFps = 350; 
-    
+    if (estFps > 350) estFps = 350;
+
     return Math.round(estFps);
 }
 
@@ -678,9 +721,9 @@ function showToast(msg) {
         toastContainer.style.gap = '10px';
         document.body.appendChild(toastContainer);
     }
-    
+
     const toast = document.createElement('div');
-    toast.style.background = '#ffffff'; 
+    toast.style.background = '#ffffff';
     toast.style.color = '#333';
     toast.style.padding = '14px 24px';
     toast.style.borderRadius = '8px';
@@ -694,17 +737,17 @@ function showToast(msg) {
     toast.style.alignItems = 'center';
     toast.style.gap = '12px';
     toast.style.borderLeft = '5px solid #0056b3';
-    
+
     toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981; font-size: 18px;"></i> <span>${msg}</span>`;
-    
+
     toastContainer.appendChild(toast);
-    
+
     // Trigger animation
     setTimeout(() => {
         toast.style.transform = 'translateX(0)';
         toast.style.opacity = '1';
     }, 10);
-    
+
     // Remove after 3.5s
     setTimeout(() => {
         toast.style.transform = 'translateX(120%)';
@@ -728,18 +771,18 @@ function addBuildToCart() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(items)
     })
-    .then(res => {
-        if (res.ok) {
-            window.location.href = '/cart';
-        } else if (res.status === 401) {
-            window.location.href = '/auth/login';
-        } else {
-            showToast('Lỗi khi thêm vào giỏ hàng');
-        }
-    })
-    .catch(err => {
-        showToast('Lỗi kết nối');
-    });
+        .then(res => {
+            if (res.ok) {
+                window.location.href = '/cart';
+            } else if (res.status === 401) {
+                window.location.href = '/auth/login';
+            } else {
+                showToast('Lỗi khi thêm vào giỏ hàng');
+            }
+        })
+        .catch(err => {
+            showToast('Lỗi kết nối');
+        });
 }
 
 // ==========================================
@@ -797,14 +840,14 @@ async function saveBuild() {
             buildData[key] = currentBuild[key].id;
         }
     });
-    
+
     if (Object.keys(buildData).length === 0) {
         showToast('Lỗi: Cấu hình của bạn đang trống!');
         return;
     }
 
     let savedBuilds = JSON.parse(localStorage.getItem('luxury_saved_builds') || '[]');
-    
+
     const { value: buildName } = await Swal.fire({
         title: 'Nhập tên cấu hình',
         input: 'text',
@@ -860,7 +903,7 @@ async function saveBuild() {
 
 async function manualLoadBuild() {
     let savedBuilds = JSON.parse(localStorage.getItem('luxury_saved_builds') || '[]');
-    
+
     if (savedBuilds.length === 0) {
         // Fallback for old single save format migration
         const oldSave = localStorage.getItem('luxury_saved_build');
@@ -904,7 +947,7 @@ async function manualLoadBuild() {
     });
 }
 
-window.loadSelectedBuild = function(index) {
+window.loadSelectedBuild = function (index) {
     let savedBuilds = JSON.parse(localStorage.getItem('luxury_saved_builds') || '[]');
     if (savedBuilds[index]) {
         loadBuildFromIds(savedBuilds[index].data);
@@ -912,7 +955,7 @@ window.loadSelectedBuild = function(index) {
     }
 };
 
-window.deleteSelectedBuild = function(index) {
+window.deleteSelectedBuild = function (index) {
     let savedBuilds = JSON.parse(localStorage.getItem('luxury_saved_builds') || '[]');
     if (savedBuilds[index]) {
         Swal.fire({
@@ -933,80 +976,10 @@ window.deleteSelectedBuild = function(index) {
     }
 };
 
-function confirmClearAll() {
-    document.getElementById('confirmClearModal').style.display = 'flex';
-}
-
-function closeConfirmClear() {
-    document.getElementById('confirmClearModal').style.display = 'none';
-}
-
-function executeClearAll() {
-    currentBuild = {};
-    localStorage.removeItem('luxury_saved_build');
-    
-    renderBuildComponents();
-    calculateTotals();
-    
-    // Reset specific UI elements if needed
-    const grid = document.getElementById('build-components-list');
-    if (grid) grid.innerHTML = '';
-    
-    closeConfirmClear();
-    showToast('Đã xóa tất cả linh kiện!');
-}
-
-function showBuildGuide() {
-    document.getElementById('guideModal').style.display = 'flex';
-}
-
-function closeBuildGuide() {
-    document.getElementById('guideModal').style.display = 'none';
-}
-
-function closeShareModal() {
-    document.getElementById('shareModal').style.display = 'none';
-}
-
-function copyShareUrl() {
-    const copyText = document.getElementById("shareUrlInput");
-    copyText.select();
-    document.execCommand("copy");
-    showToast('Đã copy link vào Clipboard!');
-}
-
-function openShareUrl() {
-    const url = document.getElementById("shareUrlInput").value;
-    if (url) window.open(url, '_blank');
-}
-
-function downloadQR() {
-    const qrImg = document.querySelector('#qrCodeContainer img');
-    const qrCanvas = document.querySelector('#qrCodeContainer canvas');
-    if (!qrImg && !qrCanvas) {
-        showToast('Không tìm thấy mã QR!');
-        return;
-    }
-    
-    let url;
-    if (qrCanvas) {
-        url = qrCanvas.toDataURL("image/png");
-    } else if (qrImg) {
-        url = qrImg.src;
-    }
-    
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "build-pc-qr.png";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
 async function shareBuild() {
     let hasItems = false;
     const payload = { totalPrice: 0 };
-    
+
     const mapping = {
         'cpu': 'cpuId',
         'mainboard': 'mainboardId',
@@ -1017,7 +990,7 @@ async function shareBuild() {
         'case': 'caseId',
         'cooling': 'coolerId'
     };
-    
+
     Object.keys(currentBuild).forEach(key => {
         if (currentBuild[key]) {
             hasItems = true;
@@ -1025,14 +998,14 @@ async function shareBuild() {
             payload.totalPrice += currentBuild[key].price;
         }
     });
-    
+
     if (!hasItems) {
         showToast('Lỗi: Cấu hình của bạn đang trống!');
         return;
     }
-    
+
     Swal.fire({ title: 'Đang tạo link...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-    
+
     try {
         const res = await fetch('/api/build/share', {
             method: 'POST',
@@ -1044,7 +1017,7 @@ async function shareBuild() {
             Swal.close();
             const shareUrl = window.location.origin + '/build-pc?share=' + data.shareCode;
             document.getElementById('shareUrlInput').value = shareUrl;
-            
+
             // Generate QR
             const qrContainer = document.getElementById('qrCodeContainer');
             qrContainer.innerHTML = '';
@@ -1052,12 +1025,12 @@ async function shareBuild() {
                 text: shareUrl,
                 width: 150,
                 height: 150,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
             });
-            
-            document.getElementById('shareModal').style.display = 'flex';
+
+            document.getElementById('shareModal').classList.add('active');
         } else {
             Swal.fire('Lỗi', 'Không thể tạo link chia sẻ.', 'error');
         }
@@ -1070,10 +1043,10 @@ async function shareBuild() {
 // Function to load build from IDs (used for both LocalStorage and Shared link)
 async function loadBuildFromIds(idsMap) {
     Swal.fire({ title: 'Đang tải cấu hình...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-    
+
     try {
         let loadedCount = 0;
-        
+
         currentBuild = {
             cpu: null,
             mainboard: null,
@@ -1084,7 +1057,7 @@ async function loadBuildFromIds(idsMap) {
             case: null,
             cooling: null
         };
-        
+
         Object.keys(idsMap).forEach(category => {
             const id = parseInt(idsMap[category]);
             if (id && productsData[category]) {
@@ -1097,18 +1070,18 @@ async function loadBuildFromIds(idsMap) {
                 }
             }
         });
-        
+
         // Cập nhật lại giao diện
         renderBuildComponents();
         calculateTotals();
         renderFpsGames();
-        
+
         if (loadedCount > 0) {
             Swal.close();
             setTimeout(() => {
                 Swal.fire({
-                    title: 'Thành công!', 
-                    text: 'Cấu hình đã được tải hoàn tất.', 
+                    title: 'Thành công!',
+                    text: 'Cấu hình đã được tải hoàn tất.',
                     icon: 'success',
                     showConfirmButton: true,
                     confirmButtonText: 'OK'
@@ -1118,15 +1091,15 @@ async function loadBuildFromIds(idsMap) {
             Swal.close();
             setTimeout(() => {
                 Swal.fire({
-                    title: 'Thông báo', 
-                    text: 'Không tìm thấy linh kiện nào trong cấu hình này.', 
+                    title: 'Thông báo',
+                    text: 'Không tìm thấy linh kiện nào trong cấu hình này.',
                     icon: 'info',
                     showConfirmButton: true,
                     confirmButtonText: 'OK'
                 });
             }, 300);
         }
-    } catch(e) {
+    } catch (e) {
         console.error(e);
         Swal.fire('Lỗi', 'Có lỗi khi tải cấu hình.', 'error');
     }
@@ -1141,7 +1114,7 @@ async function loadSharedBuild(shareCode) {
             return;
         }
         const build = await res.json();
-        
+
         const idsMap = {
             'cpu': build.cpuId,
             'mainboard': build.mainboardId,
@@ -1152,13 +1125,13 @@ async function loadSharedBuild(shareCode) {
             'case': build.caseId,
             'cooling': build.coolerId
         };
-        
+
         // Remove history so URL is clean
         window.history.replaceState({}, document.title, "/build-pc");
-        
+
         loadBuildFromIds(idsMap);
-        
-    } catch(e) {
+
+    } catch (e) {
         Swal.fire('Lỗi', 'Không thể kết nối để lấy dữ liệu.', 'error');
     }
 }
@@ -1174,3 +1147,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 1000);
 });
+
+// Consultation Support Handler - Opens Socket Chatbox according to permissions & predefined structure
+function openConsultationSupport() {
+    let initialMsg = '';
+    if (typeof currentBuild !== 'undefined' && currentBuild && Object.keys(currentBuild).length > 0) {
+        const compList = [];
+        for (const [slotId, prod] of Object.entries(currentBuild)) {
+            if (prod && prod.name) {
+                compList.push(`${slotId.toUpperCase()}: ${prod.name}`);
+            }
+        }
+        if (compList.length > 0) {
+            initialMsg = 'Tôi cần hỗ trợ tư vấn cấu hình PC đang chọn: ' + compList.join(', ');
+        }
+    }
+
+    if (typeof window.openSocketChatWindow === 'function') {
+        window.openSocketChatWindow(initialMsg);
+    } else {
+        const socketChatBtn = document.getElementById('socketChatBtn');
+        if (socketChatBtn) {
+            socketChatBtn.click();
+            if (initialMsg) {
+                const msgInput = document.getElementById('socketChatMsgInput');
+                if (msgInput) msgInput.value = initialMsg;
+            }
+        } else {
+            if (typeof showToast === 'function') {
+                showToast('Tài khoản Quản trị/Nhân viên quản lý tư vấn tại trang Quản Lý Tickets Admin.');
+            } else {
+                alert('Tài khoản Quản trị/Nhân viên quản lý tư vấn tại trang Quản Lý Tickets Admin.');
+            }
+        }
+    }
+}

@@ -20,6 +20,11 @@ public interface OrderItemDAO extends JpaRepository<OrderItem, Integer> {
                      @Param("userId") Integer userId,
                      @Param("productId") Integer productId);
 
+       @Query("SELECT oi FROM OrderItem oi WHERE oi.order.user.id = :userId AND oi.product.id = :productId AND oi.order.status IN ('COMPLETED', 'HOAN_THANH') ORDER BY oi.id DESC")
+       List<OrderItem> findCompletedOrderItemsByUserAndProduct(
+                     @Param("userId") Integer userId,
+                     @Param("productId") Integer productId);
+
        /**
         * Đếm tổng số sản phẩm flash-sale mà user đã mua trong một đợt flash sale (mọi
         * trạng thái đơn trừ CANCELLED)
@@ -31,6 +36,12 @@ public interface OrderItemDAO extends JpaRepository<OrderItem, Integer> {
                      "AND oi.order.status NOT IN ('CANCELLED', 'HUY')")
        long countFlashSalePurchasesByUser(@Param("userId") Integer userId,
                      @Param("flashSaleId") Integer flashSaleId);
+
+       @Query("SELECT oi FROM OrderItem oi LEFT JOIN FETCH oi.product p WHERE oi.order.id = :orderId")
+       List<OrderItem> findByOrderIdWithProduct(@Param("orderId") Integer orderId);
+
+       @Query("SELECT oi FROM OrderItem oi WHERE oi.order.id = :orderId")
+       List<OrderItem> findByOrderId(@Param("orderId") Integer orderId);
 
        @Modifying
        @Query("DELETE FROM OrderItem oi WHERE oi.order.orderCode LIKE 'DEMO-%'")

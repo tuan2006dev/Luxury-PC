@@ -80,7 +80,7 @@ class UserTest {
         user.setStatus(status);
         user.setUserRoles(userRoles);
         user.setAuthProvider(authProvider);
-        user.setProviderId(providerId);
+        user.setGoogleId(providerId);
         user.setNotifyOrderUpdates(notifyOrderUpdates);
         user.setNotifyFlashSale(notifyFlashSale);
         user.setNotifyNewProducts(notifyNewProducts);
@@ -101,7 +101,7 @@ class UserTest {
         assertEquals(status, user.getStatus());
         assertSame(userRoles, user.getUserRoles());
         assertEquals(authProvider, user.getAuthProvider());
-        assertEquals(providerId, user.getProviderId());
+        assertEquals(providerId, user.getGoogleId());
         assertEquals(notifyOrderUpdates, user.getNotifyOrderUpdates());
         assertEquals(notifyFlashSale, user.getNotifyFlashSale());
         assertEquals(notifyNewProducts, user.getNotifyNewProducts());

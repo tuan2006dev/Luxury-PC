@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import poly.edu.dto.NewsSummaryDto;
 
 @Controller
 @RequestMapping("/admin/news")
@@ -55,7 +56,7 @@ public class AdminNewsController {
             @RequestParam(name = "page", defaultValue = "0") int page) {
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<poly.edu.dto.NewsSummaryDto> newsPage;
+        Page<NewsSummaryDto> newsPage;
         if (keyword.isEmpty()) {
             newsPage = newsRepository.findAllSummary(pageable);
         } else {

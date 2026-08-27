@@ -135,6 +135,7 @@ window.showToast = function (msg, type = 'success') {
     }
 
     clearTimeout(toastTimeout);
+    el.style.display = '';
     el.classList.remove('show', 'active', 'warning');
     void el.offsetWidth;
 
@@ -299,4 +300,90 @@ window.buyNow = function (productId) {
     document.body.appendChild(form);
     form.submit();
 };
+
+// Global Smart Reload Prevention for Active Tabs and Current Links
+document.addEventListener('click', function (e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    // Ignore javascript:void(0) or anchors with href="#"
+    const href = link.getAttribute('href');
+    if (!href || href === '#' || href.startsWith('javascript:')) return;
+
+    const isSelfActive = link.classList.contains('active') || link.classList.contains('is-active');
+    const isNavParentActive = link.parentElement && (link.parentElement.tagName === 'LI' || link.parentElement.classList.contains('nav-item')) && link.parentElement.classList.contains('active');
+    const isCurrentUrl = link.href && (link.href === window.location.href || link.href === window.location.href + '#');
+
+    if (isCurrentUrl || (isSelfActive && isNavParentActive)) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+}, true);
+
+/* ======================================================
+   REALTIME ACCOUNT LOCK DETECTION & AUTO-LOGOUT POPUP
+   ====================================================== */
+(function () {
+    let isLockedPopupShowing = false;
+
+    function handleAccountLocked() {
+        if (isLockedPopupShowing) return;
+        isLockedPopupShowing = true;
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Tài Khoản Đã Bị Khóa 🔒',
+                text: 'Tài khoản của bạn đã bị Quản trị viên khóa. Hệ thống sẽ tự động đăng xuất!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                confirmButtonText: 'Đã hiểu',
+                confirmButtonColor: '#ef4444'
+            }).then(() => {
+                window.location.href = '/auth/login?error=account_locked';
+            });
+        } else {
+            alert('Tài khoản của bạn đã bị KHÓA bởi Quản trị viên. Hệ thống sẽ tự động đăng xuất!');
+            window.location.href = '/auth/login?error=account_locked';
+        }
+    }
+
+    function checkAccountStatus() {
+        if (isLockedPopupShowing) return;
+        fetch('/api/auth/check-status', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (response.status === 401) {
+                return response.json().then(data => {
+                    if (data && data.locked) {
+                        handleAccountLocked();
+                    }
+                }).catch(() => {});
+            }
+        })
+        .catch(() => {});
+    }
+
+    // Check status periodically every 5 seconds
+    setInterval(checkAccountStatus, 5000);
+
+    // Also check when tab regains focus
+    window.addEventListener('focus', checkAccountStatus);
+})();
+
+// Global fallback for toggleForm
+if (typeof window.toggleForm === 'undefined') {
+    window.toggleForm = function () {
+        const form = document.querySelector('.add-form-container, .form-container, #productForm, #employeeForm, #categoryForm, #accountForm');
+        if (form) {
+            form.classList.toggle('active');
+        }
+    };
+}
+
 

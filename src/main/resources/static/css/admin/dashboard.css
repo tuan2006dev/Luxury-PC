@@ -61,8 +61,8 @@ body {
 .stats-grid {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 0.85rem !important;
-	margin-bottom: 0.85rem !important;
+	gap: 0.5rem !important;
+	margin-bottom: 0.5rem !important;
 	flex-shrink: 0 !important;
 }
 
@@ -104,8 +104,13 @@ body {
 	right: 12px !important;
 	top: 12px !important;
 	font-size: 1.4rem !important;
-	color: #e2e8f0;
+	color: #64748b;
 }
+
+.stat-icon.icon-revenue { color: #16a34a !important; }
+.stat-icon.icon-orders { color: #2563eb !important; }
+.stat-icon.icon-warning { color: #dc2626 !important; }
+.stat-icon.icon-customers { color: #9333ea !important; }
 
 /* Tabs Header */
 .dashboard-tabs {

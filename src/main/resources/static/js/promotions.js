@@ -1,27 +1,21 @@
 /* Promotions Page JavaScript */
 
-// Toast notification helper
-function toast(msg) {
-    const el = document.getElementById('toast');
-    if (!el) return;
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => {
-        el.style.display = 'none';
-    }, 5000);
-}
-window.toast = toast;
-
 // Rules Modal controls
 function openRulesModal() {
     const modal = document.getElementById('rules-modal');
-    if (modal) modal.style.display = 'flex';
+    if (modal) {
+        modal.classList.add('active');
+        modal.style.display = 'flex';
+    }
 }
 window.openRulesModal = openRulesModal;
 
 function closeRulesModal() {
     const modal = document.getElementById('rules-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+    }
 }
 window.closeRulesModal = closeRulesModal;
 
@@ -56,26 +50,26 @@ function saveVoucher(btn, code) {
         },
         body: 'code=' + encodeURIComponent(code)
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            btn.innerHTML = 'Đã lưu';
-            btn.style.background = '#10b981';
-            toast('Đã lưu mã giảm giá thành công!');
-        } else {
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                btn.innerHTML = 'Đã lưu';
+                btn.style.background = '#10b981';
+                showToast('Đã lưu mã giảm giá thành công!');
+            } else {
+                btn.innerHTML = 'Lưu mã';
+                btn.disabled = false;
+                showToast(data.message || 'Lỗi khi lưu mã');
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            }
+        })
+        .catch(err => {
             btn.innerHTML = 'Lưu mã';
             btn.disabled = false;
-            toast(data.message || 'Lỗi khi lưu mã');
-            if (data.redirect) {
-                window.location.href = data.redirect;
-            }
-        }
-    })
-    .catch(err => {
-        btn.innerHTML = 'Lưu mã';
-        btn.disabled = false;
-        toast('Lỗi kết nối. Vui lòng thử lại sau.');
-    });
+            showToast('Lỗi kết nối. Vui lòng thử lại sau.');
+        });
 }
 window.saveVoucher = saveVoucher;
 
@@ -322,10 +316,68 @@ function initCategoryFilter() {
     });
 }
 
-// Voucher Tabs Filtering and Counts
+// Voucher Tabs Filtering, Limiting (max 6) and Counts
+let vouchersExpanded = false;
+
+function toggleVouchers() {
+    vouchersExpanded = !vouchersExpanded;
+    if (typeof updateVoucherVisibility === 'function') {
+        updateVoucherVisibility();
+    }
+}
+window.toggleVouchers = toggleVouchers;
+
 function initVoucherTabs() {
     const tabs = document.querySelectorAll('.voucher-tab');
     const voucherCards = document.querySelectorAll('.voucher-card');
+    const toggleBtn = document.getElementById('btnToggleVouchers');
+
+    function updateVoucherVisibility() {
+        let activeTab = document.querySelector('.voucher-tab.active');
+        let tabText = activeTab ? activeTab.innerText.trim().toUpperCase() : 'TẤT CẢ';
+
+        let matchingCards = [];
+        voucherCards.forEach(function (card) {
+            const cardType = card.getAttribute('data-type') || 'GENERAL';
+            let isMatch = false;
+
+            if (tabText.includes('TẤT CẢ')) {
+                isMatch = true;
+            } else if (tabText.includes('MÃ GIẢM GIÁ')) {
+                isMatch = (cardType === 'GENERAL');
+            } else if (tabText.includes('DANH MỤC')) {
+                isMatch = (cardType === 'CATEGORY');
+            }
+
+            if (isMatch) {
+                matchingCards.push(card);
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        matchingCards.forEach(function (card, index) {
+            if (!vouchersExpanded && index >= 6) {
+                card.style.display = 'none';
+            } else {
+                card.style.display = 'flex';
+            }
+        });
+
+        if (toggleBtn) {
+            if (matchingCards.length <= 6) {
+                toggleBtn.style.display = 'none';
+            } else {
+                toggleBtn.style.display = 'inline-block';
+                if (vouchersExpanded) {
+                    toggleBtn.innerHTML = 'Thu gọn <i class="fa-solid fa-arrow-up"></i>';
+                } else {
+                    toggleBtn.innerHTML = 'Xem tất cả Khuyến mãi (' + matchingCards.length + ') <i class="fa-solid fa-arrow-down"></i>';
+                }
+            }
+        }
+    }
+    window.updateVoucherVisibility = updateVoucherVisibility;
 
     tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
@@ -339,26 +391,7 @@ function initVoucherTabs() {
             this.style.background = '#eff6ff';
             this.style.color = '#2563eb';
 
-            const tabText = this.innerText.trim().toUpperCase();
-
-            voucherCards.forEach(function (card) {
-                const cardType = card.getAttribute('data-type') || 'GENERAL';
-                if (tabText.includes('TẤT CẢ')) {
-                    card.style.display = 'flex';
-                } else if (tabText.includes('MÃ GIẢM GIÁ')) {
-                    if (cardType === 'GENERAL') {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                } else if (tabText.includes('DANH MỤC')) {
-                    if (cardType === 'CATEGORY') {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                }
-            });
+            updateVoucherVisibility();
         });
     });
 
@@ -373,6 +406,8 @@ function initVoucherTabs() {
     if (tabs[0]) tabs[0].innerText = 'Tất cả (' + voucherCards.length + ')';
     if (tabs[1]) tabs[1].innerText = 'Mã giảm giá (' + generalCount + ')';
     if (tabs[2]) tabs[2].innerText = 'Ưu đãi theo danh mục (' + categoryCount + ')';
+
+    updateVoucherVisibility();
 }
 
 // Initialize on DOM Ready

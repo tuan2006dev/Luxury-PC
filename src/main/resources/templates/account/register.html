@@ -36,17 +36,17 @@
                     novalidate>
                     <div class="form-row">
                         <div
-                            th:replace="~{custominput/components :: textInput(label='Họ *', name='firstName', type='text', placeholder='Nguyễn', required=true, id=null, value=null)}">
+                            th:replace="~{custominput/components :: textInput(label='Họ *', name='firstName', type='text', placeholder='Nguyễn', required=true, id=null, value=${firstName})}">
                         </div>
                         <div
-                            th:replace="~{custominput/components :: textInput(label='Tên *', name='lastName', type='text', placeholder='Văn A', required=true, id=null, value=null)}">
+                            th:replace="~{custominput/components :: textInput(label='Tên *', name='lastName', type='text', placeholder='Văn A', required=true, id=null, value=${lastName})}">
                         </div>
                     </div>
                     <div
-                        th:replace="~{custominput/components :: textInput(label='Email *', name='email', type='email', placeholder='you@email.com', required=true, id=null, value=null)}">
+                        th:replace="~{custominput/components :: textInput(label='Email *', name='email', type='email', placeholder='you@email.com', required=true, id=null, value=${email})}">
                     </div>
                     <div
-                        th:replace="~{custominput/components :: textInput(label='Số điện thoại *', name='phone', type='text', placeholder='0901xxxxxx', required=true, id=null, value=null)}">
+                        th:replace="~{custominput/components :: textInput(label='Số điện thoại *', name='phone', type='text', placeholder='0901xxxxxx', required=true, id=null, value=${phone})}">
                     </div>
                     <div
                         th:replace="~{custominput/components :: textInput(label='Mật khẩu *', name='password', type='password', placeholder='••••••••', required=true, id='reg-pw', value=null)}">
@@ -59,9 +59,9 @@
                     </div>
 
                     <label class="checkbox-label terms" style="margin-top: 15px; margin-bottom: 20px;">
-                        <input type="checkbox" required> Tôi đồng ý với <a href="/products"
-                            style="color: #666; text-decoration: underline;">Điều khoản dịch vụ</a> và <a
-                            href="/products" style="color: #666; text-decoration: underline;">Chính sách bảo mật</a>
+                        <input type="checkbox" required> Tôi đồng ý với <a href="#"
+                            style="color: #666; text-decoration: underline;">Điều khoản dịch vụ</a> và <a href="#"
+                            style="color: #666; text-decoration: underline;">Chính sách bảo mật</a>
                     </label>
 
                     <button type="submit" class="btn btn-primary" id="btn-register" style="width: 100%;">ĐĂNG
@@ -92,152 +92,8 @@
     <div th:replace="~{layout/footer :: footer}"></div>
 
     <!-- URL Notification Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const params = new URLSearchParams(window.location.search);
-            if (typeof window.showAlert === 'function') {
-                if (params.has('exist')) window.showAlert('Email đã tồn tại trong hệ thống. Vui lòng đăng nhập!', false);
-                else if (params.has('mismatch')) window.showAlert('Mật khẩu xác nhận không khớp. Vui lòng thử lại.', false);
-                else if (params.has('invalidOtp')) window.showAlert('Mã OTP không chính xác hoặc đã hết hạn!', false);
-                else if (params.has('invalidEmail')) window.showAlert('Định dạng email không hợp lệ!', false);
-                else if (params.has('phoneExist')) window.showAlert('Số điện thoại đã được sử dụng!', false);
-            }
-        });
-
-        function sendOTP() {
-            const emailInput = document.querySelector('input[name="email"]');
-            const email = emailInput ? emailInput.value.trim() : '';
-            if (!email) {
-                if (typeof window.showAlert === 'function') {
-                    window.showAlert('Vui lòng nhập email trước khi gửi mã OTP!', false);
-                } else {
-                    alert('Vui lòng nhập email trước khi gửi mã OTP!');
-                }
-                if (emailInput) emailInput.focus();
-                return;
-            }
-
-            const btn = document.querySelector('.btn-otp');
-            if (btn) {
-                btn.innerText = 'ĐANG GỬI...';
-                btn.disabled = true;
-            }
-
-            const formData = new URLSearchParams();
-            formData.append('email', email);
-
-            fetch('/api/send-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData
-            })
-                .then(res => res.text())
-                .then(data => {
-                    if (data === 'success') {
-                        if (typeof window.showAlert === 'function') {
-                            window.showAlert({
-                                message: 'Đã gửi mã xác nhận (OTP)',
-                                subMessage: 'Vui lòng kiểm tra email của bạn (kể cả trong thư rác).',
-                                isSuccess: true
-                            });
-                        }
-
-                        // Countdown 60s
-                        let timeLeft = 60;
-                        if (btn) btn.innerText = `CHỜ ${timeLeft}S`;
-                        const timer = setInterval(() => {
-                            timeLeft--;
-                            if (timeLeft <= 0) {
-                                clearInterval(timer);
-                                if (btn) {
-                                    btn.innerText = 'GỬI LẠI MÃ';
-                                    btn.disabled = false;
-                                }
-                            } else {
-                                if (btn) btn.innerText = `CHỜ ${timeLeft}S`;
-                            }
-                        }, 1000);
-                    } else if (data === 'error_exist') {
-                        if (typeof window.showAlert === 'function') window.showAlert('Email này đã được đăng ký tài khoản!', false);
-                        if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
-                    } else {
-                        if (typeof window.showAlert === 'function') window.showAlert('Không thể gửi OTP. Vui lòng thử lại sau.', false);
-                        if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    if (typeof window.showAlert === 'function') window.showAlert('Đã xảy ra lỗi mạng. Vui lòng thử lại.', false);
-                    if (btn) { btn.innerText = 'GỬI MÃ'; btn.disabled = false; }
-                });
-        }
-
-        function submitRegister(e) {
-            e.preventDefault();
-
-            // Reset error states
-            document.querySelectorAll('.error-message').forEach(el => {
-                el.style.display = 'none';
-                el.innerText = '';
-            });
-            document.querySelectorAll('.reset-form input').forEach(el => {
-                el.classList.remove('is-invalid');
-            });
-
-            const firstNameInput = document.querySelector('input[name="firstName"]');
-            const lastNameInput = document.querySelector('input[name="lastName"]');
-            const emailInput = document.querySelector('input[name="email"]');
-            const phoneInput = document.querySelector('input[name="phone"]');
-            const pwInput = document.getElementById('reg-pw');
-            const pwConfirmInput = document.getElementById('reg-pw-confirm');
-            const otpInput = document.querySelector('input[name="otp"]');
-            const termsCheckbox = document.querySelector('.terms input[type="checkbox"]');
-
-            let isValid = true;
-
-            const showFieldError = (input, msg) => {
-                if (!input) return;
-                input.classList.add('is-invalid');
-                const formGroup = input.closest('.form-group');
-                if (formGroup) {
-                    const errSpan = formGroup.querySelector('.error-message');
-                    if (errSpan) {
-                        errSpan.innerText = msg;
-                        errSpan.style.display = 'block';
-                    }
-                }
-                isValid = false;
-            };
-
-            if (!firstNameInput || !firstNameInput.value.trim()) { showFieldError(firstNameInput, 'Vui lòng nhập Họ!'); }
-            if (!lastNameInput || !lastNameInput.value.trim()) { showFieldError(lastNameInput, 'Vui lòng nhập Tên!'); }
-            if (!emailInput || !emailInput.value.trim()) { showFieldError(emailInput, 'Vui lòng nhập Email!'); }
-            if (!phoneInput || !phoneInput.value.trim()) { showFieldError(phoneInput, 'Vui lòng nhập Số điện thoại!'); }
-            if (!pwInput || !pwInput.value) { showFieldError(pwInput, 'Vui lòng nhập Mật khẩu!'); }
-            if (!pwConfirmInput || !pwConfirmInput.value) { showFieldError(pwConfirmInput, 'Vui lòng nhập lại Mật khẩu!'); }
-
-            if (pwInput && pwConfirmInput && pwInput.value && pwConfirmInput.value && pwInput.value !== pwConfirmInput.value) {
-                showFieldError(pwConfirmInput, 'Mật khẩu nhập lại không khớp!');
-            }
-
-            if (!otpInput || !otpInput.value.trim()) { showFieldError(otpInput, 'Vui lòng nhập mã xác nhận (OTP)!'); }
-
-            if (isValid && termsCheckbox && !termsCheckbox.checked) {
-                if (typeof window.showAlert === 'function') {
-                    window.showAlert('Bạn cần đồng ý với Điều khoản dịch vụ và Chính sách bảo mật!', false);
-                }
-                isValid = false;
-            }
-
-            if (!isValid) {
-                return false;
-            }
-
-            document.getElementById('form-register').submit();
-        }
-    </script>
-
     <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/login.js}"></script>
 </body>
 
 </html>

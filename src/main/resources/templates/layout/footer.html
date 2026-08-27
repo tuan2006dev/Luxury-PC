@@ -36,17 +36,18 @@
                     <div class="footer-col">
                         <h4>Đăng ký nhận tin</h4>
                         <p>Nhận thông tin khuyến mãi và sản phẩm mới nhất</p>
-                        <div class="newsletter">
-                            <input type="text" placeholder="Nhập email của bạn">
-                            <button class="btn-subscribe">Đăng ký</button>
-                        </div>
+                        <form class="newsletter" onsubmit="handleNewsletterSubscribe(event)">
+                            <input type="email" id="newsletterEmail" placeholder="Nhập email của bạn..."
+                                th:value="${session.user != null ? session.user.email : ''}" required autocomplete="email">
+                            <button type="submit" class="btn-subscribe">Đăng ký</button>
+                        </form>
                     </div>
                     <div class="footer-col">
                         <h4>Về chúng tôi</h4>
                         <a href="/products">Giới thiệu</a>
                         <a th:href="@{/news}">Tin tức</a>
                         <a href="/products">Tuyển dụng</a>
-                        <a href="/products">Liên hệ</a>
+                        <a href="/support">Liên hệ</a>
                     </div>
                     <div class="footer-col">
                         <h4>Chính sách</h4>
@@ -110,17 +111,7 @@
         <!-- TOAST -->
         <div class="toast" id="toast"></div>
 
-        <!-- GLOBAL CONFIRM MODAL -->
-        <div class="confirm-popup-overlay" id="global-confirm-modal">
-            <div class="confirm-popup">
-                <h3 id="confirm-title">Xác nhận</h3>
-                <p id="confirm-msg">Bạn có chắc chắn?</p>
-                <div class="confirm-popup-actions">
-                    <button id="confirm-cancel" class="btn btn-outline">Hủy</button>
-                    <button id="confirm-ok" class="btn btn-primary">Đồng ý</button>
-                </div>
-            </div>
-        </div>
+        <!-- GLOBAL CONFIRM MODAL (Removed: Now using SweetAlert2 via confirm-popup.js) -->
 
 
 
@@ -128,23 +119,17 @@
         <!-- CÁC POPUP CỦA TRANG BUILD PC (CHUYỂN TỪ TRANG BUILD QUA) -->
         <!-- ============================================== -->
         <!-- Product Selection Modal -->
-        <div id="productModal" class="modal"
-            style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
-            <div class="modal-content"
-                style="background-color:#fff; border-radius:8px; width:90%; max-width:800px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden;">
-                <div class="modal-header"
-                    style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                    <h3 id="modalTitle" style="margin:0; font-size:18px; color:#000;">Chọn Linh Kiện</h3>
-                    <button class="close-modal" onclick="closeModal()"
-                        style="background:none; border:none; font-size:24px; cursor:pointer; color:#666;">&times;</button>
+        <div id="productModal" class="lux-modal-backdrop">
+            <div class="lux-modal-container lux-modal-large">
+                <div class="lux-modal-header">
+                    <h3 class="lux-modal-title" id="modalTitle">Chọn Linh Kiện</h3>
+                    <button class="lux-modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="modal-search" style="padding:15px 20px; background:#f9f9f9; border-bottom:1px solid #eee;">
+                <div class="lux-modal-search">
                     <input type="text" id="modalSearch" placeholder="Tìm kiếm sản phẩm..."
-                        style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;"
                         oninput="filterModalProducts()">
                 </div>
-                <div class="modal-body" id="modalProductList"
-                    style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:15px;">
+                <div class="lux-modal-body" id="modalProductList">
                     <!-- Product Items -->
                 </div>
             </div>
@@ -152,22 +137,15 @@
 
 
         <!-- Build Guide Modal -->
-        <div id="guideModal" class="modal"
-            style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
-            <div class="modal-content"
-                style="background-color:#fff; border-radius:12px; width:90%; max-width:600px; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                <div class="modal-header"
-                    style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background: #f8fafc;">
-                    <h3 style="margin:0; font-size:20px; color:#1e293b; font-weight:700;"><i
-                            class="fa-solid fa-book-open" style="color:#3b82f6; margin-right:8px;"></i> Hướng Dẫn Tự
-                        Build PC</h3>
-                    <button onclick="closeBuildGuide()"
-                        style="background:none; border:none; font-size:24px; cursor:pointer; color:#64748b; transition:0.2s;"
-                        onmouseover="this.style.color='#ef4444'"
-                        onmouseout="this.style.color='#64748b'">&times;</button>
+        <div id="guideModal" class="lux-modal-backdrop">
+            <div class="lux-modal-container">
+                <div class="lux-modal-header">
+                    <h3 class="lux-modal-title"><i class="fa-solid fa-book-open" style="color:#3b82f6;"></i> Hướng Dẫn
+                        Tự Build PC</h3>
+                    <button class="lux-modal-close" onclick="closeBuildGuide()"><i
+                            class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="modal-body"
-                    style="padding:20px 25px; overflow-y:auto; flex:1; font-size:15px; color:#475569; line-height:1.6;">
+                <div class="lux-modal-body" style="font-size:15px; color:#475569; line-height:1.6;">
                     <h4 style="color:#0f172a; margin-top:0;">Quy Trình Chuẩn (Gợi Ý)</h4>
                     <ol style="padding-left:20px; margin-bottom:20px;">
                         <li style="margin-bottom:10px;"><strong>Bước 1: Chọn CPU (Bộ Vi Xử Lý)</strong> - Là trái tim
@@ -193,52 +171,36 @@
                         chọn sẽ hoạt động hoàn hảo cùng nhau.
                     </div>
                 </div>
-                <div style="padding:15px 20px; border-top:1px solid #eee; text-align:right; background: #f8fafc;">
-                    <button onclick="closeBuildGuide()"
-                        style="padding:10px 20px; background:#3b82f6; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;"
-                        onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">Đã
-                        Hiểu</button>
+                <div class="lux-modal-footer">
+                    <button class="btn btn-primary" onclick="closeBuildGuide()">Đã Hiểu</button>
                 </div>
             </div>
         </div>
 
         <!-- Share Modal -->
-        <div id="shareModal" class="modal"
-            style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
-            <div class="modal-content"
-                style="background-color:#fff; border-radius:12px; width:90%; max-width:450px; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                <div class="modal-header"
-                    style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background: #f8fafc;">
-                    <h3 style="margin:0; font-size:20px; color:#1e293b; font-weight:700;"><i
-                            class="fa-solid fa-share-nodes" style="color:#10b981; margin-right:8px;"></i> Chia Sẻ Cấu
-                        Hình</h3>
-                    <button onclick="closeShareModal()"
-                        style="background:none; border:none; font-size:24px; cursor:pointer; color:#64748b; transition:0.2s;"
-                        onmouseover="this.style.color='#ef4444'"
-                        onmouseout="this.style.color='#64748b'">&times;</button>
+        <div id="shareModal" class="lux-modal-backdrop">
+            <div class="lux-modal-container lux-modal-small">
+                <div class="lux-modal-header">
+                    <h3 class="lux-modal-title"><i class="fa-solid fa-share-nodes" style="color:#10b981;"></i> Chia Sẻ
+                        Cấu Hình</h3>
+                    <button class="lux-modal-close" onclick="closeShareModal()"><i
+                            class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="modal-body"
-                    style="padding:30px 25px; text-align:center; display:flex; flex-direction:column; align-items:center;">
+                <div class="lux-modal-body"
+                    style="text-align:center; display:flex; flex-direction:column; align-items:center;">
                     <div id="qrCodeContainer"
                         style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:20px; display:inline-block;">
                     </div>
                     <div style="width:100%; margin-bottom:15px; display:flex; gap:10px;">
                         <input type="text" id="shareUrlInput" readonly
                             style="flex:1; padding:10px 15px; border:1px solid #cbd5e1; border-radius:6px; background:#f8fafc; color:#475569; font-size:14px; outline:none;" />
-                        <button onclick="copyShareUrl()"
-                            style="padding:10px 15px; background:#10b981; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;"
-                            onmouseover="this.style.background='#059669'"
-                            onmouseout="this.style.background='#10b981'"><i class="fa-regular fa-copy"></i>
-                            Copy</button>
+                        <button onclick="copyShareUrl()" class="btn btn-primary"
+                            style="background:#10b981; border:none;"><i class="fa-regular fa-copy"></i> Copy</button>
                     </div>
                     <div style="display:flex; gap:10px; width:100%;">
-                        <button onclick="downloadQR()"
-                            style="flex:1; padding:10px; background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;"
-                            onmouseover="this.style.background='#e2e8f0'"><i class="fa-solid fa-download"></i> Tải mã
-                            QR</button>
-                        <button onclick="openShareUrl()"
-                            style="flex:1; padding:10px; background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;"
-                            onmouseover="this.style.background='#e2e8f0'"><i
+                        <button onclick="downloadQR()" class="btn btn-outline" style="flex:1;"><i
+                                class="fa-solid fa-download"></i> Tải mã QR</button>
+                        <button onclick="openShareUrl()" class="btn btn-outline" style="flex:1;"><i
                                 class="fa-solid fa-arrow-up-right-from-square"></i> Mở Link</button>
                     </div>
                 </div>
@@ -246,11 +208,9 @@
         </div>
 
         <!-- Confirm Clear Modal -->
-        <div id="confirmClearModal" class="modal"
-            style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
-            <div class="modal-content"
-                style="background-color:#fff; border-radius:12px; width:90%; max-width:400px; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                <div class="modal-body" style="padding:30px 25px 20px; text-align:center;">
+        <div id="confirmClearModal" class="lux-modal-backdrop">
+            <div class="lux-modal-container lux-modal-confirm">
+                <div class="lux-modal-body">
                     <div
                         style="width:60px; height:60px; border-radius:50%; background:#fee2e2; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 20px;">
                         <i class="fa-solid fa-triangle-exclamation"></i>
@@ -259,23 +219,83 @@
                     </h3>
                     <p style="color:#64748b; font-size:15px; margin:0 0 20px; line-height:1.5;">Hành động này sẽ làm
                         trống cấu hình hiện tại và không thể hoàn tác. Bạn có chắc chắn muốn tiếp tục?</p>
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="closeConfirmClear()"
-                            style="flex:1; padding:12px; background:#f1f5f9; color:#475569; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;"
-                            onmouseover="this.style.background='#e2e8f0'">Hủy</button>
-                        <button onclick="executeClearAll()"
-                            style="flex:1; padding:12px; background:#ef4444; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;"
-                            onmouseover="this.style.background='#dc2626'">Đồng ý xóa</button>
-                    </div>
+                </div>
+                <div class="lux-modal-footer">
+                    <button class="btn btn-outline" onclick="closeConfirmClear()" style="flex:1;">Hủy</button>
+                    <button class="btn btn-primary" onclick="executeClearAll()"
+                        style="flex:1; background:#ef4444; border-color:#ef4444;">Đồng ý xóa</button>
                 </div>
             </div>
         </div>
         <!-- ============================================== -->
-        <!-- Script for custom confirm/alert popups -->
+        <!-- ============================================== -->
+        <!-- STATIC HTML FOR SOCKET CHAT V2 (Only for Authenticated Users) -->
+        <th:block sec:authorize="isAuthenticated() and !hasAnyRole('ADMIN', 'STAFF')">
+        <script>
+            if (localStorage.getItem('socket_chat_isOpen') === 'true') {
+                document.documentElement.classList.add('socket-chat-open');
+            }
+        </script>
+        <style>
+            html.socket-chat-open #socketChatBtn { display: none !important; }
+            html.socket-chat-open #socketChatWindow { opacity: 1 !important; transform: translateY(0) scale(1) !important; pointer-events: auto !important; }
+            html:not(.socket-chat-open) #socketChatWindow:not(.open) { opacity: 0 !important; transform: translateY(20px) scale(0.95) !important; pointer-events: none !important; }
+        </style>
+
+        <div class="socket-chat-btn" id="socketChatBtn" title="Hỗ trợ trực tuyến">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+            </svg>
+            <div class="socket-chat-badge" id="socketChatBadge"></div>
+        </div>
+        <div class="socket-chat-window" id="socketChatWindow">
+            <div class="socket-chat-header">
+                <div class="socket-chat-title">
+                    <div class="socket-chat-status" id="socketChatStatus"></div>
+                    LUXURY · <span>HỖ TRỢ</span>
+                </div>
+                <button class="socket-chat-close" id="socketChatClose">✕</button>
+            </div>
+            <div class="socket-chat-ticket-bar" id="socketChatTicketBar" style="display:none; justify-content: space-between; align-items: center;">
+                <span id="socketChatTicketLabel">Ticket #—</span>
+                <div style="display: flex; gap: 12px;">
+                    <span class="new-chat-link" id="socketChatCloseTicketBtn" style="color: #ef4444; font-weight: 500;">Đóng cuộc trò chuyện</span>
+                    <span class="new-chat-link" id="socketChatNewBtn">Tạo mới</span>
+                </div>
+            </div>
+            <div class="socket-chat-setup" id="socketChatSetup" style="display: none;">
+                <p>Vui lòng nhập thông tin để bắt đầu cuộc trò chuyện hỗ trợ.</p>
+                <input type="text" class="socket-chat-setup-input" id="socketChatNameInput" placeholder="Họ và tên..." maxlength="30" />
+                <input type="email" class="socket-chat-setup-input" id="socketChatEmailInput" placeholder="Email liên hệ (tuỳ chọn)..." maxlength="50" />
+                <button class="socket-chat-setup-btn" id="socketChatStartBtn">Bắt Đầu Chat</button>
+            </div>
+            <div class="socket-chat-waiting-state" id="socketChatWaitingState">
+                <div class="socket-chat-waiting-title">🟡 Đang tìm nhân viên hỗ trợ...</div>
+                <div class="socket-chat-waiting-subtitle" id="socketChatWaitingSubtitle">Vui lòng chờ trong giây lát.</div>
+                <div class="socket-chat-timer" id="socketChatTimer">00:00</div>
+            </div>
+            <div class="socket-chat-messages" id="socketChatMessages" style="display: none;">
+                <!-- Messages will appear here -->
+            </div>
+            <div class="socket-chat-input-area" id="socketChatInputArea" style="display: none;">
+                <input type="text" class="socket-chat-input" id="socketChatMsgInput" placeholder="Nhập tin nhắn..." autocomplete="off" />
+                <button class="socket-chat-send-btn" id="socketChatSendBtn">GỬI</button>
+            </div>
+        </div>
+        </th:block>
+        <!-- ============================================== -->
+        <!-- SweetAlert2 (Global for all confirm popups) -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- Script for confirm/alert popups -->
         <script th:src="@{/js/confirm-popup.js}"></script>
 
         <!-- Script for Live Chat Box -->
-        <script th:src="@{/js/socket-chat-v2.js}"></script>
+        <th:block sec:authorize="isAuthenticated() and !hasAnyRole('ADMIN', 'STAFF')">
+        <script th:src="@{/js/socket-chat-v2.js?v=18}"></script>
+        </th:block>
+
+        <!-- Script for footer features (modals, etc) -->
+        <script th:src="@{/js/layout/footer.js}"></script>
     </div>
 </body>
 

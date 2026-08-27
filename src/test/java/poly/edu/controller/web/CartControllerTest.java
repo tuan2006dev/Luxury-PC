@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import poly.edu.config.SecurityConfig;
 import poly.edu.dao.ProductDAO;
@@ -23,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -31,8 +29,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CartController.class)
-@Import(SecurityConfig.class)
+@WebMvcTest(controllers = CartController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
+@SuppressWarnings({ "null", "unchecked" })
 public class CartControllerTest {
 
     @Autowired
@@ -64,6 +63,9 @@ public class CartControllerTest {
 
     @MockBean
     private poly.edu.service.AuthService authService;
+
+    @MockBean
+    private poly.edu.dao.UserDAO userDAO;
 
     private MockHttpSession session;
 

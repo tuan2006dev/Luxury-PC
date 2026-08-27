@@ -3,36 +3,78 @@
 let addressCount = 0;
 
 async function loadAddresses() {
+  const cfg = window.PROFILE_CONFIG || {};
+  if (cfg.forcePasswordLock) {
+    return;
+  }
+
   try {
     const res = await fetch('/api/address');
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) return;
+      throw new Error('HTTP ' + res.status);
+    }
     const data = await res.json();
     const container = document.getElementById('address-list-container');
     if (!container) return;
     if (!data.success || !data.data || data.data.length === 0) {
       addressCount = 0;
-      container.innerHTML = `<p style="grid-column:span 2;text-align:center;color:#64748b;padding:2rem;">${window.t('profile-address-empty', 'Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.')}</p>`;
+      container.innerHTML = `<p class="address-empty">${window.t('profile-address-empty', 'Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.')}</p>`;
       return;
     }
     addressCount = data.data.length;
-    container.innerHTML = data.data.map(addr => `
-    <div style="background:#f8fafc;border:1px solid ${addr.isDefault ? '#3b82f6' : '#e2e8f0'};padding:1.5rem;">
-      <div style="font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:${addr.isDefault ? '#3b82f6' : '#64748b'};margin-bottom:.8rem;">
-        ${addr.isDefault ? window.t('profile-address-default', '📍 Địa chỉ mặc định') : window.t('profile-address-other', '📍 Địa chỉ khác')}
-      </div>
-      <div style="font-size:.9rem;color:#000;margin-bottom:.3rem;font-weight:500;">${addr.recipientName}</div>
-      <div style="font-size:.8rem;color:#64748b;line-height:1.7;">
-        ${addr.detailedAddress}<br>${addr.district}, ${addr.city}<br>📞 ${addr.phone}
-      </div>
-      <div style="display:flex;gap:.5rem;margin-top:1rem;">
-        <button class="btn-sec" onclick="editAddress(${addr.id})">${window.t('profile-address-btn-edit', 'Sửa')}</button>
-        <button class="btn-sec" onclick="deleteAddress(${addr.id})">${window.t('profile-address-btn-delete', 'Xóa')}</button>
-        ${!addr.isDefault ? `<button class="btn-sec" style="border-color:#3b82f6;color:#3b82f6;" onclick="setDefaultAddress(${addr.id})">${window.t('profile-address-set-default', 'Đặt mặc định')}</button>` : ''}
-      </div>
-    </div>
-  `).join('');
+    container.innerHTML = '';
+
+    const template = document.getElementById('address-card-template');
+    data.data.forEach(addr => {
+      if (!template) return;
+      const card = template.content.cloneNode(true).firstElementChild;
+      if (addr.isDefault) card.classList.add('default');
+
+      const badge = card.querySelector('.address-badge');
+      if (badge) {
+        if (addr.isDefault) badge.classList.add('default');
+        badge.textContent = addr.isDefault ? window.t('profile-address-default', '📍 Địa chỉ mặc định') : window.t('profile-address-other', '📍 Địa chỉ khác');
+      }
+
+      const recipient = card.querySelector('.address-recipient');
+      if (recipient) recipient.textContent = addr.recipientName;
+
+      const detail = card.querySelector('.addr-detail');
+      if (detail) detail.textContent = addr.detailedAddress;
+
+      const location = card.querySelector('.addr-location');
+      if (location) location.textContent = (addr.district ? addr.district + ', ' : '') + addr.city;
+
+      const phone = card.querySelector('.addr-phone');
+      if (phone) phone.textContent = addr.phone;
+
+      const btnEdit = card.querySelector('.btn-edit-action');
+      if (btnEdit) {
+        btnEdit.textContent = window.t('profile-address-btn-edit', 'Sửa');
+        btnEdit.onclick = () => editAddress(addr.id);
+      }
+
+      const btnDelete = card.querySelector('.btn-delete-action');
+      if (btnDelete) {
+        btnDelete.textContent = window.t('profile-address-btn-delete', 'Xóa');
+        btnDelete.onclick = () => deleteAddress(addr.id);
+      }
+
+      const btnDefault = card.querySelector('.btn-default-action');
+      if (btnDefault) {
+        if (!addr.isDefault) {
+          btnDefault.textContent = window.t('profile-address-set-default', 'Đặt mặc định');
+          btnDefault.onclick = () => setDefaultAddress(addr.id);
+        } else {
+          btnDefault.remove();
+        }
+      }
+
+      container.appendChild(card);
+    });
   } catch (err) {
     console.error('Load addresses error:', err);
-    toast('Không thể tải danh sách địa chỉ.');
   }
 }
 
@@ -190,7 +232,7 @@ async function getProfileLocation() {
 
     if (nomData && nomData.address) {
       const addr = nomData.address;
-      
+
       // 1. Tỉnh / Thành phố (Ưu tiên province/state hoặc thành phố lớn)
       const candidatesCity = [addr.province, addr.state, addr.city, addr.region].filter(Boolean);
       let city = candidatesCity.find(c => /tỉnh|thành phố|tp\.|hồ chí minh|hà nội|đà nẵng|hải phòng|cần thơ/i.test(c));
@@ -220,22 +262,6 @@ async function getProfileLocation() {
         const errDiv = document.getElementById(id + '-error');
         if (errDiv) { errDiv.style.display = 'none'; errDiv.textContent = ''; }
       });
-
-      const nameInput = document.getElementById('address-name');
-      const phoneInput = document.getElementById('address-phone');
-
-      if (!nameInput.value) {
-        const profileName = document.querySelector('input[name="firstName"]');
-        if (profileName && profileName.value) {
-          nameInput.value = profileName.value;
-        }
-      }
-      if (!phoneInput.value) {
-        const profilePhone = document.querySelector('input[name="phone"]');
-        if (profilePhone && profilePhone.value) {
-          phoneInput.value = profilePhone.value;
-        }
-      }
 
       toast('✓ Đã tự động định vị vị trí thành công!');
     } else {
@@ -336,7 +362,8 @@ function saveAddress() {
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        toast(id ? '✓ Đã cập nhật địa chỉ.' : '✓ Đã thêm địa chỉ mới.');
+        const serverMsg = (data.data && data.data.message) || (data.message !== 'Created' && data.message !== 'Updated' && data.message !== 'Success' ? data.message : null);
+        toast('✓ ' + (serverMsg || (id ? 'Đã cập nhật địa chỉ.' : 'Đã thêm địa chỉ mới.')));
         closeAddressForm();
         loadAddresses();
       } else {

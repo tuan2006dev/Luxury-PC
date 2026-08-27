@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
@@ -90,6 +89,7 @@ public class GlobalExceptionHandler {
         }
         model.addAttribute("errorCode", 500);
         model.addAttribute("errorMessage", "Hệ thống gặp sự cố. Vui lòng thử lại sau.");
+        model.addAttribute("exception", ex.getClass().getName() + ": " + ex.getMessage());
         return "error/500";
     }
 

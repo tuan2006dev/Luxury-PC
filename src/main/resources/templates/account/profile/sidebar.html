@@ -20,9 +20,9 @@
       style="font-size: 16px; font-weight: 700; margin-bottom: 5px; color: #000000;">Thanh Minh</div>
     <div class="sb-email" th:text="${email}" style="font-size: 13px; color: #666; margin-bottom: 10px;">
       thanh.minh@email.com</div>
-    <div class="sb-badge" th:text="${userRank != 'None' ? 'Thành viên ' + userRank : 'Thành viên mới'}"
+    <div class="sb-badge" th:text="${(userRank != null ? userRank + ' Member' : 'Bronze Member')}"
       style="display: inline-block; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-      Thành viên</div>
+      Bronze Member</div>
   </div>
 
   <nav class="sb-menu" style="padding: 10px 0 10px 0;">

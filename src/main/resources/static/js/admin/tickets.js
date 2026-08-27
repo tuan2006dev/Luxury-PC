@@ -61,6 +61,13 @@ function connectTicketWs(ticketId) {
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
+                
+                if (data.type === 'SYSTEM' && data.event === 'USER_REQUESTED_CLOSE') {
+                    const content = data.content || 'Khách hàng yêu cầu đóng cuộc trò chuyện.';
+                    appendSystemConfirmClose(ticketId, content);
+                    return;
+                }
+
                 // Only process CUSTOMER messages (admin messages are already shown on send)
                 if (data.sender === 'CUSTOMER' || (data.senderName && data.sender !== 'ADMIN')) {
                     const content = data.content || data.message || '';
@@ -132,10 +139,59 @@ function appendChatBubble(ticketId, senderName, content, time, isAdmin) {
 
     msgContainer.insertAdjacentHTML('beforeend', html);
 
-    // Auto-scroll
-    const isNearBottom = msgContainer.scrollHeight - msgContainer.clientHeight - msgContainer.scrollTop < 60;
-    if (isNearBottom) {
+    // Auto-scroll (Force scroll to bottom so admin always sees the latest message)
+    setTimeout(() => {
         msgContainer.scrollTop = msgContainer.scrollHeight;
+    }, 50);
+}
+
+function appendSystemConfirmClose(ticketId, content) {
+    const msgContainer = document.getElementById('chat-messages-' + ticketId);
+    if (!msgContainer) return;
+
+    // Prevent duplicate close request bubbles
+    if (msgContainer.querySelector('.system-close-request')) return;
+
+    const html = `
+        <div class="chat-bubble-wrapper system-msg system-close-request" style="text-align: center; margin: 10px 0; width: 100%;">
+            <div style="background:#fff3cd; color:#856404; padding: 12px; border-radius: 8px; font-size: 0.9em; border: 1px solid #ffeeba; display: inline-block; max-width: 80%;">
+                <strong>⚠️ Yêu cầu từ khách hàng</strong><br/>
+                ${escapeHtml(content)}<br/>
+                <button onclick="confirmCloseTicket(${ticketId})" style="margin-top: 10px; background:#dc3545; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:600;">Xác nhận đóng</button>
+            </div>
+        </div>
+    `;
+
+    msgContainer.insertAdjacentHTML('beforeend', html);
+    msgContainer.scrollTop = msgContainer.scrollHeight;
+}
+
+function confirmCloseTicket(id) {
+    updateTicketStatus(id, 'CLOSED');
+    
+    const msgContainer = document.getElementById('chat-messages-' + id);
+    if (msgContainer) {
+        // Remove the close request box so it can't be clicked again
+        const closeRequest = msgContainer.querySelector('.system-close-request');
+        if (closeRequest) closeRequest.remove();
+        
+        // Prevent duplicate "Đã đóng" messages
+        if (msgContainer.querySelector('.system-close-success')) return;
+
+        msgContainer.insertAdjacentHTML('beforeend', `
+            <div class="system-close-success" style="text-align: center; margin: 15px 0; color: #28a745; font-size: 0.9em; font-weight: bold;">
+                <i class="fa-solid fa-check-circle"></i> Đã đóng cuộc trò chuyện thành công.
+            </div>
+        `);
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+
+        // Auto-collapse the ticket cleanly after 1.5s for better UX
+        setTimeout(() => {
+            const detail = document.getElementById('detail-' + id);
+            if (detail && detail.style.display !== 'none') {
+                toggleTicket(id);
+            }
+        }, 1500);
     }
 }
 
@@ -214,21 +270,13 @@ function sendAdminMessage(id) {
     })
         .then(res => res.json())
         .then(saved => {
-            // Append the admin message immediately to the UI
+            // Append the admin message immediately to the UI using the real name from server
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            appendChatBubble(id, 'Admin', message, time, true);
+            appendChatBubble(id, saved.senderName || 'Bạn', message, time, true);
 
-            // Also broadcast via WebSocket so customer client sees it instantly
-            const ws = adminWsConnections[id];
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    ticketId: parseInt(id),
-                    sender: 'ADMIN',
-                    senderName: 'Admin',
-                    content: message,
-                    type: 'CHAT'
-                }));
-            }
+            // Note: We no longer broadcast via WebSocket here. 
+            // The Server (SupportTicketController) now automatically broadcasts 
+            // the saved message with the correct real Admin Name to guarantee consistency.
         })
         .catch(err => {
             console.error("Error sending admin message:", err);
@@ -373,3 +421,58 @@ document.addEventListener('spa:load', function() {
         cleanupTicketsWs();
     }
 });
+
+// In-place AJAX loading for filter tabs (prevents menu tab bar & page reload)
+document.addEventListener('click', function(e) {
+    const tab = e.target.closest('.filter-bar .filter-tab');
+    if (!tab) return;
+
+    const url = tab.getAttribute('href');
+    if (!url || url === '#' || url.startsWith('javascript')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (tab.classList.contains('active')) return;
+
+    // Update active class on filter tabs
+    const filterBar = tab.closest('.filter-bar');
+    if (filterBar) {
+        filterBar.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    }
+    tab.classList.add('active');
+
+    const wrap = document.querySelector('.tickets-table-wrap');
+    if (wrap) {
+        wrap.style.transition = 'opacity 0.2s ease';
+        wrap.style.opacity = '0.35';
+    }
+
+    fetch(url)
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // 1. Replace tickets list container
+            const newWrap = doc.querySelector('.tickets-table-wrap');
+            if (newWrap && wrap) {
+                wrap.innerHTML = newWrap.innerHTML;
+            }
+
+            // 2. Update stats cards counters if present
+            const newStats = doc.querySelector('.ticket-stats');
+            const currentStats = document.querySelector('.ticket-stats');
+            if (newStats && currentStats) {
+                currentStats.innerHTML = newStats.innerHTML;
+            }
+
+            // 3. Update history URL
+            window.history.pushState({}, '', url);
+        })
+        .catch(err => console.error('Error fetching ticket data:', err))
+        .finally(() => {
+            if (wrap) wrap.style.opacity = '1';
+        });
+}, true);
+

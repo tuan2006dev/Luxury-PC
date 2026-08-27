@@ -1,11 +1,12 @@
 <div class="sidebar" th:fragment="sidebar">
 
-    <link rel="stylesheet" th:href="@{/css/admin/layout/sidebar.css(v=4.0)}" />
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/layout/sidebar.css(v=4.0)}" />
 
     <!-- Sidebar Header with Logo and Collapse/Expand Toggle Button -->
     <div class="sidebar-header">
-        <a href="/" class="logo">LUXURY<span style="font-weight:300;">PC</span></a>
-        <button type="button" class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" title="Thu gọn / Mở rộng menu">
+        <a href="/" class="logo">LUXURY<span style="font-weight:300; color: var(--blue)"><Strong>PC</Strong></span></a>
+        <button type="button" class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()"
+            title="Thu gọn / Mở rộng menu">
             <i class="fa-solid fa-bars"></i>
         </button>
     </div>
@@ -27,7 +28,7 @@
                 <a href="/admin/products" id="nav-products">Sản phẩm</a>
                 <a href="/admin/categories" id="nav-categories">Danh mục</a>
                 <a href="/admin/combos" id="nav-combos">Quản lý Combo</a>
-                <a href="/admin/flash-sales" id="nav-flash-sales">Flash Sale</a>
+                <a href="/admin/flash-sales" id="nav-flash-sales" sec:authorize="hasRole('ADMIN')">Flash Sale</a>
             </div>
         </div>
 
@@ -52,12 +53,11 @@
                 <i class="fa-solid fa-chevron-down chevron"></i>
             </div>
             <div class="sub-menu" id="userMenu">
-                <a href="/admin/employees" id="nav-employees"
-                    sec:authorize="hasRole('ADMIN')">Quản lý Nhân viên</a>
-                <a href="/admin/account" id="nav-account"
-                    sec:authorize="hasRole('ADMIN')">Quản lý Khách hàng</a>
-                <a href="/admin/vouchers" id="nav-vouchers">Voucher</a>
+                <a href="/admin/employees" id="nav-employees" sec:authorize="hasRole('ADMIN')">Quản lý Nhân viên</a>
+                <a href="/admin/account" id="nav-account" sec:authorize="hasRole('ADMIN')">Quản lý Khách hàng</a>
+                <a href="/admin/vouchers" id="nav-vouchers" sec:authorize="hasRole('ADMIN')">Voucher</a>
                 <a href="/admin/tickets" id="nav-tickets">Hỗ Trợ (Tickets)</a>
+                <a href="/admin/reviews" id="nav-reviews">Quản lý Đánh giá</a>
             </div>
         </div>
 
@@ -89,13 +89,13 @@
 
 
     <!-- Flatpickr for Date Time Inputs -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.css">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
 
     <script th:src="@{/js/cursor.js}"></script>
-    <style>
+    <style data-pjax-track="true">
         body {
             display: block !important;
             height: auto !important;

@@ -6,11 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Ticket — Luxury PC Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
-    <link rel="stylesheet" th:href="@{/css/admin/tickets.css}" />
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/tickets.css}" />
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
 <body>
@@ -53,29 +55,43 @@
         </div>
 
         <!-- Filter Tabs -->
-        <div class="filter-bar">
-            <a th:href="@{/admin/tickets}" th:classappend="${filterStatus == null} ? 'active' : ''" class="filter-tab">
-                <i class="fa-solid fa-list"></i> <span>Tất cả</span>
-            </a>
-            <a th:href="@{/admin/tickets(status='OPEN')}" th:classappend="${filterStatus == 'OPEN'} ? 'active' : ''"
-                class="filter-tab open-tab">
-                <i class="fa-solid fa-circle-dot"></i> <span>Mới / Chờ xử
-                    lý</span>
-            </a>
-            <a th:href="@{/admin/tickets(status='IN_PROGRESS')}"
-                th:classappend="${filterStatus == 'IN_PROGRESS'} ? 'active' : ''" class="filter-tab progress-tab">
-                <i class="fa-solid fa-spinner"></i> <span>Đang xử
-                    lý</span>
-            </a>
-            <a th:href="@{/admin/tickets(status='RESOLVED')}"
-                th:classappend="${filterStatus == 'RESOLVED'} ? 'active' : ''" class="filter-tab resolved-tab">
-                <i class="fa-solid fa-check-circle"></i> <span>Đã giải
-                    quyết</span>
-            </a>
-            <a th:href="@{/admin/tickets(status='CLOSED')}" th:classappend="${filterStatus == 'CLOSED'} ? 'active' : ''"
-                class="filter-tab closed-tab">
-                <i class="fa-solid fa-lock"></i> <span>Đóng</span>
-            </a>
+        <div class="filter-bar"
+            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                <a th:href="@{/admin/tickets}" th:classappend="${filterStatus == 'ALL'} ? 'active' : ''"
+                    class="filter-tab" onclick="if(this.classList.contains('active')) event.preventDefault();">
+                    <i class="fa-solid fa-list"></i> <span>Tất cả</span>
+                </a>
+                <a th:href="@{/admin/tickets(status='ACTIVE')}" th:classappend="${filterStatus == 'ACTIVE'} ? 'active' : ''"
+                    class="filter-tab open-tab" onclick="if(this.classList.contains('active')) event.preventDefault();">
+                    <i class="fa-solid fa-bolt"></i> <span>Đang hoạt động</span>
+                </a>
+                <a th:href="@{/admin/tickets(status='OPEN')}" th:classappend="${filterStatus == 'OPEN'} ? 'active' : ''"
+                    class="filter-tab open-tab" onclick="if(this.classList.contains('active')) event.preventDefault();">
+                    <i class="fa-solid fa-circle-dot"></i> <span>Mới / Chờ xử
+                        lý</span>
+                </a>
+                <a th:href="@{/admin/tickets(status='IN_PROGRESS')}"
+                    th:classappend="${filterStatus == 'IN_PROGRESS'} ? 'active' : ''" class="filter-tab progress-tab"
+                    onclick="if(this.classList.contains('active')) event.preventDefault();">
+                    <i class="fa-solid fa-spinner"></i> <span>Đang xử
+                        lý</span>
+                </a>
+                <a th:href="@{/admin/tickets(status='RESOLVED')}"
+                    th:classappend="${filterStatus == 'RESOLVED'} ? 'active' : ''" class="filter-tab resolved-tab"
+                    onclick="if(this.classList.contains('active')) event.preventDefault();">
+                    <i class="fa-solid fa-check-circle"></i> <span>Đã giải
+                        quyết</span>
+                </a>
+                <a th:href="@{/admin/tickets(status='CLOSED')}"
+                    th:classappend="${filterStatus == 'CLOSED'} ? 'active' : ''" class="filter-tab closed-tab"
+                    onclick="if(this.classList.contains('active')) event.preventDefault();">
+                    <i class="fa-solid fa-lock"></i> <span>Đóng</span>
+                </a>
+            </div>
+            <div
+                th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/tickets', keyword=${keyword})}">
+            </div>
         </div>
 
         <!-- Tickets Table -->
@@ -229,7 +245,9 @@
                             </div>
 
                             <!-- Quick Delete -->
-                            <form th:action="@{/admin/tickets/delete/{id}(id=${ticket.id})}" method="post" onsubmit="return window.confirmSubmit(event, 'Xác nhận xoá ticket này?');" style="margin:0;">
+                            <form th:action="@{/admin/tickets/delete/{id}(id=${ticket.id})}" method="post"
+                                onsubmit="return window.confirmSubmit(event, 'Xác nhận xoá ticket này?');"
+                                style="margin:0;">
                                 <button type="submit" class="delete-btn">
                                     <i class="fa-solid fa-trash"></i> <span>Xóa ticket</span>
                                 </button>
@@ -239,7 +257,10 @@
                 </div>
             </div>
         </div>
-        <script th:src="@{/js/admin/tickets.js(v=5.0)}"></script>
+        <script th:inline="javascript">
+            var adminUsername = /*[[${(currentUser != null && currentUser.fullName != null && !currentUser.fullName.isEmpty()) ? currentUser.fullName : #authentication.name}]]*/ 'Admin';
+        </script>
+        <script th:src="@{/js/admin/tickets.js}"></script>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

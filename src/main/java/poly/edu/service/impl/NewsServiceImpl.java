@@ -1,7 +1,6 @@
 package poly.edu.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -11,6 +10,7 @@ import poly.edu.service.NewsService;
 
 import java.util.List;
 import java.util.Optional;
+import poly.edu.dto.NewsSummaryDto;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<poly.edu.dto.NewsSummaryDto> getPublishedNews(int page, int size, String keyword, Integer categoryId) {
+    public Page<NewsSummaryDto> getPublishedNews(int page, int size, String keyword, Integer categoryId) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         if (keyword != null && !keyword.isEmpty()) {
             return newsRepository.searchPublishedNews(keyword, pageable);
@@ -36,17 +36,17 @@ public class NewsServiceImpl implements NewsService {
     }
     
     @Override
-    public List<poly.edu.dto.NewsSummaryDto> getTop5LatestNews() {
+    public List<NewsSummaryDto> getTop5LatestNews() {
         return newsRepository.findTop5ByStatusOrderByCreatedAtDesc(poly.edu.entity.NewsStatus.PUBLISHED);
     }
     
     @Override
-    public List<poly.edu.dto.NewsSummaryDto> getTop5MostViewedNews() {
+    public List<NewsSummaryDto> getTop5MostViewedNews() {
         return newsRepository.findTop5ByStatusOrderByViewCountDesc(poly.edu.entity.NewsStatus.PUBLISHED);
     }
     
     @Override
-    public List<poly.edu.dto.NewsSummaryDto> getRelatedNews(Integer categoryId, Integer excludeNewsId) {
+    public List<NewsSummaryDto> getRelatedNews(Integer categoryId, Integer excludeNewsId) {
         if (categoryId == null) return java.util.Collections.emptyList();
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 5); // Take top 5
         return newsRepository.findRelatedNews(categoryId, excludeNewsId, pageable);

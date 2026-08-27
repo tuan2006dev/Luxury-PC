@@ -21,6 +21,9 @@ import poly.edu.dao.UserSessionDAO;
 import poly.edu.dao.UserVoucherDAO;
 import poly.edu.dao.ReviewDAO;
 import poly.edu.dao.OrderDAO;
+import poly.edu.dao.CartDAO;
+import poly.edu.dao.CartItemDAO;
+import poly.edu.repository.PasswordResetRepository;
 
 @Service
 public class ProfileService {
@@ -32,6 +35,9 @@ public class ProfileService {
     private final WishlistItemRepository wishlistItemRepository;
     private final ReviewDAO reviewDAO;
     private final OrderDAO orderDAO;
+    private final CartDAO cartDAO;
+    private final CartItemDAO cartItemDAO;
+    private final PasswordResetRepository passwordResetRepo;
 
     public ProfileService(UserRepository userRepository,
             ShippingAddressRepository shippingAddressRepository,
@@ -40,7 +46,10 @@ public class ProfileService {
             UserVoucherDAO userVoucherDAO,
             WishlistItemRepository wishlistItemRepository,
             ReviewDAO reviewDAO,
-            OrderDAO orderDAO) {
+            OrderDAO orderDAO,
+            CartDAO cartDAO,
+            CartItemDAO cartItemDAO,
+            PasswordResetRepository passwordResetRepo) {
         this.userRepository = userRepository;
         this.shippingAddressRepository = shippingAddressRepository;
         this.userRoleDAO = userRoleDAO;
@@ -49,6 +58,9 @@ public class ProfileService {
         this.wishlistItemRepository = wishlistItemRepository;
         this.reviewDAO = reviewDAO;
         this.orderDAO = orderDAO;
+        this.cartDAO = cartDAO;
+        this.cartItemDAO = cartItemDAO;
+        this.passwordResetRepo = passwordResetRepo;
     }
 
     public User getCurrentUser(Authentication authentication) {
@@ -83,7 +95,8 @@ public class ProfileService {
         m.put("orderUpdates",
                 user.getNotifyOrderUpdates() == null || Boolean.TRUE.equals(user.getNotifyOrderUpdates()));
         m.put("flashSale", user.getNotifyFlashSale() == null || Boolean.TRUE.equals(user.getNotifyFlashSale()));
-        m.put("newProducts", Boolean.TRUE.equals(user.getNotifyNewProducts()));
+        m.put("newProducts",
+                user.getNotifyNewProducts() == null || Boolean.TRUE.equals(user.getNotifyNewProducts()));
         m.put("weeklyNewsletter",
                 user.getNotifyWeeklyNewsletter() == null || Boolean.TRUE.equals(user.getNotifyWeeklyNewsletter()));
         return m;
@@ -93,6 +106,32 @@ public class ProfileService {
     public void addUserAddress(Authentication authentication, String recipientName, String phone,
             String addressLine, String district, String city) {
         User user = getCurrentUser(authentication);
+        List<ShippingAddress> existingList = shippingAddressRepository
+                .findByUser_IdOrderByDefaultShippingDescIdAsc(user.getId());
+
+        String phoneInput = phone != null ? phone.trim() : "";
+        String detailInput = addressLine != null ? addressLine.trim() : "";
+        String cityInput = city != null ? city.trim() : "";
+        String districtInput = district != null ? district.trim() : "";
+
+        for (ShippingAddress a : existingList) {
+            boolean samePhone = a.getPhone() != null && a.getPhone().trim().equalsIgnoreCase(phoneInput);
+            boolean sameDetail = a.getAddress() != null && a.getAddress().trim().equalsIgnoreCase(detailInput);
+            boolean sameCity = a.getCity() != null && a.getCity().trim().equalsIgnoreCase(cityInput);
+            String existingDistrict = a.getDistrict() != null ? a.getDistrict().trim() : "";
+            boolean sameDistrict = existingDistrict.equalsIgnoreCase(districtInput);
+
+            if (samePhone && sameDetail && sameCity && sameDistrict) {
+                a.setRecipientName(requireNonBlank(recipientName, "recipientName"));
+                a.setPhone(requireNonBlank(phone, "phone"));
+                a.setAddress(requireNonBlank(addressLine, "address"));
+                a.setDistrict(normalize(district));
+                a.setCity(normalize(city));
+                shippingAddressRepository.save(a);
+                return;
+            }
+        }
+
         ShippingAddress a = new ShippingAddress();
         a.setUser(user);
         a.setRecipientName(requireNonBlank(recipientName, "recipientName"));
@@ -100,8 +139,7 @@ public class ProfileService {
         a.setAddress(requireNonBlank(addressLine, "address"));
         a.setDistrict(normalize(district));
         a.setCity(normalize(city));
-        long n = shippingAddressRepository.countByUser_Id(user.getId());
-        a.setDefault(n == 0);
+        a.setDefault(existingList.isEmpty());
         shippingAddressRepository.save(a);
     }
 
@@ -231,20 +269,31 @@ public class ProfileService {
 
     @Transactional
     public void deleteUserFully(User user) {
+        if (user == null || user.getId() == null) return;
         Integer userId = user.getId();
 
-        // 1. Delete dependent records
+        // 1. Delete cart items and cart
+        java.util.Optional<poly.edu.entity.Cart> cartOpt = cartDAO.findByUserId(userId);
+        if (cartOpt.isPresent()) {
+            cartItemDAO.deleteByCartId(cartOpt.get().getId());
+            cartDAO.deleteByUserId(userId);
+        }
+
+        // 2. Delete dependent records
         userRoleDAO.deleteByUserId(userId);
         userSessionDAO.deleteByUserId(userId);
         userVoucherDAO.deleteByUserId(userId);
         wishlistItemRepository.deleteByUserId(userId);
         shippingAddressRepository.deleteByUserId(userId);
+        if (user.getEmail() != null) {
+            passwordResetRepo.findByEmail(user.getEmail()).ifPresent(passwordResetRepo::delete);
+        }
 
-        // 2. Nullify references (keep reviews and orders)
+        // 3. Nullify references (keep reviews and orders history)
         reviewDAO.nullifyUserReferences(userId);
         orderDAO.nullifyUserReferences(userId);
 
-        // 3. Delete the user
+        // 4. Delete the user
         userRepository.delete(user);
     }
 
@@ -252,53 +301,149 @@ public class ProfileService {
     public Map<String, Object> getFullProfileData(Authentication authentication) {
         Map<String, Object> data = new HashMap<>();
         User user = getCurrentUser(authentication);
-        
+
         Double totalSpent = orderDAO.getTotalSpentByUser(user.getId());
         totalSpent = (totalSpent == null) ? 0.0 : totalSpent;
-        
+
+        String userRank = getRank(totalSpent);
+        int discountPercent = getDiscountPercent(totalSpent);
+        String nextRank = getNextRank(totalSpent);
+        int nextRankDiscount = getDiscountPercent(getNextRankThreshold(totalSpent));
+        double nextThreshold = getNextRankThreshold(totalSpent);
+        double neededSpent = Math.max(0.0, nextThreshold - totalSpent);
+        double rankProgress = getRankProgress(totalSpent);
+
         data.put("user", user);
         data.put("totalSpent", totalSpent);
-        data.put("totalOrders", orderDAO.countByUser_Id(user.getId()));
-        data.put("userRank", getRank(totalSpent));
+        Long completedOrders = orderDAO.countCompletedOrdersByUser(user.getId());
+        data.put("totalOrders", completedOrders != null ? completedOrders : 0);
+        data.put("userRank", userRank);
         data.put("rankClass", getRankClass(totalSpent));
-        
+        data.put("discountPercent", discountPercent);
+        data.put("nextRank", nextRank);
+        data.put("nextRankDiscount", nextRankDiscount);
+        data.put("nextThreshold", nextThreshold);
+        data.put("neededSpent", neededSpent);
+        data.put("rankProgress", Math.min(100.0, Math.max(0.0, rankProgress)));
+
         data.put("orders", orderDAO.findByUser_IdOrderByCreatedAtDesc(user.getId()));
         data.put("wishlistItems", wishlistItemRepository.findByUser_IdOrderByCreatedAtDesc(user.getId()));
         data.put("addresses", getCurrentUserAddresses(authentication));
         data.put("notificationSettings", getCurrentUserNotificationSettings(authentication));
         java.util.List<poly.edu.entity.UserVoucher> allVouchers = userVoucherDAO.findByUserOrderBySavedAtDesc(user);
         java.util.List<poly.edu.entity.UserVoucher> validVouchers = allVouchers.stream()
-            .filter(uv -> uv.getVoucher() != null && uv.getVoucher().isValid())
-            .collect(java.util.stream.Collectors.toList());
+                .filter(uv -> uv.getVoucher() != null && uv.getVoucher().isValid()
+                        && !"CONSUMED".equalsIgnoreCase(uv.getStatus()))
+                .collect(java.util.stream.Collectors.toList());
         data.put("vouchers", validVouchers);
-        
+        data.put("reviewedProductIds", reviewDAO.findReviewedProductIdsByUserId(user.getId()));
+        data.put("reviewedOrderItemIds", reviewDAO.findReviewedOrderItemIdsByUserId(user.getId()));
+
         return data;
     }
 
+    public int getDiscountPercent(Double totalSpent) {
+        if (totalSpent == null)
+            return 0;
+        if (totalSpent >= 200_000_000)
+            return 10;
+        if (totalSpent >= 100_000_000)
+            return 8;
+        if (totalSpent >= 50_000_000)
+            return 5;
+        if (totalSpent >= 10_000_000)
+            return 2;
+        return 0;
+    }
+
+    private String getNextRank(Double totalSpent) {
+        if (totalSpent == null || totalSpent < 10_000_000)
+            return "Silver";
+        if (totalSpent < 50_000_000)
+            return "Gold";
+        if (totalSpent < 100_000_000)
+            return "Platinum";
+        if (totalSpent < 200_000_000)
+            return "Diamond";
+        return "MAX";
+    }
+
+    private double getNextRankThreshold(Double totalSpent) {
+        if (totalSpent == null || totalSpent < 10_000_000)
+            return 10_000_000.0;
+        if (totalSpent < 50_000_000)
+            return 50_000_000.0;
+        if (totalSpent < 100_000_000)
+            return 100_000_000.0;
+        if (totalSpent < 200_000_000)
+            return 200_000_000.0;
+        return 200_000_000.0;
+    }
+
+    private double getRankProgress(Double totalSpent) {
+        if (totalSpent == null || totalSpent <= 0)
+            return 0.0;
+        if (totalSpent >= 200_000_000)
+            return 100.0;
+
+        double currentMin = 0.0;
+        double nextMax = 10_000_000.0;
+
+        if (totalSpent >= 100_000_000) {
+            currentMin = 100_000_000.0;
+            nextMax = 200_000_000.0;
+        } else if (totalSpent >= 50_000_000) {
+            currentMin = 50_000_000.0;
+            nextMax = 100_000_000.0;
+        } else if (totalSpent >= 10_000_000) {
+            currentMin = 10_000_000.0;
+            nextMax = 50_000_000.0;
+        }
+
+        return ((totalSpent - currentMin) / (nextMax - currentMin)) * 100.0;
+    }
+
     private String getRank(Double totalSpent) {
-        if (totalSpent >= 200_000_000) return "Diamond";
-        if (totalSpent >= 50_000_000) return "Platinum";
-        if (totalSpent >= 10_000_000) return "Silver";
-        return "None";
+        if (totalSpent == null)
+            return "Bronze";
+        if (totalSpent >= 200_000_000)
+            return "Diamond";
+        if (totalSpent >= 100_000_000)
+            return "Platinum";
+        if (totalSpent >= 50_000_000)
+            return "Gold";
+        if (totalSpent >= 10_000_000)
+            return "Silver";
+        return "Bronze";
     }
 
     private String getRankClass(Double totalSpent) {
-        if (totalSpent >= 200_000_000) return "rank-diamond";
-        if (totalSpent >= 50_000_000) return "rank-platinum";
-        if (totalSpent >= 10_000_000) return "rank-silver";
-        return "rank-none";
+        if (totalSpent == null)
+            return "rank-bronze";
+        if (totalSpent >= 200_000_000)
+            return "rank-diamond";
+        if (totalSpent >= 100_000_000)
+            return "rank-platinum";
+        if (totalSpent >= 50_000_000)
+            return "rank-gold";
+        if (totalSpent >= 10_000_000)
+            return "rank-silver";
+        return "rank-bronze";
     }
 
     @Transactional
-    public void uploadAvatar(org.springframework.web.multipart.MultipartFile file, User user) throws java.io.IOException {
+    public void uploadAvatar(org.springframework.web.multipart.MultipartFile file, User user)
+            throws java.io.IOException {
         String srcUploadDir = "src/main/resources/static/uploads/avatars/";
         String targetUploadDir = "target/classes/static/uploads/avatars/";
 
         java.io.File srcDir = new java.io.File(srcUploadDir);
-        if (!srcDir.exists()) srcDir.mkdirs();
+        if (!srcDir.exists())
+            srcDir.mkdirs();
 
         java.io.File targetDir = new java.io.File(targetUploadDir);
-        if (!targetDir.exists()) targetDir.mkdirs();
+        if (!targetDir.exists())
+            targetDir.mkdirs();
 
         String originalFilename = file.getOriginalFilename();
         String extension = "";
@@ -319,6 +464,11 @@ public class ProfileService {
 
     private String resolveIdentifier(Authentication authentication) {
         Object principal = authentication.getPrincipal();
+        if (principal instanceof poly.edu.security.CustomOAuth2User customOAuth2User) {
+            if (customOAuth2User.getEmail() != null && !customOAuth2User.getEmail().isBlank()) {
+                return customOAuth2User.getEmail();
+            }
+        }
         if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
             return userDetails.getUsername();
         }

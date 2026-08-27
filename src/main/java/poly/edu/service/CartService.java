@@ -1,7 +1,6 @@
 package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,9 +61,10 @@ public class CartService {
         if (uOpt.isPresent()) {
             Double spent = orderDAO.getTotalSpentByUser(uOpt.get().getId());
             if (spent == null) spent = 0.0;
-            if (spent >= 200_000_000) return 0.10; // 10%
-            if (spent >= 50_000_000) return 0.05;  // 5%
-            if (spent >= 10_000_000) return 0.02;  // 2%
+            if (spent >= 200_000_000) return 0.10; // Kim Cương: 10%
+            if (spent >= 100_000_000) return 0.08; // Bạch Kim: 8%
+            if (spent >= 50_000_000) return 0.05;  // Vàng: 5%
+            if (spent >= 10_000_000) return 0.02;  // Bạc: 2%
         }
         return 0.0;
     }
@@ -111,7 +111,7 @@ public class CartService {
             }
         }
 
-        // 2. Identify User
+        // 2. Identify User & Require Login
         User currentUser = null;
         if (principal != null) {
             String emailOrUsername = "";
@@ -125,10 +125,15 @@ public class CartService {
             if (uOpt.isPresent()) currentUser = uOpt.get();
         }
 
+        if (currentUser == null) {
+            throw new Exception("Vui lòng đăng nhập để tiến hành đặt hàng!");
+        }
+
         // 3. Calculate Prices
         double baseTotal = calculateTotal(targetCart.values());
         double discountRate = getDiscountRate(principal);
-        double priceAfterVip = baseTotal - (baseTotal * discountRate);
+        double vipDiscount = baseTotal * discountRate;
+        double priceAfterVip = baseTotal - vipDiscount;
 
         // 4. Apply voucher combo (Order/Category discount + Freeship)
         double voucherDiscount = 0;
@@ -136,7 +141,10 @@ public class CartService {
         String appliedVoucherCode = null;
         String appliedFreeshipCode = null;
 
-        if (currentUser != null) {
+        voucherCode = cleanVoucherCode(voucherCode);
+        freeshipCode = cleanVoucherCode(freeshipCode);
+
+        if (voucherCode != null || freeshipCode != null) {
             Map<String, Object> validation = voucherService.validateVoucherCombo(voucherCode, freeshipCode, priceAfterVip, shippingFee, targetCart.values(), currentUser);
             if (Boolean.TRUE.equals(validation.get("valid"))) {
                 voucherDiscount = (double) validation.getOrDefault("orderDiscount", 0.0);
@@ -158,18 +166,17 @@ public class CartService {
         double finalShippingFee = Math.max(0, shippingFee - freeshipDiscount);
         double finalPrice = Math.max(0, (priceAfterVip - voucherDiscount) + finalShippingFee);
 
-        // 5. Create Order
+        // 5. Create Order (Linked to currentUser)
         Order order = new Order();
-        if (currentUser != null) {
-            order.setUser(currentUser);
-            if (order.getEmail() == null) order.setEmail(currentUser.getEmail());
-        }
+        order.setUser(currentUser);
+        order.setEmail(currentUser.getEmail());
         order.setFullName(fullName);
         order.setPhone(phone);
         order.setAddress(address);
         order.setTotalPrice(finalPrice);
         order.setVoucherCode(appliedVoucherCode);
         order.setDiscountAmount(voucherDiscount);
+        order.setVipDiscount(vipDiscount);
         order.setFreeshipVoucherCode(appliedFreeshipCode);
         order.setFreeshipDiscount(freeshipDiscount);
         order.setPaymentMethod(paymentMethod.toUpperCase());
@@ -184,7 +191,7 @@ public class CartService {
         orderDAO.save(order);
 
         // 6. Create Order Items & Update Stock
-        if (appliedVoucherCode != null && currentUser != null && !"VIETQR".equalsIgnoreCase(paymentMethod)) {
+        if (appliedVoucherCode != null && !"VIETQR".equalsIgnoreCase(paymentMethod)) {
             voucherService.consumeVoucher(appliedVoucherCode, currentUser.getId());
         }
         for (CartItem item : targetCart.values()) {
@@ -207,9 +214,7 @@ public class CartService {
             }
         }
 
-        if (currentUser != null) {
-            clearDbCart(currentUser);
-        }
+        clearDbCart(currentUser);
 
         return order;
     }
@@ -310,5 +315,14 @@ public class CartService {
         if (cartOpt.isPresent()) {
             cartItemDAO.deleteByCartId(cartOpt.get().getId());
         }
+    }
+
+    private String cleanVoucherCode(String code) {
+        if (code == null) return null;
+        String trimmed = code.replaceAll("^,+|,+$", "").trim();
+        if (trimmed.isEmpty() || "null".equalsIgnoreCase(trimmed) || "undefined".equalsIgnoreCase(trimmed)) {
+            return null;
+        }
+        return trimmed;
     }
 }

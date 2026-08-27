@@ -8,11 +8,11 @@
 
     <title>Quản Lý Người Dùng — Luxury PC</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/account.css}" />
+    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/account.css}" />
 
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
 <body>
@@ -44,19 +44,19 @@
         <div style="margin-bottom: 1.5rem;">
             <button class="btn btn-gold" id="toggleFormBtn" onclick="toggleForm()" type="button"><i
                     class="fa-solid fa-plus"></i> <span class="btn-text">Thêm
-                    Staff Mới</span></button>
+                    Khách Hàng Mới</span></button>
         </div>
 
         <div class="card add-form-container" id="userForm" th:classappend="${user.id != null ? 'active' : ''}">
 
             <div class="card-header">
-                <h2>Thêm / Cập nhật Staff</h2>
+                <h2>Thêm / Cập nhật Khách Hàng</h2>
                 <button class="icon-btn icon-btn-del" onclick="toggleForm()" title="Thoát" type="button"><i
                         class="fa-solid fa-xmark"></i></button>
             </div>
 
             <!-- FIX: action đúng là /admin/account/save -->
-            <form novalidate th:action="@{/admin/account/save}" method="post">
+            <form novalidate class="needs-validation" th:action="@{/admin/account/save}" method="post">
 
 
                 <input type="hidden" name="id" th:value="${user.id}">
@@ -79,13 +79,13 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Họ tên</label>
-                        <input type="text" name="fullName" th:value="${user.fullName}">
+                        <label>Họ tên *</label>
+                        <input type="text" name="fullName" th:value="${user.fullName}" required>
                     </div>
 
                     <div class="input-group">
-                        <label>Số điện thoại</label>
-                        <input type="text" name="phone" th:value="${user.phone}">
+                        <label>Số điện thoại *</label>
+                        <input type="text" name="phone" th:value="${user.phone}" required>
                     </div>
 
                     <div class="input-group">
@@ -112,11 +112,9 @@
 
                     <div class="input-group">
                         <label>Vai trò</label>
-                        <select name="roleName">
-                            <option value="USER" th:selected="${currentRole == 'USER'}">Khách hàng (USER)</option>
-                            <option value="STAFF" th:selected="${currentRole == 'STAFF'}">Nhân viên (STAFF)</option>
-                            <option value="ADMIN" th:selected="${currentRole == 'ADMIN'}">Quản trị viên (ADMIN)</option>
-                        </select>
+                        <input type="text" value="Khách hàng (USER)" readonly
+                            style="background: #f1f5f9; color: #64748b; cursor: not-allowed;">
+                        <input type="hidden" name="roleName" value="USER">
                     </div>
 
                     <div class="input-group">
@@ -138,8 +136,8 @@
 
                 </div>
 
-                <button type="submit">
-                    Lưu Staff
+                <button type="submit" class="btn-submit">
+                    Lưu Khách Hàng
                 </button>
 
             </form>
@@ -147,14 +145,19 @@
         </div>
 
         <div class="card">
-
-            <h2>Danh sách Staff</h2>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <h2 style="margin: 0;">Danh sách khách hàng</h2>
+                <div
+                    th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/account', keyword=${keyword})}">
+                </div>
+            </div>
 
             <div class="table-wrapper" style="width: 100%; max-height: 50vh; overflow-x: hidden; overflow-y: auto;">
                 <table style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">ID</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">STT</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Username</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Email</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Họ tên</th>
@@ -164,8 +167,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="u : ${users}">
-                            <td th:text="${u.id}"></td>
+                        <tr th:each="u, iterStat : ${users}">
+                            <td style="text-align: center; font-weight: 700; color: #94a3b8;" th:text="${'#' + iterStat.count}">#1</td>
                             <td th:text="${u.username}"></td>
                             <td th:text="${u.email}"></td>
                             <td th:text="${u.fullName}"></td>
@@ -206,6 +209,12 @@
                                     onsubmit="return window.confirmSubmit(event, 'Bạn có chắc chắn muốn XÓA VĨNH VIỄN người dùng này?');">
                                     <button type="submit" class="btn-action btn-danger">Xoá</button>
                                 </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${users == null or users.empty}">
+                            <td colspan="7" style="text-align: center; padding: 2.5rem 1rem !important; color: #64748b;">
+                                <i class="fa-solid fa-user-slash" style="font-size: 2rem; margin-bottom: 0.5rem; color: #cbd5e1; display: block;"></i>
+                                Không tìm thấy tài khoản khách hàng nào phù hợp.
                             </td>
                         </tr>
                     </tbody>

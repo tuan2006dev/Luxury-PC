@@ -1,7 +1,6 @@
 package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.UserVoucherDAO;
@@ -10,7 +9,6 @@ import poly.edu.entity.User;
 import poly.edu.entity.UserVoucher;
 import poly.edu.entity.Voucher;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

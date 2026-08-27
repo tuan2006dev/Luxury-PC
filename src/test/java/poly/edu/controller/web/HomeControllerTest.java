@@ -18,6 +18,7 @@ import poly.edu.service.*;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -25,8 +26,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(HomeController.class)
-@Import(SecurityConfig.class) // Nạp Security Config để đảm bảo Security không block HomeController
+@WebMvcTest(controllers = HomeController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 public class HomeControllerTest {
 
     @Autowired
@@ -54,7 +55,10 @@ public class HomeControllerTest {
     private NewsCategoryService newsCategoryService;
 
     @MockBean
-    private CategoryDAO categoryDAO;
+    private CategoryService categoryService;
+
+    @MockBean
+    private BrandService brandService;
 
     @MockBean
     private poly.edu.dao.ReviewDAO reviewDAO;
@@ -75,19 +79,44 @@ public class HomeControllerTest {
     @MockBean
     private poly.edu.service.AuthService authService;
 
+    @MockBean
+    private poly.edu.repository.AdminLogRepository adminLogRepository;
+
+    @MockBean
+    private poly.edu.security.UserStatusCheckFilter userStatusCheckFilter;
+
     @BeforeEach
     void setUp() {
-        // Giả lập dữ liệu trả về từ các Service để trang Home không bị lỗi NullPointer
+        when(categoryService.getAllCategories()).thenReturn(Collections.emptyList());
+        when(brandService.getAllBrands()).thenReturn(Collections.emptyList());
+        when(newsService.getTop5LatestNews()).thenReturn(Collections.emptyList());
+        when(newsService.getTop5MostViewedNews()).thenReturn(Collections.emptyList());
         when(productService.getFeaturedProducts()).thenReturn(Collections.emptyList());
         when(productService.getFlashSaleProducts()).thenReturn(Collections.emptyList());
         when(productService.getTopProducts(20)).thenReturn(Collections.emptyList());
+        when(productService.getTopProducts(40)).thenReturn(Collections.emptyList());
         when(reviewService.getLatestReviews()).thenReturn(Collections.emptyList());
         
         FlashSale flashSale = new FlashSale();
         flashSale.setId(1);
         flashSale.setEndTime(new Date(System.currentTimeMillis() + 100000));
         when(flashSaleService.getCurrentFlashSale()).thenReturn(Optional.of(flashSale));
-        when(flashSaleService.getItemsBySaleId(1)).thenReturn(Collections.emptyList());
+        
+        poly.edu.entity.Product product = new poly.edu.entity.Product();
+        product.setId(1);
+        product.setName("Test Product");
+        product.setPrice(1000.0);
+        product.setImage("test.jpg");
+
+        poly.edu.entity.FlashSaleItem item = new poly.edu.entity.FlashSaleItem();
+        item.setId(1);
+        item.setProduct(product);
+        item.setSalePrice(800.0);
+        item.setSoldCount(0);
+        item.setSaleQuantity(10);
+        when(flashSaleService.getItemsBySaleId(1)).thenReturn(List.of(item));
+        when(flashSaleService.getCurrentActiveSales()).thenReturn(Collections.emptyList());
+        when(flashSaleService.getUpcomingFlashSales()).thenReturn(Collections.emptyList());
         
         when(voucherService.getActiveVouchers()).thenReturn(Collections.emptyList());
     }

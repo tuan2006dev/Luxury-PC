@@ -13,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/shipping")
+@SuppressWarnings({"unused", "null"})
 public class ShippingApiController {
 
     // Địa điểm kho cửa hàng: 1011 Tân Kỳ Tân Quý, TP. Hồ Chí Minh

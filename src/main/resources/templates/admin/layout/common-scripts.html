@@ -1,6 +1,29 @@
 <div th:fragment="scripts">
+    <!-- Chart.js & Plugins for Admin Dashboard & Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <!-- SweetAlert2 for Delete Confirmation Popups -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom Confirm Popup (Global) -->
     <script th:src="@{/js/confirm-popup.js}"></script>
+    <!-- Centralized Form Validation -->
+    <script th:src="@{/js/admin/form-validation.js}"></script>
+    <script>
+        // Global Smart Reload Prevention for Admin Active Tabs & Links
+        document.addEventListener('click', function (e) {
+            const link = e.target.closest('a');
+            if (!link) return;
+            const href = link.getAttribute('href');
+            if (!href || href === '#' || href.startsWith('javascript:')) return;
+
+            const isSelfActive = link.classList.contains('active') || link.classList.contains('is-active');
+            const isParentActive = link.parentElement && link.parentElement.classList.contains('active');
+            const isCurrentUrl = link.href && (link.href === window.location.href);
+
+            if (isSelfActive || isParentActive || isCurrentUrl) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+    </script>
 </div>

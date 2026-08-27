@@ -26,6 +26,9 @@ public class AuthServiceTest {
     @Mock
     private UserDAO userDAO;
 
+    @Mock
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private AuthService authService;
 
@@ -43,7 +46,8 @@ public class AuthServiceTest {
 
     @Test
     void testLogin_ValidCredentials_ReturnsUser() {
-        when(userDAO.findByEmailAndPassword("test@gmail.com", "password123")).thenReturn(mockUser);
+        when(userDAO.findByEmail("test@gmail.com")).thenReturn(mockUser);
+        when(passwordEncoder.matches("password123", "password123")).thenReturn(true);
 
         User result = authService.login("test@gmail.com", "password123");
 
@@ -53,7 +57,8 @@ public class AuthServiceTest {
 
     @Test
     void testLogin_InvalidCredentials_ReturnsNull() {
-        when(userDAO.findByEmailAndPassword("wrong@gmail.com", "wrongpass")).thenReturn(null);
+        when(userDAO.findByEmail("wrong@gmail.com")).thenReturn(null);
+        when(userDAO.findByUsername("wrong@gmail.com")).thenReturn(null);
 
         User result = authService.login("wrong@gmail.com", "wrongpass");
 

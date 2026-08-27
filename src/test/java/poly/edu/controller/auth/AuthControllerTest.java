@@ -1,7 +1,6 @@
 package poly.edu.controller.auth;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -124,7 +123,7 @@ public class AuthControllerTest {
                 .param("password", "pass123")
                 .param("confirmPassword", "wrongpass"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/auth/register?mismatch=true"));
+                .andExpect(redirectedUrlPattern("/auth/register?mismatch=true*"));
     }
 
     @Test
@@ -140,7 +139,7 @@ public class AuthControllerTest {
                 .param("password", "pass123")
                 .param("confirmPassword", "pass123"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/auth/register?invalidOtp=true"));
+                .andExpect(redirectedUrlPattern("/auth/register?invalidOtp=true*"));
     }
 
     @Test

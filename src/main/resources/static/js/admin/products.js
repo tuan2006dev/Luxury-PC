@@ -1,5 +1,6 @@
 function toggleForm() {
-    const form = document.getElementById('productForm');
+    const form = document.getElementById('productForm') || document.querySelector('.add-form-container');
+    if (!form) return;
     const isActive = form.classList.toggle('active');
     updateToggleButtonState(isActive);
 }
@@ -9,7 +10,7 @@ function updateToggleButtonState(isActive) {
     if (!btn) return;
 
     if (isActive) {
-        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text">Cancel</span>';
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span class="btn-text">Hủy</span>';
         btn.classList.remove('btn-gold');
         btn.classList.add('btn-danger');
     } else {
@@ -28,80 +29,10 @@ function initProductFormState() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initProductFormState();
-
-    const form = document.getElementById('productFormElement');
-    if (form) {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const name = document.querySelector('input[name="name"]').value.trim();
-            if (!name) {
-                showValidationError('Vui lòng nhập tên sản phẩm.');
-                return;
-            }
-
-            const price = document.querySelector('input[name="price"]').value;
-            if (!price || price === '') {
-                showValidationError('Vui lòng nhập giá bán.');
-                return;
-            }
-
-            const cat = document.querySelector('select[name="category.id"]').value;
-            if (!cat) {
-                showValidationError('Vui lòng chọn danh mục sản phẩm.');
-                return;
-            }
-
-            form.submit();
-        });
-    }
 });
-
-function showValidationError(message) {
-    if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            title: 'Lỗi!',
-            text: message,
-            icon: 'warning',
-            background: '#1a1a1a',
-            color: '#f5f0e8',
-            confirmButtonColor: '#c9a84c'
-        });
-    } else {
-        alert(message);
-    }
-}
 
 document.addEventListener('spa:load', () => {
     initProductFormState();
-
-    const form = document.getElementById('productFormElement');
-    if (form && !form.dataset.hasValidation) {
-        form.dataset.hasValidation = 'true';
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const name = document.querySelector('input[name="name"]').value.trim();
-            if (!name) {
-                showValidationError('Vui lòng nhập tên sản phẩm.');
-                return;
-            }
-
-            const price = document.querySelector('input[name="price"]').value;
-            if (!price || price === '') {
-                showValidationError('Vui lòng nhập giá bán.');
-                return;
-            }
-
-            const cat = document.querySelector('select[name="category.id"]').value;
-            if (!cat) {
-                showValidationError('Vui lòng chọn danh mục sản phẩm.');
-                return;
-            }
-
-            form.submit();
-        });
-    }
 });
 
 function editProduct(btn) {
@@ -112,12 +43,18 @@ function editProduct(btn) {
     const brand = btn.getAttribute('data-brand');
     const desc = btn.getAttribute('data-desc');
     const stock = btn.getAttribute('data-stock');
+    const image = btn.getAttribute('data-image');
 
-    document.getElementById('id').value = id || '';
-    document.getElementById('name').value = name || '';
-    document.getElementById('price').value = price || '';
+    const idInput = document.getElementById('id');
+    if (idInput) idInput.value = id || '';
 
-    const catSelect = document.querySelector('select[name="category.id"]');
+    const nameInput = document.getElementById('name');
+    if (nameInput) nameInput.value = name || '';
+
+    const priceInput = document.getElementById('price');
+    if (priceInput) priceInput.value = price || '';
+
+    const catSelect = document.querySelector('select[name="category.id"]') || document.getElementById('category.id');
     if (catSelect) catSelect.value = cat || '';
 
     const brandInput = document.getElementById('brand');
@@ -125,12 +62,25 @@ function editProduct(btn) {
 
     const descEl = document.getElementById('description');
     if (descEl) descEl.value = desc || '';
-    document.getElementById('stock').value = stock || '0';
+
+    const stockInput = document.getElementById('stock');
+    if (stockInput) stockInput.value = stock || '0';
 
     const imageInput = document.getElementById('image');
-    if (imageInput) imageInput.value = btn.getAttribute('data-image') || '';
+    if (imageInput) imageInput.value = image || '';
+
     const imageUrlInput = document.getElementById('imageUrl');
-    if (imageUrlInput) imageUrlInput.value = btn.getAttribute('data-image') || '';
+    if (imageUrlInput) imageUrlInput.value = image || '';
+
+    // Reset file upload label
+    const fileNameSpan = document.querySelector('#productForm .file-name');
+    if (fileNameSpan) fileNameSpan.innerText = 'Chọn ảnh tải lên...';
+
+    const fileLabel = document.querySelector('#productForm .file-upload-label');
+    if (fileLabel) fileLabel.classList.remove('has-file');
+
+    const fileInput = document.querySelector('#productForm input[type="file"]');
+    if (fileInput) fileInput.value = '';
 
     // Update header
     const h2 = document.querySelector('.card-header h2');

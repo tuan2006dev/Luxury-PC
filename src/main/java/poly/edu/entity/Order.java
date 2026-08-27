@@ -41,6 +41,9 @@ public class Order {
     @Column(name = "discount_amount")
     private Double discountAmount;
 
+    @Column(name = "vip_discount")
+    private Double vipDiscount;
+
     @Column(name = "freeship_voucher_code")
     private String freeshipVoucherCode;
 
@@ -52,6 +55,9 @@ public class Order {
 
     @Column(name = "shipping_method_name")
     private String shippingMethodName;
+
+    @Column(name = "tracking_code")
+    private String trackingCode;
 
     @Column(name = "admin_note", length = 1000)
     private String adminNote;
@@ -202,6 +208,14 @@ public class Order {
         this.discountAmount = discountAmount;
     }
 
+    public Double getVipDiscount() {
+        return vipDiscount;
+    }
+
+    public void setVipDiscount(Double vipDiscount) {
+        this.vipDiscount = vipDiscount;
+    }
+
     public String getFreeshipVoucherCode() {
         return freeshipVoucherCode;
     }
@@ -274,6 +288,14 @@ public class Order {
         this.orderItems = orderItems;
     }
 
+    public String getTrackingCode() {
+        return trackingCode;
+    }
+
+    public void setTrackingCode(String trackingCode) {
+        this.trackingCode = trackingCode;
+    }
+
     @Transient
     public String getStatusDisplay() {
         if (status == null) return "Chưa xác định";
@@ -286,7 +308,9 @@ public class Order {
             case "THU_HOI" -> "Đã thu hồi";
             case "PENDING" -> "Chờ xử lý";
             case "DA_HUY", "CANCELLED", "CANCELED" -> "Đã hủy";
-            case "SHIPPING" -> "Đang giao vận";
+            case "WAITING_DRIVER" -> "Chờ tài xế Lalamove";
+            case "PICKED_UP" -> "Tài xế đã lấy hàng";
+            case "SHIPPING" -> "Đang giao hàng";
             case "COMPLETED", "HOAN_THANH" -> "Hoàn thành";
             default -> status;
         };

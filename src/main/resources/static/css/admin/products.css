@@ -13,9 +13,6 @@
         --white: #0f172a;
 }
 
-
-
-
 .sidebar {
         width: 280px;
         background: var(--deep);
@@ -327,6 +324,19 @@ td {
         color: var(--muted);
         transition: 0.3s;
         font-family: var(--sans);
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+}
+
+.file-upload-label .file-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
 }
 
 .file-upload-label:hover {
@@ -337,10 +347,13 @@ td {
 
 .file-upload-label i {
         font-size: 1.5rem;
+        flex-shrink: 0;
 }
 
-.file-input-hidden {
-        display: none;
+.file-input-hidden,
+.input-group input.file-input-hidden,
+input[type="file"].file-input-hidden {
+        display: none !important;
 }
 
 .file-upload-label.has-file {

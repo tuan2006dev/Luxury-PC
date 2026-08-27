@@ -6,18 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard — Luxury PC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/dashboard.css}" />
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 
     <!-- Flatpickr for custom date filtering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <style>
+    <style data-pjax-track="true">
         .header {
             display: flex;
             justify-content: space-between;
@@ -126,6 +126,24 @@
 </head>
 
 <body>
+    <!-- LOADING SCREEN -->
+    <div class="loader" id="loader">
+        <div class="loader-inner">
+            <div class="loader-glow"></div>
+            <div class="loader-logo">LUXURY PC</div>
+            <div class="loader-sub">ADMIN DASHBOARD...</div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('load', function () {
+            var l = document.getElementById('loader');
+            if (l) { l.classList.add('hidden'); setTimeout(function () { l.style.display = 'none'; }, 600); }
+        });
+    </script>
+
     <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
     <div class="main-content">
@@ -144,22 +162,22 @@
         <!-- Summary KPI Cards -->
         <div class="stats-grid">
             <div class="stat-card fade-in-up delay-1">
-                <i class="fa-solid fa-wallet stat-icon"></i>
+                <i class="fa-solid fa-wallet stat-icon icon-revenue" style="color: #16a34a !important;"></i>
                 <div class="stat-label">Doanh Thu Trong Kỳ</div>
                 <div class="stat-value" id="stat-revenue">0₫</div>
             </div>
             <div class="stat-card fade-in-up delay-2">
-                <i class="fa-solid fa-cart-shopping stat-icon"></i>
+                <i class="fa-solid fa-cart-shopping stat-icon icon-orders" style="color: #2563eb !important;"></i>
                 <div class="stat-label">Tổng Đơn Hàng</div>
                 <div class="stat-value" id="stat-orders">0</div>
             </div>
             <div class="stat-card fade-in-up delay-3">
-                <i class="fa-solid fa-triangle-exclamation stat-icon"></i>
+                <i class="fa-solid fa-triangle-exclamation stat-icon icon-warning" style="color: #dc2626 !important;"></i>
                 <div class="stat-label">Cảnh Báo Kho</div>
                 <div class="stat-value" th:text="${lowStock} ? ${lowStock.size()} : 0">0</div>
             </div>
             <div class="stat-card fade-in-up delay-4">
-                <i class="fa-solid fa-users stat-icon"></i>
+                <i class="fa-solid fa-users stat-icon icon-customers" style="color: #9333ea !important;"></i>
                 <div class="stat-label">Khách Hàng Mới</div>
                 <div class="stat-value" id="stat-customers">0</div>
             </div>
@@ -174,7 +192,6 @@
             <button class="tab-btn" onclick="switchTab('tab-products', event)"><i class="fa-solid fa-box"></i> Báo Cáo
                 Sản Phẩm</button>
         </div>
-
         <div class="tab-content fade-in-up delay-2">
             <!-- Tab 1: Charts -->
             <div id="tab-charts" class="tab-pane active">
@@ -207,6 +224,8 @@
                                         onclick="handlePresetClick('thisMonth', this)">Tháng này</button>
                                     <button type="button" class="btn-preset" data-range="lastMonth"
                                         onclick="handlePresetClick('lastMonth', this)">Tháng trước</button>
+                                    <button type="button" class="btn-preset" data-range="all"
+                                        onclick="handlePresetClick('all', this)">Tất cả</button>
                                     <button type="button" class="btn-preset" id="customToggleBtn"
                                         onclick="toggleCustomRange(this)">Tùy chọn</button>
                                 </div>
@@ -339,13 +358,17 @@
                 event.currentTarget.classList.add('active');
             };
 
-            let revenueChartInstance = null;
-            let orderStatusChartInstance = null;
-            let newUsersChartInstance = null;
+            var revenueChartInstance = null;
+            var orderStatusChartInstance = null;
+            var newUsersChartInstance = null;
 
-            const currencyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+            var currencyFormatter = {
+                format: function (value) {
+                    return Number(value).toLocaleString('en-US') + ' ₫';
+                }
+            };
 
-            const statusLabels = {
+            var statusLabels = {
                 'PENDING': 'Chờ xử lý',
                 'CHO_XAC_NHAN_THANH_TOAN': 'Chờ xác nhận TT',
                 'DA_THANH_TOAN': 'Đã thanh toán',
@@ -358,7 +381,7 @@
                 'DA_HUY': 'Đã hủy'
             };
 
-            const statusColors = {
+            var statusColors = {
                 'PENDING': '#ef4444',
                 'CHO_XAC_NHAN_THANH_TOAN': '#f59e0b',
                 'DA_THANH_TOAN': '#8b5cf6',
@@ -450,6 +473,11 @@
                 const noDataNotice = document.getElementById('revenueNoData');
                 if (!ctx) return;
 
+                if (typeof Chart === 'undefined') {
+                    setTimeout(() => updateRevenueChart(dailyRevenue), 150);
+                    return;
+                }
+
                 const labels = dailyRevenue.map(item => item.date);
                 const values = dailyRevenue.map(item => item.revenue);
 
@@ -503,6 +531,11 @@
                 const noDataNotice = document.getElementById('orderStatusNoData');
                 if (!ctx) return;
 
+                if (typeof Chart === 'undefined') {
+                    setTimeout(() => updateOrderStatusChart(orderStatus), 150);
+                    return;
+                }
+
                 const labels = orderStatus.map(item => statusLabels[item.status] || item.status);
                 const values = orderStatus.map(item => item.count);
                 const bgColors = orderStatus.map(item => statusColors[item.status] || '#888');
@@ -545,6 +578,11 @@
                 const ctx = document.getElementById('newUsersChart');
                 const noDataNotice = document.getElementById('newUsersNoData');
                 if (!ctx) return;
+
+                if (typeof Chart === 'undefined') {
+                    setTimeout(() => updateNewUsersChart(newUsers), 150);
+                    return;
+                }
 
                 const labels = newUsers.map(item => item.date);
                 const values = newUsers.map(item => item.count);
@@ -598,6 +636,7 @@
             // Run on DOMContentLoaded for direct page loads / F5
             document.addEventListener("DOMContentLoaded", initDashboardPage);
         </script>
+        <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
     </div>
 </body>
 

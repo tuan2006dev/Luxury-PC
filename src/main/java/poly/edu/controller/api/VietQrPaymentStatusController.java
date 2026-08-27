@@ -65,6 +65,6 @@ public class VietQrPaymentStatusController {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    static class PaymentStatusForbiddenException extends RuntimeException {
+    public static class PaymentStatusForbiddenException extends RuntimeException {
     }
 }

@@ -2,90 +2,14 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thêm/Sửa Danh Mục - Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
-    <style>
-        .form-container {
-            background: #fff;
-            padding: 24px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 500;
-            color: #475569;
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 14px;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
-        }
-
-        textarea.form-control {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .btn-submit {
-            background: #0ea5e9;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .btn-submit:hover {
-            background: #0284c7;
-        }
-
-        .btn-cancel {
-            background: #94a3b8;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-weight: 500;
-            margin-left: 8px;
-        }
-
-        .main-content {
-            margin-left: 280px;
-            flex: 1;
-            padding: 3rem;
-            overflow-x: hidden;
-        }
-
-        .page-header {
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-    </style>
+    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/newscategory/form.css}">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
 <body>

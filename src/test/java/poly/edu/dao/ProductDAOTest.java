@@ -128,18 +128,18 @@ public class ProductDAOTest {
 
     @Test
     public void testSearchProducts() {
-        List<Product> byBrand = productDAO.searchProducts(null, null, null, null, "Intel", PageRequest.of(0, 10));
+        List<Product> byBrand = productDAO.searchProducts(null, null, null, null, "Intel", PageRequest.of(0, 10)).getContent();
         assertThat(byBrand).hasSize(1);
         assertThat(byBrand.get(0).getName()).isEqualTo("Intel Core i9");
 
-        List<Product> byPriceAndCat = productDAO.searchProducts(gpuCategory.getId(), 1000.0, 2000.0, null, null, PageRequest.of(0, 10));
+        List<Product> byPriceAndCat = productDAO.searchProducts(gpuCategory.getId(), 1000.0, 2000.0, null, null, PageRequest.of(0, 10)).getContent();
         assertThat(byPriceAndCat).hasSize(1);
         assertThat(byPriceAndCat.get(0).getName()).isEqualTo("NVIDIA RTX 4090");
 
-        List<Product> byKeyword = productDAO.searchProducts(null, null, null, "DDR5", null, PageRequest.of(0, 10));
+        List<Product> byKeyword = productDAO.searchProducts(null, null, null, "DDR5", null, PageRequest.of(0, 10)).getContent();
         assertThat(byKeyword).isEmpty(); // image is null for RAM
 
-        List<Product> byKeywordWithImage = productDAO.searchProducts(null, null, null, "High", null, PageRequest.of(0, 10));
+        List<Product> byKeywordWithImage = productDAO.searchProducts(null, null, null, "High", null, PageRequest.of(0, 10)).getContent();
         assertThat(byKeywordWithImage).hasSize(2); 
     }
 }

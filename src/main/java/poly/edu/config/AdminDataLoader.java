@@ -3,7 +3,6 @@ package poly.edu.config;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -103,6 +102,14 @@ public class AdminDataLoader implements CommandLineRunner {
         }
         if (adminUpdated) {
             admin = userDAO.save(admin);
+        }
+
+        Role userRoleDefault = roleDAO.findByName("USER");
+        if (userRoleDefault == null) {
+            userRoleDefault = new Role();
+            userRoleDefault.setName("USER");
+            roleDAO.save(userRoleDefault);
+            log.info("[DataLoader] Created USER role");
         }
 
         Role staffRole = roleDAO.findByName("STAFF");

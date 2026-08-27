@@ -1,17 +1,15 @@
 <div th:fragment="modals">
   <!-- Order Review Modal -->
-  <div class="order-modal-backdrop" id="order-modal-backdrop" onclick="closeOrderModal()">
-    <div class="order-modal" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeOrderModal()">✕</button>
-      <div class="modal-head">
-        <div>
-          <div class="section-tag">Đánh giá sản phẩm</div>
-          <h3 id="modal-review-product-title" style="color:#000; margin-top:5px; font-size:1.1rem;">Đánh giá sản phẩm</h3>
-        </div>
+  <div class="lux-modal-backdrop" id="order-modal-backdrop" onclick="closeOrderModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title" id="modal-review-product-title">Đánh giá sản phẩm</h3>
+        <button class="lux-modal-close" onclick="closeOrderModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="modal-content" id="order-modal-content" style="padding-top: 15px;">
+      <div class="lux-modal-body" id="order-modal-content">
         <input type="hidden" id="review-product-id" />
         <input type="hidden" id="review-product-name" />
+        <input type="hidden" id="review-order-item-id" />
 
         <div style="margin-bottom: 1.5rem; text-align: center;">
           <div class="review-stars" style="display: flex; gap: 8px; justify-content: center;">
@@ -27,107 +25,143 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Bình luận / Nhận xét</label>
-          <textarea id="review-comment" class="form-input" rows="4"
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Bình luận / Nhận
+            xét</label>
+          <textarea id="review-comment" class="form-input" rows="3"
             placeholder="Nhập chia sẻ của bạn về sản phẩm này..."
             style="width: 100%; box-sizing: border-box; background: #fff; color: #000; border: 1px solid #cbd5e1; padding: 12px; border-radius: 4px; resize: none; font-family: inherit; font-size: 0.85rem; line-height: 1.5;"></textarea>
         </div>
 
-        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-          <button type="button" class="btn-save" onclick="submitReview()" style="padding: 0.6rem 1.5rem;">
-            <span class="btn-save-inner">Gửi Đánh Giá</span>
-          </button>
-          <button type="button" class="btn-edit" onclick="closeOrderModal()" style="padding: 0.6rem 1.5rem;">Hủy</button>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Hình ảnh hoặc Video đính kèm <span style="font-weight:400; color:#64748b; font-size:11px;">(Tùy chọn - Không bắt buộc)</span></label>
+          <div style="display: flex; gap: 12px; align-items: center; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <!-- Media Preview -->
+            <div id="reviewMediaPreviewBox" style="flex-shrink: 0; width: 90px; height: 65px; background: #0f172a; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; position: relative;">
+              <img id="reviewImagePreview" src="/images/placeholder.png" style="max-width: 100%; max-height: 100%; object-fit: cover; display: block;" alt="Preview" />
+              <video id="reviewVideoPreview" controls style="max-width: 100%; max-height: 100%; object-fit: contain; display: none;"></video>
+            </div>
+
+            <!-- Upload input box (Flashsale style) -->
+            <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+              <label class="file-upload-label" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px; background: #fff; border: 2px dashed #cbd5e1; border-radius: 8px; color: #475569; width: 100%; box-sizing: border-box; overflow: hidden; cursor: pointer; transition: all 0.2s;">
+                <i class="fa-solid fa-cloud-arrow-up" style="color: #3b82f6; font-size: 18px; flex-shrink: 0;"></i>
+                <span class="file-name" id="reviewFileName" style="flex: 1; min-width: 0; font-size: 12px; color: #475569; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">Chọn ảnh hoặc video...</span>
+                <input autocomplete="off" type="file" id="reviewMediaFile" accept="image/*,video/*" style="display: none;" onchange="handleReviewFileSelect(this)">
+              </label>
+              <div style="font-size: 10px; color: #94a3b8; text-align: center;">Chấp nhận Ảnh (JPG, PNG, WEBP) hoặc Video (MP4, WEBM)</div>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeOrderModal()">Hủy</button>
+        <button type="button" class="btn btn-primary" onclick="submitReview()">Gửi Đánh Giá</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Return / Refund Modal -->
+  <div class="lux-modal-backdrop" id="refund-modal-backdrop" onclick="closeRefundModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title" id="modal-refund-title">Yêu Cầu Thu Hồi / Hoàn Trả Đơn Hàng</h3>
+        <button class="lux-modal-close" onclick="closeRefundModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="lux-modal-body">
+        <input type="hidden" id="refund-order-id" />
+        <div style="margin-bottom: 1rem; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem;">
+          <div style="color: #64748b; margin-bottom: 4px;">Đang chọn đơn hàng:</div>
+          <div style="font-weight: 700; color: #0284c7; font-size: 1rem;" id="refund-order-code">#LUXURY-000</div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333; font-weight: 600;">
+            Lý do yêu cầu thu hồi / đổi trả <span style="color: #ef4444;">*</span>
+          </label>
+          <textarea id="refund-reason-input" class="form-input" rows="4"
+            placeholder="Vui lòng mô tả chi tiết lý do (ví dụ: Sản phẩm bị lỗi kỹ thuật, giao nhầm mã sản phẩm, muốn trả hàng...)"
+            style="width: 100%; box-sizing: border-box; background: #fff; color: #000; border: 1px solid #cbd5e1; padding: 12px; border-radius: 4px; resize: none; font-family: inherit; font-size: 0.85rem; line-height: 1.5;"></textarea>
+          <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">Tối thiểu 5 ký tự để Admin dễ dàng kiểm tra và phản hồi.</div>
+        </div>
+
+        <div style="font-size: 0.78rem; color: #64748b; line-height: 1.5; background: #f1f5f9; padding: 10px 12px; border-radius: 6px;">
+          💡 <strong>Lưu ý:</strong> Sau khi gửi yêu cầu, thông tin sẽ được chuyển trực tiếp đến Ban Quản Trị để kiểm tra. Admin sẽ duyệt, liên hệ hỗ trợ thu hồi hoặc phản hồi lại cho quý khách trong thời gian sớm nhất.
+        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeRefundModal()">Đóng</button>
+        <button type="button" id="btn-submit-refund" class="btn btn-primary" style="background: #d97706; border-color: #d97706;" onclick="submitRefundRequest()">Gửi Yêu Cầu Thu Hồi</button>
       </div>
     </div>
   </div>
 
   <!-- 2FA Modal -->
-  <div class="order-modal-backdrop" id="2fa-modal-backdrop" onclick="close2FAModal()">
-    <div class="order-modal" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="close2FAModal()">✕</button>
-      <div class="modal-head">
-        <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:#000; margin-top:5px; font-size:1.1rem;">
-            Kích hoạt xác thực 2 lớp (2FA)</h3>
-        </div>
+  <div class="lux-modal-backdrop" id="2fa-modal-backdrop" onclick="close2FAModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title">Kích hoạt xác thực 2 lớp (2FA)</h3>
+        <button class="lux-modal-close" onclick="close2FAModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="modal-content" style="padding-top: 15px;">
+      <div class="lux-modal-body">
         <p style="font-size: 0.8rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
-          Chúng tôi đã gửi một mã xác thực OTP gồm 6 chữ số đến email của bạn. Vui lòng nhập mã này dưới đây để xác
-          nhận kích hoạt tính năng đăng nhập 2 lớp.
+          Chúng tôi đã gửi một mã xác thực OTP gồm 6 chữ số đến email của bạn. Vui lòng nhập mã này dưới đây để xác nhận
+          kích hoạt tính năng đăng nhập 2 lớp.
         </p>
-        <div class="form-group" style="margin-bottom: 1.5rem;">
+        <div class="form-group">
           <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Mã OTP Xác Thực</label>
           <input type="text" id="2fa-otp-input" class="form-input" placeholder="Nhập mã OTP 6 số" maxlength="6"
-            style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; background: #fff;" />
+            style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; background: #fff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 4px;" />
         </div>
-        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-          <button type="button" class="btn-save" onclick="verifyAndEnable2FA()" style="padding: 0.6rem 1.5rem;">
-            <span class="btn-save-inner">Kích Hoạt</span>
-          </button>
-          <button type="button" class="btn-edit" onclick="close2FAModal()" style="padding: 0.6rem 1.5rem;">Hủy</button>
-        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-outline" onclick="close2FAModal()">Hủy</button>
+        <button type="button" class="btn btn-primary" onclick="verifyAndEnable2FA()">Kích Hoạt</button>
       </div>
     </div>
   </div>
 
   <!-- Email Details Modal -->
-  <div class="order-modal-backdrop" id="email-details-modal-backdrop" onclick="closeEmailDetailsModal()">
-    <div class="order-modal" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeEmailDetailsModal()">✕</button>
-      <div class="modal-head">
-        <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:#000; margin-top:5px; font-size:1.1rem;">Chi Tiết Email Xác Minh</h3>
-        </div>
+  <div class="lux-modal-backdrop" id="email-details-modal-backdrop" onclick="closeEmailDetailsModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title">Chi Tiết Email Xác Minh</h3>
+        <button class="lux-modal-close" onclick="closeEmailDetailsModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="modal-content" style="padding-top: 15px;">
+      <div class="lux-modal-body">
         <div style="display: flex; flex-direction: column; gap: 1rem; color: #333;">
           <div
             style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.8rem;">
-            <span style="color: #64748b; font-size: 0.8rem;">Địa
-              chỉ Email:</span>
+            <span style="color: #64748b; font-size: 0.8rem;">Địa chỉ Email:</span>
             <strong th:text="${email}">you@email.com</strong>
           </div>
           <div
             style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.8rem;">
-            <span style="color: #64748b; font-size: 0.8rem;">Trạng
-              thái xác minh:</span>
-            <span class="sec-status-ok" style="font-size: 0.8rem;">● Đã xác
-              minh</span>
+            <span style="color: #64748b; font-size: 0.8rem;">Trạng thái xác minh:</span>
+            <span class="sec-status-ok" style="font-size: 0.8rem;">● Đã xác minh</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding-bottom: 0.8rem;">
-            <span style="color: #64748b; font-size: 0.8rem;">Ngày
-              tạo tài khoản:</span>
+            <span style="color: #64748b; font-size: 0.8rem;">Ngày tạo tài khoản:</span>
             <strong
               th:text="${user != null && user.createdAt != null ? #dates.format(user.createdAt, 'dd/MM/yyyy HH:mm') : ''}"
               th:if="${user != null && user.createdAt != null}">01/01/2026</strong>
             <strong th:if="${user == null || user.createdAt == null}">Chưa xác định</strong>
           </div>
         </div>
-        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
-          <button type="button" class="btn-save" onclick="closeEmailDetailsModal()" style="padding: 0.6rem 2rem;">
-            <span class="btn-save-inner">Đóng</span>
-          </button>
-        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-primary" onclick="closeEmailDetailsModal()">Đóng</button>
       </div>
     </div>
   </div>
 
   <!-- Sessions Modal -->
-  <div class="order-modal-backdrop" id="sessions-modal-backdrop" onclick="closeSessionsModal()">
-    <div class="order-modal" onclick="event.stopPropagation()" style="max-width: 600px;">
-      <button class="modal-close" onclick="closeSessionsModal()">✕</button>
-      <div class="modal-head">
-        <div>
-          <div class="section-tag">Bảo mật tài khoản</div>
-          <h3 style="color:#000; margin-top:5px; font-size:1.1rem;">Quản Lý Phiên Đăng Nhập</h3>
-        </div>
+  <div class="lux-modal-backdrop" id="sessions-modal-backdrop" onclick="closeSessionsModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title">Quản Lý Phiên Đăng Nhập</h3>
+        <button class="lux-modal-close" onclick="closeSessionsModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="modal-content" style="padding-top: 15px;">
+      <div class="lux-modal-body">
         <p style="font-size: 0.8rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
           Dưới đây là danh sách các thiết bị hiện đang đăng nhập vào tài khoản của bạn. Bạn có thể đăng xuất khỏi các
           thiết bị từ xa.
@@ -135,14 +169,56 @@
         <div id="active-sessions-list" style="display: flex; flex-direction: column; gap: 1rem;">
           <!-- Dynamic loaded via JS -->
         </div>
-        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
-          <button type="button" class="btn-save" onclick="closeSessionsModal()" style="padding: 0.6rem 2rem;">
-            <span class="btn-save-inner">Đóng</span>
-          </button>
-        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-primary" onclick="closeSessionsModal()">Đóng</button>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <!-- Firebase Phone Verification Modal -->
+  <div class="lux-modal-backdrop" id="firebase-phone-modal-backdrop" onclick="closeFirebasePhoneModal()">
+    <div class="lux-modal-container" onclick="event.stopPropagation()">
+      <div class="lux-modal-header">
+        <h3 class="lux-modal-title">Xác thực SĐT qua SMS OTP (Firebase)</h3>
+        <button class="lux-modal-close" onclick="closeFirebasePhoneModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="lux-modal-body">
+        <p style="font-size: 0.8rem; color: #64748b; line-height: 1.6; margin-bottom: 1rem;">
+          Google Firebase sẽ gửi một tin nhắn SMS miễn phí chứa mã OTP 6 chữ số đến số điện thoại của bạn để xác thực.
+        </p>
+
+        <!-- Invisible Recaptcha container -->
+        <div id="recaptcha-container"></div>
+
+        <!-- Step 1: Input phone number -->
+        <div id="fb-phone-step-1">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Số điện thoại (Việt Nam)</label>
+            <input type="tel" id="fb-phone-input" class="form-input" placeholder="0901234567" th:value="${user != null ? user.phone : ''}"
+              style="width: 100%; box-sizing: border-box; font-size: 1rem; padding: 10px; border-radius: 4px; border: 1px solid #cbd5e1;" />
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-send-firebase-sms" style="width: 100%;" onclick="handleSendFirebaseSms()">
+            <i class="fa-solid fa-paper-plane"></i> Gửi Mã SMS OTP
+          </button>
+        </div>
+
+        <!-- Step 2: Input OTP code -->
+        <div id="fb-phone-step-2" style="display: none; margin-top: 1rem;">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Mã OTP 6 chữ số từ SMS</label>
+            <input type="text" id="fb-otp-input" class="form-input" placeholder="123456" maxlength="6"
+              style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; padding: 10px; border-radius: 4px; border: 1px solid #cbd5e1;" />
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-confirm-firebase-otp" style="width: 100%; background: #10b981;" onclick="handleConfirmFirebaseOtp()">
+            <i class="fa-solid fa-check-double"></i> Xác Nhận Mã OTP
+          </button>
+        </div>
+      </div>
+      <div class="lux-modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeFirebasePhoneModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
 </div>

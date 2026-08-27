@@ -45,20 +45,42 @@ public class ReviewApiController {
     @PostMapping
     public ResponseEntity<ApiResponse<Map<String, Object>>> createReview(
             Authentication authentication,
-            @Valid @RequestBody ReviewRequest request,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return validationError(bindingResult);
+            @org.springframework.web.bind.annotation.RequestParam(value = "orderItemId", required = false) Integer orderItemId,
+            @org.springframework.web.bind.annotation.RequestParam(value = "productId", required = false) Integer productId,
+            @org.springframework.web.bind.annotation.RequestParam("rating") Integer rating,
+            @org.springframework.web.bind.annotation.RequestParam(value = "comment", required = false) String comment,
+            @org.springframework.web.bind.annotation.RequestParam(value = "file", required = false) org.springframework.web.multipart.MultipartFile file) {
+        try {
+            Review review = reviewService.createReviewWithMedia(authentication, orderItemId, productId, rating, comment, file);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("Đã lưu đánh giá sản phẩm.", reviewData(review)));
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Lỗi gửi đánh giá: " + e.getMessage(), null));
         }
-        Review review = reviewService.createReview(authentication, request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Đã lưu đánh giá sản phẩm.", reviewData(review)));
+    }
+
+    @PostMapping("/{id}/reply")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> replyReview(
+            Authentication authentication,
+            @PathVariable Integer id,
+            @org.springframework.web.bind.annotation.RequestParam("replyContent") String replyContent) {
+        try {
+            Review review = reviewService.replyToReview(authentication, id, replyContent);
+            return ResponseEntity.ok(ApiResponse.success("Đã phản hồi bài đánh giá.", reviewData(review)));
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Lỗi khi phản hồi: " + e.getMessage(), null));
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteReview(Authentication authentication, @PathVariable Integer id) {
-        reviewService.deleteReview(authentication, id);
-        return ResponseEntity.ok(ApiResponse.success("Đã xóa đánh giá sản phẩm.", null));
+        return ResponseEntity.badRequest().body(ApiResponse.error("Đánh giá sau khi gửi không thể chỉnh sửa hoặc xóa.", null));
     }
 
     private Map<String, Object> reviewData(Review review) {
@@ -66,7 +88,15 @@ public class ReviewApiController {
         m.put("id", review.getId());
         m.put("stars", review.getStars());
         m.put("content", review.getContent());
+        m.put("image", review.getImage());
+        m.put("video", review.getVideo());
+        m.put("replyContent", review.getReplyContent());
+        m.put("repliedAt", review.getRepliedAt());
+        m.put("repliedBy", review.getRepliedBy());
         m.put("createdAt", review.getCreatedAt());
+        if (review.getOrderItem() != null) {
+            m.put("orderItemId", review.getOrderItem().getId());
+        }
         if (review.getProduct() != null) {
             m.put("productId", review.getProduct().getId());
             m.put("productName", review.getProduct().getName());

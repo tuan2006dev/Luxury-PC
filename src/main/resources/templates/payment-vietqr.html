@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/checkout.css}">
+    <link rel="stylesheet" th:href="@{/css/actions/check-out/checkout.css}">
 </head>
 
 <body>
@@ -17,7 +17,7 @@
     <div th:replace="~{layout/header :: header}"></div>
 
     <div class="container" style="max-width: 1200px; margin-top: 20px;"
-        th:attr="data-payment-status-url=@{/api/payments/vietqr/status},data-order-code=${orderCode},data-payment-token=${paymentToken}">
+        th:attr="data-payment-status-url=@{/api/payments/vietqr/status},data-cancel-url=@{/api/payments/vietqr/cancel},data-order-code=${orderCode},data-payment-token=${paymentToken}">
 
         <!-- BREADCRUMB -->
         <div class="breadcrumb" style="margin-bottom: 15px;">
@@ -30,41 +30,49 @@
             hàng để hoàn tất thanh toán</p>
 
         <!-- Progress Steps -->
-        <div class="checkout-steps">
-            <div class="step completed">
-                <div class="step-circle"><i class="fa-solid fa-check"></i></div>
-                <div class="step-label">Giỏ hàng</div>
-            </div>
-            <div class="step completed">
-                <div class="step-circle"><i class="fa-solid fa-check"></i></div>
-                <div class="step-label">Thông tin giao hàng</div>
-            </div>
+        <div class="stepper">
             <div class="step active">
-                <div class="step-circle">3</div>
-                <div class="step-label">Thanh toán</div>
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div> Giỏ hàng
             </div>
+            <div class="step-line"></div>
+            <div class="step active">
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div> Thông tin giao hàng
+            </div>
+            <div class="step-line"></div>
+            <div class="step active">
+                <div class="step-circle">3</div> Thanh toán
+            </div>
+            <div class="step-line"></div>
             <div class="step">
-                <div class="step-circle">4</div>
-                <div class="step-label">Hoàn thành</div>
+                <div class="step-circle">4</div> Hoàn thành
             </div>
         </div>
 
-        <div class="checkout-layout">
-            <!-- Main Content -->
-            <div style="grid-column: span 1;">
-                <div class="checkout-block">
-                    <div class="checkout-block-header">
-                        <h2>THÔNG TIN CHUYỂN KHOẢN</h2>
-                    </div>
+        <div class="checkout-grid">
+            <!-- Left Column -->
+            <div>
+                <div class="checkout-section">
+                    <div class="section-title">THÔNG TIN CHUYỂN KHOẢN</div>
 
                     <div class="qr-section"
                         style="margin-top: 20px; display: block; border: 2px solid #3b82f6; border-radius: 8px; padding: 30px; background: #eff6ff;">
                         <div class="qr-section-title"
-                            style="text-align: center; font-size: 18px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px;">
+                            style="text-align: center; font-size: 18px; font-weight: 700; color: #1e3a8a; margin-bottom: 6px;">
                             THANH TOÁN BẰNG QR CODE</div>
                         <div class="qr-section-desc"
-                            style="text-align: center; font-size: 14px; color: #666; margin-bottom: 30px;">Quét mã QR
+                            style="text-align: center; font-size: 14px; color: #666; margin-bottom: 20px;">Quét mã QR
                             bằng ứng dụng ngân hàng hoặc ví điện tử</div>
+
+                        <!-- Real-time 5-minute Countdown Timer -->
+                        <div id="payment-timer-wrapper"
+                            style="text-align: center; margin-bottom: 25px; padding: 12px 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <i class="fa-solid fa-clock" style="font-size: 18px; color: #f59e0b;"
+                                id="payment-timer-icon"></i>
+                            <span style="font-size: 14px; font-weight: 600; color: #431407;">Thời gian thanh toán còn
+                                lại:</span>
+                            <span id="payment-timer-clock"
+                                style="font-size: 20px; font-weight: 800; color: #dc2626; font-family: monospace; letter-spacing: 1px;">05:00</span>
+                        </div>
 
                         <div class="qr-content"
                             style="display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap;">
@@ -124,7 +132,7 @@
                         </div>
 
                         <p id="payment-success-message" hidden style="margin-top: 16px; color: #22c55e;">
-                            Thanh to&#225;n &#273;&#227; &#273;&#432;&#7907;c x&#225;c nh&#7853;n. <a th:href="@{/profile#orders}">Xem &#273;&#417;n h&#224;ng</a>.
+                            Thanh toán đã được xác nhận. <a th:href="@{/profile#orders}">Xem đơn hàng</a>.
                         </p>
 
                         <div class="qr-alert"
@@ -145,34 +153,39 @@
                 </div>
             </div>
 
-            <!-- Right Sidebar -->
-            <div class="order-sidebar">
-                <div class="order-header">
-                    <h3>THÔNG TIN ĐƠN HÀNG</h3>
-                </div>
+            <!-- Right Column -->
+            <div>
+                <div class="checkout-section" style="position: sticky; top: 20px;">
+                    <div class="section-title">THÔNG TIN ĐƠN HÀNG</div>
 
-                <div class="order-items" style="padding: 15px 0;">
-                    <div style="font-size: 14px; margin-bottom: 10px;">
-                        <span style="color: #666;">Mã đơn:</span> <span style="font-weight: 700;"
-                            th:text="${orderCode}">DH123</span>
+                    <div style="padding: 15px 0; border-bottom: 1px dashed var(--border);">
+                        <div
+                            style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                            <span style="color: #666;">Mã đơn hàng:</span>
+                            <span style="font-weight: 700; color: var(--primary);" th:text="${orderCode}">DH123</span>
+                        </div>
+                        <div
+                            style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                            <span style="color: #666;">Phương thức:</span>
+                            <span style="font-weight: 600;">Chuyển khoản VietQR</span>
+                        </div>
                     </div>
-                    <div style="font-size: 14px; margin-bottom: 10px;">
-                        <span style="color: #666;">Phương thức:</span> <span style="font-weight: 600;">Chuyển khoản
-                            VietQR</span>
-                    </div>
-                </div>
 
-                <div class="summary-row total" style="margin-top: 15px;">
-                    <div class="label">TỔNG THANH TOÁN</div>
-                    <div style="text-align: right;">
-                        <div class="summary-total-price"
-                            th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + 'đ'">21.970.000đ</div>
+                    <div class="summary-row total" style="margin-top: 15px; margin-bottom: 0;">
+                        <span>TỔNG THANH TOÁN</span>
+                        <div style="text-align: right;">
+                            <span class="price"
+                                th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + 'đ'">21.970.000đ</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="security-badge" style="margin-top: 30px;">
-                    <i class="fa-solid fa-lock"></i>
-                    Giao dịch an toàn & bảo mật
+                    <div class="trust-box" style="margin-top: 25px;">
+                        <div class="trust-title"><i class="fa-solid fa-shield-halved"></i> Cam kết từ chúng tôi</div>
+                        <ul class="trust-list">
+                            <li><i class="fa-solid fa-check"></i> 100% sản phẩm chính hãng</li>
+                            <li><i class="fa-solid fa-check"></i> Bảo mật thông tin tuyệt đối</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

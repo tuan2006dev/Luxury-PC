@@ -122,6 +122,10 @@
     text-align: center;
     position: relative;
     transition: 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .combo-card:hover {
@@ -158,6 +162,13 @@
     min-height: 36px;
 }
 
+.combo-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
 .combo-price {
     font-size: 18px;
     font-weight: 700;
@@ -170,7 +181,7 @@
     color: #059669;
     font-weight: 600;
     text-align: left;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .combo-specs {
@@ -206,6 +217,7 @@
     cursor: pointer;
     transition: 0.2s;
     font-size: 13px;
+    margin-top: auto;
 }
 
 .btn-apply-combo:hover {

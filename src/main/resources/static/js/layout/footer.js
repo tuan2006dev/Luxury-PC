@@ -1,29 +1,3 @@
-function showConfirm(msg, callback, title = "Xác nhận") {
-    if (typeof window.showConfirm === 'function') {
-        window.showConfirm(msg, title).then(confirmed => {
-            if (confirmed && typeof callback === 'function') {
-                callback();
-            }
-        });
-    } else if (typeof callback === 'function') {
-        if (confirm(msg)) callback();
-    }
-}
-
-function closeConfirm() {
-    if (typeof window.closeConfirmModal === 'function') {
-        window.closeConfirmModal();
-    }
-}
-
-function showAlert(msg, title = "Thông báo") {
-    if (typeof window.showAlertModal === 'function') {
-        window.showAlertModal(title, msg);
-    } else {
-        alert(msg);
-    }
-}
-
 function toggleChatWindow() {
         const windowEl = document.getElementById('ai-chat-window');
         if (!windowEl) return;
@@ -306,10 +280,15 @@ function toggleChatWindow() {
       }
 
       document.addEventListener('DOMContentLoaded', () => {
-        // Hide default socket button
+        // Hide default socket button ONLY if ai-chat-window exists (e.g. 3D build-pc)
         const socketBtn = document.getElementById('socketChatBtn');
+        const aiWin = document.getElementById('ai-chat-window');
         if (socketBtn) {
-          socketBtn.style.display = 'none';
+          if (aiWin) {
+            socketBtn.style.display = 'none';
+          } else {
+            socketBtn.style.display = 'flex';
+          }
         }
 
         // Setup MutationObserver to mirror notification badge
@@ -323,17 +302,17 @@ function toggleChatWindow() {
           observer.observe(targetBadge, { attributes: true, childList: true, characterData: true });
         }
 
-        // Dynamically inject mode selector tab bar into socket chat window
+        // Dynamically inject mode selector tab bar into socket chat window ONLY IF aiWin exists!
         const socketWin = document.getElementById('socketChatWindow');
-        if (socketWin) {
+        if (socketWin && aiWin) {
           const header = socketWin.querySelector('.socket-chat-header');
-          if (header) {
+          if (header && !socketWin.querySelector('.chatbot-mode-bar')) {
             const modeBar = document.createElement('div');
             modeBar.className = 'chatbot-mode-bar';
             modeBar.innerHTML = `
-              <div class="mode-step" id="socket-tab-ai" style="cursor: none !important;" onclick="changeMode('ai')">🤖 AI Chat</div>
+              <div class="mode-step" id="socket-tab-ai" style="cursor: pointer;" onclick="changeMode('ai')">🤖 AI Chat</div>
               <div class="mode-arrow">›</div>
-              <div class="mode-step active" id="socket-tab-live" style="cursor: none !important;" onclick="changeMode('live')">💬 Live Chat</div>
+              <div class="mode-step active" id="socket-tab-live" style="cursor: pointer;" onclick="changeMode('live')">💬 Live Chat</div>
             `;
             header.parentNode.insertBefore(modeBar, header.nextSibling);
             
@@ -382,3 +361,71 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
     });
+// --- FOOTER MODALS (Build PC Guide, Share, Confirm Clear) ---
+function showBuildGuide() { const el = document.getElementById('guideModal'); if (el) el.classList.add('active'); }
+function closeBuildGuide() { const el = document.getElementById('guideModal'); if (el) el.classList.remove('active'); }
+function openShareModal() { const el = document.getElementById('shareModal'); if (el) el.classList.add('active'); }
+function closeShareModal() { const el = document.getElementById('shareModal'); if (el) el.classList.remove('active'); }
+function copyShareUrl() { const copyText = document.getElementById('shareUrlInput'); if (!copyText) return; copyText.select(); document.execCommand('copy'); if (typeof showToast === 'function') showToast('Ðã copy link vào Clipboard!'); else alert('Ðã copy link vào Clipboard!'); }
+function openShareUrl() { const input = document.getElementById('shareUrlInput'); if (input && input.value) window.open(input.value, '_blank'); }
+function confirmClearAll() { const el = document.getElementById('confirmClearModal'); if (el) el.classList.add('active'); }
+function closeConfirmClear() { const el = document.getElementById('confirmClearModal'); if (el) el.classList.remove('active'); }
+function downloadQR() { const qrImg = document.querySelector('#qrCodeContainer img'); const qrCanvas = document.querySelector('#qrCodeContainer canvas'); if (!qrImg && !qrCanvas) { if (typeof showToast === 'function') showToast('Không tìm th?y mã QR!'); else alert('Không tìm th?y mã QR!'); return; } let url; if (qrCanvas) url = qrCanvas.toDataURL('image/png'); else if (qrImg) url = qrImg.src; const a = document.createElement('a'); a.href = url; a.download = 'build-pc-qr.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+
+async function handleNewsletterSubscribe(event) {
+    if (event) event.preventDefault();
+    const input = document.getElementById('newsletterEmail');
+    if (!input) return;
+    const email = input.value ? input.value.trim() : '';
+
+    if (!email) {
+        if (typeof showToast === 'function') showToast('⚠️ Vui lòng nhập địa chỉ Email của bạn!');
+        else alert('Vui lòng nhập địa chỉ Email!');
+        return;
+    }
+
+    const btn = document.querySelector('.newsletter .btn-subscribe');
+    const originalText = btn ? btn.innerText : 'Đăng ký';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Đang gửi...';
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append('email', email);
+
+        const response = await fetch('/api/newsletter/subscribe', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            if (typeof showToast === 'function') {
+                showToast(data.message || '🎉 Đăng ký nhận tin thành công!');
+            } else {
+                alert(data.message || 'Đăng ký nhận tin thành công!');
+            }
+            if (!data.alreadySubscribed) {
+                input.value = '';
+            }
+        } else {
+            if (typeof showToast === 'function') {
+                showToast('⚠️ ' + (data.message || 'Đăng ký thất bại!'));
+            } else {
+                alert(data.message || 'Đăng ký thất bại!');
+            }
+        }
+    } catch (err) {
+        console.error('Newsletter subscribe error:', err);
+        if (typeof showToast === 'function') showToast('⚠️ Có lỗi xảy ra. Vui lòng thử lại!');
+        else alert('Có lỗi xảy ra. Vui lòng thử lại!');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    }
+}

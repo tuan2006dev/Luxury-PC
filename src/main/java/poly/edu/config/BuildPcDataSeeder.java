@@ -3,7 +3,6 @@ package poly.edu.config;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import poly.edu.dao.CategoryDAO;
@@ -13,9 +12,6 @@ import poly.edu.entity.Product;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-
-import org.springframework.jdbc.core.JdbcTemplate;
 
 @Component
 @RequiredArgsConstructor
@@ -26,8 +22,6 @@ public class BuildPcDataSeeder implements CommandLineRunner {
     private final CategoryDAO categoryDAO;
 
     private final ProductDAO productDAO;
-
-    private final JdbcTemplate jdbcTemplate;
 
     private final poly.edu.dao.PcComboDAO comboDAO;
 

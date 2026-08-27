@@ -37,6 +37,9 @@ class PaymentControllerTest {
     private SePayPaymentSession paymentSession;
 
     @Mock
+    private poly.edu.service.OrderService orderService;
+
+    @Mock
     private Authentication authentication;
 
     private PaymentController controller;
@@ -50,7 +53,7 @@ class PaymentControllerTest {
         properties.getBank().setAccountNumber("123456789");
         properties.getBank().setAccountName("TEST ACCOUNT");
         properties.getPaymentCode().setPrefix("DH");
-        controller = new PaymentController(orderDAO, profileService, properties, paymentSession);
+        controller = new PaymentController(orderDAO, profileService, properties, paymentSession, orderService);
 
         owner = new User();
         owner.setId(1);
@@ -71,7 +74,7 @@ class PaymentControllerTest {
                 .thenReturn("token");
         ExtendedModelMap model = new ExtendedModelMap();
 
-        String view = controller.vietQrPayment(1L, "DH39", model, new MockHttpSession());
+        String view = controller.vietQrPayment(500_000L, "DH39", model, new MockHttpSession());
 
         assertEquals("payment-vietqr", view);
         assertEquals(500_000L, model.get("amount"));

@@ -1,7 +1,6 @@
 package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,8 @@ import java.util.List;
 public class ProductService {
 
     final ProductDAO productDAO;
+    final poly.edu.repository.UserRepository userRepository;
+    final EmailService emailService;
 
     public List<Product> getAllProducts() {
         return productDAO.findAll();
@@ -55,13 +56,32 @@ public class ProductService {
     }
 
     public List<Product> searchProducts(Integer cid, Double min, Double max, String kw, String brand) {
-        return productDAO.searchProducts(cid, min, max, kw, brand, org.springframework.data.domain.PageRequest.of(0, 100)); // Limit to top 100 for performance
+        org.springframework.data.domain.Page<Product> page = productDAO.searchProducts(cid, min, max, kw, brand, org.springframework.data.domain.PageRequest.of(0, 100));
+        return page.getContent();
+    }
+
+    public org.springframework.data.domain.Page<Product> searchProductsPage(Integer cid, Double min, Double max, String kw, String brand, org.springframework.data.domain.Pageable pageable) {
+        return productDAO.searchProducts(cid, min, max, kw, brand, pageable);
     }
 
     @CacheEvict(value = {"featuredProducts", "flashSaleProducts", "topProducts"}, allEntries = true)
     @Transactional
     public Product saveProduct(Product product) {
-        return productDAO.save(product);
+        boolean isNew = (product.getId() == null);
+        Product saved = productDAO.save(product);
+        if (isNew) {
+            try {
+                List<poly.edu.entity.User> subscribers = userRepository.findNewProductsSubscribers();
+                if (subscribers != null) {
+                    for (poly.edu.entity.User user : subscribers) {
+                        emailService.sendNewProductNotificationEmail(user, saved.getName(), saved.getPrice());
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Gửi email sản phẩm mới thất bại: " + e.getMessage());
+            }
+        }
+        return saved;
     }
 
     @CacheEvict(value = {"featuredProducts", "flashSaleProducts", "topProducts"}, allEntries = true)
@@ -74,7 +94,6 @@ public class ProductService {
         productDAO.deleteInventoryByProductId(id);
         productDAO.deleteStockMovementsByProductId(id);
         productDAO.deleteComboDetailsByProductId(id);
-        productDAO.unlinkOrderItemsByProductId(id);
         
         try {
             productDAO.deleteById(id);

@@ -1,5 +1,5 @@
 function openModal() {
-    document.getElementById('voucherModal').classList.add('show');
+    document.getElementById('voucherModal').classList.add('active');
     document.getElementById('voucherId').value = '';
     document.getElementById('voucherCode').value = '';
     document.getElementById('voucherDesc').value = '';
@@ -15,7 +15,7 @@ function openModal() {
     toggleCategorySelect();
 }
 function closeModal() {
-    document.getElementById('voucherModal').classList.remove('show');
+    document.getElementById('voucherModal').classList.remove('active');
 }
 function toggleCategorySelect() {
     var scope = document.getElementById('voucherScope').value;

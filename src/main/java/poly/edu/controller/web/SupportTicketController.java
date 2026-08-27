@@ -2,7 +2,6 @@ package poly.edu.controller.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.SupportTicket;
 import poly.edu.entity.ChatMessage;
 import poly.edu.entity.AdminLog;
+import poly.edu.entity.User;
 import poly.edu.repository.SupportTicketRepository;
 import poly.edu.repository.UserRepository;
 import poly.edu.repository.ChatMessageRepository;
@@ -20,7 +20,6 @@ import poly.edu.config.ChatWebSocketHandler;
 import java.util.*;
 
 @Controller
-@SuppressWarnings("null")
 @RequiredArgsConstructor
 public class SupportTicketController {
 
@@ -33,6 +32,23 @@ public class SupportTicketController {
     private final AdminLogRepository adminLogRepository;
     
     private final ChatWebSocketHandler chatWebSocketHandler;
+
+    // ========================
+    // CUSTOMER: Get available staffs for chat
+    // ========================
+    @GetMapping("/api/tickets/staffs")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, String>>> getStaffs() {
+        List<User> staffs = userRepo.findAllEmployees();
+        List<Map<String, String>> result = new ArrayList<>();
+        for (User u : staffs) {
+            Map<String, String> map = new HashMap<>();
+            map.put("username", u.getUsername());
+            map.put("fullName", u.getFullName() != null ? u.getFullName() : u.getUsername());
+            result.add(map);
+        }
+        return ResponseEntity.ok(result);
+    }
 
     // ========================
     // CUSTOMER: Submit ticket via API (from 3D builder modal)
@@ -52,6 +68,10 @@ public class SupportTicketController {
         ticket.setCategory(body.getOrDefault("category", "GENERAL"));
         ticket.setBuildConfig(body.getOrDefault("buildConfig", null));
         ticket.setStatus("OPEN");
+
+        if (body.containsKey("assignedAdmin") && !body.get("assignedAdmin").trim().isEmpty()) {
+            ticket.setAssignedAdmin(body.get("assignedAdmin").trim());
+        }
 
         // Link to logged-in user if authenticated
         if (auth != null && auth.isAuthenticated()) {
@@ -74,6 +94,47 @@ public class SupportTicketController {
         res.put("success", true);
         res.put("ticketId", ticket.getId());
         res.put("message", "Ticket #" + ticket.getId() + " đã được ghi nhận! Nhân viên sẽ liên hệ với bạn trong 30 phút.");
+        return ResponseEntity.ok(res);
+    }
+
+    // ========================
+    // CUSTOMER: Assign staff to ticket
+    // ========================
+    @PostMapping("/api/tickets/{ticketId}/assign")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> assignTicket(
+            @PathVariable Integer ticketId,
+            @RequestBody Map<String, String> body) {
+        
+        Map<String, Object> res = new HashMap<>();
+        SupportTicket ticket = ticketRepo.findById(ticketId).orElse(null);
+        if (ticket == null) {
+            res.put("success", false);
+            res.put("message", "Ticket not found");
+            return ResponseEntity.badRequest().body(res);
+        }
+
+        if (body.containsKey("assignedAdmin") && !body.get("assignedAdmin").trim().isEmpty()) {
+            ticket.setAssignedAdmin(body.get("assignedAdmin").trim());
+            ticketRepo.save(ticket);
+            res.put("success", true);
+            res.put("message", "Ticket assigned");
+        } else {
+            res.put("success", false);
+            res.put("message", "Missing assignedAdmin");
+        }
+        return ResponseEntity.ok(res);
+    }
+
+    // ========================
+    // ADMIN: Check for new OPEN tickets
+    // ========================
+    @GetMapping("/api/tickets/count/open")
+    @ResponseBody
+    public ResponseEntity<Map<String, Long>> getOpenTicketCount() {
+        long count = ticketRepo.countOpenTickets();
+        Map<String, Long> res = new HashMap<>();
+        res.put("count", count);
         return ResponseEntity.ok(res);
     }
 
@@ -142,25 +203,47 @@ public class SupportTicketController {
         // Update ticket status or assignedAdmin
         ticketRepo.findById(ticketId).ifPresent(ticket -> {
             boolean updated = false;
+            
+            // Always update the 'updatedAt' field to reflect the latest activity timestamp
+            ticket.setUpdatedAt(new java.util.Date());
+            updated = true;
+
             if ("ADMIN".equalsIgnoreCase(sender)) {
                 if ("OPEN".equals(ticket.getStatus())) {
                     ticket.setStatus("IN_PROGRESS");
-                    updated = true;
                 }
                 if (auth != null && ticket.getAssignedAdmin() == null) {
                     ticket.setAssignedAdmin(auth.getName());
-                    updated = true;
                 }
             } else {
                 if ("RESOLVED".equals(ticket.getStatus()) || "CLOSED".equals(ticket.getStatus())) {
                     ticket.setStatus("IN_PROGRESS");
-                    updated = true;
                 }
             }
             if (updated) {
                 ticketRepo.save(ticket);
             }
         });
+
+        // Broadcast via WebSocket ONLY if the message was sent by an Admin.
+        // Customer messages are already broadcasted client-side via ws.send() in socket-chat-v2.js.
+        if ("ADMIN".equalsIgnoreCase(sender)) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("sender", msg.getSender());
+                payload.put("senderName", msg.getSenderName());
+                payload.put("message", msg.getMessage());
+                payload.put("ticketId", msg.getTicketId());
+                if (msg.getCreatedAt() != null) {
+                    payload.put("createdAt", msg.getCreatedAt().toString());
+                }
+                org.springframework.web.socket.TextMessage textMsg = new org.springframework.web.socket.TextMessage(mapper.writeValueAsString(payload));
+                chatWebSocketHandler.broadcastToTicket(ticketId, textMsg);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
 
         return ResponseEntity.ok(msg);
     }
@@ -172,17 +255,38 @@ public class SupportTicketController {
     public String adminTickets(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String priority,
+            @RequestParam(name = "keyword", required = false) String keyword,
             Model model) {
 
+        if (status == null || status.isEmpty()) {
+            status = "ALL";
+        }
+
         List<SupportTicket> tickets;
-        if (status != null && !status.isEmpty()) {
-            tickets = ticketRepo.findByStatusOrderByCreatedAtDesc(status);
+        if ("ACTIVE".equals(status)) {
+            tickets = ticketRepo.findTop100ByStatusInOrderByCreatedAtDesc(java.util.Arrays.asList("OPEN", "IN_PROGRESS"));
+        } else if ("ALL".equals(status)) {
+            tickets = ticketRepo.findTop100ByOrderByCreatedAtDesc();
         } else {
-            tickets = ticketRepo.findAllByOrderByCreatedAtDesc();
+            tickets = ticketRepo.findTop100ByStatusOrderByCreatedAtDesc(status);
+        }
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            tickets = tickets.stream()
+                    .filter(t -> (t.getId() != null && String.valueOf(t.getId()).contains(kw)) ||
+                            (t.getSubject() != null && t.getSubject().toLowerCase().contains(kw)) ||
+                            (t.getCustomerName() != null && t.getCustomerName().toLowerCase().contains(kw)) ||
+                            (t.getCustomerEmail() != null && t.getCustomerEmail().toLowerCase().contains(kw)) ||
+                            (t.getCustomerPhone() != null && t.getCustomerPhone().contains(kw)) ||
+                            (t.getMessage() != null && t.getMessage().toLowerCase().contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
         }
 
         model.addAttribute("tickets", tickets);
         model.addAttribute("filterStatus", status);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("openCount", ticketRepo.countOpenTickets());
         model.addAttribute("inProgressCount", ticketRepo.countInProgressTickets());
         model.addAttribute("totalCount", ticketRepo.count());
@@ -251,7 +355,7 @@ public class SupportTicketController {
         SupportTicket ticket = opt.get();
         
         // Prevent race condition: if already assigned to someone else
-        if (ticket.getAssignedAdmin() != null) {
+        if (ticket.getAssignedAdmin() != null && !ticket.getAssignedAdmin().equals(auth.getName())) {
             res.put("success", false);
             res.put("message", "Ticket đã được nhân viên khác nhận.");
             return ResponseEntity.status(409).body(res);
@@ -293,14 +397,70 @@ public class SupportTicketController {
             ticket.setStatus(newStatus);
             ticketRepo.save(ticket);
             logAction(auth, request, "Cập nhật trạng thái Ticket: " + newStatus, "Ticket #" + id);
+            
+            if ("CLOSED".equals(newStatus)) {
+                chatWebSocketHandler.broadcastSystemEventToTicket(id, "TICKET_CLOSED", "Cuộc trò chuyện đã được đóng hoàn toàn.", "Hệ thống");
+            }
         });
         res.put("success", true);
         return ResponseEntity.ok(res);
     }
 
     // ========================
-    // ADMIN: Delete ticket
+    // CUSTOMER: Request to close ticket
     // ========================
+    @PostMapping("/api/tickets/{ticketId}/request-close")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> requestCloseTicket(@PathVariable Integer ticketId) {
+        Map<String, Object> res = new HashMap<>();
+        
+        ticketRepo.findById(ticketId).ifPresent(ticket -> {
+            if ("OPEN".equals(ticket.getStatus()) || ticket.getAssignedAdmin() == null) {
+                // Nếu ticket chưa xử lý, xóa hoàn toàn để tránh rác
+                chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(ticketId));
+                ticketRepo.deleteById(ticketId);
+            } else {
+                // Nếu đã xử lý, đổi trạng thái thành CLOSED thay vì chỉ gửi thông báo
+                ticket.setStatus("CLOSED");
+                ticketRepo.save(ticket);
+                
+                chatWebSocketHandler.broadcastSystemEventToTicket(
+                    ticketId,
+                    "USER_REQUESTED_CLOSE",
+                    "Khách hàng đã kết thúc và đóng cuộc trò chuyện.",
+                    "Hệ thống"
+                );
+            }
+        });
+        
+        res.put("success", true);
+        return ResponseEntity.ok(res);
+    }
+
+    // ========================
+    // ADMIN: Delete ticket (Form Submission)
+    // ========================
+    @org.springframework.transaction.annotation.Transactional
+    @PostMapping("/admin/tickets/delete/{id}")
+    public String deleteTicketByPath(
+            @PathVariable("id") Integer id,
+            Authentication auth,
+            HttpServletRequest request) {
+            
+        chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(id));
+        ticketRepo.deleteById(id);
+        logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+        
+        // Broadcast to customer so they don't get stuck in a ghost chat
+        chatWebSocketHandler.broadcastSystemEventToTicket(id, "TICKET_CLOSED", "Cuộc trò chuyện đã bị xóa bởi quản trị viên.", "Hệ thống");
+
+        return "redirect:/admin/tickets";
+    }
+
+    // ========================
+    // ADMIN: Delete ticket (API AJAX)
+    // ========================
+    @org.springframework.transaction.annotation.Transactional
     @PostMapping("/admin/tickets/delete")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> deleteTicket(
@@ -309,8 +469,14 @@ public class SupportTicketController {
             HttpServletRequest request) {
 
         Integer id = body.get("id");
-        ticketRepo.deleteById(id);
-        logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+        if (id != null) {
+            chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(id));
+            ticketRepo.deleteById(id);
+            logAction(auth, request, "Xóa Ticket hỗ trợ", "Ticket #" + id);
+            
+            // Broadcast to customer so they don't get stuck in a ghost chat
+            chatWebSocketHandler.broadcastSystemEventToTicket(id, "TICKET_CLOSED", "Cuộc trò chuyện đã bị xóa bởi quản trị viên.", "Hệ thống");
+        }
 
         Map<String, Object> res = new HashMap<>();
         res.put("success", true);

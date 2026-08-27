@@ -1,7 +1,6 @@
 package poly.edu.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poly.edu.dao.*;
@@ -179,5 +178,79 @@ public class OrderService {
                 log.error("Failed to restore voucher on order cancel", e);
             }
         }
+    }
+
+    @Transactional
+    public Order confirmOrderAndCreateShipping(Integer orderId) {
+        Order order = orderDAO.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn hàng #" + orderId));
+        
+        if (order.getTrackingCode() == null || order.getTrackingCode().trim().isEmpty()) {
+            String randomTracking = "LLM" + (10000000 + new java.util.Random().nextInt(90000000));
+            order.setTrackingCode(randomTracking);
+        }
+        order.setStatus("WAITING_DRIVER");
+        return orderDAO.save(order);
+    }
+
+    @Transactional
+    public Order processLalamoveWebhook(poly.edu.dto.LalamoveWebhookDTO payload) {
+        if (payload == null) {
+            throw new IllegalArgumentException("Webhook payload rỗng.");
+        }
+
+        Optional<Order> orderOpt = Optional.empty();
+        if (payload.getTrackingCode() != null && !payload.getTrackingCode().trim().isEmpty()) {
+            orderOpt = orderDAO.findByTrackingCode(payload.getTrackingCode().trim());
+        }
+        if (orderOpt.isEmpty() && payload.getOrderId() != null && !payload.getOrderId().trim().isEmpty()) {
+            String orderIdStr = payload.getOrderId().trim();
+            orderOpt = orderDAO.findByTrackingCode(orderIdStr);
+            if (orderOpt.isEmpty()) {
+                orderOpt = orderDAO.findByOrderCode(orderIdStr);
+            }
+            if (orderOpt.isEmpty()) {
+                try {
+                    Integer id = Integer.parseInt(orderIdStr);
+                    orderOpt = orderDAO.findById(id);
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+
+        if (orderOpt.isEmpty()) {
+            throw new IllegalArgumentException("Không tìm thấy đơn hàng tương ứng với webhook payload.");
+        }
+
+        Order order = orderOpt.get();
+        String event = payload.getEvent() != null ? payload.getEvent().toUpperCase().trim() : "";
+
+        switch (event) {
+            case "ASSIGN_DRIVER":
+            case "ASSIGNING_DRIVER":
+                order.setStatus("WAITING_DRIVER");
+                break;
+            case "PICKED_UP":
+                order.setStatus("PICKED_UP");
+                break;
+            case "ON_DELIVERY":
+            case "DELIVERING":
+            case "SHIPPING":
+                order.setStatus("SHIPPING");
+                break;
+            case "DELIVERED":
+            case "COMPLETED":
+                order.setStatus("COMPLETED");
+                break;
+            case "CANCEL":
+            case "CANCELLED":
+            case "CANCELED":
+                order.setStatus("CANCELLED");
+                break;
+            default:
+                log.warn("Unrecognized Lalamove event: {}", event);
+                break;
+        }
+
+        return orderDAO.save(order);
     }
 }

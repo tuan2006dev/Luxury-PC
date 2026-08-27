@@ -130,10 +130,8 @@
                     <!-- Alert message for status feedback -->
                     <script th:inline="javascript">
                         document.addEventListener('DOMContentLoaded', function () {
-                            /*<![CDATA[*/
-                            const successMsg = /*[[${successMessage}]]*/ null;
-                            const errorMsg = /*[[${errorMessage}]]*/ null;
-                            /*]]>*/
+                            const successMsg =  null;
+                            const errorMsg =  null;
                             if (typeof window.showAlert === 'function') {
                                 if (successMsg) window.showAlert(successMsg, true);
                                 else if (errorMsg) window.showAlert(errorMsg, false);

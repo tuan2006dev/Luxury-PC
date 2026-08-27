@@ -9,6 +9,9 @@
 <body>
     <div th:fragment="header">
         <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" />
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+        <link rel="stylesheet" th:href="@{/css/modal-system.css}">
+        <link rel="stylesheet" th:href="@{/css/socket-chat-v2.css}">
         <script th:src="@{/js/theme.js}"></script>
 
         <header class="header" id="navbar">
@@ -33,7 +36,7 @@
                         style="height: 46px; width: auto; display: block;" />
                     <span
                         style="font-size: 20px; font-weight: 400; letter-spacing: 1px; color: var(--text-primary);">LUXURY
-                        | <strong style="font-weight: 800; color: var(--primary);">PC</strong></span>
+                        | <strong style="font-weight: 800; color: var(--accent-blue);">PC</strong></span>
                 </a>
 
                 <!-- Right Nav -->
@@ -133,7 +136,7 @@
 
                     const performSearch = (query) => {
                         if (query && query.trim() !== '') {
-                            window.location.href = '/products?search=' + encodeURIComponent(query.trim());
+                            window.location.href = '/products?kw=' + encodeURIComponent(query.trim());
                         }
                     };
 
@@ -170,7 +173,7 @@
                                             `;
                                             });
                                             html += `
-                                            <a href="/products?search=${encodeURIComponent(val)}" style="display:block; text-align:center; padding:12px; font-size:13px; font-weight:600; color:#007bff; text-decoration:none;">Xem tất cả kết quả cho "${val}" <i class="fa-solid fa-arrow-right"></i></a>
+                                            <a href="/products?kw=${encodeURIComponent(val)}" style="display:block; text-align:center; padding:12px; font-size:13px; font-weight:600; color:#007bff; text-decoration:none;">Xem tất cả kết quả cho "${val}" <i class="fa-solid fa-arrow-right"></i></a>
                                         </div>`;
                                             searchResultsContainer.innerHTML = html;
                                         } else {
@@ -193,7 +196,13 @@
                     if (searchTags) {
                         searchTags.forEach(tag => {
                             tag.addEventListener('click', (e) => {
-                                performSearch(e.target.dataset.query);
+                                e.preventDefault();
+                                const query = tag.getAttribute('data-query') || tag.innerText.trim();
+                                if (searchInput) {
+                                    searchInput.value = query;
+                                    searchInput.focus();
+                                    searchInput.dispatchEvent(new Event('input'));
+                                }
                             });
                         });
                     }

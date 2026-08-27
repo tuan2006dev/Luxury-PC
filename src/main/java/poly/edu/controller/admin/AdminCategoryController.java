@@ -6,10 +6,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
 import poly.edu.entity.AdminLog;
 import poly.edu.entity.Category;
 import poly.edu.repository.AdminLogRepository;
 import poly.edu.service.CategoryService;
+import poly.edu.service.UploadService;
 
 import java.security.Principal;
 
@@ -20,6 +22,7 @@ public class AdminCategoryController {
 
     private final CategoryService categoryService;
     private final AdminLogRepository adminLogRepository;
+    private final UploadService uploadService;
 
     @GetMapping("")
     public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
@@ -40,8 +43,23 @@ public class AdminCategoryController {
     @PostMapping("/save")
     public String save(
             @ModelAttribute("category") Category category,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             Principal principal,
             HttpServletRequest request) {
+
+        Category existing = null;
+        if (category.getId() != null) {
+            existing = categoryService.getCategoryById(category.getId());
+        }
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String fileName = uploadService.save(imageFile, "categories");
+            category.setImage(fileName);
+        } else if (existing != null) {
+            if (category.getImage() == null || category.getImage().trim().isEmpty()) {
+                category.setImage(existing.getImage());
+            }
+        }
 
         boolean isNew = (category.getId() == null);
         categoryService.saveCategory(category);

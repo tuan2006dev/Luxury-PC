@@ -3,7 +3,6 @@ package poly.edu;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,7 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Transactional
 @AutoConfigureMockMvc
-@SuppressWarnings("null")
 class VietQrOrderFlowTest {
 
     @Autowired
@@ -151,23 +149,23 @@ class VietQrOrderFlowTest {
     }
 
     @Test
-    void adminCannotConfirmWaitingVietQrOrderManually() {
+    void adminCannotMarkWaitingVietQrOrderPaid() {
         Order order = saveOrder("VIETQR", "CHO_XAC_NHAN_THANH_TOAN", 500_000D);
 
         assertThrows(VietQrManualConfirmationException.class,
-                () -> adminService.confirmVietQrPayment(order.getId()));
+                () -> adminService.updateOrderStatus(order.getId(), "PAID"));
 
         assertEquals("CHO_XAC_NHAN_THANH_TOAN",
                 orderDAO.findById(order.getId()).orElseThrow().getStatus());
     }
 
     @Test
-    void adminConfirmationDoesNotChangeCodOrder() {
-        Order order = saveOrder("COD", "PENDING", 500_000D);
+    void adminStatusFlowMarksShippingCodOrderPaid() {
+        Order order = saveOrder("COD", "SHIPPING", 500_000D);
 
-        adminService.confirmVietQrPayment(order.getId());
+        adminService.updateOrderStatus(order.getId(), "PAID");
 
-        assertEquals("PENDING", orderDAO.findById(order.getId()).orElseThrow().getStatus());
+        assertEquals("PAID", orderDAO.findById(order.getId()).orElseThrow().getStatus());
     }
 
     @Test

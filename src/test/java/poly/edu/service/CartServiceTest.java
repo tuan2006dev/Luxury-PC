@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.User;
+import poly.edu.dao.CartDAO;
+import poly.edu.dao.CartItemDAO;
 import poly.edu.dao.OrderDAO;
 import poly.edu.dao.OrderItemDAO;
 import poly.edu.dao.ProductDAO;
@@ -17,6 +19,7 @@ import poly.edu.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,6 +39,8 @@ public class CartServiceTest {
     @Mock private VoucherService voucherService;
     @Mock private FlashSaleService flashSaleService;
     @Mock private UserVoucherService userVoucherService;
+    @Mock private CartDAO cartDAO;
+    @Mock private CartItemDAO cartItemDAO;
 
     @InjectMocks
     private CartService cartService;
@@ -90,7 +95,7 @@ public class CartServiceTest {
         p.setName("Product 1");
         p.setStock(3);
 
-        when(productDAO.findById(1)).thenReturn(Optional.of(p));
+        when(productDAO.findAllById(any())).thenReturn(List.of(p));
 
         Exception ex = assertThrows(Exception.class, () -> {
             cartService.processCheckout(cart, "Nguyễn Văn A", "0901234567", "Addr", "COD", null, 0.0, "Standard", principal);
@@ -109,15 +114,19 @@ public class CartServiceTest {
         p.setName("Product 1");
         p.setStock(10);
         when(productDAO.findById(1)).thenReturn(Optional.of(p));
+        when(productDAO.findAllById(any())).thenReturn(List.of(p));
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(dbUser));
         when(orderDAO.getTotalSpentByUser(1)).thenReturn(60_000_000.0);
+        when(cartDAO.findByUserId(1)).thenReturn(Optional.empty());
 
         Map<String, Object> voucherResult = new HashMap<>();
         voucherResult.put("valid", true);
-        voucherResult.put("discount", 100.0);
-        when(voucherService.validateVoucher(eq("VOUCHER100"), anyDouble(), anyDouble(), any(), any())).thenReturn(voucherResult);
+        voucherResult.put("orderDiscount", 100.0);
+        voucherResult.put("freeshipDiscount", 0.0);
+        voucherResult.put("voucherCode", "VOUCHER100");
+        when(voucherService.validateVoucherCombo(eq("VOUCHER100"), any(), anyDouble(), anyDouble(), any(), any())).thenReturn(voucherResult);
 
         Order result = cartService.processCheckout(cart, "Nguyễn Văn A", "0901234567", "Address", "COD", "VOUCHER100", 50.0, "Express", principal);
 

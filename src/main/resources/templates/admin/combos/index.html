@@ -2,14 +2,14 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Combo — Luxury PC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/products.css}" />
-    <style>
+    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/products.css}" />
+    <style data-pjax-track="true">
         .badge-preview {
             display: inline-block;
             padding: 4px 8px;
@@ -20,7 +20,7 @@
             text-transform: uppercase;
         }
     </style>
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
 <body>
@@ -71,8 +71,8 @@
                             <td colspan="6" style="text-align: center; padding: 2rem; color: #888;">Không có Combo nào.
                             </td>
                         </tr>
-                        <tr th:each="c : ${combos}">
-                            <td th:text="${c.id}">1</td>
+                        <tr th:each="c, stat : ${combos}">
+                            <td th:text="${stat.count}">1</td>
                             <td>
                                 <div class="img-preview" style="background-image: url('');"
                                     th:style="'background-image: url(' + ${c.image != null and !c.image.startsWith('http') and !c.image.startsWith('/images') ? '/images/products/' + c.image : (c.image != null ? c.image : '/images/placeholder.jpg')} + ')'">

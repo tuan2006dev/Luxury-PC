@@ -3,7 +3,6 @@ package poly.edu.controller.web;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -20,14 +19,14 @@ import poly.edu.service.ProfileService;
 import poly.edu.service.BrandService;
 import poly.edu.service.CategoryService;
 import poly.edu.service.NewsCategoryService;
-import poly.edu.entity.NewsCategory;
-import org.springframework.data.domain.Page;
 
+import poly.edu.dto.NewsSummaryDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
+@SuppressWarnings({"unchecked", "null"})
 @RequiredArgsConstructor
 public class HomeController {
 
@@ -48,7 +47,7 @@ public class HomeController {
     final NewsCategoryService newsCategoryService;
 
     final CategoryService categoryService;
-    
+
     final poly.edu.dao.ReviewDAO reviewDAO;
 
     final ProfileService profileService;
@@ -65,16 +64,35 @@ public class HomeController {
 
         // Query Category IDs for Build PC banners and components
         List<poly.edu.entity.Category> categories = categoryService.getAllCategories();
-        Integer gamingCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Gaming") || c.getName().toLowerCase().contains("gaming")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
-        Integer workstationCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Workstation") || c.getName().toLowerCase().contains("đồ hoạ") || c.getName().toLowerCase().contains("đồ họa") || c.getName().toLowerCase().contains("workstation")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
-        Integer vanPhongCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Văn phòng") || c.getName().toLowerCase().contains("văn phòng") || c.getName().toLowerCase().contains("office")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
-        Integer streamerCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC Streamer") || c.getName().toLowerCase().contains("streamer")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
-        
-        Integer ramCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("RAM")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
-        Integer vgaCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("VGA")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
-        Integer caseCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("Case")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
-        Integer mainboardCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("Mainboard")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
-        Integer pcCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("PC") || c.getName().toLowerCase().contains("máy bộ")).map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer gamingCid = categories.stream()
+                .filter(c -> c.getName().equalsIgnoreCase("PC Gaming") || c.getName().toLowerCase().contains("gaming"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer workstationCid = categories.stream()
+                .filter(c -> c.getName().equalsIgnoreCase("PC Workstation")
+                        || c.getName().toLowerCase().contains("đồ hoạ") || c.getName().toLowerCase().contains("đồ họa")
+                        || c.getName().toLowerCase().contains("workstation"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer vanPhongCid = categories.stream()
+                .filter(c -> c.getName().equalsIgnoreCase("PC Văn phòng")
+                        || c.getName().toLowerCase().contains("văn phòng")
+                        || c.getName().toLowerCase().contains("office"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer streamerCid = categories.stream()
+                .filter(c -> c.getName().equalsIgnoreCase("PC Streamer")
+                        || c.getName().toLowerCase().contains("streamer"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+
+        Integer ramCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("RAM"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer vgaCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("VGA"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer caseCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("Case"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer mainboardCid = categories.stream().filter(c -> c.getName().equalsIgnoreCase("Mainboard"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
+        Integer pcCid = categories.stream()
+                .filter(c -> c.getName().equalsIgnoreCase("PC") || c.getName().toLowerCase().contains("máy bộ"))
+                .map(poly.edu.entity.Category::getId).findFirst().orElse(null);
 
         model.addAttribute("categories", categories);
         model.addAttribute("gamingCid", gamingCid);
@@ -99,8 +117,8 @@ public class HomeController {
         long t4 = System.nanoTime();
 
         // Tin tức ở trang chủ: 2 mục "Tin tức mới nhất" và "Tin tức nổi bật"
-        List<poly.edu.dto.NewsSummaryDto> newestNews = newsService.getTop5LatestNews();
-        List<poly.edu.dto.NewsSummaryDto> featuredNews = newsService.getTop5MostViewedNews();
+        List<NewsSummaryDto> newestNews = newsService.getTop5LatestNews();
+        List<NewsSummaryDto> featuredNews = newsService.getTop5MostViewedNews();
 
         model.addAttribute("newestNews", newestNews);
         model.addAttribute("featuredNews", featuredNews);
@@ -110,8 +128,8 @@ public class HomeController {
         if (currentSale.isPresent()) {
             FlashSale sale = currentSale.get();
             List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId()).stream()
-                .filter(item -> item.getSoldCount() < item.getSaleQuantity())
-                .collect(Collectors.toList());
+                    .filter(item -> item.getSoldCount() < item.getSaleQuantity())
+                    .collect(Collectors.toList());
             if (!saleItems.isEmpty()) {
                 model.addAttribute("flashSale", sale);
                 model.addAttribute("flashSaleItems", saleItems);
@@ -138,9 +156,10 @@ public class HomeController {
         long t8 = System.nanoTime();
 
         long totalElapsed = (t8 - totalStart) / 1_000_000;
-        log.debug("[HomeController] index() perf: total={}ms | featured={}ms | flashSale={}ms | top={}ms | reviews={}ms | vouchers={}ms | wishlist={}ms",
-                totalElapsed, (t1-t0)/1_000_000, (t2-t1)/1_000_000, (t3-t2)/1_000_000,
-                (t4-t3)/1_000_000, (t7-t6)/1_000_000, (t8-t7)/1_000_000);
+        log.debug(
+                "[HomeController] index() perf: total={}ms | featured={}ms | flashSale={}ms | top={}ms | reviews={}ms | vouchers={}ms | wishlist={}ms",
+                totalElapsed, (t1 - t0) / 1_000_000, (t2 - t1) / 1_000_000, (t3 - t2) / 1_000_000,
+                (t4 - t3) / 1_000_000, (t7 - t6) / 1_000_000, (t8 - t7) / 1_000_000);
 
         return "index";
     }
@@ -152,29 +171,32 @@ public class HomeController {
         if (currentSale.isPresent()) {
             FlashSale sale = currentSale.get();
             List<FlashSaleItem> saleItems = flashSaleService.getItemsBySaleId(sale.getId()).stream()
-                .filter(item -> item.getSoldCount() < item.getSaleQuantity())
-                .sorted((item1, item2) -> {
-                    List<poly.edu.entity.Review> rev1 = reviewDAO.findByProductIdOrderByCreatedAtDesc(item1.getProduct().getId());
-                    double r1 = rev1.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
-                    
-                    List<poly.edu.entity.Review> rev2 = reviewDAO.findByProductIdOrderByCreatedAtDesc(item2.getProduct().getId());
-                    double r2 = rev2.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
-                    
-                    if (Double.compare(r2, r1) != 0) {
-                        return Double.compare(r2, r1);
-                    }
-                    
-                    int sold1 = item1.getSoldCount() != null ? item1.getSoldCount() : 0;
-                    int sold2 = item2.getSoldCount() != null ? item2.getSoldCount() : 0;
-                    return Integer.compare(sold2, sold1);
-                })
-                .collect(Collectors.toList());
+                    .filter(item -> item.getSoldCount() < item.getSaleQuantity())
+                    .sorted((item1, item2) -> {
+                        List<poly.edu.entity.Review> rev1 = reviewDAO
+                                .findByProductIdOrderByCreatedAtDesc(item1.getProduct().getId());
+                        double r1 = rev1.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+
+                        List<poly.edu.entity.Review> rev2 = reviewDAO
+                                .findByProductIdOrderByCreatedAtDesc(item2.getProduct().getId());
+                        double r2 = rev2.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+
+                        if (Double.compare(r2, r1) != 0) {
+                            return Double.compare(r2, r1);
+                        }
+
+                        int sold1 = item1.getSoldCount() != null ? item1.getSoldCount() : 0;
+                        int sold2 = item2.getSoldCount() != null ? item2.getSoldCount() : 0;
+                        return Integer.compare(sold2, sold1);
+                    })
+                    .collect(Collectors.toList());
 
             // Build rating and review counts maps
             java.util.Map<Integer, Double> productRatings = new java.util.HashMap<>();
             java.util.Map<Integer, Integer> productReviewCounts = new java.util.HashMap<>();
             for (FlashSaleItem item : saleItems) {
-                List<poly.edu.entity.Review> revs = reviewDAO.findByProductIdOrderByCreatedAtDesc(item.getProduct().getId());
+                List<poly.edu.entity.Review> revs = reviewDAO
+                        .findByProductIdOrderByCreatedAtDesc(item.getProduct().getId());
                 double avg = revs.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
                 productRatings.put(item.getProduct().getId(), avg);
                 productReviewCounts.put(item.getProduct().getId(), revs.size());
@@ -186,7 +208,8 @@ public class HomeController {
             model.addAttribute("productReviewCounts", productReviewCounts);
             model.addAttribute("flashSaleEndTime", sale.getEndTime().getTime());
         } else {
-            model.addAttribute("flashSaleProducts", productService.getFlashSaleProducts().stream().limit(5).collect(Collectors.toList()));
+            model.addAttribute("flashSaleProducts",
+                    productService.getFlashSaleProducts().stream().limit(5).collect(Collectors.toList()));
             model.addAttribute("flashSaleEndTime", 0);
         }
 
@@ -197,7 +220,7 @@ public class HomeController {
             List<FlashSale> top4UpcomingSales = upcomingSales.stream().limit(4).collect(Collectors.toList());
             model.addAttribute("top4UpcomingSales", top4UpcomingSales);
             model.addAttribute("allUpcomingSales", upcomingSales);
-            
+
             // Map items cho mỗi đợt
             java.util.Map<Integer, List<FlashSaleItem>> upcomingItemsMap = new java.util.HashMap<>();
             for (FlashSale sale : upcomingSales) {
@@ -225,35 +248,40 @@ public class HomeController {
         java.util.Map<Integer, List<FlashSaleItem>> sliderItemsMap = new java.util.HashMap<>();
         for (FlashSale s : sliderSales) {
             List<FlashSaleItem> items = flashSaleService.getItemsBySaleId(s.getId()).stream()
-                .filter(item -> item.getSoldCount() < item.getSaleQuantity())
-                .sorted((item1, item2) -> {
-                    List<poly.edu.entity.Review> rev1 = reviewDAO.findByProductIdOrderByCreatedAtDesc(item1.getProduct().getId());
-                    double r1 = rev1.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
-                    
-                    List<poly.edu.entity.Review> rev2 = reviewDAO.findByProductIdOrderByCreatedAtDesc(item2.getProduct().getId());
-                    double r2 = rev2.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
-                    
-                    if (Double.compare(r2, r1) != 0) {
-                        return Double.compare(r2, r1);
-                    }
-                    
-                    int sold1 = item1.getSoldCount() != null ? item1.getSoldCount() : 0;
-                    int sold2 = item2.getSoldCount() != null ? item2.getSoldCount() : 0;
-                    return Integer.compare(sold2, sold1);
-                })
-                .collect(Collectors.toList());
+                    .filter(item -> item.getSoldCount() < item.getSaleQuantity())
+                    .sorted((item1, item2) -> {
+                        List<poly.edu.entity.Review> rev1 = reviewDAO
+                                .findByProductIdOrderByCreatedAtDesc(item1.getProduct().getId());
+                        double r1 = rev1.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+
+                        List<poly.edu.entity.Review> rev2 = reviewDAO
+                                .findByProductIdOrderByCreatedAtDesc(item2.getProduct().getId());
+                        double r2 = rev2.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
+
+                        if (Double.compare(r2, r1) != 0) {
+                            return Double.compare(r2, r1);
+                        }
+
+                        int sold1 = item1.getSoldCount() != null ? item1.getSoldCount() : 0;
+                        int sold2 = item2.getSoldCount() != null ? item2.getSoldCount() : 0;
+                        return Integer.compare(sold2, sold1);
+                    })
+                    .collect(Collectors.toList());
             sliderItemsMap.put(s.getId(), items);
-            
+
             // Build ratings & review counts if not already present
             if (!model.containsAttribute("productRatings")) {
                 model.addAttribute("productRatings", new java.util.HashMap<Integer, Double>());
                 model.addAttribute("productReviewCounts", new java.util.HashMap<Integer, Integer>());
             }
-            java.util.Map<Integer, Double> pRatings = (java.util.Map<Integer, Double>) model.getAttribute("productRatings");
-            java.util.Map<Integer, Integer> pReviewCounts = (java.util.Map<Integer, Integer>) model.getAttribute("productReviewCounts");
+            java.util.Map<Integer, Double> pRatings = (java.util.Map<Integer, Double>) model
+                    .getAttribute("productRatings");
+            java.util.Map<Integer, Integer> pReviewCounts = (java.util.Map<Integer, Integer>) model
+                    .getAttribute("productReviewCounts");
             for (FlashSaleItem item : items) {
                 if (!pRatings.containsKey(item.getProduct().getId())) {
-                    List<poly.edu.entity.Review> revs = reviewDAO.findByProductIdOrderByCreatedAtDesc(item.getProduct().getId());
+                    List<poly.edu.entity.Review> revs = reviewDAO
+                            .findByProductIdOrderByCreatedAtDesc(item.getProduct().getId());
                     double avg = revs.stream().mapToInt(poly.edu.entity.Review::getStars).average().orElse(0.0);
                     pRatings.put(item.getProduct().getId(), avg);
                     pReviewCounts.put(item.getProduct().getId(), revs.size());
@@ -267,7 +295,7 @@ public class HomeController {
 
         // Voucher từ database
         List<poly.edu.entity.Voucher> allVouchers = voucherService.getActiveVouchers();
-        
+
         if (authentication != null && authentication.isAuthenticated()) {
             poly.edu.entity.User user = profileService.getCurrentUser(authentication);
             if (user != null) {
@@ -275,13 +303,13 @@ public class HomeController {
                 List<String> savedCodes = savedVouchers.stream()
                         .map(uv -> uv.getVoucher().getCode())
                         .collect(Collectors.toList());
-                
+
                 allVouchers = allVouchers.stream()
                         .filter(v -> !savedCodes.contains(v.getCode()))
                         .collect(Collectors.toList());
             }
         }
-        
+
         model.addAttribute("activeVouchers", allVouchers);
         return "promotions";
     }

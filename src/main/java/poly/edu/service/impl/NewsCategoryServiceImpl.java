@@ -1,7 +1,6 @@
 package poly.edu.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import poly.edu.entity.NewsCategory;
 import poly.edu.repository.NewsCategoryRepository;

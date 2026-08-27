@@ -1,70 +1,108 @@
-        <div th:fragment="addressesTab" class="profile-section" id="sec-address">
-          <div class="section-head">
-            <div>
-              <div class="section-tag">Giao hàng</div>
-              <div class="section-h">Địa Chỉ Giao Hàng</div>
-            </div>
-            <button class="btn-edit" onclick="openAddressForm()">+ Thêm Địa
-              Chỉ</button>
-          </div>
+<div th:fragment="addressesTab" class="profile-section" id="sec-address">
+  <div class="section-head">
+    <div>
+      <div class="section-tag">Giao hàng</div>
+      <div class="section-h">Địa Chỉ Giao Hàng</div>
+    </div>
+    <button class="btn-edit" onclick="openAddressForm()">+ Thêm Địa
+      Chỉ</button>
+  </div>
 
-          <!-- Saved address cards -->
-          <div id="address-list-container"
-            style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:2rem;">
-          </div>
+  <!-- Saved address cards -->
+  <div id="address-list-container" class="address-grid">
+    <p th:if="${#lists.isEmpty(addresses)}" class="address-empty">
+      Bạn chưa thêm địa chỉ nào. Hãy thêm địa chỉ mới.
+    </p>
 
-          <!-- Add/Edit address form -->
-          <div id="address-form-container"
-            style="background:#f8fafc;border:1px solid #e2e8f0;padding:2rem; display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-              <div id="address-form-title"
-                style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#3b82f6;">
-                Thêm / Chỉnh Sửa Địa Chỉ</div>
-              <button type="button" id="btn-profile-gps" onclick="getProfileLocation()"
-                style="background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; border-radius: 4px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-                <i class="fa-solid fa-location-crosshairs"></i> <span id="btn-profile-gps-text">Định vị GPS</span>
-              </button>
-            </div>
-            <input type="hidden" id="address-id-edit" />
-            <div class="form-2col">
-              <div class="form-group">
-                <label class="form-label">Họ và tên</label>
-                <input type="text" id="address-name" class="form-input" placeholder="Người nhận" required />
-                <div class="form-error" id="address-name-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Số điện thoại</label>
-                <input type="tel" id="address-phone" class="form-input" placeholder="Ví dụ: 0901234567"
-                  pattern="^0(3|5|7|8|9)[0-9]{8}$" required />
-                <div class="form-error" id="address-phone-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
-                </div>
-              </div>
-              <div class="form-group full">
-                <label>Địa chỉ chi tiết</label>
-                <input type="text" id="address-detail" class="form-input" placeholder="Số nhà, đường phố..." required />
-                <div class="form-error" id="address-detail-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Tỉnh / Thành phố</label>
-                <input type="text" id="address-city" class="form-input" placeholder="TP. Hồ Chí Minh" required />
-                <div class="form-error" id="address-city-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Quận / Huyện</label>
-                <input type="text" id="address-district" class="form-input" placeholder="Quận 1" required />
-                <div class="form-error" id="address-district-error"
-                  style="display:none;color:#ff6b6b;font-size:0.75rem;">
-                </div>
-              </div>
-            </div>
-            <div style="display:flex;gap:1rem;">
-              <button type="button" class="btn-save" onclick="saveAddress()">
-                <span class="btn-save-inner">Lưu Địa Chỉ</span>
-              </button>
-              <button type="button" class="btn-edit" onclick="closeAddressForm()">Hủy</button>
-            </div>
-          </div>
+    <div th:each="addr : ${addresses}" class="address-card" th:classappend="${addr.isDefault} ? 'default' : ''">
+      <div class="address-badge" th:classappend="${addr.isDefault} ? 'default' : ''"
+        th:text="${addr.isDefault} ? '📍 Địa chỉ mặc định' : '📍 Địa chỉ khác'">
+        📍 Địa chỉ khác
+      </div>
+      <div class="address-recipient" th:text="${addr.recipientName}">Tên người nhận</div>
+      <div class="address-info">
+        <span class="addr-detail" th:text="${addr.address}">Số nhà, tên đường</span><br />
+        <span class="addr-location"
+          th:text="${(addr.district != null && !addr.district.isEmpty() ? addr.district + ', ' : '') + addr.city}">Quận,
+          Thành phố</span><br />
+        📞 <span class="addr-phone" th:text="${addr.phone}">0901234567</span>
+      </div>
+      <div class="address-actions">
+        <button class="btn-sec btn-edit-action" th:onclick="'editAddress(' + ${addr.id} + ')'">Sửa</button>
+        <button class="btn-sec btn-delete-action" th:onclick="'deleteAddress(' + ${addr.id} + ')'">Xóa</button>
+        <button th:if="${!addr.isDefault}" class="btn-sec btn-default-action"
+          th:onclick="'setDefaultAddress(' + ${addr.id} + ')'">Đặt mặc định</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template for JS cloning -->
+  <template id="address-card-template">
+    <div class="address-card">
+      <div class="address-badge"></div>
+      <div class="address-recipient"></div>
+      <div class="address-info">
+        <span class="addr-detail"></span><br />
+        <span class="addr-location"></span><br />
+        📞 <span class="addr-phone"></span>
+      </div>
+      <div class="address-actions">
+        <button class="btn-sec btn-edit-action">Sửa</button>
+        <button class="btn-sec btn-delete-action">Xóa</button>
+        <button class="btn-sec btn-default-action">Đặt mặc định</button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Add/Edit address form -->
+  <div id="address-form-container" style="background:#f8fafc;border:1px solid #e2e8f0;padding:2rem; display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <div id="address-form-title" style="font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#3b82f6;">
+        Thêm / Chỉnh Sửa Địa Chỉ</div>
+      <button type="button" id="btn-profile-gps" onclick="getProfileLocation()"
+        style="background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; border-radius: 4px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+        <i class="fa-solid fa-location-crosshairs"></i> <span id="btn-profile-gps-text">Định vị GPS</span>
+      </button>
+    </div>
+    <input type="hidden" id="address-id-edit" />
+    <div class="form-2col">
+      <div class="form-group">
+        <label class="form-label">Họ và tên</label>
+        <input type="text" id="address-name" class="form-input" placeholder="Người nhận" required />
+        <div class="form-error" id="address-name-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
         </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Số điện thoại</label>
+        <input type="tel" id="address-phone" class="form-input" placeholder="Ví dụ: 0901234567"
+          pattern="^0(3|5|7|8|9)[0-9]{8}$" required />
+        <div class="form-error" id="address-phone-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+        </div>
+      </div>
+      <div class="form-group full">
+        <label>Địa chỉ chi tiết</label>
+        <input type="text" id="address-detail" class="form-input" placeholder="Số nhà, đường phố..." required />
+        <div class="form-error" id="address-detail-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tỉnh / Thành phố</label>
+        <input type="text" id="address-city" class="form-input" placeholder="TP. Hồ Chí Minh" required />
+        <div class="form-error" id="address-city-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quận / Huyện</label>
+        <input type="text" id="address-district" class="form-input" placeholder="Quận 1" required />
+        <div class="form-error" id="address-district-error" style="display:none;color:#ff6b6b;font-size:0.75rem;">
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:1rem;">
+      <button type="button" class="btn-save" onclick="saveAddress()">
+        <span class="btn-save-inner">Lưu Địa Chỉ</span>
+      </button>
+      <button type="button" class="btn-edit" onclick="closeAddressForm()">Hủy</button>
+    </div>
+  </div>
+</div>

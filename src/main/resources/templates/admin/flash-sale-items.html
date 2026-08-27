@@ -6,24 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sản Phẩm Flash Sale — Luxury PC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
-    <link rel="stylesheet" th:href="@{/css/admin/flash-sale-items.css}" />
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/flash-sale-items.css}" />
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
 
 <body>
     <div th:replace="~{admin/layout/sidebar :: sidebar}"></div>
 
     <div class="main-content">
-        <a href="/admin/flash-sales" class="back-link"><i class="fa-solid fa-arrow-left"></i> <span>Quay lại danh sách Flash Sale</span></a>
+        <a href="/admin/flash-sales" class="back-link"><i class="fa-solid fa-arrow-left"></i> <span>Quay lại danh sách
+                Flash Sale</span></a>
 
         <div class="header">
             <div class="title">
-                <h1><i class="fa-solid fa-cubes" style="color:var(--gold);margin-right:10px;"></i><span>Sản Phẩm Flash Sale</span></h1>
-                <p><span>Chương trình</span>: <strong
-                        th:text="${flashSale.name}" style="color:var(--gold);">Flash Sale</strong>
+                <h1><i class="fa-solid fa-cubes" style="color:var(--gold);margin-right:10px;"></i><span>Sản Phẩm Flash
+                        Sale</span></h1>
+                <p><span>Chương trình</span>: <strong th:text="${flashSale.name}" style="color:var(--gold);">Flash
+                        Sale</strong>
                     — <span th:text="${#dates.format(flashSale.startTime, 'dd/MM/yyyy HH:mm')}">01/04</span>
                     <span>đến</span> <span
                         th:text="${#dates.format(flashSale.endTime, 'dd/MM/yyyy HH:mm')}">30/04</span>
@@ -31,38 +33,48 @@
             </div>
         </div>
 
-        <div th:if="${success}" class="toast toast-success">
-            <i class="fa-solid fa-check-circle"></i> <span th:text="${success}"></span>
-        </div>
-        <div th:if="${error}" class="toast toast-error">
-            <i class="fa-solid fa-exclamation-circle"></i> <span th:text="${error}"></span>
-        </div>
+        <div th:replace="~{admin/fragments/toast :: toast}"></div>
 
         <!-- Add product form -->
         <div class="form-card">
-            <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span>Thêm Sản Phẩm Vào Flash Sale</span></div>
-            <form autocomplete="off" th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}" method="POST" id="addFlashSaleItemForm" onsubmit="return validateFlashSaleItem(this)">
+            <div class="table-h" style="margin-bottom:1rem;"><i class="fa-solid fa-plus-circle"></i> <span>Thêm Sản Phẩm
+                    Vào Flash Sale</span></div>
+            <form autocomplete="off" novalidate th:action="@{/admin/flash-sales/{id}/items/add(id=${flashSale.id})}"
+                method="POST" id="addFlashSaleItemForm" onsubmit="return validateFlashSaleItem(this)">
                 <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 3; min-width: 250px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 3; min-width: 250px; margin-bottom: 0; position: relative;">
                         <label>Sản Phẩm</label>
                         <select name="productId" required>
                             <option value="">-- Chọn sản phẩm --
                             </option>
-                            <option th:each="p : ${products}" th:value="${p.id}"
-                                th:data-price="${p.price}"
+                            <option th:each="p : ${products}" th:value="${p.id}" th:data-price="${p.price}"
                                 th:text="${p.name + ' — ' + #numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT') + '₫'}">
                                 Product
                             </option>
                         </select>
                     </div>
-                    <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1.5; min-width: 170px; margin-bottom: 0; position: relative;">
                         <label>Giá Sale (₫)</label>
-                        <input autocomplete="off" type="number" name="salePrice" required placeholder="VD: 15000000" min="0">
+                        <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
+                            <input autocomplete="off" type="number" name="salePrice" required placeholder="VD: 15000000"
+                                min="0" style="padding-right: 95px; width: 100%;">
+                            <span class="field-hint-badge"
+                                style="position: absolute; right: 8px; font-size: 11px; font-weight: 600; color: #0369a1; background: #e0f2fe; border: 1px solid #bae6fd; padding: 2px 6px; border-radius: 4px; pointer-events: none; display: none; white-space: nowrap; z-index: 2;"></span>
+                        </div>
                     </div>
-                    <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1.2; min-width: 140px; margin-bottom: 0; position: relative;">
+                        <label>Giảm %</label>
+                        <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
+                            <input autocomplete="off" type="number" name="saleDiscountPercent" required
+                                placeholder="VD: 15" min="0" max="100" style="padding-right: 95px; width: 100%;">
+                            <span class="field-hint-badge"
+                                style="position: absolute; right: 8px; font-size: 11px; font-weight: 600; color: #0369a1; background: #e0f2fe; border: 1px solid #bae6fd; padding: 2px 6px; border-radius: 4px; pointer-events: none; display: none; white-space: nowrap; z-index: 2;"></span>
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0; position: relative;">
                         <label>Số Lượng Sale</label>
                         <input autocomplete="off" type="number" name="saleQuantity" required placeholder="VD: 50"
-                            value="50" min="0">
+                            min="0">
                     </div>
                     <button type="submit" class="btn btn-gold" style="height: 38px; white-space: nowrap;"><i
                             class="fa-solid fa-plus"></i> <span>Thêm</span></button>
@@ -72,25 +84,52 @@
 
         <!-- Items table -->
         <div class="table-card">
-            <div class="table-h"><i class="fa-solid fa-list"></i> <span>Sản
-                    Phẩm Trong Chương Trình</span> (<span th:text="${items.size()}">0</span>)</div>
+            <div
+                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.8rem; flex-wrap: wrap; gap: 10px;">
+                <div class="table-h" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+                    <i class="fa-solid fa-list"></i> <span>Sản Phẩm Trong Chương Trình</span> (<span
+                        th:text="${items.size()}">0</span>)
+                </div>
+                <div style="margin-left: auto;">
+                    <div
+                        th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/flash-sales/' + ${flashSale.id} + '/items', keyword=${keyword})}">
+                    </div>
+                </div>
+            </div>
 
-            <div style="width: 100%; overflow-x: auto;">
-                <table th:if="${items != null and !items.isEmpty()}" style="min-width: 800px;">
+            <div class="table-wrapper"
+                style="width: 100%; max-height: 295px; overflow-y: auto !important; overflow-x: auto !important;">
+                <table th:if="${items != null and !items.isEmpty()}"
+                    style="width: 100%; min-width: 800px; border-collapse: separate; border-spacing: 0;">
                     <thead>
                         <tr>
-                            <th>Sản Phẩm</th>
-                            <th>Giá Gốc</th>
-                            <th>Giá Sale</th>
-                            <th>Giảm</th>
-                            <th>Đã Bán</th>
-                            <th>Tiến Trình</th>
-                            <th>Hành Động</th>
+                            <th
+                                style="position: sticky; top: 0; background: #ffffff; z-index: 10; border-bottom: 2px solid #e2e8f0;">
+                                Sản Phẩm</th>
+                            <th
+                                style="position: sticky; top: 0; background: #ffffff; z-index: 10; border-bottom: 2px solid #e2e8f0;">
+                                Giá Gốc</th>
+                            <th
+                                style="position: sticky; top: 0; background: #ffffff; z-index: 10; border-bottom: 2px solid #e2e8f0;">
+                                Giá Sale</th>
+                            <th
+                                style="position: sticky; top: 0; background: #ffffff; z-index: 10; border-bottom: 2px solid #e2e8f0;">
+                                Giảm</th>
+                            <th
+                                style="position: sticky; top: 0; background: #ffffff; z-index: 10; border-bottom: 2px solid #e2e8f0;">
+                                Đã Bán</th>
+                            <th
+                                style="position: sticky; top: 0; background: #ffffff; z-index: 10; border-bottom: 2px solid #e2e8f0;">
+                                Tiến Trình</th>
+                            <th
+                                style="position: sticky; top: 0; background: #ffffff; z-index: 10; border-bottom: 2px solid #e2e8f0;">
+                                Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="item : ${items}">
-                            <td style="font-weight:600;color:var(--white); max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:title="${item.product.name}" th:text="${item.product.name}">RTX 4090</td>
+                            <td style="font-weight:600;color:var(--white); max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                th:title="${item.product.name}" th:text="${item.product.name}">RTX 4090</td>
                             <td>
                                 <span class="original-price"
                                     th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">20.000.000₫</span>
@@ -114,7 +153,8 @@
                                     th:action="@{/admin/flash-sales/{saleId}/items/remove/{itemId}(saleId=${flashSale.id},itemId=${item.id})}"
                                     method="POST"
                                     th:onsubmit="event.preventDefault(); window.confirmDelete(this, 'Xóa sản phẩm này khỏi Flash Sale?');">
-                                    <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i> <span>Xóa</span></button>
+                                    <button type="submit" class="btn btn-sm btn-red"><i class="fa-solid fa-trash"></i>
+                                        <span>Xóa</span></button>
                                 </form>
                             </td>
                         </tr>
@@ -129,27 +169,326 @@
             </div>
         </div>
     </div>
-    
+
+    <style data-pjax-track="true">
+        .input-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important;
+            animation: errorShake 0.4s ease-in-out;
+        }
+
+        @keyframes errorShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-4px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(4px);
+            }
+        }
+
+        .field-error-msg {
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 4px;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .field-info-msg {
+            color: #0284c7;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 4px;
+            display: block;
+            line-height: 1.2;
+        }
+    </style>
+
     <script th:src="@{/js/confirm-popup.js}"></script>
     <script>
+        function showFieldError(inputEl, msg) {
+            if (!inputEl) return;
+            clearFieldInfo(inputEl);
+            const container = inputEl.closest('.form-group') || inputEl.parentElement;
+            if (!container) return;
+
+            let errorEl = container.querySelector('.field-error-msg');
+            if (!errorEl) {
+                errorEl = document.createElement('small');
+                errorEl.className = 'field-error-msg';
+                errorEl.style.cssText = "position: absolute; top: 100%; left: 0; margin-top: 2px; color: #ef4444; font-size: 11px; font-weight: 500; display: block; line-height: 1.2; white-space: nowrap; z-index: 10;";
+                container.style.position = 'relative';
+                container.appendChild(errorEl);
+            }
+            errorEl.innerText = msg;
+            errorEl.style.display = 'block';
+
+            inputEl.classList.remove('input-error');
+            void inputEl.offsetWidth; // re-trigger animation
+            inputEl.classList.add('input-error');
+        }
+
+        function clearFieldError(inputEl) {
+            if (!inputEl) return;
+            inputEl.classList.remove('input-error');
+            const container = inputEl.closest('.form-group') || inputEl.parentElement;
+            if (container) {
+                const errorEl = container.querySelector('.field-error-msg');
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                    errorEl.innerText = '';
+                }
+            }
+        }
+
+        function showFieldInfo(inputEl, msg) {
+            if (!inputEl) return;
+            clearFieldError(inputEl);
+            const wrapper = inputEl.closest('.input-wrapper') || inputEl.parentElement;
+            if (!wrapper) return;
+
+            let hintEl = wrapper.querySelector('.field-hint-badge');
+            if (!hintEl) {
+                hintEl = document.createElement('span');
+                hintEl.className = 'field-hint-badge';
+                hintEl.style.cssText = "position: absolute; right: 8px; font-size: 11px; font-weight: 600; color: #0369a1; background: #e0f2fe; border: 1px solid #bae6fd; padding: 2px 6px; border-radius: 4px; pointer-events: none; white-space: nowrap; z-index: 2;";
+                wrapper.style.position = 'relative';
+                wrapper.appendChild(hintEl);
+            }
+            hintEl.innerText = msg;
+            hintEl.style.display = 'inline-block';
+        }
+
+        function clearFieldInfo(inputEl) {
+            if (!inputEl) return;
+            const wrapper = inputEl.closest('.input-wrapper') || inputEl.parentElement;
+            if (wrapper) {
+                const hintEl = wrapper.querySelector('.field-hint-badge');
+                if (hintEl) {
+                    hintEl.style.display = 'none';
+                    hintEl.innerText = '';
+                }
+            }
+        }
+
         function validateFlashSaleItem(form) {
             const select = form.querySelector('select[name="productId"]');
             const salePriceInput = form.querySelector('input[name="salePrice"]');
-            
-            if (select && salePriceInput && select.selectedIndex >= 0) {
+            const percentInput = form.querySelector('input[name="saleDiscountPercent"]');
+            const quantityInput = form.querySelector('input[name="saleQuantity"]');
+
+            let isValid = true;
+            let firstInvalidEl = null;
+
+            // Clear previous errors
+            [select, salePriceInput, percentInput, quantityInput].forEach(el => clearFieldError(el));
+
+            // Validate Product
+            if (!select || !select.value) {
+                showFieldError(select, 'Vui lòng chọn sản phẩm!');
+                if (!firstInvalidEl) firstInvalidEl = select;
+                isValid = false;
+            }
+
+            // Validate Sale Price
+            const salePrice = salePriceInput ? parseFloat(salePriceInput.value) : NaN;
+            if (isNaN(salePrice) || salePrice <= 0) {
+                showFieldError(salePriceInput, 'Nhập giá lớn hơn 0!');
+                if (!firstInvalidEl) firstInvalidEl = salePriceInput;
+                isValid = false;
+            }
+
+            // Validate Percent
+            const percentVal = percentInput ? percentInput.value.trim() : '';
+            const percent = parseFloat(percentVal);
+            if (percentVal === '' || isNaN(percent) || percent < 0 || percent > 100) {
+                showFieldError(percentInput, 'Nhập % giảm (0-100%)!');
+                if (!firstInvalidEl) firstInvalidEl = percentInput;
+                isValid = false;
+            }
+
+            // Validate Quantity
+            const quantity = quantityInput ? parseInt(quantityInput.value, 10) : NaN;
+            if (isNaN(quantity) || quantity <= 0) {
+                showFieldError(quantityInput, 'Số lượng lớn hơn 0!');
+                if (!firstInvalidEl) firstInvalidEl = quantityInput;
+                isValid = false;
+            }
+
+            // Validate Sale Price vs Original Price
+            if (isValid && select && select.selectedIndex >= 0) {
                 const selectedOption = select.options[select.selectedIndex];
                 const originalPrice = parseFloat(selectedOption.getAttribute('data-price'));
-                const salePrice = parseFloat(salePriceInput.value);
-                
-                if (!isNaN(originalPrice) && !isNaN(salePrice)) {
-                    if (salePrice > originalPrice) {
-                        alert('Giá SALE không được cao hơn giá gốc của sản phẩm (' + originalPrice.toLocaleString('vi-VN') + '₫)!');
-                        return false;
-                    }
+
+                if (!isNaN(originalPrice) && !isNaN(salePrice) && salePrice > originalPrice) {
+                    showFieldError(salePriceInput, 'Không cao hơn giá gốc (' + originalPrice.toLocaleString('vi-VN') + '₫)!');
+                    if (!firstInvalidEl) firstInvalidEl = salePriceInput;
+                    isValid = false;
                 }
             }
-            return true;
+
+            if (!isValid && firstInvalidEl) {
+                firstInvalidEl.focus();
+            }
+
+            return isValid;
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('addFlashSaleItemForm');
+            if (!form) return;
+
+            const productSelect = form.querySelector('select[name="productId"]');
+            const salePriceInput = form.querySelector('input[name="salePrice"]');
+            const percentInput = form.querySelector('input[name="saleDiscountPercent"]');
+            const quantityInput = form.querySelector('input[name="saleQuantity"]');
+
+            // Auto-clear errors when typing/selecting
+            [productSelect, salePriceInput, percentInput, quantityInput].forEach(input => {
+                if (input) {
+                    input.addEventListener('input', function () {
+                        if (this.value && this.value.trim() !== '') {
+                            clearFieldError(this);
+                        }
+                    });
+                    input.addEventListener('change', function () {
+                        if (this.value && this.value.trim() !== '') {
+                            clearFieldError(this);
+                        }
+                    });
+                }
+            });
+
+            function getOriginalPrice() {
+                if (!productSelect || productSelect.selectedIndex < 0) return null;
+                const option = productSelect.options[productSelect.selectedIndex];
+                if (!option || !option.value) return null;
+                const price = parseFloat(option.getAttribute('data-price'));
+                return (!isNaN(price) && price > 0) ? price : null;
+            }
+
+            function formatVND(amount) {
+                return Math.round(amount).toLocaleString('vi-VN') + '₫';
+            }
+
+            let isUpdating = false;
+
+            if (salePriceInput) {
+                salePriceInput.addEventListener('input', function () {
+                    if (isUpdating) return;
+                    isUpdating = true;
+
+                    const origPrice = getOriginalPrice();
+                    const val = salePriceInput.value.trim();
+
+                    if (origPrice && val !== '') {
+                        const sPrice = parseFloat(val);
+                        if (!isNaN(sPrice) && sPrice >= 0) {
+                            let percent = Math.round(((origPrice - sPrice) / origPrice) * 100);
+                            percent = Math.max(0, Math.min(100, percent));
+                            if (percentInput) {
+                                percentInput.value = percent;
+                                clearFieldError(percentInput);
+                            }
+                            const savedAmount = origPrice - sPrice;
+                            if (savedAmount >= 0) {
+                                showFieldInfo(salePriceInput, '-' + formatVND(savedAmount));
+                                showFieldInfo(percentInput, '-' + formatVND(savedAmount));
+                            } else {
+                                clearFieldInfo(salePriceInput);
+                                clearFieldInfo(percentInput);
+                            }
+                        }
+                    } else {
+                        if (percentInput) percentInput.value = '';
+                        clearFieldInfo(salePriceInput);
+                        clearFieldInfo(percentInput);
+                    }
+
+                    isUpdating = false;
+                });
+            }
+
+            if (percentInput) {
+                percentInput.addEventListener('input', function () {
+                    if (isUpdating) return;
+                    isUpdating = true;
+
+                    const origPrice = getOriginalPrice();
+                    const val = percentInput.value.trim();
+
+                    if (origPrice && val !== '') {
+                        let percent = parseFloat(val);
+                        if (!isNaN(percent)) {
+                            percent = Math.max(0, Math.min(100, percent));
+                            const sPrice = Math.round(origPrice * (1 - percent / 100));
+                            if (salePriceInput) {
+                                salePriceInput.value = Math.max(0, sPrice);
+                                clearFieldError(salePriceInput);
+                            }
+                            const savedAmount = origPrice - sPrice;
+                            showFieldInfo(percentInput, '-' + formatVND(savedAmount));
+                            showFieldInfo(salePriceInput, '-' + formatVND(savedAmount));
+                        }
+                    } else {
+                        if (salePriceInput) salePriceInput.value = '';
+                        clearFieldInfo(percentInput);
+                        clearFieldInfo(salePriceInput);
+                    }
+
+                    isUpdating = false;
+                });
+            }
+
+            if (productSelect) {
+                productSelect.addEventListener('change', function () {
+                    const origPrice = getOriginalPrice();
+                    if (!origPrice) {
+                        clearFieldInfo(salePriceInput);
+                        clearFieldInfo(percentInput);
+                        return;
+                    }
+
+                    if (percentInput && percentInput.value.trim() !== '') {
+                        let percent = parseFloat(percentInput.value.trim());
+                        if (!isNaN(percent)) {
+                            percent = Math.max(0, Math.min(100, percent));
+                            const sPrice = Math.round(origPrice * (1 - percent / 100));
+                            if (salePriceInput) {
+                                salePriceInput.value = Math.max(0, sPrice);
+                                clearFieldError(salePriceInput);
+                            }
+                            const savedAmount = origPrice - sPrice;
+                            showFieldInfo(percentInput, '-' + formatVND(savedAmount));
+                            showFieldInfo(salePriceInput, '-' + formatVND(savedAmount));
+                        }
+                    } else if (salePriceInput && salePriceInput.value.trim() !== '') {
+                        const sPrice = parseFloat(salePriceInput.value.trim());
+                        if (!isNaN(sPrice)) {
+                            let percent = Math.round(((origPrice - sPrice) / origPrice) * 100);
+                            percent = Math.max(0, Math.min(100, percent));
+                            if (percentInput) {
+                                percentInput.value = percent;
+                                clearFieldError(percentInput);
+                            }
+                            const savedAmount = origPrice - sPrice;
+                            showFieldInfo(salePriceInput, '-' + formatVND(savedAmount));
+                            showFieldInfo(percentInput, '-' + formatVND(savedAmount));
+                        }
+                    }
+                });
+            }
+        });
     </script>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

@@ -88,9 +88,10 @@ public class FlashSaleServiceTest {
     void incrementSoldCount_IncrementsCorrectly() {
         when(flashSaleDAO.findCurrentActiveSale()).thenReturn(List.of(currentSale));
         when(flashSaleItemDAO.findByFlashSaleIdAndProductId(1, 10)).thenReturn(Optional.of(flashSaleItem));
+        when(flashSaleItemDAO.incrementSoldCountAtomically(1, 10, 5)).thenReturn(1);
 
         flashSaleService.incrementSoldCount(10, 5);
 
-        verify(flashSaleItemDAO, times(1)).save(argThat(i -> i.getSoldCount() == 7));
+        verify(flashSaleItemDAO, times(1)).incrementSoldCountAtomically(1, 10, 5);
     }
 }

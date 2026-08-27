@@ -2,13 +2,14 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <link rel="icon" type="image/png" th:href="@{/logo.png}" />
+    <link rel="icon" type="image/png" th:href="@{/images/logo.svg}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thêm/Sửa Bài Viết - Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/news/form.css}">
 
     <!-- TinyMCE CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
@@ -66,122 +67,6 @@
             }
         });
     </script>
-
-    <style>
-        .form-container {
-            background: #fff;
-            padding: 24px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .row {
-            display: flex;
-            gap: 24px;
-        }
-
-        .col-8 {
-            flex: 0 0 70%;
-        }
-
-        .col-4 {
-            flex: 0 0 30%;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 500;
-            color: #475569;
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 14px;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
-        }
-
-        textarea.form-control {
-            resize: vertical;
-        }
-
-        .btn-submit {
-            background: #0ea5e9;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .btn-submit:hover {
-            background: #0284c7;
-        }
-
-        .btn-cancel {
-            display: block;
-            text-align: center;
-            color: #64748b;
-            text-decoration: none;
-            margin-top: 12px;
-            font-weight: 500;
-        }
-
-        .btn-cancel:hover {
-            color: #334155;
-        }
-
-        .main-content {
-            margin-left: 280px;
-            flex: 1;
-            padding: 3rem;
-            overflow-x: hidden;
-        }
-
-        .page-header {
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-weight: 600;
-            margin-bottom: 16px;
-            font-size: 16px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 8px;
-        }
-
-        .img-preview {
-            margin-top: 10px;
-            max-width: 100%;
-            border-radius: 4px;
-            display: none;
-        }
-    </style>
 </head>
 
 <body>
@@ -285,10 +170,28 @@
                     <div class="card">
                         <h3 class="card-title">Ảnh đại diện (Thumbnail)</h3>
                         <div class="form-group">
-                            <input type="file" name="thumbnailFile" id="thumbnailFile" class="form-control"
-                                accept="image/*" onchange="previewImage(this);" />
-                            <small style="color: #64748b; display:block; margin-top:5px;">Chọn ảnh mới để thay thế ảnh
-                                cũ (nếu có)</small>
+                            <label class="file-upload-label" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 15px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; width: 100%; box-sizing: border-box; overflow: hidden;">
+                                <i class="fa-solid fa-cloud-arrow-up" style="color: #64748b; font-size: 18px; flex-shrink: 0;"></i>
+                                <span class="file-name" style="flex: 1; min-width: 0; font-size: 13px; color: #475569; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">Chọn ảnh tải lên...</span>
+                                <input autocomplete="off" type="file" name="thumbnailFile" id="thumbnailFile" accept="image/*"
+                                    style="display: none;" onchange="
+                                    let name = 'Chọn ảnh tải lên...';
+                                    if (this.files && this.files.length > 0) {
+                                        name = this.files[0].name;
+                                        if (name.length > 25) {
+                                            const dotIdx = name.lastIndexOf('.');
+                                            const ext = dotIdx !== -1 ? name.substring(dotIdx) : '';
+                                            const base = dotIdx !== -1 ? name.substring(0, dotIdx) : name;
+                                            name = base.substring(0, 18) + '...' + ext;
+                                        }
+                                    }
+                                    const label = this.closest('.file-upload-label');
+                                    const textSpan = label.querySelector('.file-name');
+                                    if (textSpan) textSpan.innerText = name;
+                                    previewImage(this);
+                                ">
+                            </label>
+                            <small style="color: #64748b; display:block; margin-bottom:12px;">Chọn ảnh mới để thay thế ảnh cũ (nếu có)</small>
 
                             <!-- Ảnh preview hoặc ảnh cũ -->
                             <img id="preview"

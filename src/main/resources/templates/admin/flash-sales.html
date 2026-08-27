@@ -6,10 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Flash Sale — Luxury PC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/admin/flash-sales.css(v=5.0)}" />
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/flash-sales.css}" />
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/modal-system.css}">
 </head>
 
 <body>
@@ -27,12 +28,7 @@
             <div th:replace="~{admin/layout/header :: adminProfile}"></div>
         </div>
 
-        <div th:if="${success}" class="toast toast-success">
-            <i class="fa-solid fa-check-circle"></i> <span th:text="${success}"></span>
-        </div>
-        <div th:if="${error}" class="toast toast-error">
-            <i class="fa-solid fa-exclamation-circle"></i> <span th:text="${error}"></span>
-        </div>
+        <div th:replace="~{admin/fragments/toast :: toast}"></div>
 
         <div class="table-card">
             <div class="table-h"
@@ -49,7 +45,7 @@
             </div>
 
             <div class="table-wrapper"
-                style="width: 100%; max-height: 56vh; overflow-x: hidden !important; overflow-y: auto !important;">
+                style="width: 100%; max-height: 56vh; overflow-x: auto !important; overflow-y: auto !important;">
                 <table th:if="${flashSales != null and !flashSales.isEmpty()}" class="admin-table"
                     style="width: 100%; table-layout: auto;">
                     <thead>
@@ -68,11 +64,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="fs : ${flashSales}">
-                            <td style="color:var(--muted);" th:text="${fs.id}">#1</td>
+                        <tr th:each="fs, iterStat : ${flashSales}">
+                            <td style="color:var(--muted); font-weight: 700;" th:text="${'#' + iterStat.count}">#1</td>
                             <td>
                                 <img th:if="${fs.bannerImage != null and !fs.bannerImage.isEmpty()}"
-                                    th:src="@{${fs.bannerImage.startsWith('http') ? fs.bannerImage : '/images/flashsale/' + fs.bannerImage}}"
+                                    th:src="${fs.bannerImage.startsWith('http') ? fs.bannerImage : '/images/flashsale/' + fs.bannerImage}"
                                     onerror="this.src='/images/placeholder.png'"
                                     style="height: 45px; width: 120px; object-fit: cover; border-radius: 4px;"
                                     alt="Banner">
@@ -152,91 +148,115 @@
         </div>
 
         <!-- Create Flash Sale Modal -->
-        <div class="modal-overlay" id="flashSaleModal">
-            <div class="modal">
-                <div class="modal-title"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i><span
-                        id="modalTitle">Tạo Flash Sale Mới</span></div>
-                <form novalidate autocomplete="off" th:action="@{/admin/flash-sales/save}" method="POST"
-                    id="flashSaleForm" enctype="multipart/form-data">
-                    <input type="hidden" name="id" id="fsId">
-                    <div class="form-group">
-                        <label>Tên Chương Trình</label>
-                        <input autocomplete="off" type="text" name="name" id="fsName" required
-                            placeholder="VD: Flash Sale Tháng 4">
-                    </div>
-                    <div class="form-group">
-                        <label>Mô Tả <span style="font-weight:400; color:var(--muted); font-size:11px;">(Tùy chọn - Hiển
-                                thị dưới banner)</span></label>
-                        <textarea autocomplete="off" name="description" id="fsDescription" rows="2"
-                            placeholder="VD: Giảm đến 50% các linh kiện CPU, GPU trong 24 giờ..."
-                            style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; resize:vertical; outline: none;"
-                            onfocus="this.style.borderColor='var(--gold)'"
-                            onblur="this.style.borderColor='#cbd5e1'"></textarea>
-                    </div>
-                    <div class="form-row">
+        <div class="lux-modal-backdrop" id="flashSaleModal">
+            <div class="lux-modal-container">
+                <div class="lux-modal-header">
+                    <h3 class="lux-modal-title"><i class="fa-solid fa-bolt" style="color: var(--primary);"></i> <span
+                            id="modalTitle">Tạo Flash Sale Mới</span></h3>
+                    <button class="lux-modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="lux-modal-body">
+                    <form class="needs-validation" novalidate autocomplete="off" th:action="@{/admin/flash-sales/save}"
+                        method="POST" id="flashSaleForm" enctype="multipart/form-data">
+                        <input type="hidden" name="id" id="fsId">
                         <div class="form-group">
-                            <label>Bắt Đầu</label>
-                            <input autocomplete="off" type="datetime-local" name="startTime" id="fsStart" required>
+                            <label>Tên Chương Trình</label>
+                            <input autocomplete="off" type="text" name="name" id="fsName" required
+                                placeholder="VD: Flash Sale Tháng 4">
                         </div>
                         <div class="form-group">
-                            <label>Kết Thúc</label>
-                            <input autocomplete="off" type="datetime-local" name="endTime" id="fsEnd" required>
+                            <label>Mô Tả <span style="font-weight:400; color:var(--muted); font-size:11px;">(Tùy chọn -
+                                    Hiển
+                                    thị dưới banner)</span></label>
+                            <textarea autocomplete="off" name="description" id="fsDescription" rows="2"
+                                placeholder="VD: Giảm đến 50% các linh kiện CPU, GPU trong 24 giờ..."
+                                style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:inherit; resize:vertical; outline: none;"
+                                onfocus="this.style.borderColor='var(--gold)'"
+                                onblur="this.style.borderColor='#cbd5e1'"></textarea>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Giới Hạn Mua / Người <span
-                                style="font-weight:400; color:var(--muted); font-size:11px;">(Tùy chọn - để trống =
-                                không giới hạn)</span></label>
-                        <input autocomplete="off" type="number" name="maxPerUser" id="fsMaxPerUser" min="1"
-                            placeholder="VD: 3 (mỗi user chỉ mua tối đa 3 sản phẩm)" style="width:100%;">
-                    </div>
-                    <div class="form-group">
-                        <label>Ảnh Banner (Tải lên hoặc dùng Link)</label>
-
-                        <div
-                            style="display: flex; gap: 15px; align-items: flex-start; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                            <!-- Image Preview -->
-                            <div
-                                style="flex-shrink: 0; width: 100px; height: 60px; background: var(--dark); border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
-                                <img id="bannerPreviewImg" src="/images/placeholder.png"
-                                    style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Bắt Đầu</label>
+                                <input autocomplete="off" type="datetime-local" name="startTime" id="fsStart" required>
                             </div>
+                            <div class="form-group">
+                                <label>Kết Thúc</label>
+                                <input autocomplete="off" type="datetime-local" name="endTime" id="fsEnd" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Giới Hạn Mua / Người <span
+                                    style="font-weight:400; color:var(--muted); font-size:11px;">(Tùy chọn - để trống =
+                                    không giới hạn)</span></label>
+                            <input autocomplete="off" type="number" name="maxPerUser" id="fsMaxPerUser" min="1"
+                                placeholder="VD: 3 (mỗi user chỉ mua tối đa 3 sản phẩm)" style="width:100%;">
+                        </div>
+                        <div class="form-group">
+                            <label>Ảnh Banner (Tải lên hoặc dùng Link)</label>
 
-                            <!-- Inputs -->
                             <div
-                                style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center;">
-                                <input autocomplete="off" type="file" name="bannerImageFile" id="fsBannerFile"
-                                    accept="image/*"
-                                    style="font-size: 12px; padding: 6px; background: var(--black); border-radius: 4px; border: 1px solid #e2e8f0; color: var(--cream); width: 100%; cursor: pointer;"
-                                    onchange="previewBannerFile(this)">
-
-                                <div id="urlInputGroup"
-                                    style="display: none; align-items: center; gap: 8px; margin-top: 4px;">
-                                    <span style="font-size: 11px; color: var(--muted); white-space: nowrap;">URL:</span>
-                                    <input autocomplete="off" type="text" name="bannerImage" id="fsBannerUrl"
-                                        placeholder="https://..."
-                                        style="flex-grow: 1; font-size: 12px; padding: 6px 8px; background: var(--black); border: 1px solid #e2e8f0; border-radius: 4px; color: var(--cream);"
-                                        oninput="previewBannerUrl(this.value)">
+                                style="display: flex; gap: 15px; align-items: flex-start; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <!-- Image Preview -->
+                                <div
+                                    style="flex-shrink: 0; width: 100px; height: 60px; background: var(--dark); border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
+                                    <img id="bannerPreviewImg" src="/images/placeholder.png"
+                                        style="max-width: 100%; max-height: 100%; object-fit: contain;">
                                 </div>
-                                <a href="javascript:void(0)"
-                                    onclick="document.getElementById('urlInputGroup').style.display = document.getElementById('urlInputGroup').style.display === 'none' ? 'flex' : 'none'; this.innerText = document.getElementById('urlInputGroup').style.display === 'none' ? '+ Dùng link ảnh' : '- Ẩn link ảnh';"
-                                    style="font-size: 11px; color: var(--gold); text-decoration: none; align-self: flex-start; margin-top: 2px;">+
-                                    Dùng link ảnh</a>
+
+                                <!-- Inputs -->
+                                <div
+                                    style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                                    <label class="file-upload-label"
+                                        style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 15px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; color: #475569; width: 100%; box-sizing: border-box; overflow: hidden;">
+                                        <i class="fa-solid fa-cloud-arrow-up" style="color: #64748b; font-size: 18px; flex-shrink: 0;"></i>
+                                        <span class="file-name" style="flex: 1; min-width: 0; font-size: 13px; color: #475569; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">Chọn ảnh tải lên...</span>
+                                        <input autocomplete="off" type="file" name="bannerImageFile" id="fsBannerFile" accept="image/*"
+                                            style="display: none;" onchange="
+                                            let name = 'Chọn ảnh tải lên...';
+                                            if (this.files && this.files.length > 0) {
+                                                name = this.files[0].name;
+                                                if (name.length > 20) {
+                                                    const dotIdx = name.lastIndexOf('.');
+                                                    const ext = dotIdx !== -1 ? name.substring(dotIdx) : '';
+                                                    const base = dotIdx !== -1 ? name.substring(0, dotIdx) : name;
+                                                    name = base.substring(0, 14) + '...' + ext;
+                                                }
+                                            }
+                                            const label = this.closest('.file-upload-label');
+                                            const textSpan = label.querySelector('.file-name');
+                                            if (textSpan) textSpan.innerText = name;
+                                            previewBannerFile(this);
+                                        ">
+                                    </label>
+
+                                    <div id="urlInputGroup"
+                                        style="display: none; align-items: center; gap: 8px; margin-top: 4px;">
+                                        <span
+                                            style="font-size: 11px; color: var(--muted); white-space: nowrap;">URL:</span>
+                                        <input autocomplete="off" type="text" name="bannerImage" id="fsBannerUrl"
+                                            placeholder="https://..."
+                                            style="flex-grow: 1; font-size: 12px; padding: 6px 8px; background: var(--black); border: 1px solid #e2e8f0; border-radius: 4px; color: var(--cream);"
+                                            oninput="previewBannerUrl(this.value)">
+                                    </div>
+                                    <a href="javascript:void(0)"
+                                        onclick="document.getElementById('urlInputGroup').style.display = document.getElementById('urlInputGroup').style.display === 'none' ? 'flex' : 'none'; this.innerText = document.getElementById('urlInputGroup').style.display === 'none' ? '+ Dùng link ảnh' : '- Ẩn link ảnh';"
+                                        style="font-size: 11px; color: var(--gold); text-decoration: none; align-self: flex-start; margin-top: 2px;">+
+                                        Dùng link ảnh</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn" style="color: black;" onclick="closeModal()">Hủy</button>
-                        <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span
-                                id="btnSubmitText">Tạo Chương Trình</span></button>
-                    </div>
-                </form>
+                        <div class="lux-modal-footer">
+                            <button type="button" class="btn" style="color: black;" onclick="closeModal()">Hủy</button>
+                            <button type="submit" class="btn btn-gold"><i class="fa-solid fa-save"></i> <span
+                                    id="btnSubmitText">Tạo Chương Trình</span></button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <script th:src="@{/js/admin/flash-sales.js?v=2}"></script>
-    </div>
-    <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
+            <script th:src="@{/js/admin/flash-sales.js}"></script>
+        </div>
+        <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>
 
 </html>

@@ -3,7 +3,6 @@ package poly.edu.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -25,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import poly.edu.dao.OrderDAO;
@@ -59,6 +57,12 @@ public class ProfileServiceTest {
     private ReviewDAO reviewDAO;
     @Mock
     private OrderDAO orderDAO;
+    @Mock
+    private poly.edu.dao.CartDAO cartDAO;
+    @Mock
+    private poly.edu.dao.CartItemDAO cartItemDAO;
+    @Mock
+    private poly.edu.repository.PasswordResetRepository passwordResetRepo;
 
     @InjectMocks
     private ProfileService profileService;
@@ -220,7 +224,7 @@ public class ProfileServiceTest {
         // Given
         when(authentication.getName()).thenReturn("test@luxurypc.com");
         when(userRepository.findByEmail("test@luxurypc.com")).thenReturn(Optional.of(mockUser));
-        when(shippingAddressRepository.countByUser_Id(1)).thenReturn(0L);
+        when(shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(1)).thenReturn(Collections.emptyList());
 
         // When
         profileService.addUserAddress(authentication, "John", "0123456789", "123 Street", "District 1", "City");

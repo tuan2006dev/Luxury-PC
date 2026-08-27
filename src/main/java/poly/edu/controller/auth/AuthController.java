@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import poly.edu.entity.User;
@@ -53,6 +52,16 @@ public class AuthController {
         }
     }
 
+    private void preserveFormInputs(org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes,
+                                   String firstName, String lastName, String email, String phone) {
+        if (redirectAttributes != null) {
+            redirectAttributes.addAttribute("firstName", firstName);
+            redirectAttributes.addAttribute("lastName", lastName);
+            redirectAttributes.addAttribute("email", email);
+            if (phone != null) redirectAttributes.addAttribute("phone", phone);
+        }
+    }
+
     @PostMapping("/register")
     public String register(@RequestParam String firstName,
                            @RequestParam String lastName,
@@ -62,82 +71,99 @@ public class AuthController {
                            @RequestParam(required = false) String inviteCode,
                            @RequestParam String password,
                            @RequestParam(required = false) String confirmPassword,
+                           org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes,
                            jakarta.servlet.http.HttpServletRequest request,
                            jakarta.servlet.http.HttpServletResponse response) {
 
-        email = email.trim().toLowerCase();
+        String cleanEmail = email != null ? email.trim().toLowerCase() : "";
 
-        // Simple email regex for KH_DK_04
-        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            return "redirect:/auth/register?invalidEmail=true";
-        }
-
-        if(userRepo.findByEmail(email).isPresent()) {
-            return "redirect:/auth/register?exist=true";
-        }
-        
-        if(confirmPassword != null && !password.equals(confirmPassword)) {
-            return "redirect:/auth/register?mismatch=true";
-        }
-        
-        if(!emailService.verifyOtp(email, otp)) {
-            return "redirect:/auth/register?invalidOtp=true";
-        }
-        
-        if(phone != null && !phone.trim().isEmpty() && userRepo.findByPhone(phone.trim()).isPresent()) {
-            return "redirect:/auth/register?phoneExist=true";
-        }
-
-        User user = new User();
-        user.setFullName(firstName + " " + lastName);
-        user.setEmail(email);
-        user.setUsername(email); 
-        user.setPassword(encoder.encode(password)); // Only hash once here
-        user.setPhone(phone);
-
-        User savedUser = userRepo.save(user);
-
-        // --- ROLE ASSIGNMENT ---
-        String roleName = "USER";
-
-        poly.edu.entity.Role role = roleDAO.findByName(roleName);
-        if (role != null) {
-            poly.edu.entity.UserRole ur = new poly.edu.entity.UserRole();
-            ur.setUser(savedUser);
-            ur.setRole(role);
-            userRoleDAO.save(ur);
-        }
-
-        // --- TASK 2: Tự động Đăng nhập sau khi Đăng ký ---
         try {
-            // Tự tạo UserDetails để tránh lỗi LazyLoad
-            java.util.List<org.springframework.security.core.authority.SimpleGrantedAuthority> authorities = 
-                java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + roleName));
+            // Simple email regex for KH_DK_04
+            if (!cleanEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                preserveFormInputs(redirectAttributes, firstName, lastName, cleanEmail, phone);
+                return "redirect:/auth/register?invalidEmail=true";
+            }
+
+            if(userRepo.findByEmail(cleanEmail).isPresent()) {
+                preserveFormInputs(redirectAttributes, firstName, lastName, cleanEmail, phone);
+                return "redirect:/auth/register?exist=true";
+            }
             
-            org.springframework.security.core.userdetails.User userDetails = 
-                new org.springframework.security.core.userdetails.User(savedUser.getEmail(), savedUser.getPassword(), authorities);
+            if(confirmPassword != null && !password.equals(confirmPassword)) {
+                preserveFormInputs(redirectAttributes, firstName, lastName, cleanEmail, phone);
+                return "redirect:/auth/register?mismatch=true";
+            }
+            
+            if(!emailService.verifyOtp(cleanEmail, otp)) {
+                preserveFormInputs(redirectAttributes, firstName, lastName, cleanEmail, phone);
+                return "redirect:/auth/register?invalidOtp=true";
+            }
+            
+            if(phone != null && !phone.trim().isEmpty() && userRepo.findByPhone(phone.trim()).isPresent()) {
+                preserveFormInputs(redirectAttributes, firstName, lastName, cleanEmail, phone);
+                return "redirect:/auth/register?phoneExist=true";
+            }
+
+            User user = new User();
+            user.setFullName(((firstName != null ? firstName.trim() : "") + " " + (lastName != null ? lastName.trim() : "")).trim());
+            user.setEmail(cleanEmail);
+            user.setUsername(cleanEmail); 
+            user.setPassword(encoder.encode(password));
+            user.setPhone(phone != null ? phone.trim() : null);
+            user.setAuthProvider(User.AuthProvider.LOCAL);
+            user.setStatus(true);
+            user.setForceChangePassword(false);
+
+            User savedUser = userRepo.save(user);
+
+            // --- ROLE ASSIGNMENT ---
+            String roleName = "USER";
+
+            poly.edu.entity.Role role = roleDAO.findByName(roleName);
+            if (role != null) {
+                poly.edu.entity.UserRole ur = new poly.edu.entity.UserRole();
+                ur.setUser(savedUser);
+                ur.setRole(role);
+                userRoleDAO.save(ur);
+            }
+
+            // --- TASK 2: Tự động Đăng nhập sau khi Đăng ký ---
+            try {
+                // Tự tạo UserDetails để tránh lỗi LazyLoad
+                java.util.List<org.springframework.security.core.authority.SimpleGrantedAuthority> authorities = 
+                    java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + roleName));
                 
-            org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken = 
-                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authToken);
-            
-            // Lưu Context vào Session để Spring Security nhận diện sau khi redirect
-            securityContextRepository.saveContext(org.springframework.security.core.context.SecurityContextHolder.getContext(), request, response);
-            return "redirect:/";
+                org.springframework.security.core.userdetails.User userDetails = 
+                    new org.springframework.security.core.userdetails.User(savedUser.getEmail(), savedUser.getPassword(), authorities);
+                    
+                org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken = 
+                    new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authToken);
+                
+                // Lưu Context vào Session để Spring Security nhận diện sau khi redirect
+                securityContextRepository.saveContext(org.springframework.security.core.context.SecurityContextHolder.getContext(), request, response);
+                return "redirect:/";
+            } catch (Exception e) {
+                log.error("[Auth] Auto-login error after registration", e);
+                return "redirect:/auth/login?success=true";
+            }
         } catch (Exception e) {
-            log.error("[Auth] OTP verification error", e);
-            return "redirect:/auth/login?success=true";
+            log.error("[Auth] Registration failure error", e);
+            preserveFormInputs(redirectAttributes, firstName, lastName, cleanEmail, phone);
+            return "redirect:/auth/register?error=true";
         }
     }
 
     @PostMapping("/forgot-password/send-otp")
     @ResponseBody
     public String sendForgotPasswordOtp(@RequestParam String email) {
-        email = email.trim().toLowerCase();
-        if(userRepo.findByEmail(email).isEmpty()) return "error_not_found";
+        String cleanEmail = email != null ? email.trim().toLowerCase() : "";
+        User user = userRepo.findByEmailIgnoreCase(cleanEmail).orElseGet(() -> userRepo.findByUsernameIgnoreCase(cleanEmail).orElse(null));
+        if (user == null) return "error_not_found";
+        if (Boolean.FALSE.equals(user.getStatus())) return "error_locked";
         
         try {
-            emailService.sendForgotPasswordOtpEmail(email, email);
+            emailService.sendForgotPasswordOtpEmail(user.getEmail(), user.getEmail());
             return "success";
         } catch(Exception e) {
             log.error("[Auth] Password reset error", e);
@@ -150,18 +176,22 @@ public class AuthController {
     public String resetPassword(@RequestParam String email,
                                 @RequestParam String otp,
                                 @RequestParam String newPassword) {
-        email = email.trim().toLowerCase();
+        String cleanEmail = email != null ? email.trim().toLowerCase() : "";
         
-        if(!emailService.verifyForgotPasswordOtp(email, otp)) {
+        if(!emailService.verifyForgotPasswordOtp(cleanEmail, otp)) {
             return "error_otp";
         }
         
-        User user = userRepo.findByEmail(email).orElse(null);
+        User user = userRepo.findByEmailIgnoreCase(cleanEmail).orElseGet(() -> userRepo.findByUsernameIgnoreCase(cleanEmail).orElse(null));
         if (user == null) {
             return "error_not_found";
         }
+        if (Boolean.FALSE.equals(user.getStatus())) {
+            return "error_locked";
+        }
         
         user.setPassword(encoder.encode(newPassword));
+        user.setForceChangePassword(false);
         userRepo.save(user);
         
         return "success";

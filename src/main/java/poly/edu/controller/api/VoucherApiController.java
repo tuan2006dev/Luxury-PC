@@ -10,7 +10,6 @@ import poly.edu.entity.CartItem;
 import poly.edu.entity.User;
 import poly.edu.entity.Voucher;
 import poly.edu.repository.AdminLogRepository;
-import poly.edu.service.FlashSaleService;
 import poly.edu.service.ProfileService;
 import poly.edu.service.VoucherService;
 
@@ -27,7 +26,7 @@ public class VoucherApiController {
 
     private final ProfileService profileService;
 
-    private final FlashSaleService flashSaleService;
+    private final poly.edu.service.CartService cartService;
 
     private final AdminLogRepository adminLogRepository;
 
@@ -97,7 +96,10 @@ public class VoucherApiController {
             user = profileService.getCurrentUser(authentication);
         }
 
-        return voucherService.validateVoucherCombo(code, freeshipCode, cartTotal, shippingFee, targetCart != null ? targetCart.values() : null, user);
+        double discountRate = cartService.getDiscountRate(authentication != null ? authentication.getPrincipal() : null);
+        double priceAfterVip = cartTotal - (cartTotal * discountRate);
+
+        return voucherService.validateVoucherCombo(code, freeshipCode, priceAfterVip, shippingFee, targetCart != null ? targetCart.values() : null, user);
     }
 
     /**
