@@ -4,20 +4,14 @@
 -- ======================================================
 
 -- ======================================================
--- PostgreSQL Table Structures & Initial Data for LuxuryPC
--- Compatible with Render Cloud PostgreSQL & Local PostgreSQL
--- ======================================================
-
--- ======================================================
--- PostgreSQL Table Structures & Initial Data for LuxuryPC
--- Compatible with Render Cloud PostgreSQL & Local PostgreSQL
--- ======================================================
-
--- ======================================================
 -- SQL Server Table Structures (CREATE TABLE)
 -- Ordered Topologically
 -- Date: 2026-07-19
 -- ======================================================
+
+-- --------------------------------------------------
+-- DROP ALL EXISTING FOREIGN KEYS DYNAMICALLY
+-- --------------------------------------------------
 
 -- ----------------------------
 -- Table structure for flyway_schema_history
@@ -25,12 +19,12 @@
 DROP TABLE IF EXISTS flyway_schema_history CASCADE;
 CREATE TABLE flyway_schema_history (
   installed_rank INT NOT NULL,
-  version VARCHAR(255)(50),
-  description VARCHAR(255)(200)  NOT NULL,
-  type VARCHAR(255)(20)  NOT NULL,
-  script VARCHAR(255)(1000)  NOT NULL,
+  version VARCHAR(50),
+  description VARCHAR(200)  NOT NULL,
+  type VARCHAR(20)  NOT NULL,
+  script VARCHAR(1000)  NOT NULL,
   checksum INT,
-  installed_by VARCHAR(255)(100)  NOT NULL,
+  installed_by VARCHAR(100)  NOT NULL,
   installed_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   execution_time INT NOT NULL,
   success BOOLEAN NOT NULL
@@ -42,16 +36,16 @@ CREATE TABLE flyway_schema_history (
 DROP TABLE IF EXISTS sepay_transactions CASCADE;
 CREATE TABLE sepay_transactions (
   id SERIAL PRIMARY KEY,
-  account_number VARCHAR(255)(100),
-  order_code VARCHAR(255)(100),
-  payment_code VARCHAR(255)(100),
+  account_number VARCHAR(100),
+  order_code VARCHAR(100),
+  payment_code VARCHAR(100),
   processed_at TIMESTAMP,
-  processing_status VARCHAR(255)(100),
-  raw_payload VARCHAR(255)(MAX),
+  processing_status VARCHAR(100),
+  raw_payload TEXT,
   received_at TIMESTAMP,
   sepay_transaction_id BIGINT,
   transfer_amount DECIMAL(18,2),
-  transfer_type VARCHAR(255)(100)
+  transfer_type VARCHAR(100)
 );
 
 -- ----------------------------
@@ -60,7 +54,7 @@ CREATE TABLE sepay_transactions (
 DROP TABLE IF EXISTS roles CASCADE;
 CREATE TABLE roles (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255)(255)  NOT NULL
+  name VARCHAR(255)  NOT NULL
 );
 
 -- ----------------------------
@@ -69,17 +63,17 @@ CREATE TABLE roles (
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(255)(255),
-  email VARCHAR(255)(255)  NOT NULL UNIQUE,
-  password VARCHAR(255)(255) NULL,
-  full_name VARCHAR(255)(255),
-  phone VARCHAR(255)(255),
-  address VARCHAR(255)(MAX),
+  username VARCHAR(255),
+  email VARCHAR(255)  NOT NULL UNIQUE,
+  password VARCHAR(255) NULL,
+  full_name VARCHAR(255),
+  phone VARCHAR(255),
+  address TEXT,
   enabled BOOLEAN DEFAULT TRUE,
-  auth_provider VARCHAR(255)(255),
-  google_id VARCHAR(255)(255),
-  facebook_id VARCHAR(255)(255),
-  avatar VARCHAR(255)(255),
+  auth_provider VARCHAR(255),
+  google_id VARCHAR(255),
+  facebook_id VARCHAR(255),
+  avatar VARCHAR(255),
   birthday TIMESTAMP,
   gender BOOLEAN,
   status BOOLEAN,
@@ -97,9 +91,9 @@ CREATE TABLE users (
 DROP TABLE IF EXISTS categories CASCADE;
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255)(100)  NOT NULL,
-  display VARCHAR(255)(MAX),
-  slug VARCHAR(255)(255)
+  name VARCHAR(100)  NOT NULL,
+  display TEXT,
+  slug VARCHAR(255)
 );
 
 -- ----------------------------
@@ -109,10 +103,10 @@ DROP TABLE IF EXISTS news_categories CASCADE;
 CREATE TABLE news_categories (
   id SERIAL PRIMARY KEY,
   created_at TIMESTAMP,
-  description VARCHAR(255)(MAX),
-  name VARCHAR(255)(100)  NOT NULL,
-  slug VARCHAR(255)(100)  NOT NULL,
-  status VARCHAR(255)(20)  NOT NULL,
+  description TEXT,
+  name VARCHAR(100)  NOT NULL,
+  slug VARCHAR(100)  NOT NULL,
+  status VARCHAR(20)  NOT NULL,
   updated_at TIMESTAMP
 );
 
@@ -125,13 +119,11 @@ CREATE TABLE flash_sales (
   active BOOLEAN,
   created_at TIMESTAMP,
   end_time TIMESTAMP,
-  name VARCHAR(255)(255),
+  name VARCHAR(255),
   start_time TIMESTAMP
 );
 
-ALTER TABLE flash_sales
-ADD description VARCHAR(255)(500) NULL,
-    max_per_user INT NULL;
+ALTER TABLE flash_sales ADD COLUMN IF NOT EXISTS description VARCHAR(500), ADD COLUMN IF NOT EXISTS max_per_user INT;
 
 -- ----------------------------
 -- Table structure for pc_combos
@@ -139,11 +131,11 @@ ADD description VARCHAR(255)(500) NULL,
 DROP TABLE IF EXISTS pc_combos CASCADE;
 CREATE TABLE pc_combos (
   id BIGSERIAL PRIMARY KEY,
-  badge VARCHAR(255)(255),
-  badge_color VARCHAR(255)(255),
-  description VARCHAR(255)(255),
-  image VARCHAR(255)(255),
-  name VARCHAR(255)(255),
+  badge VARCHAR(255),
+  badge_color VARCHAR(255),
+  description VARCHAR(255),
+  image VARCHAR(255),
+  name VARCHAR(255),
   price DECIMAL(18,2)
 );
 
@@ -158,7 +150,7 @@ CREATE TABLE spring_session (
   last_access_time BIGINT NOT NULL,
   max_inactive_interval INT NOT NULL,
   expiry_time BIGINT NOT NULL,
-  principal_name VARCHAR(255)(100)
+  principal_name VARCHAR(100)
 );
 
 -- ----------------------------
@@ -166,7 +158,7 @@ CREATE TABLE spring_session (
 -- ----------------------------
 DROP TABLE IF EXISTS game_engine_traits CASCADE;
 CREATE TABLE game_engine_traits (
-  game_name VARCHAR(255)(255) NOT NULL PRIMARY KEY,
+  game_name VARCHAR(255) NOT NULL PRIMARY KEY,
   cpu_dependency_weight DOUBLE PRECISION
 );
 
@@ -177,8 +169,8 @@ DROP TABLE IF EXISTS fps_baselines CASCADE;
 CREATE TABLE fps_baselines (
   id SERIAL PRIMARY KEY,
   estimated_fps INT,
-  preset VARCHAR(255)(255),
-  resolution VARCHAR(255)(255)
+  preset VARCHAR(255),
+  resolution VARCHAR(255)
 );
 
 -- ----------------------------
@@ -208,11 +200,11 @@ DROP TABLE IF EXISTS user_sessions CASCADE;
 CREATE TABLE user_sessions (
   id SERIAL PRIMARY KEY,
   user_id INT NOT NULL,
-  session_id VARCHAR(255)(255)  NOT NULL,
-  user_agent VARCHAR(255)(500),
-  device_info VARCHAR(255)(255),
-  ip_address VARCHAR(255)(50),
-  location VARCHAR(255)(100),
+  session_id VARCHAR(255)  NOT NULL,
+  user_agent VARCHAR(500),
+  device_info VARCHAR(255),
+  ip_address VARCHAR(50),
+  location VARCHAR(100),
   login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   is_expired BOOLEAN DEFAULT FALSE
@@ -224,12 +216,12 @@ CREATE TABLE user_sessions (
 DROP TABLE IF EXISTS shipping_addresses CASCADE;
 CREATE TABLE shipping_addresses (
   id SERIAL PRIMARY KEY,
-  address VARCHAR(255)(500)  NOT NULL,
-  city VARCHAR(255)(120),
+  address VARCHAR(500)  NOT NULL,
+  city VARCHAR(120),
   is_default BOOLEAN NOT NULL,
-  district VARCHAR(255)(120),
-  phone VARCHAR(255)(255)  NOT NULL,
-  recipient_name VARCHAR(255)(255)  NOT NULL,
+  district VARCHAR(120),
+  phone VARCHAR(255)  NOT NULL,
+  recipient_name VARCHAR(255)  NOT NULL,
   user_id INT NOT NULL
 );
 
@@ -239,17 +231,17 @@ CREATE TABLE shipping_addresses (
 DROP TABLE IF EXISTS user_addresses CASCADE;
 CREATE TABLE user_addresses (
   id SERIAL PRIMARY KEY,
-  address VARCHAR(255)(500)  NOT NULL,
-  city VARCHAR(255)(150),
+  address VARCHAR(500)  NOT NULL,
+  city VARCHAR(150),
   created_at TIMESTAMP,
-  district VARCHAR(255)(150),
+  district VARCHAR(150),
   is_default BOOLEAN,
-  phone VARCHAR(255)(255)  NOT NULL,
-  recipient_name VARCHAR(255)(255)  NOT NULL,
+  phone VARCHAR(255)  NOT NULL,
+  recipient_name VARCHAR(255)  NOT NULL,
   updated_at TIMESTAMP,
   user_id INT NOT NULL,
-  address_line VARCHAR(255)(1000),
-  receiver_name VARCHAR(255)(255)
+  address_line VARCHAR(1000),
+  receiver_name VARCHAR(255)
 );
 
 -- ----------------------------
@@ -294,17 +286,17 @@ CREATE TABLE pc_builds (
 DROP TABLE IF EXISTS support_tickets CASCADE;
 CREATE TABLE support_tickets (
   id SERIAL PRIMARY KEY,
-  admin_reply VARCHAR(255)(MAX),
-  assigned_admin VARCHAR(255)(255),
-  build_config VARCHAR(255)(MAX),
-  category VARCHAR(255)(255),
+  admin_reply TEXT,
+  assigned_admin VARCHAR(255),
+  build_config TEXT,
+  category VARCHAR(255),
   created_at TIMESTAMP,
-  customer_email VARCHAR(255)(255),
-  customer_name VARCHAR(255)(255),
-  customer_phone VARCHAR(255)(255),
-  message VARCHAR(255)(MAX),
-  status VARCHAR(255)(255),
-  subject VARCHAR(255)(1000),
+  customer_email VARCHAR(255),
+  customer_name VARCHAR(255),
+  customer_phone VARCHAR(255),
+  message TEXT,
+  status VARCHAR(255),
+  subject VARCHAR(1000),
   updated_at TIMESTAMP,
   user_id INT
 );
@@ -315,16 +307,16 @@ CREATE TABLE support_tickets (
 DROP TABLE IF EXISTS tickets CASCADE;
 CREATE TABLE tickets (
   id SERIAL PRIMARY KEY,
-  assigned_admin VARCHAR(255)(255),
-  build_config VARCHAR(255)(MAX),
-  category VARCHAR(255)(255),
+  assigned_admin VARCHAR(255),
+  build_config TEXT,
+  category VARCHAR(255),
   created_at TIMESTAMP,
-  customer_email VARCHAR(255)(255),
-  customer_name VARCHAR(255)(255)  NOT NULL,
-  customer_phone VARCHAR(255)(255),
-  message VARCHAR(255)(MAX),
-  status VARCHAR(255)(255),
-  subject VARCHAR(255)(255)  NOT NULL
+  customer_email VARCHAR(255),
+  customer_name VARCHAR(255)  NOT NULL,
+  customer_phone VARCHAR(255),
+  message TEXT,
+  status VARCHAR(255),
+  subject VARCHAR(255)  NOT NULL
 );
 
 -- ----------------------------
@@ -333,14 +325,14 @@ CREATE TABLE tickets (
 DROP TABLE IF EXISTS products CASCADE;
 CREATE TABLE products (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255)(200)  NOT NULL,
+  name VARCHAR(200)  NOT NULL,
   price DECIMAL(18,2) NOT NULL,
-  description VARCHAR(255)(MAX),
-  image VARCHAR(255)(255),
+  description TEXT,
+  image VARCHAR(255),
   category_id INT,
   stock INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  brand VARCHAR(255)(100)
+  brand VARCHAR(100)
 );
 
 -- ----------------------------
@@ -350,10 +342,10 @@ DROP TABLE IF EXISTS vouchers CASCADE;
 CREATE TABLE vouchers (
   id SERIAL PRIMARY KEY,
   active BOOLEAN,
-  code VARCHAR(255)(255)  NOT NULL,
+  code VARCHAR(255)  NOT NULL,
   created_at TIMESTAMP,
-  description VARCHAR(255)(255),
-  discount_type VARCHAR(255)(255),
+  description VARCHAR(255),
+  discount_type VARCHAR(255),
   discount_value DECIMAL(18,2),
   end_date TIMESTAMP,
   max_discount_amount DECIMAL(18,2),
@@ -370,20 +362,20 @@ CREATE TABLE vouchers (
 DROP TABLE IF EXISTS news CASCADE;
 CREATE TABLE news (
   id SERIAL PRIMARY KEY,
-  content VARCHAR(255)(MAX),
+  content TEXT,
   created_at TIMESTAMP,
-  slug VARCHAR(255)(255)  NOT NULL,
-  summary VARCHAR(255)(MAX),
-  thumbnail VARCHAR(255)(255),
-  title VARCHAR(255)(255)  NOT NULL,
+  slug VARCHAR(255)  NOT NULL,
+  summary TEXT,
+  thumbnail VARCHAR(255),
+  title VARCHAR(255)  NOT NULL,
   updated_at TIMESTAMP,
   author_id INT NOT NULL,
-  meta_description VARCHAR(255)(MAX),
-  meta_keywords VARCHAR(255)(255),
-  meta_title VARCHAR(255)(255),
+  meta_description TEXT,
+  meta_keywords VARCHAR(255),
+  meta_title VARCHAR(255),
   view_count BIGINT DEFAULT 0,
   category_id INT,
-  status VARCHAR(255)(20)
+  status VARCHAR(20)
 );
 
 -- ----------------------------
@@ -392,7 +384,7 @@ CREATE TABLE news (
 DROP TABLE IF EXISTS spring_session_attributes CASCADE;
 CREATE TABLE spring_session_attributes (
   session_primary_id char(36) NOT NULL,
-  attribute_name VARCHAR(255)(200) NOT NULL,
+  attribute_name VARCHAR(200) NOT NULL,
   attribute_bytes VARBINARY(MAX) NOT NULL,
   PRIMARY KEY (session_primary_id, attribute_name)
 );
@@ -402,19 +394,19 @@ CREATE TABLE spring_session_attributes (
 -- ----------------------------
 DROP TABLE IF EXISTS shared_builds CASCADE;
 CREATE TABLE shared_builds (
-  share_code VARCHAR(255)(15) NOT NULL PRIMARY KEY,
+  share_code VARCHAR(15) NOT NULL PRIMARY KEY,
   build_id INT NOT NULL,
-  name VARCHAR(255)(100)  DEFAULT 'Cấu hình chia sẻ từ LuxuryPC',
+  name VARCHAR(100)  DEFAULT 'Cấu hình chia sẻ từ LuxuryPC',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  case_id VARCHAR(255)(50),
-  cooler_id VARCHAR(255)(50),
-  cpu_id VARCHAR(255)(50),
-  gpu_id VARCHAR(255)(50),
-  mainboard_id VARCHAR(255)(50),
-  psu_id VARCHAR(255)(50),
-  ram_id VARCHAR(255)(50),
+  case_id VARCHAR(50),
+  cooler_id VARCHAR(50),
+  cpu_id VARCHAR(50),
+  gpu_id VARCHAR(50),
+  mainboard_id VARCHAR(50),
+  psu_id VARCHAR(50),
+  ram_id VARCHAR(50),
   total_price numeric(38,2),
-  storage_id VARCHAR(255)(50)
+  storage_id VARCHAR(50)
 );
 
 -- Xóa cột build_id (nếu nó đang là khóa chính thì phải DROP CONSTRAINT trước)
@@ -434,22 +426,22 @@ CREATE TABLE orders (
   id SERIAL PRIMARY KEY,
   user_id INT,
   total_price DECIMAL(18,2),
-  status VARCHAR(255)(50),
-  order_code VARCHAR(255)(255),
-  full_name VARCHAR(255)(255),
-  email VARCHAR(255)(255),
-  phone VARCHAR(255)(255),
-  address VARCHAR(255)(MAX),
-  city VARCHAR(255)(255),
+  status VARCHAR(50),
+  order_code VARCHAR(255),
+  full_name VARCHAR(255),
+  email VARCHAR(255),
+  phone VARCHAR(255),
+  address TEXT,
+  city VARCHAR(255),
   discount_amount DECIMAL(18,2) DEFAULT 0,
-  voucher_code VARCHAR(255)(255),
-  installment_bank VARCHAR(255)(255),
+  voucher_code VARCHAR(255),
+  installment_bank VARCHAR(255),
   installment_fee numeric(15,2) DEFAULT 0,
   installment_term INT,
-  payment_method VARCHAR(255)(255),
-  admin_note VARCHAR(255)(MAX),
-  refund_previous_status VARCHAR(255)(255),
-  refund_reason VARCHAR(255)(MAX),
+  payment_method VARCHAR(255),
+  admin_note TEXT,
+  refund_previous_status VARCHAR(255),
+  refund_reason TEXT,
   stock_deducted BOOLEAN,
   stock_restored BOOLEAN,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -484,15 +476,15 @@ CREATE TABLE cart_items (
 DROP TABLE IF EXISTS reviews CASCADE;
 CREATE TABLE reviews (
   id SERIAL PRIMARY KEY,
-  content VARCHAR(255)(255),
+  content VARCHAR(255),
   created_at TIMESTAMP,
   stars INT,
   user_id INT,
   product_id INT,
   order_id INT,
-  title VARCHAR(255)(255),
-  image VARCHAR(255)(255),
-  video VARCHAR(255)(255)
+  title VARCHAR(255),
+  image VARCHAR(255),
+  video VARCHAR(255)
 );
 
 -- ----------------------------
@@ -525,8 +517,8 @@ CREATE TABLE stock_movements (
   id SERIAL PRIMARY KEY,
   product_id INT,
   change_quantity INT,
-  movement_type VARCHAR(255)(255),
-  note VARCHAR(255)(MAX),
+  movement_type VARCHAR(255),
+  note TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -549,9 +541,9 @@ CREATE TABLE flash_sale_items (
 DROP TABLE IF EXISTS brands CASCADE;
 CREATE TABLE brands (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255)(255) NOT NULL,
-  logo VARCHAR(255)(500) NOT NULL,
-  link VARCHAR(255)(500),
+  name VARCHAR(255) NOT NULL,
+  logo VARCHAR(500) NOT NULL,
+  link VARCHAR(500),
   display_order INT DEFAULT 0
 );
 
@@ -561,7 +553,7 @@ CREATE TABLE brands (
 DROP TABLE IF EXISTS pc_combo_details CASCADE;
 CREATE TABLE pc_combo_details (
   id BIGSERIAL PRIMARY KEY,
-  slot_type VARCHAR(255)(255),
+  slot_type VARCHAR(255),
   combo_id BIGINT,
   product_id INT
 );
@@ -583,9 +575,9 @@ DROP TABLE IF EXISTS ticket_messages CASCADE;
 CREATE TABLE ticket_messages (
   id SERIAL PRIMARY KEY,
   created_at TIMESTAMP,
-  message VARCHAR(255)(MAX)  NOT NULL,
-  sender VARCHAR(255)(255)  NOT NULL,
-  sender_name VARCHAR(255)(255),
+  message TEXT  NOT NULL,
+  sender VARCHAR(255)  NOT NULL,
+  sender_name VARCHAR(255),
   ticket_id INT NOT NULL
 );
 
@@ -600,7 +592,7 @@ CREATE TABLE user_vouchers (
   saved_at TIMESTAMP,
   used_at TIMESTAMP,
   reservation_expires_at TIMESTAMP,
-  status VARCHAR(255)(255) NOT NULL
+  status VARCHAR(255) NOT NULL
 );
 
 -- ----------------------------
@@ -610,9 +602,9 @@ DROP TABLE IF EXISTS chat_messages CASCADE;
 CREATE TABLE chat_messages (
   id SERIAL PRIMARY KEY,
   created_at TIMESTAMP,
-  message VARCHAR(255)(MAX),
-  sender VARCHAR(255)(255),
-  sender_name VARCHAR(255)(255),
+  message TEXT,
+  sender VARCHAR(255),
+  sender_name VARCHAR(255),
   ticket_id INT
 );
 
@@ -622,8 +614,8 @@ CREATE TABLE chat_messages (
 DROP TABLE IF EXISTS password_resets CASCADE;
 CREATE TABLE password_resets (
   id BIGSERIAL PRIMARY KEY,
-  email VARCHAR(255)(100),
-  token VARCHAR(255)(255),
+  email VARCHAR(100),
+  token VARCHAR(255),
   expiry TIMESTAMP
 );
 
@@ -635,7 +627,7 @@ CREATE TABLE case_specs (
   product_id INT NOT NULL PRIMARY KEY,
   max_cpu_cooler_height_mm INT,
   max_gpu_length_mm INT,
-  motherboard_support VARCHAR(255)(255)
+  motherboard_support VARCHAR(255)
 );
 
 -- ----------------------------
@@ -646,7 +638,7 @@ CREATE TABLE casespec_specs (
   product_id INT NOT NULL PRIMARY KEY,
   max_cpu_cooler_height_mm INT,
   max_gpu_length_mm INT,
-  motherboard_support VARCHAR(255)(255)
+  motherboard_support VARCHAR(255)
 );
 
 -- ----------------------------
@@ -657,8 +649,8 @@ CREATE TABLE cpu_specs (
   product_id INT NOT NULL PRIMARY KEY,
   has_igpu BOOLEAN,
   includes_stock_cooler BOOLEAN,
-  ram_type_supported VARCHAR(255)(255),
-  socket VARCHAR(255)(255),
+  ram_type_supported VARCHAR(255),
+  socket VARCHAR(255),
   tdp_max INT
 );
 
@@ -670,8 +662,8 @@ CREATE TABLE cpuspec_specs (
   product_id INT NOT NULL PRIMARY KEY,
   has_igpu BOOLEAN,
   includes_stock_cooler BOOLEAN,
-  ram_type_supported VARCHAR(255)(255),
-  socket VARCHAR(255)(255),
+  ram_type_supported VARCHAR(255),
+  socket VARCHAR(255),
   tdp_max INT
 );
 
@@ -681,7 +673,7 @@ CREATE TABLE cpuspec_specs (
 DROP TABLE IF EXISTS cooler_specs CASCADE;
 CREATE TABLE cooler_specs (
   product_id INT NOT NULL PRIMARY KEY,
-  cooler_type VARCHAR(255)(255),
+  cooler_type VARCHAR(255),
   height_mm INT,
   tdp_rating_watt INT
 );
@@ -692,7 +684,7 @@ CREATE TABLE cooler_specs (
 DROP TABLE IF EXISTS coolerspec_specs CASCADE;
 CREATE TABLE coolerspec_specs (
   product_id INT NOT NULL PRIMARY KEY,
-  cooler_type VARCHAR(255)(255),
+  cooler_type VARCHAR(255),
   height_mm INT,
   tdp_rating_watt INT
 );
@@ -730,10 +722,10 @@ DROP TABLE IF EXISTS mainboard_specs CASCADE;
 CREATE TABLE mainboard_specs (
   product_id INT NOT NULL PRIMARY KEY,
   cpu_power_connectors INT,
-  form_factor VARCHAR(255)(255),
+  form_factor VARCHAR(255),
   ram_slots INT,
-  ram_type VARCHAR(255)(255),
-  socket VARCHAR(255)(255)
+  ram_type VARCHAR(255),
+  socket VARCHAR(255)
 );
 
 -- ----------------------------
@@ -743,10 +735,10 @@ DROP TABLE IF EXISTS mainboardspec_specs CASCADE;
 CREATE TABLE mainboardspec_specs (
   product_id INT NOT NULL PRIMARY KEY,
   cpu_power_connectors INT,
-  form_factor VARCHAR(255)(255),
+  form_factor VARCHAR(255),
   ram_slots INT,
-  ram_type VARCHAR(255)(255),
-  socket VARCHAR(255)(255)
+  ram_type VARCHAR(255),
+  socket VARCHAR(255)
 );
 
 -- ----------------------------
@@ -780,7 +772,7 @@ DROP TABLE IF EXISTS ram_specs CASCADE;
 CREATE TABLE ram_specs (
   product_id INT NOT NULL PRIMARY KEY,
   capacity_total INT,
-  ddr_type VARCHAR(255)(255),
+  ddr_type VARCHAR(255),
   module_count INT
 );
 
@@ -791,7 +783,7 @@ DROP TABLE IF EXISTS ramspec_specs CASCADE;
 CREATE TABLE ramspec_specs (
   product_id INT NOT NULL PRIMARY KEY,
   capacity_total INT,
-  ddr_type VARCHAR(255)(255),
+  ddr_type VARCHAR(255),
   module_count INT
 );
 
@@ -801,8 +793,8 @@ CREATE TABLE ramspec_specs (
 DROP TABLE IF EXISTS storage_specs CASCADE;
 CREATE TABLE storage_specs (
   product_id INT NOT NULL PRIMARY KEY,
-  form_factor VARCHAR(255)(255),
-  interface_type VARCHAR(255)(255)
+  form_factor VARCHAR(255),
+  interface_type VARCHAR(255)
 );
 
 -- ----------------------------
@@ -811,8 +803,8 @@ CREATE TABLE storage_specs (
 DROP TABLE IF EXISTS storagespec_specs CASCADE;
 CREATE TABLE storagespec_specs (
   product_id INT NOT NULL PRIMARY KEY,
-  form_factor VARCHAR(255)(255),
-  interface_type VARCHAR(255)(255)
+  form_factor VARCHAR(255),
+  interface_type VARCHAR(255)
 );
 
 -- ----------------------------
@@ -1235,8 +1227,8 @@ INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, cate
 INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (2, NULL, 'leecookcu@gmail.com', NULL, 'GENERAL', '2026-06-23 16:34:27.632', 'phamcongthanh.8311@gmail.com', 'thanh', '', 'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'IN_PROGRESS', 'Chat hỗ trợ trực tuyến', '2026-06-23 17:09:43.807', 5);
 INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (3, NULL, 'tuan9bledinhchinh@gmail.com', NULL, 'GENERAL', '2026-07-14 09:45:54.78', 'tuan9bledinhchinh@gmail.com', '36', '', 'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'IN_PROGRESS', 'Chat hỗ trợ trực tuyến', '2026-07-14 09:45:59.943', 2);
 INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (4, NULL, 'leecookcu@gmail.com', NULL, 'GENERAL', '2026-07-14 13:29:48.231', 'phamcongthanh.8311@gmail.com', 'Thanh', '', 'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'IN_PROGRESS', 'Chat hỗ trợ trực tuyến', '2026-07-14 13:30:11.568', 5);
-INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (5, NULL, NULL, NULL, 'GENERAL', '2026-07-14 17:19:18.965', 'tuan9bledinhchinh@gmail.com', '36', '', 'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'OPE', 'Chat hỗ trợ trực tuyến', '2026-07-14 17:19:18.965', 2);
-INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (6, NULL, NULL, NULL, 'GENERAL', '2026-07-15 10:47:51.665', 'phamcongthanh.8311@gmail.com', 'Thanh', '', 'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'OPE', 'Chat hỗ trợ trực tuyến', '2026-07-15 10:47:51.665', 5);
+INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (5, NULL, NULL, NULL, 'GENERAL', '2026-07-14 17:19:18.965', 'tuan9bledinhchinh@gmail.com', '36', '', 'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'OPE', N'Chat hỗ trợ trực tuyến', '2026-07-14 17:19:18.965', 2);
+INSERT INTO support_tickets (id, admin_reply, assigned_admin, build_config, category, created_at, customer_email, customer_name, customer_phone, message, status, subject, updated_at, user_id) VALUES (6, NULL, NULL, NULL, 'GENERAL', '2026-07-15 10:47:51.665', 'phamcongthanh.8311@gmail.com', 'Thanh', '', 'Khách hàng bắt đầu phiên chat hỗ trợ trực tuyến.', 'OPE', N'Chat hỗ trợ trực tuyến', '2026-07-15 10:47:51.665', 5);
 
 -- Dumping data for table products
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (257, 'Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz (TRAY) - CHÍNH HÃNG', 2500000, 'TDP: 65W', 'i9_14900k.jpg', 1, 99, '2026-06-27 12:52:50.064', NULL);
@@ -1633,7 +1625,7 @@ INSERT INTO products (id, name, price, description, image, category_id, stock, c
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (391, 'Chuột máy tính LAMZU Atlantis OG V2 Wireless Gaming Mouse 55g', 2250000, 'TDP: 1W', 'corsair_3500x_black.png', 17, 50, '2026-07-23 10:00:00.000', 'LAMZU');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (392, 'Chuột máy tính Endgame Gear OP1WE Wireless Gaming Mouse 58g', 1950000, 'TDP: 1W', 'corsair_3500x_black.png', 17, 60, '2026-07-23 10:00:00.000', 'Endgame Gear');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (393, 'Chuột máy tính VGN Dragonfly F1 PRO MAX Wireless Nordic MCU', 1150000, 'TDP: 1W', 'corsair_3500x_black.png', 17, 90, '2026-07-23 10:00:00.000', 'VG');
-INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (394, 'Chuột máy tính VXE R1 PRO MAX Ultra Light Wireless PAW3395', 980000, 'TDP: 1W', 'corsair_3500x_black.png', 17, 110, '2026-07-23 10:00:00.000', 'VXE');
+INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (394, N'Chuột máy tính VXE R1 PRO MAX Ultra Light Wireless PAW3395', 980000, 'TDP: 1W', 'corsair_3500x_black.png', 17, 110, '2026-07-23 10:00:00.000', 'VXE');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (395, 'Chuột máy tính SteelSeries Rival 3 Wireless Gaming Mouse 18k DPI', 950000, 'TDP: 1W', 'corsair_3500x_black.png', 17, 100, '2026-07-23 10:00:00.000', 'SteelSeries');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (396, 'Chuột máy tính ASUS ROG Harpe Ace Aim Lab Edition 54g Wireless', 2850000, 'TDP: 1W', 'corsair_3500x_black.png', 17, 35, '2026-07-23 10:00:00.000', 'ASUS');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (397, 'Tai nghe gaming HyperX Cloud II Wireless Red/Black Spatial Audio', 2950000, 'TDP: 1W', 'corsair_3500x_black.png', 18, 60, '2026-07-23 10:00:00.000', 'HyperX');
@@ -1976,14 +1968,14 @@ INSERT INTO products (id, name, price, description, image, category_id, stock, c
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (191, 'ASUS ROG Ryujin III 360 ARGB', 8864600, '360mm, Asetek 8th Gen, 3.5-inch Full Color', 'https://static.nb.com.ar/i/nb_WATER-COOLER-ASUS-ROG-RYUJIN-III-360-ARGB-EXTREME_export_8a547ab1b93ed328764c69a3da19902e.png', 14, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (192, 'ASUS ROG Thor 1200W Platinum II', 8102600, '1200W, 80 Plus Platinum, Full Modular, Real-time power draw', 'https://files.pccasegear.com/images/ROG-THOR-1200P2-GAMING-thumb.jpg', 12, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (193, 'MSI MEG Z790 GODLIKE MAX', 30454600, 'LGA1700, Intel Z790, 7x M.2 slots, M-Vision Dashboard', 'https://storage-asset.msi.com/global/picture/image/feature/mb/Z790/meg-z790-godlike-max/images/mb-godlike-max-02.png', 5, 50, '6/5/2026 10:05:55 AM', NULL);
-INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (194, 'MSI MAG B650 TOMAHAWK WIFI', 5562600, 'AM5, AMD B650, DDR5 7600+(OC), Realtek 2.5Gbps LA', 'https://storage-asset.msi.com/global/picture/image/feature/mb/B650/MAG-B650-TOMAHAWK-WIFI/mag-b650-tomahawk-wifi.png', 5, 50, '6/5/2026 10:05:55 AM', NULL);
+INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (194, 'MSI MAG B650 TOMAHAWK WIFI', 5562600, 'AM5, AMD B650, DDR5 7600+(OC), Realtek 2.5Gbps LAN', 'https://storage-asset.msi.com/global/picture/image/feature/mb/B650/MAG-B650-TOMAHAWK-WIFI/mag-b650-tomahawk-wifi.png', 5, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (195, 'MSI GeForce RTX 4080 SUPER 16G GAMING X SLIM', 26644600, '16GB GDDR6X, TRI FROZR 3, 2625 MHz', 'https://storage-asset.msi.com/global/picture/image/feature/vga/NVIDIA/4080-Gaming/RTX-4080-Gaming-X-Slim-16G/images/msi-4080-gaming-x-slim-16g-in-desktop-01.jpg', 2, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (196, 'MSI MPG 271QRX QD-OLED', 20294600, '27-inch, 2560x1440 (2K), 360Hz, 0.03ms (GtG)', 'https://www.bhphotovideo.com/images/images2500x2500/msi_mpg_271qrx_qd_oled_27_wqhd_oled_16_9_1808681.jpg', 7, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (197, 'MSI MEG MAESTRO 700L PZ', 10642600, 'ATX Full Tower, Curved Tempered Glass, Back-connect (Project Zero) support', 'https://storage-asset.msi.com/global/picture/image/feature/PC-Case/MEG-MAESTRO-700L-PZ/meg-maestro-700l-pz-connect-pd.png', 13, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (198, 'MSI MAG CORELIQUID I360', 3530600, '360mm, ARGB Fans, Infinite Mirror IPS Style Design', 'https://cdn.mwave.com.au/images/400/msi_mag_coreliquid_i360_360mm_argb_aio_liquid_cpu_cooler_black_ac79069_96031.jpg', 14, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (199, 'MSI SPATIUM M570 PCIe 5.0 NVMe M.2 HS', 7594600, '2TB, Up to 12400 MB/s, Up to 11800 MB/s', 'https://asset.msi.com/resize/image/global/product/product_167573935424940aba56cd1dba801846447d621bb2.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 6, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (200, 'Gigabyte Z790 AORUS XTREME X', 25374600, 'LGA1700, 24+1+2 Phases, Wi-Fi 7, PCIe 5.0 x16', 'https://static.gigabyte.com/StaticFile/Image/Global/dee0b0bef844f7dcac99c3569fdf02c8/Product/36669/Png', 5, 50, '6/5/2026 10:05:55 AM', NULL);
-INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (201, 'Gigabyte X670E AORUS MASTER', 11404600, 'AM5, AMD X670E, 4x M.2 PCIe 5.0, Intel 2.5GbE LA', 'https://c1.neweggimages.com/ProductImageCompressAll1280/13-145-405-01.jpg', 5, 50, '6/5/2026 10:05:55 AM', NULL);
+INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (201, 'Gigabyte X670E AORUS MASTER', 11404600, 'AM5, AMD X670E, 4x M.2 PCIe 5.0, Intel 2.5GbE LAN', 'https://c1.neweggimages.com/ProductImageCompressAll1280/13-145-405-01.jpg', 5, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (202, 'Gigabyte M27Q Gaming Monitor', 7594600, '27-inch, Super Speed IPS, 2560x1440, 170Hz', 'https://i5.walmartimages.com/seo/GIGABYTE-M27Q-X-27-IPS-Gaming-Monitor-QHD-2560x1440-240Hz-1ms-GTG-AMD-FreeSync-Premium-Type-C-KVM-HDMI-DP-Type-C-Height-Adjustable-Black_f3eb5f61-69ba-4e34-b036-cec12104f4ce.7073182e88b5c23aed1a2c2a254b8c81.jpeg', 7, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (203, 'Gigabyte AORUS FO32U2P', 30454600, '32-inch, OLED (QD-OLED), 3840x2160, DP 2.1 UHBR20 supported', 'https://m.media-amazon.com/images/I/71M5qy2eL0L._AC_.jpg', 7, 50, '6/5/2026 10:05:55 AM', NULL);
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (204, 'Gigabyte AORUS Gen5 12000 SSD 2TB', 8102600, 'PCIe 5.0 x4, NVMe 2.0, 12,400 MB/s, 11,800 MB/s', 'https://gzhls.at/pix/0c/eb/0ceb8457e76f2dda-n.webp', 6, 50, '6/5/2026 10:05:55 AM', NULL);
@@ -2175,7 +2167,7 @@ INSERT INTO products (id, name, price, description, image, category_id, stock, c
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (390, 'Chuột máy tính Ninjutso Sora V2 Ultra Lightweight Wireless 39g', 2450000, 'TDP: 1W', 'https://down-ph.img.susercontent.com/file/sg-11134202-7ratx-may7aujrn6uu1e', 17, 40, '7/23/2026 10:00:00 AM', 'Ninjutso');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (391, 'Chuột máy tính LAMZU Atlantis OG V2 Wireless Gaming Mouse 55g', 2250000, 'TDP: 1W', 'https://cdn.store-assets.com/s/824673/i/62363110.jpeg', 17, 50, '7/23/2026 10:00:00 AM', 'LAMZU');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (392, 'Chuột máy tính Endgame Gear OP1WE Wireless Gaming Mouse 58g', 1950000, 'TDP: 1W', 'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m5d24fcjbuieb0', 17, 60, '7/23/2026 10:00:00 AM', 'Endgame Gear');
-INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (393, 'Chuột máy tính VGN Dragonfly F1 PRO MAX Wireless Nordic MCU', 1150000, 'TDP: 1W', 'https://bizweb.dktcdn.net/thumb/1024x1024/100/466/510/products/9884aef4-733e-4f36-a587-d3bed9c441ed-1693989197508.jpg?v=1694080500800', 17, 90, '7/23/2026 10:00:00 AM', 'VG');
+INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (393, 'Chuột máy tính VGN Dragonfly F1 PRO MAX Wireless Nordic MCU', 1150000, 'TDP: 1W', 'https://bizweb.dktcdn.net/thumb/1024x1024/100/466/510/products/9884aef4-733e-4f36-a587-d3bed9c441ed-1693989197508.jpg?v=1694080500800', 17, 90, '7/23/2026 10:00:00 AM', 'VGN');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (394, 'Chuột máy tính VXE R1 PRO MAX Ultra Light Wireless PAW3395', 980000, 'TDP: 1W', 'https://down-br.img.susercontent.com/file/br-11134207-7r98o-m5etuyqhic3628', 17, 110, '7/23/2026 10:00:00 AM', 'VXE');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (395, 'Chuột máy tính SteelSeries Rival 3 Wireless Gaming Mouse 18k DPI', 950000, 'TDP: 1W', 'https://os-jo.com/image/cache/catalog/products/Accessories/Mouse/RIVAL-3-Wireless/a89f866daa5b7f847d234e3beb4d6582-1200x1200.jpg', 17, 100, '7/23/2026 10:00:00 AM', 'SteelSeries');
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES (396, 'Chuột máy tính ASUS ROG Harpe Ace Aim Lab Edition 54g Wireless', 2850000, 'TDP: 1W', 'https://product.hstatic.net/1000262653/product/sp1080884_f0bb5b45cbbc4da1881a87dc14861641_master.png', 17, 35, '7/23/2026 10:00:00 AM', 'ASUS');
@@ -3118,6 +3110,18 @@ INSERT INTO chat_messages (id, created_at, message, sender, sender_name, ticket_
 -- ----------------------------
 -- Table structure & sample data for news_categories
 -- ----------------------------
+IF NOT EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID('news_categories') AND type IN ('U'))
+BEGIN
+    CREATE TABLE news_categories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        slug VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+END;
 
 INSERT INTO news_categories (id, name, slug, status) VALUES (1, 'Card Đồ Họa', 'card-do-hoa', 'ACTIVE') ON CONFLICT (id) DO NOTHING;
 IF NOT EXISTS (SELECT 1 FROM news_categories WHERE id = 2) INSERT INTO news_categories (id, name, slug, status) VALUES (2, 'Bộ Vi Xử Lý (CPU)', 'bo-vi-xu-ly', 'ACTIVE');
@@ -3129,6 +3133,26 @@ INSERT INTO news_categories (id, name, slug, status) VALUES (6, 'Mẹo & Thủ T
 -- ----------------------------
 -- Table structure & sample data for news
 -- ----------------------------
+IF NOT EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID('news') AND type IN ('U'))
+BEGIN
+    CREATE TABLE news (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        content TEXT NOT NULL,
+        summary TEXT NOT NULL,
+        thumbnail VARCHAR(255),
+        view_count BIGINT DEFAULT 0,
+        meta_title VARCHAR(255),
+        meta_description TEXT,
+        meta_keywords VARCHAR(255),
+        status VARCHAR(20) DEFAULT 'PUBLISHED',
+        category_id INT FOREIGN KEY REFERENCES news_categories(id),
+        author_id INT NOT NULL FOREIGN KEY REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+END;
 
 INSERT INTO news (content, created_at, slug, summary, thumbnail, title, updated_at, author_id, meta_description, meta_keywords, meta_title, view_count, category_id, status)
 VALUES
@@ -3158,70 +3182,6 @@ VALUES
 ('Corsair', '/images/ui-new/corsair.svg', '/products?brand=Corsair', 6),
 ('Kingston', '/images/ui-new/kingston.svg', '/products?brand=Kingston', 7),
 ('Cooler Master', '/images/ui-new/coolermaster.svg', '/products?brand=Cooler Master', 8);
-
--- ----------------------------
--- Table structure for sepay_payment_sessions
--- ----------------------------
-DROP TABLE IF EXISTS sepay_payment_sessions CASCADE;
-CREATE TABLE sepay_payment_sessions (
-  id BIGSERIAL PRIMARY KEY,
-  order_id INT NOT NULL,
-  qr_created_at TIMESTAMP NOT NULL,
-  qr_expires_at TIMESTAMP NOT NULL,
-  paid_at TIMESTAMP,
-  expired_at TIMESTAMP,
-  CONSTRAINT fk_sepay_payment_sessions_orders FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
-);
-CREATE INDEX IF NOT EXISTS idx_sepay_payment_sessions_order_created ON sepay_payment_sessions (order_id, qr_created_at DESC);
-
--- ======================================================
--- Reset Sequences to Max ID for Auto-Increment Tables
--- ======================================================
-DO $$
-DECLARE
-    r RECORD;
-BEGIN
-    FOR r IN (
-        SELECT c.table_name, c.column_name, pg_get_serial_sequence(c.table_name, c.column_name) AS seq
-        FROM information_schema.columns c
-        WHERE c.table_schema = 'public' 
-          AND pg_get_serial_sequence(c.table_name, c.column_name) IS NOT NULL
-    ) LOOP
-        EXECUTE format('SELECT setval(%L, COALESCE((SELECT MAX(%I) FROM %I), 1))', r.seq, r.column_name, r.table_name);
-    END LOOP;
-END $$;
-
--- ----------------------------
--- Table structure for sepay_payment_sessions
--- ----------------------------
-DROP TABLE IF EXISTS sepay_payment_sessions CASCADE;
-CREATE TABLE sepay_payment_sessions (
-  id BIGSERIAL PRIMARY KEY,
-  order_id INT NOT NULL,
-  qr_created_at TIMESTAMP NOT NULL,
-  qr_expires_at TIMESTAMP NOT NULL,
-  paid_at TIMESTAMP,
-  expired_at TIMESTAMP,
-  CONSTRAINT fk_sepay_payment_sessions_orders FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
-);
-CREATE INDEX IF NOT EXISTS idx_sepay_payment_sessions_order_created ON sepay_payment_sessions (order_id, qr_created_at DESC);
-
--- ======================================================
--- Reset Sequences to Max ID for Auto-Increment Tables
--- ======================================================
-DO $$
-DECLARE
-    r RECORD;
-BEGIN
-    FOR r IN (
-        SELECT c.table_name, c.column_name, pg_get_serial_sequence(c.table_name, c.column_name) AS seq
-        FROM information_schema.columns c
-        WHERE c.table_schema = 'public' 
-          AND pg_get_serial_sequence(c.table_name, c.column_name) IS NOT NULL
-    ) LOOP
-        EXECUTE format('SELECT setval(%L, COALESCE((SELECT MAX(%I) FROM %I), 1))', r.seq, r.column_name, r.table_name);
-    END LOOP;
-END $$;
 
 -- ----------------------------
 -- Table structure for sepay_payment_sessions

@@ -187,6 +187,6 @@ UPDATE products
 SET name = 'AMD Ryzen 7 8700G', price = 9200000, description = 'Powerful APU, Radeon 780M', image = 'i9_14900k.jpg', category_id = 1, stock = 33, brand = 'AMD'
 WHERE id = 30 OR name LIKE '%8700G%';
 
-PRINT '=====================================================';
-PRINT 'ĐÃ HOÀN TẤT CẬP NHẬT (UPDATE) DỮ LIỆU CÁC SẢN PHẨM CPU!';
-PRINT '=====================================================';
+'=====================================================';
+'ĐÃ HOÀN TẤT CẬP NHẬT (UPDATE) DỮ LIỆU CÁC SẢN PHẨM CPU!';
+'=====================================================';
