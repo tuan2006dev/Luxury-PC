@@ -35,6 +35,7 @@ public class AdminReviewController {
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "star", required = false) Integer star,
             @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
             Model model) {
 
         List<Review> allReviews = reviewDAO.findAllByOrderByCreatedAtDesc();
@@ -94,8 +95,10 @@ public class AdminReviewController {
                     .collect(Collectors.toList());
         }
 
-        model.addAttribute("reviews", filteredReviews);
+        List<Review> paginatedReviews = poly.edu.util.PaginationUtils.paginate(filteredReviews, page, model);
+        model.addAttribute("reviews", paginatedReviews);
         model.addAttribute("totalReviews", totalReviews);
+        model.addAttribute("filteredCount", filteredReviews.size());
         model.addAttribute("avgRating", avgRating);
         model.addAttribute("pendingCount", pendingCount);
         model.addAttribute("repliedCount", repliedCount);

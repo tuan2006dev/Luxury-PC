@@ -33,45 +33,50 @@
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-        <div class="table-wrapper" style="width: 100%; max-height: 75vh; overflow: auto;">
-            <table style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">STT</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tên danh mục</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Đường dẫn (Slug)</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Số bài viết</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Trạng thái</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="cat, stat : ${categories}">
-                        <td th:text="${stat.count}">1</td>
-                        <td th:text="${cat.name}">Tên</td>
-                        <td th:text="${cat.slug}">slug</td>
-                        <td th:text="${cat.newsList != null ? cat.newsList.size() : 0}">0</td>
-                        <td>
-                            <span class="badge badge-success" th:if="${cat.status == 'ACTIVE'}">Hoạt động</span>
-                            <span class="badge badge-gray" th:unless="${cat.status == 'ACTIVE'}">Ẩn</span>
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <a th:href="@{/admin/news-categories/edit/{id}(id=${cat.id})}"
-                                    class="btn btn-warning"><i class="fa fa-edit"></i></a>
-                                <form th:action="@{/admin/news-categories/delete/{id}(id=${cat.id})}" method="post"
-                                    onsubmit="return window.confirmSubmit(event, 'Xóa danh mục này?');"
-                                    style="margin:0;">
-                                    <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(categories)}">
-                        <td colspan="6" style="text-align:center;">Chưa có danh mục nào</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card">
+            <div class="table-wrapper" style="width: 100%;">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên danh mục</th>
+                            <th>Đường dẫn (Slug)</th>
+                            <th>Số bài viết</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cat, stat : ${categories}">
+                            <td th:text="${(startItem != null ? startItem : 1) + stat.index}">1</td>
+                            <td th:text="${cat.name}">Tên</td>
+                            <td th:text="${cat.slug}">slug</td>
+                            <td th:text="${cat.newsList != null ? cat.newsList.size() : 0}">0</td>
+                            <td>
+                                <span class="badge badge-success" th:if="${cat.status == 'ACTIVE'}">Hoạt động</span>
+                                <span class="badge badge-gray" th:unless="${cat.status == 'ACTIVE'}">Ẩn</span>
+                            </td>
+                            <td>
+                                <div class="action-btns">
+                                    <a th:href="@{/admin/news-categories/edit/{id}(id=${cat.id})}" class="btn btn-warning"><i
+                                            class="fa fa-edit"></i></a>
+                                    <form th:action="@{/admin/news-categories/delete/{id}(id=${cat.id})}" method="post"
+                                        onsubmit="return window.confirmSubmit(event, 'Xóa danh mục này?');"
+                                        style="margin:0;">
+                                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${categories.empty}">
+                            <td colspan="6" style="text-align:center;">Chưa có danh mục nào</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/news-categories')}"></div>
         </div>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>

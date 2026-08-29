@@ -285,4 +285,14 @@ public class EmailService {
             System.err.println("Gửi email cấp tài khoản staff thất bại: " + e.getMessage());
         }
     }
+
+    public void sendHtmlEmail(String toEmail, String subject, String htmlBody) throws jakarta.mail.MessagingException {
+        jakarta.mail.internet.MimeMessage mimeMessage = mailSender.createMimeMessage();
+        org.springframework.mail.javamail.MimeMessageHelper helper = new org.springframework.mail.javamail.MimeMessageHelper(mimeMessage, true, "UTF-8");
+        helper.setFrom("luxury.pc.noreply@gmail.com");
+        helper.setTo(toEmail);
+        helper.setSubject(subject);
+        helper.setText(htmlBody, true);
+        mailSender.send(mimeMessage);
+    }
 }

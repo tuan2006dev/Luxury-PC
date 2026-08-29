@@ -32,7 +32,10 @@ public class AdminProductController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    public String list(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
         java.util.List<Product> prods = productService.getAllProducts();
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
@@ -42,7 +45,8 @@ public class AdminProductController {
                                  (p.getCategory() != null && p.getCategory().getName() != null && p.getCategory().getName().toLowerCase().contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
-        model.addAttribute("products", prods);
+        java.util.List<Product> paginatedProds = poly.edu.util.PaginationUtils.paginate(prods, page, model);
+        model.addAttribute("products", paginatedProds);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("product", new Product());
         model.addAttribute("keyword", keyword);
@@ -58,7 +62,8 @@ public class AdminProductController {
             Model model) {
 
         if (result.hasErrors()) {
-            model.addAttribute("products", productService.getAllProducts());
+            java.util.List<Product> prods = productService.getAllProducts();
+            model.addAttribute("products", poly.edu.util.PaginationUtils.paginate(prods, 1, model));
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("error", "Vui lòng kiểm tra lại các trường bắt buộc.");
             return "admin/products";
@@ -102,10 +107,14 @@ public class AdminProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Integer id, Model model) {
+    public String edit(
+            @PathVariable("id") Integer id,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
         Product p = productService.getProductById(id);
         model.addAttribute("product", p);
-        model.addAttribute("products", productService.getAllProducts());
+        java.util.List<Product> prods = productService.getAllProducts();
+        model.addAttribute("products", poly.edu.util.PaginationUtils.paginate(prods, page, model));
         model.addAttribute("categories", categoryService.getAllCategories());
         return "admin/products";
     }

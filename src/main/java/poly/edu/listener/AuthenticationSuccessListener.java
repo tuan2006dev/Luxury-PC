@@ -12,9 +12,12 @@ import jakarta.servlet.http.HttpSession;
 import poly.edu.dao.UserSessionDAO;
 import poly.edu.entity.User;
 import poly.edu.entity.UserSession;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import poly.edu.repository.UserRepository;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -22,10 +25,12 @@ public class AuthenticationSuccessListener implements ApplicationListener<Intera
 
     private final UserSessionDAO userSessionDAO;
     private final UserRepository userRepository;
+    private final SessionRegistry sessionRegistry;
 
-    public AuthenticationSuccessListener(UserSessionDAO userSessionDAO, UserRepository userRepository) {
+    public AuthenticationSuccessListener(UserSessionDAO userSessionDAO, UserRepository userRepository, SessionRegistry sessionRegistry) {
         this.userSessionDAO = userSessionDAO;
         this.userRepository = userRepository;
+        this.sessionRegistry = sessionRegistry;
     }
 
     @Override
@@ -64,18 +69,40 @@ public class AuthenticationSuccessListener implements ApplicationListener<Intera
             return;
         }
 
+        // Extract device info, browser, os, ip, location
+        String userAgent = request.getHeader("User-Agent");
+        String deviceInfo = buildDeviceInfo(userAgent);
+        String ipAddress = getIpAddress(request);
+        String location = getLocation(request);
+
+        // Expire any existing active sessions on the same device and IP for this user
+        try {
+            List<UserSession> existingActiveSessions = userSessionDAO.findByUserAndIsExpiredFalseOrderByLoginTimeDesc(user);
+            for (UserSession oldSession : existingActiveSessions) {
+                if (deviceInfo.equalsIgnoreCase(oldSession.getDeviceInfo()) && ipAddress.equalsIgnoreCase(oldSession.getIpAddress())) {
+                    oldSession.setIsExpired(true);
+                    userSessionDAO.save(oldSession);
+
+                    try {
+                        SessionInformation info = sessionRegistry.getSessionInformation(oldSession.getSessionId());
+                        if (info != null) {
+                            info.expireNow();
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error cleaning up previous sessions on login: " + e.getMessage());
+        }
+
         // Record the new session
         UserSession userSession = new UserSession();
         userSession.setUser(user);
         userSession.setSessionId(sessionId);
-        
-        String userAgent = request.getHeader("User-Agent");
         userSession.setUserAgent(userAgent);
-        
-        // Extract device info, browser, os, ip, location
-        userSession.setDeviceInfo(buildDeviceInfo(userAgent));
-        userSession.setIpAddress(getIpAddress(request));
-        userSession.setLocation(getLocation(request));
+        userSession.setDeviceInfo(deviceInfo);
+        userSession.setIpAddress(ipAddress);
+        userSession.setLocation(location);
         userSession.setLoginTime(new Date());
         userSession.setLastActivity(new Date());
         userSession.setIsExpired(false);

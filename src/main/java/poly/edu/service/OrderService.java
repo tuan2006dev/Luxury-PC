@@ -87,7 +87,8 @@ public class OrderService {
             Product product = productDAO.findByIdForUpdate(item.getId()).get();
             
             // Deduct stock in Product entity
-            product.setStock(product.getStock() - item.getQuantity());
+            int curStock = product.getStock() != null ? product.getStock() : 0;
+            product.setStock(Math.max(0, curStock - item.getQuantity()));
             productDAO.save(product);
 
             // Sync with Inventory table
@@ -156,6 +157,18 @@ public class OrderService {
                     Integer newStock = (product.getStock() != null ? product.getStock() : 0) + item.getQuantity();
                     product.setStock(newStock);
                     productDAO.save(product);
+
+                    // Đồng bộ với bảng Inventory
+                    try {
+                        Optional<Inventory> invOpt = inventoryDAO.findByProductId(product.getId());
+                        if (invOpt.isPresent()) {
+                            Inventory inv = invOpt.get();
+                            inv.setQuantity(newStock);
+                            inventoryDAO.save(inv);
+                        }
+                    } catch (Exception e) {
+                        log.error("Lỗi đồng bộ kho khi hủy đơn", e);
+                    }
                     
                     // Khôi phục số lượng flash sale nếu có
                     try {

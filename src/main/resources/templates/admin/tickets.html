@@ -256,6 +256,7 @@
                     </div>
                 </div>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/tickets')}"></div>
         </div>
         <script th:inline="javascript">
             var adminUsername = /*[[${(currentUser != null && currentUser.fullName != null && !currentUser.fullName.isEmpty()) ? currentUser.fullName : #authentication.name}]]*/ 'Admin';

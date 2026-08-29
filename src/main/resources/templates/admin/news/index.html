@@ -32,79 +32,70 @@
             <a th:href="@{/admin/news/create}" class="btn btn-primary"><i class="fa fa-plus"></i> Thêm bài viết</a>
         </div>
 
-        <div class="table-wrapper" style="width: 100%; max-height: 70vh; overflow: auto;">
-            <table class="news-table" style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Ảnh</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Danh mục</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tiêu đề</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tác giả</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Lượt xem</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Trạng thái</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Ngày tạo</th>
-                        <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="n : ${newsPage.content}">
-                        <td>
-                            <img th:if="${n.thumbnail != null}"
-                                th:src="${n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail}"
-                                alt="Thumb"
-                                style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;" />
-                            <span th:unless="${n.thumbnail != null}">-</span>
-                        </td>
-                        <td>
-                            <span class="badge badge-gray"
-                                th:text="${n.categoryName != null ? n.categoryName : 'Chưa phân loại'}">Danh mục</span>
-                        </td>
-                        <td th:text="${n.title}">Tiêu đề</td>
-                        <td th:text="${n.authorName != null ? n.authorName : 'Ẩn danh'}">Tác giả</td>
-                        <td th:text="${n.viewCount}">0</td>
-                        <td>
-                            <span class="badge badge-success"
-                                th:if="${n.status != null and n.status.name() == 'PUBLISHED'}">Đã đăng</span>
-                            <span class="badge badge-gray"
-                                th:if="${n.status != null and n.status.name() == 'DRAFT'}">Bản
-                                nháp</span>
-                            <span class="badge badge-gray" style="background:#fef08a; color:#854d0e;"
-                                th:if="${n.status != null and n.status.name() == 'ARCHIVED'}">Lưu trữ</span>
-                            <span class="badge badge-gray" th:if="${n.status == null}">Chưa rõ</span>
-                        </td>
-                        <td th:text="${#dates.format(n.createdAt, 'dd/MM/yyyy')}">Ngày</td>
-                        <td>
-                            <div class="action-btns">
-                                <a th:href="@{/admin/news/edit/{id}(id=${n.id})}" class="btn btn-warning"><i
-                                        class="fa fa-edit"></i></a>
-                                <form th:action="@{/admin/news/delete/{id}(id=${n.id})}" method="post"
-                                    onsubmit="return window.confirmSubmit(event, 'Xóa bài viết này?');"
-                                    style="margin:0;">
-                                    <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${newsPage.empty}">
-                        <td colspan="8" style="text-align:center;">Chưa có bài viết nào</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card">
+            <div class="table-wrapper" style="width: 100%;">
+                <table class="news-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Ảnh</th>
+                            <th>Danh mục</th>
+                            <th>Tiêu đề</th>
+                            <th>Tác giả</th>
+                            <th>Lượt xem</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="n : ${newsPage.content}">
+                            <td>
+                                <img th:if="${n.thumbnail != null}"
+                                    th:src="${n.thumbnail.startsWith('http') || n.thumbnail.startsWith('/') ? n.thumbnail : '/images/news/' + n.thumbnail}"
+                                    alt="Thumb"
+                                    style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;" />
+                                <span th:unless="${n.thumbnail != null}">-</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-gray"
+                                    th:text="${n.categoryName != null ? n.categoryName : 'Chưa phân loại'}">Danh mục</span>
+                            </td>
+                            <td th:text="${n.title}">Tiêu đề</td>
+                            <td th:text="${n.authorName != null ? n.authorName : 'Ẩn danh'}">Tác giả</td>
+                            <td th:text="${n.viewCount}">0</td>
+                            <td>
+                                <span class="badge badge-success"
+                                    th:if="${n.status != null and n.status.name() == 'PUBLISHED'}">Đã đăng</span>
+                                <span class="badge badge-gray"
+                                    th:if="${n.status != null and n.status.name() == 'DRAFT'}">Bản
+                                    nháp</span>
+                                <span class="badge badge-gray" style="background:#fef08a; color:#854d0e;"
+                                    th:if="${n.status != null and n.status.name() == 'ARCHIVED'}">Lưu trữ</span>
+                                <span class="badge badge-gray" th:if="${n.status == null}">Chưa rõ</span>
+                            </td>
+                            <td th:text="${#dates.format(n.createdAt, 'dd/MM/yyyy')}">Ngày</td>
+                            <td>
+                                <div class="action-btns">
+                                    <a th:href="@{/admin/news/edit/{id}(id=${n.id})}" class="btn btn-warning"><i
+                                            class="fa fa-edit"></i></a>
+                                    <form th:action="@{/admin/news/delete/{id}(id=${n.id})}" method="post"
+                                        onsubmit="return window.confirmSubmit(event, 'Xóa bài viết này?');"
+                                        style="margin:0;">
+                                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${newsPage.empty}">
+                            <td colspan="8" style="text-align:center;">Chưa có bài viết nào</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/news')}"></div>
         </div>
-
-        <!-- Pagination -->
-        <!-- <div class="pagination" th:if="${newsPage.totalPages > 1}">
-            <a th:href="@{/admin/news(page=${newsPage.number - 1}, categoryId=${categoryId}, status=${status}, keyword=${keyword})}"
-                th:classappend="${newsPage.first} ? 'disabled' : ''">&laquo; Prev</a>
-
-            <span th:each="i : ${#numbers.sequence(0, newsPage.totalPages - 1)}">
-                <a th:href="@{/admin/news(page=${i}, categoryId=${categoryId}, status=${status}, keyword=${keyword})}"
-                    th:text="${i + 1}" th:classappend="${i == newsPage.number} ? 'active' : ''">1</a>
-            </span>
-
-            <a th:href="@{/admin/news(page=${newsPage.number + 1}, categoryId=${categoryId}, status=${status}, keyword=${keyword})}"
-                th:classappend="${newsPage.last} ? 'disabled' : ''">Next &raquo;</a>
-        </div> -->
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
 </body>

@@ -24,7 +24,10 @@ public class AdminNewsCategoryController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String index(Model model, @RequestParam(name = "keyword", defaultValue = "") String keyword) {
+    public String index(
+            Model model,
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page) {
         List<NewsCategory> categories = newsCategoryService.getAllCategories();
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
@@ -34,7 +37,8 @@ public class AdminNewsCategoryController {
                             (c.getId() != null && String.valueOf(c.getId()).contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
-        model.addAttribute("categories", categories);
+        List<NewsCategory> paginatedCategories = poly.edu.util.PaginationUtils.paginate(categories, page, model);
+        model.addAttribute("categories", paginatedCategories);
         model.addAttribute("keyword", keyword);
         return "admin/newscategory/index";
     }

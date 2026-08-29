@@ -156,67 +156,21 @@
 
   <!-- Sessions Modal -->
   <div class="lux-modal-backdrop" id="sessions-modal-backdrop" onclick="closeSessionsModal()">
-    <div class="lux-modal-container" onclick="event.stopPropagation()">
-      <div class="lux-modal-header">
-        <h3 class="lux-modal-title">Quản Lý Phiên Đăng Nhập</h3>
+    <div class="lux-modal-container" onclick="event.stopPropagation()" style="max-width: 540px; border-radius: 12px;">
+      <div class="lux-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="lux-modal-title" style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #0f172a;">Quản Lý Phiên Đăng Nhập</h3>
         <button class="lux-modal-close" onclick="closeSessionsModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="lux-modal-body">
-        <p style="font-size: 0.8rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
-          Dưới đây là danh sách các thiết bị hiện đang đăng nhập vào tài khoản của bạn. Bạn có thể đăng xuất khỏi các
-          thiết bị từ xa.
+      <div class="lux-modal-body" style="padding: 20px; max-height: 72vh; overflow-y: auto;">
+        <p style="font-size: 0.82rem; color: #64748b; line-height: 1.5; margin-bottom: 1.25rem;">
+          Theo dõi và quản lý danh sách các thiết bị đang đăng nhập vào tài khoản của bạn. Bạn có thể đăng xuất khỏi các thiết bị lạ hoặc không còn sử dụng.
         </p>
-        <div id="active-sessions-list" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div id="sessions-list-container" style="display: flex; flex-direction: column; gap: 1.25rem;">
           <!-- Dynamic loaded via JS -->
         </div>
       </div>
-      <div class="lux-modal-footer">
-        <button type="button" class="btn btn-primary" onclick="closeSessionsModal()">Đóng</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Firebase Phone Verification Modal -->
-  <div class="lux-modal-backdrop" id="firebase-phone-modal-backdrop" onclick="closeFirebasePhoneModal()">
-    <div class="lux-modal-container" onclick="event.stopPropagation()">
-      <div class="lux-modal-header">
-        <h3 class="lux-modal-title">Xác thực SĐT qua SMS OTP (Firebase)</h3>
-        <button class="lux-modal-close" onclick="closeFirebasePhoneModal()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="lux-modal-body">
-        <p style="font-size: 0.8rem; color: #64748b; line-height: 1.6; margin-bottom: 1rem;">
-          Google Firebase sẽ gửi một tin nhắn SMS miễn phí chứa mã OTP 6 chữ số đến số điện thoại của bạn để xác thực.
-        </p>
-
-        <!-- Invisible Recaptcha container -->
-        <div id="recaptcha-container"></div>
-
-        <!-- Step 1: Input phone number -->
-        <div id="fb-phone-step-1">
-          <div class="form-group" style="margin-bottom: 1rem;">
-            <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Số điện thoại (Việt Nam)</label>
-            <input type="tel" id="fb-phone-input" class="form-input" placeholder="0901234567" th:value="${user != null ? user.phone : ''}"
-              style="width: 100%; box-sizing: border-box; font-size: 1rem; padding: 10px; border-radius: 4px; border: 1px solid #cbd5e1;" />
-          </div>
-          <button type="button" class="btn btn-primary" id="btn-send-firebase-sms" style="width: 100%;" onclick="handleSendFirebaseSms()">
-            <i class="fa-solid fa-paper-plane"></i> Gửi Mã SMS OTP
-          </button>
-        </div>
-
-        <!-- Step 2: Input OTP code -->
-        <div id="fb-phone-step-2" style="display: none; margin-top: 1rem;">
-          <div class="form-group" style="margin-bottom: 1rem;">
-            <label class="form-label" style="display:block; margin-bottom: 0.5rem; color: #333;">Mã OTP 6 chữ số từ SMS</label>
-            <input type="text" id="fb-otp-input" class="form-input" placeholder="123456" maxlength="6"
-              style="width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; padding: 10px; border-radius: 4px; border: 1px solid #cbd5e1;" />
-          </div>
-          <button type="button" class="btn btn-primary" id="btn-confirm-firebase-otp" style="width: 100%; background: #10b981;" onclick="handleConfirmFirebaseOtp()">
-            <i class="fa-solid fa-check-double"></i> Xác Nhận Mã OTP
-          </button>
-        </div>
-      </div>
-      <div class="lux-modal-footer">
-        <button type="button" class="btn btn-outline" onclick="closeFirebasePhoneModal()">Đóng</button>
+      <div class="lux-modal-footer" style="padding: 12px 20px; border-top: 1px solid #e2e8f0;">
+        <button type="button" class="btn btn-primary" style="width: 100%; border-radius: 6px; font-weight: 600; padding: 10px;" onclick="closeSessionsModal()">Đóng</button>
       </div>
     </div>
   </div>

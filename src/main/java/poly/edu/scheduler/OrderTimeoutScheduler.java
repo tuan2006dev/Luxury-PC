@@ -21,11 +21,13 @@ public class OrderTimeoutScheduler {
     private final OrderDAO orderDAO;
     private final ProductDAO productDAO;
     private final FlashSaleService flashSaleService;
+    private final poly.edu.dao.InventoryDAO inventoryDAO;
 
-    public OrderTimeoutScheduler(OrderDAO orderDAO, ProductDAO productDAO, FlashSaleService flashSaleService) {
+    public OrderTimeoutScheduler(OrderDAO orderDAO, ProductDAO productDAO, FlashSaleService flashSaleService, poly.edu.dao.InventoryDAO inventoryDAO) {
         this.orderDAO = orderDAO;
         this.productDAO = productDAO;
         this.flashSaleService = flashSaleService;
+        this.inventoryDAO = inventoryDAO;
     }
 
     @Scheduled(fixedRate = 60000) // Run every 1 minute
@@ -50,8 +52,18 @@ public class OrderTimeoutScheduler {
                     Optional<Product> pOpt = productDAO.findById(item.getProduct().getId());
                     if (pOpt.isPresent()) {
                         Product p = pOpt.get();
-                        p.setStock(p.getStock() + item.getQuantity());
+                        int curStock = p.getStock() != null ? p.getStock() : 0;
+                        p.setStock(curStock + item.getQuantity());
                         productDAO.save(p);
+
+                        // Sync to Inventory table
+                        try {
+                            poly.edu.entity.Inventory inv = inventoryDAO.findByProductId(p.getId()).orElse(null);
+                            if (inv != null) {
+                                inv.setQuantity(p.getStock());
+                                inventoryDAO.save(inv);
+                            }
+                        } catch (Exception ignored) {}
                     }
                     
                     flashSaleService.decrementSoldCount(item.getProduct().getId(), item.getQuantity());

@@ -34,7 +34,7 @@
         <div class="table-card">
             <div class="table-h">
                 <h2>Quản Lý Đơn Hàng</h2>
-                <span><span th:text="${orders.size()}">0</span> <span>đơn hàng</span></span>
+                <span><span th:text="${totalItems != null ? totalItems : orders.size()}">0</span> <span>đơn hàng</span></span>
             </div>
             <div class="table-wrapper">
                 <table class="admin-table" style="min-width: 1200px !important;">
@@ -245,6 +245,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/orders')}"></div>
         </div>
     </div>
 

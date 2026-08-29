@@ -75,7 +75,8 @@ class OrderTimeoutSchedulerTest {
         return new OrderTimeoutScheduler(
                 orderDAO,
                 mock(ProductDAO.class),
-                mock(FlashSaleService.class));
+                mock(FlashSaleService.class),
+                mock(poly.edu.dao.InventoryDAO.class));
     }
 
     private Order order(String paymentMethod, String status) {

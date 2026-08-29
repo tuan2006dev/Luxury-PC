@@ -87,49 +87,8 @@
     <script th:src="@{/js/account/profile/security.js}"></script>
     <script th:src="@{/js/account/profile/notifications.js}"></script>
     <script th:src="@{/js/account/profile/addresses.js}"></script>
-    <!-- Firebase Web App SDK Compat -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script th:src="@{/js/account/firebase-phone-verify.js}"></script>
+    <script th:src="@{/js/account/phone-verify.js}"></script>
 
-    <script>
-      function openFirebasePhoneModal() {
-        const modal = document.getElementById('firebase-phone-modal-backdrop');
-        if (modal) modal.classList.add('active');
-      }
-      function closeFirebasePhoneModal() {
-        const modal = document.getElementById('firebase-phone-modal-backdrop');
-        if (modal) modal.classList.remove('active');
-      }
-      function handleSendFirebaseSms() {
-        const phoneInput = document.getElementById('fb-phone-input');
-        const phone = phoneInput ? phoneInput.value : '';
-        const btn = document.getElementById('btn-send-firebase-sms');
-        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi SMS...'; }
-        
-        sendFirebasePhoneOtp(phone, function() {
-          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi Lại Mã SMS'; }
-          document.getElementById('fb-phone-step-1').style.display = 'none';
-          document.getElementById('fb-phone-step-2').style.display = 'block';
-        }, function(err) {
-          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi Mã SMS OTP'; }
-        });
-      }
-      function handleConfirmFirebaseOtp() {
-        const otpInput = document.getElementById('fb-otp-input');
-        const phoneInput = document.getElementById('fb-phone-input');
-        const otp = otpInput ? otpInput.value : '';
-        const phone = phoneInput ? phoneInput.value : '';
-        const btn = document.getElementById('btn-confirm-firebase-otp');
-        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xác nhận...'; }
-
-        confirmFirebasePhoneOtp(otp, phone, function(res) {
-          closeFirebasePhoneModal();
-        }, function(err) {
-          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check-double"></i> Xác Nhận Mã OTP'; }
-        });
-      }
-    </script>
     <script th:src="@{/js/script.js}"></script>
     <script th:src="@{/js/cursor.js}"></script>
     <script th:src="@{/js/confirm-popup.js}"></script>

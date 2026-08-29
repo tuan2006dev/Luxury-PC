@@ -29,7 +29,10 @@ public class AdminFlashSaleController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String listFlashSales(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    public String listFlashSales(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
         java.util.List<FlashSale> flashSales = flashSaleService.getAllFlashSales();
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
@@ -38,7 +41,8 @@ public class AdminFlashSaleController {
                             (f.getId() != null && String.valueOf(f.getId()).contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
-        model.addAttribute("flashSales", flashSales);
+        java.util.List<FlashSale> paginatedSales = poly.edu.util.PaginationUtils.paginate(flashSales, page, model);
+        model.addAttribute("flashSales", paginatedSales);
         model.addAttribute("keyword", keyword);
         return "admin/flash-sales";
     }
@@ -126,13 +130,19 @@ public class AdminFlashSaleController {
     }
 
     @GetMapping("/{id}/items")
-    public String manageItems(@PathVariable("id") Integer id, Model model) {
+    public String manageItems(
+            @PathVariable("id") Integer id,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
         FlashSale sale = flashSaleService.getById(id);
         if (sale == null)
             return "redirect:/admin/flash-sales";
 
+        java.util.List<FlashSaleItem> items = flashSaleService.getItemsBySaleId(id);
+        java.util.List<FlashSaleItem> paginatedItems = poly.edu.util.PaginationUtils.paginate(items, page, model);
+
         model.addAttribute("flashSale", sale);
-        model.addAttribute("items", flashSaleService.getItemsBySaleId(id));
+        model.addAttribute("items", paginatedItems);
         model.addAttribute("products", productDAO.findAll());
         return "admin/flash-sale-items";
     }

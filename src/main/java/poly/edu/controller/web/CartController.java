@@ -456,16 +456,16 @@ public class CartController {
             if (pOpt.isPresent()) {
                 Product product = pOpt.get();
                 item.setImage(product.getImage());
-                item.setStock(product.getStock());
+                item.setStock(product.getStock() != null ? product.getStock() : 0);
                 item.setPrice(flashSaleService.getEffectivePrice(product.getId()));
             } else {
                 item.setStock(5);
             }
 
-            if (item.getStock() <= 0) {
+            if (item.getStock() == null || item.getStock() <= 0) {
                 iterator.remove();
                 cartChanged = true;
-            } else if (item.getQuantity() > item.getStock()) {
+            } else if (item.getQuantity() != null && item.getStock() != null && item.getQuantity() > item.getStock()) {
                 item.setQuantity(item.getStock());
                 cartChanged = true;
             }
@@ -646,16 +646,16 @@ public class CartController {
                 Product p = productMap.get(item.getId());
 
                 if (p != null) {
-                    item.setStock(p.getStock());
+                    item.setStock(p.getStock() != null ? p.getStock() : 0);
                     item.setImage(p.getImage());
                 } else {
                     item.setStock(5);
                 }
 
-                if (item.getStock() <= 0) {
+                if (item.getStock() == null || item.getStock() <= 0) {
                     iterator.remove();
                     cartChanged = true;
-                } else if (item.getQuantity() > item.getStock()) {
+                } else if (item.getQuantity() != null && item.getStock() != null && item.getQuantity() > item.getStock()) {
                     item.setQuantity(item.getStock());
                     cartChanged = true;
                 }

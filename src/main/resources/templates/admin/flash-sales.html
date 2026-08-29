@@ -44,8 +44,7 @@
                 </div>
             </div>
 
-            <div class="table-wrapper"
-                style="width: 100%; max-height: 56vh; overflow-x: auto !important; overflow-y: auto !important;">
+            <div class="table-wrapper">
                 <table th:if="${flashSales != null and !flashSales.isEmpty()}" class="admin-table"
                     style="width: 100%; table-layout: auto;">
                     <thead>
@@ -65,7 +64,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="fs, iterStat : ${flashSales}">
-                            <td style="color:var(--muted); font-weight: 700;" th:text="${'#' + iterStat.count}">#1</td>
+                            <td style="color:var(--muted); font-weight: 700;" th:text="'#' + ${(startItem != null ? startItem : 1) + iterStat.index}">#1</td>
                             <td>
                                 <img th:if="${fs.bannerImage != null and !fs.bannerImage.isEmpty()}"
                                     th:src="${fs.bannerImage.startsWith('http') ? fs.bannerImage : '/images/flashsale/' + fs.bannerImage}"
@@ -108,24 +107,21 @@
                                         <!-- Khi chưa kích hoạt: Nút Bật (Kích hoạt) -->
                                         <button type="submit" class="btn btn-sm btn-gold" th:if="${!fs.active}"
                                             title="Kích hoạt" style="width: 85px; text-align: center;">
-                                            <i class="fa-solid fa-play"></i> Bật
+                                            <i class="fa-solid fa-play"></i> <span>Bật</span>
                                         </button>
-                                        <!-- Khi đang kích hoạt: Nút Tắt -->
-                                        <button type="submit" class="btn btn-sm"
-                                            style="width: 85px; text-align: center; background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);cursor:pointer;"
-                                            th:if="${fs.active}" title="Tắt hiển thị">
-                                            <i class="fa-solid fa-stop"></i> Tắt
+                                        <!-- Khi đã kích hoạt: Nút Tắt -->
+                                        <button type="submit" class="btn btn-sm" th:if="${fs.active}"
+                                            style="background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); width: 85px; text-align: center;"
+                                            title="Tắt chương trình Flash Sale này">
+                                            <i class="fa-solid fa-power-off"></i> <span>Tắt</span>
                                         </button>
                                     </form>
-                                    <button type="button" class="btn btn-sm"
-                                        style="border:1px solid var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);"
-                                        th:data-id="${fs.id}" th:data-name="${fs.name}"
+                                    <button type="button" class="btn btn-sm btn-gold" title="Sửa" th:data-id="${fs.id}"
+                                        th:data-name="${fs.name}"
                                         th:data-start="${#dates.format(fs.startTime, 'yyyy-MM-dd''T''HH:mm')}"
                                         th:data-end="${#dates.format(fs.endTime, 'yyyy-MM-dd''T''HH:mm')}"
-                                        th:data-banner="${fs.bannerImage != null ? fs.bannerImage : ''}"
-                                        th:data-description="${fs.description != null ? fs.description : ''}"
-                                        th:data-max-per-user="${fs.maxPerUser != null ? fs.maxPerUser : ''}"
-                                        onclick="editFlashSale(this)" title="Sửa">
+                                        th:data-active="${fs.active}" th:data-banner="${fs.bannerImage}"
+                                        onclick="openEditModal(this)">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <a th:href="@{/admin/flash-sales/{id}/items(id=${fs.id})}"
@@ -140,6 +136,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/flash-sales')}"></div>
 
             <div th:if="${flashSales == null or flashSales.isEmpty()}" class="empty-state">
                 <i class="fa-solid fa-bolt"></i>

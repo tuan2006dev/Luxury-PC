@@ -47,18 +47,32 @@ public class AdminDataLoader implements CommandLineRunner {
             log.warn("[DataLoader] Failed to clean up DEMO orders: {}", e.getMessage());
         }
 
-        // 1. Initialize Inventory for all products
+        // 1. Initialize and synchronize Inventory for all products
         List<Product> products = productDAO.findAll();
         for (Product p : products) {
-            if (inventoryDAO.findByProductId(p.getId()).isEmpty()) {
-                Inventory inv = new Inventory();
-                inv.setProduct(p);
-                inv.setQuantity(p.getStock() != null ? p.getStock() : 10);
-                try {
+            try {
+                Optional<Inventory> invOpt = inventoryDAO.findByProductId(p.getId());
+                if (invOpt.isEmpty()) {
+                    int initialStock = (p.getStock() != null && p.getStock() > 0) ? p.getStock() : 10;
+                    p.setStock(initialStock);
+                    productDAO.save(p);
+
+                    Inventory inv = new Inventory();
+                    inv.setProduct(p);
+                    inv.setQuantity(initialStock);
                     inventoryDAO.save(inv);
-                } catch (Exception e) {
-                    log.warn("[DataLoader] Failed to seed inventory for product id={}: {}", p.getId(), e.getMessage());
+                } else {
+                    Inventory inv = invOpt.get();
+                    if ((p.getStock() == null || p.getStock() == 0) && inv.getQuantity() != null && inv.getQuantity() > 0) {
+                        p.setStock(inv.getQuantity());
+                        productDAO.save(p);
+                    } else if (p.getStock() != null && (inv.getQuantity() == null || !inv.getQuantity().equals(p.getStock()))) {
+                        inv.setQuantity(p.getStock());
+                        inventoryDAO.save(inv);
+                    }
                 }
+            } catch (Exception e) {
+                log.warn("[DataLoader] Failed to sync inventory for product id={}: {}", p.getId(), e.getMessage());
             }
         }
 

@@ -25,7 +25,10 @@ public class AdminCategoryController {
     private final UploadService uploadService;
 
     @GetMapping("")
-    public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    public String list(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
         java.util.List<Category> categories = categoryService.getAllCategories();
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
@@ -34,7 +37,8 @@ public class AdminCategoryController {
                                  (c.getId() != null && String.valueOf(c.getId()).contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
-        model.addAttribute("categories", categories);
+        java.util.List<Category> paginatedCategories = poly.edu.util.PaginationUtils.paginate(categories, page, model);
+        model.addAttribute("categories", paginatedCategories);
         model.addAttribute("category", new Category());
         model.addAttribute("keyword", keyword);
         return "admin/categories";
@@ -69,8 +73,12 @@ public class AdminCategoryController {
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute("categories", categoryService.getAllCategories());
+    public String edit(
+            @PathVariable("id") Integer id,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        java.util.List<Category> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", poly.edu.util.PaginationUtils.paginate(categories, page, model));
         model.addAttribute("category", categoryService.getCategoryById(id));
         return "admin/categories";
     }

@@ -21,7 +21,7 @@
     <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1><span>Quản Lý Sản Phẩm</span> (<span th:text="${products != null ? products.size() : 0}">0</span>)
+                <h1><span>Quản Lý Sản Phẩm</span> (<span th:text="${totalItems != null ? totalItems : (products != null ? products.size() : 0)}">0</span>)
                 </h1>
             </div>
             <div th:replace="~{admin/layout/header :: adminProfile}"></div>
@@ -142,7 +142,7 @@
 
         <!-- Bảng dữ liệu -->
         <div class="card">
-            <div class="table-wrapper" style="width: 100%; max-height: 60vh; overflow: auto;">
+            <div class="table-wrapper">
                 <table class="admin-table">
                     <thead>
                         <tr>
@@ -168,7 +168,7 @@
                                 </div>
                                 <div class="product-info">
                                     <div class="product-name" th:text="${p.name}">Intel Core i9-14900K</div>
-                                    <div class="product-cat" th:text="'STT: #' + ${stat.count}">STT: #1</div>
+                                    <div class="product-cat" th:text="'STT: #' + ${(startItem != null ? startItem : 1) + stat.index}">STT: #1</div>
                                 </div>
                             </td>
                             <td th:text="${p.category != null ? p.category.name : 'Chưa phân loại'}">CPU</td>
@@ -195,6 +195,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/products')}"></div>
         </div>
         <script th:src="@{/js/admin/products.js}"></script>
     </div>

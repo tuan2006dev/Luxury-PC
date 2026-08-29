@@ -39,7 +39,7 @@
         <div class="table-card">
             <div class="table-h">
                 <h2>Quản Lý Kho Hàng</h2>
-                <span><span th:text="${inventory.size()}">0</span> <span>sản phẩm</span></span>
+                <span><span th:text="${totalItems != null ? totalItems : inventory.size()}">0</span> <span>sản phẩm</span></span>
             </div>
             <div class="table-wrapper">
                 <table class="admin-table inventory-table" style="min-width: 900px;">
@@ -105,6 +105,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/inventory')}"></div>
         </div>
     </div>
     <script>

@@ -2,6 +2,8 @@ package poly.edu.controller.api;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
+import jakarta.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -340,10 +342,15 @@ public class ProfileApiController {
         return ResponseEntity.ok(response);
     }
 
-    @org.springframework.web.bind.annotation.PostMapping("/verify-phone")
-    public ResponseEntity<Map<String, Object>> verifyAndSavePhone(
+    // ----------------------------------------------------------------
+    // Gửi OTP xác thực SĐT (không dùng Firebase)
+    // ----------------------------------------------------------------
+    @org.springframework.web.bind.annotation.PostMapping("/send-phone-otp")
+    public ResponseEntity<Map<String, Object>> sendPhoneOtp(
             Authentication authentication,
+            HttpSession session,
             @org.springframework.web.bind.annotation.RequestParam("phone") String phone) {
+
         Map<String, Object> response = new java.util.HashMap<>();
         if (authentication == null || !authentication.isAuthenticated()) {
             response.put("success", false);
@@ -359,9 +366,120 @@ public class ProfileApiController {
         }
 
         String cleanPhone = phone != null ? phone.trim().replaceAll("\\s+", "") : "";
-        if (cleanPhone.startsWith("+84")) {
-            cleanPhone = "0" + cleanPhone.substring(3);
+        if (!cleanPhone.matches("^0(3|5|7|8|9)[0-9]{8}$")) {
+            response.put("success", false);
+            response.put("message", "Số điện thoại không đúng định dạng Việt Nam (VD: 0912345678)!");
+            return ResponseEntity.badRequest().body(response);
         }
+
+        // Kiểm tra SĐT đã được dùng bởi tài khoản khác chưa
+        java.util.Optional<User> existingUser = userRepository.findByPhone(cleanPhone);
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
+            response.put("success", false);
+            response.put("message", "Số điện thoại này đã được liên kết với một tài khoản khác!");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Sinh OTP 6 chữ số
+        String otp = String.format("%06d", new Random().nextInt(1_000_000));
+        long expiry = System.currentTimeMillis() + 5 * 60 * 1000L; // 5 phút
+
+        session.setAttribute("phone_otp_code", otp);
+        session.setAttribute("phone_otp_phone", cleanPhone);
+        session.setAttribute("phone_otp_expiry", expiry);
+
+        // Gửi OTP qua email của user
+        String userEmail = user.getEmail();
+        try {
+            String subject = "[Luxury PC] Mã OTP xác thực số điện thoại";
+            String body = "<div style='font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:24px;border:1px solid #e2e8f0;border-radius:8px;'>"
+                    + "<h2 style='color:#0066CC;margin-top:0;'>Xác thực Số Điện Thoại</h2>"
+                    + "<p>Bạn đang yêu cầu xác thực số điện thoại <strong>" + cleanPhone + "</strong> cho tài khoản Luxury PC.</p>"
+                    + "<div style='background:#f0f9ff;border-left:4px solid #0066CC;padding:16px;margin:20px 0;border-radius:4px;'>"
+                    + "<p style='margin:0;font-size:14px;color:#64748b;'>Mã OTP của bạn:</p>"
+                    + "<p style='font-size:36px;font-weight:bold;letter-spacing:8px;color:#0066CC;margin:8px 0 0;'>" + otp + "</p>"
+                    + "</div>"
+                    + "<p style='color:#64748b;font-size:13px;'>Mã có hiệu lực trong <strong>5 phút</strong>. Không chia sẻ mã này với ai.</p>"
+                    + "<hr style='border:none;border-top:1px solid #e2e8f0;'/>"
+                    + "<p style='color:#94a3b8;font-size:12px;margin-bottom:0;'>© Luxury PC - Hệ thống xác thực tự động</p>"
+                    + "</div>";
+            emailService.sendHtmlEmail(userEmail, subject, body);
+        } catch (Exception e) {
+            log.error("Gửi email OTP xác thực SĐT thất bại: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "Không thể gửi email OTP. Vui lòng thử lại!");
+            return ResponseEntity.internalServerError().body(response);
+        }
+
+        response.put("success", true);
+        response.put("message", "Đã gửi mã OTP đến email: " + maskEmail(userEmail));
+        response.put("maskedEmail", maskEmail(userEmail));
+        return ResponseEntity.ok(response);
+    }
+
+    private String maskEmail(String email) {
+        if (email == null || !email.contains("@")) return email;
+        String[] parts = email.split("@");
+        String local = parts[0];
+        String masked = local.length() <= 3
+                ? local.charAt(0) + "***"
+                : local.substring(0, 2) + "***" + local.charAt(local.length() - 1);
+        return masked + "@" + parts[1];
+    }
+
+    // ----------------------------------------------------------------
+    // Xác thực OTP và lưu SĐT
+    // ----------------------------------------------------------------
+    @org.springframework.web.bind.annotation.PostMapping("/verify-phone")
+    public ResponseEntity<Map<String, Object>> verifyAndSavePhone(
+            Authentication authentication,
+            HttpSession session,
+            @org.springframework.web.bind.annotation.RequestParam("phone") String phone,
+            @org.springframework.web.bind.annotation.RequestParam("otp") String otp) {
+
+        Map<String, Object> response = new java.util.HashMap<>();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            response.put("success", false);
+            response.put("message", "Chưa đăng nhập.");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        User user = resolveUser(authentication);
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "Không tìm thấy người dùng.");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        // Kiểm tra OTP trong session
+        String sessionOtp = (String) session.getAttribute("phone_otp_code");
+        String sessionPhone = (String) session.getAttribute("phone_otp_phone");
+        Long sessionExpiry = (Long) session.getAttribute("phone_otp_expiry");
+
+        if (sessionOtp == null || sessionPhone == null || sessionExpiry == null) {
+            response.put("success", false);
+            response.put("message", "Phiên OTP không hợp lệ. Vui lòng yêu cầu gửi lại mã!");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (System.currentTimeMillis() > sessionExpiry) {
+            session.removeAttribute("phone_otp_code");
+            session.removeAttribute("phone_otp_phone");
+            session.removeAttribute("phone_otp_expiry");
+            response.put("success", false);
+            response.put("message", "Mã OTP đã hết hạn (5 phút). Vui lòng gửi lại mã mới!");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        String cleanPhone = phone != null ? phone.trim().replaceAll("\\s+", "") : "";
+        String cleanOtp = otp != null ? otp.trim() : "";
+
+        if (!sessionOtp.equals(cleanOtp) || !sessionPhone.equals(cleanPhone)) {
+            response.put("success", false);
+            response.put("message", "Mã OTP không chính xác!");
+            return ResponseEntity.badRequest().body(response);
+        }
+
         if (!cleanPhone.matches("^0(3|5|7|8|9)[0-9]{8}$")) {
             response.put("success", false);
             response.put("message", "Số điện thoại không đúng định dạng Việt Nam!");
@@ -375,11 +493,17 @@ public class ProfileApiController {
             return ResponseEntity.badRequest().body(response);
         }
 
+        // Lưu SĐT
         user.setPhone(cleanPhone);
         userRepository.save(user);
 
+        // Xóa OTP khỏi session
+        session.removeAttribute("phone_otp_code");
+        session.removeAttribute("phone_otp_phone");
+        session.removeAttribute("phone_otp_expiry");
+
         response.put("success", true);
-        response.put("message", "Xác thực qua SMS và cập nhật Số điện thoại thành công!");
+        response.put("message", "Xác thực OTP thành công! Số điện thoại đã được cập nhật.");
         response.put("phone", cleanPhone);
         return ResponseEntity.ok(response);
     }

@@ -97,8 +97,7 @@
                 </div>
             </div>
 
-            <div class="table-wrapper"
-                style="width: 100%; max-height: 295px; overflow-y: auto !important; overflow-x: auto !important;">
+            <div class="table-wrapper">
                 <table th:if="${items != null and !items.isEmpty()}"
                     style="width: 100%; min-width: 800px; border-collapse: separate; border-spacing: 0;">
                     <thead>
@@ -161,6 +160,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl=@{/admin/flash-sales/{id}/items(id=${flashSale.id})})}"></div>
 
             <div th:if="${items == null or items.isEmpty()}" class="empty-state">
                 <i class="fa-solid fa-cubes"></i>

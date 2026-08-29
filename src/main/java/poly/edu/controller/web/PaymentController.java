@@ -55,6 +55,13 @@ public class PaymentController {
             }
         }
 
+        if (!"VIETQR".equalsIgnoreCase(order.getPaymentMethod()) && !"SEPAY".equalsIgnoreCase(order.getPaymentMethod())) {
+            throw new AccessDeniedException("Order is not a VietQR payment");
+        }
+        if (!"CHO_XAC_NHAN_THANH_TOAN".equals(order.getStatus()) && !"PENDING".equals(order.getStatus())) {
+            throw new AccessDeniedException("VietQR order is not awaiting payment");
+        }
+
         long amount = exactOrderAmount(order);
         if (requestedAmount != null && requestedAmount != amount) {
             throw new AccessDeniedException("VietQR payment amount mismatch");
@@ -124,15 +131,14 @@ public class PaymentController {
     }
 
     private long exactOrderAmount(Order order) {
-        Double totalPrice = order.getTotalPrice();
+        return toExactVndAmount(order.getTotalPrice());
+    }
+
+    private long toExactVndAmount(Double totalPrice) {
         if (totalPrice == null || !Double.isFinite(totalPrice) || totalPrice <= 0) {
             throw new IllegalStateException("Order total is invalid");
         }
-        try {
-            return BigDecimal.valueOf(totalPrice).longValueExact();
-        } catch (ArithmeticException exception) {
-            throw new IllegalStateException("Order total is not an exact VND amount", exception);
-        }
+        return Math.round(totalPrice);
     }
 
     private User currentUser() {

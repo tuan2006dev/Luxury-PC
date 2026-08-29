@@ -73,6 +73,7 @@ public class AdminEmployeeController {
     public String index(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Boolean statusFilter,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
             Model model) {
 
         List<User> employees = userRepository.findAllEmployees();
@@ -98,7 +99,8 @@ public class AdminEmployeeController {
         long activeStaff = allStaff.stream().filter(u -> Boolean.TRUE.equals(u.getStatus())).count();
         long lockedStaff = allStaff.stream().filter(u -> Boolean.FALSE.equals(u.getStatus())).count();
 
-        model.addAttribute("employees", employees);
+        List<User> paginatedEmployees = poly.edu.util.PaginationUtils.paginate(employees, page, model);
+        model.addAttribute("employees", paginatedEmployees);
         model.addAttribute("employeeCount", totalStaff);
         model.addAttribute("activeCount", activeStaff);
         model.addAttribute("lockedCount", lockedStaff);
