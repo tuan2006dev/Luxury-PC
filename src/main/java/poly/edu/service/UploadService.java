@@ -23,21 +23,30 @@ public class UploadService {
             return null;
         }
 
-        // Tạo tên tệp độc duy nhất
-        String name = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        
+        // Lấy đúng tên file gốc (tránh lỗi Windows trả về full path)
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()) {
+            originalFilename = "upload";
+        }
+        // Chỉ lấy tên file, bỏ path (Windows có thể trả về full path)
+        originalFilename = Paths.get(originalFilename).getFileName().toString();
+        // Sanitize: thay khoảng trắng và ký tự đặc biệt bằng dấu gạch dưới
+        originalFilename = originalFilename.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+        // Tạo tên tệp duy nhất: UUID + productId (từ originalFilename)
+        String name = UUID.randomUUID().toString() + "_" + originalFilename;
+
         try {
             // Đường dẫn lưu trữ: src/main/resources/static/images/ + folder
-            // Lưu ý: Trong môi trường dev, chúng ta thường lưu vào thư mục thật để nó được nhận diện ngay
             String rootPath = System.getProperty("user.dir") + "/src/main/resources/static/images/" + folder;
             File dir = new File(rootPath);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            
+
             Path path = Paths.get(rootPath, name);
             Files.write(path, file.getBytes());
-            
+
             return name;
         } catch (IOException e) {
             throw new RuntimeException("Lỗi lưu tệp: " + e.getMessage());

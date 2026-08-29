@@ -34,7 +34,10 @@ public class AccountController {
     // hiển thị form + danh sách user
     // ===============================
     @GetMapping
-    public String users(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    public String users(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
 
         model.addAttribute("user", new User());
 
@@ -50,7 +53,8 @@ public class AccountController {
                     .collect(Collectors.toList());
         }
 
-        model.addAttribute("users", users);
+        List<User> paginatedUsers = poly.edu.util.PaginationUtils.paginate(users, page, model);
+        model.addAttribute("users", paginatedUsers);
         model.addAttribute("keyword", keyword);
 
         return "admin/account";

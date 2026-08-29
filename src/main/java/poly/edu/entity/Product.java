@@ -22,7 +22,7 @@ public class Product implements Serializable {
     private Double price;
     private String description;
     private String image;
-    private Integer stock;
+    private Integer stock = 0;
     
     @Column(name = "brand", length = 100)
     private String brand;
@@ -91,11 +91,11 @@ public class Product implements Serializable {
     }
 
     public Integer getStock() {
-        return stock;
+        return stock != null ? stock : 0;
     }
 
     public void setStock(Integer stock) {
-        this.stock = stock;
+        this.stock = stock != null ? stock : 0;
     }
 
     public String getBrand() {

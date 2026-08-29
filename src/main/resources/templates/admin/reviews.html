@@ -57,7 +57,7 @@
                             Danh Sách Đánh Giá
                         </h2>
                         <span style="font-size: 0.82rem; color: #64748b; white-space: nowrap;">
-                            (Tìm thấy <strong th:text="${reviews.size()}">0</strong> đánh giá)
+                            (Tìm thấy <strong th:text="${totalItems != null ? totalItems : reviews.size()}">0</strong> đánh giá)
                         </span>
 
                         <!-- Inline Stats Chips -->
@@ -159,7 +159,7 @@
                         <tr th:each="r, iterStat : ${reviews}">
                             <!-- ID & Date -->
                             <td>
-                                <div style="font-weight: 700; color: #0f172a;" th:text="'#' + ${iterStat.count}">#1</div>
+                                <div style="font-weight: 700; color: #0f172a;" th:text="'#' + ${(startItem != null ? startItem : 1) + iterStat.index}">#1</div>
                                 <div style="font-size: 0.72rem; color: #64748b; margin-top: 2px;"
                                     th:text="${r.createdAt != null ? #temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm') : '—'}">
                                     01/01/2026
@@ -288,6 +288,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/reviews')}"></div>
         </div>
     </div>
 

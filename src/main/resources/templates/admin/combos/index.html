@@ -30,7 +30,7 @@
     <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1>Quản Lý Combo (<span th:text="${combos != null ? combos.size() : 0}">0</span>)</h1>
+                <h1>Quản Lý Combo (<span th:text="${totalItems != null ? totalItems : (combos != null ? combos.size() : 0)}">0</span>)</h1>
             </div>
             <div th:replace="~{admin/layout/header :: adminProfile}"></div>
         </div>
@@ -40,10 +40,13 @@
             <i class="fa-solid fa-circle-check"></i> <span th:text="${message}"></span>
         </div>
 
-        <!-- Nút mở form tạo -->
-        <div style="margin-bottom: 1.5rem;">
-            <a th:href="@{/admin/combos/create}" class="btn btn-gold"><i class="fa-solid fa-plus"></i> <span
-                    class="btn-text">Thêm Combo Mới</span></a>
+        <!-- Action bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div>
+                <a th:href="@{/admin/combos/create}" class="btn btn-gold"><i class="fa-solid fa-plus"></i> <span
+                        class="btn-text">Thêm Combo Mới</span></a>
+            </div>
+            <div th:replace="~{admin/fragments/search-bar :: searchBar(actionUrl='/admin/combos', keyword=${keyword})}"></div>
         </div>
 
         <div class="card">
@@ -51,11 +54,11 @@
                 <h2>Danh sách Combo hiện có</h2>
             </div>
 
-            <div class="table-wrapper" style="width: 100%; max-height: 49vh; overflow-x: hidden; overflow-y: auto;">
+            <div class="table-wrapper">
                 <table class="admin-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th width="50" style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">ID</th>
+                            <th width="50" style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">STT</th>
                             <th width="100" style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Hình ảnh
                             </th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Tên Combo</th>
@@ -72,7 +75,7 @@
                             </td>
                         </tr>
                         <tr th:each="c, stat : ${combos}">
-                            <td th:text="${stat.count}">1</td>
+                            <td th:text="${(startItem != null ? startItem : 1) + stat.index}">1</td>
                             <td>
                                 <div class="img-preview" style="background-image: url('');"
                                     th:style="'background-image: url(' + ${c.image != null and !c.image.startsWith('http') and !c.image.startsWith('/images') ? '/images/products/' + c.image : (c.image != null ? c.image : '/images/placeholder.jpg')} + ')'">
@@ -99,6 +102,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/combos')}"></div>
         </div>
     </div>
 

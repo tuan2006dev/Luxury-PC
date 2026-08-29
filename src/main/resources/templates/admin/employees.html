@@ -266,8 +266,7 @@
                 </div>
             </div>
 
-            <div class="table-wrapper"
-                style="width: 100%; max-height: 450px; overflow-y: auto; overflow-x: auto; border-radius: 8px;">
+            <div class="table-wrapper">
                 <table class="admin-table" style="min-width: 1000px; border-collapse: collapse;">
                     <thead style="position: sticky; top: 0; z-index: 10;">
                         <tr
@@ -291,7 +290,7 @@
                         <tr th:each="u, iterStat : ${employees}"
                             style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;">
                             <td style="padding: 12px 10px; text-align: center; font-weight: 700; color: #94a3b8;"
-                                th:text="${'#' + iterStat.count}">#1</td>
+                                th:text="'#' + ${(startItem != null ? startItem : 1) + iterStat.index}">#1</td>
                             <td style="padding: 12px 10px;">
                                 <div th:with="isAdmin=${u.userRoles != null and #lists.size(u.userRoles.?[role.name == 'ADMIN']) > 0}"
                                     style="display: flex; align-items: center; gap: 10px;">
@@ -404,6 +403,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/employees')}"></div>
         </div>
 
         <!-- Audit Logs Card -->

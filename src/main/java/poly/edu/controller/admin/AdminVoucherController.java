@@ -26,7 +26,10 @@ public class AdminVoucherController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping("")
-    public String listVouchers(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    public String listVouchers(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
         java.util.List<Voucher> vouchers = voucherService.getAllVouchers();
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
@@ -36,7 +39,8 @@ public class AdminVoucherController {
                                  (v.getId() != null && String.valueOf(v.getId()).contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
-        model.addAttribute("vouchers", vouchers);
+        java.util.List<Voucher> paginatedVouchers = poly.edu.util.PaginationUtils.paginate(vouchers, page, model);
+        model.addAttribute("vouchers", paginatedVouchers);
         model.addAttribute("categories", categoryDAO.findAll());
         model.addAttribute("voucher", new Voucher());
         model.addAttribute("keyword", keyword);

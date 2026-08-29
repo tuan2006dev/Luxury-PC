@@ -50,7 +50,7 @@ public class CartController {
         int productStock = 5;
         Optional<Product> pOpt = productDAO.findById(id);
         if (pOpt.isPresent()) {
-            productStock = pOpt.get().getStock();
+            productStock = pOpt.get().getStock() != null ? pOpt.get().getStock() : 0;
             if (name == null || "1".equals(name) || name.isEmpty() || name.equals("undefined")) {
                 name = pOpt.get().getName();
             }
@@ -124,7 +124,7 @@ public class CartController {
         Product product = pOpt.get();
         String name = product.getName();
         double price = product.getPrice();
-        int productStock = product.getStock();
+        int productStock = product.getStock() != null ? product.getStock() : 0;
 
         if (productStock <= 0) {
             result.put("success", false);
@@ -190,7 +190,7 @@ public class CartController {
         int productStock = 5;
         Optional<Product> pOpt = productDAO.findById(id);
         if (pOpt.isPresent()) {
-            productStock = pOpt.get().getStock();
+            productStock = pOpt.get().getStock() != null ? pOpt.get().getStock() : 0;
             if (name == null || "1".equals(name) || name.isEmpty() || name.equals("undefined")) {
                 name = pOpt.get().getName();
             }
@@ -285,7 +285,7 @@ public class CartController {
             String prodName = cart.get(id).getName();
             Optional<Product> pOpt = productDAO.findById(id);
             if (pOpt.isPresent()) {
-                productStock = pOpt.get().getStock();
+                productStock = pOpt.get().getStock() != null ? pOpt.get().getStock() : 0;
                 prodName = pOpt.get().getName();
             }
 
@@ -456,16 +456,16 @@ public class CartController {
             if (pOpt.isPresent()) {
                 Product product = pOpt.get();
                 item.setImage(product.getImage());
-                item.setStock(product.getStock());
+                item.setStock(product.getStock() != null ? product.getStock() : 0);
                 item.setPrice(flashSaleService.getEffectivePrice(product.getId()));
             } else {
                 item.setStock(5);
             }
 
-            if (item.getStock() <= 0) {
+            if (item.getStock() == null || item.getStock() <= 0) {
                 iterator.remove();
                 cartChanged = true;
-            } else if (item.getQuantity() > item.getStock()) {
+            } else if (item.getQuantity() != null && item.getStock() != null && item.getQuantity() > item.getStock()) {
                 item.setQuantity(item.getStock());
                 cartChanged = true;
             }
@@ -646,16 +646,16 @@ public class CartController {
                 Product p = productMap.get(item.getId());
 
                 if (p != null) {
-                    item.setStock(p.getStock());
+                    item.setStock(p.getStock() != null ? p.getStock() : 0);
                     item.setImage(p.getImage());
                 } else {
                     item.setStock(5);
                 }
 
-                if (item.getStock() <= 0) {
+                if (item.getStock() == null || item.getStock() <= 0) {
                     iterator.remove();
                     cartChanged = true;
-                } else if (item.getQuantity() > item.getStock()) {
+                } else if (item.getQuantity() != null && item.getStock() != null && item.getQuantity() > item.getStock()) {
                     item.setQuantity(item.getStock());
                     cartChanged = true;
                 }

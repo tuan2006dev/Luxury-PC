@@ -28,6 +28,7 @@ window.closeEmailDetailsModal = closeEmailDetailsModal;
 window.openSessionsModal = openSessionsModal;
 window.closeSessionsModal = closeSessionsModal;
 window.revokeSession = revokeSession;
+window.revokeAllOtherSessions = revokeAllOtherSessions;
 window.deleteAccount = deleteAccount;
 
 let isCurrentPwValid = true;
@@ -281,61 +282,154 @@ function closeSessionsModal() {
 }
 
 function loadSessions() {
-  const listContainer = document.getElementById('active-sessions-list');
+  const listContainer = document.getElementById('sessions-list-container') || document.getElementById('active-sessions-list');
   if (!listContainer) return;
-  listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: #64748b; font-size: 0.85rem;">Đang tải danh sách thiết bị...</div>';
+  listContainer.innerHTML = '<div style="text-align:center; padding: 2rem; color: #64748b; font-size: 0.85rem;"><i class="fa-solid fa-spinner fa-spin" style="margin-right: 6px;"></i> Đang tải danh sách thiết bị...</div>';
 
   fetch('/api/sessions/active')
     .then(res => res.json())
     .then(data => {
-      if (data.success && data.data) {
-        if (data.data.length === 0) {
-          listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: #64748b; font-size: 0.85rem;">Không có phiên đăng nhập nào.</div>';
-          return;
-        }
+      if (!data.success || !data.data) {
+        listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: var(--red, #ef4444); font-size: 0.85rem;">Không thể tải danh sách phiên.</div>';
+        return;
+      }
 
-        listContainer.innerHTML = data.data.map(us => {
-          const uaLower = us.deviceInfo.toLowerCase();
-          const deviceIcon = uaLower.includes("phone") || uaLower.includes("android") || uaLower.includes("ios") || uaLower.includes("iphone") || uaLower.includes("ipad") ? "📱" : "🖥️";
-          const currentBadge = us.isCurrent
-            ? '<span style="font-size: 0.7rem; color: #3b82f6; border: 1px solid #3b82f6; padding: 2px 6px; border-radius: 3px; font-weight: 500;">Thiết bị hiện tại</span>'
-            : '<span style="font-size: 0.7rem; color: var(--green); border: 1px solid var(--green); padding: 2px 6px; border-radius: 3px; font-weight: 500;">Đang hoạt động</span>';
+      let currentSession = null;
+      let otherSessions = [];
 
-          const actionBtn = us.isCurrent
-            ? ''
-            : `<button class="btn-sec" style="border-color:var(--red); color:var(--red); font-size:0.75rem; padding:4px 10px; white-space:nowrap;" onclick="revokeSession('${us.sessionId}')">Đăng xuất</button>`;
+      if (data.data.currentSession) {
+        currentSession = data.data.currentSession;
+        otherSessions = data.data.otherSessions || [];
+      } else if (Array.isArray(data.data)) {
+        currentSession = data.data.find(s => s.isCurrent);
+        otherSessions = data.data.filter(s => !s.isCurrent);
+      } else if (data.data.allSessions) {
+        currentSession = data.data.allSessions.find(s => s.isCurrent);
+        otherSessions = data.data.allSessions.filter(s => !s.isCurrent);
+      }
 
-          const loginDate = new Date(us.loginTime);
-          const loginStr = loginDate.getDate().toString().padStart(2, '0') + '/' +
-            (loginDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
-            loginDate.getFullYear() + ' ' +
-            loginDate.getHours().toString().padStart(2, '0') + ':' +
-            loginDate.getMinutes().toString().padStart(2, '0');
+      const formatTime = (ts) => {
+        if (!ts) return 'Không rõ';
+        const d = new Date(ts);
+        return d.getDate().toString().padStart(2, '0') + '/' +
+          (d.getMonth() + 1).toString().padStart(2, '0') + '/' +
+          d.getFullYear() + ' ' +
+          d.getHours().toString().padStart(2, '0') + ':' +
+          d.getMinutes().toString().padStart(2, '0');
+      };
 
-          return `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(201,168,76,0.15); border-radius: 6px; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 1.5rem;">${deviceIcon}</span>
-              <div style="text-align: left;">
-                <div style="font-weight: 600; font-size: 0.85rem; color: #000;">${us.deviceInfo}</div>
-                <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">IP: ${us.ipAddress} · ${us.location}</div>
-                <div style="font-size: 0.72rem; color: #64748b; margin-top: 2px;">Đăng nhập lúc: ${loginStr}</div>
-                <div style="margin-top: 6px; display: inline-block;">${currentBadge}</div>
-              </div>
+      const getDeviceIcon = (info) => {
+        const ua = (info || '').toLowerCase();
+        if (ua.includes('phone') || ua.includes('android') || ua.includes('ios') || ua.includes('iphone')) return '📱';
+        if (ua.includes('ipad') || ua.includes('tablet')) return '💻';
+        return '🖥️';
+      };
+
+      // 1. Current Session Section
+      let currentSectionHtml = '';
+      if (currentSession) {
+        const curIcon = getDeviceIcon(currentSession.deviceInfo);
+        const curTime = formatTime(currentSession.loginTime);
+        currentSectionHtml = `
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 0.78rem; font-weight: 700; color: #0284c7; text-transform: uppercase; letter-spacing: 0.5px;">Thiết bị hiện tại</span>
+              <span style="font-size: 0.68rem; background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; padding: 1px 6px; border-radius: 10px; font-weight: 600;">Phiên này</span>
             </div>
-            <div>
-              ${actionBtn}
+            <div style="padding: 14px 16px; background: #f0f9ff; border: 1.5px solid #38bdf8; border-radius: 8px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(14, 165, 233, 0.08);">
+              <span style="font-size: 1.8rem; line-height: 1;">${curIcon}</span>
+              <div style="flex-grow: 1; min-width: 0;">
+                <div style="font-weight: 700; font-size: 0.92rem; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                  <span>${currentSession.deviceInfo}</span>
+                </div>
+                <div style="font-size: 0.78rem; color: #475569; margin-top: 3px; display: flex; flex-wrap: wrap; gap: 4px 10px;">
+                  <span><i class="fa-solid fa-network-wired" style="font-size: 0.7rem; color: #64748b;"></i> IP: <strong>${currentSession.ipAddress}</strong></span>
+                  <span><i class="fa-solid fa-location-dot" style="font-size: 0.7rem; color: #64748b;"></i> ${currentSession.location || 'Vietnam'}</span>
+                </div>
+                <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">
+                  <i class="fa-regular fa-clock" style="font-size: 0.7rem;"></i> Đăng nhập lúc: ${curTime}
+                </div>
+              </div>
+              <div style="flex-shrink: 0;">
+                <span style="font-size: 0.72rem; color: #0369a1; background: #e0f2fe; border: 1px solid #7dd3fc; padding: 4px 8px; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
+                  <span style="width: 7px; height: 7px; border-radius: 50%; background: #0284c7; display: inline-block;"></span> Thiết bị này
+                </span>
+              </div>
             </div>
           </div>
         `;
-        }).join('');
-      } else {
-        listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: var(--red); font-size: 0.85rem;">Không thể tải danh sách phiên.</div>';
       }
+
+      // 2. Other Sessions Section
+      let otherSessionsHtml = '';
+      const otherCount = otherSessions.length;
+      const revokeAllBtn = otherCount > 0
+        ? `<button type="button" class="btn-sec" style="border: 1px solid #f87171; color: #ef4444; background: #fff; font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'" onclick="revokeAllOtherSessions()">Đăng xuất tất cả (${otherCount})</button>`
+        : '';
+
+      let otherListContent = '';
+      if (otherCount === 0) {
+        otherListContent = `
+          <div style="text-align: center; padding: 22px 16px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+            <i class="fa-solid fa-shield-halved" style="font-size: 26px; color: #10b981; margin-bottom: 6px; display: block;"></i>
+            <div style="font-weight: 600; color: #334155; font-size: 0.85rem;">Không có thiết bị nào khác</div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-top: 3px;">Tài khoản của bạn hiện chỉ đang đăng nhập duy nhất trên thiết bị này.</div>
+          </div>
+        `;
+      } else {
+        otherListContent = otherSessions.map(us => {
+          const icon = getDeviceIcon(us.deviceInfo);
+          const timeStr = formatTime(us.loginTime);
+          return `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; gap: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
+              <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+                <span style="font-size: 1.6rem; line-height: 1;">${icon}</span>
+                <div style="text-align: left; min-width: 0;">
+                  <div style="font-weight: 600; font-size: 0.88rem; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${us.deviceInfo}</div>
+                  <div style="font-size: 0.76rem; color: #64748b; margin-top: 2px;">IP: ${us.ipAddress} · ${us.location || 'Vietnam'}</div>
+                  <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 2px;">Đăng nhập lúc: ${timeStr}</div>
+                  <div style="margin-top: 5px;">
+                    <span style="font-size: 0.68rem; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 2px 6px; border-radius: 3px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                      <span style="width: 5px; height: 5px; border-radius: 50%; background: #10b981; display: inline-block;"></span> Đang hoạt động
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div style="flex-shrink: 0;">
+                <button class="btn-sec" style="border: 1px solid #ef4444; color: #ef4444; background: #fff; font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 6px; white-space: nowrap; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'" onclick="revokeSession('${us.sessionId}')">
+                  ĐĂNG XUẤT
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      otherSessionsHtml = `
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+              <span>Thiết bị khác đang hoạt động</span>
+              <span style="font-size: 0.68rem; background: #e2e8f0; color: #475569; padding: 1px 6px; border-radius: 10px; font-weight: 600;">${otherCount}</span>
+            </div>
+            ${revokeAllBtn}
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            ${otherListContent}
+          </div>
+        </div>
+      `;
+
+      listContainer.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          ${currentSectionHtml}
+          ${otherSessionsHtml}
+        </div>
+      `;
     })
     .catch(err => {
       console.error('Load sessions error:', err);
-      listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: var(--red); font-size: 0.85rem;">Lỗi kết nối máy chủ.</div>';
+      listContainer.innerHTML = '<div style="text-align:center; padding: 1.5rem; color: var(--red, #ef4444); font-size: 0.85rem;">Lỗi kết nối máy chủ khi tải danh sách phiên.</div>';
     });
 }
 
@@ -343,9 +437,13 @@ function revokeSession(sessionId) {
   showConfirm('Bạn có chắc chắn muốn đăng xuất tài khoản khỏi thiết bị này từ xa?').then(confirmed => {
     if (!confirmed) return;
 
+    const token = typeof csrfToken !== 'undefined' ? csrfToken : (document.querySelector('meta[name="_csrf"]')?.content || '');
+    const header = typeof csrfHeader !== 'undefined' ? csrfHeader : (document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN');
+    const headers = token ? { [header]: token } : {};
+
     fetch('/api/sessions/revoke?sessionId=' + encodeURIComponent(sessionId), {
       method: 'POST',
-      headers: { [csrfHeader]: csrfToken }
+      headers: headers
     })
       .then(res => res.json())
       .then(data => {
@@ -358,6 +456,34 @@ function revokeSession(sessionId) {
       })
       .catch(err => {
         console.error('Revoke session error:', err);
+        toast('⚠️ Lỗi kết nối đến máy chủ.');
+      });
+  });
+}
+
+function revokeAllOtherSessions() {
+  showConfirm('Bạn có chắc chắn muốn đăng xuất tài khoản khỏi TẤT CẢ các thiết bị khác từ xa?').then(confirmed => {
+    if (!confirmed) return;
+
+    const token = typeof csrfToken !== 'undefined' ? csrfToken : (document.querySelector('meta[name="_csrf"]')?.content || '');
+    const header = typeof csrfHeader !== 'undefined' ? csrfHeader : (document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN');
+    const headers = token ? { [header]: token } : {};
+
+    fetch('/api/sessions/revoke-all', {
+      method: 'POST',
+      headers: headers
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          toast('✓ ' + (data.data?.message || 'Đã đăng xuất các thiết bị khác thành công.'));
+          loadSessions();
+        } else {
+          toast('⚠️ ' + (data.message || 'Lỗi khi đăng xuất các thiết bị khác.'));
+        }
+      })
+      .catch(err => {
+        console.error('Revoke all sessions error:', err);
         toast('⚠️ Lỗi kết nối đến máy chủ.');
       });
   });

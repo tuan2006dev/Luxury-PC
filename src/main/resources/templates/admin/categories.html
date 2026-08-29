@@ -20,7 +20,7 @@
         <div class="header">
             <div class="title">
                 <h1><span>Quản Lý Danh Mục</span> (<span
-                        th:text="${categories != null ? categories.size() : 0}">0</span>)</h1>
+                        th:text="${totalItems != null ? totalItems : (categories != null ? categories.size() : 0)}">0</span>)</h1>
             </div>
             <div th:replace="~{admin/layout/header :: adminProfile}"></div>
         </div>
@@ -111,7 +111,7 @@
         </div>
 
         <div class="card">
-            <div class="table-wrapper" style="width: 100%; max-height: 60vh; overflow: auto;">
+            <div class="table-wrapper">
                 <table class="admin-table">
                     <thead>
                         <tr>
@@ -123,7 +123,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="c, stat : ${categories}">
-                            <td th:text="${stat.count}">1</td>
+                            <td th:text="${(startItem != null ? startItem : 1) + stat.index}">1</td>
                             <td>
                                 <div style="width: 44px; height: 44px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 2px; display: flex; align-items: center; justify-content: center;">
                                     <img th:src="${c.categoryImage}"
@@ -149,6 +149,7 @@
                     </tbody>
                 </table>
             </div>
+            <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/categories')}"></div>
         </div>
         <script th:src="@{/js/admin/categories.js}"></script>
     </div>

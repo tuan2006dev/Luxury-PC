@@ -3,7 +3,10 @@ package poly.edu.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 import poly.edu.entity.Order;
 import poly.edu.entity.PasswordReset;
@@ -284,5 +287,15 @@ public class EmailService {
         } catch (Exception e) {
             System.err.println("Gửi email cấp tài khoản staff thất bại: " + e.getMessage());
         }
+    }
+
+    public void sendHtmlEmail(String toEmail, String subject, String htmlBody) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        helper.setFrom("luxury.pc.noreply@gmail.com");
+        helper.setTo(toEmail);
+        helper.setSubject(subject);
+        helper.setText(htmlBody, true);
+        mailSender.send(mimeMessage);
     }
 }

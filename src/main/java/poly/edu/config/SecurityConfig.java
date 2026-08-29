@@ -27,6 +27,8 @@ public class SecurityConfig {
 
         private final poly.edu.security.UserStatusCheckFilter userStatusCheckFilter;
 
+        private final poly.edu.dao.UserSessionDAO userSessionDAO;
+
         @Bean
         public SecurityContextRepository securityContextRepository() {
                 return new HttpSessionSecurityContextRepository();
@@ -101,6 +103,15 @@ public class SecurityConfig {
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
                                                 .addLogoutHandler((request, response, authentication) -> {
+                                                        jakarta.servlet.http.HttpSession session = request.getSession(false);
+                                                        if (session != null) {
+                                                                try {
+                                                                        userSessionDAO.findBySessionId(session.getId()).ifPresent(us -> {
+                                                                                us.setIsExpired(true);
+                                                                                userSessionDAO.save(us);
+                                                                        });
+                                                                } catch (Exception ignored) {}
+                                                        }
                                                         if (authentication != null && authentication.getName() != null) {
                                                                 String username = authentication.getName();
                                                                 String clientIp = request.getHeader("X-Forwarded-For");

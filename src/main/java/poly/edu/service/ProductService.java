@@ -15,6 +15,7 @@ import java.util.List;
 public class ProductService {
 
     final ProductDAO productDAO;
+    final poly.edu.dao.InventoryDAO inventoryDAO;
     final poly.edu.repository.UserRepository userRepository;
     final EmailService emailService;
 
@@ -69,6 +70,22 @@ public class ProductService {
     public Product saveProduct(Product product) {
         boolean isNew = (product.getId() == null);
         Product saved = productDAO.save(product);
+
+        // Sync with Inventory table
+        try {
+            poly.edu.entity.Inventory inv = inventoryDAO.findByProductId(saved.getId()).orElse(null);
+            if (inv == null) {
+                inv = new poly.edu.entity.Inventory();
+                inv.setProduct(saved);
+                inv.setQuantity(saved.getStock() != null ? saved.getStock() : 0);
+            } else {
+                inv.setQuantity(saved.getStock() != null ? saved.getStock() : 0);
+            }
+            inventoryDAO.save(inv);
+        } catch (Exception e) {
+            System.err.println("Đồng bộ tồn kho thất bại: " + e.getMessage());
+        }
+
         if (isNew) {
             try {
                 List<poly.edu.entity.User> subscribers = userRepository.findNewProductsSubscribers();

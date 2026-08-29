@@ -63,14 +63,17 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    public String manageOrders(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    public String manageOrders(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
         java.util.List<poly.edu.entity.Order> orders = adminService.getAllOrders();
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
             orders = orders.stream()
                     .filter(o -> (o.getId() != null && String.valueOf(o.getId()).contains(kw)) ||
                             (o.getUser() != null && o.getUser().getUsername() != null
-                                    && o.getUser().getUsername().toLowerCase().contains(kw))
+                                     && o.getUser().getUsername().toLowerCase().contains(kw))
                             ||
                             (o.getUser() != null && o.getUser().getFullName() != null
                                     && o.getUser().getFullName().toLowerCase().contains(kw))
@@ -79,7 +82,8 @@ public class AdminController {
                             (o.getPhone() != null && o.getPhone().contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
-        model.addAttribute("orders", orders);
+        java.util.List<poly.edu.entity.Order> paginatedOrders = poly.edu.util.PaginationUtils.paginate(orders, page, model);
+        model.addAttribute("orders", paginatedOrders);
         model.addAttribute("keyword", keyword);
         return "admin/orders";
     }
@@ -233,7 +237,10 @@ public class AdminController {
     }
 
     @GetMapping("/inventory")
-    public String manageInventory(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    public String manageInventory(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
         java.util.List<poly.edu.entity.Inventory> inventory = adminService.getFullInventory();
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
@@ -248,7 +255,8 @@ public class AdminController {
                                     && inv.getProduct().getCategory().getName().toLowerCase().contains(kw)))
                     .collect(java.util.stream.Collectors.toList());
         }
-        model.addAttribute("inventory", inventory);
+        java.util.List<poly.edu.entity.Inventory> paginatedInventory = poly.edu.util.PaginationUtils.paginate(inventory, page, model);
+        model.addAttribute("inventory", paginatedInventory);
         model.addAttribute("keyword", keyword);
         return "admin/inventory";
     }

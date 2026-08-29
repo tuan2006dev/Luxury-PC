@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "gemini.api.url",
+    "type": "java.lang.String",
+    "description": "A description for 'gemini.api.url'"
+  },
+  {
+    "name": "gemini.api.key",
+    "type": "java.lang.String",
+    "description": "A description for 'gemini.api.key'"
+  },
+  {
+    "name": "shipping.hcm.code",
+    "type": "java.lang.String",
+    "description": "A description for 'shipping.hcm.code'"
+  },
+  {
+    "name": "shipping.national.fee",
+    "type": "java.lang.String",
+    "description": "A description for 'shipping.national.fee'"
+  }
+]}

@@ -18,6 +18,7 @@ import poly.edu.repository.AdminLogRepository;
 import poly.edu.service.UploadService;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -32,8 +33,22 @@ public class AdminComboController {
     private final AdminLogRepository adminLogRepository;
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("combos", pcComboDAO.findAll());
+    public String index(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        List<PcCombo> combos = pcComboDAO.findAll();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            combos = combos.stream()
+                    .filter(c -> (c.getName() != null && c.getName().toLowerCase().contains(kw)) ||
+                            (c.getId() != null && String.valueOf(c.getId()).contains(kw)) ||
+                            (c.getDescription() != null && c.getDescription().toLowerCase().contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        List<PcCombo> paginatedCombos = poly.edu.util.PaginationUtils.paginate(combos, page, model);
+        model.addAttribute("combos", paginatedCombos);
+        model.addAttribute("keyword", keyword);
         return "admin/combos/index";
     }
 

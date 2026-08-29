@@ -37,6 +37,8 @@ public class CartService {
     private final FlashSaleService flashSaleService;
     private final CartDAO cartDAO;
     private final CartItemDAO cartItemDAO;
+    private final poly.edu.dao.InventoryDAO inventoryDAO;
+    private final poly.edu.dao.StockMovementDAO stockMovementDAO;
 
     public double calculateTotal(Collection<CartItem> items) {
         if (items == null || items.isEmpty()) return 0.0;
@@ -164,7 +166,7 @@ public class CartService {
         }
 
         double finalShippingFee = Math.max(0, shippingFee - freeshipDiscount);
-        double finalPrice = Math.max(0, (priceAfterVip - voucherDiscount) + finalShippingFee);
+        double finalPrice = Math.round(Math.max(0, (priceAfterVip - voucherDiscount) + finalShippingFee));
 
         // 5. Create Order (Linked to currentUser)
         Order order = new Order();
@@ -206,8 +208,30 @@ public class CartService {
                 orderItemDAO.save(oi);
 
                 // Trừ số lượng tồn kho
-                p.setStock(p.getStock() - item.getQuantity());
+                int curStock = p.getStock() != null ? p.getStock() : 0;
+                p.setStock(Math.max(0, curStock - item.getQuantity()));
                 productDAO.save(p);
+
+                // Đồng bộ với bảng Inventory
+                try {
+                    poly.edu.entity.Inventory inv = inventoryDAO.findByProductId(p.getId()).orElse(null);
+                    if (inv == null) {
+                        inv = new poly.edu.entity.Inventory();
+                        inv.setProduct(p);
+                    }
+                    inv.setQuantity(p.getStock());
+                    inventoryDAO.save(inv);
+
+                    // Ghi nhận lịch sử xuất kho
+                    poly.edu.entity.StockMovement movement = new poly.edu.entity.StockMovement();
+                    movement.setProduct(p);
+                    movement.setChangeQuantity(item.getQuantity());
+                    movement.setMovementType("EXPORT");
+                    movement.setNote("Xuất bán đơn hàng " + (order.getOrderCode() != null ? order.getOrderCode() : "#" + order.getId()));
+                    stockMovementDAO.save(movement);
+                } catch (Exception e) {
+                    System.err.println("Lỗi đồng bộ kho CartService: " + e.getMessage());
+                }
 
                 // Cập nhật sold count cho flash sale (nếu là sản phẩm Flash Sale)
                 flashSaleService.incrementSoldCount(item.getId(), item.getQuantity());

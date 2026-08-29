@@ -257,6 +257,7 @@ public class SupportTicketController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String priority,
             @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
             Model model) {
 
         if (status == null || status.isEmpty()) {
@@ -284,7 +285,8 @@ public class SupportTicketController {
                     .collect(java.util.stream.Collectors.toList());
         }
 
-        model.addAttribute("tickets", tickets);
+        List<SupportTicket> paginatedTickets = poly.edu.util.PaginationUtils.paginate(tickets, page, model);
+        model.addAttribute("tickets", paginatedTickets);
         model.addAttribute("filterStatus", status);
         model.addAttribute("keyword", keyword);
         model.addAttribute("openCount", ticketRepo.countOpenTickets());

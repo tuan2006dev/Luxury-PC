@@ -188,11 +188,6 @@
         style="color: #10b981; font-weight: 600;">✓ Đã liên kết</div>
       <div class="ic-sub" th:if="${user == null || user.phone == null || user.phone.isEmpty()}" style="color: #64748b;">
         ✗ Chưa liên kết</div>
-      <button type="button" class="btn-save"
-        style="margin-top: 8px; font-size: 11px; padding: 4px 10px; background: #000; border-radius: 4px; border: none; cursor: pointer; color: #fff;"
-        onclick="openFirebasePhoneModal()">
-        <i class="fa-solid fa-mobile-screen-button"></i> Xác thực SĐT (Firebase SMS)
-      </button>
     </div>
     <div class="info-card">
       <label>Ngày sinh</label>

@@ -53,18 +53,32 @@ public class AdminNewsController {
     @GetMapping("")
     public String index(Model model,
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
-            @RequestParam(name = "page", defaultValue = "0") int page) {
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        int pageNum = (page == null || page < 1) ? 0 : page - 1;
+        Pageable pageable = PageRequest.of(pageNum, 8, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<NewsSummaryDto> newsPage;
-        if (keyword.isEmpty()) {
+        if (keyword.trim().isEmpty()) {
             newsPage = newsRepository.findAllSummary(pageable);
         } else {
-            newsPage = newsRepository.searchAllNewsSummary(keyword, pageable);
+            newsPage = newsRepository.searchAllNewsSummary(keyword.trim(), pageable);
         }
+
+        int totalItems = (int) newsPage.getTotalElements();
+        int totalPages = newsPage.getTotalPages() > 0 ? newsPage.getTotalPages() : 1;
+        int currentPage = newsPage.getNumber() + 1;
+        int startItem = totalItems == 0 ? 0 : (currentPage - 1) * 8 + 1;
+        int endItem = Math.min((currentPage - 1) * 8 + newsPage.getNumberOfElements(), totalItems);
 
         model.addAttribute("newsPage", newsPage);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalItems", totalItems);
+        model.addAttribute("pageSize", 8);
+        model.addAttribute("startItem", startItem);
+        model.addAttribute("endItem", endItem);
+
         return "admin/news/index";
     }
 
