@@ -344,16 +344,25 @@ public class AdminService {
                 .build();
 
         List<Map<String, Object>> rawDailyRevenue = orderDAO.getDailyRevenueBetween(startDate, endDate);
-        List<RevenueDTO> dailyRevenue = new ArrayList<>();
+        Map<String, Double> revenueMap = new HashMap<>();
         if (rawDailyRevenue != null) {
             for (Map<String, Object> map : rawDailyRevenue) {
                 Object d = getMapValue(map, "date", "DATE");
                 Object r = getMapValue(map, "revenue", "REVENUE");
                 String dateStr = toStr(d);
                 if (dateStr != null && !dateStr.isBlank()) {
-                    dailyRevenue.add(new RevenueDTO(dateStr, toDouble(r)));
+                    revenueMap.put(dateStr, toDouble(r));
                 }
             }
+        }
+
+        List<RevenueDTO> dailyRevenue = new ArrayList<>();
+        java.time.format.DateTimeFormatter dtf = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate cur = start;
+        while (!cur.isAfter(end)) {
+            String curDateStr = cur.format(dtf);
+            dailyRevenue.add(new RevenueDTO(curDateStr, revenueMap.getOrDefault(curDateStr, 0.0)));
+            cur = cur.plusDays(1);
         }
 
         List<Map<String, Object>> rawOrderStatus = orderDAO.getOrderStatusBetween(startDate, endDate);
@@ -370,16 +379,24 @@ public class AdminService {
         }
 
         List<Map<String, Object>> rawNewUsers = userRepository.getNewUsersBetween(startDate, endDate);
-        List<UserGrowthDTO> newUsers = new ArrayList<>();
+        Map<String, Long> newUsersMap = new HashMap<>();
         if (rawNewUsers != null) {
             for (Map<String, Object> map : rawNewUsers) {
                 Object d = getMapValue(map, "date", "DATE");
                 Object c = getMapValue(map, "count", "COUNT");
                 String dateStr = toStr(d);
                 if (dateStr != null && !dateStr.isBlank()) {
-                    newUsers.add(new UserGrowthDTO(dateStr, toLong(c)));
+                    newUsersMap.put(dateStr, toLong(c));
                 }
             }
+        }
+
+        List<UserGrowthDTO> newUsers = new ArrayList<>();
+        cur = start;
+        while (!cur.isAfter(end)) {
+            String curDateStr = cur.format(dtf);
+            newUsers.add(new UserGrowthDTO(curDateStr, newUsersMap.getOrDefault(curDateStr, 0L)));
+            cur = cur.plusDays(1);
         }
 
         return DashboardDTO.builder()

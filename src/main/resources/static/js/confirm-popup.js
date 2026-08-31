@@ -11,6 +11,13 @@
         script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
         document.head.appendChild(script);
     }
+    // Đảm bảo SweetAlert2 luôn hiển thị trên cùng (tránh bị che bởi modal backdrop z-index 10000)
+    if (!document.getElementById('swal2-toplayer-style')) {
+        const style = document.createElement('style');
+        style.id = 'swal2-toplayer-style';
+        style.textContent = '.swal2-container { z-index: 999999 !important; }';
+        document.head.appendChild(style);
+    }
 })();
 
 // =======================================================================

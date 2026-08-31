@@ -13,15 +13,6 @@
         --white: #0f172a;
 }
 
-.sidebar {
-        width: 280px;
-        background: var(--deep);
-        border-right: 1px solid #e2e8f0;
-        padding: 2rem;
-        position: fixed;
-        height: 100vh;
-        z-index: 100;
-}
 
 .logo {
         font-size: 1.5rem;

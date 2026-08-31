@@ -239,6 +239,9 @@ public class OrderService {
 
         switch (event) {
             case "ASSIGN_DRIVER":
+            case "DRIVER_ASSIGNED":
+                order.setStatus("DRIVER_ASSIGNED");
+                break;
             case "ASSIGNING_DRIVER":
                 order.setStatus("WAITING_DRIVER");
                 break;

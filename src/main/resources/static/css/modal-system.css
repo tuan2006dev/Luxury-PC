@@ -24,6 +24,11 @@
     opacity: 1;
 }
 
+/* Đảm bảo SweetAlert2 / hộp thoại xác nhận confirm luôn hiển thị trên cùng mọi modal backdrop */
+.swal2-container {
+    z-index: 999999 !important;
+}
+
 .lux-modal-container {
     background-color: #fff;
     border-radius: 12px;

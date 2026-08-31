@@ -3,17 +3,19 @@
  * Viết theo phong cách đơn giản, tuyến tính (Fresher/Junior Style) giống account.js và login.js
  */
 
-document.addEventListener('DOMContentLoaded', function () {
+function initEmployeePage() {
     initUserFormState();
     bindValidationEvents();
     initStaffLogSearch();
-});
+    applyStaffLogFilters(true);
+}
 
-document.addEventListener('spa:load', function () {
-    initUserFormState();
-    bindValidationEvents();
-    initStaffLogSearch();
-});
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEmployeePage);
+} else {
+    initEmployeePage();
+}
+document.addEventListener('spa:load', initEmployeePage);
 
 // =====================================
 // 1. Bắt sự kiện Blur & Input cho các ô nhập
@@ -326,12 +328,15 @@ function initUserFormState() {
 }
 
 // =====================================
-// 5. Bộ lọc thời gian & Tìm kiếm tên cho Nhật Ký Thao Tác (Staff Audit Logs)
+// 5. Bộ lọc thời gian, Tìm kiếm & Phân trang cho Nhật Ký Thao Tác (Staff Audit Logs)
 // =====================================
 let currentLogRange = 'all';
 let customStartDate = '';
 let customEndDate = '';
 let currentSearchKeyword = '';
+let currentLogPage = 1;
+const LOGS_PER_PAGE = 10;
+let currentMatchingLogRows = [];
 
 function initStaffLogSearch() {
     const searchContainer = document.getElementById('staffLogsSearchContainer') || document.querySelector('#logsTableBody')?.closest('.card');
@@ -346,7 +351,7 @@ function initStaffLogSearch() {
         searchInput.addEventListener('input', function () {
             if (this.value.trim() === '' && currentSearchKeyword !== '') {
                 currentSearchKeyword = '';
-                applyStaffLogFilters();
+                applyStaffLogFilters(true);
             }
         });
     }
@@ -358,7 +363,7 @@ function initStaffLogSearch() {
             if (searchInput) {
                 currentSearchKeyword = searchInput.value.trim().toLowerCase();
             }
-            applyStaffLogFilters();
+            applyStaffLogFilters(true);
             return false;
         };
 
@@ -370,7 +375,7 @@ function initStaffLogSearch() {
                 if (searchInput) {
                     currentSearchKeyword = searchInput.value.trim().toLowerCase();
                 }
-                applyStaffLogFilters();
+                applyStaffLogFilters(true);
             });
         }
     }
@@ -382,7 +387,7 @@ function initStaffLogSearch() {
             e.stopPropagation();
             if (searchInput) searchInput.value = '';
             currentSearchKeyword = '';
-            applyStaffLogFilters();
+            applyStaffLogFilters(true);
         });
     }
 }
@@ -404,7 +409,7 @@ function filterStaffLogs(range, btn) {
     }
 
     currentLogRange = range;
-    applyStaffLogFilters();
+    applyStaffLogFilters(true);
 }
 
 function toggleLogCustomRange(btn) {
@@ -452,7 +457,7 @@ function applyCustomLogFilter() {
     currentLogRange = 'custom';
     customStartDate = startVal;
     customEndDate = endVal;
-    applyStaffLogFilters();
+    applyStaffLogFilters(true);
 }
 
 function removeVietnameseTones(str) {
@@ -474,13 +479,12 @@ function removeVietnameseTones(str) {
     return str;
 }
 
-function applyStaffLogFilters() {
-    const rows = document.querySelectorAll('.log-row');
+function applyStaffLogFilters(resetPage = true) {
+    const rows = Array.from(document.querySelectorAll('.log-row'));
     const now = new Date();
     const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    
-    let matchingCount = 0;
 
+    currentMatchingLogRows = [];
     const normalizedKeyword = removeVietnameseTones(currentSearchKeyword);
 
     rows.forEach(row => {
@@ -511,8 +515,32 @@ function applyStaffLogFilters() {
         }
 
         if (dateMatch && searchMatch) {
+            currentMatchingLogRows.push(row);
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    if (resetPage) {
+        currentLogPage = 1;
+    }
+
+    renderLogPagination();
+}
+
+function renderLogPagination() {
+    const totalItems = currentMatchingLogRows.length;
+    const totalPages = Math.ceil(totalItems / LOGS_PER_PAGE) || 1;
+
+    if (currentLogPage < 1) currentLogPage = 1;
+    if (currentLogPage > totalPages) currentLogPage = totalPages;
+
+    const startIndex = (currentLogPage - 1) * LOGS_PER_PAGE;
+    const endIndex = Math.min(startIndex + LOGS_PER_PAGE, totalItems);
+
+    currentMatchingLogRows.forEach((row, idx) => {
+        if (idx >= startIndex && idx < endIndex) {
             row.style.display = '';
-            matchingCount++;
         } else {
             row.style.display = 'none';
         }
@@ -520,11 +548,112 @@ function applyStaffLogFilters() {
 
     const noRow = document.getElementById('noFilteredLogsRow');
     if (noRow) {
-        noRow.style.display = (matchingCount === 0 && rows.length > 0) ? '' : 'none';
+        noRow.style.display = (totalItems === 0 && document.querySelectorAll('.log-row').length > 0) ? '' : 'none';
     }
 
     const countBadge = document.getElementById('logCountBadge');
     if (countBadge) {
-        countBadge.innerHTML = `<i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị ${matchingCount} nhật ký`;
+        countBadge.innerHTML = `<i class="fa-solid fa-list-check" style="margin-right: 4px;"></i> Hiển thị ${totalItems} nhật ký`;
+    }
+
+    const paginationWrapper = document.getElementById('staffLogsPagination');
+    if (!paginationWrapper) return;
+
+    if (totalItems === 0) {
+        paginationWrapper.style.display = 'none';
+        return;
+    }
+
+    paginationWrapper.style.display = 'flex';
+
+    const startSpan = document.getElementById('logStartItem');
+    const endSpan = document.getElementById('logEndItem');
+    const totalSpan = document.getElementById('logTotalItems');
+    const badgeSpan = document.getElementById('logPageBadge');
+
+    if (startSpan) startSpan.innerText = startIndex + 1;
+    if (endSpan) endSpan.innerText = endIndex;
+    if (totalSpan) totalSpan.innerText = totalItems;
+    if (badgeSpan) badgeSpan.innerText = `(Trang ${currentLogPage} / ${totalPages})`;
+
+    const btnsContainer = document.getElementById('logPaginationBtns');
+    if (!btnsContainer) return;
+
+    if (totalPages <= 1) {
+        btnsContainer.innerHTML = '';
+        return;
+    }
+
+    let btnsHtml = '';
+
+    // Nút Trang đầu
+    btnsHtml += `
+        <button type="button" class="page-btn nav-btn ${currentLogPage === 1 ? 'disabled' : ''}" 
+            ${currentLogPage === 1 ? 'disabled' : ''} onclick="goToLogPage(1)" title="Trang đầu">
+            <i class="fa-solid fa-angles-left"></i>
+        </button>
+    `;
+
+    // Nút Trang trước
+    // btnsHtml += `
+    //     <button type="button" class="page-btn nav-btn ${currentLogPage === 1 ? 'disabled' : ''}" 
+    //         ${currentLogPage === 1 ? 'disabled' : ''} onclick="goToLogPage(${currentLogPage - 1})" title="Trang trước">
+    //         <i class="fa-solid fa-angle-left"></i>
+    //     </button>
+    // `;
+
+    // Các số trang (window +/- 2)
+    const startPage = Math.max(1, currentLogPage - 2);
+    const endPage = Math.min(totalPages, currentLogPage + 2);
+
+    // if (startPage > 1) {
+    //     btnsHtml += `<button type="button" class="page-btn num-btn" onclick="goToLogPage(1)">1</button>`;
+    //     if (startPage > 2) {
+    //         btnsHtml += `<span style="padding: 0 4px; color: #94a3b8; font-size: 12px;">...</span>`;
+    //     }
+    // }
+
+    for (let i = startPage; i <= endPage; i++) {
+        btnsHtml += `
+            <button type="button" class="page-btn num-btn ${i === currentLogPage ? 'active' : ''}" 
+                onclick="goToLogPage(${i})">${i}</button>
+        `;
+    }
+
+    // if (endPage < totalPages) {
+    //     if (endPage < totalPages - 1) {
+    //         btnsHtml += `<span style="padding: 0 4px; color: #94a3b8; font-size: 12px;">...</span>`;
+    //     }
+    //     btnsHtml += `<button type="button" class="page-btn num-btn" onclick="goToLogPage(${totalPages})">${totalPages}</button>`;
+    // }
+
+    // Nút Trang sau
+    // btnsHtml += `
+    //     <button type="button" class="page-btn nav-btn ${currentLogPage === totalPages ? 'disabled' : ''}" 
+    //         ${currentLogPage === totalPages ? 'disabled' : ''} onclick="goToLogPage(${currentLogPage + 1})" title="Trang kế tiếp">
+    //         <i class="fa-solid fa-angle-right"></i>
+    //     </button>
+    // `;
+
+    // Nút Trang cuối
+    btnsHtml += `
+        <button type="button" class="page-btn nav-btn ${currentLogPage === totalPages ? 'disabled' : ''}" 
+            ${currentLogPage === totalPages ? 'disabled' : ''} onclick="goToLogPage(${totalPages})" title="Trang cuối">
+            <i class="fa-solid fa-angles-right"></i>
+        </button>
+    `;
+
+    btnsContainer.innerHTML = btnsHtml;
+}
+
+function goToLogPage(page) {
+    currentLogPage = page;
+    renderLogPagination();
+    const wrapper = document.getElementById('staffLogsWrapper');
+    if (wrapper) {
+        wrapper.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
+
+window.goToLogPage = goToLogPage;
+

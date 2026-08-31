@@ -93,12 +93,7 @@ th {
     color: #475569;
 }
 
-.main-content {
-    margin-left: 280px;
-    flex: 1;
-    padding: 3rem;
-    overflow-x: hidden;
-}
+
 
 .news-search-bar {
     display: flex;

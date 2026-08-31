@@ -308,7 +308,8 @@ public class Order {
             case "THU_HOI" -> "Đã thu hồi";
             case "PENDING" -> "Chờ xử lý";
             case "DA_HUY", "CANCELLED", "CANCELED" -> "Đã hủy";
-            case "WAITING_DRIVER" -> "Chờ tài xế Lalamove";
+            case "WAITING_DRIVER" -> "Chờ tài xế nhận đơn";
+            case "DRIVER_ASSIGNED" -> "Tài xế đã nhận đơn";
             case "PICKED_UP" -> "Tài xế đã lấy hàng";
             case "SHIPPING" -> "Đang giao hàng";
             case "COMPLETED", "HOAN_THANH" -> "Hoàn thành";

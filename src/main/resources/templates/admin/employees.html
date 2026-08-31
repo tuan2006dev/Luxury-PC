@@ -88,6 +88,63 @@
             white-space: nowrap !important;
             flex-shrink: 0 !important;
         }
+
+        /* Khắc phục lỗi co hẹp bảng nhân viên và hỗ trợ cuộn trang tự nhiên */
+        html, body {
+            height: auto !important;
+            min-height: 100% !important;
+            overflow-y: auto !important;
+        }
+
+        .main-content {
+            height: auto !important;
+            min-height: 100vh !important;
+            max-height: none !important;
+            overflow-y: visible !important;
+            display: flex !important;
+            flex-direction: column !important;
+            padding-bottom: 3rem !important;
+        }
+
+        .card:not(.add-form-container) {
+            flex: none !important;
+            min-height: auto !important;
+            height: auto !important;
+            overflow: visible !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .employee-table-card {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .table-wrapper {
+            flex: none !important;
+            min-height: auto !important;
+            height: auto !important;
+            max-height: none !important;
+            overflow-x: auto !important;
+            overflow-y: visible !important;
+        }
+
+        .employee-table-wrapper {
+            min-height: 120px !important;
+            overflow-x: auto !important;
+            overflow-y: visible !important;
+        }
+
+        #staffLogsWrapper {
+            max-height: 420px !important;
+            overflow-y: auto !important;
+            overflow-x: auto !important;
+        }
+
+        .admin-table th {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 10 !important;
+            background: #f8fafc !important;
+        }
     </style>
 </head>
 
@@ -254,7 +311,7 @@
         </div>
 
         <!-- Employee Table Card -->
-        <div class="card">
+        <div class="card employee-table-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
                 <h2 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-list-check" style="color: var(--gold);"></i>
@@ -266,7 +323,7 @@
                 </div>
             </div>
 
-            <div class="table-wrapper">
+            <div class="table-wrapper employee-table-wrapper" style="min-height: 120px !important; overflow-x: auto !important; overflow-y: visible !important;">
                 <table class="admin-table" style="min-width: 1000px; border-collapse: collapse;">
                     <thead style="position: sticky; top: 0; z-index: 10;">
                         <tr
@@ -407,7 +464,7 @@
         </div>
 
         <!-- Audit Logs Card -->
-        <div class="card">
+        <div class="card employee-audit-card">
             <div
                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
                 <h2
@@ -444,7 +501,7 @@
 
                         <!-- Custom Log Date Popover -->
                         <div id="customLogDateBox"
-                            style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; z-index: 100; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); align-items: center; gap: 8px; white-space: nowrap;">
+                            style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; z-index: 150 !important; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); align-items: center; gap: 8px; white-space: nowrap;">
                             <span style="font-size: 0.78rem; color: #475569; font-weight: 600;">Từ:</span>
                             <input type="date" id="logStartDate"
                                 style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; outline: none; font-family: inherit;">
@@ -579,6 +636,23 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Audit Logs Pagination Container -->
+            <div id="staffLogsPagination" class="admin-pagination-wrapper" style="display: none; margin-top: 10px;">
+                <div class="pagination-info">
+                    <span>Hiển thị</span>
+                    <strong id="logStartItem">1</strong>
+                    <span>-</span>
+                    <strong id="logEndItem">10</strong>
+                    <span>trong tổng số</span>
+                    <strong id="logTotalItems">0</strong>
+                    <span>bản ghi</span>
+                    <span class="page-count-badge" id="logPageBadge">(Trang 1 / 1)</span>
+                </div>
+                <div class="pagination-btns" id="logPaginationBtns">
+                    <!-- Dynamic page buttons rendered by JS -->
+                </div>
             </div>
         </div>
 

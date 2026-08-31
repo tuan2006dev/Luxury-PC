@@ -9,21 +9,103 @@
     <!-- Centralized Form Validation -->
     <script th:src="@{/js/admin/form-validation.js}"></script>
     <script>
-        // Global Smart Reload Prevention for Admin Active Tabs & Links
+        // Global Smart Reload Prevention: Chỉ ngăn reload khi click vào chính URL hiện tại hoặc tab-link active
         document.addEventListener('click', function (e) {
             const link = e.target.closest('a');
             if (!link) return;
             const href = link.getAttribute('href');
             if (!href || href === '#' || href.startsWith('javascript:')) return;
 
-            const isSelfActive = link.classList.contains('active') || link.classList.contains('is-active');
-            const isParentActive = link.parentElement && link.parentElement.classList.contains('active');
-            const isCurrentUrl = link.href && (link.href === window.location.href);
+            // Không can thiệp nếu link có target="_blank"
+            if (link.target === '_blank') return;
 
-            if (isSelfActive || isParentActive || isCurrentUrl) {
+            // Nếu người dùng click vào chính xác URL hiện tại (bao gồm cả pathname + search)
+            const currentFullUrl = window.location.pathname + window.location.search;
+            const linkUrl = link.pathname + link.search;
+
+            // Chỉ chặn khi click vào tab nội bộ của trang (như tab active) hoặc đúng trang hiện tại
+            const isTabActive = (link.classList.contains('active') || link.classList.contains('is-active')) && (linkUrl === currentFullUrl);
+            const isExactCurrentPage = (link.href === window.location.href);
+
+            if (isTabActive || isExactCurrentPage) {
                 e.preventDefault();
                 e.stopPropagation();
             }
         }, true);
+
+        // Global Seamless AJAX Pagination for All Admin Pages
+        document.addEventListener('click', function (e) {
+            const pageLink = e.target.closest('.admin-pagination-wrapper a.page-btn');
+            if (!pageLink) return;
+
+            if (pageLink.classList.contains('disabled') || pageLink.classList.contains('active')) {
+                e.preventDefault();
+                return;
+            }
+
+            const targetUrl = pageLink.getAttribute('href');
+            if (!targetUrl || targetUrl === '#' || targetUrl.startsWith('javascript:')) return;
+
+            e.preventDefault();
+
+            // Tìm container chứa bảng và phân trang
+            const container = pageLink.closest('.card') || pageLink.closest('.table-card') || pageLink.closest('.admin-table-container') || document.querySelector('.main-content');
+            if (container) {
+                container.style.transition = 'opacity 0.2s ease';
+                container.style.opacity = '0.4';
+                container.style.pointerEvents = 'none';
+            }
+
+            fetch(targetUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Network error: ' + res.status);
+                return res.text();
+            })
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // 1. Cập nhật Bảng dữ liệu tương ứng
+                const currentTableWrap = document.querySelector('.table-wrapper, .table-responsive, .admin-table-wrapper, .admin-table');
+                const newTableWrap = doc.querySelector('.table-wrapper, .table-responsive, .admin-table-wrapper, .admin-table');
+                if (currentTableWrap && newTableWrap) {
+                    currentTableWrap.innerHTML = newTableWrap.innerHTML;
+                }
+
+                // 2. Cập nhật Thanh Phân Trang
+                const currentPagination = document.querySelector('.admin-pagination-wrapper');
+                const newPagination = doc.querySelector('.admin-pagination-wrapper');
+                if (currentPagination && newPagination) {
+                    currentPagination.innerHTML = newPagination.innerHTML;
+                }
+
+                // 3. Đổi URL trên trình duyệt mượt mà (hỗ trợ Back/Forward)
+                window.history.pushState({ path: targetUrl }, '', targetUrl);
+
+                // 4. Kích hoạt lại các event listener nếu có (spa:load)
+                document.dispatchEvent(new CustomEvent('spa:load'));
+            })
+            .catch(err => {
+                console.error('[AJAX Pagination] Fallback to standard navigation:', err);
+                window.location.href = targetUrl;
+            })
+            .finally(() => {
+                if (container) {
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = '';
+                }
+            });
+        });
+
+        // Xử lý nút Back/Forward của trình duyệt cho AJAX Pagination
+        window.addEventListener('popstate', function (e) {
+            if (window.location.pathname.startsWith('/admin/')) {
+                window.location.reload();
+            }
+        });
     </script>
 </div>

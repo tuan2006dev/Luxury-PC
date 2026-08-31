@@ -400,7 +400,7 @@ function sendLalamoveWebhook(btn) {
 }
 
 // Initialize Event Listeners
-document.addEventListener('DOMContentLoaded', function() {
+function initOrderPage() {
     // Close modal on click outside modal content
     const modal = document.getElementById('orderDetailModal');
     if (modal) {
@@ -427,4 +427,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOrderPage);
+} else {
+    initOrderPage();
+}
+document.addEventListener('spa:load', initOrderPage);

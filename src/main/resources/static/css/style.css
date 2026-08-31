@@ -1123,6 +1123,10 @@ img {
     justify-content: center;
 }
 
+.swal2-container {
+    z-index: 999999 !important;
+}
+
 .confirm-popup-overlay.active {
     display: flex;
 }
