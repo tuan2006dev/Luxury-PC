@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Sorry! This Site is Currently Not Available!</title>
+    <link rel="shortcut icon" href="https://welcome.exabytes.my/images/exa-favicon.ico" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://welcome.exabytes.my/css/style.css?v=1.0.0">
+    <link rel="stylesheet" href="https://welcome.exabytes.my/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://welcome.exabytes.my/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://welcome.exabytes.my/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://welcome.exabytes.my/css/custom.css?v=1.0.1">
+</head>
+<body class="is-boxed has-animations">
+    <div class="body-wrap boxed-container">
+    <div class="stars-container">
+        <div id="stars"></div>
+    </div>
+        <header class="site-header">
+            <div class="container">
+                <div class="site-header-large-bg"><span></span></div>
+                <div class="site-header-inner">
+                    <div class="brand header-brand">
+                        <h1 class="m-0">
+                            <a class="logo logo-exabytes" href="https://www.exabytes.my" target="_blank">
+                                <img src="https://welcome.exabytes.my/images/250x53-logo-white@2x.png" width="250" height="53" alt="logo" />
+                            </a>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-inner">
+                        <div class="hero-copy">
+                            <div class="container-sm">
+                                <h1 class="hero-title h2-mobile mt-0 is-revealing" style="color:#fff;">Oops! We’re Sorry!</h1>
+                                <h4 style="margin-bottom: 20px;">This site is temporarily unavailable!</h4>
+                                <a href="https://support.exabytes.com.my/en/support/tickets/new" class="button button-primary button-shadow" role="button" target="_blank">Submit a Ticket</a>
+                                <p style="margin-top: 10px;">Have a question? Please contact us at <a class="link" href="mailto:sales@exabytes.my">sales@exabytes.my</a></p>
+                                <hr class="line">
+                                <!-- Explanation -->
+                                <div class="products-list">
+                                    <h4 style="color:#fff; margin-bottom: 25px;">This could be due to:</h4>
+                                    <ol class="number-list">
+                                        <li>A mistyped website URL</li>
+                                        <li>The website is under maintenance</li>
+                                        <li>The website does not exist on our server</li>
+                                        <li>The web hosting service for this website has expired</li>
+                                        <li>The website has been suspended due to fraud / scam / abuse / breach of terms, service over-utilisation and/or other possible reason(s)</li>
+                                    </ol>
+                                </div>
+                                <!--End Explanation -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer text-light">
+            <div class="container">
+                <div class="site-footer-inner">
+                    <div class="footer-copyright">Copyright &copy; Exabytes Network Sdn Bhd (576092-T). All Trademarks Are The Property of Their Respective Owners.</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="https://welcome.exabytes.my/js/jquery.min.js"></script>
+    <script src="https://welcome.exabytes.my/js/scrollreveal.min.js"></script>
+    <script src="https://welcome.exabytes.my/js/bootstrap.min.js"></script>
+    <script src="https://welcome.exabytes.my/js/main.min.js"></script>
+</body>
+</html>

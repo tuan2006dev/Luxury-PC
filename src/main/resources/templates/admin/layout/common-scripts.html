@@ -1,6 +1,24 @@
 <div th:fragment="scripts">
-    <!-- Global Suppress for Chrome Extension / Web Vitals Errors -->
+    <!-- Global Suppress for Chrome Extension / Web Vitals Errors & Image Fallbacks -->
     <script>
+        // Ensure no-referrer is present
+        if (!document.querySelector('meta[name="referrer"]')) {
+            var metaRef = document.createElement('meta');
+            metaRef.name = 'referrer';
+            metaRef.content = 'no-referrer';
+            document.head.appendChild(metaRef);
+        }
+
+        // Global fallback for broken or blocked product images in Admin
+        document.addEventListener('error', function (e) {
+            if (e.target && e.target.tagName === 'IMG') {
+                if (!e.target.dataset.fallbackApplied) {
+                    e.target.dataset.fallbackApplied = 'true';
+                    e.target.src = '/images/logo.svg';
+                }
+            }
+        }, true);
+
         window.addEventListener('error', function (event) {
             if (event.message && (event.message.includes('startTime') || event.message.includes('reportAllChanges'))) {
                 event.preventDefault();

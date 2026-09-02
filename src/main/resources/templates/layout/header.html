@@ -4,15 +4,28 @@
 <head>
     <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" />
     <meta charset="UTF-8" />
+    <meta name="referrer" content="no-referrer" />
 </head>
 
 <body>
     <div th:fragment="header">
+        <meta name="referrer" content="no-referrer" />
         <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" />
         <link rel="stylesheet" th:href="@{/css/style.css}">
         <link rel="stylesheet" th:href="@{/css/modal-system.css}">
         <link rel="stylesheet" th:href="@{/css/socket-chat-v2.css}">
         <script th:src="@{/js/theme.js}"></script>
+        <script>
+            // Global fallback for broken or blocked third-party product images
+            document.addEventListener('error', function (e) {
+                if (e.target && e.target.tagName === 'IMG') {
+                    if (!e.target.dataset.fallbackApplied) {
+                        e.target.dataset.fallbackApplied = 'true';
+                        e.target.src = '/images/logo.svg';
+                    }
+                }
+            }, true);
+        </script>
 
         <header class="header" id="navbar">
             <div class="container header-top">
