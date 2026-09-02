@@ -75,7 +75,7 @@ public class OrderService {
         order.setFullName(fullName);
         order.setPhone(phone);
         order.setAddress(address);
-        order.setTotalPrice(finalPrice);
+        order.setTotalPrice((double) Math.round(finalPrice));
         order.setVoucherCode(appliedVoucherCode);
         order.setDiscountAmount(voucherDiscount);
         order.setStatus("PENDING");
@@ -239,6 +239,9 @@ public class OrderService {
 
         switch (event) {
             case "ASSIGN_DRIVER":
+            case "DRIVER_ASSIGNED":
+                order.setStatus("DRIVER_ASSIGNED");
+                break;
             case "ASSIGNING_DRIVER":
                 order.setStatus("WAITING_DRIVER");
                 break;

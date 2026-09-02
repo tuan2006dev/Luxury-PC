@@ -31,19 +31,28 @@ document.addEventListener('DOMContentLoaded', () => {
             '/admin/dashboard': 'nav-dashboard',
             '/admin/products': 'nav-products',
             '/admin/categories': 'nav-categories',
-            '/admin/flash-sales': 'nav-flash-sales',
+            '/admin/combos': 'nav-combos',
             '/admin/flash-sale-items': 'nav-flash-sales',
+            '/admin/flash-sales': 'nav-flash-sales',
             '/admin/inventory': 'nav-inventory',
             '/admin/orders': 'nav-orders',
+            '/admin/employees': 'nav-employees',
             '/admin/account': 'nav-account',
             '/admin/vouchers': 'nav-vouchers',
             '/admin/tickets': 'nav-tickets',
-            '/admin/reviews': 'nav-reviews'
+            '/admin/reviews': 'nav-reviews',
+            '/admin/news-categories': 'nav-news-categories',
+            '/admin/news': 'nav-news'
         };
 
         let activeId = null;
-        for (let key in linkMap) {
-            if (path.startsWith(key)) activeId = linkMap[key];
+        // Ưu tiên khớp chính xác hoặc đường dẫn dài hơn trước để tránh /admin/news ghi đè /admin/news-categories
+        const sortedKeys = Object.keys(linkMap).sort((a, b) => b.length - a.length);
+        for (let key of sortedKeys) {
+            if (path === key || path.startsWith(key + '/') || path.startsWith(key + '?')) {
+                activeId = linkMap[key];
+                break;
+            }
         }
 
         if (activeId) {
@@ -62,119 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Init on load
+    // Init active status on load
     updateSidebarActiveStatus(window.location.pathname);
-
-    // Custom SPA Router (PJAX) with AbortController & Style Leak Cleanup
-    let pjaxController = null;
-
-    document.querySelectorAll('.sub-menu a, #nav-dashboard').forEach(link => {
-        link.addEventListener('click', async (e) => {
-            const url = link.getAttribute('href');
-            if (!url || url === '#' || url.startsWith('javascript')) return;
-
-            if (window.location.pathname === url) {
-                e.preventDefault();
-                return;
-            }
-            if (e.ctrlKey || e.metaKey || link.target === '_blank') return;
-
-            e.preventDefault();
-
-            // Abort previous in-flight PJAX fetch to prevent race conditions
-            if (pjaxController) {
-                pjaxController.abort();
-            }
-            pjaxController = new AbortController();
-
-            const mainContent = document.querySelector('.main-content');
-            if (mainContent) mainContent.style.opacity = '0.5';
-
-            try {
-                const res = await fetch(url, { signal: pjaxController.signal });
-                const html = await res.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-
-                const newContent = doc.querySelector('.main-content');
-                if (newContent) {
-                    // Sync title
-                    if (doc.title) document.title = doc.title;
-
-                    // Sync styles and links from head (Full Synchronization)
-                    const newStyles = Array.from(doc.head.querySelectorAll('link[rel="stylesheet"], style'));
-                    const oldStyles = Array.from(document.head.querySelectorAll('link[rel="stylesheet"], style'));
-
-                    // Remove old styles that are not in new HTML
-                    oldStyles.forEach(oldStyle => {
-                        let exists = false;
-                        if (oldStyle.tagName === 'LINK') {
-                            exists = newStyles.some(newS => newS.tagName === 'LINK' && newS.href === oldStyle.href);
-                        } else if (oldStyle.tagName === 'STYLE') {
-                            exists = newStyles.some(newS => newS.tagName === 'STYLE' && newS.innerHTML.trim() === oldStyle.innerHTML.trim());
-                        }
-                        if (!exists && oldStyle.hasAttribute('data-pjax-track')) {
-                            oldStyle.remove();
-                        }
-                    });
-
-                    // Add new styles that are not in old HTML
-                    newStyles.forEach(newStyle => {
-                        let exists = false;
-                        if (newStyle.tagName === 'LINK') {
-                            exists = oldStyles.some(old => old.tagName === 'LINK' && old.href === newStyle.href);
-                        } else if (newStyle.tagName === 'STYLE') {
-                            exists = oldStyles.some(old => old.tagName === 'STYLE' && old.innerHTML.trim() === newStyle.innerHTML.trim());
-                        }
-                        if (!exists) {
-                            const clone = newStyle.cloneNode(true);
-                            document.head.appendChild(clone);
-                        }
-                    });
-
-                    // Destroy previous Chart instances if present
-                    if (typeof window.revenueChartInstance !== 'undefined' && window.revenueChartInstance) {
-                        try { window.revenueChartInstance.destroy(); } catch (err) {}
-                        window.revenueChartInstance = null;
-                    }
-                    if (typeof window.orderStatusChartInstance !== 'undefined' && window.orderStatusChartInstance) {
-                        try { window.orderStatusChartInstance.destroy(); } catch (err) {}
-                        window.orderStatusChartInstance = null;
-                    }
-                    if (typeof window.newUsersChartInstance !== 'undefined' && window.newUsersChartInstance) {
-                        try { window.newUsersChartInstance.destroy(); } catch (err) {}
-                        window.newUsersChartInstance = null;
-                    }
-
-                    if (mainContent) mainContent.replaceWith(newContent);
-
-                    // Execute new scripts safely
-                    const scripts = newContent.querySelectorAll('script');
-                    scripts.forEach(oldScript => {
-                        const newScript = document.createElement('script');
-                        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                        oldScript.parentNode.replaceChild(newScript, oldScript);
-                    });
-
-                    window.history.pushState({}, '', url);
-                    updateSidebarActiveStatus(url);
-                    document.dispatchEvent(new Event('spa:load'));
-                } else {
-                    window.location.href = url;
-                }
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    window.location.href = url;
-                }
-            } finally {
-                const updatedMainContent = document.querySelector('.main-content');
-                if (updatedMainContent) updatedMainContent.style.opacity = '1';
-            }
-        });
-    });
-
-    window.addEventListener('popstate', () => window.location.reload());
 });
 
 document.addEventListener("DOMContentLoaded", function () {

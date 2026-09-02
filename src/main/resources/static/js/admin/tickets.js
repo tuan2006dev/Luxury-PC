@@ -476,3 +476,59 @@ document.addEventListener('click', function(e) {
         });
 }, true);
 
+// Auto polling for new open tickets every 6s on /admin/tickets page
+let lastOpenCount = null;
+let ticketPollInterval = null;
+
+function startTicketPolling() {
+    if (ticketPollInterval) clearInterval(ticketPollInterval);
+    ticketPollInterval = setInterval(() => {
+        if (!window.location.pathname.startsWith('/admin/tickets')) {
+            clearInterval(ticketPollInterval);
+            return;
+        }
+
+        fetch('/api/tickets/count/open')
+            .then(res => res.json())
+            .then(data => {
+                if (data && typeof data.count === 'number') {
+                    if (lastOpenCount !== null && data.count > lastOpenCount) {
+                        const openDetails = document.querySelectorAll('.ticket-detail[style*="display: block"]');
+                        if (openDetails.length === 0) {
+                            const currentUrl = window.location.href;
+                            fetch(currentUrl)
+                                .then(res => res.text())
+                                .then(html => {
+                                    const parser = new DOMParser();
+                                    const doc = parser.parseFromString(html, 'text/html');
+                                    const newWrap = doc.querySelector('.tickets-table-wrap');
+                                    const currentWrap = document.querySelector('.tickets-table-wrap');
+                                    if (newWrap && currentWrap) {
+                                        currentWrap.innerHTML = newWrap.innerHTML;
+                                    }
+                                    const newStats = doc.querySelector('.ticket-stats');
+                                    const currentStats = document.querySelector('.ticket-stats');
+                                    if (newStats && currentStats) {
+                                        currentStats.innerHTML = newStats.innerHTML;
+                                    }
+                                });
+                        }
+                    }
+                    lastOpenCount = data.count;
+                }
+            })
+            .catch(() => {});
+    }, 6000);
+}
+
+if (window.location.pathname.startsWith('/admin/tickets')) {
+    startTicketPolling();
+}
+document.addEventListener('spa:load', function() {
+    if (window.location.pathname.startsWith('/admin/tickets')) {
+        startTicketPolling();
+    } else if (ticketPollInterval) {
+        clearInterval(ticketPollInterval);
+    }
+});
+

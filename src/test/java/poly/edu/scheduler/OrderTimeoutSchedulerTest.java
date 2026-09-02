@@ -27,7 +27,8 @@ class OrderTimeoutSchedulerTest {
         scheduler(orderDAO).cancelExpiredPendingOrders();
 
         assertEquals("CANCELLED", order.getStatus());
-        assertEquals("Hệ thống tự động hủy do quá hạn thanh toán", order.getRefundReason());
+        assertEquals("Hệ thống tự động hủy do quá hạn thanh toán",
+                order.getRefundReason());
         verify(orderDAO).save(order);
     }
 
@@ -62,7 +63,8 @@ class OrderTimeoutSchedulerTest {
         OrderDAO orderDAO = mock(OrderDAO.class);
         Order processing = order("VIETQR", "PROCESSING");
         Order shipping = order("VIETQR", "SHIPPING");
-        when(orderDAO.findExpiredPendingOrders(any())).thenReturn(List.of(processing, shipping));
+        when(orderDAO.findExpiredPendingOrders(any())).thenReturn(List.of(processing,
+                shipping));
 
         scheduler(orderDAO).cancelExpiredPendingOrders();
 

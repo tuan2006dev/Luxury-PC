@@ -26,6 +26,7 @@ public class SecurityConfig {
         private final poly.edu.repository.AdminLogRepository adminLogRepository;
 
         private final poly.edu.security.UserStatusCheckFilter userStatusCheckFilter;
+
         private final poly.edu.dao.UserSessionDAO userSessionDAO;
 
         @Bean

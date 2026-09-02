@@ -50,7 +50,7 @@ public class CartController {
         int productStock = 5;
         Optional<Product> pOpt = productDAO.findById(id);
         if (pOpt.isPresent()) {
-            productStock = pOpt.get().getStock();
+            productStock = pOpt.get().getStock() != null ? pOpt.get().getStock() : 0;
             if (name == null || "1".equals(name) || name.isEmpty() || name.equals("undefined")) {
                 name = pOpt.get().getName();
             }
@@ -72,6 +72,7 @@ public class CartController {
             poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
             int remainingSale = fsi.getSaleQuantity() - fsi.getSoldCount();
             maxAllowed = Math.min(productStock, remainingSale);
+            price = fsi.getSalePrice();
         }
 
         if (maxAllowed <= 0) {
@@ -124,7 +125,7 @@ public class CartController {
         Product product = pOpt.get();
         String name = product.getName();
         double price = product.getPrice();
-        int productStock = product.getStock();
+        int productStock = product.getStock() != null ? product.getStock() : 0;
 
         if (productStock <= 0) {
             result.put("success", false);
@@ -190,7 +191,7 @@ public class CartController {
         int productStock = 5;
         Optional<Product> pOpt = productDAO.findById(id);
         if (pOpt.isPresent()) {
-            productStock = pOpt.get().getStock();
+            productStock = pOpt.get().getStock() != null ? pOpt.get().getStock() : 0;
             if (name == null || "1".equals(name) || name.isEmpty() || name.equals("undefined")) {
                 name = pOpt.get().getName();
             }
@@ -212,6 +213,7 @@ public class CartController {
             poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
             int remainingSale = fsi.getSaleQuantity() - fsi.getSoldCount();
             maxAllowed = Math.min(productStock, remainingSale);
+            price = fsi.getSalePrice();
         }
 
         if (maxAllowed <= 0) {
@@ -285,7 +287,7 @@ public class CartController {
             String prodName = cart.get(id).getName();
             Optional<Product> pOpt = productDAO.findById(id);
             if (pOpt.isPresent()) {
-                productStock = pOpt.get().getStock();
+                productStock = pOpt.get().getStock() != null ? pOpt.get().getStock() : 0;
                 prodName = pOpt.get().getName();
             }
 

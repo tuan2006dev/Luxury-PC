@@ -70,16 +70,50 @@ public class AdminController {
         java.util.List<poly.edu.entity.Order> orders = adminService.getAllOrders();
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.trim().toLowerCase();
+            String rawDigits = kw.replaceAll("[^0-9]", "");
+            boolean isOnlyDhPrefix = kw.equals("dh") || kw.equals("dh-") || kw.equals("dh ") || kw.equals("#");
+
             orders = orders.stream()
-                    .filter(o -> (o.getId() != null && String.valueOf(o.getId()).contains(kw)) ||
-                            (o.getUser() != null && o.getUser().getUsername() != null
-                                     && o.getUser().getUsername().toLowerCase().contains(kw))
-                            ||
-                            (o.getUser() != null && o.getUser().getFullName() != null
-                                    && o.getUser().getFullName().toLowerCase().contains(kw))
-                            ||
-                            (o.getStatus() != null && o.getStatus().toLowerCase().contains(kw)) ||
-                            (o.getPhone() != null && o.getPhone().contains(kw)))
+                    .filter(o -> {
+                        if (o == null) return false;
+                        String orderIdStr = o.getId() != null ? String.valueOf(o.getId()) : "";
+                        String dhCode = o.getId() != null ? "dh" + o.getId() : "";
+                        String dhDashCode = o.getId() != null ? "dh-" + o.getId() : "";
+                        String dhSpaceCode = o.getId() != null ? "dh " + o.getId() : "";
+                        String hashId = o.getId() != null ? "#" + o.getId() : "";
+                        String orderCode = o.getOrderCode() != null ? o.getOrderCode().toLowerCase() : "";
+
+                        // Tìm kiếm theo ID đơn hàng hoặc mã đơn (DH..., #..., hoặc chỉ số)
+                        boolean matchId = isOnlyDhPrefix ||
+                                (!orderIdStr.isEmpty() && orderIdStr.contains(kw)) ||
+                                (!dhCode.isEmpty() && dhCode.contains(kw)) ||
+                                (!dhDashCode.isEmpty() && dhDashCode.contains(kw)) ||
+                                (!dhSpaceCode.isEmpty() && dhSpaceCode.contains(kw)) ||
+                                (!hashId.isEmpty() && hashId.contains(kw)) ||
+                                (!orderCode.isEmpty() && orderCode.contains(kw)) ||
+                                (!rawDigits.isEmpty() && !orderIdStr.isEmpty() && orderIdStr.contains(rawDigits));
+
+                        // Tìm kiếm theo tài khoản người dùng
+                        boolean matchUser = (o.getUser() != null && o.getUser().getUsername() != null && o.getUser().getUsername().toLowerCase().contains(kw)) ||
+                                (o.getUser() != null && o.getUser().getFullName() != null && o.getUser().getFullName().toLowerCase().contains(kw));
+
+                        // Tìm kiếm theo thông tin người nhận
+                        boolean matchRecipient = (o.getFullName() != null && o.getFullName().toLowerCase().contains(kw)) ||
+                                (o.getEmail() != null && o.getEmail().toLowerCase().contains(kw)) ||
+                                (o.getPhone() != null && o.getPhone().contains(kw)) ||
+                                (o.getAddress() != null && o.getAddress().toLowerCase().contains(kw)) ||
+                                (o.getCity() != null && o.getCity().toLowerCase().contains(kw));
+
+                        // Tìm kiếm theo trạng thái / mã vận đơn / voucher / phương thức thanh toán
+                        boolean matchOther = (o.getStatus() != null && o.getStatus().toLowerCase().contains(kw)) ||
+                                (o.getStatusDisplay() != null && o.getStatusDisplay().toLowerCase().contains(kw)) ||
+                                (o.getTrackingCode() != null && o.getTrackingCode().toLowerCase().contains(kw)) ||
+                                (o.getVoucherCode() != null && o.getVoucherCode().toLowerCase().contains(kw)) ||
+                                (o.getPaymentMethod() != null && o.getPaymentMethod().toLowerCase().contains(kw)) ||
+                                (o.getPaymentMethodDisplay() != null && o.getPaymentMethodDisplay().toLowerCase().contains(kw));
+
+                        return matchId || matchUser || matchRecipient || matchOther;
+                    })
                     .collect(java.util.stream.Collectors.toList());
         }
         java.util.List<poly.edu.entity.Order> paginatedOrders = poly.edu.util.PaginationUtils.paginate(orders, page, model);

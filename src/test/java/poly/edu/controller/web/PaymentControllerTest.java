@@ -74,7 +74,7 @@ class PaymentControllerTest {
                 .thenReturn("token");
         ExtendedModelMap model = new ExtendedModelMap();
 
-        String view = controller.vietQrPayment(500_000L, "DH39", model, new MockHttpSession());
+        String view = controller.vietQrPayment(1L, "DH39", model, new MockHttpSession());
 
         assertEquals("payment-vietqr", view);
         assertEquals(500_000L, model.get("amount"));

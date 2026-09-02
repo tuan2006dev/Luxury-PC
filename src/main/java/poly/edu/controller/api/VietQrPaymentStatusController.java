@@ -45,14 +45,17 @@ public class VietQrPaymentStatusController {
 
         Order order = orderDAO.findByOrderCode(orderCode).orElseThrow(PaymentStatusForbiddenException::new);
         User currentUser = currentUser(authentication);
-        if (!"VIETQR".equals(order.getPaymentMethod())
-                || order.getUser() == null
-                || currentUser == null
-                || !currentUser.getId().equals(order.getUser().getId())) {
+        if (!"VIETQR".equalsIgnoreCase(order.getPaymentMethod()) && !"SEPAY".equalsIgnoreCase(order.getPaymentMethod())) {
+            throw new PaymentStatusForbiddenException();
+        }
+        if (order.getUser() != null && currentUser != null && !currentUser.getId().equals(order.getUser().getId())) {
             throw new PaymentStatusForbiddenException();
         }
 
-        boolean paid = "DA_THANH_TOAN".equals(order.getStatus()) || "PAID".equals(order.getStatus());
+        boolean paid = "DA_THANH_TOAN".equals(order.getStatus()) || "PAID".equals(order.getStatus())
+                || "PROCESSING".equals(order.getStatus()) || "DANG_XU_LY".equals(order.getStatus())
+                || "SHIPPING".equals(order.getStatus()) || "DANG_GIAO".equals(order.getStatus())
+                || "COMPLETED".equals(order.getStatus()) || "HOAN_THANH".equals(order.getStatus());
         return new VietQrPaymentStatusResponse(order.getOrderCode(), order.getStatusDisplay(), paid);
     }
 

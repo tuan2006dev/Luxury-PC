@@ -187,7 +187,7 @@
                         <input type="hidden" name="id" th:value="${product.id}" />
                         <input type="hidden" name="name" th:value="${product.name}" />
                         <input type="hidden" name="price"
-                            th:value="${product.price != null ? product.price.longValue() : 0}" />
+                            th:value="${flashSaleItem != null ? (flashSaleItem.salePrice != null ? flashSaleItem.salePrice.longValue() : (product.price != null ? product.price.longValue() : 0)) : (product.price != null ? product.price.longValue() : 0)}" />
                         <input type="hidden" name="quantity" id="form-qty" value="1" />
                     </form>
 

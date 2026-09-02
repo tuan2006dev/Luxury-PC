@@ -288,10 +288,10 @@
                                 <thead>
                                     <tr>
                                         <th
-                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 10 !important; color: #64748b;">
                                             Tên Linh Kiện</th>
                                         <th
-                                            style="text-align: right; position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            style="text-align: right; position: sticky; top: 0; background: #ffffff !important; z-index: 10 !important; color: #64748b;">
                                             Đã Bán</th>
                                     </tr>
                                 </thead>
@@ -318,13 +318,13 @@
                                 <thead>
                                     <tr>
                                         <th
-                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 10 !important; color: #64748b;">
                                             Tên Sản Phẩm</th>
                                         <th
-                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 10 !important; color: #64748b;">
                                             Tồn Kho</th>
                                         <th
-                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 999 !important; color: #64748b;">
+                                            style="position: sticky; top: 0; background: #ffffff !important; z-index: 10 !important; color: #64748b;">
                                             Trạng Thái</th>
                                     </tr>
                                 </thead>
@@ -372,26 +372,40 @@
                 'PENDING': 'Chờ xử lý',
                 'CHO_XAC_NHAN_THANH_TOAN': 'Chờ xác nhận TT',
                 'DA_THANH_TOAN': 'Đã thanh toán',
-                'SHIPPING': 'Đang giao',
+                'PAID': 'Đã thanh toán',
+                'WAITING_DRIVER': 'Chờ tài xế',
+                'DRIVER_ASSIGNED': 'Tài xế đã nhận',
+                'PICKED_UP': 'Tài xế đã lấy',
+                'SHIPPING': 'Đang giao hàng',
                 'COMPLETED': 'Hoàn thành',
-                'YEU_CAU_HOAN_TIEN': 'Yêu cầu hoàn tiền',
+                'HOAN_THANH': 'Hoàn thành',
+                'YEU_CAU_HOAN_TIEN': 'Yêu cầu hoàn trả',
+                'CHO_HOAN_TIEN': 'Chờ hoàn tiền',
                 'DA_HOAN_TIEN': 'Đã hoàn tiền',
-                'THU_HOI': 'Thu hồi',
+                'THU_HOI': 'Thu hồi hàng',
                 'CANCELLED': 'Đã hủy',
-                'DA_HUY': 'Đã hủy'
+                'DA_HUY': 'Đã hủy',
+                'CANCELED': 'Đã hủy'
             };
 
             var statusColors = {
-                'PENDING': '#ef4444',
-                'CHO_XAC_NHAN_THANH_TOAN': '#f59e0b',
-                'DA_THANH_TOAN': '#8b5cf6',
-                'SHIPPING': '#3b82f6',
-                'COMPLETED': '#10b981',
-                'YEU_CAU_HOAN_TIEN': '#eab308',
-                'DA_HOAN_TIEN': '#64748b',
-                'THU_HOI': '#ec4899',
-                'CANCELLED': '#6b7280',
-                'DA_HUY': '#6b7280'
+                'PENDING': '#f59e0b',                   // Vàng hổ phách (Amber) - Chờ xử lý
+                'CHO_XAC_NHAN_THANH_TOAN': '#ea580c',   // Cam đậm (Vibrant Orange) - Chờ xác nhận thanh toán
+                'DA_THANH_TOAN': '#8b5cf6',             // Tím hoàng gia (Purple) - Đã thanh toán
+                'PAID': '#8b5cf6',                      // Tím hoàng gia
+                'WAITING_DRIVER': '#06b6d4',            // Xanh Cyan - Chờ tài xế
+                'DRIVER_ASSIGNED': '#6366f1',           // Xanh Indigo - Tài xế đã nhận đơn
+                'PICKED_UP': '#3b82f6',                 // Xanh dương - Đã giao tài xế
+                'SHIPPING': '#0284c7',                  // Xanh Sky Blue - Đang vận chuyển
+                'COMPLETED': '#10b981',                 // Xanh ngọc lục bảo (Emerald) - Hoàn thành
+                'HOAN_THANH': '#10b981',                // Xanh ngọc lục bảo
+                'YEU_CAU_HOAN_TIEN': '#eab308',         // Vàng chanh (Gold) - Yêu cầu hoàn tiền
+                'CHO_HOAN_TIEN': '#d97706',             // Nâu cam (Bronze) - Chờ hoàn tiền
+                'DA_HOAN_TIEN': '#14b8a6',              // Xanh ngọc bích (Teal) - Đã hoàn tiền
+                'THU_HOI': '#ec4899',                   // Hồng cánh sen (Magenta) - Thu hồi hàng
+                'CANCELLED': '#dc2626',                 // Đỏ tươi (Crimson) - Đã hủy đơn
+                'DA_HUY': '#dc2626',                    // Đỏ tươi
+                'CANCELED': '#dc2626'                   // Đỏ tươi
             };
 
             window.handlePresetClick = function (range, btn) {
@@ -422,7 +436,85 @@
                 window.loadDashboardStats({ start: start, end: end });
             };
 
-            window.loadDashboardStats = async function (params = { range: '30d' }) {
+            var currentFilterParams = { range: '7d' };
+
+            function ensureContinuousDailyData(dataList, params) {
+                if (!dataList) dataList = [];
+
+                let startDate = null;
+                let endDate = new Date();
+                endDate.setHours(0, 0, 0, 0);
+
+                if (params && params.start && params.end) {
+                    const sParts = params.start.split('-');
+                    const eParts = params.end.split('-');
+                    startDate = new Date(parseInt(sParts[0]), parseInt(sParts[1]) - 1, parseInt(sParts[2]));
+                    endDate = new Date(parseInt(eParts[0]), parseInt(eParts[1]) - 1, parseInt(eParts[2]));
+                } else {
+                    const range = (params && params.range) ? params.range : '30d';
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0);
+
+                    if (range === 'today') {
+                        startDate = new Date(now);
+                        endDate = new Date(now);
+                    } else if (range === 'yesterday') {
+                        startDate = new Date(now);
+                        startDate.setDate(startDate.getDate() - 1);
+                        endDate = new Date(startDate);
+                    } else if (range === '7d') {
+                        startDate = new Date(now);
+                        startDate.setDate(startDate.getDate() - 6);
+                        endDate = new Date(now);
+                    } else if (range === 'thisMonth') {
+                        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                        endDate = new Date(now);
+                    } else if (range === 'lastMonth') {
+                        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                        endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                    } else if (range === '30d') {
+                        startDate = new Date(now);
+                        startDate.setDate(startDate.getDate() - 29);
+                        endDate = new Date(now);
+                    } else {
+                        // For 'all' or other custom, fallback to data bounds if present
+                        if (dataList.length > 1) {
+                            return dataList;
+                        }
+                        startDate = new Date(now);
+                        startDate.setDate(startDate.getDate() - 29);
+                        endDate = new Date(now);
+                    }
+                }
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(0, 0, 0, 0);
+
+                const dataMap = {};
+                dataList.forEach(item => {
+                    if (item.date) {
+                        dataMap[item.date] = (item.revenue !== undefined) ? item.revenue : (item.count !== undefined ? item.count : 0);
+                    }
+                });
+
+                const result = [];
+                let cur = new Date(startDate);
+                while (cur <= endDate) {
+                    const y = cur.getFullYear();
+                    const m = String(cur.getMonth() + 1).padStart(2, '0');
+                    const d = String(cur.getDate()).padStart(2, '0');
+                    const dateStr = `${y}-${m}-${d}`;
+                    result.push({
+                        date: dateStr,
+                        revenue: dataMap[dateStr] !== undefined ? dataMap[dateStr] : 0,
+                        count: dataMap[dateStr] !== undefined ? dataMap[dateStr] : 0
+                    });
+                    cur.setDate(cur.getDate() + 1);
+                }
+                return result;
+            }
+
+            window.loadDashboardStats = async function (params = { range: '7d' }) {
+                currentFilterParams = params;
                 const loader = document.getElementById('statsLoader');
                 if (loader) loader.style.display = 'inline-block';
 
@@ -452,14 +544,18 @@
                         document.getElementById('stat-customers').innerText = (data.summary.customers || 0).toLocaleString();
                     }
 
+                    // Continuous Zero-Filled Data series
+                    const fullRevenue = ensureContinuousDailyData(data.dailyRevenue || [], currentFilterParams);
+                    const fullNewUsers = ensureContinuousDailyData(data.newUsers || [], currentFilterParams);
+
                     // 2. Update Revenue Chart
-                    updateRevenueChart(data.dailyRevenue || []);
+                    updateRevenueChart(fullRevenue);
 
                     // 3. Update Order Status Chart
                     updateOrderStatusChart(data.orderStatus || []);
 
                     // 4. Update New Users Chart
-                    updateNewUsersChart(data.newUsers || []);
+                    updateNewUsersChart(fullNewUsers);
 
                 } catch (error) {
                     console.error("Failed to fetch dashboard stats:", error);
@@ -478,8 +574,17 @@
                     return;
                 }
 
-                const labels = dailyRevenue.map(item => item.date);
+                const rawDates = dailyRevenue.map(item => item.date);
+                const labels = dailyRevenue.map(item => {
+                    if (item.date && item.date.length === 10) {
+                        const p = item.date.split('-');
+                        return `${p[2]}/${p[1]}`;
+                    }
+                    return item.date;
+                });
                 const values = dailyRevenue.map(item => item.revenue);
+                const pointRadii = values.map(v => v > 0 ? 5 : 0);
+                const tickLimit = (dailyRevenue.length > 15) ? 8 : (dailyRevenue.length > 8 ? 7 : dailyRevenue.length);
 
                 if (noDataNotice) {
                     noDataNotice.style.display = (dailyRevenue.length === 0) ? 'block' : 'none';
@@ -488,12 +593,27 @@
                 if (revenueChartInstance) {
                     revenueChartInstance.data.labels = labels;
                     revenueChartInstance.data.datasets[0].data = values;
+                    revenueChartInstance.data.datasets[0].pointRadius = pointRadii;
+                    revenueChartInstance.options.scales.x.ticks.maxTicksLimit = tickLimit;
+                    revenueChartInstance.options.scales.x.ticks.maxRotation = 0;
+                    revenueChartInstance.options.scales.x.ticks.minRotation = 0;
+                    revenueChartInstance.options.interaction = { mode: 'index', intersect: false };
+                    revenueChartInstance.options.plugins.tooltip.callbacks = {
+                        title: (tooltipItems) => {
+                            const idx = tooltipItems[0].dataIndex;
+                            return '📅 Ngày: ' + (rawDates[idx] || tooltipItems[0].label);
+                        },
+                        label: (context) => {
+                            return '💰 Doanh thu: ' + currencyFormatter.format(context.parsed.y || 0);
+                        }
+                    };
                     revenueChartInstance.update();
                 } else {
                     const context2d = ctx.getContext('2d');
-                    let gradient = context2d.createLinearGradient(0, 0, 0, 400);
-                    gradient.addColorStop(0, 'rgba(0, 102, 204, 0.3)');
-                    gradient.addColorStop(1, 'rgba(0, 102, 204, 0.02)');
+                    let gradient = context2d.createLinearGradient(0, 0, 0, 360);
+                    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.25)');
+                    gradient.addColorStop(0.65, 'rgba(37, 99, 235, 0.05)');
+                    gradient.addColorStop(1, 'rgba(37, 99, 235, 0.00)');
 
                     revenueChartInstance = new Chart(context2d, {
                         type: 'line',
@@ -502,24 +622,85 @@
                             datasets: [{
                                 label: 'Doanh Thu (VNĐ)',
                                 data: values,
-                                borderColor: '#0066CC',
+                                borderColor: '#2563eb',
                                 backgroundColor: gradient,
-                                borderWidth: 3,
-                                pointBackgroundColor: '#fff',
-                                pointBorderColor: '#0066CC',
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
+                                borderWidth: 2.5,
+                                pointBackgroundColor: '#ffffff',
+                                pointBorderColor: '#2563eb',
+                                pointBorderWidth: 2.5,
+                                pointRadius: pointRadii,
+                                pointHoverRadius: 7,
+                                pointHoverBackgroundColor: '#2563eb',
+                                pointHoverBorderColor: '#ffffff',
+                                pointHoverBorderWidth: 2.5,
                                 fill: true,
-                                tension: 0.4
+                                tension: 0.35
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                                    titleColor: '#94a3b8',
+                                    titleFont: { size: 12, weight: '500' },
+                                    bodyColor: '#ffffff',
+                                    bodyFont: { size: 13, weight: '700' },
+                                    padding: { top: 8, bottom: 8, left: 12, right: 12 },
+                                    cornerRadius: 8,
+                                    displayColors: false,
+                                    borderColor: 'rgba(255, 255, 255, 0.12)',
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        title: (tooltipItems) => {
+                                            const idx = tooltipItems[0].dataIndex;
+                                            return '📅 Ngày: ' + (rawDates[idx] || tooltipItems[0].label);
+                                        },
+                                        label: (context) => {
+                                            return '💰 Doanh thu: ' + currencyFormatter.format(context.parsed.y || 0);
+                                        }
+                                    }
+                                }
+                            },
                             scales: {
-                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b' } },
-                                x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(226, 232, 240, 0.7)',
+                                        borderDash: [4, 4],
+                                        drawBorder: false
+                                    },
+                                    border: { display: false },
+                                    ticks: {
+                                        color: '#64748b',
+                                        font: { size: 11, weight: '500' },
+                                        padding: 8,
+                                        callback: (value) => {
+                                            if (value >= 1000000000) return (value / 1000000000).toLocaleString() + 'B';
+                                            if (value >= 1000000) return (value / 1000000).toLocaleString() + 'M';
+                                            if (value >= 1000) return (value / 1000).toLocaleString() + 'K';
+                                            return value;
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    border: { display: false },
+                                    ticks: {
+                                        color: '#64748b',
+                                        font: { size: 11, weight: '500' },
+                                        maxRotation: 0,
+                                        minRotation: 0,
+                                        autoSkip: true,
+                                        maxTicksLimit: tickLimit
+                                    }
+                                }
                             }
                         }
                     });
@@ -538,7 +719,7 @@
 
                 const labels = orderStatus.map(item => statusLabels[item.status] || item.status);
                 const values = orderStatus.map(item => item.count);
-                const bgColors = orderStatus.map(item => statusColors[item.status] || '#888');
+                const bgColors = orderStatus.map(item => statusColors[item.status] || '#94a3b8');
 
                 if (noDataNotice) {
                     noDataNotice.style.display = (orderStatus.length === 0) ? 'block' : 'none';
@@ -548,6 +729,9 @@
                     orderStatusChartInstance.data.labels = labels.length > 0 ? labels : ['Chưa có dữ liệu'];
                     orderStatusChartInstance.data.datasets[0].data = values.length > 0 ? values : [0];
                     orderStatusChartInstance.data.datasets[0].backgroundColor = bgColors.length > 0 ? bgColors : ['#e2e8f0'];
+                    orderStatusChartInstance.data.datasets[0].borderColor = '#ffffff';
+                    orderStatusChartInstance.data.datasets[0].borderWidth = 2;
+                    orderStatusChartInstance.data.datasets[0].hoverOffset = 6;
                     orderStatusChartInstance.update();
                 } else {
                     orderStatusChartInstance = new Chart(ctx, {
@@ -558,16 +742,59 @@
                             datasets: [{
                                 data: values.length > 0 ? values : [0],
                                 backgroundColor: bgColors.length > 0 ? bgColors : ['#e2e8f0'],
-                                borderWidth: 0
+                                borderColor: '#ffffff',
+                                borderWidth: 2,
+                                hoverOffset: 6
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            cutout: '70%',
+                            cutout: '68%',
                             plugins: {
-                                legend: { position: 'right', labels: { color: '#475569', boxWidth: 12, padding: 12 } },
-                                datalabels: { color: '#fff', font: { weight: 'bold', size: 13 }, formatter: val => val > 0 ? val : '' }
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        color: '#334155',
+                                        font: { family: "'Outfit', 'Segoe UI', sans-serif", size: 12, weight: '500' },
+                                        boxWidth: 12,
+                                        boxHeight: 12,
+                                        borderRadius: 3,
+                                        useBorderRadius: true,
+                                        padding: 12
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                                    titleColor: '#94a3b8',
+                                    titleFont: { size: 12, weight: '500' },
+                                    bodyColor: '#ffffff',
+                                    bodyFont: { size: 13, weight: '700' },
+                                    padding: { top: 8, bottom: 8, left: 12, right: 12 },
+                                    cornerRadius: 8,
+                                    displayColors: true,
+                                    borderColor: 'rgba(255, 255, 255, 0.12)',
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        label: function (context) {
+                                            const val = context.parsed || 0;
+                                            const dataset = context.dataset.data;
+                                            const total = dataset.reduce((a, b) => a + b, 0);
+                                            const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                            return ` Số lượng: ${val} đơn (${pct}%)`;
+                                        }
+                                    }
+                                },
+                                datalabels: {
+                                    color: '#ffffff',
+                                    font: { family: "'Outfit', sans-serif", weight: '700', size: 11 },
+                                    formatter: (val, ctx) => {
+                                        const dataset = ctx.dataset.data;
+                                        const total = dataset.reduce((a, b) => a + b, 0);
+                                        const pct = total > 0 ? (val / total) * 100 : 0;
+                                        return pct >= 6 ? val : '';
+                                    }
+                                }
                             }
                         }
                     });
@@ -584,8 +811,16 @@
                     return;
                 }
 
-                const labels = newUsers.map(item => item.date);
+                const rawDates = newUsers.map(item => item.date);
+                const labels = newUsers.map(item => {
+                    if (item.date && item.date.length === 10) {
+                        const p = item.date.split('-');
+                        return `${p[2]}/${p[1]}`;
+                    }
+                    return item.date;
+                });
                 const values = newUsers.map(item => item.count);
+                const tickLimit = (newUsers.length > 15) ? 8 : (newUsers.length > 8 ? 7 : newUsers.length);
 
                 if (noDataNotice) {
                     noDataNotice.style.display = (newUsers.length === 0) ? 'block' : 'none';
@@ -594,6 +829,19 @@
                 if (newUsersChartInstance) {
                     newUsersChartInstance.data.labels = labels;
                     newUsersChartInstance.data.datasets[0].data = values;
+                    newUsersChartInstance.options.scales.x.ticks.maxTicksLimit = tickLimit;
+                    newUsersChartInstance.options.scales.x.ticks.maxRotation = 0;
+                    newUsersChartInstance.options.scales.x.ticks.minRotation = 0;
+                    newUsersChartInstance.options.interaction = { mode: 'index', intersect: false };
+                    newUsersChartInstance.options.plugins.tooltip.callbacks = {
+                        title: (tooltipItems) => {
+                            const idx = tooltipItems[0].dataIndex;
+                            return '📅 Ngày: ' + (rawDates[idx] || tooltipItems[0].label);
+                        },
+                        label: (context) => {
+                            return '👤 Người dùng mới: ' + (context.parsed.y || 0) + ' người';
+                        }
+                    };
                     newUsersChartInstance.update();
                 } else {
                     newUsersChartInstance = new Chart(ctx, {
@@ -603,17 +851,65 @@
                             datasets: [{
                                 label: 'Người Dùng Mới',
                                 data: values,
-                                backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                                borderRadius: 4
+                                backgroundColor: 'rgba(37, 99, 235, 0.85)',
+                                hoverBackgroundColor: '#1d4ed8',
+                                borderRadius: 6
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                                    titleColor: '#94a3b8',
+                                    titleFont: { size: 12, weight: '500' },
+                                    bodyColor: '#ffffff',
+                                    bodyFont: { size: 13, weight: '700' },
+                                    padding: { top: 8, bottom: 8, left: 12, right: 12 },
+                                    cornerRadius: 8,
+                                    displayColors: false,
+                                    borderColor: 'rgba(255, 255, 255, 0.12)',
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        title: (tooltipItems) => {
+                                            const idx = tooltipItems[0].dataIndex;
+                                            return '📅 Ngày: ' + (rawDates[idx] || tooltipItems[0].label);
+                                        },
+                                        label: (context) => {
+                                            return '👤 Người dùng mới: ' + (context.parsed.y || 0) + ' người';
+                                        }
+                                    }
+                                }
+                            },
                             scales: {
-                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b', stepSize: 1 } },
-                                x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(226, 232, 240, 0.7)',
+                                        borderDash: [4, 4],
+                                        drawBorder: false
+                                    },
+                                    border: { display: false },
+                                    ticks: { color: '#64748b', font: { size: 11, weight: '500' }, stepSize: 1 }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    border: { display: false },
+                                    ticks: {
+                                        color: '#64748b',
+                                        font: { size: 11, weight: '500' },
+                                        maxRotation: 0,
+                                        minRotation: 0,
+                                        autoSkip: true,
+                                        maxTicksLimit: tickLimit
+                                    }
+                                }
                             }
                         }
                     });

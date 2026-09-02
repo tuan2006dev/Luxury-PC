@@ -10,8 +10,8 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link data-pjax-track="true" rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/products.css}" />
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/products.css}" />
 </head>
 
 <body>
@@ -71,12 +71,15 @@
                             placeholder="VD: 54990000">
                     </div>
                     <div class="input-group">
+                        <label><span>Số Lượng Tồn Kho</span> *</label>
+                        <input autocomplete="off" type="number" th:field="*{stock}" id="stock" required min="0" max="200"
+                            placeholder="VD: 50">
+                    </div>
+                    <div class="input-group full">
                         <label><span>Danh Mục</span> *</label>
                         <select th:field="*{category.id}" required>
-                            <option value="">-- Chọn danh mục --
-                            </option>
-                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">VGA
-                            </option>
+                            <option value="">-- Chọn danh mục --</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">VGA</option>
                         </select>
                     </div>
                     <div class="input-group full">
@@ -116,18 +119,14 @@
                         <input autocomplete="off" type="text" id="imageUrl" th:field="*{image}"
                             placeholder="VD: https://example.com/hinh-anh.jpg">
                     </div>
-                    <!-- <div class="input-group">
-                        <label>Số lượng kho</label>
-                        <input autocomplete="off" type="number" th:field="*{stock}" min="0">
-                    </div> -->
-                    <div class="input-group full" th:if="${product.image != null}">
+                    <div class="input-group full" id="currentImageWrapper" th:style="${product.image != null and !product.image.isEmpty()} ? '' : 'display: none;'">
                         <label>Ảnh hiện tại:</label>
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <img th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}"
+                            <img id="currentImagePreview" th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}"
                                 th:alt="${product.name}"
                                 onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';"
                                 style="width:100px; height:100px; object-fit:contain; border:1px solid var(--gold); border-radius:4px; padding:2px; background:#fff;">
-                            <span th:text="${product.image}" style="font-size:0.8rem; color:var(--muted);"></span>
+                            <span id="currentImageName" th:text="${product.image}" style="font-size:0.8rem; color:var(--muted);"></span>
                         </div>
                     </div>
                 </div>

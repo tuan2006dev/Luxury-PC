@@ -64,9 +64,28 @@ body.sidebar-collapsed .main-content {
 
 .table-wrapper {
         width: 100% !important;
-        max-height: 58vh !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        max-height: calc(100vh - 260px) !important;
         overflow-x: auto !important;
         overflow-y: auto !important;
+}
+
+.admin-pagination-wrapper {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 0 0 0 !important;
+        margin-top: auto !important;
+        background: #ffffff !important;
+        border-top: 1px solid #e2e8f0 !important;
+        box-sizing: border-box !important;
+        flex-shrink: 0 !important;
+        width: 100% !important;
+        position: relative !important;
+        z-index: 30 !important;
 }
 
 .table-h {
@@ -139,47 +158,86 @@ body.sidebar-collapsed .main-content {
         white-space: nowrap !important;
 }
 
-.badge-pending,
-.badge-cho_xac_nhan_thanh_toan,
-.badge-cho_hoan_tien {
+/* Distinct Status Badges */
+.badge-pending {
         background: #fef3c7 !important;
         color: #d97706 !important;
         border: 1px solid #fde68a !important;
 }
 
-.badge-completed,
+.badge-cho_xac_nhan_thanh_toan {
+        background: #ffedd5 !important;
+        color: #ea580c !important;
+        border: 1px solid #fed7aa !important;
+}
+
 .badge-da_thanh_toan,
-.badge-hoan_thanh {
-        background: #dcfce7 !important;
-        color: #16a34a !important;
-        border: 1px solid #bbf7d0 !important;
-}
-
-.badge-shipping,
-.badge-da_hoan_tien {
-        background: #e0f2fe !important;
-        color: #0284c7 !important;
-        border: 1px solid #bae6fd !important;
-}
-
-.badge-cancelled,
-.badge-thu_hoi,
-.badge-da_huy {
-        background: #fee2e2 !important;
-        color: #dc2626 !important;
-        border: 1px solid #fca5a5 !important;
-}
-
 .badge-paid {
         background: #f3e8ff !important;
         color: #7c3aed !important;
         border: 1px solid #ddd6fe !important;
 }
 
+.badge-waiting_driver {
+        background: #cffafe !important;
+        color: #0891b2 !important;
+        border: 1px solid #a5f3fc !important;
+}
+
+.badge-driver_assigned {
+        background: #e0e7ff !important;
+        color: #4338ca !important;
+        border: 1px solid #c7d2fe !important;
+}
+
+.badge-picked_up {
+        background: #dbeafe !important;
+        color: #2563eb !important;
+        border: 1px solid #bfdbfe !important;
+}
+
+.badge-shipping {
+        background: #e0f2fe !important;
+        color: #0284c7 !important;
+        border: 1px solid #bae6fd !important;
+}
+
+.badge-completed,
+.badge-hoan_thanh {
+        background: #dcfce7 !important;
+        color: #16a34a !important;
+        border: 1px solid #bbf7d0 !important;
+}
+
 .badge-yeu_cau_hoan_tien {
-        background: #fff7ed !important;
-        color: #c2410c !important;
-        border: 1px solid #ffedd5 !important;
+        background: #fef9c3 !important;
+        color: #ca8a04 !important;
+        border: 1px solid #fef08a !important;
+}
+
+.badge-cho_hoan_tien {
+        background: #fef3c7 !important;
+        color: #b45309 !important;
+        border: 1px solid #fcd34d !important;
+}
+
+.badge-da_hoan_tien {
+        background: #ccfbf1 !important;
+        color: #0d9488 !important;
+        border: 1px solid #99f6e4 !important;
+}
+
+.badge-thu_hoi {
+        background: #fce7f3 !important;
+        color: #db2777 !important;
+        border: 1px solid #fbcfe8 !important;
+}
+
+.badge-cancelled,
+.badge-da_huy {
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+        border: 1px solid #fca5a5 !important;
 }
 
 /* Payment Chip */
@@ -251,20 +309,22 @@ button.update-btn:hover {
         font-weight: 600 !important;
         font-size: 0.78rem !important;
         white-space: nowrap !important;
-        padding: 0.3rem 0.6rem !important;
+        padding: 0.35rem 0.65rem !important;
         background: #eff6ff !important;
         border: 1px solid #bfdbfe !important;
         border-radius: 6px !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 0.2rem !important;
+        gap: 0.25rem !important;
         list-style: none !important;
         outline: none !important;
+        user-select: none !important;
         transition: all 0.2s ease !important;
 }
 
 .action-menu summary:hover {
         background: #dbeafe !important;
+        border-color: #93c5fd !important;
 }
 
 .action-menu summary::-webkit-details-marker {
@@ -276,29 +336,38 @@ button.update-btn:hover {
         font-size: 0.85em !important;
 }
 
-.action-menu {
-        position: relative !important;
-        display: inline-block !important;
+.action-menu[open] {
+        z-index: 110 !important;
 }
 
-.action-menu[open] {
-        z-index: 9999 !important;
+.action-menu[open] summary {
+        background: #0066CC !important;
+        color: #ffffff !important;
+        border-color: #0052a3 !important;
 }
 
 .action-panel {
         display: grid !important;
-        gap: .65rem !important;
+        gap: .55rem !important;
         margin-top: .4rem !important;
-        padding: .85rem !important;
+        padding: .75rem !important;
         background: #ffffff !important;
         border: 1px solid #cbd5e1 !important;
         position: absolute !important;
         right: 0 !important;
         top: 100% !important;
-        z-index: 99999 !important;
-        min-width: 230px !important;
-        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.25), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        z-index: 120 !important;
+        min-width: 220px !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
         border-radius: 8px !important;
+}
+
+.admin-table tbody tr:nth-last-child(-n+2) .action-panel {
+        top: auto !important;
+        bottom: 100% !important;
+        margin-top: 0 !important;
+        margin-bottom: .4rem !important;
+        box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.2), 0 -4px 6px -2px rgba(0, 0, 0, 0.05) !important;
 }
 
 .action-form {
@@ -379,6 +448,7 @@ button.update-btn:hover {
                 opacity: 0;
                 transform: scale(0.96);
         }
+
         to {
                 opacity: 1;
                 transform: scale(1);
@@ -654,9 +724,12 @@ button.update-btn:hover {
         body * {
                 visibility: hidden;
         }
-        #orderDetailModal, #orderDetailModal * {
+
+        #orderDetailModal,
+        #orderDetailModal * {
                 visibility: visible;
         }
+
         #orderDetailModal {
                 position: absolute !important;
                 left: 0 !important;
@@ -666,12 +739,14 @@ button.update-btn:hover {
                 background: white !important;
                 padding: 0 !important;
         }
+
         .order-modal-dialog {
                 box-shadow: none !important;
                 border: none !important;
                 max-width: 100% !important;
                 max-height: none !important;
         }
+
         .order-modal-header button,
         .order-modal-footer {
                 display: none !important;

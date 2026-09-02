@@ -392,6 +392,59 @@
         }
     }
 
+    function showAiTyping() {
+        removeAiTyping();
+        const typingEl = document.createElement('div');
+        typingEl.id = 'socket-chat-ai-typing';
+        typingEl.className = 'socket-chat-msg bot-msg';
+        typingEl.style.cssText = 'background: #f1f5f9; color: #475569; border-radius: 12px; padding: 8px 12px; font-size: 0.85rem; font-style: italic; display: inline-flex; align-items: center; gap: 6px; width: fit-content; margin: 4px 0;';
+        typingEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="color: #0066cc;"></i> Luxury Bot 🤖 đang soạn tin...`;
+        messagesDiv.appendChild(typingEl);
+        scrollToBottom();
+    }
+
+    function removeAiTyping() {
+        const el = document.getElementById('socket-chat-ai-typing');
+        if (el) el.remove();
+    }
+
+    function appendSystemMessage(text) {
+        const msgEl = document.createElement('div');
+        msgEl.className = 'socket-chat-msg system-msg';
+        msgEl.textContent = text;
+        messagesDiv.appendChild(msgEl);
+        scrollToBottom();
+    }
+
+    function appendMessage(sender, text, isOutgoing = false) {
+        removeAiTyping();
+        const msgEl = document.createElement('div');
+        msgEl.className = `socket-chat-msg ${isOutgoing ? 'user-msg' : 'bot-msg'}`;
+        
+        const senderEl = document.createElement('div');
+        senderEl.className = 'sender-name';
+        senderEl.textContent = sender;
+        
+        const contentEl = document.createElement('div');
+        contentEl.className = 'content';
+        contentEl.textContent = text;
+        
+        const timeEl = document.createElement('div');
+        timeEl.className = 'time';
+        timeEl.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        msgEl.appendChild(senderEl);
+        msgEl.appendChild(contentEl);
+        msgEl.appendChild(timeEl);
+        
+        messagesDiv.appendChild(msgEl);
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
     // Connect WebSocket
     function connectWebSocket() {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -424,19 +477,20 @@
                 if (data.type === 'SYSTEM') {
                     if (data.event === 'ADMIN_JOINED') {
                         adminJoined = true;
+                        removeAiTyping();
                         stopWaitingTimer();
                         appendSystemMessage(data.content || `Nhân viên ${data.adminName || 'hỗ trợ'} đã tham gia cuộc trò chuyện.`);
                     } else if (data.event === 'TICKET_CLOSED') {
                         adminJoined = false;
+                        removeAiTyping();
+                        stopWaitingTimer();
                         appendSystemMessage(data.content || 'Cuộc trò chuyện đã được đóng hoàn toàn.');
                         setTimeout(() => {
                             closeChatLocally();
                             if(typeof showToast === 'function') { showToast('Đã kết thúc và đóng cuộc trò chuyện.'); } else { alert('Đã kết thúc và đóng cuộc trò chuyện.'); }
                         }, 2000);
                     } else if (data.event === 'AI_WAITING') {
-                        document.querySelector('.socket-chat-waiting-title').textContent = '🤖 Đang kết nối AI...';
-                        document.getElementById('socketChatWaitingSubtitle').textContent = data.content;
-                        startWaitingTimer();
+                        showAiTyping();
                     } else if (data.content && !data.content.includes('đã tham gia')) {
                         appendSystemMessage(data.content);
                     }
@@ -444,7 +498,7 @@
                 }
 
                 if (data.type === 'AI_REPLY') {
-                    stopWaitingTimer();
+                    removeAiTyping();
                     appendMessage(data.adminName || 'Luxury Bot 🤖', data.content, false);
                     return;
                 }
@@ -456,6 +510,7 @@
                 const content = data.content || data.message || '';
                 
                 if (!isOutgoing) {
+                    removeAiTyping();
                     stopWaitingTimer();
                 }
 
@@ -564,6 +619,10 @@
 
         ws.send(JSON.stringify(msgPayload));
 
+        if (!adminJoined) {
+            showAiTyping();
+        }
+
         // Also persist to DB via REST API if ticket is available
         if (currentTicketId && ticketSystemAvailable) {
             fetch(`/api/tickets/${currentTicketId}/messages`, {
@@ -586,23 +645,41 @@
         msgInput.focus();
     }
     
-    function handleQuickReplyClick(text, isAiReq) {
+    async function handleQuickReplyClick(text, isAiReq) {
         if (text === '🧑‍💻 Gặp nhân viên hỗ trợ') {
             if (adminJoined) {
-                if(typeof showToast === 'function') { showToast('Nhân viên đã tham gia cuộc trò chuyện rồi ạ.'); } else { alert('Nhân viên đã tham gia cuộc trò chuyện rồi ạ.'); }
+                if (typeof showToast === 'function') { showToast('Nhân viên đã tham gia cuộc trò chuyện rồi ạ.'); } else { alert('Nhân viên đã tham gia cuộc trò chuyện rồi ạ.'); }
                 return;
             }
-            if (waitingStateDiv.classList.contains('active') && text === '🧑‍💻 Gặp nhân viên hỗ trợ') {
-                if(typeof showToast === 'function') { showToast('Yêu cầu của bạn đang được kết nối, vui lòng chờ.'); } else { alert('Yêu cầu của bạn đang được kết nối, vui lòng chờ.'); }
+            if (waitingStateDiv.classList.contains('active')) {
+                if (typeof showToast === 'function') { showToast('Yêu cầu của bạn đang được kết nối, vui lòng chờ.'); } else { alert('Yêu cầu của bạn đang được kết nối, vui lòng chờ.'); }
                 return;
             }
+
+            // Đảm bảo Ticket đã được tạo trong hệ thống trước khi gửi yêu cầu gặp nhân viên
+            if (!currentTicketId) {
+                const name = (username || localStorage.getItem('socket_chat_username') || 'Khách hàng').trim();
+                const email = (userEmail || localStorage.getItem('socket_chat_email') || '').trim();
+                const ticketId = await createTicket(name, email);
+                if (ticketId) {
+                    currentTicketId = ticketId;
+                    localStorage.setItem('socket_chat_ticket_id', currentTicketId);
+                    ticketSystemAvailable = true;
+                    if (ticketBar) ticketBar.style.display = 'flex';
+                    if (ticketLabel) ticketLabel.textContent = 'Ticket #' + currentTicketId;
+                    
+                    // Kết nối WebSocket với ticketId mới
+                    connectWebSocket();
+                }
+            }
+
             document.querySelector('.socket-chat-waiting-title').textContent = '🟡 Đang tìm nhân viên...';
             document.getElementById('socketChatWaitingSubtitle').textContent = 'Vui lòng chờ trong giây lát.';
             startWaitingTimer();
             appendSystemMessage('Đã gửi yêu cầu đến nhân viên hỗ trợ. Vui lòng chờ trong giây lát...');
         }
         
-        // Send as normal message
+        // Gửi tin nhắn qua WebSocket
         if (!ws || ws.readyState !== WebSocket.OPEN) {
             appendSystemMessage('Đang kết nối lại...');
             connectWebSocket();
@@ -613,7 +690,7 @@
                 senderName: username,
                 content: text,
                 type: 'CHAT',
-                isAiRequest: adminJoined ? false : isAiReq
+                isAiRequest: (text === '🧑‍💻 Gặp nhân viên hỗ trợ' || adminJoined) ? false : isAiReq
             };
             ws.send(JSON.stringify(msgPayload));
             
@@ -628,8 +705,6 @@
                     })
                 }).catch(() => {});
             }
-            
-            // Removed redundant mock AI trigger
         }
     }
 

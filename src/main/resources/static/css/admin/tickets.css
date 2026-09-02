@@ -69,6 +69,11 @@
     flex-wrap: wrap;
 }
 
+.filter-bar .search-bar-container form {
+    max-width: 700px !important;
+    width: 100% !important;
+}
+
 .filter-tab {
     padding: 0.5rem 1.1rem;
     border-radius: 20px;
@@ -116,9 +121,29 @@
 
 /* ===== TICKETS TABLE ===== */
 .tickets-table-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    padding: 0.75rem 1.15rem 0.5rem 1.15rem !important;
+    box-sizing: border-box !important;
+}
+
+.tickets-list-wrapper {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    padding-right: 4px !important;
+    padding-bottom: 0.5rem !important;
 }
 
 .empty-state {
@@ -147,29 +172,35 @@
 
 /* ===== TICKET ROW ===== */
 .ticket-row {
-    background: var(--dark);
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: border-color 0.2s;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
 }
 
 .ticket-row:hover {
-    border-color: #cbd5e1;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
 }
 
 .ticket-row-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.2rem;
-    cursor: pointer;
-    user-select: none;
-    gap: 1rem;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0.85rem 1.15rem !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    gap: 1rem !important;
+    background: #ffffff !important;
 }
 
 .ticket-row-header:hover {
-    background: #ffffff;
+    background: #f8fafc !important;
 }
 
 .ticket-left {
@@ -300,16 +331,19 @@
 
 /* ===== TICKET DETAIL PANEL ===== */
 .ticket-detail {
-    border-top: 1px solid #e2e8f0;
-    padding: 1.5rem;
-    background: #ffffff;
-    animation: fadeDown 0.25s ease;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 1.25rem !important;
+    background: #ffffff !important;
+    border-radius: 0 0 8px 8px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    animation: fadeDown 0.2s ease !important;
 }
 
 @keyframes fadeDown {
     from {
         opacity: 0;
-        transform: translateY(-8px);
+        transform: translateY(-6px);
     }
 
     to {
@@ -319,13 +353,14 @@
 }
 
 .ticket-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.5rem !important;
+    align-items: start !important;
 }
 
 .detail-section {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem !important;
 }
 
 .detail-section-title {
@@ -510,23 +545,24 @@
 }
 
 .admin-chat-messages {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    max-height: 250px;
-    overflow-y: auto;
-    padding-right: 0.5rem;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    height: 250px !important;
+    max-height: 250px !important;
+    overflow-y: auto !important;
+    padding-right: 0.5rem !important;
     scrollbar-width: thin;
-    scrollbar-color: rgba(201, 168, 76, 0.2) transparent;
+    scrollbar-color: #cbd5e1 transparent;
 }
 
 .admin-chat-messages::-webkit-scrollbar {
-    width: 4px;
+    width: 5px;
 }
 
 .admin-chat-messages::-webkit-scrollbar-thumb {
-    background: rgba(201, 168, 76, 0.2);
-    border-radius: 2px;
+    background: #cbd5e1;
+    border-radius: 4px;
 }
 
 .chat-bubble-wrapper {

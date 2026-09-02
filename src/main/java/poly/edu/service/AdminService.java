@@ -120,17 +120,9 @@ public class AdminService {
     @Transactional
     public void updateOrderStatus(Integer orderId, String status) {
         Order order = getOrderById(orderId);
-        if (order != null && isVietQrPayment(order)
-                && isStatusValue(status, "PAID", "DA_THANH_TOAN", "CHO_XAC_NHAN_THANH_TOAN")) {
-            throw new VietQrManualConfirmationException();
-        }
-        if (order != null && isWaitingVietQr(order)
-                && !isStatusValue(status, "DA_HUY", "CANCELLED")) {
-            throw new VietQrManualConfirmationException();
-        }
         if (order != null && Arrays.asList(
-                "PENDING", "PROCESSING", "DANG_XU_LY", "SHIPPING", "DANG_GIAO",
-                "PAID", "COMPLETED", "HOAN_THANH", "DA_HUY", "CANCELLED").contains(status)) {
+                "PENDING", "CHO_THANH_TOAN", "CHO_XAC_NHAN_THANH_TOAN", "PROCESSING", "DANG_XU_LY", "SHIPPING", "DANG_GIAO",
+                "PAID", "DA_THANH_TOAN", "COMPLETED", "HOAN_THANH", "DA_HUY", "CANCELLED").contains(status)) {
             if (Objects.equals(order.getStatus(), status)) {
                 return;
             }
@@ -138,7 +130,6 @@ public class AdminService {
                 throw new IllegalStateException("Chuyển trạng thái đơn hàng không hợp lệ.");
             }
 
-            
             String oldStatus = order.getStatus();
             order.setStatus(status);
             orderDAO.save(order);
@@ -148,8 +139,8 @@ public class AdminService {
             if (order.getVoucherCode() != null && order.getUser() != null) {
                 if ("CANCELLED".equals(status) || "DA_HUY".equals(status)) {
                     voucherService.restoreVoucher(order.getVoucherCode(), order.getUser().getId());
-                } else if ("PAID".equals(status) || "COMPLETED".equals(status) || "SHIPPING".equals(status)) {
-                    if ("PENDING".equals(oldStatus) || "CHO_XAC_NHAN_THANH_TOAN".equals(oldStatus)) {
+                } else if ("PAID".equals(status) || "DA_THANH_TOAN".equals(status) || "COMPLETED".equals(status) || "HOAN_THANH".equals(status) || "SHIPPING".equals(status) || "DANG_GIAO".equals(status)) {
+                    if ("PENDING".equals(oldStatus) || "CHO_XAC_NHAN_THANH_TOAN".equals(oldStatus) || "CHO_THANH_TOAN".equals(oldStatus)) {
                         voucherService.consumeVoucher(order.getVoucherCode(), order.getUser().getId());
                     }
                 }
@@ -231,7 +222,7 @@ public class AdminService {
             case "PROCESSING", "DANG_XU_LY" ->
                     isStatusValue(nextStatus, "SHIPPING", "DANG_GIAO", "DA_HUY", "CANCELLED");
             case "SHIPPING", "DANG_GIAO" ->
-                    isStatusValue(nextStatus, "PAID", "DA_HUY", "CANCELLED");
+                    isStatusValue(nextStatus, "PAID", "DA_THANH_TOAN", "DA_HUY", "CANCELLED");
             case "PAID", "DA_THANH_TOAN" ->
                     isStatusValue(nextStatus, "COMPLETED", "HOAN_THANH", "DA_HUY", "CANCELLED");
             default -> false;
@@ -241,7 +232,7 @@ public class AdminService {
     private boolean isAllowedPrepaidTransition(String currentStatus, String nextStatus) {
         return switch (currentStatus) {
             case "PENDING", "CHO_THANH_TOAN", "CHO_XAC_NHAN_THANH_TOAN" ->
-                    isStatusValue(nextStatus, "DA_HUY", "CANCELLED");
+                    isStatusValue(nextStatus, "PAID", "DA_THANH_TOAN", "DA_HUY", "CANCELLED");
             case "DA_THANH_TOAN", "PAID" ->
                     isStatusValue(nextStatus, "PROCESSING", "DANG_XU_LY", "DA_HUY", "CANCELLED");
             case "PROCESSING", "DANG_XU_LY" ->
@@ -344,16 +335,25 @@ public class AdminService {
                 .build();
 
         List<Map<String, Object>> rawDailyRevenue = orderDAO.getDailyRevenueBetween(startDate, endDate);
-        List<RevenueDTO> dailyRevenue = new ArrayList<>();
+        Map<String, Double> revenueMap = new HashMap<>();
         if (rawDailyRevenue != null) {
             for (Map<String, Object> map : rawDailyRevenue) {
                 Object d = getMapValue(map, "date", "DATE");
                 Object r = getMapValue(map, "revenue", "REVENUE");
                 String dateStr = toStr(d);
                 if (dateStr != null && !dateStr.isBlank()) {
-                    dailyRevenue.add(new RevenueDTO(dateStr, toDouble(r)));
+                    revenueMap.put(dateStr, toDouble(r));
                 }
             }
+        }
+
+        List<RevenueDTO> dailyRevenue = new ArrayList<>();
+        java.time.format.DateTimeFormatter dtf = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate cur = start;
+        while (!cur.isAfter(end)) {
+            String curDateStr = cur.format(dtf);
+            dailyRevenue.add(new RevenueDTO(curDateStr, revenueMap.getOrDefault(curDateStr, 0.0)));
+            cur = cur.plusDays(1);
         }
 
         List<Map<String, Object>> rawOrderStatus = orderDAO.getOrderStatusBetween(startDate, endDate);
@@ -370,16 +370,24 @@ public class AdminService {
         }
 
         List<Map<String, Object>> rawNewUsers = userRepository.getNewUsersBetween(startDate, endDate);
-        List<UserGrowthDTO> newUsers = new ArrayList<>();
+        Map<String, Long> newUsersMap = new HashMap<>();
         if (rawNewUsers != null) {
             for (Map<String, Object> map : rawNewUsers) {
                 Object d = getMapValue(map, "date", "DATE");
                 Object c = getMapValue(map, "count", "COUNT");
                 String dateStr = toStr(d);
                 if (dateStr != null && !dateStr.isBlank()) {
-                    newUsers.add(new UserGrowthDTO(dateStr, toLong(c)));
+                    newUsersMap.put(dateStr, toLong(c));
                 }
             }
+        }
+
+        List<UserGrowthDTO> newUsers = new ArrayList<>();
+        cur = start;
+        while (!cur.isAfter(end)) {
+            String curDateStr = cur.format(dtf);
+            newUsers.add(new UserGrowthDTO(curDateStr, newUsersMap.getOrDefault(curDateStr, 0L)));
+            cur = cur.plusDays(1);
         }
 
         return DashboardDTO.builder()

@@ -24,9 +24,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class FlashSaleServiceTest {
 
-    @Mock private FlashSaleDAO flashSaleDAO;
-    @Mock private FlashSaleItemDAO flashSaleItemDAO;
-    @Mock private ProductDAO productDAO;
+    @Mock
+    private FlashSaleDAO flashSaleDAO;
+    @Mock
+    private FlashSaleItemDAO flashSaleItemDAO;
+    @Mock
+    private ProductDAO productDAO;
 
     @InjectMocks
     private FlashSaleService flashSaleService;

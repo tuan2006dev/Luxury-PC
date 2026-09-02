@@ -18,7 +18,7 @@ public class ChatMessage {
 
     private String senderName;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String message;
 
     @Temporal(TemporalType.TIMESTAMP)

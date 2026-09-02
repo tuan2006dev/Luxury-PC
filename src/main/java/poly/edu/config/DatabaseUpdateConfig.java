@@ -42,32 +42,15 @@ public class DatabaseUpdateConfig {
                 jdbcTemplate.execute(
                         "IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'banner_image' AND Object_ID = Object_ID(N'flash_sales')) BEGIN ALTER TABLE flash_sales ADD banner_image VARCHAR(500) END");
                 
-                // Remove translation table if any
+                // Remove translation table
                 try {
-                    jdbcTemplate.execute("IF OBJECT_ID('translations', 'U') IS NOT NULL DROP TABLE translations");
+                    jdbcTemplate.execute("DROP TABLE IF EXISTS translations");
                     log.info("[DB] Dropped translations table successfully.");
                 } catch (Exception e) {
                     log.warn("[DB] Could not drop translations table: {}", e.getMessage());
                 }
 
-                // Ensure no legacy text/ntext columns cause JDBC conversion errors
-                String[] textCols = {
-                    "sepay_transactions.raw_payload", "news_categories.description", 
-                    "support_tickets.admin_reply", "support_tickets.build_config", "support_tickets.message",
-                    "tickets.build_config", "tickets.message",
-                    "news.content", "news.summary", "news.meta_description",
-                    "ticket_messages.message", "chat_messages.message"
-                };
-                for (String colRef : textCols) {
-                    try {
-                        String[] parts = colRef.split("\\.");
-                        jdbcTemplate.execute(
-                            "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" + parts[0] + "' AND COLUMN_NAME='" + parts[1] + "' AND DATA_TYPE IN ('text', 'ntext')) " +
-                            "ALTER TABLE " + parts[0] + " ALTER COLUMN " + parts[1] + " NVARCHAR(MAX)");
-                    } catch (Exception ignored) {}
-                }
-
-                log.info("[DB] Schema verified/added successfully for users, user_vouchers and legacy column types.");
+                log.info("[DB] Schema verified/added successfully for users and user_vouchers.");
             } catch (Exception e) {
                 log.warn("[DB] Schema update skipped (columns may already exist): {}", e.getMessage());
             }

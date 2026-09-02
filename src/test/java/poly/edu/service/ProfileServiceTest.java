@@ -57,12 +57,6 @@ public class ProfileServiceTest {
     private ReviewDAO reviewDAO;
     @Mock
     private OrderDAO orderDAO;
-    @Mock
-    private poly.edu.dao.CartDAO cartDAO;
-    @Mock
-    private poly.edu.dao.CartItemDAO cartItemDAO;
-    @Mock
-    private poly.edu.repository.PasswordResetRepository passwordResetRepo;
 
     @InjectMocks
     private ProfileService profileService;
@@ -224,7 +218,7 @@ public class ProfileServiceTest {
         // Given
         when(authentication.getName()).thenReturn("test@luxurypc.com");
         when(userRepository.findByEmail("test@luxurypc.com")).thenReturn(Optional.of(mockUser));
-        when(shippingAddressRepository.findByUser_IdOrderByDefaultShippingDescIdAsc(1)).thenReturn(Collections.emptyList());
+        when(shippingAddressRepository.countByUser_Id(1)).thenReturn(0L);
 
         // When
         profileService.addUserAddress(authentication, "John", "0123456789", "123 Street", "District 1", "City");

@@ -6,8 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Đơn Hàng — Luxury PC</title>
-    <link data-pjax-track="true" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link data-pjax-track="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link data-pjax-track="true"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link data-pjax-track="true" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/orders.css}" />
     <link data-pjax-track="true" rel="stylesheet" th:href="@{/css/admin/admin.css}">
 </head>
@@ -34,7 +36,8 @@
         <div class="table-card">
             <div class="table-h">
                 <h2>Quản Lý Đơn Hàng</h2>
-                <span><span th:text="${totalItems != null ? totalItems : orders.size()}">0</span> <span>đơn hàng</span></span>
+                <span><span th:text="${totalItems != null ? totalItems : orders.size()}">0</span> <span>đơn
+                        hàng</span></span>
             </div>
             <div class="table-wrapper">
                 <table class="admin-table" style="min-width: 1200px !important;">
@@ -56,8 +59,7 @@
                         <tr th:each="o : ${orders}">
                             <td>
                                 <button type="button" class="order-code-btn"
-                                    th:onclick="'openOrderDetailModal(' + ${o.id} + ')'"
-                                    title="Xem chi tiết đơn hàng"
+                                    th:onclick="'openOrderDetailModal(' + ${o.id} + ')'" title="Xem chi tiết đơn hàng"
                                     th:text="${o.orderCode != null ? o.orderCode : 'DH' + o.id}">DH101</button>
                             </td>
                             <td>
@@ -84,7 +86,8 @@
                                     style="font-size:0.72rem; color:#64748b"
                                     th:text="${#numbers.formatDecimal(o.shippingFee, 0, 'COMMA', 0, 'POINT')} + '₫'">
                                     50.000₫</div>
-                                <div th:if="${o.trackingCode != null}" style="font-size:0.7rem; color:#0284c7; font-family:monospace; font-weight:700; margin-top:2px;">
+                                <div th:if="${o.trackingCode != null}"
+                                    style="font-size:0.7rem; color:#0284c7; font-family:monospace; font-weight:700; margin-top:2px;">
                                     <i class="fa-solid fa-truck"></i> <span th:text="${o.trackingCode}">LLM123</span>
                                 </div>
                             </td>
@@ -112,7 +115,8 @@
                                 <div th:if="${o.adminNote != null}" style="white-space: normal !important;">
                                     <span class="note-label"
                                         th:text="${o.adminNote != null and (#strings.startsWith(o.adminNote, '[Staff]') or #strings.contains(#strings.toLowerCase(o.adminNote), 'staff:')) ? 'Staff:' : 'Admin:'}">Admin:</span>
-                                    <span th:text="${#strings.replace(#strings.replace(o.adminNote, '[Staff] ', ''), '[Admin] ', '')}"
+                                    <span
+                                        th:text="${#strings.replace(#strings.replace(o.adminNote, '[Staff] ', ''), '[Admin] ', '')}"
                                         style="white-space: normal !important;">Ghi chú</span>
                                 </div>
                                 <span th:if="${o.refundReason == null and o.adminNote == null}">-</span>
@@ -127,7 +131,7 @@
                                             <i class="fa-solid fa-eye"></i> Xem Chi Tiết Đơn
                                         </button>
 
-                                        <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI'}"
+                                        <span th:if="${o.status == 'DA_HOAN_TIEN' or o.status == 'THU_HOI' or o.status == 'DA_HUY' or o.status == 'CANCELLED'}"
                                             class="admin-note">Đơn đã kết thúc xử lý.</span>
 
                                         <!-- Form tạo vận đơn Lalamove nếu chưa có -->
@@ -136,39 +140,105 @@
                                             th:action="@{/admin/orders/confirm-shipping}" method="post"
                                             class="action-form">
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
-                                            <button type="submit" class="update-btn" style="background:#0284c7; color:#fff;">
+                                            <button type="submit" class="update-btn"
+                                                style="background:#0284c7; color:#fff;">
                                                 <i class="fa-solid fa-truck-fast"></i> Tạo Vận Đơn Lalamove
                                             </button>
                                         </form>
 
                                         <!-- Panel Lalamove Simulator nếu đã có trackingCode -->
-                                        <div th:if="${o.trackingCode != null}" class="lalamove-simulator-box" style="margin-top: 6px; padding: 8px; background: #0f172a; border-radius: 6px; color: #fff; text-align: left;">
-                                            <div style="font-weight: 700; color: #38bdf8; font-size: 0.75rem; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                                        <div th:if="${o.trackingCode != null}" class="lalamove-simulator-box"
+                                            style="margin-top: 6px; padding: 8px; background: #0f172a; border-radius: 6px; color: #fff; text-align: left;">
+                                            <div
+                                                style="font-weight: 700; color: #38bdf8; font-size: 0.75rem; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
                                                 <span><i class="fa-solid fa-truck-fast"></i> Lalamove Simulator</span>
-                                                <small style="color: #94a3b8; font-family: monospace;" th:text="${o.trackingCode}">LLM123</small>
+                                                <small style="color: #94a3b8; font-family: monospace;"
+                                                    th:text="${o.trackingCode}">LLM123</small>
                                             </div>
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px;">
-                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="ASSIGN_DRIVER" style="background:#0284c7; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟦 Driver Accepted</button>
-                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="PICKED_UP" style="background:#eab308; color:#000; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟨 Picked Up</button>
-                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="ON_DELIVERY" style="background:#f97316; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟧 On Delivery</button>
-                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="DELIVERED" style="background:#22c55e; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟩 Delivered</button>
-                                                <button type="button" onclick="sendLalamoveWebhook(this)" th:data-tracking="${o.trackingCode}" data-event="CANCELLED" style="background:#ef4444; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem; grid-column: span 2;">🟥 Cancel Order</button>
+                                            <div
+                                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px;">
+                                                <button type="button" onclick="sendLalamoveWebhook(this)"
+                                                    th:data-tracking="${o.trackingCode}" data-event="ASSIGN_DRIVER"
+                                                    style="background:#0284c7; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟦
+                                                    Driver Accepted</button>
+                                                <button type="button" onclick="sendLalamoveWebhook(this)"
+                                                    th:data-tracking="${o.trackingCode}" data-event="PICKED_UP"
+                                                    style="background:#eab308; color:#000; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟨
+                                                    Picked Up</button>
+                                                <button type="button" onclick="sendLalamoveWebhook(this)"
+                                                    th:data-tracking="${o.trackingCode}" data-event="ON_DELIVERY"
+                                                    style="background:#f97316; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟧
+                                                    On Delivery</button>
+                                                <button type="button" onclick="sendLalamoveWebhook(this)"
+                                                    th:data-tracking="${o.trackingCode}" data-event="DELIVERED"
+                                                    style="background:#22c55e; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem;">🟩
+                                                    Delivered</button>
+                                                <button type="button" onclick="sendLalamoveWebhook(this)"
+                                                    th:data-tracking="${o.trackingCode}" data-event="CANCELLED"
+                                                    style="background:#ef4444; color:#fff; border:none; padding:4px; border-radius:3px; font-weight:600; cursor:pointer; font-size:0.68rem; grid-column: span 2;">🟥
+                                                    Cancel Order</button>
                                             </div>
                                         </div>
 
+                                        <!-- Nút Xác nhận đã thanh toán cho đơn QR/Chờ xác nhận -->
                                         <form novalidate autocomplete="off"
-                                            th:if="${(o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PENDING' or o.status == 'CHO_THANH_TOAN' or o.status == 'CHO_XAC_NHAN_THANH_TOAN')}"
+                                            th:if="${o.status == 'CHO_XAC_NHAN_THANH_TOAN' or o.status == 'PENDING' or o.status == 'CHO_THANH_TOAN'}"
                                             th:action="@{/admin/orders/update-status}" method="post"
                                             class="action-form">
+                                            <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                            <input autocomplete="off" type="hidden" name="status" value="DA_THANH_TOAN">
+                                            <button type="submit" class="update-btn"
+                                                style="background:#16a34a; color:#fff;"
+                                                onclick="return confirm('Xác nhận khách đã thanh toán cho đơn hàng này?')">
+                                                <i class="fa-solid fa-circle-check"></i> Xác Nhận Đã Thanh Toán
+                                            </button>
+                                        </form>
 
+                                        <!-- Nút Chuyển Đang xử lý -->
+                                        <form novalidate autocomplete="off"
+                                            th:if="${o.status == 'DA_THANH_TOAN' or o.status == 'PAID' or o.status == 'PENDING'}"
+                                            th:action="@{/admin/orders/update-status}" method="post"
+                                            class="action-form">
+                                            <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                            <input autocomplete="off" type="hidden" name="status" value="PROCESSING">
+                                            <button type="submit" class="update-btn"
+                                                style="background:#4f46e5; color:#fff;">
+                                                <i class="fa-solid fa-gears"></i> Chuyển Đang Xử Lý
+                                            </button>
+                                        </form>
+
+                                        <!-- Nút Xác nhận hoàn thành đơn hàng -->
+                                        <form novalidate autocomplete="off"
+                                            th:if="${o.status == 'PROCESSING' or o.status == 'SHIPPING' or o.status == 'DA_THANH_TOAN' or o.status == 'PAID'}"
+                                            th:action="@{/admin/orders/update-status}" method="post"
+                                            class="action-form">
+                                            <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
+                                            <input autocomplete="off" type="hidden" name="status" value="COMPLETED">
+                                            <button type="submit" class="update-btn"
+                                                style="background:#059669; color:#fff;"
+                                                onclick="return confirm('Xác nhận hoàn thành đơn hàng này?')">
+                                                <i class="fa-solid fa-clipboard-check"></i> Đánh Dấu Hoàn Thành
+                                            </button>
+                                        </form>
+
+                                        <!-- Nút Hủy Đơn áp dụng cho cả COD và VIETQR khi chưa tạo vận đơn -->
+                                        <form novalidate autocomplete="off"
+                                            th:if="${o.trackingCode == null and (o.status == 'PENDING' or o.status == 'CHO_THANH_TOAN' or o.status == 'CHO_XAC_NHAN_THANH_TOAN')}"
+                                            th:action="@{/admin/orders/update-status}" method="post"
+                                            class="action-form">
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <input autocomplete="off" type="hidden" name="status" value="DA_HUY">
-                                            <button type="submit" class="update-btn">Đã Hủy</button>
+                                            <button type="submit" class="update-btn"
+                                                style="background:#ef4444; color:#fff;"
+                                                onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
+                                                <i class="fa-solid fa-ban"></i> Hủy Đơn
+                                            </button>
                                         </form>
+
+                                        <!-- Các nút quy trình hoàn tiền -->
                                         <form novalidate autocomplete="off" th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}"
                                             th:action="@{/admin/orders/approve-refund}" method="post"
                                             class="action-form">
-
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <input autocomplete="off" type="text" name="note"
                                                 placeholder="Ghi chú duyệt yêu cầu">
@@ -177,7 +247,6 @@
                                         <form novalidate autocomplete="off" th:if="${o.status == 'YEU_CAU_HOAN_TIEN'}"
                                             th:action="@{/admin/orders/reject-refund}" method="post"
                                             class="action-form">
-
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <input autocomplete="off" type="text" name="note" required
                                                 placeholder="Lý do từ chối">
@@ -187,7 +256,6 @@
                                             th:if="${o.paymentMethod == 'VIETQR' and (o.status == 'DA_THANH_TOAN' or o.status == 'PAID')}"
                                             th:action="@{/admin/orders/request-refund}" method="post"
                                             class="action-form">
-
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <input autocomplete="off" type="text" name="note"
                                                 placeholder="Lý do admin tạo hoàn tiền">
@@ -196,47 +264,10 @@
                                         <form novalidate autocomplete="off" th:if="${o.status == 'CHO_HOAN_TIEN'}"
                                             th:action="@{/admin/orders/confirm-refund}" method="post"
                                             class="action-form">
-
                                             <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
                                             <input autocomplete="off" type="text" name="note"
                                                 placeholder="Ghi chú xác nhận hoàn tiền">
                                             <button type="submit" class="update-btn">Xác Nhận Đã Hoàn Tiền</button>
-                                        </form>
-                                        <form novalidate autocomplete="off"
-                                            th:if="${o.status == 'DA_THANH_TOAN' or o.status == 'PAID' or o.status == 'SHIPPING' or o.status == 'COMPLETED' or o.status == 'HOAN_THANH' or o.status == 'YEU_CAU_HOAN_TIEN' or o.status == 'CHO_HOAN_TIEN'}"
-                                            th:action="@{/admin/orders/recall}" method="post" class="action-form">
-
-                                            <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
-                                            <input autocomplete="off" type="text" name="note"
-                                                placeholder="Lý do thu hồi">
-                                            <button type="submit" class="update-btn">Thu Hồi Đơn</button>
-                                        </form>
-                                        <form novalidate autocomplete="off"
-                                            th:if="${(o.paymentMethod == 'COD' and (o.status == 'PENDING' or o.status == 'PROCESSING' or o.status == 'DANG_XU_LY' or o.status == 'SHIPPING' or o.status == 'DANG_GIAO' or o.status == 'PAID' or o.status == 'DA_THANH_TOAN')) or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN' or o.status == 'PROCESSING' or o.status == 'DANG_XU_LY' or o.status == 'SHIPPING' or o.status == 'DANG_GIAO'))}"
-                                            th:action="@{/admin/orders/update-status}" method="post"
-                                            class="action-form">
-
-                                            <input autocomplete="off" type="hidden" name="orderId" th:value="${o.id}">
-                                            <select name="status">
-                                                <option value="PROCESSING"
-                                                    th:if="${(o.paymentMethod == 'COD' and o.status == 'PENDING') or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN'))}">
-                                                    Đang xử lý
-                                                </option>
-                                                <option value="SHIPPING"
-                                                    th:if="${o.status == 'PROCESSING' or o.status == 'DANG_XU_LY'}">Đang
-                                                     giao
-                                                </option>
-                                                <option value="PAID"
-                                                    th:if="${o.paymentMethod == 'COD' and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO')}">
-                                                    Đã thanh toán
-                                                </option>
-                                                <option value="COMPLETED"
-                                                    th:if="${(o.paymentMethod == 'COD' and (o.status == 'PAID' or o.status == 'DA_THANH_TOAN')) or ((o.paymentMethod == 'VIETQR' or o.paymentMethod == 'SEPAY') and (o.status == 'SHIPPING' or o.status == 'DANG_GIAO'))}">
-                                                    Hoàn thành
-                                                </option>
-                                                <option value="DA_HUY">Đã hủy</option>
-                                            </select>
-                                            <button type="submit" class="update-btn">Cập Nhật Trạng Thái</button>
                                         </form>
                                     </div>
                                 </details>
@@ -250,13 +281,15 @@
     </div>
 
     <!-- Order Detail Modal Component -->
-    <div id="orderDetailModal" class="order-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="orderDetailModalTitle">
+    <div id="orderDetailModal" class="order-modal-backdrop" role="dialog" aria-modal="true"
+        aria-labelledby="orderDetailModalTitle">
         <div class="order-modal-dialog">
             <div class="order-modal-header">
                 <h3 id="orderDetailModalTitle">
                     <i class="fa-solid fa-file-invoice" style="color: #0066CC;"></i> <span>Chi Tiết Đơn Hàng</span>
                 </h3>
-                <button type="button" class="order-modal-close" onclick="closeOrderDetailModal()" title="Đóng modal (Esc)">
+                <button type="button" class="order-modal-close" onclick="closeOrderDetailModal()"
+                    title="Đóng modal (Esc)">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>

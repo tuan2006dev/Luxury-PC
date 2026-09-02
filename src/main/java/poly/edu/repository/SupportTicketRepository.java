@@ -26,4 +26,10 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, In
 
     @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.status = 'IN_PROGRESS'")
     long countInProgressTickets();
+
+    @Query("SELECT t FROM SupportTicket t WHERE t.user.id = :userId AND t.status IN ('OPEN', 'IN_PROGRESS') ORDER BY t.createdAt DESC")
+    List<SupportTicket> findActiveTicketsByUserId(Integer userId);
+
+    @Query("SELECT t FROM SupportTicket t WHERE t.customerEmail = :email AND t.status IN ('OPEN', 'IN_PROGRESS') ORDER BY t.createdAt DESC")
+    List<SupportTicket> findActiveTicketsByEmail(String email);
 }

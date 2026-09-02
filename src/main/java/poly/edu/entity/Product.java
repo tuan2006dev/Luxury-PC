@@ -24,7 +24,7 @@ public class Product implements Serializable {
     private Double price;
     private String description;
     private String image;
-    private Integer stock;
+    private Integer stock = 0;
     
     @Column(name = "brand", length = 100)
     private String brand;

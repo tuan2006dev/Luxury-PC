@@ -173,11 +173,7 @@ public class SePayWebhookService {
         if (totalPrice == null || !Double.isFinite(totalPrice) || totalPrice <= 0) {
             throw new IllegalStateException("Order total is invalid");
         }
-        try {
-            return BigDecimal.valueOf(totalPrice).longValueExact();
-        } catch (ArithmeticException exception) {
-            throw new IllegalStateException("Order total is not an exact VND amount", exception);
-        }
+        return Math.round(totalPrice);
     }
 
     private Integer parseOrderId(String paymentCode) {

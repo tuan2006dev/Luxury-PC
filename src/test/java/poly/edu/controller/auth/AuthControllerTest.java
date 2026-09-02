@@ -123,7 +123,7 @@ public class AuthControllerTest {
                 .param("password", "pass123")
                 .param("confirmPassword", "wrongpass"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("/auth/register?mismatch=true*"));
+                .andExpect(redirectedUrl("/auth/register?mismatch=true"));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class AuthControllerTest {
                 .param("password", "pass123")
                 .param("confirmPassword", "pass123"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("/auth/register?invalidOtp=true*"));
+                .andExpect(redirectedUrl("/auth/register?invalidOtp=true"));
     }
 
     @Test

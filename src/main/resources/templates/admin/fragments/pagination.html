@@ -3,6 +3,7 @@
 
 <body>
     <div th:fragment="pagination(baseUrl)" class="admin-pagination-wrapper"
+        style="margin-top: auto; flex-shrink: 0;"
         th:if="${totalItems != null and totalItems > 0}">
         <div class="pagination-info">
             <span>Hiển thị</span>
@@ -12,8 +13,8 @@
             <span>trong tổng số</span>
             <strong th:text="${totalItems}">50</strong>
             <span>bản ghi</span>
-            <span class="page-count-badge"
-                th:text="'(Trang ' + ${currentPage} + ' / ' + ${totalPages} + ')'">(Trang 1 / 5)</span>
+            <span class="page-count-badge" th:text="'(Trang ' + ${currentPage} + ' / ' + ${totalPages} + ')'">(Trang 1 /
+                5)</span>
         </div>
 
         <div class="pagination-btns" th:if="${totalPages > 1}">
@@ -21,12 +22,6 @@
             <a th:href="@{${baseUrl}(page=1, keyword=${keyword}, status=${selectedStatus ?: (filterStatus ?: status)}, star=${selectedStar ?: star}, statusFilter=${statusFilter}, categoryId=${categoryId})}"
                 class="page-btn nav-btn" th:classappend="${currentPage == 1} ? 'disabled' : ''" title="Trang đầu">
                 <i class="fa-solid fa-angles-left"></i>
-            </a>
-
-            <!-- Trang trước -->
-            <a th:href="@{${baseUrl}(page=${currentPage - 1}, keyword=${keyword}, status=${selectedStatus ?: (filterStatus ?: status)}, star=${selectedStar ?: star}, statusFilter=${statusFilter}, categoryId=${categoryId})}"
-                class="page-btn nav-btn" th:classappend="${currentPage == 1} ? 'disabled' : ''" title="Trang trước">
-                <i class="fa-solid fa-angle-left"></i>
             </a>
 
             <!-- Các số trang -->
@@ -39,11 +34,11 @@
             </th:block>
 
             <!-- Trang sau -->
-            <a th:href="@{${baseUrl}(page=${currentPage + 1}, keyword=${keyword}, status=${selectedStatus ?: (filterStatus ?: status)}, star=${selectedStar ?: star}, statusFilter=${statusFilter}, categoryId=${categoryId})}"
+            <!-- <a th:href="@{${baseUrl}(page=${currentPage + 1}, keyword=${keyword}, status=${selectedStatus ?: (filterStatus ?: status)}, star=${selectedStar ?: star}, statusFilter=${statusFilter}, categoryId=${categoryId})}"
                 class="page-btn nav-btn" th:classappend="${currentPage == totalPages} ? 'disabled' : ''"
                 title="Trang kế tiếp">
                 <i class="fa-solid fa-angle-right"></i>
-            </a>
+            </a> -->
 
             <!-- Trang cuối -->
             <a th:href="@{${baseUrl}(page=${totalPages}, keyword=${keyword}, status=${selectedStatus ?: (filterStatus ?: status)}, star=${selectedStar ?: star}, statusFilter=${statusFilter}, categoryId=${categoryId})}"

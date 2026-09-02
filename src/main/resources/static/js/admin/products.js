@@ -3,6 +3,18 @@ function toggleForm() {
     if (!form) return;
     const isActive = form.classList.toggle('active');
     updateToggleButtonState(isActive);
+
+    if (!isActive) {
+        // Reset form to default state
+        const formEl = document.getElementById('productFormElement');
+        if (formEl) formEl.reset();
+        const idInput = document.getElementById('id');
+        if (idInput) idInput.value = '';
+        const imgWrapper = document.getElementById('currentImageWrapper');
+        if (imgWrapper) imgWrapper.style.display = 'none';
+        const h2 = document.querySelector('.card-header h2');
+        if (h2) h2.innerText = 'Thêm Sản Phẩm Mới';
+    }
 }
 
 function updateToggleButtonState(isActive) {
@@ -71,6 +83,21 @@ function editProduct(btn) {
 
     const imageUrlInput = document.getElementById('imageUrl');
     if (imageUrlInput) imageUrlInput.value = image || '';
+
+    // Update Image Preview
+    const imgWrapper = document.getElementById('currentImageWrapper');
+    const imgPreview = document.getElementById('currentImagePreview');
+    const imgName = document.getElementById('currentImageName');
+    if (imgWrapper && imgPreview) {
+        if (image && image.trim() !== '') {
+            const imgSrc = (image.startsWith('http') || image.startsWith('/')) ? image : '/images/products/' + image;
+            imgPreview.src = imgSrc;
+            if (imgName) imgName.innerText = image;
+            imgWrapper.style.display = '';
+        } else {
+            imgWrapper.style.display = 'none';
+        }
+    }
 
     // Reset file upload label
     const fileNameSpan = document.querySelector('#productForm .file-name');

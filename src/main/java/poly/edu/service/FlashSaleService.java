@@ -81,18 +81,20 @@ public class FlashSaleService {
         boolean isNew = (flashSale.getId() == null);
         FlashSale saved = flashSaleDAO.save(flashSale);
         if (isNew) {
-            try {
-                List<poly.edu.entity.User> subscribers = userRepository.findFlashSaleSubscribers();
-                if (subscribers != null) {
-                    String title = saved.getName() != null ? saved.getName() : "Flash Sale Siêu Hấp Dẫn";
-                    String content = "Chương trình Flash Sale mới vừa được phát động với rất nhiều linh kiện PC giảm giá sâu.";
-                    for (poly.edu.entity.User user : subscribers) {
-                        emailService.sendFlashSaleNotificationEmail(user, title, content);
+            java.util.concurrent.CompletableFuture.runAsync(() -> {
+                try {
+                    List<poly.edu.entity.User> subscribers = userRepository.findFlashSaleSubscribers();
+                    if (subscribers != null) {
+                        String title = saved.getName() != null ? saved.getName() : "Flash Sale Siêu Hấp Dẫn";
+                        String content = "Chương trình Flash Sale mới vừa được phát động với rất nhiều linh kiện PC giảm giá sâu.";
+                        for (poly.edu.entity.User user : subscribers) {
+                            emailService.sendFlashSaleNotificationEmail(user, title, content);
+                        }
                     }
+                } catch (Exception e) {
+                    log.error("Lỗi khi gửi email Flash Sale: {}", e.getMessage());
                 }
-            } catch (Exception e) {
-                log.error("Lỗi khi gửi email Flash Sale: {}", e.getMessage());
-            }
+            });
         }
         return saved;
     }
@@ -136,7 +138,7 @@ public class FlashSaleService {
         return flashSaleItemDAO.save(item);
     }
 
-    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "flashSaleItems"}, allEntries = true)
+    @org.springframework.cache.annotation.CacheEvict(value = {"currentFlashSale", "currentActiveSales", "flashSaleItems"}, allEntries = true)
     public void removeItemFromSale(Integer itemId) {
         flashSaleItemDAO.deleteById(itemId);
     }

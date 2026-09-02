@@ -29,8 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = CartController.class)
-@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(CartController.class)
+@Import(SecurityConfig.class)
 @SuppressWarnings({ "null", "unchecked" })
 public class CartControllerTest {
 
@@ -63,9 +63,6 @@ public class CartControllerTest {
 
     @MockBean
     private poly.edu.service.AuthService authService;
-
-    @MockBean
-    private poly.edu.dao.UserDAO userDAO;
 
     private MockHttpSession session;
 
