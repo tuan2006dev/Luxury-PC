@@ -72,6 +72,7 @@ public class CartController {
             poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
             int remainingSale = fsi.getSaleQuantity() - fsi.getSoldCount();
             maxAllowed = Math.min(productStock, remainingSale);
+            price = fsi.getSalePrice();
         }
 
         if (maxAllowed <= 0) {
@@ -212,6 +213,7 @@ public class CartController {
             poly.edu.entity.FlashSaleItem fsi = fsiOpt.get();
             int remainingSale = fsi.getSaleQuantity() - fsi.getSoldCount();
             maxAllowed = Math.min(productStock, remainingSale);
+            price = fsi.getSalePrice();
         }
 
         if (maxAllowed <= 0) {

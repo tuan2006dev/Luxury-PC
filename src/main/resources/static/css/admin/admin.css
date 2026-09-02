@@ -930,18 +930,21 @@ textarea.is-invalid {
 
 /* ========== ADMIN COMPACT PAGINATION STYLES ========== */
 .admin-pagination-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 6px 12px;
-  margin-top: 6px;
-  background: #ffffff;
-  border-top: 1px solid var(--admin-border, #e2e8f0);
-  border-radius: 0 0 8px 8px;
-  box-sizing: border-box;
-  flex-shrink: 0;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  padding: 8px 16px !important;
+  margin-top: auto !important;
+  background: #ffffff !important;
+  border-top: 1px solid var(--admin-border, #e2e8f0) !important;
+  border-radius: 0 0 10px 10px !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  position: relative !important;
+  z-index: 30 !important;
 }
 
 .pagination-info {

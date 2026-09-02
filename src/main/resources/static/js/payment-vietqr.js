@@ -65,6 +65,30 @@ function initPaymentStatusPolling() {
     };
 
     const handleTimeoutCancel = async () => {
+        // Kiểm tra lần cuối xem đơn hàng đã được thanh toán chưa trước khi thực hiện hủy
+        try {
+            const finalCheck = await fetch(statusUrl + '?orderCode=' + encodeURIComponent(orderCode), {
+                headers: { 'X-Payment-Token': paymentToken },
+                cache: 'no-store'
+            });
+            if (finalCheck.ok) {
+                const finalResult = await finalCheck.json();
+                if (finalResult.paid) {
+                    stopPolling();
+                    localStorage.removeItem(storageKey);
+                    if (statusElement) {
+                        statusElement.textContent = finalResult.paymentStatus || 'Đã thanh toán';
+                        statusElement.style.color = '#22c55e';
+                    }
+                    if (successMessage) successMessage.hidden = false;
+                    if (timerWrapper) timerWrapper.style.display = 'none';
+                    return;
+                }
+            }
+        } catch (e) {
+            console.error('Lỗi kiểm tra trạng thái cuối cùng:', e);
+        }
+
         stopPolling();
         localStorage.removeItem(storageKey);
 

@@ -79,8 +79,18 @@ function initPromoCountdown() {
     const mainEndTimers = document.querySelectorAll('.main-end-timer');
     if (bannerCountdowns.length === 0 && mainEndTimers.length === 0) return;
 
+    // Calculate server time offset to prevent wrong countdown if client clock is wrong
+    let serverTimeOffset = 0;
+    const firstTimerWithServer = document.querySelector('[data-servertime]');
+    if (firstTimerWithServer) {
+        const sTime = parseInt(firstTimerWithServer.getAttribute('data-servertime'), 10);
+        if (!isNaN(sTime) && sTime > 0) {
+            serverTimeOffset = sTime - Date.now();
+        }
+    }
+
     function updatePromoCountdown() {
-        const now = new Date().getTime();
+        const now = Date.now() + serverTimeOffset;
 
         bannerCountdowns.forEach(function (box) {
             const endTimeAttr = box.getAttribute('data-endtime');
@@ -234,18 +244,27 @@ function initUpcomingTimers() {
 // Category Filter Logic
 function initCategoryFilter() {
     const catItems = document.querySelectorAll('.promo-cat-item');
+    const flashSaleBlocks = document.querySelectorAll('.flash-sale-main');
     const flashCards = document.querySelectorAll('.flash-card');
     const noSaleMsg = document.getElementById('no-sale-message');
 
     function checkEmptyState() {
-        let visibleCount = 0;
-        flashCards.forEach(function (card) {
-            if (card.style.display !== 'none') {
-                visibleCount++;
+        let totalVisibleInAll = 0;
+        flashSaleBlocks.forEach(function (block) {
+            const cardsInBlock = block.querySelectorAll('.flash-card');
+            if (cardsInBlock.length > 0) {
+                let visibleInBlock = 0;
+                cardsInBlock.forEach(function (card) {
+                    if (card.style.display !== 'none') {
+                        visibleInBlock++;
+                    }
+                });
+                block.style.display = (visibleInBlock === 0) ? 'none' : 'block';
+                totalVisibleInAll += visibleInBlock;
             }
         });
         if (noSaleMsg) {
-            noSaleMsg.style.display = (visibleCount === 0) ? 'flex' : 'none';
+            noSaleMsg.style.display = (totalVisibleInAll === 0) ? 'flex' : 'none';
         }
     }
 

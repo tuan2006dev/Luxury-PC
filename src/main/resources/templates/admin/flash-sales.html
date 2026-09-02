@@ -121,7 +121,7 @@
                                         th:data-start="${#dates.format(fs.startTime, 'yyyy-MM-dd''T''HH:mm')}"
                                         th:data-end="${#dates.format(fs.endTime, 'yyyy-MM-dd''T''HH:mm')}"
                                         th:data-active="${fs.active}" th:data-banner="${fs.bannerImage}"
-                                        onclick="openEditModal(this)">
+                                        onclick="editFlashSale(this)">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <a th:href="@{/admin/flash-sales/{id}/items(id=${fs.id})}"

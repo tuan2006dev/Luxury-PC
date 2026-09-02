@@ -3,6 +3,7 @@
 
 <body>
     <div th:fragment="pagination(baseUrl)" class="admin-pagination-wrapper"
+        style="margin-top: auto; flex-shrink: 0;"
         th:if="${totalItems != null and totalItems > 0}">
         <div class="pagination-info">
             <span>Hiển thị</span>

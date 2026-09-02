@@ -79,7 +79,7 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @org.springframework.data.jpa.repository.Query("UPDATE Order o SET o.user = null WHERE o.user.id = :userId")
     void nullifyUserReferences(@org.springframework.data.repository.query.Param("userId") Integer userId);
 
-    @Query("SELECT o FROM Order o WHERE o.status = 'PENDING' AND o.createdAt < :threshold")
+    @Query("SELECT o FROM Order o WHERE (o.status = 'PENDING' OR o.status = 'CHO_XAC_NHAN_THANH_TOAN' OR o.status = 'CHO_THANH_TOAN') AND o.createdAt < :threshold")
     List<Order> findExpiredPendingOrders(@org.springframework.data.repository.query.Param("threshold") java.util.Date threshold);
 
     @org.springframework.data.jpa.repository.Modifying

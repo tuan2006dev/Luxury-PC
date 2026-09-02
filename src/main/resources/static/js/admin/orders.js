@@ -418,12 +418,53 @@ function initOrderPage() {
         }
     });
 
-    // Close open details action menu when clicking outside
+    // Quản lý đóng mở menu thao tác một cách mượt mà và chống tràn/đè giao diện khi cuộn
+    const closeAllActionMenus = (exceptDetails = null) => {
+        document.querySelectorAll('details.action-menu[open]').forEach(details => {
+            if (details !== exceptDetails) {
+                details.removeAttribute('open');
+            }
+        });
+    };
+
+    // Đóng menu khi click ra ngoài
     document.addEventListener('click', function (e) {
         const clickedDetails = e.target.closest('details.action-menu');
-        document.querySelectorAll('details.action-menu[open]').forEach(details => {
-            if (details !== clickedDetails) {
-                details.removeAttribute('open');
+        closeAllActionMenus(clickedDetails);
+    });
+
+    // Tự động đóng menu khi người dùng cuộn danh sách đơn hàng hoặc cuộn trang
+    const tableWrapper = document.querySelector('.table-wrapper');
+    if (tableWrapper) {
+        tableWrapper.addEventListener('scroll', function () {
+            closeAllActionMenus();
+        }, { passive: true });
+    }
+    window.addEventListener('scroll', function () {
+        closeAllActionMenus();
+    }, { passive: true });
+
+    // Tự động tính toán vị trí hiển thị (lên hoặc xuống) khi mở menu thao tác
+    document.querySelectorAll('details.action-menu').forEach(details => {
+        details.addEventListener('toggle', function () {
+            if (this.open) {
+                closeAllActionMenus(this);
+                const panel = this.querySelector('.action-panel');
+                if (panel) {
+                    const rect = this.getBoundingClientRect();
+                    const spaceBelow = window.innerHeight - rect.bottom;
+                    if (spaceBelow < 280 && rect.top > 280) {
+                        panel.style.top = 'auto';
+                        panel.style.bottom = '100%';
+                        panel.style.marginTop = '0';
+                        panel.style.marginBottom = '0.4rem';
+                    } else {
+                        panel.style.top = '100%';
+                        panel.style.bottom = 'auto';
+                        panel.style.marginTop = '0.4rem';
+                        panel.style.marginBottom = '0';
+                    }
+                }
             }
         });
     });

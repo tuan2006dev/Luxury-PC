@@ -152,25 +152,41 @@ public class AdminFlashSaleController {
             @PathVariable("id") Integer id,
             @RequestParam(value = "productId", required = false) Integer productId,
             @RequestParam(value = "salePrice", required = false) Double salePrice,
+            @RequestParam(value = "saleDiscountPercent", required = false) Double saleDiscountPercent,
             @RequestParam(value = "saleQuantity", required = false) Integer saleQuantity,
             Principal principal,
             HttpServletRequest request,
             RedirectAttributes ra) {
 
-        if (productId == null || salePrice == null || saleQuantity == null) {
-            ra.addFlashAttribute("error", "Vui lòng nhập đầy đủ thông tin sản phẩm, giá sale và số lượng!");
+        if (productId == null || saleQuantity == null) {
+            ra.addFlashAttribute("error", "Vui lòng nhập đầy đủ thông tin sản phẩm và số lượng!");
             return "redirect:/admin/flash-sales/" + id + "/items";
         }
 
         poly.edu.entity.Product p = productDAO.findById(productId).orElse(null);
-        if (p != null && salePrice > p.getPrice()) {
+        if (p == null) {
+            ra.addFlashAttribute("error", "Sản phẩm không tồn tại!");
+            return "redirect:/admin/flash-sales/" + id + "/items";
+        }
+
+        // Tự động tính giá sale nếu người dùng chỉ nhập % giảm giá
+        if (salePrice == null && saleDiscountPercent != null && saleDiscountPercent >= 0) {
+            salePrice = Math.round(p.getPrice() * (1.0 - (saleDiscountPercent / 100.0)) / 1000.0) * 1000.0;
+        }
+
+        if (salePrice == null) {
+            ra.addFlashAttribute("error", "Vui lòng nhập đầy đủ giá sale hoặc % giảm giá!");
+            return "redirect:/admin/flash-sales/" + id + "/items";
+        }
+
+        if (salePrice > p.getPrice()) {
             ra.addFlashAttribute("error", "Giá SALE không được cao hơn giá gốc của sản phẩm!");
             return "redirect:/admin/flash-sales/" + id + "/items";
         }
 
         FlashSaleItem item = flashSaleService.addItemToSale(id, productId, salePrice, saleQuantity);
         if (item != null) {
-            String pName = p != null ? p.getName() : "ProductID #" + productId;
+            String pName = p.getName();
             logAction(principal, request, "Thêm SP vào Flash Sale", pName);
             ra.addFlashAttribute("success", "Đã thêm sản phẩm vào Flash Sale!");
         } else {

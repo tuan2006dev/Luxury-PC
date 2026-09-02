@@ -57,28 +57,26 @@ class AdminServiceVietQrTest {
     }
 
     @Test
-    void genericStatusUpdateCannotBypassWebhook() {
+    void adminCanConfirmPaymentForWaitingVietQrOrder() {
         Order order = order("VIETQR", "PENDING", 39);
         when(orderDAO.findById(39)).thenReturn(Optional.of(order));
 
-        assertThrows(VietQrManualConfirmationException.class,
-                () -> adminService.updateOrderStatus(39, "PAID"));
+        adminService.updateOrderStatus(39, "DA_THANH_TOAN");
 
-        assertEquals("PENDING", order.getStatus());
-        verify(orderDAO, never()).save(order);
+        assertEquals("DA_THANH_TOAN", order.getStatus());
+        verify(orderDAO).save(order);
     }
 
     @Test
-    void paidVietQrCannotBeSentThroughManualPaymentStatusUpdate() {
+    void paidVietQrCanBeMovedToProcessingStatusUpdate() {
         Order order = waitingVietQrOrder();
         order.setStatus("DA_THANH_TOAN");
         when(orderDAO.findById(39)).thenReturn(Optional.of(order));
 
-        assertThrows(VietQrManualConfirmationException.class,
-                () -> adminService.updateOrderStatus(39, "PAID"));
+        adminService.updateOrderStatus(39, "PROCESSING");
 
-        assertEquals("DA_THANH_TOAN", order.getStatus());
-        verify(orderDAO, never()).save(order);
+        assertEquals("PROCESSING", order.getStatus());
+        verify(orderDAO).save(order);
     }
 
 
@@ -243,11 +241,11 @@ class AdminServiceVietQrTest {
     }
 
     @Test
-    void unpaidVietQrOrderCannotBeMovedToProcessingManually() {
+    void unpaidVietQrOrderMustBePaidBeforeProcessing() {
         Order order = order("VIETQR", "PENDING", 46);
         when(orderDAO.findById(46)).thenReturn(Optional.of(order));
 
-        assertThrows(VietQrManualConfirmationException.class,
+        assertThrows(IllegalStateException.class,
                 () -> adminService.updateOrderStatus(46, "PROCESSING"));
 
         assertEquals("PENDING", order.getStatus());

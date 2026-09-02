@@ -90,7 +90,7 @@
 
                         <!-- Countdown timer: active sale (kết thúc trong) -->
                         <div th:if="${not isUpcoming}" class="banner-countdown"
-                            th:attr="data-endtime=${sale.endTime.getTime()}"
+                            th:attr="data-endtime=${sale.endTime.getTime()}, data-servertime=${#dates.createNow().getTime()}"
                             style="background: rgba(15, 23, 42, 0.75); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 3; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); position: absolute; bottom: 20px; right: 20px;">
                             <div
                                 style="font-size: 10px; font-weight: 700; margin-bottom: 8px; color: #fecaca; text-transform: uppercase; letter-spacing: 1px;">
@@ -258,7 +258,7 @@
                             style="display: flex; flex-direction: column; align-items: flex-end;">
                             <span style="font-size: 11px; font-weight: 600; color: #ef4444; margin-bottom: 5px;">Kết
                                 thúc trong:</span>
-                            <div class="card-countdown main-end-timer" th:attr="data-endtime=${sale.endTime.getTime()}"
+                            <div class="card-countdown main-end-timer" th:attr="data-endtime=${sale.endTime.getTime()}, data-servertime=${#dates.createNow().getTime()}"
                                 style="font-size: 14px; font-weight: 700; color: #ef4444; background: #fef2f2; padding: 4px 10px; border-radius: 6px; display: inline-block;">
                                 00:00:00</div>
                         </div>
@@ -348,6 +348,12 @@
                         <p style="margin: 0; font-size: 13px; font-weight: 600; color: #6b7280;">Chưa có sản phẩm cho
                             đợt này</p>
                     </div>
+                </div>
+
+                <div id="no-sale-message"
+                    style="display: none; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 40px 20px; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #9ca3af; width: 100%;">
+                    <i class="fa-solid fa-face-frown" style="font-size: 36px; color: #cbd5e1; margin-bottom: 15px;"></i>
+                    <p style="margin: 0; font-size: 14px; font-weight: 600; color: #6b7280;">Không có sản phẩm nào thuộc danh mục này trong các đợt Flash Sale</p>
                 </div>
             </div>
 
