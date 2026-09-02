@@ -74,10 +74,11 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
-		<!-- Driver JDBC để Spring Boot kết nối với PostgreSQL (chuẩn cho Render Cloud Database và Local). -->
+		<!-- Driver JDBC chính thức để Spring Boot kết nối và làm việc với hệ quản trị CSDL Microsoft SQL Server. -->
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>11.2.3.jre17</version>
 			<scope>runtime</scope>
 		</dependency>
 

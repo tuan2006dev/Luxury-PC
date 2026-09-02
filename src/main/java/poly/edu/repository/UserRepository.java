@@ -41,7 +41,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             """)
     List<User> findAllUserNotAdmin();
 
-    @Query(value = "SELECT TO_CHAR(created_at, 'YYYY-MM-DD') as date, COUNT(*) as count FROM users WHERE created_at >= :startDate GROUP BY TO_CHAR(created_at, 'YYYY-MM-DD') ORDER BY date ASC", nativeQuery = true)
+    @Query(value = "SELECT CONVERT(VARCHAR(10), created_at, 120) as date, COUNT(*) as count FROM users WHERE created_at >= :startDate GROUP BY CONVERT(VARCHAR(10), created_at, 120) ORDER BY date ASC", nativeQuery = true)
     List<java.util.Map<String, Object>> getNewUsersByDate(
             @org.springframework.data.repository.query.Param("startDate") java.util.Date startDate);
 
@@ -49,7 +49,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Long countCustomersBetween(@org.springframework.data.repository.query.Param("start") java.util.Date start,
             @org.springframework.data.repository.query.Param("end") java.util.Date end);
 
-    @Query(value = "SELECT TO_CHAR(created_at, 'YYYY-MM-DD') as date, COUNT(*) as count FROM users WHERE created_at >= :start AND created_at <= :end GROUP BY TO_CHAR(created_at, 'YYYY-MM-DD') ORDER BY date ASC", nativeQuery = true)
+    @Query(value = "SELECT CONVERT(VARCHAR(10), created_at, 120) as date, COUNT(*) as count FROM users WHERE created_at >= :start AND created_at <= :end GROUP BY CONVERT(VARCHAR(10), created_at, 120) ORDER BY date ASC", nativeQuery = true)
     List<java.util.Map<String, Object>> getNewUsersBetween(
             @org.springframework.data.repository.query.Param("start") java.util.Date start,
             @org.springframework.data.repository.query.Param("end") java.util.Date end);

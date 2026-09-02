@@ -45,10 +45,21 @@
                         th:alt="${product.name}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='/images/placeholder.png';" />
                 </div>
                 <div class="pd-thumbnails">
+                    <!-- Ảnh chính -->
                     <img th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : '/images/placeholder.png'}"
                         class="active" onclick="changeMainImage(this.src, this)"
                         referrerpolicy="no-referrer"
-                        onerror="this.onerror=null; this.src='/images/placeholder.png';">
+                        onerror="this.onerror=null; this.src='/images/placeholder.png';"
+                        th:alt="${product.name}">
+                    <!-- Các ảnh phụ -->
+                    <th:block th:if="${product.productImages != null and !product.productImages.isEmpty()}">
+                        <img th:each="pImg : ${product.productImages}"
+                            th:src="${pImg.imageUrl != null ? (pImg.imageUrl.startsWith('http') || pImg.imageUrl.startsWith('/') ? pImg.imageUrl : '/images/products/' + pImg.imageUrl) : '/images/placeholder.png'}"
+                            onclick="changeMainImage(this.src, this)"
+                            referrerpolicy="no-referrer"
+                            onerror="this.onerror=null; this.src='/images/placeholder.png';"
+                            th:alt="${product.name}">
+                    </th:block>
                 </div>
             </div>
 

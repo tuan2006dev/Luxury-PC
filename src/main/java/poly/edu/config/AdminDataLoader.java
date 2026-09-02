@@ -16,7 +16,7 @@ public class AdminDataLoader implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(AdminDataLoader.class);
 
-    private static final String TEST_ADMIN_EMAIL = "nguyentruongq169@gmail.com";
+    private static final String TEST_ADMIN_EMAIL = "leecookcu@gmail.com";
     private static final String TEST_ADMIN_PASSWORD = "123456";
 
     private final OrderDAO orderDAO;
@@ -78,78 +78,66 @@ public class AdminDataLoader implements CommandLineRunner {
 
         // 2. Seed Sample Orders if empty
         // BỎ TÍNH NĂNG NÀY ĐỂ TRÁNH RÁC DATABASE CHO TÀI KHOẢN MỚI
-        /*
-        if (orderDAO.count() == 0) {
-            User user = userDAO.findAll().stream().findFirst().orElse(null);
-            if (user != null && !products.isEmpty()) {
-                createSampleOrder(user, products.get(0), "COMPLETED", 1);
-                if (products.size() > 1) {
-                    createSampleOrder(user, products.get(1), "PENDING", 2);
-                }
-                if (products.size() > 2) {
-                    createSampleOrder(user, products.get(2), "SHIPPING", 1);
-                }
-            }
-        }
-        */
 
-        // 3. Ensure the requested test admin account exists and can authenticate.
-        User admin = userDAO.findByEmail(TEST_ADMIN_EMAIL);
-        if (admin == null) {
-            admin = new User();
-            admin.setUsername(TEST_ADMIN_EMAIL);
-            admin.setEmail(TEST_ADMIN_EMAIL);
-            admin.setFullName("LuxuryPC Admin");
-            admin.setPassword(passwordEncoder.encode(TEST_ADMIN_PASSWORD));
-            admin = userDAO.save(admin);
-            log.info("[DataLoader] Created test admin account: {}", TEST_ADMIN_EMAIL);
-        }
-
-        boolean adminUpdated = false;
-        if (!Boolean.TRUE.equals(admin.getStatus())) {
-            admin.setStatus(true);
-            adminUpdated = true;
-        }
-        if (admin.getPassword() == null || !passwordEncoder.matches(TEST_ADMIN_PASSWORD, admin.getPassword())) {
-            admin.setPassword(passwordEncoder.encode(TEST_ADMIN_PASSWORD));
-            adminUpdated = true;
-        }
-        if (adminUpdated) {
-            admin = userDAO.save(admin);
-        }
-
-        Role userRoleDefault = roleDAO.findByName("USER");
-        if (userRoleDefault == null) {
-            userRoleDefault = new Role();
-            userRoleDefault.setName("USER");
-            roleDAO.save(userRoleDefault);
-            log.info("[DataLoader] Created USER role");
+        // 3. Ensure the admin accounts exist and can authenticate.
+        List<String> adminUsernames = List.of("admin", "leecookcu@gmail.com");
+        
+        Role adminRole = roleDAO.findByName("ADMIN");
+        if (adminRole == null) {
+            adminRole = new Role();
+            adminRole.setName("ADMIN");
+            adminRole = roleDAO.save(adminRole);
+            log.info("[DataLoader] Created ADMIN role");
         }
 
         Role staffRole = roleDAO.findByName("STAFF");
         if (staffRole == null) {
             staffRole = new Role();
             staffRole.setName("STAFF");
-            roleDAO.save(staffRole);
+            staffRole = roleDAO.save(staffRole);
             log.info("[DataLoader] Created STAFF role");
         }
 
-        Role adminRole = roleDAO.findByName("ADMIN");
-        if (adminRole == null) {
-            adminRole = new Role();
-            adminRole.setName("ADMIN");
-            roleDAO.save(adminRole);
-            log.info("[DataLoader] Created ADMIN role");
+        Role userRoleDefault = roleDAO.findByName("USER");
+        if (userRoleDefault == null) {
+            userRoleDefault = new Role();
+            userRoleDefault.setName("USER");
+            userRoleDefault = roleDAO.save(userRoleDefault);
+            log.info("[DataLoader] Created USER role");
         }
 
-        boolean hasAdminRole = userRoleDAO.findByUserId(admin.getId()).stream()
-                .anyMatch(ur -> "ADMIN".equals(ur.getRole().getName()));
-        if (!hasAdminRole) {
-                UserRole userRole = new UserRole();
-                userRole.setUser(admin);
-                userRole.setRole(adminRole);
-                userRoleDAO.save(userRole);
-                log.info("[DataLoader] Assigned ADMIN role to: {}", TEST_ADMIN_EMAIL);
+        for (String admIdent : adminUsernames) {
+            User adm = userDAO.findByEmail(admIdent);
+            if (adm == null) {
+                adm = userDAO.findByUsername(admIdent);
             }
+            if (adm == null) {
+                adm = new User();
+                adm.setUsername(admIdent.contains("@") ? admIdent.split("@")[0] : admIdent);
+                adm.setEmail(admIdent.contains("@") ? admIdent : admIdent + "@luxurypc.vn");
+                adm.setFullName("LuxuryPC Administrator");
+                adm.setPassword(passwordEncoder.encode(TEST_ADMIN_PASSWORD));
+                adm.setStatus(true);
+                adm = userDAO.save(adm);
+                log.info("[DataLoader] Created admin account: {}", admIdent);
+            } else {
+                adm.setStatus(true);
+                adm.setPassword(passwordEncoder.encode(TEST_ADMIN_PASSWORD));
+                adm = userDAO.save(adm);
+            }
+
+            final Integer admId = adm.getId();
+            final Role fAdminRole = adminRole;
+            final User fAdm = adm;
+            boolean hasAdmRole = userRoleDAO.findByUserId(admId).stream()
+                    .anyMatch(ur -> "ADMIN".equals(ur.getRole().getName()));
+            if (!hasAdmRole) {
+                UserRole userRole = new UserRole();
+                userRole.setUser(fAdm);
+                userRole.setRole(fAdminRole);
+                userRoleDAO.save(userRole);
+                log.info("[DataLoader] Assigned ADMIN role to: {}", admIdent);
+            }
+        }
     }
 }
