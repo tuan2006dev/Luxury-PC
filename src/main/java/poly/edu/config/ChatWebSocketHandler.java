@@ -81,9 +81,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             final Integer finalTicketId = msgTicketId;
             final String query = userContent;
             
-            // Send waiting status to user
-            broadcastSystemEventToTicket(finalTicketId, "AI_WAITING", "🤖 AI đang suy nghĩ...", "Luxury Bot 🤖");
-            
             executorService.submit(() -> {
                 String aiReply = geminiAIService.getPCAdvice(query);
                 

@@ -252,6 +252,14 @@ public class SupportTicketController {
         return ResponseEntity.ok(messages);
     }
 
+    private String getStaffDisplayName(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) return "Admin";
+        String username = auth.getName();
+        return userRepo.findByUsername(username)
+                .map(u -> (u.getFullName() != null && !u.getFullName().isBlank()) ? u.getFullName() : username)
+                .orElse(username);
+    }
+
     // ========================
     // CHAT: Send message for a ticket
     // ========================
@@ -269,7 +277,7 @@ public class SupportTicketController {
         
         String senderName = body.getOrDefault("senderName", "Khách hàng");
         if (auth != null && auth.isAuthenticated() && "ADMIN".equalsIgnoreCase(sender)) {
-            senderName = auth.getName();
+            senderName = getStaffDisplayName(auth);
         }
         msg.setSenderName(senderName);
         msg.setMessage(body.getOrDefault("message", ""));
@@ -288,7 +296,7 @@ public class SupportTicketController {
                     ticket.setStatus("IN_PROGRESS");
                 }
                 if (auth != null && ticket.getAssignedAdmin() == null) {
-                    ticket.setAssignedAdmin(auth.getName());
+                    ticket.setAssignedAdmin(getStaffDisplayName(auth));
                 }
             } else {
                 if ("RESOLVED".equals(ticket.getStatus()) || "CLOSED".equals(ticket.getStatus())) {
@@ -382,16 +390,17 @@ public class SupportTicketController {
             HttpServletRequest request) {
 
         ticketRepo.findById(ticketId).ifPresent(ticket -> {
+            String displayName = getStaffDisplayName(auth);
             ticket.setAdminReply(reply);
             ticket.setStatus(status);
-            if (auth != null) ticket.setAssignedAdmin(auth.getName());
+            if (auth != null) ticket.setAssignedAdmin(displayName);
             ticketRepo.save(ticket);
 
             // Also save to chat messages logs
             ChatMessage adminMsg = new ChatMessage();
             adminMsg.setTicketId(ticketId);
             adminMsg.setSender("ADMIN");
-            adminMsg.setSenderName(auth != null ? auth.getName() : "Admin");
+            adminMsg.setSenderName(displayName);
             adminMsg.setMessage(reply);
             chatMessageRepo.save(adminMsg);
 
@@ -430,16 +439,17 @@ public class SupportTicketController {
         }
 
         SupportTicket ticket = opt.get();
+        String displayName = getStaffDisplayName(auth);
         
         // Prevent race condition: if already assigned to someone else
-        if (ticket.getAssignedAdmin() != null && !ticket.getAssignedAdmin().equals(auth.getName())) {
+        if (ticket.getAssignedAdmin() != null && !ticket.getAssignedAdmin().equals(displayName) && !ticket.getAssignedAdmin().equals(auth.getName())) {
             res.put("success", false);
             res.put("message", "Ticket đã được nhân viên khác nhận.");
             return ResponseEntity.status(409).body(res);
         }
         
         // Update ticket
-        ticket.setAssignedAdmin(auth.getName());
+        ticket.setAssignedAdmin(displayName);
         ticket.setStatus("IN_PROGRESS");
         ticketRepo.save(ticket);
         
@@ -447,12 +457,12 @@ public class SupportTicketController {
         chatWebSocketHandler.broadcastSystemEventToTicket(
             ticketId, 
             "ADMIN_JOINED", 
-            "Nhân viên " + auth.getName() + " đã tham gia cuộc trò chuyện.", 
-            auth.getName()
+            "Nhân viên " + displayName + " đã tham gia cuộc trò chuyện.", 
+            displayName
         );
 
         res.put("success", true);
-        res.put("assignedAdmin", auth.getName());
+        res.put("assignedAdmin", displayName);
         return ResponseEntity.ok(res);
     }
 
