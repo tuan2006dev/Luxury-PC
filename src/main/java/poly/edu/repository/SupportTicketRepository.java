@@ -28,8 +28,18 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, In
     long countInProgressTickets();
 
     @Query("SELECT t FROM SupportTicket t WHERE t.user.id = :userId AND t.status IN ('OPEN', 'IN_PROGRESS') ORDER BY t.createdAt DESC")
-    List<SupportTicket> findActiveTicketsByUserId(Integer userId);
+    List<SupportTicket> findActiveTicketsByUserId(@org.springframework.data.repository.query.Param("userId") Integer userId);
 
     @Query("SELECT t FROM SupportTicket t WHERE t.customerEmail = :email AND t.status IN ('OPEN', 'IN_PROGRESS') ORDER BY t.createdAt DESC")
-    List<SupportTicket> findActiveTicketsByEmail(String email);
+    List<SupportTicket> findActiveTicketsByEmail(@org.springframework.data.repository.query.Param("email") String email);
+
+    @Query("SELECT t FROM SupportTicket t WHERE t.customerPhone = :phone AND t.status IN ('OPEN', 'IN_PROGRESS') ORDER BY t.createdAt DESC")
+    List<SupportTicket> findActiveTicketsByPhone(@org.springframework.data.repository.query.Param("phone") String phone);
+
+    @Query("SELECT t FROM SupportTicket t WHERE ((:userId IS NOT NULL AND t.user.id = :userId) OR (:email IS NOT NULL AND :email <> '' AND t.customerEmail = :email) OR (:phone IS NOT NULL AND :phone <> '' AND t.customerPhone = :phone)) AND t.status IN ('OPEN', 'IN_PROGRESS') ORDER BY t.createdAt DESC")
+    List<SupportTicket> findActiveTickets(
+            @org.springframework.data.repository.query.Param("userId") Integer userId,
+            @org.springframework.data.repository.query.Param("email") String email,
+            @org.springframework.data.repository.query.Param("phone") String phone
+    );
 }

@@ -51,24 +51,30 @@ public class SupportTicketController {
     }
 
     // ========================
-    // CUSTOMER: Get active open ticket for user/email
+    // CUSTOMER: Get active open ticket for user/email/phone
     // ========================
     @GetMapping("/api/tickets/active")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getActiveTicket(
             @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phone,
             Authentication auth) {
         SupportTicket activeTicket = null;
+        Integer userId = null;
         if (auth != null && auth.isAuthenticated()) {
             User user = userRepo.findByUsername(auth.getName()).orElse(null);
             if (user != null) {
-                List<SupportTicket> list = ticketRepo.findActiveTicketsByUserId(user.getId());
-                if (!list.isEmpty()) activeTicket = list.get(0);
+                userId = user.getId();
             }
         }
-        if (activeTicket == null && email != null && !email.isBlank()) {
-            List<SupportTicket> list = ticketRepo.findActiveTicketsByEmail(email.trim());
-            if (!list.isEmpty()) activeTicket = list.get(0);
+        
+        List<SupportTicket> activeList = ticketRepo.findActiveTickets(
+                userId,
+                (email != null && !email.isBlank()) ? email.trim() : null,
+                (phone != null && !phone.isBlank()) ? phone.trim() : null
+        );
+        if (!activeList.isEmpty()) {
+            activeTicket = activeList.get(0);
         }
 
         Map<String, Object> res = new HashMap<>();
@@ -77,7 +83,10 @@ public class SupportTicketController {
             res.put("ticketId", activeTicket.getId());
             res.put("status", activeTicket.getStatus());
             res.put("subject", activeTicket.getSubject());
+            res.put("customerName", activeTicket.getCustomerName());
             res.put("assignedAdmin", activeTicket.getAssignedAdmin());
+            res.put("createdAt", activeTicket.getCreatedAt());
+            res.put("message", "Bạn đang có cuộc trò chuyện chưa đóng (Ticket #" + activeTicket.getId() + ").");
         } else {
             res.put("hasActive", false);
         }
@@ -94,50 +103,49 @@ public class SupportTicketController {
             Authentication auth) {
 
         String email = body.getOrDefault("email", "").trim();
+        String phone = body.getOrDefault("phone", "").trim();
         String customerName = body.getOrDefault("name", "Khách hàng").trim();
         String messageContent = body.getOrDefault("message", "").trim();
+        boolean forceNew = "true".equalsIgnoreCase(body.get("forceNew"));
 
         // 1. Kiểm tra nếu người dùng đã có Ticket đang mở (OPEN hoặc IN_PROGRESS)
         SupportTicket existingTicket = null;
         User currentUser = null;
+        Integer currentUserId = null;
         if (auth != null && auth.isAuthenticated()) {
             currentUser = userRepo.findByUsername(auth.getName()).orElse(null);
             if (currentUser != null) {
-                List<SupportTicket> active = ticketRepo.findActiveTicketsByUserId(currentUser.getId());
-                if (!active.isEmpty()) existingTicket = active.get(0);
+                currentUserId = currentUser.getId();
             }
         }
-        if (existingTicket == null && !email.isBlank()) {
-            List<SupportTicket> active = ticketRepo.findActiveTicketsByEmail(email);
-            if (!active.isEmpty()) existingTicket = active.get(0);
+
+        List<SupportTicket> activeList = ticketRepo.findActiveTickets(
+                currentUserId,
+                !email.isBlank() ? email : null,
+                !phone.isBlank() ? phone : null
+        );
+        if (!activeList.isEmpty()) {
+            existingTicket = activeList.get(0);
         }
 
-        // Nếu đã có ticket đang mở -> Nối tin nhắn vào ticket cũ thay vì tạo trùng lặp
+        // Nếu đã có ticket đang mở -> Chặn hoàn toàn không cho tạo mới!
         if (existingTicket != null) {
-            if (!messageContent.isEmpty()) {
-                ChatMessage nextMsg = new ChatMessage();
-                nextMsg.setTicketId(existingTicket.getId());
-                nextMsg.setSender("CUSTOMER");
-                nextMsg.setSenderName(existingTicket.getCustomerName() != null ? existingTicket.getCustomerName() : customerName);
-                nextMsg.setMessage(messageContent);
-                chatMessageRepo.save(nextMsg);
-            }
-            existingTicket.setUpdatedAt(new java.util.Date());
-            ticketRepo.save(existingTicket);
-
             Map<String, Object> res = new HashMap<>();
-            res.put("success", true);
+            res.put("success", false);
+            res.put("code", "ACTIVE_TICKET_EXISTS");
+            res.put("hasActive", true);
             res.put("ticketId", existingTicket.getId());
-            res.put("isExisting", true);
-            res.put("message", "Đã tiếp tục phiên hỗ trợ Ticket #" + existingTicket.getId());
-            return ResponseEntity.ok(res);
+            res.put("status", existingTicket.getStatus());
+            res.put("assignedAdmin", existingTicket.getAssignedAdmin());
+            res.put("message", "Bạn đang có cuộc trò chuyện chưa đóng (Ticket #" + existingTicket.getId() + "). Không thể tạo ticket mới! Vui lòng đóng ticket hiện tại trước.");
+            return ResponseEntity.status(409).body(res);
         }
 
-        // 2. Tạo Ticket mới nếu chưa có ticket nào đang mở
+        // 2. Tạo Ticket mới khi không có ticket nào đang mở
         SupportTicket ticket = new SupportTicket();
         ticket.setCustomerName(customerName);
         ticket.setCustomerEmail(email);
-        ticket.setCustomerPhone(body.getOrDefault("phone", ""));
+        ticket.setCustomerPhone(phone);
         ticket.setSubject(body.getOrDefault("subject", "Tư vấn linh kiện PC"));
         ticket.setMessage(messageContent);
         ticket.setCategory(body.getOrDefault("category", "GENERAL"));
@@ -166,8 +174,9 @@ public class SupportTicketController {
 
         Map<String, Object> res = new HashMap<>();
         res.put("success", true);
-        res.put("ticketId", ticket.getId());
+        res.put("hasActive", false);
         res.put("isExisting", false);
+        res.put("ticketId", ticket.getId());
         res.put("message", "Ticket #" + ticket.getId() + " đã được ghi nhận! Nhân viên sẽ liên hệ với bạn trong 30 phút.");
         return ResponseEntity.ok(res);
     }
@@ -494,33 +503,30 @@ public class SupportTicketController {
     }
 
     // ========================
-    // CUSTOMER: Request to close ticket
+    // CUSTOMER: Request / confirm to close ticket
     // ========================
-    @PostMapping("/api/tickets/{ticketId}/request-close")
+    @PostMapping({"/api/tickets/{ticketId}/close", "/api/tickets/{ticketId}/request-close"})
     @ResponseBody
     public ResponseEntity<Map<String, Object>> requestCloseTicket(@PathVariable Integer ticketId) {
         Map<String, Object> res = new HashMap<>();
         
         ticketRepo.findById(ticketId).ifPresent(ticket -> {
-            if ("OPEN".equals(ticket.getStatus()) || ticket.getAssignedAdmin() == null) {
-                // Nếu ticket chưa xử lý, xóa hoàn toàn để tránh rác
-                chatMessageRepo.deleteAll(chatMessageRepo.findByTicketIdOrderByCreatedAtAsc(ticketId));
-                ticketRepo.deleteById(ticketId);
-            } else {
-                // Nếu đã xử lý, đổi trạng thái thành CLOSED thay vì chỉ gửi thông báo
-                ticket.setStatus("CLOSED");
-                ticketRepo.save(ticket);
-                
-                chatWebSocketHandler.broadcastSystemEventToTicket(
-                    ticketId,
-                    "USER_REQUESTED_CLOSE",
-                    "Khách hàng đã kết thúc và đóng cuộc trò chuyện.",
-                    "Hệ thống"
-                );
-            }
+            ticket.setStatus("CLOSED");
+            ticket.setUpdatedAt(new java.util.Date());
+            ticketRepo.save(ticket);
+            
+            chatWebSocketHandler.broadcastSystemEventToTicket(
+                ticketId,
+                "TICKET_CLOSED",
+                "Khách hàng đã kết thúc và đóng cuộc trò chuyện.",
+                "Hệ thống"
+            );
         });
         
         res.put("success", true);
+        res.put("ticketId", ticketId);
+        res.put("status", "CLOSED");
+        res.put("message", "Đã đóng cuộc trò chuyện hỗ trợ thành công.");
         return ResponseEntity.ok(res);
     }
 

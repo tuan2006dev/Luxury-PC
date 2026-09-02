@@ -31,6 +31,7 @@
     let ticketSystemAvailable = null; // null = unknown, true/false after first call
     let availableStaffs = [];
     let adminJoined = false;
+    let isCreatingTicket = false; // Lock chống tạo ticket trùng lặp
 
     // Auto fetch logged-in user info to bypass setup form
     fetch('/api/auth/check-status')
@@ -44,8 +45,9 @@
                 if (nameInput) nameInput.value = username;
                 if (emailInput) emailInput.value = userEmail;
 
+                // Khi page load và chat đang mở: CHỈ restore ticket cũ, KHÔNG tạo mới
                 if (win && win.classList.contains('open') && !currentTicketId) {
-                    startChat();
+                    restoreActiveTicketOnLoad();
                 }
             }
         })
@@ -68,10 +70,11 @@
         inputArea.style.display = 'flex';
         ticketBar.style.display = 'flex';
         ticketLabel.textContent = 'Ticket #' + currentTicketId;
-    } else if (username && !currentTicketId) {
-        setupDiv.style.display = 'none';
-        messagesDiv.style.display = 'flex';
-        inputArea.style.display = 'flex';
+    } else {
+        // Luôn hiện form setup nếu không có ticket active
+        setupDiv.style.display = 'flex';
+        messagesDiv.style.display = 'none';
+        inputArea.style.display = 'none';
     }
 
     // Toggle Chat window
@@ -91,7 +94,8 @@
                 connectWebSocket();
                 loadChatHistory();
             } else if (username && !currentTicketId) {
-                startChat();
+                // Chỉ restore ticket cũ hoặc hiện welcome menu - KHÔNG tự tạo ticket
+                showChatWithoutTicket();
             } else if (!username) {
                 nameInput.focus();
             }
@@ -123,16 +127,8 @@
         }
     };
 
-    // Auto open if it was open before reload
-    if (localStorage.getItem('socket_chat_isOpen') === 'true') {
-        win.classList.add('open');
-        btn.style.display = 'none';
-        document.documentElement.classList.add('socket-chat-open');
-        if (username && currentTicketId && !ws) {
-            connectWebSocket();
-            loadChatHistory();
-        }
-    }
+    // Chat bot luôn đóng khi load trang - user phải bấm nút để mở
+    // (không auto-restore trạng thái mở từ localStorage)
 
     closeBtn.addEventListener('click', () => {
         win.classList.remove('open');
@@ -183,10 +179,48 @@
         emailInput.value = userEmail;
     }
 
-    // New Chat button - reset ticket to start a new conversation
+    // New Chat button - LUÔN kiểm tra server trước, chặn ngay nếu còn ticket chưa đóng
     newChatBtn.addEventListener('click', async () => {
-        const ok = await window.showConfirm('Bạn có muốn tạo cuộc trò chuyện mới không? Lịch sử chat hiện tại sẽ vẫn được lưu lại.', 'Tạo cuộc trò chuyện mới');
-        if (!ok) return;
+        // Bước 1: Hỏi server xem có ticket active không (không tin localStorage)
+        let activeTicketId = currentTicketId;
+        try {
+            const params = new URLSearchParams();
+            if (userEmail) params.append('email', userEmail);
+            if (username) params.append('name', username);
+            const checkRes = await fetch('/api/tickets/active?' + params.toString());
+            if (checkRes.ok) {
+                const checkData = await checkRes.json();
+                if (checkData.hasActive && checkData.ticketId) {
+                    activeTicketId = checkData.ticketId;
+                    currentTicketId = activeTicketId;
+                    localStorage.setItem('socket_chat_ticket_id', currentTicketId);
+                }
+            }
+        } catch (e) {
+            console.log('[socket-chat] Cannot check active ticket from server:', e);
+        }
+
+        if (activeTicketId) {
+            // CHẶN NGAY - hiện popup trước khi vào form
+            const ok = await window.showConfirm(
+                `⚠️ Bạn đang có Ticket #${activeTicketId} chưa đóng.\n\nBạn cần đóng ticket hiện tại trước khi tạo cuộc trò chuyện mới.\n\nBạn có muốn đóng Ticket #${activeTicketId} ngay không?`,
+                'Đóng Ticket để tạo mới'
+            );
+            if (!ok) {
+                if (typeof showToast === 'function') showToast('ℹ️ Hãy đóng ticket hiện tại trước khi tạo mới.');
+                return;
+            }
+            try {
+                await fetch(`/api/tickets/${activeTicketId}/close`, { method: 'POST' });
+                if (typeof showToast === 'function') showToast('✅ Đã đóng Ticket #' + activeTicketId + '. Bây giờ bạn có thể tạo mới!');
+            } catch (e) {
+                console.error('[socket-chat] Error closing ticket:', e);
+            }
+        } else {
+            const ok = await window.showConfirm('Bạn có muốn tạo cuộc trò chuyện mới không? Lịch sử chat hiện tại sẽ vẫn được lưu lại.', 'Tạo cuộc trò chuyện mới');
+            if (!ok) return;
+        }
+
         currentTicketId = null;
         localStorage.removeItem('socket_chat_ticket_id');
         messagesDiv.innerHTML = '';
@@ -194,13 +228,11 @@
         stopWaitingTimer();
         adminJoined = false;
         
-        // Close existing WebSocket
         if (ws) {
             ws.close();
             ws = null;
         }
 
-        // Show setup again but with name pre-filled
         setupDiv.style.display = 'flex';
         messagesDiv.style.display = 'none';
         inputArea.style.display = 'none';
@@ -250,6 +282,78 @@
         messagesDiv.style.display = 'flex';
     }
 
+    // Khi page load: chỉ restore ticket cũ, KHÔNG tạo mới (chống spam ticket khi server restart)
+    async function restoreActiveTicketOnLoad() {
+        try {
+            const params = new URLSearchParams();
+            if (userEmail) params.append('email', userEmail);
+            if (username) params.append('name', username);
+            const checkRes = await fetch('/api/tickets/active?' + params.toString());
+            if (checkRes.ok) {
+                const checkData = await checkRes.json();
+                if (checkData.hasActive && checkData.ticketId) {
+                    // Có ticket active → restore session
+                    currentTicketId = checkData.ticketId;
+                    localStorage.setItem('socket_chat_ticket_id', currentTicketId);
+                    ticketSystemAvailable = true;
+                    setupDiv.style.display = 'none';
+                    inputArea.style.display = 'flex';
+                    messagesDiv.style.display = 'flex';
+                    ticketBar.style.display = 'flex';
+                    ticketLabel.textContent = 'Ticket #' + currentTicketId;
+                    connectWebSocket();
+                    setTimeout(() => { loadChatHistory(); }, 300);
+                    return;
+                }
+            }
+        } catch (e) {
+            console.log('[socket-chat] Cannot check active ticket on load:', e);
+        }
+        // Không có ticket active → chỉ hiện welcome menu, đợi user tương tác
+        setupDiv.style.display = 'none';
+        messagesDiv.style.display = 'flex';
+        inputArea.style.display = 'flex';
+        if (!messagesDiv.innerHTML.includes('Trợ lý ảo Luxury PC')) {
+            appendWelcomeMenu();
+        }
+    }
+
+    // Hiện giao diện chat với welcome menu (KHÔNG tạo ticket)
+    // Ticket chỉ được tạo khi user tương tác (bấm menu hoặc gửi tin nhắn)
+    async function showChatWithoutTicket() {
+        // Hỏi server có ticket active không → nếu có thì restore
+        try {
+            const params = new URLSearchParams();
+            if (userEmail) params.append('email', userEmail);
+            if (username) params.append('name', username);
+            const checkRes = await fetch('/api/tickets/active?' + params.toString());
+            if (checkRes.ok) {
+                const checkData = await checkRes.json();
+                if (checkData.hasActive && checkData.ticketId) {
+                    // Có ticket active → restore session
+                    currentTicketId = checkData.ticketId;
+                    localStorage.setItem('socket_chat_ticket_id', currentTicketId);
+                    ticketSystemAvailable = true;
+                    setupDiv.style.display = 'none';
+                    inputArea.style.display = 'flex';
+                    messagesDiv.style.display = 'flex';
+                    ticketBar.style.display = 'flex';
+                    ticketLabel.textContent = 'Ticket #' + currentTicketId;
+                    connectWebSocket();
+                    setTimeout(() => { loadChatHistory(); }, 300);
+                    return;
+                }
+            }
+        } catch (e) {
+            console.log('[socket-chat] Cannot check active ticket:', e);
+        }
+        // Không có ticket active → HIỆN FORM SETUP (Bắt đầu chat)
+        // Không auto-tạo ticket, cũng không hiện giao diện chat khi chưa có ticket
+        setupDiv.style.display = 'flex';
+        messagesDiv.style.display = 'none';
+        inputArea.style.display = 'none';
+    }
+
     async function startChat() {
         const name = (nameInput.value || username || localStorage.getItem('socket_chat_username') || '').trim();
         if (!name) {
@@ -266,11 +370,70 @@
 
         // Try to create a ticket through the ticket API
         try {
-            const ticketId = await createTicket(username, userEmail);
-            if (ticketId) {
-                currentTicketId = ticketId;
+            const result = await createTicket(username, userEmail);
+
+            // CHẶN HOÀN TOÀN nếu server trả về 409 (đang có ticket chưa đóng)
+            if (result && typeof result === 'object' && result.blocked) {
+                startBtn.disabled = false;
+                startBtn.textContent = 'Bắt Đầu Chat';
+                const blockedId = result.ticketId;
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '⛔ Không thể tạo cuộc trò chuyện mới!',
+                        html: `Bạn đang có <b>Ticket #${blockedId}</b> chưa đóng.<br><br>Hệ thống không cho phép tạo mới khi ticket cũ chưa kết thúc.`,
+                        showCancelButton: true,
+                        confirmButtonText: '🗑️ Đóng Ticket #' + blockedId,
+                        cancelButtonText: '💬 Tiếp tục Ticket #' + blockedId,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#0066cc'
+                    }).then(async (res) => {
+                        if (res.isConfirmed) {
+                            await fetch(`/api/tickets/${blockedId}/close`, { method: 'POST' });
+                            if (typeof showToast === 'function') showToast('✅ Đã đóng Ticket #' + blockedId + '. Bạn có thể bắt đầu chat mới!');
+                        } else if (res.dismiss === Swal.DismissReason.cancel) {
+                            // Tiếp tục ticket cũ
+                            currentTicketId = blockedId;
+                            localStorage.setItem('socket_chat_ticket_id', currentTicketId);
+                            ticketSystemAvailable = true;
+                            setupDiv.style.display = 'none';
+                            inputArea.style.display = 'flex';
+                            messagesDiv.style.display = 'flex';
+                            ticketBar.style.display = 'flex';
+                            ticketLabel.textContent = 'Ticket #' + currentTicketId;
+                            connectWebSocket();
+                            setTimeout(() => { loadChatHistory(); }, 300);
+                        }
+                    });
+                } else {
+                    const goOld = confirm(`Bạn đang có Ticket #${blockedId} chưa đóng.\n\nBấm OK để tiếp tục ticket cũ, Cancel để đóng ticket cũ và tạo mới.`);
+                    if (goOld) {
+                        currentTicketId = blockedId;
+                        localStorage.setItem('socket_chat_ticket_id', currentTicketId);
+                        ticketSystemAvailable = true;
+                        setupDiv.style.display = 'none';
+                        inputArea.style.display = 'flex';
+                        messagesDiv.style.display = 'flex';
+                        ticketBar.style.display = 'flex';
+                        ticketLabel.textContent = 'Ticket #' + currentTicketId;
+                        connectWebSocket();
+                        setTimeout(() => { loadChatHistory(); }, 300);
+                    } else {
+                        await fetch(`/api/tickets/${blockedId}/close`, { method: 'POST' });
+                        if (typeof showToast === 'function') showToast('✅ Đã đóng Ticket #' + blockedId + '. Bạn có thể bắt đầu chat mới!');
+                    }
+                }
+                return;
+            }
+
+            if (typeof result === 'number' && result) {
+                currentTicketId = result;
                 localStorage.setItem('socket_chat_ticket_id', currentTicketId);
                 ticketSystemAvailable = true;
+                // Thông báo tạo ticket thành công
+                if (typeof showToast === 'function') {
+                    showToast('✅ Ticket #' + currentTicketId + ' đã được tạo. Vui lòng chờ nhân viên hỗ trợ.');
+                }
             } else {
                 ticketSystemAvailable = false;
             }
@@ -281,13 +444,7 @@
         // Switch to chat view
         setupDiv.style.display = 'none';
         inputArea.style.display = 'flex';
-        
-        if (currentTicketId && ticketSystemAvailable) {
-            // Do not show waiting state initially
-            messagesDiv.style.display = 'flex';
-        } else {
-            messagesDiv.style.display = 'flex';
-        }
+        messagesDiv.style.display = 'flex';
         
         if (currentTicketId) {
             ticketBar.style.display = 'flex';
@@ -311,6 +468,12 @@
      * Falls back gracefully if the ticket system (Luxury404) is not merged yet.
      */
     async function createTicket(name, email) {
+        // Lock chống tạo ticket trùng lặp (server restart, double click, etc.)
+        if (isCreatingTicket) {
+            console.log('[socket-chat] createTicket already in progress, skipping.');
+            return null;
+        }
+        isCreatingTicket = true;
         try {
             const response = await fetch('/api/tickets/submit', {
                 method: 'POST',
@@ -324,6 +487,12 @@
                 })
             });
 
+            // HTTP 409 = đang có ticket chưa đóng - CHẶN HOÀN TOÀN
+            if (response.status === 409) {
+                const data = await response.json();
+                return { blocked: true, ticketId: data.ticketId, message: data.message };
+            }
+
             if (response.ok) {
                 const data = await response.json();
                 if (data.success && data.ticketId) {
@@ -332,9 +501,11 @@
             }
             return null;
         } catch (e) {
-            // Ticket system not available (not merged yet) - that's fine
+            // Ticket system not available - that's fine
             console.log('[socket-chat] Ticket API not available, using general chat mode.');
             return null;
+        } finally {
+            isCreatingTicket = false;
         }
     }
 
@@ -614,12 +785,12 @@
             senderName: username,
             content: text,
             type: 'CHAT',
-            isAiRequest: !adminJoined
+            isAiRequest: !adminJoined && !(waitingStateDiv && waitingStateDiv.classList.contains('active'))
         };
 
         ws.send(JSON.stringify(msgPayload));
 
-        if (!adminJoined) {
+        if (!adminJoined && !(waitingStateDiv && waitingStateDiv.classList.contains('active'))) {
             showAiTyping();
         }
 
@@ -660,15 +831,52 @@
             if (!currentTicketId) {
                 const name = (username || localStorage.getItem('socket_chat_username') || 'Khách hàng').trim();
                 const email = (userEmail || localStorage.getItem('socket_chat_email') || '').trim();
-                const ticketId = await createTicket(name, email);
-                if (ticketId) {
-                    currentTicketId = ticketId;
+                const result = await createTicket(name, email);
+
+                // Xử lý bị chặn (409) ngay tại đây
+                if (result && typeof result === 'object' && result.blocked) {
+                    const blockedId = result.ticketId;
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '⛔ Không thể tạo ticket mới!',
+                            html: `Bạn đang có <b>Ticket #${blockedId}</b> chưa đóng.<br><br>Hệ thống không cho phép tạo mới khi ticket cũ chưa kết thúc.`,
+                            showCancelButton: true,
+                            confirmButtonText: '🗑️ Đóng Ticket #' + blockedId,
+                            cancelButtonText: '💬 Tiếp tục Ticket #' + blockedId,
+                            confirmButtonColor: '#ef4444',
+                            cancelButtonColor: '#0066cc'
+                        }).then(async (res) => {
+                            if (res.isConfirmed) {
+                                await fetch(`/api/tickets/${blockedId}/close`, { method: 'POST' });
+                                if (typeof showToast === 'function') showToast('✅ Đã đóng Ticket #' + blockedId + '. Bạn có thể bắt đầu chat mới!');
+                            } else if (res.dismiss === Swal.DismissReason.cancel) {
+                                currentTicketId = blockedId;
+                                localStorage.setItem('socket_chat_ticket_id', currentTicketId);
+                                ticketSystemAvailable = true;
+                                if (ticketBar) ticketBar.style.display = 'flex';
+                                if (ticketLabel) ticketLabel.textContent = 'Ticket #' + currentTicketId;
+                                connectWebSocket();
+                                setTimeout(() => { loadChatHistory(); }, 300);
+                            }
+                        });
+                    } else {
+                        alert(`Bạn đang có Ticket #${blockedId} chưa đóng. Vui lòng đóng trước khi tạo mới.`);
+                        currentTicketId = blockedId;
+                        localStorage.setItem('socket_chat_ticket_id', currentTicketId);
+                        if (ticketBar) ticketBar.style.display = 'flex';
+                        if (ticketLabel) ticketLabel.textContent = 'Ticket #' + currentTicketId;
+                    }
+                    return;
+                }
+
+                // Tạo thành công
+                if (typeof result === 'number' && result) {
+                    currentTicketId = result;
                     localStorage.setItem('socket_chat_ticket_id', currentTicketId);
                     ticketSystemAvailable = true;
                     if (ticketBar) ticketBar.style.display = 'flex';
                     if (ticketLabel) ticketLabel.textContent = 'Ticket #' + currentTicketId;
-                    
-                    // Kết nối WebSocket với ticketId mới
                     connectWebSocket();
                 }
             }
@@ -680,6 +888,8 @@
         }
         
         // Gửi tin nhắn qua WebSocket
+        // Khi admin đã join: KHÔNG bao giờ gửi isAiRequest=true
+        const shouldAsk = !adminJoined && isAiReq && text !== '🧑‍💻 Gặp nhân viên hỗ trợ' && !(waitingStateDiv && waitingStateDiv.classList.contains('active'));
         if (!ws || ws.readyState !== WebSocket.OPEN) {
             appendSystemMessage('Đang kết nối lại...');
             connectWebSocket();
@@ -690,7 +900,7 @@
                 senderName: username,
                 content: text,
                 type: 'CHAT',
-                isAiRequest: (text === '🧑‍💻 Gặp nhân viên hỗ trợ' || adminJoined) ? false : isAiReq
+                isAiRequest: shouldAsk
             };
             ws.send(JSON.stringify(msgPayload));
             

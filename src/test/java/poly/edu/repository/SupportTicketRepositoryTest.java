@@ -93,5 +93,21 @@ public class SupportTicketRepositoryTest {
         long count = repository.countInProgressTickets();
         assertThat(count).isEqualTo(1);
     }
+
+    @Test
+    public void test_findActiveTicketsByEmail() {
+        repository.save(ticket1);
+        repository.save(ticket2);
+
+        List<SupportTicket> activeA = repository.findActiveTicketsByEmail("a@example.com");
+        assertThat(activeA).hasSize(1);
+        assertThat(activeA.get(0).getStatus()).isEqualTo("OPEN");
+
+        ticket1.setStatus("CLOSED");
+        repository.save(ticket1);
+
+        List<SupportTicket> activeAClosed = repository.findActiveTicketsByEmail("a@example.com");
+        assertThat(activeAClosed).isEmpty();
+    }
 }
 
