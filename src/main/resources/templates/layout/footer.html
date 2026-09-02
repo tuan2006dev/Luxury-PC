@@ -114,8 +114,6 @@
 
         <!-- GLOBAL CONFIRM MODAL (Removed: Now using SweetAlert2 via confirm-popup.js) -->
 
-
-
         <!-- ============================================== -->
         <!-- CÁC POPUP CỦA TRANG BUILD PC (CHUYỂN TỪ TRANG BUILD QUA) -->
         <!-- ============================================== -->
@@ -232,15 +230,27 @@
         <!-- ============================================== -->
         <!-- STATIC HTML FOR SOCKET CHAT V2 (Only for Authenticated Users) -->
         <th:block sec:authorize="isAuthenticated() and !hasAnyRole('ADMIN', 'STAFF')">
-        <script>
-            // Chat bot luôn đóng khi load trang - không auto-open
-            localStorage.removeItem('socket_chat_isOpen');
-        </script>
-        <style>
-            html.socket-chat-open #socketChatBtn { display: none !important; }
-            html.socket-chat-open #socketChatWindow { opacity: 1 !important; transform: translateY(0) scale(1) !important; pointer-events: auto !important; }
-            html:not(.socket-chat-open) #socketChatWindow:not(.open) { opacity: 0 !important; transform: translateY(20px) scale(0.95) !important; pointer-events: none !important; }
-        </style>
+            <script>
+                // Chat bot luôn đóng khi load trang - không auto-open
+                localStorage.removeItem('socket_chat_isOpen');
+            </script>
+            <style>
+                html.socket-chat-open #socketChatBtn {
+                    display: none !important;
+                }
+
+                html.socket-chat-open #socketChatWindow {
+                    opacity: 1 !important;
+                    transform: translateY(0) scale(1) !important;
+                    pointer-events: auto !important;
+                }
+
+                html:not(.socket-chat-open) #socketChatWindow:not(.open) {
+                    opacity: 0 !important;
+                    transform: translateY(20px) scale(0.95) !important;
+                    pointer-events: none !important;
+                }
+            </style>
 
             <div class="socket-chat-btn" id="socketChatBtn" title="Hỗ trợ trực tuyến">
                 <svg viewBox="0 0 24 24">
