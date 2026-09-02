@@ -21,18 +21,21 @@
     <div class="main-content">
         <div class="header">
             <div class="title">
-                <h1><span>Quản Lý Sản Phẩm</span> (<span th:text="${totalItems != null ? totalItems : (products != null ? products.size() : 0)}">0</span>)
+                <h1><span>Quản Lý Sản Phẩm</span> (<span
+                        th:text="${totalItems != null ? totalItems : (products != null ? products.size() : 0)}">0</span>)
                 </h1>
             </div>
             <div th:replace="~{admin/layout/header :: adminProfile}"></div>
         </div>
 
-        <div th:if="${message}" class="alert alert-success"
+        <div th:if="${message != null or success != null}" class="alert alert-success"
             style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 6px; color: #22c55e;">
-            <i class="fa-solid fa-circle-check"></i> <span th:text="${message}"></span>
+            <i class="fa-solid fa-circle-check"></i> <span th:text="${message != null ? message : success}"></span>
         </div>
-        <!-- Removed alert-danger block to use inline client-side validation -->
-
+        <div th:if="${error}" class="alert alert-danger"
+            style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 6px; color: #ef4444;">
+            <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}"></span>
+        </div>
 
         <!-- Action Bar: Nút Thêm mới + Tìm kiếm góc phải -->
         <div
@@ -72,69 +75,94 @@
                     </div>
                     <div class="input-group">
                         <label><span>Số Lượng Tồn Kho</span> *</label>
-                        <input autocomplete="off" type="number" th:field="*{stock}" id="stock" required min="0" max="200"
-                            placeholder="VD: 50">
+                        <input autocomplete="off" type="number" th:field="*{stock}" id="stock" required min="0"
+                            max="200" placeholder="VD: 50">
                     </div>
                     <div class="input-group full">
                         <label><span>Danh Mục</span> *</label>
                         <select th:field="*{category.id}" required>
                             <option value="">-- Chọn danh mục --</option>
-                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">VGA</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">VGA
+                            </option>
                         </select>
                     </div>
                     <div class="input-group full">
                         <label>Mô Tả Nhanh</label>
                         <textarea th:field="*{description}" rows="3" placeholder="Mô tả kỹ thuật ..."></textarea>
                     </div>
+
+                    <!-- CỘT 1: TẢI ẢNH LÊN (DROPZONE CHO 4 ẢNH) -->
                     <div class="input-group">
-                        <label>Tải Ảnh Lên</label>
-                        <div class="file-upload-wrapper">
-                            <label class="file-upload-label">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span class="file-name">Chọn ảnh tải
-                                    lên...</span>
-                                <input autocomplete="off" type="file" name="imageFile" accept="image/*"
-                                    class="file-input-hidden" style="display: none !important;" onchange="
-                                let name = 'Chọn ảnh tải lên...';
-                                if (this.files && this.files.length > 0) {
-                                    name = this.files[0].name;
-                                    if (name.length > 25) {
-                                        const dotIdx = name.lastIndexOf('.');
-                                        const ext = dotIdx !== -1 ? name.substring(dotIdx) : '';
-                                        const base = dotIdx !== -1 ? name.substring(0, dotIdx) : name;
-                                        name = base.substring(0, 18) + '...' + ext;
-                                    }
-                                }
-                                const label = this.closest('.file-upload-label');
-                                const textSpan = label.querySelector('.file-name');
-                                if (textSpan) textSpan.innerText = name;
-                                if (this.files && this.files.length > 0) label.classList.add('has-file');
-                                else label.classList.remove('has-file');
-                            ">
-                            </label>
+                        <div class="image-section-header">
+                            <span class="section-title">TẢI ẢNH LÊN</span>
+                            <span class="section-hint"><i class="fa-solid fa-circle-info"></i> Tối đa 4 ảnh (1 ảnh chính + 3 ảnh chi tiết)</span>
+                        </div>
+                        <div class="image-dropzone-box" id="fileDropzone">
+                            <!-- Hidden input file đa chọn -->
+                            <input type="file" id="uploadFilesInput" name="uploadFiles" multiple accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;" onchange="handleMultipleFileSelect(this)">
+                            
+                            <!-- Trạng thái trống: Click để mở file picker -->
+                            <div id="fileEmptyState" class="dropzone-empty-trigger" onclick="document.getElementById('uploadFilesInput').click()">
+                                <i class="fa-solid fa-plus dropzone-icon"></i>
+                                <div class="dropzone-title">Thêm ảnh sản phẩm</div>
+                                <div class="dropzone-sub">Tối đa 4 ảnh (JPG, JPEG, PNG, WEBP – tối đa 5MB/ảnh)</div>
+                            </div>
+
+                            <!-- Trạng thái hiển thị các ảnh trực tiếp trong khung -->
+                            <div id="fileFilledState" class="dropzone-filled-container" style="display: none;">
+                                <div class="preview-grid-4" id="fileCardsGrid">
+                                    <!-- Render các thẻ ảnh ở đây -->
+                                </div>
+                                <div class="dropzone-footer-bar">
+                                    <span id="fileCountText" style="font-size: 0.75rem; color: #64748b;">Đã chọn 0 ảnh</span>
+                                    <button type="button" class="link-btn-clear" onclick="clearAllUploadedFiles()"><i class="fa-solid fa-trash"></i> Xóa tất cả</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- CỘT 2: THÊM LINK ẢNH (URL) -->
                     <div class="input-group">
-                        <label>Hoặc nhập Link Ảnh (URL)</label>
-                        <input autocomplete="off" type="text" id="imageUrl" th:field="*{image}"
-                            placeholder="VD: https://example.com/hinh-anh.jpg">
-                    </div>
-                    <div class="input-group full" id="currentImageWrapper" th:style="${product.image != null and !product.image.isEmpty()} ? '' : 'display: none;'">
-                        <label>Ảnh hiện tại:</label>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <img id="currentImagePreview" th:src="${product.image != null ? (product.image.startsWith('http') || product.image.startsWith('/') ? product.image : '/images/products/' + product.image) : 'https://placehold.co/100x100/111/c9a84c?text=No+Image'}"
-                                th:alt="${product.name}"
-                                onerror="this.onerror=null; this.src='https://placehold.co/100x100/111/c9a84c?text=No+Image';"
-                                style="width:100px; height:100px; object-fit:contain; border:1px solid var(--gold); border-radius:4px; padding:2px; background:#fff;">
-                            <span id="currentImageName" th:text="${product.image}" style="font-size:0.8rem; color:var(--muted);"></span>
+                        <div class="image-section-header">
+                            <span class="section-title">THÊM LINK ẢNH (URL)</span>
+                            <span class="section-hint"><i class="fa-solid fa-circle-info"></i> Thêm nhiều link ảnh bằng cách bấm dấu +</span>
+                        </div>
+                        <div class="image-dropzone-box" id="urlDropzone">
+                            <!-- Thanh nhập Link URL -->
+                            <div class="url-input-bar-group">
+                                <input type="text" id="urlInputText" placeholder="Dán link ảnh (https://...) và bấm +" onkeydown="if(event.key==='Enter'){event.preventDefault(); addUrlFromInput();}">
+                                <button type="button" onclick="addUrlFromInput()" title="Thêm link ảnh này"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+
+                            <!-- Trạng thái trống -->
+                            <div id="urlEmptyState" class="dropzone-empty-trigger" onclick="document.getElementById('urlInputText').focus()">
+                                <i class="fa-solid fa-link dropzone-icon" style="transform: rotate(-45deg);"></i>
+                                <div class="dropzone-title">Thêm link ảnh</div>
+                                <div class="dropzone-sub">Bấm dấu + để thêm nhiều link ảnh</div>
+                            </div>
+
+                            <!-- Trạng thái hiển thị các ảnh URL trực tiếp trong khung -->
+                            <div id="urlFilledState" class="dropzone-filled-container" style="display: none;">
+                                <div class="preview-grid-4" id="urlCardsGrid">
+                                    <!-- Render các thẻ ảnh URL ở đây -->
+                                </div>
+                                <div class="dropzone-footer-bar">
+                                    <span id="urlCountText" style="font-size: 0.75rem; color: #64748b;">Đã thêm 0 link ảnh</span>
+                                    <button type="button" class="link-btn-clear" onclick="clearAllUrls()"><i class="fa-solid fa-trash"></i> Xóa tất cả</button>
+                                </div>
+                            </div>
+
+                            <!-- Hidden inputs để Spring Boot Controller bind dữ liệu -->
+                            <input type="hidden" id="mainImageUrlInput" th:field="*{image}">
+                            <input type="hidden" id="extraUrl1Input" name="extraUrl1">
+                            <input type="hidden" id="extraUrl2Input" name="extraUrl2">
+                            <input type="hidden" id="extraUrl3Input" name="extraUrl3">
                         </div>
                     </div>
                 </div>
                 <div style="margin-top: 2rem; display: flex; gap: 10px;">
-                    <button type="submit" class="btn btn-gold">Lưu Sản
-                        Phẩm</button>
-                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/products'">Hủy / Làm
-                        mới</button>
+                    <button type="submit" class="btn btn-gold">Lưu Sản Phẩm</button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='/admin/products'">Hủy / Làm mới</button>
                 </div>
             </form>
         </div>
@@ -149,25 +177,26 @@
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Danh Mục</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Giá Bán</th>
                             <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">Kho</th>
-                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; width: 100px;">Thao
-                                Tác</th>
+                            <th style="position: sticky; top: 0; z-index: 10; background: #f8fafc; width: 100px;">Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="p, stat : ${products}">
                             <td>
                                 <div class="product-img">
-                                    <img th:if="${p.image != null}"
+                                    <img th:if="${p.image != null and !p.image.isEmpty()}"
                                         th:src="${p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/images/products/' + p.image}"
                                         th:alt="${p.name}"
-                                        onerror="this.onerror=null; this.src='https://placehold.co/50x50/111/c9a84c?text=Error';"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/50x50/f1f5f9/64748b?text=No+Img';"
                                         style="width:100%; height:100%; object-fit:contain; border-radius:inherit; border:none; padding:2px;">
-                                    <span th:if="${p.image == null}"
+                                    <span th:if="${p.image == null or p.image.isEmpty()}"
                                         style="font-size:0.6rem; text-align:center;">No<br>Image</span>
                                 </div>
                                 <div class="product-info">
                                     <div class="product-name" th:text="${p.name}">Intel Core i9-14900K</div>
-                                    <div class="product-cat" th:text="'STT: #' + ${(startItem != null ? startItem : 1) + stat.index}">STT: #1</div>
+                                    <div class="product-cat"
+                                        th:text="'STT: #' + ${(startItem != null ? startItem : 1) + stat.index}">STT: #1
+                                    </div>
                                 </div>
                             </td>
                             <td th:text="${p.category != null ? p.category.name : 'Chưa phân loại'}">CPU</td>
@@ -181,7 +210,9 @@
                                         th:data-price="${p.price != null ? #numbers.formatDecimal(p.price, 0, 'NONE', 0, 'POINT') : 0}"
                                         th:data-cat="${p.category != null ? p.category.id : ''}"
                                         th:data-desc="${p.description}" th:data-stock="${p.stock}"
-                                        th:data-image="${p.image}" onclick="editProduct(this)">
+                                        th:data-image="${p.image}"
+                                        th:data-subimages="${p.productImages != null and !p.productImages.isEmpty() ? #strings.arrayJoin(p.productImages.![imageUrl], ',') : ''}"
+                                        onclick="editProduct(this)">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <a th:href="@{/admin/products/delete/{id}(id=${p.id})}"
@@ -196,6 +227,23 @@
             </div>
             <div th:replace="~{admin/fragments/pagination :: pagination(baseUrl='/admin/products')}"></div>
         </div>
+
+        <!-- Image Lightbox Modal (Xem ảnh phóng to) -->
+        <div id="imageLightboxModal" class="image-lightbox-modal" onclick="closeImageLightbox(event)">
+            <div class="image-lightbox-content" onclick="event.stopPropagation()">
+                <button type="button" class="image-lightbox-close" onclick="closeImageLightbox()" title="Đóng (Esc)"><i
+                        class="fa-solid fa-xmark"></i></button>
+                <div class="image-lightbox-header">
+                    <span id="lightboxBadge" class="preview-slot-badge badge-main"
+                        style="position:static; display:inline-block; padding: 4px 10px; font-size: 11px; border-radius: 4px;">Ảnh chính</span>
+                    <span id="lightboxTitle" style="font-size: 13px; color: #475569; font-weight: 500; margin-left: 8px;">Xem ảnh chi tiết</span>
+                </div>
+                <div class="image-lightbox-body">
+                    <img id="lightboxImg" src="" alt="Preview" />
+                </div>
+            </div>
+        </div>
+
         <script th:src="@{/js/admin/products.js}"></script>
     </div>
     <div th:replace="~{admin/layout/common-scripts :: scripts}"></div>
