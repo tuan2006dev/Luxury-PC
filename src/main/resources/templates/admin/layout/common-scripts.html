@@ -1,4 +1,14 @@
 <div th:fragment="scripts">
+    <!-- Global Suppress for Chrome Extension / Web Vitals Errors -->
+    <script>
+        window.addEventListener('error', function (event) {
+            if (event.message && (event.message.includes('startTime') || event.message.includes('reportAllChanges'))) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                return true;
+            }
+        }, true);
+    </script>
     <!-- Chart.js & Plugins for Admin Dashboard & Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>

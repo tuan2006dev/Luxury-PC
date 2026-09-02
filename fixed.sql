@@ -4179,10 +4179,6 @@ WHERE admin_note = N'Đơn hàng mẫu phân bổ trạng thái'
 ORDER BY id DESC;
 GO
 
-
-
-
-
 -- news_categories THÊM 3 DANH MỤC TIN TỨC MẪU
 INSERT INTO dbo.news_categories (name, slug, description, status, created_at, updated_at)
 VALUES 

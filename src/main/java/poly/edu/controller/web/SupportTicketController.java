@@ -51,7 +51,41 @@ public class SupportTicketController {
     }
 
     // ========================
-    // CUSTOMER: Submit ticket via API (from 3D builder modal)
+    // CUSTOMER: Get active open ticket for user/email
+    // ========================
+    @GetMapping("/api/tickets/active")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getActiveTicket(
+            @RequestParam(required = false) String email,
+            Authentication auth) {
+        SupportTicket activeTicket = null;
+        if (auth != null && auth.isAuthenticated()) {
+            User user = userRepo.findByUsername(auth.getName()).orElse(null);
+            if (user != null) {
+                List<SupportTicket> list = ticketRepo.findActiveTicketsByUserId(user.getId());
+                if (!list.isEmpty()) activeTicket = list.get(0);
+            }
+        }
+        if (activeTicket == null && email != null && !email.isBlank()) {
+            List<SupportTicket> list = ticketRepo.findActiveTicketsByEmail(email.trim());
+            if (!list.isEmpty()) activeTicket = list.get(0);
+        }
+
+        Map<String, Object> res = new HashMap<>();
+        if (activeTicket != null) {
+            res.put("hasActive", true);
+            res.put("ticketId", activeTicket.getId());
+            res.put("status", activeTicket.getStatus());
+            res.put("subject", activeTicket.getSubject());
+            res.put("assignedAdmin", activeTicket.getAssignedAdmin());
+        } else {
+            res.put("hasActive", false);
+        }
+        return ResponseEntity.ok(res);
+    }
+
+    // ========================
+    // CUSTOMER: Submit ticket via API (from 3D builder modal / live chat)
     // ========================
     @PostMapping("/api/tickets/submit")
     @ResponseBody
@@ -59,12 +93,53 @@ public class SupportTicketController {
             @RequestBody Map<String, String> body,
             Authentication auth) {
 
+        String email = body.getOrDefault("email", "").trim();
+        String customerName = body.getOrDefault("name", "Khách hàng").trim();
+        String messageContent = body.getOrDefault("message", "").trim();
+
+        // 1. Kiểm tra nếu người dùng đã có Ticket đang mở (OPEN hoặc IN_PROGRESS)
+        SupportTicket existingTicket = null;
+        User currentUser = null;
+        if (auth != null && auth.isAuthenticated()) {
+            currentUser = userRepo.findByUsername(auth.getName()).orElse(null);
+            if (currentUser != null) {
+                List<SupportTicket> active = ticketRepo.findActiveTicketsByUserId(currentUser.getId());
+                if (!active.isEmpty()) existingTicket = active.get(0);
+            }
+        }
+        if (existingTicket == null && !email.isBlank()) {
+            List<SupportTicket> active = ticketRepo.findActiveTicketsByEmail(email);
+            if (!active.isEmpty()) existingTicket = active.get(0);
+        }
+
+        // Nếu đã có ticket đang mở -> Nối tin nhắn vào ticket cũ thay vì tạo trùng lặp
+        if (existingTicket != null) {
+            if (!messageContent.isEmpty()) {
+                ChatMessage nextMsg = new ChatMessage();
+                nextMsg.setTicketId(existingTicket.getId());
+                nextMsg.setSender("CUSTOMER");
+                nextMsg.setSenderName(existingTicket.getCustomerName() != null ? existingTicket.getCustomerName() : customerName);
+                nextMsg.setMessage(messageContent);
+                chatMessageRepo.save(nextMsg);
+            }
+            existingTicket.setUpdatedAt(new java.util.Date());
+            ticketRepo.save(existingTicket);
+
+            Map<String, Object> res = new HashMap<>();
+            res.put("success", true);
+            res.put("ticketId", existingTicket.getId());
+            res.put("isExisting", true);
+            res.put("message", "Đã tiếp tục phiên hỗ trợ Ticket #" + existingTicket.getId());
+            return ResponseEntity.ok(res);
+        }
+
+        // 2. Tạo Ticket mới nếu chưa có ticket nào đang mở
         SupportTicket ticket = new SupportTicket();
-        ticket.setCustomerName(body.getOrDefault("name", "Khách hàng"));
-        ticket.setCustomerEmail(body.getOrDefault("email", ""));
+        ticket.setCustomerName(customerName);
+        ticket.setCustomerEmail(email);
         ticket.setCustomerPhone(body.getOrDefault("phone", ""));
         ticket.setSubject(body.getOrDefault("subject", "Tư vấn linh kiện PC"));
-        ticket.setMessage(body.getOrDefault("message", ""));
+        ticket.setMessage(messageContent);
         ticket.setCategory(body.getOrDefault("category", "GENERAL"));
         ticket.setBuildConfig(body.getOrDefault("buildConfig", null));
         ticket.setStatus("OPEN");
@@ -73,26 +148,26 @@ public class SupportTicketController {
             ticket.setAssignedAdmin(body.get("assignedAdmin").trim());
         }
 
-        // Link to logged-in user if authenticated
-        if (auth != null && auth.isAuthenticated()) {
-            userRepo.findByUsername(auth.getName()).ifPresent(ticket::setUser);
+        if (currentUser != null) {
+            ticket.setUser(currentUser);
         }
 
         ticketRepo.save(ticket);
 
-        // Save initial message in ChatMessage
-        if (ticket.getMessage() != null && !ticket.getMessage().trim().isEmpty()) {
+        // Lưu tin nhắn khởi tạo
+        if (!messageContent.isEmpty()) {
             ChatMessage firstMsg = new ChatMessage();
             firstMsg.setTicketId(ticket.getId());
             firstMsg.setSender("CUSTOMER");
             firstMsg.setSenderName(ticket.getCustomerName());
-            firstMsg.setMessage(ticket.getMessage());
+            firstMsg.setMessage(messageContent);
             chatMessageRepo.save(firstMsg);
         }
 
         Map<String, Object> res = new HashMap<>();
         res.put("success", true);
         res.put("ticketId", ticket.getId());
+        res.put("isExisting", false);
         res.put("message", "Ticket #" + ticket.getId() + " đã được ghi nhận! Nhân viên sẽ liên hệ với bạn trong 30 phút.");
         return ResponseEntity.ok(res);
     }
