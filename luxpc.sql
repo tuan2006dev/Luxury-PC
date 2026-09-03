@@ -21,7 +21,7 @@ GO
 -- 1. DROP ALL EXISTING FOREIGN KEYS DYNAMICALLY
 -- --------------------------------------------------
 DECLARE @sql NVARCHAR(MAX) = N'';
-SELECT @sql += N'ALTER TABLE ' + QUOTENAME(OBJECT_NAME(parent_object_id)) + N' DROP CONSTRAINT ' + QUOTENAME(name) + N';' + CHAR(13) + CHAR(10)
+SELECT @sql += N'ALTER TABLE ' + QUOTENAME(OBJECT_NAME(parent_object_id)) + N' DROP CONSTRAINT ' + QUOTENAME(name) + N';N' + CHAR(13) + CHAR(10)
 FROM sys.foreign_keys;
 IF @sql <> N''
     EXEC sp_executesql @sql;
@@ -32,7 +32,7 @@ GO
 -- --------------------------------------------------
 
 -- Bảng Quyền hạn
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'roles') AND type IN ('U')) DROP TABLE roles;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'roles') AND type IN ('UN')) DROP TABLE roles;
 GO
 CREATE TABLE roles (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -52,7 +52,7 @@ CREATE TABLE users (
     phone NVARCHAR(255),
     address NVARCHAR(MAX),
     enabled BIT DEFAULT 1,
-    auth_provider NVARCHAR(255) DEFAULT 'LOCAL',
+    auth_provider NVARCHAR(255) DEFAULT 'LOCALN',
     google_id NVARCHAR(255),
     facebook_id NVARCHAR(255),
     avatar NVARCHAR(255),
@@ -71,7 +71,7 @@ CREATE TABLE users (
 GO
 
 -- Bảng Phân quyền Người dùng
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'user_roles') AND type IN ('U')) DROP TABLE user_roles;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'user_roles') AND type IN ('UN')) DROP TABLE user_roles;
 GO
 CREATE TABLE user_roles (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -82,7 +82,7 @@ CREATE TABLE user_roles (
 GO
 
 -- Bảng Quản lý Phiên đăng nhập (Session Management)
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'user_sessions') AND type IN ('U')) DROP TABLE user_sessions;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'user_sessions') AND type IN ('UN')) DROP TABLE user_sessions;
 GO
 CREATE TABLE user_sessions (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -99,7 +99,7 @@ CREATE TABLE user_sessions (
 GO
 
 -- Bảng Danh mục Sản phẩm
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'categories') AND type IN ('U')) DROP TABLE categories;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'categories') AND type IN ('UN')) DROP TABLE categories;
 GO
 CREATE TABLE categories (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -111,7 +111,7 @@ CREATE TABLE categories (
 GO
 
 -- Bảng Thương hiệu
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'brands') AND type IN ('U')) DROP TABLE brands;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'brands') AND type IN ('UN')) DROP TABLE brands;
 GO
 CREATE TABLE brands (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -123,7 +123,7 @@ CREATE TABLE brands (
 GO
 
 -- Bảng Sản phẩm
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'products') AND type IN ('U')) DROP TABLE products;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'products') AND type IN ('UN')) DROP TABLE products;
 GO
 CREATE TABLE products (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -140,7 +140,7 @@ GO
 
 -- Bảng Ảnh phụ Sản phẩm
 IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'product_images') AND type IN ('U')) DROP TABLE product_images;
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'product_image') AND type IN ('U')) DROP TABLE product_image;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'product_image') AND type IN ('UN')) DROP TABLE product_image;
 GO
 CREATE TABLE product_images (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -152,7 +152,7 @@ GO
 
 
 -- Bảng Flash Sale
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'flash_sales') AND type IN ('U')) DROP TABLE flash_sales;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'flash_sales') AND type IN ('UN')) DROP TABLE flash_sales;
 GO
 CREATE TABLE flash_sales (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -168,7 +168,7 @@ CREATE TABLE flash_sales (
 GO
 
 -- Bảng Chi tiết Flash Sale
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'flash_sale_items') AND type IN ('U')) DROP TABLE flash_sale_items;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'flash_sale_items') AND type IN ('UN')) DROP TABLE flash_sale_items;
 GO
 CREATE TABLE flash_sale_items (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -181,7 +181,7 @@ CREATE TABLE flash_sale_items (
 GO
 
 -- Bảng PC Combo lắp sẵn
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_combos') AND type IN ('U')) DROP TABLE pc_combos;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_combos') AND type IN ('UN')) DROP TABLE pc_combos;
 GO
 CREATE TABLE pc_combos (
     id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -195,7 +195,7 @@ CREATE TABLE pc_combos (
 GO
 
 -- Bảng Chi tiết linh kiện PC Combo
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_combo_details') AND type IN ('U')) DROP TABLE pc_combo_details;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_combo_details') AND type IN ('UN')) DROP TABLE pc_combo_details;
 GO
 CREATE TABLE pc_combo_details (
     id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -206,7 +206,7 @@ CREATE TABLE pc_combo_details (
 GO
 
 -- Bảng Build PC đã lưu
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_builds') AND type IN ('U')) DROP TABLE pc_builds;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_builds') AND type IN ('UN')) DROP TABLE pc_builds;
 GO
 CREATE TABLE pc_builds (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -217,7 +217,7 @@ CREATE TABLE pc_builds (
 GO
 
 -- Bảng Chi tiết linh kiện Build PC
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_build_items') AND type IN ('U')) DROP TABLE pc_build_items;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'pc_build_items') AND type IN ('UN')) DROP TABLE pc_build_items;
 GO
 CREATE TABLE pc_build_items (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -231,7 +231,7 @@ IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'shared_bu
 GO
 CREATE TABLE shared_builds (
     share_code NVARCHAR(15) NOT NULL PRIMARY KEY,
-    name NVARCHAR(100) DEFAULT N'Cấu hình chia sẻ từ LuxuryPC',
+    name NVARCHAR(100) DEFAULT N'Cấu hình chia sẻ từ LuxuryPCN',
     created_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
     cpu_id NVARCHAR(50),
     mainboard_id NVARCHAR(50),
@@ -246,7 +246,7 @@ CREATE TABLE shared_builds (
 GO
 
 -- Bảng Mã giảm giá Voucher
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'vouchers') AND type IN ('U')) DROP TABLE vouchers;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'vouchers') AND type IN ('UN')) DROP TABLE vouchers;
 GO
 CREATE TABLE vouchers (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -274,7 +274,7 @@ CREATE TABLE user_vouchers (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     user_id INT NOT NULL,
     voucher_id INT NOT NULL,
-    status NVARCHAR(255) DEFAULT 'AVAILABLE' NOT NULL,
+    status NVARCHAR(255) DEFAULT 'AVAILABLEN' NOT NULL,
     saved_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
     used_at DATETIME2,
     reservation_expires_at DATETIME2
@@ -282,7 +282,7 @@ CREATE TABLE user_vouchers (
 GO
 
 -- Bảng Địa chỉ giao hàng
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'shipping_addresses') AND type IN ('U')) DROP TABLE shipping_addresses;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'shipping_addresses') AND type IN ('UN')) DROP TABLE shipping_addresses;
 GO
 CREATE TABLE shipping_addresses (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -297,7 +297,7 @@ CREATE TABLE shipping_addresses (
 GO
 
 -- Bảng Đơn hàng
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'orders') AND type IN ('U')) DROP TABLE orders;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'orders') AND type IN ('UN')) DROP TABLE orders;
 GO
 CREATE TABLE orders (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -332,7 +332,7 @@ CREATE TABLE orders (
 GO
 
 -- Bảng Chi tiết Đơn hàng
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'order_items') AND type IN ('U')) DROP TABLE order_items;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'order_items') AND type IN ('UN')) DROP TABLE order_items;
 GO
 CREATE TABLE order_items (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -344,7 +344,7 @@ CREATE TABLE order_items (
 GO
 
 -- Bảng Giỏ hàng
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'carts') AND type IN ('U')) DROP TABLE carts;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'carts') AND type IN ('UN')) DROP TABLE carts;
 GO
 CREATE TABLE carts (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -354,7 +354,7 @@ CREATE TABLE carts (
 GO
 
 -- Bảng Chi tiết Giỏ hàng
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'cart_items') AND type IN ('U')) DROP TABLE cart_items;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'cart_items') AND type IN ('UN')) DROP TABLE cart_items;
 GO
 CREATE TABLE cart_items (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -373,7 +373,7 @@ CREATE TABLE comments (
     product_id INT NOT NULL,
     content NVARCHAR(MAX) NOT NULL,
     parent_id INT,
-    status NVARCHAR(20) DEFAULT 'APPROVED',
+    status NVARCHAR(20) DEFAULT 'APPROVEDN',
     created_at DATETIME2 DEFAULT CURRENT_TIMESTAMP
 );
 GO
@@ -386,13 +386,13 @@ CREATE TABLE comment_replies (
     comment_id INT NOT NULL,
     user_id INT NOT NULL,
     content NVARCHAR(MAX) NOT NULL,
-    status NVARCHAR(20) DEFAULT 'APPROVED',
+    status NVARCHAR(20) DEFAULT 'APPROVEDN',
     created_at DATETIME2 DEFAULT CURRENT_TIMESTAMP
 );
 GO
 
 -- Bảng Đánh giá Sản phẩm (Reviews)
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'reviews') AND type IN ('U')) DROP TABLE reviews;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'reviews') AND type IN ('UN')) DROP TABLE reviews;
 GO
 CREATE TABLE reviews (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -413,7 +413,7 @@ CREATE TABLE reviews (
 GO
 
 -- Bảng Danh sách Yêu thích (Wishlist)
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'wishlist_items') AND type IN ('U')) DROP TABLE wishlist_items;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'wishlist_items') AND type IN ('UN')) DROP TABLE wishlist_items;
 GO
 CREATE TABLE wishlist_items (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -424,7 +424,7 @@ CREATE TABLE wishlist_items (
 GO
 
 -- Bảng Kho hàng (Inventory)
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'inventory') AND type IN ('U')) DROP TABLE inventory;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'inventory') AND type IN ('UN')) DROP TABLE inventory;
 GO
 CREATE TABLE inventory (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -435,7 +435,7 @@ CREATE TABLE inventory (
 GO
 
 -- Bảng Biến động kho hàng
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'stock_movements') AND type IN ('U')) DROP TABLE stock_movements;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'stock_movements') AND type IN ('UN')) DROP TABLE stock_movements;
 GO
 CREATE TABLE stock_movements (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -455,7 +455,7 @@ CREATE TABLE news_categories (
     name NVARCHAR(100) NOT NULL,
     slug NVARCHAR(100) NOT NULL,
     description NVARCHAR(MAX),
-    status NVARCHAR(20) DEFAULT 'ACTIVE' NOT NULL,
+    status NVARCHAR(20) DEFAULT 'ACTIVEN' NOT NULL,
     created_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP
 );
@@ -473,7 +473,7 @@ CREATE TABLE news (
     thumbnail NVARCHAR(255),
     author_id INT NOT NULL,
     category_id INT,
-    status NVARCHAR(20) DEFAULT 'ACTIVE',
+    status NVARCHAR(20) DEFAULT 'ACTIVEN',
     meta_title NVARCHAR(255),
     meta_description NVARCHAR(MAX),
     meta_keywords NVARCHAR(255),
@@ -523,7 +523,7 @@ CREATE TABLE tickets (
 GO
 
 -- Bảng Tin nhắn trong Ticket
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'ticket_messages') AND type IN ('U')) DROP TABLE ticket_messages;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'ticket_messages') AND type IN ('UN')) DROP TABLE ticket_messages;
 GO
 CREATE TABLE ticket_messages (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -536,7 +536,7 @@ CREATE TABLE ticket_messages (
 GO
 
 -- Bảng Tin nhắn Live Chat
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'chat_messages') AND type IN ('U')) DROP TABLE chat_messages;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'chat_messages') AND type IN ('UN')) DROP TABLE chat_messages;
 GO
 CREATE TABLE chat_messages (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -549,7 +549,7 @@ CREATE TABLE chat_messages (
 GO
 
 -- Bảng Đặt lại Mật khẩu
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'password_resets') AND type IN ('U')) DROP TABLE password_resets;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'password_resets') AND type IN ('UN')) DROP TABLE password_resets;
 GO
 CREATE TABLE password_resets (
     id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -560,7 +560,7 @@ CREATE TABLE password_resets (
 GO
 
 -- Bảng Giao dịch Thanh toán SePay
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'sepay_transactions') AND type IN ('U')) DROP TABLE sepay_transactions;
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'sepay_transactions') AND type IN ('UN')) DROP TABLE sepay_transactions;
 GO
 CREATE TABLE sepay_transactions (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -743,548 +743,3334 @@ GO
 -- ----------------------------------------------------------------------------
 SET IDENTITY_INSERT products ON;
 INSERT INTO products (id, name, price, description, image, category_id, stock, created_at, brand) VALUES
-(1, 'Intel Core i9-14900K', 15500000, N'TDP: 125W | 24 Cores, up to 6.0GHz, LGA 1700', 'i9_14900k.jpg', 1, 46, '2026-04-06 13:46:29.076393', N'Intel'),
-(2, 'AMD Ryzen 9 7950X3D', 17200000, N'TDP: 170W | 16 Cores, 128MB L3 Cache, AM5', 'i9_14900k.jpg', 1, 15, NULL, N'AMD'),
-(3, 'Intel Core i7-14700Kkk', 10800000, N'TDP: 125W | 20 Cores, Hybrid Architecture', N'https://himmcom.com.np/wp-content/uploads/2024/01/1-3.jpg%20?%3E', 1, 0, NULL, N'Intel'),
-(4, 'AMD Ryzen 7 7800X3D', 11500000, N'TDP: 120W | Best gaming CPU, 8 Cores, 3D V-Cache', N'https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-7800x3d.jpg', 1, 27, '2026-04-06 13:46:29.076393', N'AMD'),
-(5, 'Intel Core i5-13600K', 8200000, N'TDP: 125W | 14 Cores, Mid-range gaming', N'https://www.notebookcheck.net/fileadmin/Notebooks/Sonstiges/Intel/Raptor_Lake_S/Raptor_Lake_7.jpg', 1, 54, '2026-04-06 13:46:29.076393', N'Intel'),
-(6, 'AMD Ryzen 5 7600X', 5800000, N'TDP: 65W | 6 Cores, Zen 4 Architecture, AM5', N'https://static01.galaxus.com/productimages/8/6/2/2/3/5/8/5/2/5/8/0/4/8/2/7/4/9/6/a215fe82-81fe-4ec0-a941-8dfab4312068_cropped.png_720.jpeg', 1, 59, '2026-04-06 13:46:29.076393', N'AMD'),
-(7, 'Intel Core i9-13900KS', 18500000, N'TDP: 125W | Special Edition, 6.0GHz', N'https://tpucdn.com/cpu-specs/images/chips/2956-front.jpg', 1, 0, '2026-04-06 13:46:29.076393', N'Intel'),
-(8, 'AMD Ryzen 9 7900X', 10500000, N'TDP: 170W | 12 Cores, 5.6GHz Boost', N'https://www.notebookcheck.net/uploads/tx_nbc2/R9_7900_9.jpg', 1, 18, '2026-04-06 13:46:29.076393', N'AMD'),
-(9, 'Intel Core i7-13700F', 8900000, N'TDP: 65W | 16 Cores, No Integrated Graphics', N'https://microless.com/cdn/products/08f5cf4e0f9b43cecfee68f4a554f23c-hi.jpg', 1, 45, '2026-04-06 13:46:29.076393', N'Intel'),
-(10, 'AMD Ryzen 7 5800X3D', 8500000, N'TDP: 120W | Legendary AM4 gaming CPU', N'https://www.techpowerup.com/review/amd-ryzen-7-5800x3d-10th-anniversary/images/title.jpg', 1, 25, '2026-04-06 13:46:29.076393', N'AMD'),
-(11, 'Intel Core i5-12400F', 3500000, N'TDP: 65W | Budget King, 6 Cores', N'https://atcsjo.com/public/uploads/all/PZ7Ofk2PcEE8TNoZi0QSSfpF5x5tI84fcjFIBiLt.jpg', 1, 96, '2026-04-06 13:46:29.076393', N'Intel'),
-(12, 'AMD Ryzen 5 5600G', 3200000, N'TDP: 65W | Integrated Vega Graphics', N'https://networkitstore.in/wp-content/uploads/2024/01/amd-ryzen-5600g-600x600.webp', 1, 71, '2026-04-06 13:46:29.076393', N'AMD'),
-(13, 'Intel Core i3-14100', 3800000, N'TDP: 65W | Entry level 14th Gen', N'https://cputronic.com/storage/images/big/intel-core-i3.webp', 1, 37, '2026-04-06 13:46:29.076393', N'Intel'),
-(14, 'AMD Ryzen 3 4100', 1800000, N'TDP: 65W | Budget 4 Cores, AM4', N'https://images.tcdn.com.br/img/img_prod/591628/processador_amd_ryzen_3_4100_3_8ghz_4_0ghz_boost_zen_2_cache_6mb_am4_sem_video_integrado_34011_1_5b401d307e263fa3ee2586f9b4006a80.jpg', 1, 118, '2026-04-06 13:46:29.076393', N'AMD'),
-(15, 'Intel Core i9-12900K', 9500000, N'TDP: 125W | 16 Cores, Previous Flagship', N'https://www.pcworld.com/wp-content/uploads/2021/11/12th_Gen_Core_i9_12900K_Hero_Close_Up-4.jpg?resize=1536%2C1024&quality=50&strip=all', 1, 13, '2026-04-06 13:46:29.076393', N'Intel'),
-(16, N'Vỏ máy tính Xigmatek QUANTUM 4AF', 800000, N'TDP: 0W', N'http://cdn.hstatic.net/products/200000722513/gearvn-vo-may-tinh-xigmatek-quantum-4af-1_c9db476a42ef48fba6d84a9703a94945_grande.jpg', 12, 100, '2026-06-27 12:22:45.418', N'Xigmatek'),
-(17, 'Intel Core i5-14400F', 5600000, N'TDP: 65W | 10 Cores, Efficient Gaming', N'https://microless.com/cdn/products/30c01bcc173314e1a756151858871162-hi.jpg', 1, 64, '2026-04-06 13:46:29.076393', N'Intel'),
-(18, 'AMD Ryzen 5 8600G', 6200000, N'TDP: 65W | AI Engine, Radeon 760M', N'https://www.bhphotovideo.com/images/images2500x2500/amd_100_100001237box_ryzen_5_8600g_wraith_1804827.jpg', 1, 34, '2026-04-06 13:46:29.076393', N'AMD'),
-(19, 'Intel Core i7-12700K', 7200000, N'TDP: 125W | 12 Cores, LGA 1700', N'https://product.hstatic.net/200000680839/product/hz__25mb__12_cores_20_threads__0703223b7ae44a9ca2dd97b79516fa6f_master_de0749de4f2f4df687f7940d2cd121d9_1024x1024.jpg', 1, 34, '2026-04-06 13:46:29.076393', N'Intel'),
-(20, 'AMD Ryzen 7 7700', 7800000, N'TDP: 65W | 8 Cores, Low Power 65W', N'https://www.ryans.com/storage/products/main/amd-ryzen-7-7700-38ghz-53ghz-8-core-40mb-cache-11696328242.webp', 1, 28, '2026-04-06 13:46:29.076393', N'AMD'),
-(21, 'Intel Core i5-11400F', 2800000, N'TDP: 65W | Old Gen Budget King', N'https://www.techpowerup.com/cpu-specs/images/chips/2407-front.jpg', 1, 50, '2026-04-06 13:46:29.076393', N'Intel'),
-(22, 'AMD Ryzen 5 4500', 1950000, N'TDP: 65W | Super Budget 6 Cores', N'https://lanoc.org/images/reviews/2022/amd_ryzen_5_4500/image_2.jpg', 1, 92, '2026-04-06 13:46:29.076393', N'AMD'),
-(23, 'Intel Core i9-11900K', 6500000, N'TDP: 125W | Legacy Flagship LGA 1200', N'https://www.notebookcheck.com/fileadmin/Notebooks/Sonstiges/Intel/Rocket_Lake_S/Rocket_Lake_S_6.jpg', 1, 9, '2026-04-06 13:46:29.076393', N'Intel'),
-(24, 'AMD Ryzen 5 3600', 2100000, N'TDP: 65W | Popular AM4 CPU', N'https://www.techspot.com/images/products/2019/processors/amd/org/2019-07-25-product-6.jpg', 1, 150, '2026-04-06 13:46:29.076393', N'AMD'),
-(25, 'Intel Core i5-10400F', 2200000, N'TDP: 65W | Stable and Cheap', N'https://tpucdn.com/cpu-specs/images/chips/2270-front.jpg', 1, 110, '2026-04-06 13:46:29.076393', N'Intel'),
-(26, 'AMD Ryzen 9 3900X', 7500000, N'TDP: 105W | 12 Cores, Workstation', N'https://res.cloudinary.com/jawa/image/upload/f_auto,ar_1:1,c_fill,w_3840,q_auto/production/listings/gdo47zchozcdcelniqzd', 1, 8, '2026-04-06 13:46:29.076393', N'AMD'),
-(27, 'Intel Pentium G7400', 1900000, N'TDP: 65W | Office work, 2 Cores', N'https://image.made-in-china.com/2f0j00HPzqpKeCABkW/for-Original-Best-Price-Intel-Pentium-Gold-G7400-Processor-3-70GHz-CPU-Alder-Lake-SRL66-LGA-1700-Processor-for-Desktop.jpg', 1, 200, '2026-04-06 13:46:29.076393', N'Intel'),
-(28, 'AMD Athlon 3000G', 1200000, N'TDP: 65W | Ultra Budget Graphics', N'https://m.media-amazon.com/images/I/51wiBVz7jaL._AC_SL1000_.jpg', 1, 180, '2026-04-06 13:46:29.076393', N'AMD'),
-(29, 'Intel Core i7-10700K', 4800000, N'TDP: 65W | High Clock Legacy', N'https://cdn.mos.cms.futurecdn.net/2WTyhwkcYo5b43PuCQYkzU.jpg', 1, 20, '2026-04-06 13:46:29.076393', N'Intel'),
-(30, 'AMD Ryzen 7 8700G', 9200000, N'TDP: 65W | Powerful APU, Radeon 780M', N'https://m.media-amazon.com/images/I/61nRX0W6fhL._AC_SL1500_.jpg', 1, 33, '2026-04-06 13:46:29.076393', N'AMD'),
-(31, 'NVIDIA RTX 4090 24GB', 55000000, N'TDP: 450W | Ultimate Gaming GPU', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6522/6522679_sd.jpg', 2, 10, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(32, 'RTX 4080 Super', 32000000, N'TDP: 320W | High-end 4K Gaming', N'https://www.picclickimg.com/YyIAAeSwtxVqdEgW/NVIDIA-GeForce-RTX-4080-Super-32GB-2SLOT-Turbo.webp', 2, 15, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(33, 'RTX 4070 Ti Super', 24500000, N'TDP: 285W | Perfect for 2K Gaming', N'https://hardwarerk.com/img/products/gpu-rtx-4070-ti-super.jpg', 2, 25, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(34, 'AMD RX 7900 XTX', 28500000, N'TDP: 320W | AMD Flagship, 24GB', N'https://m.media-amazon.com/images/I/81il2WdPPJL._AC_.jpg', 2, 12, '2026-04-06 13:46:29.076393', N'AMD'),
-(35, 'RTX 4060 Ti 8GB', 11500000, N'TDP: 160W | Efficient 1080p/2K', N'https://img.terabyteshop.com.br/produto/g/placa-de-video-msi-nvidia-geforce-rtx-4060-ti-gaming-x-8gb-gddr6-dlss-ray-tracing-912-v515-022_170920.jpg', 2, 43, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(36, 'AMD RX 7800 XT', 15200000, N'TDP: 220W | Best value 2K GPU', N'https://fpsbench.com/static/images/game_images/16_9/fortnite.webp', 2, 30, '2026-04-06 13:46:29.076393', N'AMD'),
-(37, 'RTX 3060 12GB', 7800000, N'TDP: 115W | Popular Mid-range', N'https://m.media-amazon.com/images/I/61XAtpgr1lL._AC_.jpg', 2, 80, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(38, 'AMD RX 6600', 5500000, N'TDP: 75W | Best budget 1080p', N'https://m.media-amazon.com/images/I/81Ts3uaZqgL._AC_.jpg', 2, 100, '2026-04-06 13:46:29.076393', N'AMD'),
-(39, 'ASUS ROG RTX 4090', 62000000, N'TDP: 450W | Premium build cooling', N'https://media.ldlc.com/r1600/ld/products/00/06/12/43/LD0006124357.jpg', 2, 5, '2026-04-06 13:46:29.076393', N'ASUS'),
-(40, 'MSI Gaming X RTX 4070', 18500000, N'TDP: 200W | Quiet and Cool', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6539/6539607cv17d.jpg', 2, 20, '2026-04-06 13:46:29.076393', N'MSI'),
-(41, 'Gigabyte Eagle RTX 4060', 8200000, N'TDP: 115W | Triple Fan Budget', N'https://m.media-amazon.com/images/I/71g2Lc8urJL._AC_SL1500_.jpg', 2, 60, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(42, 'RTX 4070 Super', 17800000, N'TDP: 220W | 12GB GDDR6X, Fast', N'https://hardwarerk.com/img/products/gpu-rtx-4070-ti-super.jpg', 2, 35, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(43, 'AMD RX 7600', 7900000, N'TDP: 65W | Budget RDNA 3', N'https://m.media-amazon.com/images/I/81QItJufypL._AC_.jpg', 2, 50, '2026-04-06 13:46:29.076393', N'AMD'),
-(44, 'RTX 3050 6GB', 5200000, N'TDP: 75W | Entry level RTX', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/d2e9569c-e820-41de-9d8b-c3d26b98ac87.jpg', 2, 70, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(45, 'Zotac RTX 4060', 7800000, N'TDP: 115W | Compact dual fan', N'https://m.media-amazon.com/images/I/81w-5i9+nbL.jpg', 2, 40, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(46, 'Galax RTX 4070 Pink', 16900000, N'TDP: 200W | Pink Edition RGB', N'https://www.gaming.gen.tr/cdn-cgi/image/quality=90,gravity=auto,sharpen=1,metadata=none,format=auto,onerror=redirect/wp-content/uploads/2023/10/galax-ex-gamer-pink-1-click-oc-geforce-rtx-4070-12gb-gddr6x-192-bit-ekran-karti-47nom7md7lpk-12.jpg', 2, 15, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(47, 'ASUS TUF RTX 3070 Ti', 12000000, N'TDP: 285W | Rugged build quality', N'https://m.media-amazon.com/images/I/81t7Ga7nyxS._AC_.jpg', 2, 10, '2026-04-06 13:46:29.076393', N'ASUS'),
-(48, 'EVGA RTX 3080', 15000000, N'TDP: 320W | High performance legacy', N'https://m.media-amazon.com/images/I/81sXFTXt5CS.jpg', 2, 5, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(49, 'Sapphire RX 7900 GRE', 16500000, N'TDP: 220W | Golden Rabbit Edition', N'https://cdn.wccftech.com/wp-content/uploads/2023/07/AMD-Radeon-RX-7900-GRE-16-GB-GPU-Sapphire-Nitro-_5-g-standard-scale-4_00x-g-standard-scale-4_00x-Custom-1456x772.jpeg', 2, 18, '2026-04-06 13:46:29.076393', N'Sapphire'),
-(50, 'PowerColor RX 7800 XT', 14800000, N'TDP: 220W | Excellent cooling', N'https://files.pccasegear.com/images/1693535888-RX7800XT-16G-E-OC-thb.jpg', 2, 22, '2026-04-06 13:46:29.076393', N'PowerColor'),
-(51, 'GTX 1650', 3800000, N'TDP: 75W | No external power', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6347/6347252_sd.jpg', 2, 150, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(52, 'RX 6700 XT', 9500000, N'TDP: 115W | Great 1440p value', N'https://media.ldlc.com/r1600/ld/products/00/05/80/29/LD0005802927_1.jpg', 2, 40, '2026-04-06 13:46:29.076393', N'AMD'),
-(53, 'Colorful RTX 4080', 31000000, N'TDP: 320W | LCD screen on GPU', N'https://static.tweaktown.com/news/8/8/88259_03_colorful-igame-geforce-rtx-4080-ultra-oc-spotted-oh-man-here-we-go_full.png', 2, 8, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(54, 'Quadro RTX A4000', 22000000, N'TDP: 140W | Workstation GPU', N'https://images.wiautomation.com/public/images/landing/anticipa/product/27_06_2024_11_39_54_RTX_A4000_Nvidia.jpg', 2, 0, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(55, 'Radeon Pro W7800', 58000000, N'TDP: 140W | Professional Graphics', N'https://www.gigabyte.com/FileUpload/Global/KeyFeature/3773/innergigabyte/images/kft.png', 2, 3, '2026-04-06 13:46:29.076393', N'AMD'),
-(56, 'Intel Arc A770 16GB', 9200000, N'TDP: 225W | Intel High-end GPU', N'https://pg.asrock.com/Graphics-Card/photo/Intel%20Arc%20A770%20Phantom%20Gaming%2016GB%20OC(L1).png', 2, 25, '2026-04-06 13:46:29.076393', N'Intel'),
-(57, 'Intel Arc A750', 6500000, N'TDP: 225W | Budget King Intel', N'https://m.media-amazon.com/images/I/71sO2CZL1UL.jpg', 2, 40, '2026-04-06 13:46:29.076393', N'Intel'),
-(58, 'ASUS Dual RTX 4070', 17500000, N'TDP: 200W | Clean white build', N'https://media.ldlc.com/r1600/ld/products/00/06/03/60/LD0006036039.jpg', 2, 15, '2026-04-06 13:46:29.076393', N'ASUS'),
-(59, 'Gigabyte RTX 4090', 59000000, N'TDP: 450W | Massive cooler', N'https://www.pricerunner.com/product/3013080735/Gigabyte-GeForce-RTX-4090-WINDFORCE-V2-3xDP-HDMI-24GB.jpg', 2, 4, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(60, 'PNY RTX 4060', 7500000, N'TDP: 115W | Small and efficient', N'https://i5.walmartimages.com/asr/7a16bb22-0ab5-4190-b4b4-419ccbbb8de2.7f8f100c1db40b894fbac7d7c38e995b.jpeg', 2, 55, '2026-04-06 13:46:29.076393', N'NVIDIA'),
-(61, 'Corsair Vengeance 32GB', 3500000, N'TDP: 10W | DDR5 6000MHz Black', N'https://os-jo.com/image/cache/catalog/products/memory/CMH32GX5M2B6400C32W/CORSAIR-Vengeance-RGB-D5-White-1200x1200.jpg', 3, 50, '2026-04-06 13:46:29.076393', N'Corsair'),
-(62, 'G.Skill Trident Z5 32GB', 4200000, N'TDP: 15W | DDR5 6400MHz RGB', N'https://cdn.mwave.com.au/images/400/gskill_trident_z5_royal_neo_rgb_32gb_2x_16gb_ddr5_6000mhz_cl28_amd_desktop_memory_silver_ac78818_41026.jpg', 3, 40, '2026-04-06 13:46:29.076393', N'G.Skill'),
-(63, 'Kingston Fury 16GB', 1250000, N'TDP: 5W | DDR4 3200MHz', N'https://m.media-amazon.com/images/I/71+clMT-q-L._AC_SL1500_.jpg', 3, 120, '2026-04-06 13:46:29.076393', N'Kingston'),
-(64, 'T-Force Delta 32GB', 3200000, N'TDP: 5W | DDR5 6000MHz White', N'https://m.media-amazon.com/images/I/71yyY+Y29WL._AC_.jpg', 3, 45, '2026-04-06 13:46:29.076393', N'TeamGroup'),
-(65, 'ADATA XPG 16GB', 1800000, N'TDP: 5W | DDR5 5200MHz', N'https://hoanglongcomputer.vn/media/product/5612-adadada.webp', 3, 70, '2026-04-06 13:46:29.076393', N'ADATA'),
-(66, 'Crucial 8GB', 650000, N'TDP: 5W | Standard office RAM', N'https://m.media-amazon.com/images/I/819OdHGCicL.jpg', 3, 200, '2026-04-06 13:46:29.076393', N'Crucial'),
-(67, 'Dominator Titanium 64GB', 9500000, N'TDP: 15W | DDR5 7200MHz', N'https://m.media-amazon.com/images/I/61oUyUOzhwL._AC_.jpg', 3, 10, '2026-04-06 13:46:29.076393', N'Corsair'),
-(68, 'Ripjaws V 16GB', 1100000, N'TDP: 10W | DDR4 3600MHz', N'https://c1.neweggimages.com/ProductImageCompressAll1280/20-232-181-02.jpg', 3, 90, '2026-04-06 13:46:29.076393', N'G.Skill'),
-(69, 'Lexar Thor 32GB', 2100000, N'TDP: 0W | DDR4 3200MHz Budget', N'https://down-ph.img.susercontent.com/file/ph-11134207-7ras8-m2lujp7y6sc27f', 3, 55, '2026-04-06 13:46:29.076393', N'Lexar'),
-(70, 'Fury Renegade 32GB', 4800000, N'TDP: 15W | DDR5 7200MHz', N'https://m.media-amazon.com/images/I/71GJY5+c14L._AC_SL1500_.jpg', 3, 25, '2026-04-06 13:46:29.076393', N'Kingston'),
-(71, 'PNY XLR8 16GB', 1350000, N'TDP: 5W | DDR4 3200MHz RGB', N'https://basitcomputers.com/wp-content/uploads/2024/12/16GB-DDR4-RAM-3200MHz-PNY-XLR8-GAMiNG-RAM-WiTH-HEATSiNK-105.jpg', 3, 60, '2026-04-06 13:46:29.076393', N'PNY'),
-(72, 'Silicon Power 16GB', 950000, N'TDP: 5W | Value RAM 3200', N'https://static1.nordic.pictures/890711-thickbox_default/silicon-power-flash-drive-16gb-marvel-m01-usb-30-blue.jpg', 3, 150, '2026-04-06 13:46:29.076393', N'Silicon Power'),
-(73, 'Mushkin Redline 32GB', 3400000, N'TDP: 5W | DDR5 5600MHz', N'https://www.singular.com.cy/images/detailed/615/Mushkin_Redline_DDR5_module_32_GB_SODIMM_MRA5S480FFFD32G-895755.jpg', 3, 20, '2026-04-06 13:46:29.076393', N'Mushkin'),
-(74, 'Patriot Viper 16GB', 1450000, N'TDP: 5W | DDR4 4000MHz', N'https://m.media-amazon.com/images/S/aplus-media/sc/1cd89a7c-d360-4b74-aeac-a8d357feb38d.__CR0,0,970,600_PT0_SX970_V1___.jpg', 3, 40, '2026-04-06 13:46:29.076393', N'Razer'),
-(75, 'Samsung 32GB', 2800000, N'TDP: 5W | DDR5 4800MHz OEM', N'https://shopdigiwireless.com/wp-content/uploads/2023/08/DW-Website-Phones_A04e-1.png', 3, 30, '2026-04-06 13:46:29.076393', N'Samsung'),
-(76, 'Thermaltake 16GB', 2200000, N'TDP: 5W | DDR4 3600MHz RGB', N'https://images-na.ssl-images-amazon.com/images/I/811DUVLPAJL.jpg', 3, 25, '2026-04-06 13:46:29.076393', N'Thermaltake'),
-(77, 'Zadak Spark 32GB', 3900000, N'TDP: 5W | DDR5 6000MHz', N'https://img.terabyteshop.com.br/produto/g/memoria-ddr4-zadak-spark-rgb-32gb-3600mhz-2x16gb-zd4-spr36c25-32g2b2_132087.jpg', 3, 15, '2026-04-06 13:46:29.076393', N'Zadak'),
-(78, 'Apacer Panther 8GB', 750000, N'TDP: 5W | Budget Gaming RAM', N'https://down-th.img.susercontent.com/file/33c93c24fd76aa21db815921559cbf6c', 3, 100, '2026-04-06 13:46:29.076393', N'Acer'),
-(79, 'GeIL Super Luce 16GB', 1300000, N'TDP: 5W | DDR4 3200MHz', N'https://www.memoryc.com/images/products/bb/geil-16567-1_61986.jpg', 3, 50, '2026-04-06 13:46:29.076393', N'GeIL'),
-(80, 'V-Color Prism 32GB', 3100000, N'TDP: 5W | DDR4 3600MHz RGB', N'https://microless.com/cdn/products/f2f307222b823793c47a0da071ca69c0-hi.jpg', 3, 40, '2026-04-06 13:46:29.076393', N'V-Color'),
-(81, 'Kingston Fury 64GB', 6800000, N'TDP: 5W | DDR5 5600MHz Kit', N'https://m.media-amazon.com/images/I/717cPftxQgL._AC_.jpg', 3, 20, '2026-04-06 13:46:29.076393', N'Kingston'),
-(82, 'Vengeance LPX 32GB', 2500000, N'TDP: 10W | DDR4 3200 Low Profile', N'https://res.cloudinary.com/jawa/image/upload/f_auto,ar_1:1,c_fill,w_3840,q_auto/production/listings/fxqabbdlbowyj2wl8sks', 3, 80, '2026-04-06 13:46:29.076393', N'Corsair'),
-(83, 'Trident Z Neo 32GB', 3400000, N'TDP: 5W | Optimized for Ryzen', N'https://www.wootware.co.za/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/2/0/20-374-105-02.jpg', 3, 35, '2026-04-06 13:46:29.076393', N'G.Skill'),
-(84, 'Team Elite 16GB', 1600000, N'TDP: 5W | DDR5 4800 Basic', N'https://down-ph.img.susercontent.com/file/sg-11134201-22100-yx2ubhg0aaivc5', 3, 60, '2026-04-06 13:46:29.076393', N'TeamGroup'),
-(85, 'Crucial Pro 32GB', 3300000, N'TDP: 5W | 6000MHz Overclock', N'https://m.media-amazon.com/images/I/61EUuA9HiaL._AC_.jpg', 3, 45, '2026-04-06 13:46:29.076393', N'Crucial'),
-(86, 'Aorus RGB 16GB', 2400000, N'TDP: 5W | 3733MHz w/ Demo', N'https://smartland-tech.com/wp-content/uploads/2026/06/2cb5d453-1637-4c8a-9cdf-bca6cdc63898.png', 3, 15, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(87, 'Lexar Ares 32GB', 3600000, N'TDP: 5W | DDR5 6400MHz', N'https://platincdn.com/3393/pictures/JIYFEDVBRW1182024185730_Lexar-Ares-DT-32GB-RGB-DDR5-LD5EU016G-R6400GDLA-Ra.jpg', 3, 30, '2026-04-06 13:46:29.076393', N'Lexar'),
-(88, 'Netac Shadow 16GB', 1100000, N'TDP: 5W | Budget RGB RAM', N'https://netacbd.com/wp-content/uploads/2022/07/1080X1080-7-e1677757851813.jpg', 3, 100, NULL, N'Netac'),
-(89, 'Galax HOF 32GB', 5500000, N'TDP: 5W | 8000MHz White OC', N'https://file.hstatic.net/200000061442/file/-32gb-hof-oc-lab-xoc-limited-edition1_c0e96b372a054a89be5725eb7d03eb20_1024x1024.jpg', 3, 3, '2026-04-06 13:46:29.076393', N'GALAX'),
-(90, 'Oloy Blade 32GB', 3250000, N'TDP: 5W | DDR5 6000MHz Black', N'https://i5.walmartimages.com/seo/OLOy-Blade-RGB-OLOY-32GB-2-x-16GB-288-Pin-PC-RAM-DDR5-6000-PC5-48000-Desktop-Memory-Model-ND5U1660306BRKDA_9442b6df-2d87-4ea0-9f7f-78e5e36edc71.e4905b98195ae58f7ed8a2ec4712e02f.jpeg', 3, 25, '2026-04-06 13:46:29.076393', N'OLOy'),
-(91, 'ROG Maximus Z790 Hero', 16500000, N'TDP: 50W | Flagship Intel Board', N'https://dlcdnwebimgs.asus.com/gain/7512B84A-0D14-4798-A585-3439F4B645CB/w1000/h732', 4, 12, '2026-04-06 13:46:29.076393', N'ASUS'),
-(92, 'B760M Mortar WiFi', 4500000, N'TDP: 40W | Best Mid-range Intel', N'https://storage-asset.msi.com/global/picture/image/feature/mb/B760M/mag-b760m-mortar-wifi/msi-b760m-mortar-wifi-motherboard.png', 4, 45, '2026-04-06 13:46:29.076393', N'MSI'),
-(93, 'Z790 Aorus Elite', 7800000, N'TDP: 50W | High perf Z790', N'https://www.gigabyte.com/FileUpload/Global/KeyFeature/2181/innergigabyteimages/specsmall01.jpg', 4, 30, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(94, 'TUF B650-Plus', 5800000, N'TDP: 40W | Standard AM5 Board', N'https://dlcdnwebimgs.asus.com/files/media/2b278afc-50b2-452f-9fae-ec2825d27632/V1/img/kv-main.png', 4, 40, '2026-04-06 13:46:29.076393', N'ASUS'),
-(95, 'B660M Pro RS', 3200000, N'TDP: 5W | Budget Intel 12/13', N'https://nguyencongpc.vn/media/product/22934-main-b660m-pro-rs-ax-4.jpeg', 4, 60, '2026-04-06 13:46:29.076393', N'ASRock'),
-(96, 'X670E Carbon WiFi', 11500000, N'TDP: 50W | High-end AM5', N'https://www.wootware.co.za/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/p/mpg_x670e_carbon_wifi_4_2x.jpg', 4, 15, '2026-04-06 13:46:29.076393', N'MSI'),
-(97, 'Prime H610M-K', 2100000, N'TDP: 0W | Office Intel Board', N'https://dlcdnwebimgs.asus.com/gain/eb6af592-21fd-4592-81f3-d342cf769939/', 4, 100, '2026-04-06 13:46:29.076393', N'ASUS'),
-(98, 'B450M DS3H', 1850000, N'TDP: 30W | Legendary AM4 Budget', N'https://rbtechngames.com/wp-content/uploads/2021/08/gigabyte_b450m_ds3h.jpg', 4, 80, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(99, 'ROG Strix B760-I', 5900000, N'TDP: 40W | ITX Intel Board', N'https://microless.com/cdn/products/e990c5abc3a758b3a68f88b2e8460039-hi.jpg', 4, 20, '2026-04-06 13:46:29.076393', N'ASUS'),
-(100, 'Z790 GODLIKE', 35000000, N'TDP: 50W | Ultimate Overclock', N'https://storage-asset.msi.com/global/picture/image/feature/mb/Z790/MEG-Z790-GODLIKE/m2-01.png', 4, 3, '2026-04-06 13:46:29.076393', N'MSI'),
-(101, 'Z790 Taichi', 12500000, N'TDP: 50W | Gear design, E-ATX', N'https://preview.redd.it/weekly-bios-update-post-week-21-2024-v0-lnupskh4732d1.png?width=1000&format=png&auto=webp&s=035625ea434f9e87a2f721df80ae2f6929fe4569', 4, 8, '2026-04-06 13:46:29.076393', N'ASRock'),
-(102, 'ProArt Z790-Creator', 13800000, N'TDP: 50W | For Creators', N'https://dlcdnwebimgs.asus.com/gain/fe64f38f-9f58-4722-b2b0-723379b316be/', 4, 10, '2026-04-06 13:46:29.076393', N'ASUS'),
-(103, 'B650I Aorus Ultra', 7200000, N'TDP: 40W | ITX AM5 Board', N'https://www.gigabyte.com/FileUpload/Global/KeyFeature/2226/innergigabyteimages/smartfan601.png', 4, 12, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(104, 'PRO H610M-E', 1950000, N'TDP: 0W | Cheap office build', N'https://m.media-amazon.com/images/I/81MY4UCX8wL._AC_SY450_.jpg', 4, 150, '2026-04-06 13:46:29.076393', N'MSI'),
-(105, 'Crosshair X670E', 28000000, N'TDP: 50W | Best of AM5', N'https://files.pccasegear.com/images/ROG-CROSSHAIR-X670E-EXTREME-add5.jpg', 4, 5, '2026-04-06 13:46:29.076393', N'ASUS'),
-(106, 'Biostar B760MZ', 3100000, N'TDP: 40W | Budget B760', N'https://microless.com/cdn/products/a0122264cca32a3cf97401f16cb33fc2-hi.jpg', 4, 40, '2026-04-06 13:46:29.076393', N'Biostar'),
-(107, 'CVN B760M Frozen', 4200000, N'TDP: 40W | White Motherboard', N'https://down-my.img.susercontent.com/file/my-11134207-7r98p-ltdcg42jx1x342', 4, 25, '2026-04-06 13:46:29.076393', N'COLORFUL'),
-(108, 'A520M S2H', 1650000, N'TDP: 30W | Budget AM4', N'https://m.media-amazon.com/images/I/81o0aL-hQuL._AC_.jpg', 4, 90, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(109, 'NZXT N7 Z790', 8500000, N'TDP: 50W | Clean Aesthetic', N'https://m.media-amazon.com/images/I/71u-dioc8vL._AC_SL1500_.jpg', 4, 18, '2026-04-06 13:46:29.076393', N'NZXT'),
-(110, 'A620M-HDV', 2800000, N'TDP: 30W | Cheap AM5 entry', N'https://media.ldlc.com/r1600/ld/products/00/06/03/41/LD0006034167.jpg', 4, 55, '2026-04-06 13:46:29.076393', N'ASRock'),
-(111, 'Z790 Dark Kingpin', 22000000, N'TDP: 50W | Limitless OC', N'https://static.tweaktown.com/news/8/8/88651_03_evgas-new-z790-dark-kingpin-motherboard-teased-its-unbelievable.jpg', 4, 2, '2026-04-06 13:46:29.076393', N'EVGA'),
-(112, 'X570S Tomahawk', 6500000, N'TDP: 40W | Silent AM4', N'https://images.novatech.co.uk/msi-mag_x570_tomahawk_wifi_extra3.jpg', 4, 20, '2026-04-06 13:46:29.076393', N'MSI'),
-(113, 'A520M-Plus', 2400000, N'TDP: 30W | Durable AM4', N'https://www.cclonline.com/images/avante/5_TUF-GAMING-A520M-PLUS-WIFI_3D_AURA.jpg?width=1600&height=1600&scale=canvas', 4, 45, '2026-04-06 13:46:29.076393', N'ASUS'),
-(114, 'Z790 UD', 5500000, N'TDP: 50W | Basic Z790', N'https://m.media-amazon.com/images/I/71w2Kf+KK+L._AC_.jpg', 4, 35, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(115, 'B550M Steel Legend', 3800000, N'TDP: 40W | Solid B550 AM4', N'https://www.asrock.com/mb/photo/B550M%20Steel%20Legend(L1).png', 4, 40, '2026-04-06 13:46:29.076393', N'ASRock'),
-(116, 'MSI B650 Gaming', 4900000, N'TDP: 40W | Budget AM5 WiFi', N'https://media.ldlc.com/r1600/ld/products/00/06/03/76/LD0006037607.jpg', 4, 50, '2026-04-06 13:46:29.076393', N'MSI'),
-(117, 'Prime Z790-P', 6200000, N'TDP: 50W | Mainstream Z790', N'https://www.dateks.lv/images/pic/2400/2400/712/1307.jpg', 4, 30, '2026-04-06 13:46:29.076393', N'ASUS'),
-(118, 'H610M S2H', 2250000, N'TDP: 0W | LGA 1700 Office', N'https://m.media-amazon.com/images/I/81AdQh4+sHL._AC_SL1500_.jpg', 4, 110, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(119, 'X670E Steel Legend', 8900000, N'TDP: 50W | White AM5 High', N'https://media.ldlc.com/r1600/ld/products/00/05/98/02/LD0005980298.jpg', 4, 15, '2026-04-06 13:46:29.076393', N'ASRock'),
-(120, 'Valkyrie Z790', 9500000, N'TDP: 50W | Biostar Flagship', N'https://thetechrevolutionist.com/wp-content/uploads/2022/09/z790-valkyrie-4.png?is-pending-load=1', 4, 7, '2026-04-06 13:46:29.076393', N'Valkyrie'),
-(121, 'Samsung 990 Pro 1T', 3200000, N'TDP: 9W | NVMe Gen4 7450MB/s', N'https://s13emagst.akamaized.net/products/50830/50829483/images/res_a126340b9468e6ebe28dfaef136309be.jpg', 5, 60, '2026-04-06 13:46:29.076393', N'Samsung'),
-(122, 'Samsung 980 Pro 2T', 4500000, N'TDP: 9W | NVMe Gen4 7000MB/s', N'https://www.ssd1tb.com/wp-content/uploads/Samsung-980-Pro-2tb-ssd.jpg', 5, 40, '2026-04-06 13:46:29.076393', N'Samsung'),
-(123, 'WD SN850X 1TB', 2600000, N'TDP: 9W | Top gaming SSD', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6512/6512131cv12d.jpg', 5, 55, '2026-04-06 13:46:29.076393', N'WD'),
-(124, 'Crucial P3 Plus 1T', 1850000, N'TDP: 5W | Budget Gen4', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6509/6509715cv12d.jpg', 5, 100, '2026-04-06 13:46:29.076393', N'Crucial'),
-(125, 'Kingston NV2 500G', 950000, N'TDP: 5W | Entry NVMe', N'https://images.kabum.com.br/produtos/fotos/sync_mirakl/400945/SSD-Kingston-Nv2-500GB-M-2-2280-NVME-PCIE-4-0-X4-Leitura-3500MB-s-E-Grava-o-2100MB-s-Preto-Snv2s-500g_1732199474_gg.jpg', 5, 150, '2026-04-06 13:46:29.076393', N'Kingston'),
-(126, 'Samsung 870 EVO 1T', 2100000, N'TDP: 5W | Best SATA SSD', N'https://www.ssd1tb.com/wp-content/uploads/samsung-870-evo-1tb.jpg', 5, 80, '2026-04-06 13:46:29.076393', N'Samsung'),
-(127, 'P41 Platinum 2T', 5200000, N'TDP: 5W | Super Fast Gen4', N'https://cdn.wccftech.com/wp-content/uploads/2024/03/DSC_0547-Custom.jpg', 5, 20, '2026-04-06 13:46:29.076393', N'SK hynix'),
-(128, 'Lexar NM790 2T', 3800000, N'TDP: 5W | Value Gen4 7400', N'https://a.allegroimg.com/original/11b9a3/a4d9f6854e66ad6a065f1a9a7151/Dysk-SSD-Lexar-2TB-M-2-PCIe-Gen4-NVMe-NM790', 5, 45, '2026-04-06 13:46:29.076393', N'Lexar'),
-(129, 'Crucial T700 1TB', 5800000, N'TDP: 14W | Gen5 11700MB/s', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6544/6544913_sd.jpg', 5, 15, '2026-04-06 13:46:29.076393', N'Crucial'),
-(130, 'Aorus Gen5 2TB', 9500000, N'TDP: 14W | Gen5 w/ Heatsink', N'https://cdn.mcc-jo.com/media/G6O8nomwymYdYRvEto1xZM1OlAH5n2PoshguCK3s.webp', 5, 10, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(131, 'TeamGroup MP33 1T', 1400000, N'TDP: 5W | Budget NVMe', N'https://images.teamgroupinc.com/products/ssd/m2/mp33/1tb_01.jpg', 5, 90, '2026-04-06 13:46:29.076393', N'TeamGroup'),
-(132, 'XPG S70 Blade 1T', 2200000, N'TDP: 5W | PS5 Gen4', N'https://webapi3.adata.com/storage/product/s70_blade_pk_1tb.png', 5, 65, '2026-04-06 13:46:29.076393', N'ADATA'),
-(133, 'SN580 1TB', 1700000, N'TDP: 5W | Reliable Gen4', N'https://i5.walmartimages.com/seo/WD-Blue-1TB-SN580-NVMe-Internal-SSD-WDBWMY0010BBL-WRWM_28933fdc-65d2-4eef-95f4-474478cfd226.51d02b302ea9785e967da33be118bf8b.jpeg', 5, 75, '2026-04-06 13:46:29.076393', N'WD'),
-(134, 'FireCuda 530 2TB', 5900000, N'TDP: 5W | High endurance', N'https://lagihitech.vn/wp-content/uploads/2022/02/SSD-Seagate-Firecuda-530-2TB-M.2-PCIe-Gen4x4-NVMe-ZP2000GM30013-hinh-1.jpg', 5, 18, '2026-04-06 13:46:29.076393', N'Seagate'),
-(135, 'Sabrent Rocket 4TB', 12500000, N'TDP: 5W | Huge capacity', N'https://m.media-amazon.com/images/I/71g-S-3aAjL._AC_.jpg', 5, 8, '2026-04-06 13:46:29.076393', N'Sabrent'),
-(136, '970 EVO Plus 2TB', 3900000, N'TDP: 5W | Gen3 King', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6347/6347286cv11d.jpg', 5, 30, '2026-04-06 13:46:29.076393', N'Samsung'),
-(137, 'PNY CS2241 1TB', 1600000, N'TDP: 5W | Budget Gen4', N'https://minipcreviewer.com/wp-content/uploads/2024/03/pny-cs2241-1tb-m2-nvme-gen4-x4-internal-solid-state-drive-ssd-m280cs2241-1tb-rb-1.jpg', 5, 50, '2026-04-06 13:46:29.076393', N'PNY'),
-(138, 'Silicon Power UD90 1650000', 1650000, N'TDP: 75W | Gen4 Value', N'https://talospc.com/wp-content/uploads/2023/03/SILICON-POWER-UD90-1TB-700-1.jpg', 5, 60, '2026-04-06 13:46:29.076393', N'Silicon Power'),
-(139, 'MP600 Pro 2TB', 4800000, N'TDP: 5W | Optimized for PS5', N'https://microless.com/cdn/products/d78642f6f74ff365958f933b707cc544-hi.jpg', 5, 22, '2026-04-06 13:46:29.076393', N'Corsair'),
-(140, 'KC3000 1TB', 2450000, N'TDP: 9W | Fast Gen4 OS', N'https://www.dateks.lv/images/pic/1200/1200/849/1083.jpg', 5, 40, '2026-04-06 13:46:29.076393', N'Kingston'),
-(141, 'Crucial MX500 1TB', 1800000, N'TDP: 5W | SATA storage', N'https://c1.neweggimages.com/productimage/nb1280/20-156-174-V05.jpg', 5, 85, '2026-04-06 13:46:29.076393', N'Crucial'),
-(142, 'SN350 480GB', 850000, N'TDP: 5W | Cheap upgrade', N'https://static.ctonline.mx/imagenes/DDUWSD1690/DDUWSD1690_full.jpg', 5, 120, '2026-04-06 13:46:29.076393', N'WD'),
-(143, 'Spatium M480 2TB', 4600000, N'TDP: 5W | High-end MSI SSD', N'https://m.media-amazon.com/images/I/71KFqIt1KeL._AC_.jpg', 5, 20, '2026-04-06 13:46:29.076393', N'MSI'),
-(144, 'Transcend 250S 1T', 2100000, N'TDP: 5W | Gen4 with Cache', N'https://www.ucc.com.bd/image/cache/catalog/ssd/transcend/TS1TMTE250S-550x550.png.webp', 5, 35, '2026-04-06 13:46:29.076393', N'Transcend'),
-(145, 'Viper VP4300 2TB', 5400000, N'TDP: 5W | Dual heatsinks', N'https://i5.walmartimages.com/seo/Patriot-Viper-VP4300-2TB-Internal-SSD-W-HS-NVMe-PCIe-Gen-4x4-M-2-2280-Solid-State-Drive-VP4300-2TBM28H_2c78e06e-e406-4ac8-a54f-2c5b7fcdbfb6.d9f034f5a760a6dd0a15752b29a0c1c8.jpeg', 5, 12, '2026-04-06 13:46:29.076393', N'Razer'),
-(146, 'Lexar NM620 512G', 900000, N'TDP: 5W | Gen3 Budget', N'https://lap.lk/wp-content/uploads/2023/06/Lexar-NM620-512GB.png', 5, 100, '2026-04-06 13:46:29.076393', N'Lexar'),
-(147, 'Netac N7000 2TB', 3600000, N'TDP: 5W | Gen4 7000MB/s', N'https://cdn.neowin.com/news/images/uploaded/2023/10/1698065089_netac-internal-ssd.jpg', 5, 40, '2026-04-06 13:46:29.076393', N'Netac'),
-(148, '870 QVO 4TB', 8500000, N'TDP: 5W | Massive SATA', N'https://www.discoazul.pt/uploads/media/images/disco-duro-ssd-samsung-870-qvo-4tb-sata-3-2-5-16.jpg', 5, 31, '2026-04-06 13:46:29.076393', N'Samsung'),
-(149, 'Adata SU650 240G', 450000, N'TDP: 12W | Cheapest SSD', N'https://img.pchome.com.tw/cs/items/DRAH0VA900HX1I5/000001_1727978028.jpg', 5, 200, '2026-04-06 13:46:29.076393', N'ADATA'),
-(150, 'Crucial T705 2TB', 10500000, N'TDP: 14W | Fastest Gen5', N'https://m.media-amazon.com/images/I/61wfug68D+L.jpg', 5, 5, '2026-04-06 13:46:29.076393', N'Crucial'),
-(151, 'LG 27GR95QE', 22500000, N'TDP: 5W | 27 OLED 240Hz', N'https://files.pccasegear.com/images/27GR95QE-B-thumb.jpg', 6, 12, '2026-04-06 13:46:29.076393', N'LG'),
-(152, 'Dell U2723QE', 14800000, N'TDP: 5W | 27" 4K IPS Black', N'https://www.ofzenandcomputing.com/wp-content/uploads/2026/01/B09TQZP9CL_customer_1.jpg', 6, 25, '2026-04-06 13:46:29.076393', N'Dell'),
-(153, 'VG249Q', 4200000, N'TDP: 5W | 24 144Hz IPS', N'https://dlcdnimgs.asus.com/websites/global/products/mpppu3u01ux28nvt/images/section4-img.png', 6, 60, '2026-04-06 13:46:29.076393', N'ASUS'),
-(154, 'Odyssey Neo G8', 28000000, N'TDP: 5W | 32 4K 240Hz', N'https://m.media-amazon.com/images/I/81dDR+bGO3L._AC_.jpg', 6, 8, '2026-04-06 13:46:29.076393', N'Samsung'),
-(155, 'Gigabyte M27Q', 7800000, N'TDP: 5W | 27 2K 170Hz', N'https://m.media-amazon.com/images/I/71d-odH5-8L._AC_SL1500_.jpg', 6, 35, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(156, 'AOC 24G2', 3900000, N'TDP: 5W | Popular 144Hz', N'https://m.media-amazon.com/images/I/81NEMtk5qPL._AC_SL1500_.jpg', 6, 80, '2026-04-06 13:46:29.076393', N'AOC'),
-(157, 'ViewSonic VX2728', 4500000, N'TDP: 5W | 27 165Hz IPS', N'https://wise-tech.com.pk/wp-content/uploads/2024/04/VX2728-Side-View.png', 6, 50, '2026-04-06 13:46:29.076393', N'ViewSonic'),
-(158, 'MAG274QRF-QD', 10500000, N'TDP: 5W | 2K Quantum Dot', N'https://asset.msi.com/resize/image/global/product/product_1698825055a998b04cad4f3a7146e1cbbd35fe08d1.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 6, 20, '2026-04-06 13:46:29.076393', N'MSI'),
-(159, 'AW3423DW', 32000000, N'TDP: 5W | 34 QD-OLED', N'https://m.media-amazon.com/images/I/71ufV5NQ44L._AC_SL1500_.jpg', 6, 5, '2026-04-06 13:46:29.076393', N'Dell'),
-(160, 'BenQ SW271C', 42000000, N'TDP: 5W | Pro Color Photo', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6486/6486795cv1d.jpg', 6, 3, '2026-04-06 13:46:29.076393', N'BenQ'),
-(161, 'Samsung M7', 8200000, N'TDP: 5W | 32 4K Smart', N'https://i5.walmartimages.com/seo/SAMSUNG-32-Smart-Monitor-M7-M70D-4K-UHD-with-Streaming-TV-Speakers-and-USB-C_b8469dad-9f08-4fdf-a685-b499f060f079.a0006f71cc35ee2ea5151413bf93f24b.jpeg?odnHeight=640&odnWidth=640&odnBg=FFFFFF', 6, 30, '2026-04-06 13:46:29.076393', N'Samsung'),
-(162, 'LG 24MP60G', 2900000, N'TDP: 5W | Budget 24 IPS', N'https://m.media-amazon.com/images/I/71Ud77qJvSL._SL1500_.jpg', 6, 100, '2026-04-06 13:46:29.076393', N'LG'),
-(163, 'Swift PG42UQ', 38000000, N'TDP: 5W | 42 OLED 4K', N'https://www.gaming.gen.tr/wp-content/uploads/2023/05/asus-rog-swift-pg42uq-41-5-inc-138hz-0-1ms-uhd-adaptive-sync-oled-gaming-monitor-y.jpg', 6, 4, '2026-04-06 13:46:29.076393', N'ASUS'),
-(164, 'Gigabyte G24F 2', 4100000, N'TDP: 5W | 24 180Hz OC', N'https://m.media-amazon.com/images/I/81xNJON5ysL._AC_SL1500_.jpg', 6, 70, '2026-04-06 13:46:29.076393', N'GIGABYTE'),
-(165, 'HP Z27k G3', 15500000, N'TDP: 5W | 4K Studio USB-C', N'https://mitosshoppers.com/wp-content/uploads/2026/01/2-19.jpg', 6, 15, '2026-04-06 13:46:29.076393', N'HP'),
-(166, 'Nitro VG271U', 6500000, N'TDP: 5W | 27 2K 144Hz', N'https://i5.walmartimages.com/seo/Acer-Nitro-VG271U-M3bmiipx-27-WQHD-2560-x-1440-IPS-Monitor-with-AMD-FreeSync-Premium-Technology_87dece16-0f5e-4d5f-9579-ae97d9169316.ab486d96a9e5254d8824bc11fb4f19a4.png', 6, 45, '2026-04-06 13:46:29.076393', N'Acer'),
-(167, 'Dell S2721DGF', 9200000, N'TDP: 5W | Fast IPS 165Hz', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6421/6421624cv17d.jpg', 6, 22, '2026-04-06 13:46:29.076393', N'Dell'),
-(168, 'LG DualUp', 16000000, N'TDP: 5W | Square 16:18', N'https://www.lg.com/content/dam/channel/wcms/br/images/M02_mnt-dualup-ergo-28mq780-01-2-lg-dualup-monitor-ergo-mobile.jpg', 6, 10, '2026-04-06 13:46:29.076393', N'LG'),
-(169, 'Odyssey G5', 7200000, N'TDP: 5W | 27 2K Curved', N'https://m.media-amazon.com/images/I/81Pm4yGtiYL._AC_SL1500_.jpg', 6, 40, '2026-04-06 13:46:29.076393', N'Samsung'),
-(170, 'Legion Y25-30', 6800000, N'TDP: 5W | 24.5 240Hz', N'https://techacute.com/wp-content/uploads/2022/12/Lenovo-Legion-Y25-30-Gaming-Monitor-Tested-Out-Esports-Display-Review.jpg', 6, 25, '2026-04-06 13:46:29.076393', N'Lenovo'),
-(171, 'ProArt PA278QV', 8900000, N'TDP: 5W | Color Accurate', N'https://dlcdnimgs.asus.com/websites/global/products/gvxnvsvumc3y1lyy/images/pic_true_beauty.png', 6, 18, '2026-04-06 13:46:29.076393', N'ASUS'),
-(172, 'HKC ANT27TQC', 5500000, N'TDP: 5W | Budget 2K Curved', N'https://doc-fd.zol-img.com.cn/t_s640x2000/g6/M00/0A/06/ChMkKmBZkIaIYkKIACPmpm8vrpYAAL71QN3WEcAI-a-654.png', 6, 55, '2026-04-06 13:46:29.076393', N'HKC'),
-(173, 'MSI G2412', 3500000, N'TDP: 5W | Budget 170Hz', N'https://asset.msi.com/resize/image/global/product/product_16533746428fdd9ede10dbb55365e4d4267b978414.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 6, 90, '2026-04-06 13:46:29.076393', N'MSI'),
-(174, 'Dell E2222H', 2200000, N'TDP: 5W | Office 22"', N'https://www.e-retail.com/wp-content/uploads/2022/02/monitors_e2222h_gallery_2.jpg', 6, 150, '2026-04-06 13:46:29.076393', N'Dell'),
-(175, 'LG 29WP500', 5200000, N'TDP: 5W | 29 UltraWide', N'https://c1.neweggimages.com/ProductImageCompressAll1280/24-026-192-V04.jpg', 6, 35, '2026-04-06 13:46:29.076393', N'LG'),
-(176, 'Philips 242E1', 3100000, N'TDP: 0W | Budget 144Hz', N'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/107/MTA-129724838/no-brand_no-brand_full01.jpg', 6, 80, '2026-04-06 13:46:29.076393', N'Philips'),
-(177, 'AOC CU34G2X', 12500000, N'TDP: 5W | 34 UW 144Hz', N'https://media.techeblog.com/images/aoc-cu34g2x-34-inch-curved-gaming-monitor.jpg', 6, 15, '2026-04-06 13:46:29.076393', N'AOC'),
-(178, 'Xeneon Flex', 45000000, N'TDP: 5W | Bendable OLED', N'https://www.kitguru.net/wp-content/uploads/2022/08/Corsair-Xeneon-Flexfront-curved.jpg', 6, 2, '2026-04-06 13:46:29.076393', N'Corsair'),
-(179, 'Zowie XL2546K', 13500000, N'TDP: 5W | Pro Esport 240Hz', N'https://brain-images-ssl.cdn.dixons.com/4/9/10218894/u_10218894.jpg', 6, 20, '2026-04-06 13:46:29.076393', N'BenQ'),
-(180, 'Xiaomi Mi 34', 9500000, N'TDP: 5W | 34 2K UltraWide', N'https://ph-test-11.slatic.net/p/8642c1abe8e78d3a3f37b584614461b8.jpg', 6, 40, '2026-04-06 13:46:29.076393', N'Xiaomi'),
-(181, 'Intel Arc A770 Limited Edition GPU', 8356600, N'TDP: 225W | 16GB GDDR6, 256-bit, 2100 MHz, 225W', N'https://m.media-amazon.com/images/I/71rzJRZ7lIL._AC_.jpg', 2, 50, '2026-06-05 10:05:55.522526', N'Intel'),
-(182, 'Intel Arc A750 Graphics Card', 6324600, N'TDP: 225W | 8GB GDDR6, 256-bit, 2050 MHz, 225W', N'https://m.media-amazon.com/images/I/71sO2CZL1UL._AC_.jpg', 2, 49, '2026-06-05 10:05:55.522526', N'Intel'),
-(183, 'Intel Arc A580 Graphics Card', 4546600, N'TDP: 185W | 8GB GDDR6, 256-bit, 1700 MHz, 185W', N'https://www.notebookcheck.net/fileadmin/Notebooks/News/_nc3/Intel-Arc-A580-header.jpg', 2, 50, '2026-06-05 10:05:55.522526', N'Intel'),
-(184, 'AMD Radeon RX 7900 XT GPU', 22834600, N'TDP: 285W | 20GB GDDR6, 80MB, 315W', N'https://m.media-amazon.com/images/I/81ZBhhO35mL._AC_.jpg', 2, 50, '2026-06-05 10:05:55.522526', N'AMD'),
-(185, 'AMD Radeon RX 7800 XT GPU', 12674600, N'TDP: 220W | 16GB GDDR6, 64MB, 263W', N'https://m.media-amazon.com/images/I/81VpOvD9wJL._AC_.jpg', 2, 50, '2026-06-05 10:05:55.522526', N'AMD'),
-(186, 'AMD Ryzen 5 5600X Desktop Processor', 3784600, N'TDP: 65W | 6 Cores, 12 Threads, 35MB Cache, Up to 4.6GHz, Socket AM4', N'https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-5-5600x.jpg', 1, 50, '2026-06-05 10:05:55.522526', N'AMD'),
-(187, 'ASUS ROG Maximus Z790 Dark Hero', 17754600, N'TDP: 50W | LGA1700, Intel Z790, 4x DDR5 (Up to 192GB), ATX', N'https://dlcdnwebimgs.asus.com/gain/8E88DC59-A399-4385-8BCB-C3877F4EB746/w1000/h732', 4, 50, '2026-06-05 10:05:55.522526', N'ASUS'),
-(188, 'ASUS ROG Strix X670E-E Gaming WiFi', 12674600, N'TDP: 50W | AM5, AMD X670E, PCIe 5.0, ATX', N'https://dlcdnwebimgs.asus.com/gain/BADFA920-702B-451B-9592-8279ACD6857B', 4, 50, '2026-06-05 10:05:55.522526', N'ASUS'),
-(189, 'ASUS ROG Strix GeForce RTX 4090 OC Edition', 50774600, N'TDP: 450W | 24GB GDDR6X, 16384, PCIe 4.0', N'https://media.ldlc.com/r1600/ld/products/00/06/00/29/LD0006002969.jpg', 2, 50, '2026-06-05 10:05:55.522526', N'ASUS'),
-(190, 'ASUS ROG Swift OLED PG32UCDM', 32994600, N'TDP: 0W | 32-inch, 3840x2160 (4K), 240Hz, QD-OLED', N'https://m.media-amazon.com/images/I/91MMzcvOwLL.jpg', 6, 50, '2026-06-05 10:05:55.522526', N'ASUS'),
-(191, 'ASUS ROG Ryujin III 360 ARGB', 8864600, N'TDP: 15W | 360mm, Asetek 8th Gen, 3.5-inch Full Color', N'https://dlcdnwebimgs.asus.com/gain/A1D6D78A-00BE-4F89-A360-2790312CDDAD', 13, 50, '2026-06-05 10:05:55.522526', N'ASUS'),
-(192, 'ASUS ROG Thor 1200W Platinum II', 8102600, N'TDP: 0W | 1200W, 80 Plus Platinum, Full Modular, Real-time power draw', N'https://pcboost.co.uk/wp-content/uploads/2022/11/ROG-THOR-1200W-Platinum-II-Fully-Modular-Power-Supply-From-ASUS.jpg', 11, 50, '2026-06-05 10:05:55.522526', N'ASUS'),
-(193, 'MSI MEG Z790 GODLIKE MAX', 30454600, N'TDP: 50W | LGA1700, Intel Z790, 7x M.2 slots, M-Vision Dashboard', N'https://storage-asset.msi.com/global/picture/image/feature/mb/Z790/meg-z790-godlike-max/images/mb-godlike-max-02.png', 4, 50, '2026-06-05 10:05:55.522526', N'MSI'),
-(194, 'MSI MAG B650 TOMAHAWK WIFI', 5562600, N'TDP: 40W | AM5, AMD B650, DDR5 7600+(OC), Realtek 2.5Gbps LAN', N'https://storage-asset.msi.com/global/picture/image/feature/mb/B650/MAG-B650-TOMAHAWK-WIFI/mag-b650-tomahawk-wifi.png', 4, 50, '2026-06-05 10:05:55.522526', N'MSI'),
-(195, 'MSI GeForce RTX 4080 SUPER 16G GAMING X SLIM', 26644600, N'TDP: 320W | 16GB GDDR6X, TRI FROZR 3, 2625 MHz', N'https://m.media-amazon.com/images/I/71262tPfh-L._AC_SL1500_.jpg', 2, 50, '2026-06-05 10:05:55.522526', N'MSI'),
-(196, 'MSI MPG 271QRX QD-OLED', 20294600, N'TDP: 0W | 27-inch, 2560x1440 (2K), 360Hz, 0.03ms (GtG)', N'https://images.versus.io/objects/msi-mpg-271qrx-qd-oled-27.front.master2x.1714391809576.webp', 6, 50, '2026-06-05 10:05:55.522526', N'MSI'),
-(197, 'MSI MEG MAESTRO 700L PZ', 10642600, N'TDP: 5W | ATX Full Tower, Curved Tempered Glass, Back-connect (Project Zero) support', N'https://storage-asset.msi.com/global/picture/image/feature/PC-Case/MEG-MAESTRO-700L-PZ/meg-maestro-700l-pz-connect-pd.png', 12, 50, '2026-06-05 10:05:55.522526', N'MSI'),
-(198, 'MSI MAG CORELIQUID I360', 3530600, N'TDP: 15W | 360mm, ARGB Fans, Infinite Mirror IPS Style Design', N'https://cdn.mwave.com.au/images/400/msi_mag_coreliquid_i360_360mm_argb_aio_liquid_cpu_cooler_black_ac79069_96031.jpg', 13, 50, '2026-06-05 10:05:55.522526', N'MSI'),
-(199, 'MSI SPATIUM M570 PCIe 5.0 NVMe M.2 HS', 7594600, N'TDP: 14W | 2TB, Up to 12400 MB/s, Up to 11800 MB/s', N'https://asset.msi.com/resize/image/global/product/product_167573935424940aba56cd1dba801846447d621bb2.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 5, 50, '2026-06-05 10:05:55.522526', N'MSI'),
-(200, 'Gigabyte Z790 AORUS XTREME X', 25374600, N'TDP: 50W | LGA1700, 24+1+2 Phases, Wi-Fi 7, PCIe 5.0 x16', N'https://static.gigabyte.com/StaticFile/Image/Global/dee0b0bef844f7dcac99c3569fdf02c8/Product/36669/Png', 4, 50, '2026-06-05 10:05:55.522526', N'GIGABYTE'),
-(201, 'Gigabyte X670E AORUS MASTER', 11404600, N'TDP: 50W | AM5, AMD X670E, 4x M.2 PCIe 5.0, Intel 2.5GbE LAN', N'https://c1.neweggimages.com/ProductImageCompressAll1280/13-145-405-01.jpg', 4, 50, '2026-06-05 10:05:55.522526', N'GIGABYTE'),
-(202, 'Gigabyte M27Q Gaming Monitor', 7594600, N'TDP: 0W | 27-inch, Super Speed IPS, 2560x1440, 170Hz', N'https://www.gigabyte.com/FileUpload/Global/KeyFeature/1554/innergigabyteimages/bg1.png', 6, 50, '2026-06-05 10:05:55.522526', N'GIGABYTE'),
-(203, 'Gigabyte AORUS FO32U2P', 30454600, N'TDP: 5W | 32-inch, OLED (QD-OLED), 3840x2160, DP 2.1 UHBR20 supported', N'https://m.media-amazon.com/images/I/71M5qy2eL0L._AC_.jpg', 6, 50, '2026-06-05 10:05:55.522526', N'GIGABYTE'),
-(204, 'Gigabyte AORUS Gen5 12000 SSD 2TB', 8102600, N'TDP: 14W | PCIe 5.0 x4, NVMe 2.0, 12,400 MB/s, 11,800 MB/s', N'https://elbadrgroupeg.store/image/cache/catalog/Gigabyte/fRt20PFj2jAFDEFVYh7wtd8LXj-1000x1000.png', 5, 50, '2026-06-05 10:05:55.522526', N'GIGABYTE'),
-(205, 'Gigabyte UD1000GM PG5 (Rev 2.0)', 4038600, N'TDP: 0W | 1000W, PCIe Gen 5.0 (12VHPWR), 80 PLUS Gold', N'https://cdn.cclonline.com/cdn-cgi/image/width=2000/images/shopblocks/UD1000GM%20PG5-05.png', 11, 50, '2026-06-05 10:05:55.522526', N'GIGABYTE'),
-(206, 'Gigabyte AORUS C500 GLASS', 4546600, N'TDP: 0W | Mid Tower, 4mm Tempered Glass, Up to 420mm front', N'https://www.gigabyte.com/FileUpload/Global/KeyFeature/2156/innergigabyteimages/utility-img-1.jpg', 12, 50, '2026-06-05 10:05:55.522526', N'GIGABYTE'),
-(207, 'Corsair Dominator Titanium RGB DDR5 32GB (2x16GB)6000MHz', 4673600, N'TDP: 15W | 32GB, 6000 MT/s, CL30, Intel XMP 3.0 / AMD EXPO', N'https://m.media-amazon.com/images/I/61HhbZrQ4-L._AC_.jpg', 3, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(208, 'Corsair Vengeance RGB DDR5 64GB (2x32GB)5600MHz', 5562600, N'TDP: 65W | 64GB, 5600 MT/s, CL40', N'https://img.terabyteshop.com.br/produto/g/memoria-ddr5-corsair-vengeance-rgb-64gb-2x32gb-5600mhz-preto-cmh64gx5m2b5600z40k_236431.jpg', 3, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(209, 'Corsair iCUE LINK H150i LCD Liquid CPU Cooler', 7340600, N'TDP: 5W | 360mm, 3x QX120 RGB Fans, 2.1-inch IPS Display, iCUE LINK Ecosystem', N'https://microless.com/cdn/products/f8d91556e68aba4803a42b07377221bc-hi.jpg', 13, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(210, 'Corsair 5000D AIRFLOW Tempered Glass Mid-Tower', 4165600, N'TDP: 0W | Mid-Tower, Black, RapidRoute System, Up to 10x 120mm fans', N'https://cwsmgmt.corsair.com/pdp/5000-series/images/5000d-af-clear-clean-cool.png', 12, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(211, 'Corsair iCUE LINK 6500X RGB Mid-Tower DualChamber', 5054600, N'TDP: 0W | Dual Chamber Layout, Reverse-connector support, Front & Side Tempered Glass', N'https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Cases/6500/CC-9011269-WW/Gallery/6500X_RGB_BLACK_RENDER_01.webp', 12, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(212, 'Corsair RM1000x Shift Fully Modular ATX PSU', 5308600, N'TDP: 0W | 1000W, 80 PLUS Gold, Side-mounted modular connections, ATX 3.0 & PCIe 5.0 ready', N'https://m.media-amazon.com/images/I/81dwGXVwpgL.jpg', 11, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(213, 'Corsair AX1600i Digital ATX Power Supply', 15468600, N'TDP: 0W | 1600W, 80 PLUS Titanium, Gallium Nitride (GaN) FETs', N'https://www.e-weekly.co.uk/Images/JohnMac/Corsair/CSR-AX160I/Images/AX1600i_03.jpg', 11, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(214, 'Corsair K100 RGB Mechanical Gaming Keyboard', 6324600, N'TDP: 2W | Corsair OPX Optical-Mechanical, AXON 4000Hz Hyper-polling, iCUE Control Wheel', N'https://eezepc.com/wp-content/uploads/2021/03/Corsair-K100-RGB-Mechanical-Gaming-Keyboard-EEZEPC-1.jpg', 15, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(215, 'Corsair Darkstar Wireless MMO Gaming Mouse', 4292600, N'TDP: 1W | 15 programmable buttons, MARKSMAN 26K DPI Optical, SLIPSTREAM Wireless & Bluetooth', N'https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Gaming-Mice/CH-931A011/DARKSTAR_WIRELESS_01.webp', 16, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(216, 'Corsair Virtuoso RGB Wireless XT Headset', 6832600, N'TDP: 1W | High-Density 50mm Neodymium, Spatial Dolby Atmos, Broadcast-grade detachable mic', N'https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Gaming-Headsets/CA-9011188-NA/Gallery/VIRTUOSO_XT_01.webp', 17, 50, '2026-06-05 10:05:55.522526', N'Corsair'),
-(217, 'Logitech G Pro X Superlight 2 Wireless GamingMouse', 4038600, N'TDP: 1W | 60 grams, HERO 2 Sensor (32,000 DPI), LIGHTFORCE Hybrid Switches, 4000Hz max polling', N'https://techubme.com/wp-content/uploads/2024/07/logitech_Pro_X_Super_light_2.png', 16, 50, '2026-06-05 10:05:55.522526', N'Logitech'),
-(218, 'Logitech G502 X LIGHTSPEED Wireless GamingMouse', 3530600, N'TDP: 1W | HERO 25K Sensor, 13 programmable controls, Dual-mode infinite scroll', N'https://www.bhphotovideo.com/images/images1500x1500/logitech_g_910_006178_g502_x_lightspeed_wireless_1722687.jpg', 16, 50, '2026-06-05 10:05:55.522526', N'Logitech'),
-(219, 'Logitech G915 TKL Wireless Mechanical Keyboard', 5816600, N'TDP: 2W | Tenkeyless (TKL), Low Profile GL Tactile/Linear/Clicky, Up to 40 hours (100% brightness)', N'https://resource.logitechg.com/d_transparent.gif/content/dam/gaming/en/products/g915-tkl/g915-tkl-gallery/deu-g915-tkl-carbon-gallery-topdown.png', 15, 50, '2026-06-05 10:05:55.522526', N'Logitech'),
-(220, 'Logitech G Pro X TKL LIGHTSPEED Gaming Keyboard', 5054600, N'TDP: 2W | Dual-shot PBT keycaps, LIGHTSPEED Wireless, Bluetooth, USB, Dedicated volume roller and controls', N'https://www.enation.sg/wp-content/uploads/2025/06/251.png', 15, 50, '2026-06-05 10:05:55.522526', N'Logitech'),
-(221, 'Logitech G Pro X 2 LIGHTSPEED Wireless Headset', 6324600, N'TDP: 1W | 50mm Graphene Drivers, LIGHTSPEED, Bluetooth, 3.5mm wired, Up to 50 hours battery life', N'https://www.bhphotovideo.com/images/images1500x1500/logitech_g_981_001262_pro_x_2_wireless_1763226.jpg', 17, 50, '2026-06-05 10:05:55.522526', N'Logitech'),
-(222, 'Logitech MX Master 3S Wireless Mouse', 2514600, N'TDP: 1W | 8K DPI tracking on any surface, Quiet clicks technology, MagSpeed Electromagnetic scrolling', N'https://m.media-amazon.com/images/I/61+OT7FPABL._AC_SL1500_.jpg', 16, 50, '2026-06-05 10:05:55.522526', N'Logitech'),
-(223, 'Logitech MX Keys S Wireless Keyboard', 2768600, N'TDP: 2W | Spherically-dished Perfect Stroke keys, Smart illumination proximity sensor, Easy-Switch up to 3 devices', N'https://resource.logitech.com/w_1800,h_1800,c_limit,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/product-gallery/graphite/mx-keys-s-keyboard-top-view-graphite-us.png?v=1', 15, 50, '2026-06-05 10:05:55.522526', N'Logitech'),
-(224, 'Razer Viper V3 Pro Wireless Gaming Mouse', 4038600, N'TDP: 1W | 54 grams, Focus Pro 35K Optical Sensor Gen-2, True 8000Hz HyperPolling Wireless', N'https://m.media-amazon.com/images/I/619xpFKAXPL.jpg', 16, 50, '2026-06-05 10:05:55.522526', N'Razer'),
-(225, 'Razer DeathAdder V3 Pro Wireless Gaming Mouse', 3784600, N'TDP: 1W | 63 grams, Right-handed ergonomic design, Focus Pro 30K Optical Sensor', N'https://wise-tech.com.pk/wp-content/uploads/2023/07/Razer-DeathAdder-V3-Pro-Ergonomic-Gaming-Mouse-White.png', 16, 50, '2026-06-05 10:05:55.522526', N'Razer'),
-(226, 'Razer Huntsman V3 Pro TKL Mechanical Keyboard', 5562600, N'TDP: 2W | Razer Analog Optical Switches Gen-2, Rapid Trigger mode with adjustable actuation (0.1- 4.0mm), Dual-purpose digital dial', N'https://m.media-amazon.com/images/I/81qBUNMtcLL._AC_.jpg', 15, 50, '2026-06-05 10:05:55.522526', N'Razer'),
-(227, 'Razer BlackWidow V4 Pro Mechanical GamingKeyboard', 5816600, N'TDP: 2W | Razer Green Clicky / Yellow Linear Switches, Per-key & 3-sided underglow RGB, 8 dedicated macro keys', N'https://m.media-amazon.com/images/I/81L4FpeS3VL._AC_SL1500_.jpg', 15, 50, '2026-06-05 10:05:55.522526', N'Razer'),
-(228, 'Razer BlackShark V2 Pro (2023 Edition) WirelessHeadset', 5054600, N'TDP: 1W | Razer HyperClear Super Wideband Mic, TriForce Titanium 50mm Drivers, Up to 70 hours', N'https://images-na.ssl-images-amazon.com/images/I/71Z9KK9-zvL.jpg', 17, 50, '2026-06-05 10:05:55.522526', N'Razer'),
-(229, 'Samsung 990 PRO PCIe 4.0 NVMe M.2 SSD 2TB', 4546600, N'TDP: 9W | 2TB, Up to 7450 MB/s, Up to 6900 MB/s, Samsung Pascal Controller', N'https://images.samsung.com/is/image/samsung/p6pim/ca_fr/mz-v9p2t0b-am/gallery/ca-fr-990pro-nvme-m2-ssd-mz-v9p2t0b-am-534208574?$650_519_PNG$', 5, 50, '2026-06-05 10:05:55.522526', N'Samsung'),
-(230, 'Samsung 990 EVO PCIe 4.0 x4 / 5.0 x2 M.2 SSD 1TB', 2260600, N'TDP: 9W | 1TB, Up to 5000 MB/s, Up to 4200 MB/s', N'https://images.samsung.com/is/image/samsung/p6pim/ca/mz-v9e1t0b-am/gallery/ca-990-evo-nvme-m2-ssd-mz-v9e1t0b-am-539584186?$650_519_PNG$', 5, 50, '2026-06-05 10:05:55.522526', N'Samsung'),
-(231, 'Samsung T7 Shield Portable SSD 2TB', 4292600, N'TDP: 9W | 2TB, USB 3.2 Gen 2 (10Gbps), IP65 water & dust resistant, 3-meter drop proof', N'https://down-ph.img.susercontent.com/file/sg-11134275-7rd6w-m7rcerx9s5nrbc', 5, 50, '2026-06-05 10:05:55.522526', N'Samsung'),
-(232, 'Samsung Odyssey OLED G9 (G95SC) Gaming Monitor', 40614600, N'TDP: 0W | 49-inch Curved Ultra-wide, 5120x1440 (Dual QHD), 240Hz, 0.03ms (GtG)', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/4bc7c582-c2db-4ce3-ab96-6c47e7521993.jpg', 6, 50, '2026-06-05 10:05:55.522526', N'Samsung'),
-(233, 'Samsung Odyssey Ark Gen 2 Mini-LED Monitor', 63474600, N'TDP: 0W | 55-inch 1000R Curved, 3840x2160 (4K), 165Hz, Yes, rotates vertically', N'https://images-na.ssl-images-amazon.com/images/I/81nwxTmzMRL.jpg', 6, 50, '2026-06-05 10:05:55.522526', N'Samsung'),
-(234, 'Samsung Galaxy Buds3 Pro', 6324600, N'TDP: 5W | Hi-Fi 24-bit Ultra High Quality Audio, Adaptive Noise Cancelling with Blade Lights, Stem style ergonomic fit', N'https://m.media-amazon.com/images/I/61Mv3cWzZeL._AC_SL1500_.jpg', 17, 50, '2026-06-05 10:05:55.522526', N'Samsung'),
-(235, 'Kingston FURY Renegade DDR5 RGB 32GB (2x16GB) 7200MHz', 4292600, N'TDP: 15W | 32GB Kit, 7200 MT/s, CL38-44-44, 1.45V', N'https://img.evetech.co.za/repository/ProductImages/kingston-fury-renegade-rgb-32gb-7200mhz-ddr5-black-memory-1600px-v1-01.webp', 3, 50, '2026-06-05 10:05:55.522526', N'Kingston'),
-(236, 'Kingston FURY Beast DDR5 32GB (2x16GB) 6000MHz', 3022600, N'TDP: 15W | 32GB Kit, 6000 MT/s, AMD EXPO / Intel XMP 3.0 certified', N'https://m.media-amazon.com/images/I/717cPftxQgL._AC_.jpg', 3, 50, '2026-06-05 10:05:55.522526', N'Kingston'),
-(237, 'Kingston KC3000 PCIe 4.0 NVMe M.2 SSD 2TB', 3911600, N'TDP: 9W | 2TB, Up to 7000 MB/s, Up to 7000 MB/s, Phison E18', N'https://www.onoff.az/storage/uploads/products/onoff-2026-01-15t231256269-32101.jpg', 5, 50, '2026-06-05 10:05:55.522526', N'Kingston'),
-(238, 'Kingston NV2 PCIe 4.0 NVMe M.2 SSD 1TB', 1625600, N'TDP: 9W | 1TB, Up to 3500 MB/s, Up to 2100 MB/s, M.2 2280', N'https://images.kabum.com.br/produtos/fotos/sync_mirakl/400812/SSD-1TB-Kingston-Nv2-M-2-2280-PCIe-NVMe-Leitura-3500MB-s-Grava-o-2100MB-s-Snv2s-1000g_1730146919_gg.jpg', 5, 50, '2026-06-05 10:05:55.522526', N'Kingston'),
-(239, 'Kingston FURY Impact DDR5 SO-DIMM 32GB (2x16GB) 5600MHz', 3149600, N'TDP: 65W | Laptop Memory (SO-DIMM), 32GB Kit, 5600 MT/s', N'http://extra.md/public/products/thumbs/205027_32gb-ddr55600mhz-sodimm-kingston-fury-impact-9857901454477.jpg', 3, 50, '2026-06-05 10:05:55.522526', N'Kingston'),
-(240, 'WD Red Pro NAS Internal Hard Drive 12TB', 7594600, N'TDP: 5W | 12TB, 7200 RPM, 256MB, SATA 6 Gb/s', N'https://m.media-amazon.com/images/I/71X-Co2yQgL._AC_.jpg', 10, 50, '2026-06-05 10:05:55.522526', N'WD'),
-(241, 'Seagate IronWolf Pro 16TB NAS HDD', 8356600, N'TDP: 7W | 16TB, 550TB/year, Rotational Vibration (RV) sensors', N'https://i5.walmartimages.com/seo/Seagate-IronWolf-Pro-16TB-NAS-Hard-Drive-7200-RPM-256MB-Cache-CMR-SATA-6-0Gb-s-3-5-Internal-HDD-NE-ST16000NE000_ce14528e-ad18-4af3-aed0-35a74db6ecf3.d2fe1c875b4ae1ab2dfd13fd849edd5a.jpeg', 10, 50, '2026-06-05 10:05:55.522526', N'Seagate'),
-(242, 'Noctua NH-D15 chromax.black Dual-Tower Cooler', 3022600, N'TDP: 5W | 2x NF-A15 HS-PWM fans, Full black design, Intel LGA1700/AM5 ready', N'https://os-jo.com/image/cache/catalog/products/ANOCTUA/NH-D15-BLACK/BLACK-1200x1200.JPEG', 13, 50, '2026-06-05 10:05:55.522526', N'Noctua'),
-(243, 'NZXT H9 Flow Dual-Chamber Mid-Tower', 4038600, N'TDP: 0W | Wrap-around tempered glass pane, 4x F120Q Airflow fans, Up to 435mm', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6529/6529623cv11d.jpg', 12, 50, '2026-06-05 10:05:55.522526', N'NZXT'),
-(244, 'NZXT Kraken Elite 360 RGB Liquid Cooler', 7594600, N'TDP: 15W | 360mm aluminum radiator, 2.36-inch wide-angle TFT-LCD display, 640x640 pixels', N'https://img.terabyteshop.com.br/produto/g/water-cooler-nzxt-kraken-elite-360-rgb-360mm-aio-lcd-display-black-intel-amd-rl-kr36e-b1_191056.jpg', 13, 50, '2026-06-05 10:05:55.522526', N'NZXT'),
-(245, 'SteelSeries Arctis Nova Pro Wireless Headset', 8864600, N'TDP: 1W | Nova Pro Acoustic System, Active Noise Cancellation with Transparency Mode, Dual Battery Infinity System', N'https://images.hometheaterreview.com/htr-stateless/2025/07/646a3e4a-steelseries-arctis-nova-pro-wireless-gaming-headset-scaled.jpg', 17, 50, '2026-06-05 10:05:55.522526', N'SteelSeries'),
-(246, 'BenQ ZOWIE XL2566K 360Hz Esports Gaming Monitor', 15214600, N'TDP: 15W | 24.5-inch TN Panel, 360Hz, DyAc+ Technology motion blur reduction', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6539/6539682_sd.jpg', 6, 50, '2026-06-05 10:05:55.522526', N'BenQ'),
-(247, 'Sony WH-1000XM5 Wireless Noise CancelingHeadphones', 10134600, N'TDP: 1W | Integrated Processor V1 & HD Noise CancelingProcessor QN1, 8 microphones for extreme voice pick up, Up to 30 hours total life', N'https://d1ncau8tqf99kp.cloudfront.net/converted/103364_original_local_1200x1050_v3_converted.webp', 17, 50, '2026-06-05 10:05:55.522526', N'Sony'),
-(248, 'Crucial Pro DDR5 48GB (2x24GB) 5600MHz Kit', 3784600, N'TDP: 65W | 48GB Kit, 5600 MT/s, Low-profile aluminum black heatsink', N'https://a.allegroimg.com/original/116f3d/93c9c04d46c29c03260e9a12823a/SUPER-Pamiec-DDR5-Crucial-Pro-48GB-2x24GB-5600MHz-XMP-3-0-AMD-EXPO', 3, 50, '2026-06-05 10:05:55.522526', N'Crucial'),
-(249, 'Fractal Design North Charcoal Black WoodMid-Tower', 3530600, N'TDP: 5W | Real walnut wood front panel struts, Mesh or Tempered Glass available, 2x Aspect 14 PWM fans', N'https://m.media-amazon.com/images/I/71MSloBQcCL._AC_.jpg', 12, 50, '2026-06-05 10:05:55.522526', N'Fractal Design'),
-(250, 'Lian Li O11 Dynamic EVO RGB Black', 4292600, N'TDP: 0W | Dual-chamber adjustable ATX case, Two L-shaped diffuse LED RGB strips, Reversible design architecture', N'https://gitec.ge/images/thumbs/0073589_g99o11dergbx00.jpeg', 12, 50, '2026-06-05 10:05:55.522526', N'Lian Li'),
-(251, 'Lian Li UNI FAN TL LCD 120 Triple Pack Black', 3784600, N'TDP: 4W | 120mm fans, Built-in 1.6-inch LCD screen on center fan, Daisy-chain interlocking mechanism', N'https://microless.com/cdn/products/01a0bf24eea1fcdb39621ce8e43485f5-hi.jpg', 14, 50, '2026-06-05 10:05:55.522526', N'Lian Li'),
-(252, 'EVGA SuperNOVA 1000 G7 Gold Modular PSU', 4800600, N'TDP: 0W | 1000W, 80 PLUS Gold Certified, Ultra-compact 130mm chassis size', N'https://www.cyberpuerta.mx/img/product/XL/CP-EVGA-220-G7-1000-X1-87d9b7.jpg', 11, 50, '2026-06-05 10:05:55.522526', N'EVGA'),
-(253, 'DeepCool AK620 Digital Dual-Tower Air Cooler', 2006600, N'TDP: 5W | Real-time temperature and usage status top screen, 2x FK120 fluid dynamic bearing fans, 6x 6mm copper heatpipes', N'https://down-my.img.susercontent.com/file/cn-11134207-7qukw-lfqke8nuk8jva1', 13, 50, '2026-06-05 10:05:55.522526', N'DeepCool'),
-(254, 'Thermalright Peerless Assassin 120 SE AirCooler', 990600, N'TDP: 5W | Dual tower heatsink design, 2x TL-C12C 120mm PWM fans, 155mm standard height', N'https://m.media-amazon.com/images/I/71YEiWsyLlS._AC_.jpg', 13, 50, '2026-06-05 10:05:55.522526', N'Thermalright'),
-(255, 'Be Quiet! Dark Power 13 1000W Titanium ATX 3.0PSU', 7340600, N'TDP: 65W', N'https://hwbusters.com/wp-content/uploads/2023/05/be-quiet-Dark-Power-13-1000W.jpg', 11, 50, '2026-06-05 10:05:55.522526', N'Intel'),
-(256, 'Intel Core Ultra 7 265F (Tray)', 12000000, N'TDP: 125W', N'https://med.greatecno.com/1526371-large_default/intel-s1851-core-ultra-7-265f-tray.jpg', 1, 97, '2026-06-27 12:52:49.647', N'Intel'),
-(257, N'Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz (TRAY) - CHÍNH HÃNG', 2500000, N'TDP: 65W', N'https://cdn.hstatic.net/products/200000837185/12400f_tray_e59465bf117e4e778e5f568c39bc32b9_grande.png', 1, 99, '2026-06-27 12:52:50.064', N'Intel'),
-(258, 'Intel Core i7 14700F (Tray)', 9500000, N'TDP: 65W', N'https://nguyencongpc.vn/media/product/250-26474-intel-core-i7-14700f-tray-new-010.jpg', 1, 100, '2026-06-27 12:52:50.462', N'Intel'),
-(259, 'GIGABYTE Z890 EAGLE WIFI7 (DDR5)', 7500000, N'TDP: 40W', N'https://m.media-amazon.com/images/I/81G2my+RKeL._AC_.jpg', 4, 97, '2026-06-27 12:52:50.891', N'GIGABYTE'),
-(260, 'GIGABYTE H610M-H V3 (DDR4)', 1800000, N'TDP: 30W', N'https://media.ldlc.com/r1600/ld/products/00/06/12/72/LD0006127276.jpg', 4, 99, '2026-06-27 12:52:51.326', N'GIGABYTE'),
-(261, 'GIGABYTE B760M GAMING PLUS WIFI DDR4', 3500000, N'TDP: 40W', N'https://www.gigabyte.com/FileUpload/Global/KeyFeature/3701/innergigabyteimages/kf-img.png', 4, 100, '2026-06-27 12:52:51.741', N'GIGABYTE'),
-(262, 'RAM Kingmax Horizon 16GB DDR5 Bus 5600Mhz', 1200000, N'TDP: 10W', N'https://cdn.hstatic.net/products/1000361104/1_9aef94b8600b4a80a74401e379b2dd4c.jpg', 3, 97, '2026-06-27 12:52:52.239', N'Kingmax'),
-(263, 'Ram KingSpec Heatsink Red 1x16GB DDR4 Bus 3200Mhz', 750000, N'TDP: 10W', N'https://cdn.hstatic.net/products/200000722513/ram-kingspec-heatsink-red-1x16gb-ddr4-bus-3200mhz-1_23edecb668f84ae783d00d77d8a23b83.jpg', 3, 100, '2026-06-27 12:52:52.718', N'KingSpec'),
-(264, 'MSI GeForce RTX 5070 Ti 16GB Shadow 3X OC', 25000000, N'TDP: 250W', N'https://asset.msi.com/resize/image/global/product/product_1738649851f99734cac740c6f5eba83717cf3dfcc1.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 9, 99, '2026-06-27 12:52:53.246', N'MSI'),
-(265, 'GIGABYTE GeForce RTX 5080 WINDFORCE OC SFF 16G', 35000000, N'TDP: 300W', N'https://www.gigabyte.com/FileUpload/Global/KeyFeature/3886/innergigabyte/images/features-img.png', 9, 98, '2026-06-27 12:52:53.742', N'GIGABYTE'),
-(266, 'MSI GeForce RTX 5060 Ventus 2X OC 8GB', 8500000, N'TDP: 150W', N'https://asset.msi.com/resize/image/global/product/product_17452877802adc1ee82075afaeea7d2a2dcf366cb9.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 9, 100, '2026-06-27 12:52:54.227', N'MSI'),
-(267, 'ZOTAC GeForce RTX 5060 Ti 8GB TWIN EDGE GDDR7', 11000000, N'TDP: 160W', N'https://www.kccshop.vn/media/product/250-13410-vga-zotac-gaming-geforce-rtx-5060-ti-8gb-twin-edge-oc-white-edition--zt-b50610q-10m-_4_main.jpeg', 9, 100, '2026-06-27 12:52:54.716', N'NVIDIA'),
-(268, N'Ổ cứng SSD Kingston NV3 1TB M.2 PCIe NVMe Gen4', 1800000, N'TDP: 10W', N'https://down-ph.img.susercontent.com/file/sg-11134201-7rdw7-lzr1u0ea362c97', 7, 97, '2026-06-27 12:52:55.209', N'Kingston'),
-(269, N'Ổ Cứng SSD KingSpec NVMe 512GB (NE-512)', 800000, N'TDP: 10W', N'https://hmpcstore.com/admin/uploads/O-cung-SSD-KingSpec-NE-512GB-PCIe-Gen3-x4-NVMe-M2-2280-NE-512/20260225_101548_0_699e696480d03_710__ne-5122-1__1__8d84d40669de4ec497acc541f607579f_grande.jpg', 7, 100, '2026-06-27 12:52:55.693', N'KingSpec'),
-(270, 'Corsair RM850e ATX 3.1 - 80 Plus Gold - Full Modular (850W)', 3500000, N'TDP: 0W', N'https://product.hstatic.net/200000722513/product/89689_nguon_may_tinh_corsair_rm850e_atx_006_e59a3ebce3034f23aa2bde43f1d242e5_1024x1024.jpg', 11, 97, '2026-06-27 12:52:56.192', N'Corsair'),
-(271, 'Cooler Master MWE 650 - 80 Plus Bronze - V3 230V (650W)', 1500000, N'TDP: 0W', N'https://os-jo.com/image/cache/catalog/products/power-supply/MPE-6501-ACAAW-3BUK/81TVrRqQJeL._SL1500_-1200x1200.jpg', 11, 100, '2026-06-27 12:52:56.68', N'Cooler Master'),
-(272, N'Nguồn FSP HV PRO 650W - 80 Plus Bronze', 1400000, N'TDP: 0W', N'https://down-vn.img.susercontent.com/file/vn-11134211-820l4-mjf8qo64x91ha6', 11, 100, '2026-06-27 12:52:57.17', N'FSP'),
-(273, 'Corsair CX650 - 80 Plus Bronze (650W)', 1600000, N'TDP: 0W', N'https://www.bhphotovideo.com/images/fb/corsair_cp_9020278_na_cx_series_cx650_650w_1808744.jpg', 11, 100, '2026-06-27 12:52:57.668', N'Corsair'),
-(274, 'Corsair 3500X TG Mid Tower Black', 2000000, N'TDP: 0W', N'https://philong.com.vn/media/product/33615-vo-case-corsair-3500x-argb-mid-tower-tg-black-cc-9011278-ww-philong--5-.png', 12, 99, '2026-06-27 12:52:58.157', N'Corsair'),
-(275, 'Corsair FRAME 4500X RS-R ARGB Panoramic Black', 3500000, N'TDP: 0W', N'https://www.pcstudio.in/wp-content/uploads/2025/09/Corsair-Frame-4500X-RS-R-ARGB-Panoramic-Glass-Mid-Tower-E-ATX-Cabinet-Black-2-600x600.webp', 12, 98, '2026-06-27 12:52:58.657', N'Corsair'),
-(276, N'Tản nhiệt AIO Corsair NAUTILUS 360 ARGB Black', 2800000, N'TDP: 15W', N'https://phucanhcdn.com/media/product/58804_tan_nhiet_nuoc_aio_corsair_nautilus_360_argb_black_cw_9060093_ww_2.jpg', 8, 97, '2026-06-27 12:52:59.35', N'Corsair'),
-(277, 'Cooler Master Hyper 212 Spectrum V3 ARGB', 600000, N'TDP: 5W', N'https://c1.neweggimages.com/BizIntell/item/ACCS%20-%20PC/CPU%20Cooling/35-103-357/hyper-212-spectrum-v3_01.jpg', 8, 99, '2026-06-27 12:52:59.845', N'Cooler Master'),
-(278, 'Intel Core i9 14900K (Tray)', 14000000, N'TDP: 125W', N'https://pcngon.vn/wp-content/uploads/2024/11/CPU-Intel-Core-i9-14900K-Tray-2.4GHz-Turbo-5.8GHz-24-nhan-32-luong-1.jpg', 1, 100, '2026-06-27 13:16:14.081', N'Intel'),
-(279, 'Intel Core Ultra 9 285K', 16500000, N'TDP: 125W', N'https://images.versus.io/objects/intel-core-ultra-9-285k.front.variety.1729100341269.jpg', 1, 49, '2026-06-27 13:16:14.752', N'Intel'),
-(280, 'ASUS ROG MAXIMUS Z790 HERO', 15000000, N'TDP: 60W', N'https://dlcdnwebimgs.asus.com/gain/A3777166-EF70-4D33-915B-EC65CF77CAE5', 4, 100, '2026-06-27 13:16:16.445', N'ASUS'),
-(281, 'ProArt Z790-CREATOR WIFI', 12000000, N'TDP: 55W', N'https://dlcdnwebimgs.asus.com/gain/fe64f38f-9f58-4722-b2b0-723379b316be/', 4, 100, '2026-06-27 13:16:16.974', N'ASUS'),
-(282, 'Corsair Dominator Titanium 64GB', 6500000, N'TDP: 15W', N'https://m.media-amazon.com/images/I/611o1NX2HvL._AC_SL1500_.jpg', 3, 100, '2026-06-27 13:16:18.101', N'Corsair'),
-(283, 'G.Skill Trident Z5 64GB DDR5', 5500000, N'TDP: 15W', N'https://c1.neweggimages.com/ProductImageCompressAll1280/20-374-432-07.png', 3, 100, '2026-06-27 13:16:18.602', N'G.Skill'),
-(284, 'ASUS ROG Strix RTX 5090 24GB', 65000000, N'TDP: 450W', N'https://cdn-ru.bitrix24.ru/b11322588/landing/90e/90ed69e925e824a07ca15eb1b5d9bc42/asus_rog_astral_geforce_rtx_5090_32gb_gddr7_oc_edition_16_1x.png', 9, 100, '2026-06-27 13:16:33.267', N'ASUS'),
-(285, 'Samsung 990 PRO 2TB', 4500000, N'TDP: 15W', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6523/6523595cv11d.jpg', 7, 100, '2026-06-27 13:16:34.196', N'Samsung'),
-(286, 'ROG Ryujin III 360 ARGB', 8500000, N'TDP: 125W', N'https://dlcdnwebimgs.asus.com/gain/A1D6D78A-00BE-4F89-A360-2790312CDDAD', 8, 108, '2026-06-27 13:16:36.609', N'Intel'),
-(287, N'Thẻ nhớ SanDisk Extreme Pro 128GB MicroSDXC UHS-I 200MB/s', 650000, N'TDP: 2W', N'https://bizweb.dktcdn.net/100/533/247/products/1658759624-img-1802164.jpg?v=1754561963193', 4, 100, '2026-07-23 10:00:00.000', N'SanDisk'),
-(288, N'Thẻ nhớ Samsung PRO Plus 256GB MicroSDXC kèm Đầu đọc USB', 950000, N'TDP: 2W', N'https://bizweb.dktcdn.net/thumb/grande/100/490/762/products/the-nho-microsdxc-samsung-pro-plus-u3-256gb-05-jpg-v-1715014985150-jpg-v-1715201603263.jpg?v=1716191494470', 4, 80, '2026-07-23 10:00:00.000', N'Samsung'),
-(289, N'Thẻ nhớ Lexar Professional 1066x 512GB MicroSDXC UHS-I', 1450000, N'TDP: 3W', N'http://compro.com.vn/uploads/product/23_08_2023/2.png', 4, 50, '2026-07-23 10:00:00.000', N'Lexar'),
-(290, N'Thẻ nhớ Kingston Canvas Go! Plus 128GB SDXC UHS-I', 580000, N'TDP: 2W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m1bljvpi8efwca', 4, 120, '2026-07-23 10:00:00.000', N'Kingston'),
-(291, N'Thẻ nhớ SanDisk Ultra SDXC 64GB 140MB/s Class 10', 280000, N'TDP: 1W', N'https://bizweb.dktcdn.net/100/513/826/products/web-bia-the-sd-trang-xam-64gb.png?v=1767153744330', 4, 150, '2026-07-23 10:00:00.000', N'SanDisk'),
-(292, N'Thẻ nhớ Transcend SDXC 330S 128GB High Speed 100MB/s', 520000, N'TDP: 2W', N'https://bestcomputers.mn/storage/products/abb127a0b29bc93.png', 4, 90, '2026-07-23 10:00:00.000', N'Transcend'),
-(293, N'Thẻ nhớ ProGrade Digital SDXC UHS-II V60 256GB', 2800000, N'TDP: 3W', N'https://haliti.com.vn/wp-content/uploads/2023/05/the-nho-prograde-digital-SDXC-UHS-II-V60-250R-256gb-haliti-01.jpg', 4, 30, '2026-07-23 10:00:00.000', N'ASUS'),
-(294, N'Thẻ nhớ Sony TOUGH SF-G Series 128GB SDXC UHS-II 300MB/s', 4200000, N'TDP: 3W', N'https://cdn.vjshop.vn/phu-kien-nhiep-anh/the-nho/the-sd/the-nho-sony-sdxc-128gb-sf-g-series-tough-uhs-ii/sony-sdxc-128gb-sf-g-series-tough-uhs-ii-1.jpg', 4, 25, '2026-07-23 10:00:00.000', N'Sony'),
-(295, N'Thẻ nhớ Kioxia Exceria High Endurance 128GB MicroSD', 480000, N'TDP: 2W', N'https://tuanphong.vn/pictures/full/2020/08/1598000458-172-the-nho-128gb-microsd-kioxia-exceria-high-endurance-2.jpg', 4, 110, '2026-07-23 10:00:00.000', N'Kioxia'),
-(296, N'Thẻ nhớ TeamGroup GO Card MicroSDXC 256GB 100MB/s', 720000, N'TDP: 2W', N'https://images.teamgroupinc.com/products/card/microsd/go-card/msdxc/256gb_adpt_01.jpg', 4, 75, '2026-07-23 10:00:00.000', N'TeamGroup'),
-(297, N'Ổ cứng di động SSD SanDisk Extreme Portable 1TB USB 3.2 Gen 2', 2650000, N'TDP: 5W', N'https://hanoicomputercdn.com/media/product/70740_o_cung_di_dong_sandisk_extreme_pro_portable_ssd_1tb_usb_3__7_.jpg', 8, 60, '2026-07-23 10:00:00.000', N'SanDisk'),
-(298, N'Ổ cứng di động Samsung T7 Shield 2TB Type-C Chống sốc IP65', 4850000, N'TDP: 5W', N'https://media.karousell.com/media/photos/products/2023/10/20/samsung_t7_shield_2tb_beige_co_1697782299_2da3fdf9.jpg', 8, 45, '2026-07-23 10:00:00.000', N'Samsung'),
-(299, N'Ổ cứng di động HDD WD My Passport 2TB USB 3.0 Black', 1950000, N'TDP: 5W', N'https://atechworld.vn/wp-content/uploads/2024/01/wd-my-passport-2tb-1-1.jpg', 8, 80, '2026-07-23 10:00:00.000', N'WD'),
-(300, N'Ổ cứng di động SSD Crucial X9 Pro 1TB 1050MB/s Vỏ nhôm', 2450000, N'TDP: 4W', N'https://tuanphong.vn/pictures/full/2024/06/1717476599-965-crucial-x9pro-d.jpg', 8, 50, '2026-07-23 10:00:00.000', N'Crucial'),
-(301, N'Ổ cứng gắn ngoài HDD Seagate Expansion Desktop 8TB 3.5 inch', 4900000, N'TDP: 10W', N'https://down-id.img.susercontent.com/file/id-11134207-7r992-lz4iwty51s8092', 8, 30, '2026-07-23 10:00:00.000', N'Seagate'),
-(302, N'Ổ cứng di động HDD Lacie Rugged Mini 2TB USB 3.0 Chống dằn xóc', 2800000, N'TDP: 5W', N'https://www.bhphotovideo.com/images/fb/lacie_9000298_rugged_mini_disk_2tb_1039044.jpg', 8, 40, '2026-07-23 10:00:00.000', N'LaCie'),
-(303, N'Ổ cứng di động SSD Kingston XS2000 1TB Type-C 2000MB/s Siêu nhỏ', 2950000, N'TDP: 5W', N'https://lagihitech.vn/wp-content/uploads/2024/04/o-cung-di-dong-SSD-Kingston-XS2000-1TB-SXS20001000G-hinh-1.jpg', 8, 35, '2026-07-23 10:00:00.000', N'Kingston'),
-(304, N'Ổ cứng di động HDD Transcend StoreJet 25M3 1TB Chống sốc 3 lớp', 1650000, N'TDP: 5W', N'https://enhakkore.net/wp-content/uploads/2018/07/TRANSCEND-1TB.jpg', 8, 70, '2026-07-23 10:00:00.000', N'Transcend'),
-(305, N'Ổ cứng di động SSD Corsair EX100U 2TB Type-C USB 3.2 Gen2x2', 4200000, N'TDP: 5W', N'https://hoangkhue.vn/wp-content/uploads/2024/08/250-10284-o-cung-ssd-corsair-ex100u-1tb-1-.jpg', 8, 25, '2026-07-23 10:00:00.000', N'Corsair'),
-(306, N'Ổ cứng di động SSD ADATA SE880 1TB Type-C 2000MB/s', 2550000, N'TDP: 4W', N'https://down-sg.img.susercontent.com/file/sg-11134207-7rdx0-lxxvt9dyai734a', 8, 55, '2026-07-23 10:00:00.000', N'ADATA'),
-(307, N'Tản nhiệt nước AIO NZXT Kraken Elite 360 RGB White LCD', 7250000, N'TDP: 15W', N'https://azaudio.vn/wp-content/uploads/2024/12/nzxt-kraken-elite-360-rgb-white-1.jpg', 9, 30, '2026-07-23 10:00:00.000', N'NZXT'),
-(308, N'Tản nhiệt nước AIO Corsair iCUE LINK H150i LCD White 360mm', 6800000, N'TDP: 15W', N'https://philong.com.vn/media/product/31944-tan-nhiet-nuoc-cpu-aio-corsair-icue-link-h150i-rgb-360mm-white-cw-9061006-ww-philong--10-.jpg', 9, 25, '2026-07-23 10:00:00.000', N'Corsair'),
-(309, N'Tản nhiệt nước AIO ASUS ROG Ryujin III 360 ARGB White Edition', 8900000, N'TDP: 20W', N'https://cdn.hstatic.net/products/200000522285/71tqdctsyil._sl1500_3d133254025a4566b8a6b75de0177edc.jpg', 9, 20, '2026-07-23 10:00:00.000', N'ASUS'),
-(310, N'Tản nhiệt nước AIO MSI MAG CORELIQUID E360 Black', 3450000, N'TDP: 12W', N'https://philong.com.vn/media/product/32659-tan-nhiet-nuoc-aio-cpu-msi-mag-coreliquid-e360-black-philong--3-.png', 9, 50, '2026-07-23 10:00:00.000', N'MSI'),
-(311, N'Tản nhiệt nước AIO DeepCool LT720 360mm High-Performance', 3650000, N'TDP: 15W', N'https://product.hstatic.net/1000333506/product/n-nuoc-aio-deepcool-lt720-7_33b321d32ef447a4b060ea862d2c3c3a_1024x1024_3d97403a18dd4741a07d41ea8b3e458c.jpg', 9, 40, '2026-07-23 10:00:00.000', N'DeepCool'),
-(312, N'Tản nhiệt nước AIO Lian Li Galahad II Trinity SL-INF 360 White', 4950000, N'TDP: 15W', N'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mgvopvat08i6a8', 9, 35, '2026-07-23 10:00:00.000', N'Lian Li'),
-(313, N'Tản nhiệt nước AIO Cooler Master MasterLiquid 360 Atmos ARGB', 3850000, N'TDP: 12W', N'https://cdn.hstatic.net/products/200000921511/tan_nhiet_nuoc_aio_cooler_master_masterliquid_360_atmos_ii_lcd_argb__1b2b1d1b61bb4c83bef81b7188d48fa8_1024x1024.jpg', 9, 45, '2026-07-23 10:00:00.000', N'Cooler Master'),
-(314, N'Tản nhiệt nước AIO Thermalright Frozen Prism 360 ARGB Black', 1850000, N'TDP: 10W', N'https://product.hstatic.net/200000420363/product/4_fc0894cf23c34545b98c502be9363f3e_master.jpg', 9, 70, '2026-07-23 10:00:00.000', N'Thermalright'),
-(315, N'Tản nhiệt nước AIO Valkyrie GL360 ARGB Màn hình LCD Black', 4200000, N'TDP: 15W', N'https://gland.vn/media/product/15140_81374_t___n_nhi___t_n_____c_valkyrie_gl360___en__2_.jpg', 9, 30, '2026-07-23 10:00:00.000', N'Valkyrie'),
-(316, N'Tản nhiệt nước AIO ID-COOLING DASHFLOW 360 Basic Black', 1650000, N'TDP: 10W', N'https://tanphat.com.vn/media/product/5969_51818_tan_nhiet_nuoc_aio_id_cooling_dashflow_360_basic_black_3.jpg', 9, 80, '2026-07-23 10:00:00.000', N'ID-COOLING'),
-(317, N'Card màn hình GIGABYTE GeForce RTX 4070 Ti SUPER WINDFORCE OC 16G', 23900000, N'TDP: 285W', N'https://product.hstatic.net/200000722513/product/geforce_rtx__4070_ti_super_gaming_oc_16g-01_948cbd78b02643aeb972232ee5e9cc05.png', 10, 25, '2026-07-23 10:00:00.000', N'GIGABYTE'),
-(318, N'Card màn hình ASUS TUF Gaming GeForce RTX 4080 SUPER 16GB GDDR6X', 31500000, N'TDP: 320W', N'https://www.tnc.com.vn/uploads/product/sp2024/card-man-hinh-asus-tuf-rtx4080s-o16g-gaming.jpg', 10, 20, '2026-07-23 10:00:00.000', N'ASUS'),
-(319, N'Card màn hình MSI GeForce RTX 4060 Ti GAMING X SLIM 16G', 12800000, N'TDP: 165W', N'https://product.hstatic.net/200000722513/product/rtx_4060_ti_gaming_x_slim_16g_a214d2ab8d5b4c72885ff81cf695918d.png', 10, 40, '2026-07-23 10:00:00.000', N'MSI'),
-(320, N'Card màn hình ZOTAC GAMING GeForce RTX 4070 SUPER Twin Edge OC 12GB', 16900000, N'TDP: 220W', N'https://halinhcomputer.vn/uploads/images/web-halinh-new/linh-kien-le/vga/zotac/rtx-4070-twin-edge-oc-12gb-gddr6x.png', 10, 35, '2026-07-23 10:00:00.000', N'NVIDIA'),
-(321, N'Card màn hình GALAX GeForce RTX 4070 Ti SUPER EX Gamer White 16GB', 24500000, N'TDP: 285W', N'https://khanhlinhpc.vn/hinh-anh/san-pham/4070ti-super-exg-w-02.png', 10, 18, '2026-07-23 10:00:00.000', N'NVIDIA'),
-(322, N'Card màn hình PowerColor Hellhound AMD Radeon RX 7900 XT 20GB', 21500000, N'TDP: 315W', N'https://m.media-amazon.com/images/I/814keJHzlgL._AC_.jpg', 10, 15, '2026-07-23 10:00:00.000', N'AMD'),
-(323, N'Card màn hình Sapphire NITRO+ AMD Radeon RX 7800 XT 16GB', 15800000, N'TDP: 263W', N'https://cdn.sicomp.vn/cache/large/product/5552/5552_card-man-hinh-sapphire-nitro-amd-radeon-rx-7800-xt_1.webp', 10, 30, '2026-07-23 10:00:00.000', N'AMD'),
-(324, N'Card màn hình XFX Speedster MERC 310 AMD Radeon RX 7900 GRE 16GB', 16950000, N'TDP: 260W', N'https://cdn.prod.website-files.com/5d1911406ad3cbdb9924a753/639736d43e89781c8b59f26d_03.jpg', 10, 22, '2026-07-23 10:00:00.000', N'AMD'),
-(325, N'Card màn hình COLORFUL iGame GeForce RTX 4070 SUPER Ultra W OC 12GB', 17900000, N'TDP: 220W', N'https://nguyencongpc.vn/media/product/26203-z5083848788059_6fd23c6d5c495549bd8c0c3277d7842e_18_11zon.jpg', 10, 28, '2026-07-23 10:00:00.000', N'NVIDIA'),
-(326, N'Card màn hình ASRock Phantom Gaming Radeon RX 7700 XT 12GB OC', 12500000, N'TDP: 245W', N'https://media.ldlc.com/r1600/ld/products/00/06/06/20/LD0006062055.jpg', 10, 30, '2026-07-23 10:00:00.000', N'AMD'),
-(327, N'Ổ cứng HDD PC Seagate Barracuda 2TB 3.5 inch SATA3 7200rpm', 1550000, N'TDP: 6W', N'https://down-vn.img.susercontent.com/file/77d9291cc7bf7b9a179cfa099e3e10d8', 11, 100, '2026-07-23 10:00:00.000', N'Seagate'),
-(328, N'Ổ cứng HDD PC Western Digital Blue 2TB 3.5 inch 7200rpm', 1480000, N'TDP: 6W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ra0g-m8x69xif6p36b1', 11, 110, '2026-07-23 10:00:00.000', N'WD'),
-(329, N'Ổ cứng HDD PC Toshiba P300 2TB 3.5 inch SATA3 7200rpm', 1390000, N'TDP: 6W', N'https://hoanghapccdn.com/media/product/5135_hdd_toshiba_p300_2tb_ha2.jpg', 11, 90, '2026-07-23 10:00:00.000', N'Toshiba'),
-(330, N'Ổ cứng HDD Server Seagate IronWolf 4TB 3.5 inch NAS SATA3', 2950000, N'TDP: 7W', N'https://www.kccshop.vn/media/product/250-10927-----c---ng-hdd-seagate-ironwolf-4tb--3-5-inch--5400rpm--sata3--256mb-cache--st4000vn006-_2.jpeg', 11, 60, '2026-07-23 10:00:00.000', N'Seagate'),
-(331, N'Ổ cứng HDD Server Western Digital Red Plus 4TB 3.5 inch NAS', 3100000, N'TDP: 7W', N'https://www.tnc.com.vn/uploads/product/sp2026/o-cung-hdd-gan-trong-western-digital-red-plus-4tb-wd40efzz.webp', 11, 55, '2026-07-23 10:00:00.000', N'WD'),
-(332, N'Ổ cứng HDD Enterprise Seagate Exos X18 16TB 3.5 inch SATA3', 8500000, N'TDP: 9W', N'https://qnapvn.com/o-cung-hdd-seagate-enterprise-exos-35-sata-7e8-16tb-st16000nm000j-2.png', 11, 20, '2026-07-23 10:00:00.000', N'Seagate'),
-(333, N'Ổ cứng HDD Enterprise Western Digital Gold 8TB 3.5 inch 7200rpm', 5900000, N'TDP: 8W', N'https://mygear.io.vn/media/product/6102-wd-gold-3-5.jpg', 11, 30, '2026-07-23 10:00:00.000', N'WD'),
-(334, N'Ổ cứng HDD PC Toshiba X300 4TB 7200rpm Gaming Internal', 3250000, N'TDP: 8W', N'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/93/MTA-9352335/toshiba_toshiba_x300_4tb_sata_3_cache_128mb_7200rpm_-_hdd_internal_pc_full03_mcg4oh8k.jpg', 11, 40, '2026-07-23 10:00:00.000', N'Toshiba'),
-(335, N'Ổ cứng HDD PC Western Digital Black 1TB 3.5 inch Performance', 1850000, N'TDP: 7W', N'https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-black-desktop-sata-hdd/gallery/wd-black-desktop-1tb.png', 11, 75, '2026-07-23 10:00:00.000', N'WD'),
-(336, N'Ổ cứng HDD Camera Seagate SkyHawk 4TB 3.5 inch Surveillance', 2650000, N'TDP: 6W', N'https://lapvip.com.vn/upload/anh-san-pham/70221-o-cung-hdd-seagate-skyhawk-4tb-3-2-1920x.jpg', 11, 80, '2026-07-23 10:00:00.000', N'Seagate'),
-(337, N'Nguồn Corsair RM750e ATX 3.0 80 Plus Gold Full Modular (750W)', 2850000, N'TDP: 0W', N'https://cdn.mwave.com.au/images/400/rm750e_ac62522_75331.jpg', 12, 60, '2026-07-23 10:00:00.000', N'Corsair'),
-(338, N'Nguồn MSI MAG A750GL PCIE5 750W 80 Plus Gold Full Modular', 2650000, N'TDP: 0W', N'https://m.media-amazon.com/images/I/716c-SjLwPL.jpg', 12, 70, '2026-07-23 10:00:00.000', N'MSI'),
-(339, N'Nguồn GIGABYTE UD850GM PG5 850W 80 Plus Gold PCIe 5.0', 3100000, N'TDP: 0W', N'https://techarc.pk/wp-content/uploads/2026/01/gigabyte-gp-ud850gm-pg5-850w-80-plus-gold-power-supply-1-techarc.pk_.webp', 12, 50, '2026-07-23 10:00:00.000', N'GIGABYTE'),
-(340, N'Nguồn ASUS TUF Gaming 750W 80 Plus Bronze', 2150000, N'TDP: 0W', N'https://songphuong.vn/Content/uploads/2025/06/TUF-Gaming-750W-Bronze-1.webp', 12, 80, '2026-07-23 10:00:00.000', N'ASUS'),
-(341, N'Nguồn Cooler Master MWE Gold 850 V2 Full Modular (850W)', 2950000, N'TDP: 0W', N'https://songphuong.vn/Content/uploads/2021/08/Nguon-Cooler-Master-MWE-GOLD-850-V2-Full-Modular-850W-songphuong.vn_.jpg', 12, 65, '2026-07-23 10:00:00.000', N'Cooler Master'),
-(342, N'Nguồn DeepCool PL750D 750W 80 Plus Bronze ATX 3.0 Native', 1750000, N'TDP: 0W', N'https://phucanhcdn.com/media/product/61221_nguon_may_tinh_deepcool_pl750d_750w_80_plus_bronze_atx_3_0_pcie_5_5.jpg', 12, 90, '2026-07-23 10:00:00.000', N'DeepCool'),
-(343, N'Nguồn Super Flower Leadex III Gold 850W ARGB Full Modular', 3450000, N'TDP: 0W', N'https://down-my.img.susercontent.com/file/27e5251ee99cf1d947ce9d44aacbb258', 12, 40, '2026-07-23 10:00:00.000', N'Super Flower'),
-(344, N'Nguồn Seasonic Focus GX-850 850W 80 Plus Gold Full Modular', 3650000, N'TDP: 0W', N'https://bgamer.pro/wp-content/uploads/2024/02/850w-seasonic-4.jpg', 12, 45, '2026-07-23 10:00:00.000', N'Seasonic'),
-(345, N'Nguồn FSP Hydro G PRO 850W PCIe5.0 80 Plus Gold', 3350000, N'TDP: 0W', N'https://smart1ech.com/wp-content/uploads/2023/10/www.fspgroupusa.com-HG2-850W-5G-36.png', 12, 50, '2026-07-23 10:00:00.000', N'Logitech'),
-(346, N'Nguồn Thermaltake Toughpower GF A3 850W Gold ATX 3.0', 2950000, N'TDP: 0W', N'https://cdn.mwave.com.au/images/400/thermaltake_toughpower_gf_a3_1050w_80_gold_pcie_gen5_atx_30_fully_modular_psu_ac62361_24452.jpg', 12, 55, '2026-07-23 10:00:00.000', N'Thermaltake'),
-(347, N'Vỏ case NZXT H6 Flow RGB Dual-Chamber Mid-Tower Black', 3450000, N'TDP: 0W', N'https://c1.neweggimages.com/productimage/nb1280/11-146-359-05.jpg', 13, 40, '2026-07-23 10:00:00.000', N'NZXT'),
-(348, N'Vỏ case Lian Li O11 Vision Tempered Glass Mid-Tower White', 3950000, N'TDP: 0W', N'https://i5.walmartimages.com/seo/LIAN-LI-O11-Vision-White-Aluminum-Steel-Tempered-Glass-ATX-Mid-Tower-Computer-Case-O11VW_8a75551b-e1fb-4b80-8cd4-a1db5126b46a.8bf544a2a9b5dedc9213b95788327938.jpeg', 13, 35, '2026-07-23 10:00:00.000', N'Lian Li'),
-(349, N'Vỏ case Corsair 4000D AIRFLOW Tempered Glass Mid-Tower Black', 2150000, N'TDP: 0W', N'https://m.media-amazon.com/images/I/81hL4tPkXZL._AC_SL1500_.jpg', 13, 80, '2026-07-23 10:00:00.000', N'Corsair'),
-(350, N'Vỏ case Montech KING 95 PRO Panoramic Curved Glass ARGB Black', 3650000, N'TDP: 0W', N'https://ascenti.co.th/main/wp-content/uploads/2024/08/MONTECH-KING-95-PRO-Black.jpg', 13, 30, '2026-07-23 10:00:00.000', N'Montech'),
-(351, N'Vỏ case HYTE Y60 Panoramic Dual Chamber Glass Black/Red', 5450000, N'TDP: 0W', N'https://m.media-amazon.com/images/I/71TuyBKv0UL.jpg', 13, 20, '2026-07-23 10:00:00.000', N'HYTE'),
-(352, N'Vỏ case Antec C8 Dual-Chamber Full Tower Black', 2850000, N'TDP: 0W', N'http://dynaquestpc.com/cdn/shop/files/146_95625c7a-de2e-4025-8358-3a91733300f2.png?crop=center&height=1200&v=1714810776&width=1200', 13, 45, '2026-07-23 10:00:00.000', N'Antec'),
-(353, N'Vỏ case Fractal Design Pop Air RGB TG Black', 2450000, N'TDP: 0W', N'https://mygear.io.vn/media/product/9794-vo-case-fractal-design-pop-air-rgb-black-tg-clear-4.png', 13, 50, '2026-07-23 10:00:00.000', N'Fractal Design'),
-(354, N'Vỏ case DeepCool CH560 DIGITAL ARGB Màn hình nhiệt độ Black', 2650000, N'TDP: 0W', N'https://www.tncstore.vn/media/product/9099-vo-case-deepcool-ch560-digital-2.jpg', 13, 60, '2026-07-23 10:00:00.000', N'DeepCool'),
-(355, N'Vỏ case Xigmatek ENDORPHIN ULTRA ARTIC White Panoramic', 1450000, N'TDP: 0W', N'https://nvs.tn-cdn.net/2023/08/vo-case-xigmatek-endorphin-ultra-arctic_01.jpg', 13, 90, '2026-07-23 10:00:00.000', N'Xigmatek'),
-(356, N'Vỏ case Phanteks NV5 Mid-Tower ARGB Black Glass', 2750000, N'TDP: 0W', N'https://images.tokopedia.net/img/cache/900/VqbcmM/2023/11/30/459f4cd1-d894-4066-a304-09372696e580.jpg', 13, 40, '2026-07-23 10:00:00.000', N'Phanteks'),
-(357, N'Tản nhiệt khí Thermalright Peerless Assassin 120 SE ARGB', 980000, N'TDP: 5W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mde35e6fewkcc0', 14, 100, '2026-07-23 10:00:00.000', N'Thermalright'),
-(358, N'Tản nhiệt khí DeepCool AK400 Digital ARGB Màn hình LED Black', 1150000, N'TDP: 4W', N'https://www.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/CPUAirCoolers/AK400_DIGITAL/Gallery/4000X4000/03.png', 14, 80, '2026-07-23 10:00:00.000', N'DeepCool'),
-(359, N'Tản nhiệt khí Noctua NH-D15 chromax.black Dual-Tower Premium', 2950000, N'TDP: 5W', N'https://os-jo.com/image/cache/catalog/products/ANOCTUA/NH-D15-BLACK/BLACK-1200x1200.JPEG', 14, 35, '2026-07-23 10:00:00.000', N'Noctua'),
-(360, N'Tản nhiệt khí ID-COOLING SE-224-XT ARGB V2 Black', 520000, N'TDP: 3W', N'https://product.hstatic.net/1000262653/product/z4299420230640_8445263c7cf679422f5efeef9d30572d_e3ca58a2214f4bcfaf2231ff9a9bf482_master.jpg', 14, 120, '2026-07-23 10:00:00.000', N'ID-COOLING'),
-(361, N'Tản nhiệt khí Cooler Master Hyper 622 Halo Black ARGB Dual-Tower', 1350000, N'TDP: 5W', N'http://kccshop.vn/media/product/250-5123-1.jpg', 14, 60, '2026-07-23 10:00:00.000', N'Cooler Master'),
-(362, N'Tản nhiệt khí Jonsbo CR-1000 EVO ARGB Black', 380000, N'TDP: 3W', N'https://nvs.tn-cdn.net/2023/07/tan-nhiet-khi-jonsbo-cr-1000-evo-argb-6.jpg', 14, 150, '2026-07-23 10:00:00.000', N'Jonsbo'),
-(363, N'Tản nhiệt khí Thermalright Phantom Spirit 120 EVO 7 Heatpipes', 1280000, N'TDP: 5W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m0wqvyxlqdkd17', 14, 75, '2026-07-23 10:00:00.000', N'Thermalright'),
-(364, N'Tản nhiệt khí Be Quiet! Dark Rock Pro 5 Dual Tower', 2450000, N'TDP: 5W', N'https://pcper.com/wp-content/uploads/2023/10/dark-rock-elite-and-pro-5.jpg', 14, 40, '2026-07-23 10:00:00.000', N'Be Quiet!'),
-(365, N'Tản nhiệt khí PCCOOLER K6 Digital Display ARGB Dual Tower', 1050000, N'TDP: 4W', N'https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=2404382830021734', 14, 65, '2026-07-23 10:00:00.000', N'PCCOOLER'),
-(366, N'Tản nhiệt khí Valkyrie SL125 ARGB Màn hiển thị nhiệt độ', 950000, N'TDP: 4W', N'https://down-vn.img.susercontent.com/file/vn-11134201-23030-bngm8wm2wjov2c', 14, 70, '2026-07-23 10:00:00.000', N'Valkyrie'),
-(367, N'Bộ 3 Fan tản nhiệt Lian Li UNI FAN SL-Infinity 120 ARGB Triple Black', 2450000, N'TDP: 3W', N'https://product.hstatic.net/200000522285/product/_fan_ghep_noi_khong_day__toc_2100rpm__pwm__fan_case_sl120_tpassionvn_1_76a2eab92dd74027a0eed0c5552a6b4d.jpg', 15, 50, '2026-07-23 10:00:00.000', N'Lian Li'),
-(368, N'Bộ 3 Fan tản nhiệt Corsair iCUE LINK QX120 RGB Starter Kit White', 3650000, N'TDP: 4W', N'https://www.scan.co.uk/images/infopages/corsair_fans/QX120/starterkit/topimgw.png', 15, 40, '2026-07-23 10:00:00.000', N'Corsair'),
-(369, N'Bộ 3 Fan tản nhiệt NZXT Duo F120 RGB Triple Pack Black', 2150000, N'TDP: 3W', N'https://azaudio.vn/wp-content/uploads/2024/01/NZXT-F120-RGB-TRIPLE-black.jpg', 15, 60, '2026-07-23 10:00:00.000', N'NZXT'),
-(370, N'Bộ 3 Fan tản nhiệt Thermalright TL-C12C-S ARGB Triple Pack Black', 480000, N'TDP: 2W', N'https://product.hstatic.net/200000420363/product/5_653cd2cd23164950a50b4c518c8f3a2c_master.jpg', 15, 120, '2026-07-23 10:00:00.000', N'Thermalright'),
-(371, N'Bộ 3 Fan tản nhiệt DeepCool FC120 3-in-1 ARGB Black', 850000, N'TDP: 3W', N'https://cf.shopee.ph/file/4cc04f06991eb09257723ef1526e9fcf', 15, 80, '2026-07-23 10:00:00.000', N'DeepCool'),
-(372, N'Bộ 3 Fan tản nhiệt Phanteks D30-120 Reverse Airflow Triple Black', 2250000, N'TDP: 3W', N'https://www.tncstore.vn/media/product/250-13877-quat-tan-nhiet-phanteks-d30-120mm-reversed-drgb-black-triple-pack-1.jpg', 15, 45, '2026-07-23 10:00:00.000', N'Phanteks'),
-(373, N'Bộ 3 Fan tản nhiệt ID-COOLING XF-12025 ARGB Trio Pack', 550000, N'TDP: 2W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-ltjplsx9zeh679', 15, 100, '2026-07-23 10:00:00.000', N'ID-COOLING'),
-(374, N'Bộ 3 Fan tản nhiệt Cooler Master MasterFan MF120 Halo2 ARGB White', 1350000, N'TDP: 3W', N'https://product.hstatic.net/200000722513/product/63609_halo3in1_white_2fe56efd09ad4358bc9bffe694dc34c0_ae18db62db9a4b17b2544370f1bf7da0_1024x1024.jpg', 15, 70, '2026-07-23 10:00:00.000', N'Cooler Master'),
-(375, N'Bộ 3 Fan tản nhiệt Antec Fusion 120 ARGB Triple Pack', 780000, N'TDP: 2W', N'https://media.ldlc.com/r1600/ld/products/00/05/97/64/LD0005976472.jpg', 15, 90, '2026-07-23 10:00:00.000', N'Antec'),
-(376, N'Bộ 3 Fan tản nhiệt Montech AX120 PWM ARGB Pack White', 650000, N'TDP: 2W', N'https://www.mixmarket.lv/images/stories/virtuemart/product/01K7PJZV1QFS1FR3VF1FX8P0ZK.jpg', 15, 95, '2026-07-23 10:00:00.000', N'Montech'),
-(377, N'Bàn phím cơ AKKO 3087 v2 Silent Bluetooth 5.0 / Wireless 2.4G', 1450000, N'TDP: 1W', N'https://akko.vn/wp-content/uploads/2021/10/ban-phim-co-akko-3087-v2-steam-engine-03.jpg', 16, 60, '2026-07-23 10:00:00.000', N'AKKO'),
-(378, N'Bàn phím cơ Keychron V1 Max Wireless Custom Mechanical Keyboard Hotswap', 2250000, N'TDP: 2W', N'https://cdn.shopify.com/s/files/1/0059/0630/1017/files/V1-Max-1.jpg?v=1699065014', 16, 50, '2026-07-23 10:00:00.000', N'Keychron'),
-(379, N'Bàn phím cơ Royal Kludge RK84 RGB Wireless 80% Layout Hotswap', 980000, N'TDP: 1W', N'https://cf.shopee.vn/file/6e1e4cbe7912a8b7473e94334e280d6d', 16, 90, '2026-07-23 10:00:00.000', N'Royal Kludge'),
-(380, N'Bàn phím cơ FL-Esports FL980 SAM Tropical Secret Wireless', 2450000, N'TDP: 2W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-ltsd0cu67e2y55', 16, 40, '2026-07-23 10:00:00.000', N'FL-Esports'),
-(381, N'Bàn phím cơ MonsGeek M1W V3 Fully Assembled Aluminum Wireless', 2150000, N'TDP: 2W', N'https://down-my.img.susercontent.com/file/sg-11134201-7rd51-lvbxo0vd8e038e', 16, 45, '2026-07-23 10:00:00.000', N'MonsGeek'),
-(382, N'Bàn phím cơ EPOMAKER RT100 Retro Mechanical Keyboard Màn hình Smart', 2650000, N'TDP: 2W', N'https://manuals.plus/wp-content/uploads/2023/03/Epomaker-RT100-Mechanical-Gaming-Keyboard-Product-image.jpg', 16, 35, '2026-07-23 10:00:00.000', N'EPOMAKER'),
-(383, N'Bàn phím cơ Ducky One 3 Daybreak Hotswap RGB Mech Keyboard', 2850000, N'TDP: 2W', N'https://img.lazcdn.com/g/p/55ae1abfed8b5f9068f263c2fdad5fee.png_720x720q80.png', 16, 30, '2026-07-23 10:00:00.000', N'Ducky'),
-(384, N'Bàn phím cơ Varmilo VEA87 Vintage Mechanical Keyboard Cherry MX', 3150000, N'TDP: 1W', N'https://down-sg.img.susercontent.com/file/sg-11134201-23010-9jf38tbmpxlv7d', 16, 25, '2026-07-23 10:00:00.000', N'Varmilo'),
-(385, N'Bàn phím cơ NuPhy Air75 V2 Low-Profile Wireless Keyboard', 2950000, N'TDP: 2W', N'https://down-id.img.susercontent.com/file/id-11134201-7r98w-lt0o38jrvqx9ae', 16, 40, '2026-07-23 10:00:00.000', N'NuPhy'),
-(386, N'Bàn phím cơ Custom Womier K66 Gateron Switch RGB Acrylic Glass', 1250000, N'TDP: 1W', N'https://ae01.alicdn.com/kf/S81196b6be21d49b9b30c4343a17e3808S/Womier-K66-Mechanical-Gaming-Keyboard-RGB-led-Backlit-Hot-Swappable-Gateron-Switch-Tyce-C-Light-transmission.jpg', 16, 70, '2026-07-23 10:00:00.000', N'Womier'),
-(387, N'Chuột máy tính Razer Basilisk V3 Ergonomic Gaming Mouse 26k DPI', 1450000, N'TDP: 1W', N'https://m.media-amazon.com/images/I/61JKqNxaZkL._AC_SL1500_.jpg', 17, 80, '2026-07-23 10:00:00.000', N'Razer'),
-(388, N'Chuột máy tính Logitech G304 LIGHTSPEED Wireless Black 12k DPI', 820000, N'TDP: 1W', N'https://laptec.co.mz/wp-content/uploads/2024/11/51VpABY-b6L._SL1500_.jpg', 17, 150, '2026-07-23 10:00:00.000', N'Logitech'),
-(389, N'Chuột máy tính Pulsar X2 V2 Wireless Gaming Mouse Superlight 53g', 2150000, N'TDP: 1W', N'https://down-id.img.susercontent.com/file/id-11134207-7r992-lmzwg5uzu56pc0', 17, 45, '2026-07-23 10:00:00.000', N'Pulsar'),
-(390, N'Chuột máy tính Ninjutso Sora V2 Ultra Lightweight Wireless 39g', 2450000, N'TDP: 1W', N'https://down-sg.img.susercontent.com/file/sg-11134201-7rd69-m6ywp16bi7h0a2', 17, 40, '2026-07-23 10:00:00.000', N'Ninjutso'),
-(391, N'Chuột máy tính LAMZU Atlantis OG V2 Wireless Gaming Mouse 55g', 2250000, N'TDP: 1W', N'https://cdn.store-assets.com/s/824673/i/62363351.jpeg?width=1024', 17, 50, '2026-07-23 10:00:00.000', N'LAMZU'),
-(392, N'Chuột máy tính Endgame Gear OP1WE Wireless Gaming Mouse 58g', 1950000, N'TDP: 1W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m5d24fcjbuieb0', 17, 60, '2026-07-23 10:00:00.000', N'Endgame Gear'),
-(393, N'Chuột máy tính VGN Dragonfly F1 PRO MAX Wireless Nordic MCU', 1150000, N'TDP: 1W', N'https://bizweb.dktcdn.net/100/506/630/products/5.png?v=1710093977290', 17, 90, '2026-07-23 10:00:00.000', N'VGN'),
-(394, N'Chuột máy tính VXE R1 PRO MAX Ultra Light Wireless PAW3395', 980000, N'TDP: 1W', N'https://down-br.img.susercontent.com/file/br-11134207-7r98o-m5etuyqhic3628', 17, 110, '2026-07-23 10:00:00.000', N'VXE'),
-(395, N'Chuột máy tính SteelSeries Rival 3 Wireless Gaming Mouse 18k DPI', 950000, N'TDP: 1W', N'https://os-jo.com/image/cache/catalog/products/Accessories/Mouse/RIVAL-3-Wireless/a89f866daa5b7f847d234e3beb4d6582-1200x1200.jpg', 17, 100, '2026-07-23 10:00:00.000', N'SteelSeries'),
-(396, N'Chuột máy tính ASUS ROG Harpe Ace Aim Lab Edition 54g Wireless', 2850000, N'TDP: 1W', N'https://product.hstatic.net/1000262653/product/sp1080884_f0bb5b45cbbc4da1881a87dc14861641_master.png', 17, 35, '2026-07-23 10:00:00.000', N'ASUS'),
-(397, N'Tai nghe gaming HyperX Cloud II Wireless Red/Black Spatial Audio', 2950000, N'TDP: 1W', N'http://hyperx.com/cdn/shop/files/hyperx_cloud_ii_red_2_main_mixer.jpg?v=1721075774', 18, 60, '2026-07-23 10:00:00.000', N'HyperX'),
-(398, N'Tai nghe gaming Razer BlackShark V2 X 7.1 Surround Sound Black', 1250000, N'TDP: 1W', N'https://cdn.hstatic.net/products/1000231532/mua_razer_blackshark_v2_x_b_o_h_nh_24_th_ng_uy_t_n_t_i_nshop_4e5bb68935394ba79b01c641540fa09e_master.jpg', 18, 100, '2026-07-23 10:00:00.000', N'Razer'),
-(399, N'Tai nghe gaming Corsair HS80 RGB Wireless Spatial Audio White', 3450000, N'TDP: 2W', N'https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Gaming-Headsets/CA-9011236-EU/Gallery/HS80_RGB_WIRELESS_WHITE_01.webp', 18, 45, '2026-07-23 10:00:00.000', N'Corsair'),
-(400, N'Tai nghe gaming Logitech G435 LIGHTSPEED Ultra-Light Wireless Blue', 1450000, N'TDP: 1W', N'https://resource.logitechg.com/w_1206,c_limit,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/gaming/en/products/g435/g435-gaming-headset-feature-2-blue.png?v=1', 18, 90, '2026-07-23 10:00:00.000', N'Logitech'),
-(401, N'Tai nghe gaming SteelSeries Arctis Nova 7 Wireless Multi-Platform', 4250000, N'TDP: 2W', N'https://m.media-amazon.com/images/I/719xhYDZj9L._AC_.jpg', 18, 35, '2026-07-23 10:00:00.000', N'SteelSeries'),
-(402, N'Tai nghe gaming EPOS Sennheiser GSP 300 Closed Acoustic Black/Blue', 1850000, N'TDP: 1W', N'https://m.media-amazon.com/images/I/71gcu2BXwCL._AC_SL1500_.jpg', 18, 50, '2026-07-23 10:00:00.000', N'EPOS'),
-(403, N'Tai nghe gaming Audio-Technica ATH-GDL3 Open-Back Gaming Headset', 3250000, N'TDP: 1W', N'https://down-id.img.susercontent.com/file/3333631a77a536b448894e7821767789', 18, 30, '2026-07-23 10:00:00.000', N'Audio-Technica'),
-(404, N'Tai nghe gaming JBL Quantum 400 USB Wired Gaming Headset QuantumSURROUND', 1950000, N'TDP: 1W', N'https://m.media-amazon.com/images/I/71plrtRXJNL._AC_.jpg', 18, 70, '2026-07-23 10:00:00.000', N'JBL'),
-(405, N'Tai nghe gaming ASUS ROG Delta S Wireless Gaming Headset Type-C', 4650000, N'TDP: 2W', N'https://mygear.io.vn/media/product/9420-tai-nghe-gaming-overear-asus-rog-delta-s-wireless-4.jpg', 18, 25, '2026-07-23 10:00:00.000', N'ASUS'),
-(406, N'Tai nghe gaming EKSA E900 Pro 7.1 Surround Sound Wired Dual Audio', 750000, N'TDP: 1W', N'https://electronix.ie/wp-content/uploads/2025/04/EKSA-E900PRO_1-500x500-1.jpg', 18, 120, '2026-07-23 10:00:00.000', N'EKSA'),
-(407, N'Thẻ nhớ MicroSD Sandisk Ultra 32GB Class 10 120MB/s', 120000, N'TDP: 1W', N'https://maytinhtrangia.com/wp-content/uploads/SD-32G-1.jpg', 4, 150, '2026-07-23 11:35:00.000', N'SanDisk'),
-(408, N'Thẻ nhớ MicroSD Sandisk High Endurance 64GB Chuyên ghi Dashcam', 290000, N'TDP: 1W', N'https://cdn2.cellphones.com.vn/x/media/catalog/product/t/h/the-nho-microsd-sandisk-high-endurance-chuyen-camera-64gb_1_.png', 4, 100, '2026-07-23 11:35:00.000', N'SanDisk'),
-(409, N'Thẻ nhớ SDXC SanDisk Extreme PRO 64GB UHS-I 200MB/s', 450000, N'TDP: 2W', N'https://media.foto-erhardt.de/images/product_images/popup_images/893/sandisk-64-gb-sdxc-extremepro-200mbs-v30-uhs-i-u3-class-10-speicherkarte-166124206789380304.jpg', 4, 120, '2026-07-23 11:35:00.000', N'SanDisk'),
-(410, N'Thẻ nhớ MicroSD Samsung EVO Plus 64GB kèm Adapter', 210000, N'TDP: 1W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lfc894uls77909', 4, 180, '2026-07-23 11:35:00.000', N'Samsung'),
-(411, N'Thẻ nhớ MicroSD Samsung EVO Plus 128GB UHS-I U3', 350000, N'TDP: 2W', N'https://www.nhatthuc.com.vn/resize-image/470x/2025/08/the-nho-micro-sd-samsung-evo-plus-128gb-1.jpg', 4, 140, '2026-07-23 11:35:00.000', N'Samsung'),
-(412, N'Thẻ nhớ MicroSD Kingston Canvas Select Plus 64GB', 150000, N'TDP: 1W', N'https://cdn2.cellphones.com.vn/x/media/catalog/product/t/h/the-nho-microsd-kingston-canvas-select-plus-64gb-sdcs3_2_.png', 4, 200, '2026-07-23 11:35:00.000', N'Kingston'),
-(413, N'Thẻ nhớ MicroSD Kingston Canvas Select Plus 256GB', 520000, N'TDP: 2W', N'https://cdn2.cellphones.com.vn/x/media/catalog/product/t/h/the-nho-microsd-kingston-canvas-select-plus-256gb-sdcs3_4_.png', 4, 90, '2026-07-23 11:35:00.000', N'Kingston'),
-(414, N'Thẻ nhớ SDXC Lexar Professional 1667x 128GB SDXC UHS-II 250MB/s', 1150000, N'TDP: 3W', N'https://product.hstatic.net/200000863343/product/the-nho-sdxc-lexar-128gb-uhs-ii-1667x-250mb-s-17ba7_a2173df497b14812967527ce0cbb21d5.jpg', 4, 60, '2026-07-23 11:35:00.000', N'Lexar'),
-(415, N'Thẻ nhớ MicroSD Lexar Play 256GB UHS-I cho Nintendo Switch', 680000, N'TDP: 2W', N'https://cdn.hstatic.net/products/1000231532/ss_256gb_lexar_cho_nintendo_switch_2_chinh_hang_gia_tot_chat_luong_cao_d1dc82953bc747cbac60d5e312b47e76.jpg', 4, 80, '2026-07-23 11:35:00.000', N'Lexar'),
-(416, N'Thẻ nhớ SDXC Sony SF-E Series 64GB UHS-II 270MB/s', 850000, N'TDP: 2W', N'https://photoking.vn/upload/images/Ph%E1%BB%A5%20Ki%E1%BB%87n/Th%E1%BA%BB%20Nh%E1%BB%9B/the-nho-sony-sdxc-64gb-270mbs-70-mbs-sf-m64-photoking-vn-02.jpg', 4, 50, '2026-07-23 11:35:00.000', N'Sony'),
-(417, N'Thẻ nhớ SDXC Sony TOUGH M Series 128GB UHS-II 270MB/s', 2100000, N'TDP: 3W', N'https://cf.shopee.co.id/file/50fab139ce6eeb1d06a77f9ef2d9577f', 4, 35, '2026-07-23 11:35:00.000', N'Sony'),
-(418, N'Thẻ nhớ MicroSD Kioxia Exceria G2 256GB NVMe Class', 620000, N'TDP: 2W', N'https://vinacenter.com.vn/wp-content/uploads/2026/04/the7.webp', 4, 75, '2026-07-23 11:35:00.000', N'Kioxia'),
-(419, N'Thẻ nhớ SDXC Transcend 700S 64GB SDXC UHS-II V90 285MB/s', 1850000, N'TDP: 3W', N'https://www.picclickimg.com/hWEAAOSwtj5lw31H/Scheda-di-memoria-SD-Transcend-700S-SDXC-UHS-II.webp', 4, 40, '2026-07-23 11:35:00.000', N'Transcend'),
-(420, N'Thẻ nhớ MicroSD TeamGroup PRO Endurance 128GB', 390000, N'TDP: 2W', N'https://cdn.hstatic.net/products/200001078011/the-nho-team-group-elite-128g-uhs-i-u3-v30-a1_72e4b2b6836c44dcb2acea7c924762a2_master.jpg', 4, 85, '2026-07-23 11:35:00.000', N'TeamGroup'),
-(421, N'Thẻ nhớ SDXC ProGrade Digital SDXC UHS-II V90 Cobalt 128GB', 3950000, N'TDP: 3W', N'https://www.lens-camera.com/wp-content/uploads/2025/03/02/prograde_digital_555654_1_1.jpg', 4, 20, '2026-07-23 11:35:00.000', N'ASUS'),
-(422, N'Ổ cứng di động SSD WD My Passport SSD 1TB USB 3.2 Red', 2450000, N'TDP: 4W', N'https://minhancomputercdn.com/media/product/11301_wd_my_passport_ssd_1tb_wdbagf0010brd_wesn_2.jpg', 8, 60, '2026-07-23 11:35:00.000', N'WD'),
-(423, N'Ổ cứng di động SSD WD Black P50 Game Drive 1TB NVMe 2000MB/s', 3850000, N'TDP: 5W', N'https://www.legitreviews.com/wp-content/uploads/2020/08/wd-p50-game-drive-1tb-portable-ssd.jpg', 8, 40, '2026-07-23 11:35:00.000', N'WD'),
-(424, N'Ổ cứng di động HDD WD Elements Portable 1TB 2.5 inch USB 3.0', 1390000, N'TDP: 5W', N'https://minhancomputercdn.com/media/product/986_o_cung_di_dong_western_elements_1tb_2_5inch_usb_3_0_1.jpg', 8, 100, '2026-07-23 11:35:00.000', N'WD'),
-(425, N'Ổ cứng di động HDD WD Elements Portable 4TB 2.5 inch USB 3.0', 3150000, N'TDP: 6W', N'https://www.sieuthimaychu.vn/datafiles/setone/16141343642993.jpg', 8, 50, '2026-07-23 11:35:00.000', N'WD'),
-(426, N'Ổ cứng di động SSD Samsung T7 Portable 1TB USB 3.2 Titan Gray', 2550000, N'TDP: 4W', N'https://cdn2.cellphones.com.vn/x/media/catalog/product/o/-/o-cung-di-dong-ssd-samsung-t7-portable_10_.png', 8, 70, '2026-07-23 11:35:00.000', N'Samsung'),
-(427, N'Ổ cứng di động SSD Samsung T9 Portable 2TB USB 3.2 Gen 2x2 2000MB/s', 5450000, N'TDP: 5W', N'https://bizweb.dktcdn.net/thumb/1024x1024/100/329/122/products/o-cung-di-dong-ssd-1tb-samsung-t9-2000mb-5-c3a14677-d68f-44aa-957d-83483159d4f5.jpg?v=1718353885613', 8, 30, '2026-07-23 11:35:00.000', N'Samsung'),
-(428, N'Ổ cứng di động SSD SanDisk Extreme PRO Portable 2TB USB 3.2 Gen 2x2', 5150000, N'TDP: 5W', N'https://down-vn.img.susercontent.com/file/sg-11134201-22120-69sq1wzfywkv7d', 8, 35, '2026-07-23 11:35:00.000', N'SanDisk'),
-(429, N'Ổ cứng di động HDD Seagate One Touch 2TB 2.5 inch USB 3.0 Black', 2050000, N'TDP: 5W', N'https://huyhoang.vn/uploads/o-cung-di-dong-hdd-seagate-one-touch-2tb-25-usb-30-den-stky2000400-3.jpg', 8, 80, '2026-07-23 11:35:00.000', N'Seagate'),
-(430, N'Ổ cứng di động HDD Seagate Basic 1TB 2.5 inch USB 3.0', 1290000, N'TDP: 5W', N'https://hoanghapccdn.com/media/product/3630_1tb_touch_1_hdd_1.jpg', 8, 110, '2026-07-23 11:35:00.000', N'Seagate'),
-(431, N'Ổ cứng di động SSD Crucial X6 Portable SSD 2TB 800MB/s', 3450000, N'TDP: 4W', N'https://5sc.vn/wp-content/uploads/2022/05/Crucial-X6-Portable-SSD-2TB-Box-Front-Image.png', 8, 45, '2026-07-23 11:35:00.000', N'Crucial'),
-(432, N'Ổ cứng di động SSD Crucial X10 Pro 2TB USB 3.2 Gen 2x2 2100MB/s', 5850000, N'TDP: 5W', N'https://down-th.img.susercontent.com/file/th-11134201-7r98y-lljgx9wk1kn2d8', 8, 25, '2026-07-23 11:35:00.000', N'Crucial'),
-(433, N'Ổ cứng di động SSD Kingston XS1000 2TB External SSD Type-C Red', 3650000, N'TDP: 4W', N'https://goldentechstore.com.ar/wp-content/uploads/DIS207.jpg', 8, 55, '2026-07-23 11:35:00.000', N'Kingston'),
-(434, N'Tản nhiệt nước AIO Corsair H100i RGB ELITE 240mm', 3250000, N'TDP: 12W', N'https://philong.com.vn/media/product/31924-tan-nhiet-nuoc-cpu-aio-corsair-icue-h100i-rgb-elite-240mm-white-cw-9060078-ww-philong--2-.jpg', 9, 50, '2026-07-23 11:35:00.000', N'Corsair'),
-(435, N'Tản nhiệt nước AIO Corsair iCUE LINK H100i RGB White 240mm', 4850000, N'TDP: 12W', N'https://bizweb.dktcdn.net/thumb/1024x1024/100/329/122/products/tan-nhiet-nuoc-aio-corsair-icue-link-h100i-rgb-white-cw-9061005-ww-1.jpg?v=1743638717187', 9, 35, '2026-07-23 11:35:00.000', N'Corsair'),
-(436, N'Tản nhiệt nước AIO NZXT Kraken 240 RGB Black LCD', 4250000, N'TDP: 12W', N'https://www.pcstudio.in/wp-content/uploads/2023/05/Nzxt-Kraken-240-Rgb-240mm-Aio-Liquid-Cooler-Matte-Black-1.jpg', 9, 40, '2026-07-23 11:35:00.000', N'NZXT'),
-(437, N'Tản nhiệt nước AIO NZXT Kraken 360 RGB Black LCD', 5350000, N'TDP: 15W', N'https://hoanghapc.vn/media/product/4402_rl_kr360_b1_ha1.jpg', 9, 30, '2026-07-23 11:35:00.000', N'NZXT'),
-(438, N'Tản nhiệt nước AIO ASUS ROG Strix LC III 360 ARGB', 4950000, N'TDP: 15W', N'https://mygear.io.vn/media/product/6094-rog-strix-lc-iii-360-argb-03.png', 9, 25, '2026-07-23 11:35:00.000', N'ASUS'),
-(439, N'Tản nhiệt nước AIO ASUS TUF Gaming LC II 360 ARGB', 2950000, N'TDP: 15W', N'https://hoanghapccdn.com/media/product/5001_tuf_gaming_lc_ii_360_argb_ha1.jpg', 9, 45, '2026-07-23 11:35:00.000', N'ASUS'),
-(440, N'Tản nhiệt nước AIO DeepCool LS720 SE 360mm ARGB Black', 2650000, N'TDP: 15W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m2whteh6qzuu1d', 9, 60, '2026-07-23 11:35:00.000', N'DeepCool'),
-(441, N'Tản nhiệt nước AIO DeepCool MYSTIQUE 360 Màn hình LCD 3.4 inch', 4150000, N'TDP: 15W', N'http://cms2.deepcool.com:8080/public/ProductFile/DEEPCOOL/Cooling/CPULiquidCoolers/MYSTIQUE_360_ARGB/Gallery/4000X4000/01.png', 9, 30, '2026-07-23 11:35:00.000', N'DeepCool'),
-(442, N'Tản nhiệt nước AIO Thermalright Frozen Warframe 360 ARGB Màn LCD', 2750000, N'TDP: 15W', N'https://product.hstatic.net/200000475459/product/thermalright_frozen_warframe_360_b3_b5044d16fccc47adb7a6ce676ae3e2ad_289933337cb24cb5b65dcaded772689b_master.jpg', 9, 40, '2026-07-23 11:35:00.000', N'Thermalright'),
-(443, N'Tản nhiệt nước AIO Lian Li Galahad II LCD 360 SL-INF Black', 6450000, N'TDP: 15W', N'https://ttgshop.vn/media/product/1054421234_82296_tan_nhiet_nuoc_lian_li_galahad_ii_lcd_sl_inf_360_black__3__f16e36ee72964ce8a37a7384400e9d15.jpg', 9, 20, '2026-07-23 11:35:00.000', N'Lian Li'),
-(444, N'Tản nhiệt nước AIO MSI MAG CORELIQUID 240R V2', 2250000, N'TDP: 12W', N'https://bizweb.dktcdn.net/thumb/1024x1024/100/329/122/products/tan-nhiet-nuoc-aio-mag-coreliquid-240r-4.jpg?v=1697040027870', 9, 55, '2026-07-23 11:35:00.000', N'MSI'),
-(445, N'Tản nhiệt nước AIO ID-COOLING FROSTFLOW X 240 Snow Edition White', 1150000, N'TDP: 10W', N'https://down-vn.img.susercontent.com/file/vn-11134201-23020-tn10ee3ldunv20', 9, 80, '2026-07-23 11:35:00.000', N'ID-COOLING'),
-(446, N'Card màn hình ASUS ROG Strix GeForce RTX 4090 OC Edition 24GB GDDR6X', 54900000, N'TDP: 450W', N'https://dlcdnwebimgs.asus.com/gain/2486AE38-B7C7-443A-9615-FD08D5430992/w1000/h732', 10, 10, '2026-07-23 11:35:00.000', N'ASUS'),
-(447, N'Card màn hình MSI GeForce RTX 4080 SUPER 16G GAMING X TRIO', 33500000, N'TDP: 320W', N'https://hanoicomputercdn.com/media/product/79168_card_man_hinh_msi_rtx_4080_super_16g_gaming_x_trio__2_.jpg', 10, 15, '2026-07-23 11:35:00.000', N'MSI'),
-(448, N'Card màn hình GIGABYTE GeForce RTX 4060 EAGLE OC 8G', 8450000, N'TDP: 115W', N'https://product.hstatic.net/200000722513/product/z4467044485040_9a09deef236a05de8179abdccd40f035_fd7e141a0a0a4464b78e0adf591b21c2.jpg', 10, 60, '2026-07-23 11:35:00.000', N'GIGABYTE'),
-(449, N'Card màn hình GIGABYTE GeForce RTX 3050 WINDFORCE OC 6G', 4650000, N'TDP: 70W', N'https://product.hstatic.net/200000722513/product/geforce_rtx__3050_windforce_oc_6g-02_8e038f8bf31d4b008bc170b13dd3cff4.png', 10, 80, '2026-07-23 11:35:00.000', N'GIGABYTE'),
-(450, N'Card màn hình ASUS Dual GeForce RTX 4060 Ti EVO OC Edition 8GB', 11250000, N'TDP: 160W', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6545/6545279cv12d.jpg', 10, 45, '2026-07-23 11:35:00.000', N'ASUS'),
-(451, N'Card màn hình ZOTAC GAMING GeForce RTX 3060 Twin Edge OC 12GB', 7250000, N'TDP: 170W', N'https://res.cloudinary.com/jawa/image/upload/f_auto,c_limit,w_1280,q_auto/production/listings/pcubpf4kb1xn6xd6iklw', 10, 50, '2026-07-23 11:35:00.000', N'NVIDIA'),
-(452, N'Card màn hình Sapphire PULSE AMD Radeon RX 7600 8GB GDDR6', 7150000, N'TDP: 165W', N'https://vitinhtrangia.com/wp-content/uploads/2024/08/card-man-hinh-vga-sapphire-pulse-amd-radeon-rx-7600-8gb-gaming-oc-8gb-4.jpg', 10, 40, '2026-07-23 11:35:00.000', N'AMD'),
-(453, N'Card màn hình PowerColor Fighter AMD Radeon RX 6600 8GB GDDR6', 5250000, N'TDP: 132W', N'https://m.media-amazon.com/images/I/81Vtsr0wIVL._AC_.jpg', 10, 55, '2026-07-23 11:35:00.000', N'AMD'),
-(454, N'Card màn hình ASRock Challenger Radeon RX 7800 XT 16GB OC', 14150000, N'TDP: 263W', N'https://media.ldlc.com/r1600/ld/products/00/06/06/19/LD0006061987.jpg', 10, 30, '2026-07-23 11:35:00.000', N'AMD'),
-(455, N'Card màn hình COLORFUL GeForce GTX 1650 NB 4GD6-V', 3650000, N'TDP: 75W', N'https://tinhungtech.com/watermark/product/1400x1500x2/upload/product/51dmzhei2olsr600315piwhitestripbottomleft035sclzzzzzzzfmpngbg255255255-4585.png', 10, 70, '2026-07-23 11:35:00.000', N'NVIDIA'),
-(456, N'Ổ cứng HDD PC Western Digital Purple 2TB 3.5 inch Surveillance', 1650000, N'TDP: 6W', N'https://www.flashtrend.com.au/assets/alt_2/WD20PURZ.jpg?20200714030752', 11, 90, '2026-07-23 11:35:00.000', N'WD'),
-(457, N'Ổ cứng HDD PC Western Digital Purple 4TB 3.5 inch Surveillance', 2750000, N'TDP: 7W', N'https://m.media-amazon.com/images/I/61Np0SuI9rL.jpg', 11, 70, '2026-07-23 11:35:00.000', N'WD'),
-(458, N'Ổ cứng HDD PC Western Digital Purple 6TB 3.5 inch Surveillance', 4350000, N'TDP: 8W', N'https://m.media-amazon.com/images/I/61oyy18RjsL._AC_SL1500_.jpg', 11, 45, '2026-07-23 11:35:00.000', N'WD'),
-(459, N'Ổ cứng HDD PC Seagate SkyHawk 2TB 3.5 inch Surveillance', 1550000, N'TDP: 6W', N'https://hanoicomputercdn.com/media/product/35130_hdd_seagate_skyhawk_surveillance_2tb5900_sata_3_64mb_cache_st2000vx008_011.jpg', 11, 85, '2026-07-23 11:35:00.000', N'Seagate'),
-(460, N'Ổ cứng HDD PC Seagate SkyHawk 6TB 3.5 inch Surveillance', 4150000, N'TDP: 8W', N'https://maytinhtrungbac.com/wp-content/uploads/2023/12/HDD9.jpg', 11, 50, '2026-07-23 11:35:00.000', N'Seagate'),
-(461, N'Ổ cứng HDD Server Seagate IronWolf Pro 8TB 3.5 inch NAS', 6150000, N'TDP: 9W', N'https://philong.com.vn/media/product/29504-phi-long-o-cung-hdd-seagate-ironwolf-pro-8tb-st8000ne001.jpg', 11, 30, '2026-07-23 11:35:00.000', N'Seagate'),
-(462, N'Ổ cứng HDD Server Seagate IronWolf Pro 12TB 3.5 inch NAS', 8950000, N'TDP: 10W', N'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mmqy7t6kpb0l57', 11, 20, '2026-07-23 11:35:00.000', N'Seagate'),
-(463, N'Ổ cứng HDD Server Western Digital Red Pro 8TB 3.5 inch NAS', 6450000, N'TDP: 9W', N'https://www.tnc.com.vn/uploads/product/sp2025/o-cung-hdd-western-digital-red-pro-nas-8tb-wd8005ffbx.jpg', 11, 25, '2026-07-23 11:35:00.000', N'WD'),
-(464, N'Ổ cứng HDD Enterprise Seagate Exos X16 14TB 3.5 inch SATA3', 7250000, N'TDP: 10W', N'https://media.loveitopcdn.com/30716/o-cung-hdd-seagate-enterprise-exos-35-sata-x16-14tb-st14000nm001g-13.png', 11, 25, '2026-07-23 11:35:00.000', N'Seagate'),
-(465, N'Ổ cứng HDD Enterprise Western Digital Ultrastar DC HC550 18TB', 9450000, N'TDP: 10W', N'https://m.media-amazon.com/images/I/710JaskXbqL._AC_.jpg', 11, 15, '2026-07-23 11:35:00.000', N'WD'),
-(466, N'Ổ cứng HDD PC Toshiba Canvio Basics 1TB 2.5 inch', 1250000, N'TDP: 4W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mb3gsn7g9uwx71', 11, 110, '2026-07-23 11:35:00.000', N'Toshiba'),
-(467, N'Ổ cứng HDD PC Toshiba Surveillance S300 4TB 3.5 inch', 2550000, N'TDP: 7W', N'https://alfathtechnology.com/wp-content/uploads/2025/07/https___static.arvutitark.ee_public_media-hub-olev_2021_10_123986_media-nkeail.jpg', 11, 60, '2026-07-23 11:35:00.000', N'Toshiba'),
-(468, N'Ổ cứng HDD Laptop Western Digital Blue 1TB 2.5 inch SATA3', 1150000, N'TDP: 4W', N'https://product.hstatic.net/200000837185/product/ptop-western-digital-blue-1tb-2-5_-5400-rpm-128mb-cache-wd10spzx-f0x6i_e28dfeaf8b5844fbaa0a6c4b9ebda4e8_master.jpg', 11, 95, '2026-07-23 11:35:00.000', N'WD'),
-(469, N'Nguồn Corsair RM850e ATX 3.0 80 Plus Gold Full Modular (850W)', 3450000, N'TDP: 0W', N'https://product.hstatic.net/200000722513/product/89689_nguon_may_tinh_corsair_rm850e_atx_006_e59a3ebce3034f23aa2bde43f1d242e5_1024x1024.jpg', 12, 50, '2026-07-23 11:35:00.000', N'Corsair'),
-(470, N'Nguồn Corsair RM1000x Shift 80 Plus Gold Full Modular (1000W)', 4950000, N'TDP: 0W', N'https://product.hstatic.net/1000037809/product/thegioigear_corsair_rm1000x_1_1c478e5ea1ae485b91e607ee2b71eca7_master.jpg', 12, 30, '2026-07-23 11:35:00.000', N'Corsair'),
-(471, N'Nguồn Corsair CV650 650W 80 Plus Bronze', 1450000, N'TDP: 0W', N'https://maytinhdalat.vn/Images/Product/maytinhdalat_nguon-may-tinh-corsair-cv650-650w-80-plus-bronzenguon-may-tinh-corsair-cv650-650w-80-plus-bronze-avt2725337_full_26002022_030016.jpg', 12, 90, '2026-07-23 11:35:00.000', N'Corsair'),
-(472, N'Nguồn MSI MAG A650BN 650W 80 Plus Bronze', 1250000, N'TDP: 0W', N'https://halinhcomputer.vn/uploads/images/web-halinh-new/linh-kien-le/psu/mag-a650bn.png', 12, 110, '2026-07-23 11:35:00.000', N'MSI'),
-(473, N'Nguồn MSI MEG Ai1300P PCIE5 1300W 80 Plus Platinum', 8950000, N'TDP: 0W', N'https://down-sg.img.susercontent.com/file/sg-11134201-22100-ms6oh974ckivaa', 12, 15, '2026-07-23 11:35:00.000', N'MSI'),
-(474, N'Nguồn ASUS ROG Thor 1000W Platinum II OLED', 8450000, N'TDP: 0W', N'https://image.citycenter.jo/cache/catalog/22022/1000P-1200x1200.jpg', 12, 20, '2026-07-23 11:35:00.000', N'ASUS'),
-(475, N'Nguồn ASUS TUF Gaming 650B 650W 80 Plus Bronze', 1650000, N'TDP: 0W', N'https://ddtech.mx/assets/uploads/6f275abb29f47415663708443680a8c5.jpg', 12, 80, '2026-07-23 11:35:00.000', N'ASUS'),
-(476, N'Nguồn Cooler Master Elite V3 600W 230V', 1050000, N'TDP: 0W', N'https://huyhoang.vn/uploads/pc600-box.jpg', 12, 100, '2026-07-23 11:35:00.000', N'Cooler Master'),
-(477, N'Nguồn DeepCool PK650D 650W 80 Plus Bronze', 1350000, N'TDP: 0W', N'https://hoanghapccdn.com/media/product/3687_deepcool_pk650_3.jpg', 12, 85, '2026-07-23 11:35:00.000', N'DeepCool'),
-(478, N'Nguồn ASRock Phantom Gaming PG-850G 850W 80 Plus Gold', 2950000, N'TDP: 0W', N'https://cdn.cclonline.com/cdn-cgi/image/width=2000/images/avante/02-PG-850G_3A.jpg', 12, 40, '2026-07-23 11:35:00.000', N'ASRock'),
-(479, N'Vỏ case NZXT H9 Flow Dual-Chamber ATX Mid-Tower Black', 4450000, N'TDP: 0W', N'https://microless.com/cdn/products/d554d168dd1e4febb71cd2cbf0698726-hi.jpg', 13, 30, '2026-07-23 11:35:00.000', N'NZXT'),
-(480, N'Vỏ case NZXT H5 Flow RGB Compact Mid-Tower White', 2650000, N'TDP: 0W', N'https://www.topmarket.co.il/images/detailed/257/OtYnNeyks2.jpg', 13, 50, '2026-07-23 11:35:00.000', N'NZXT'),
-(481, N'Vỏ case Lian Li O11 Dynamic EVO XL Full Tower Black', 5850000, N'TDP: 0W', N'https://media.ldlc.com/r1600/ld/products/00/06/06/93/LD0006069352.jpg', 13, 20, '2026-07-23 11:35:00.000', N'Lian Li'),
-(482, N'Vỏ case Lian Li Lancool 216 ARGB Mid-Tower Black', 2350000, N'TDP: 0W', N'https://os-jo.com/image/cache/catalog/products/cases/LANCOOL-216/My-project-1200x1200.jpg', 13, 60, '2026-07-23 11:35:00.000', N'Lian Li'),
-(483, N'Vỏ case Corsair 3500X ARGB Mid-Tower Glass Black', 2450000, N'TDP: 0W', N'https://kccshop.vn/media/product/250-9689-v----case-corsair-3500x-rgb-tempered-glass-mid-tower-black--cc-9011278-ww--01.jpg', 13, 70, '2026-07-23 11:35:00.000', N'Corsair'),
-(484, N'Vỏ case Corsair 5000D AIRFLOW Tempered Glass Mid-Tower White', 3850000, N'TDP: 0W', N'https://cwsmgmt.corsair.com/pdp/5000-series/images/5000d-af-clear-clean-cool.png', 13, 35, '2026-07-23 11:35:00.000', N'Corsair'),
-(485, N'Vỏ case MSI MAG FORGE 100M Mid-Tower Black', 1150000, N'TDP: 0W', N'https://gitec.ge/images/thumbs/0063677_msi-mag-forge-100m.jpeg', 13, 90, '2026-07-23 11:35:00.000', N'MSI'),
-(486, N'Vỏ case Xigmatek Gaming X 3FX 3 Fan ARGB Black', 850000, N'TDP: 0W', N'https://phucngoc.vn/Data/images/vo-case-xigmatek-master-x-3fx.jpg', 13, 120, '2026-07-23 11:35:00.000', N'Xigmatek'),
-(487, N'Vỏ case Mik Aios Black Kèm 3 Fan ARGB', 950000, N'TDP: 0W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lu9j1tie6gwh88', 13, 100, '2026-07-23 11:35:00.000', N'Mik'),
-(488, N'Vỏ case SAMA 3509 Black Kèm 3 Fan RGB', 750000, N'TDP: 0W', N'https://m.media-amazon.com/images/I/81EZRt3KIOL._AC_SL1500_.jpg', 13, 110, '2026-07-23 11:35:00.000', N'SAMA'),
-(489, N'Tản nhiệt khí Thermalright Peerless Assassin 120 White ARGB', 1050000, N'TDP: 5W', N'https://hanoicomputercdn.com/media/product/72071_peerless_assasin_120_se_white_argb__4_.jpg', 14, 80, '2026-07-23 11:35:00.000', N'Thermalright'),
-(490, N'Tản nhiệt khí Thermalright Frost Tower 120 Dual Tower Black', 950000, N'TDP: 5W', N'https://hoanghapccdn.com/media/product/4157_thermalright_frost_tower_120_ha8.jpg', 14, 70, '2026-07-23 11:35:00.000', N'Thermalright'),
-(491, N'Tản nhiệt khí DeepCool AK620 Digital ARGB Black Dual Tower', 1850000, N'TDP: 5W', N'https://hoanghapccdn.com/media/product/4420_ak620_digital_ha9.jpg', 14, 50, '2026-07-23 11:35:00.000', N'DeepCool'),
-(492, N'Tản nhiệt khí DeepCool AG400 ARGB Single Tower', 450000, N'TDP: 3W', N'https://ecommerce.datablitz.com.ph/cdn/shop/files/zdfhbsrtg_800x.jpg?v=1739759913', 14, 130, '2026-07-23 11:35:00.000', N'DeepCool'),
-(493, N'Tản nhiệt khí Noctua NH-U12S chromax.black Single Tower', 2150000, N'TDP: 4W', N'https://m.media-amazon.com/images/I/81Qu6DEtTlL._SL1500_.jpg', 14, 40, '2026-07-23 11:35:00.000', N'Noctua'),
-(494, N'Tản nhiệt khí Noctua NH-L9i-17xx Low-Profile CPU Cooler', 1350000, N'TDP: 3W', N'https://m.media-amazon.com/images/I/81XLADINZiL.jpg', 14, 60, '2026-07-23 11:35:00.000', N'Noctua'),
-(495, N'Tản nhiệt khí ID-COOLING SE-207-XT Black Dual Tower', 950000, N'TDP: 5W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lxdjem7mcdspfe', 14, 75, '2026-07-23 11:35:00.000', N'ID-COOLING'),
-(496, N'Tản nhiệt khí ID-COOLING FROZN A620 Black Dual Tower', 1150000, N'TDP: 5W', N'https://kccshop.vn/media/product/250-10672-t---n-nhi---t-kh---id-cooling-frozn-a620-black_3_main.jpeg', 14, 65, '2026-07-23 11:35:00.000', N'ID-COOLING'),
-(497, N'Tản nhiệt khí Cooler Master MasterAir MA612 Stealth Black', 1750000, N'TDP: 5W', N'https://hoanghapccdn.com/media/product/2166_masterair_ma612_stealth_4_optimized.jpg', 14, 45, '2026-07-23 11:35:00.000', N'Cooler Master'),
-(498, N'Tản nhiệt khí Jonsbo CR-1400 ARGB Black', 280000, N'TDP: 2W', N'https://cdn.ben.com.vn/Content/Images/Products/3ce81aed-a15e-4202-a095-273b931c928a.jpg', 14, 160, '2026-07-23 11:35:00.000', N'Jonsbo'),
-(499, N'Bộ 3 Fan tản nhiệt Lian Li UNI FAN TL LCD 120 Reverse Black', 3450000, N'TDP: 4W', N'https://product.hstatic.net/200000522285/product/f96af51f816fcd8a4bc30e591f13ed61_f2475336158448a796dbe2760f5675b4.jpg', 15, 30, '2026-07-23 11:35:00.000', N'Lian Li'),
-(500, N'Bộ 3 Fan tản nhiệt Lian Li UNI FAN AL120 V2 ARGB Black', 2150000, N'TDP: 3W', N'https://images.tcdn.com.br/img/img_prod/1362985/kit_cooler_fan_lian_li_uni_fan_al120_v2_120mm_3_un_preto_argb_2000_rpm_modular_uf_al120v2_3b_1747_2_cd18221530e72d4d8e615bcff1e491dc.jpg', 15, 50, '2026-07-23 11:35:00.000', N'Lian Li'),
-(501, N'Bộ 3 Fan tản nhiệt Corsair LL120 RGB 120mm Dual Light Loop White', 2650000, N'TDP: 3W', N'https://minhancomputercdn.com/media/product/8348_qu___t_t___n_nhi___t_case_corsair_ll120_rgb_white.jpg', 15, 45, '2026-07-23 11:35:00.000', N'Corsair'),
-(502, N'Bộ 3 Fan tản nhiệt Corsair SP120 RGB ELITE 120mm PWM Triple Pack', 1650000, N'TDP: 3W', N'https://cellphones.com.vn/media/catalog/product/t/e/text_ng_n_16__1_10.png', 15, 60, '2026-07-23 11:35:00.000', N'Corsair'),
-(503, N'Bộ 3 Fan tản nhiệt NZXT F120 RGB Core Triple Pack White', 1850000, N'TDP: 3W', N'https://product.hstatic.net/200000420363/product/20-rgb-core-triple-pack-with-rgb-controller-left-side-angle-view-white_fadd4054388446b9b8fe182a6ea3fa5d_master.png', 15, 55, '2026-07-23 11:35:00.000', N'NZXT'),
-(504, N'Bộ 3 Fan tản nhiệt DeepCool FC120 White 3-in-1 ARGB', 890000, N'TDP: 3W', N'https://nguyenvu-store-medias.tn-cdn.net/2023/07/quat-tan-nhiet-deepcool-fc120-3-in-1-trang-8.jpg', 15, 80, '2026-07-23 11:35:00.000', N'DeepCool'),
-(505, N'Bộ 3 Fan tản nhiệt Thermalright TL-C12C-S X3 White ARGB', 490000, N'TDP: 2W', N'https://product.hstatic.net/200000680123/product/thermalright-tl-c12cw-s-x3-fan-h4-600x600.jpg_14298f234eb24344bc5e46938f38fdb6_1024x1024.png', 15, 110, '2026-07-23 11:35:00.000', N'Thermalright'),
-(506, N'Bộ 3 Fan tản nhiệt Thermalright TL-K12 ARGB High-Performance', 650000, N'TDP: 2W', N'https://www.thermalright.com/wp-content/uploads/2023/08/1-10.jpg', 15, 90, '2026-07-23 11:35:00.000', N'Thermalright'),
-(507, N'Bộ 3 Fan tản nhiệt Montech RX120 PWM Reverse ARGB Pack', 690000, N'TDP: 2W', N'https://cdn0.centrecom.com.au/images/upload/0196456_0.jpeg', 15, 85, '2026-07-23 11:35:00.000', N'Montech'),
-(508, N'Bộ 3 Fan tản nhiệt Xigmatek Galaxy II Pro ARGB 3 Fan Pack', 450000, N'TDP: 2W', N'https://alfrensia.com/wp-content/uploads/2022/02/EN42128.jpg', 15, 120, '2026-07-23 11:35:00.000', N'Xigmatek'),
-(509, N'Bộ 3 Fan tản nhiệt Mik Halo ARGB 3 Fan Pack Black', 380000, N'TDP: 2W', N'https://down-vn.img.susercontent.com/file/e9fdd00372700ad2f4ba6850323cb2cd', 15, 130, '2026-07-23 11:35:00.000', N'Mik'),
-(510, N'Bộ 3 Fan tản nhiệt SAMA Halo ARGB Kit 3 Fan kèm Hub Remote', 350000, N'TDP: 2W', N'https://down-br.img.susercontent.com/file/br-11134207-7r98o-lq1zxlij2scj37', 15, 140, '2026-07-23 11:35:00.000', N'SAMA'),
-(511, N'Fan tản nhiệt lẻ Noctua NF-A12x25 PWM chromax.black', 850000, N'TDP: 1W', N'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mf6vvwttiww967', 15, 90, '2026-07-23 11:35:00.000', N'Noctua'),
-(512, N'Fan tản nhiệt lẻ Arctic P12 PWM PST Black 120mm', 220000, N'TDP: 1W', N'https://pcngon.vn/wp-content/uploads/2024/09/Quat-tan-nhiet-Arctic-P12-PWM-PST-Black-4.png', 15, 200, '2026-07-23 11:35:00.000', N'Arctic'),
-(513, N'Bàn phím cơ AKKO 5075B Plus Dragon Ball Z Wireless RGB', 2350000, N'TDP: 2W', N'https://salt.tikicdn.com/ts/product/ab/f7/88/56e8132ad98041714b1041cb6feaee08.jpg', 16, 40, '2026-07-23 11:35:00.000', N'AKKO'),
-(514, N'Bàn phím cơ AKKO MonsGeek M1 V2 Kit Nhôm CNC Hotswap', 1850000, N'TDP: 1W', N'https://cf.shopee.vn/file/sg-11134201-22110-noy506z680jvf2', 16, 50, '2026-07-23 11:35:00.000', N'AKKO'),
-(515, N'Bàn phím cơ Keychron K2 Pro Wireless Bluetooth QMK/VIA Gateron', 2150000, N'TDP: 2W', N'https://product.hstatic.net/1000187560/product/ban-phim-co-keychron-k2-pro-qmkvia-album-svf-thinkpro.vn_a9824fcb4b79456fa624cc6cf1c834cc_large.jpg', 16, 60, '2026-07-23 11:35:00.000', N'Keychron'),
-(516, N'Bàn phím cơ Keychron Q1 Max Full Aluminum Wireless Custom', 4650000, N'TDP: 2W', N'https://cdn.shopify.com/s/files/1/0059/0630/1017/files/Q1-Max-2.jpg?v=1701051646', 16, 25, '2026-07-23 11:35:00.000', N'Keychron'),
-(517, N'Bàn phím cơ Logitech G Pro X TKL LIGHTSPEED Wireless Black', 4150000, N'TDP: 2W', N'https://www.tncstore.vn/media/product/13847-ban-phim-co-logitech-g-pro-x-tkl-lightspeed-tactile-switch-black.jpg', 16, 35, '2026-07-23 11:35:00.000', N'Logitech'),
-(518, N'Bàn phím cơ Razer BlackWidow V4 Pro Mechanical Gaming Keyboard', 5450000, N'TDP: 3W', N'https://media.currys.biz/i/currysprod/10251854', 16, 20, '2026-07-23 11:35:00.000', N'Razer'),
-(519, N'Bàn phím cơ Corsair K70 RGB PRO Mechanical Gaming Keyboard', 3650000, N'TDP: 2W', N'https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Gaming-Keyboards/CH-910941A-NA/Gallery/K70_PRO_OPX_PBT_01.webp', 16, 45, '2026-07-23 11:35:00.000', N'Corsair'),
-(520, N'Bàn phím cơ SteelSeries Apex Pro TKL Wireless', 5950000, N'TDP: 2W', N'https://owlgaming.vn/wp-content/uploads/2024/10/ban-phim-steelseries-apex-pro-tkl-wireless-gen-3.jpg', 16, 20, '2026-07-23 11:35:00.000', N'SteelSeries'),
-(521, N'Bàn phím cơ ASUS ROG Azoth Wireless Custom Gaming Keyboard', 6850000, N'TDP: 3W', N'https://pcmarket.vn/media/product/10986_ban_phim_co_gaming_asus_rog_azoth_white_pcm_6.jpg', 16, 15, '2026-07-23 11:35:00.000', N'ASUS'),
-(522, N'Bàn phím cơ Dareu EK87 V2 Multi-LED Tenkeyless Black', 450000, N'TDP: 1W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lnf8bm6zuy258f', 16, 120, '2026-07-23 11:35:00.000', N'Dareu'),
-(523, N'Chuột máy tính Logitech G Pro X Superlight 2 Wireless Black', 3450000, N'TDP: 1W', N'https://www.tncstore.vn/media/product/250-9061-chuot-logitech-g-pro-x-superlight-2-wireless-12.jpg', 17, 50, '2026-07-23 11:35:00.000', N'Logitech'),
-(524, N'Chuột máy tính Logitech G502 X PLUS LIGHTSPEED Wireless RGB', 3650000, N'TDP: 1W', N'https://www.bhphotovideo.com/images/images1500x1500/logitech_g_910_006160_g502_x_plus_wireless_1722686.jpg', 17, 40, '2026-07-23 11:35:00.000', N'Logitech'),
-(525, N'Chuột máy tính Razer DeathAdder V3 Pro Wireless Ultra-Lightweight', 3250000, N'TDP: 1W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m0nqss9a7bf390', 17, 45, '2026-07-23 11:35:00.000', N'Razer'),
-(526, N'Chuột máy tính Razer Viper V3 Pro Ultra-Lightweight Wireless', 3850000, N'TDP: 1W', N'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mjnkr1p25hxcb7', 17, 35, '2026-07-23 11:35:00.000', N'Razer'),
-(527, N'Chuột máy tính SteelSeries Aerox 3 Wireless Onyx Superlight', 1850000, N'TDP: 1W', N'https://minhancomputercdn.com/media/product/10229_steelseries_aerox_3_wireless_black_4.jpg', 17, 60, '2026-07-23 11:35:00.000', N'SteelSeries'),
-(528, N'Chuột máy tính Corsair M65 RGB ULTRA Wireless Gaming Mouse', 2450000, N'TDP: 1W', N'https://media.ldlc.com/r1600/ld/products/00/05/98/52/LD0005985249.jpg', 17, 50, '2026-07-23 11:35:00.000', N'Corsair'),
-(529, N'Chuột máy tính ASUS ROG Keris II Ace Ultra-Lightweight Wireless', 3150000, N'TDP: 1W', N'https://dlcdnwebimgs.asus.com/gain/E9A5CF8D-2795-45DB-ABA7-D515962D8826/w1000/h732', 17, 40, '2026-07-23 11:35:00.000', N'ASUS'),
-(530, N'Chuột máy tính Dareu EM901X RGB Wireless kèm Đế sạc', 590000, N'TDP: 1W', N'https://hugotech.vn/wp-content/uploads/EM901X-a.jpg', 17, 100, '2026-07-23 11:35:00.000', N'Dareu'),
-(531, N'Chuột máy tính Rapoo VT9 PRO Dual-Mode Wireless Gaming Mouse', 790000, N'TDP: 1W', N'https://rapoostore.vn/wp-content/uploads/2024/05/Chuot-gaming-rapoo-vt9prodm.jpg', 17, 90, '2026-07-23 11:35:00.000', N'Samsung'),
-(532, N'Chuột máy tính Fantech Helios II Pro XD3 V3 Wireless', 1250000, N'TDP: 1W', N'https://down-id.img.susercontent.com/file/id-11134208-7r98x-lxuwkmyu8eq237', 17, 70, '2026-07-23 11:35:00.000', N'Antec'),
-(533, N'Tai nghe gaming HyperX Cloud III Wireless Black/Red 120-Hour Battery', 3850000, N'TDP: 1W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mdodsk4dl57wd1', 18, 40, '2026-07-23 11:35:00.000', N'HyperX'),
-(534, N'Tai nghe gaming HyperX Cloud Stinger 2 Core Gaming Headset', 850000, N'TDP: 1W', N'https://product.hstatic.net/200000722513/product/thumbtainghe_499f42bf16fe47d28ab00bffb7bd5748_47730811ddaf40a0a969f4e4d49c7b27_1024x1024.png', 18, 90, '2026-07-23 11:35:00.000', N'HyperX'),
-(535, N'Tai nghe gaming Razer BlackShark V2 Pro Wireless 2023 Edition', 4450000, N'TDP: 1W', N'https://m.media-amazon.com/images/I/71ZTXGr2g0L._AC_SL1500_.jpg', 18, 35, '2026-07-23 11:35:00.000', N'Razer'),
-(536, N'Tai nghe gaming Razer Kraken Kitty V2 Pro RGB Quartz Pink', 4250000, N'TDP: 2W', N'https://laptopworld.vn/media/product/16639_76012_tai_nghe_gaming_co_day_razer_kraken_kitty_v2_pro_2023_edition_rgb_pink___rz04_04510200_r3m1_1.jpg', 18, 30, '2026-07-23 11:35:00.000', N'NZXT'),
-(537, N'Tai nghe gaming Logitech G PRO X 2 LIGHTSPEED Wireless Graphene', 5650000, N'TDP: 1W', N'https://resource.logitechg.com/w_544,h_466,ar_7:6,c_pad,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/gaming/en/products/pro-x-2-lightspeed/gallery/gallery-3-pro-x-2-lightspeed-gaming-headset-black.png', 18, 25, '2026-07-23 11:35:00.000', N'Logitech'),
-(538, N'Tai nghe gaming Logitech G733 LIGHTSPEED Wireless RGB White', 2950000, N'TDP: 1W', N'https://gangaelectronica.es/694377-large_default/logitech-g733-lightspeed-wireless-rgb-gaming-headset-white.jpg', 18, 50, '2026-07-23 11:35:00.000', N'Logitech'),
-(539, N'Tai nghe gaming SteelSeries Arctis Nova Pro Wireless PC/PlayStation', 8950000, N'TDP: 2W', N'https://media.steelseriescdn.com/thumbs/filer_public/d7/b7/d7b782e8-2b82-4abd-8be1-790619ba6543/arctis_nova_pro_wl_black_img_buy_1.png__1920x1080_crop-fit_optimize_subsampling-2.png', 18, 15, '2026-07-23 11:35:00.000', N'SteelSeries'),
-(540, N'Tai nghe gaming Corsair VIRTUOSO RGB WIRELESS High-Fidelity', 4850000, N'TDP: 2W', N'https://res.cloudinary.com/corsair-pwa/image/upload/v1665096094/akamai/landing/virtuoso/assets/images/VIRTUOSO-White.png', 18, 30, '2026-07-23 11:35:00.000', N'Corsair'),
-(541, N'Tai nghe gaming ASUS ROG Pugi III Delta S Animate Display', 5250000, N'TDP: 2W', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mbacj96f7nivf2', 18, 20, '2026-07-23 11:35:00.000', N'ASUS'),
-(542, N'Tai nghe gaming Dareu EH722X 7.1 Surround Sound Pink', 490000, N'TDP: 1W', N'https://songphuong.vn/Content/uploads/2021/08/Tai-nghe-DareU-EH722X-7.1-PINK-3.jpg', 18, 110, '2026-07-23 11:35:00.000', N'Dareu');
+(1, N'Intel Core i9-14900K', 15500000, N'Socket: LGA 1700
+Số nhân/luồng: 24 Nhân (8 P-core + 16 E-core) / 32 Luồng
+Xung nhịp: Base 3.2GHz, Turbo Boost 6.0GHz
+Bộ nhớ đệm: 36MB Intel Smart Cache
+TDP: 125W (Max Turbo 253W)
+Hỗ trợ RAM: DDR5 5600MHz / DDR4 3200MHz
+Đồ họa tích hợp: Intel UHD Graphics 770
+Bảo hành: 36 Tháng chính hãng', N'i9_14900k.jpg', 1, 46, '2026-04-06 13:46:29', N'Intel'),
+(2, N'AMD Ryzen 9 7950X3D', 17200000, N'Socket: AM5
+Số nhân/luồng: 16 Nhân / 32 Luồng
+Xung nhịp: Base 4.2GHz, Boost 5.7GHz
+Bộ nhớ đệm: 80MB (16MB L2 + 64MB L3 Cache)
+TDP: 170W
+Tiến trình: TSMC 5nm FinFET
+Bảo hành: 36 Tháng chính hãng', N'i9_14900k.jpg', 1, 15, '2026-04-06 13:46:29', N'AMD'),
+(3, N'Intel Core i7-14700Kkk', 10800000, N'Socket: LGA 1700
+Số nhân/luồng: 20 Nhân (8 P-core + 12 E-core) / 28 Luồng
+Xung nhịp: Base 3.4GHz, Turbo Boost 5.6GHz
+Bộ nhớ đệm: 33MB Intel Smart Cache
+TDP: 125W (Max Turbo 253W)
+Hỗ trợ RAM: DDR5 5600MHz / DDR4 3200MHz
+Bảo hành: 36 Tháng chính hãng', N'https://himmcom.com.np/wp-content/uploads/2024/01/1-3.jpg%20?%3E', 1, 0, '2026-04-06 13:46:29', N'Intel'),
+(4, N'AMD Ryzen 7 7800X3D', 11500000, N'Socket: AM5 / AM4
+Số nhân/luồng: 8 Nhân / 16 Luồng
+Xung nhịp: Base 4.2GHz, Boost 5.0GHz
+Bộ nhớ đệm: 104MB 3D V-Cache công nghệ mới
+TDP: 120W
+Đặc điểm: CPU chơi game số 1 thế giới
+Bảo hành: 36 Tháng chính hãng', N'https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-7800x3d.jpg', 1, 27, '2026-04-06 13:46:29', N'AMD'),
+(5, N'Intel Core i5-13600K', 8200000, N'Socket: LGA 1700
+Số nhân/luồng: 14 Nhân / 20 Luồng
+Xung nhịp: Base 3.5GHz, Turbo Boost 5.1GHz
+Bộ nhớ đệm: 24MB Intel Smart Cache
+TDP: 125W (Max Turbo 181W)
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000320233/product/c12_5f95c60de3a941629bec4c4015d32e49_grande.jpg', 1, 54, '2026-04-06 13:46:29', N'Intel'),
+(6, N'AMD Ryzen 5 7600X', 5800000, N'Socket: AM5
+Số nhân/luồng: 6 - 8 Nhân / 12 - 16 Luồng
+Xung nhịp: Base 3.8GHz, Boost 5.3GHz
+Bộ nhớ đệm: 38MB Cache
+TDP: 65W - 105W
+Bảo hành: 36 Tháng chính hãng', N'https://static01.galaxus.com/productimages/8/6/2/2/3/5/8/5/2/5/8/0/4/8/2/7/4/9/6/a215fe82-81fe-4ec0-a941-8dfab4312068_cropped.png_720.jpeg', 1, 59, '2026-04-06 13:46:29', N'AMD'),
+(7, N'Intel Core i9-13900KS', 18500000, N'Socket: LGA 1700
+Số nhân/luồng: 24 Nhân / 32 Luồng
+Xung nhịp: Base 3.0GHz, Turbo Boost 5.8GHz
+Bộ nhớ đệm: 36MB Intel Smart Cache
+TDP: 125W (Max Turbo 253W)
+Bảo hành: 36 Tháng chính hãng', N'https://tpucdn.com/cpu-specs/images/chips/2956-front.jpg', 1, 0, '2026-04-06 13:46:29', N'Intel'),
+(8, N'AMD Ryzen 9 7900X', 10500000, N'Socket: AM5
+Số nhân/luồng: 12 Nhân / 24 Luồng
+Xung nhịp: Base 4.7GHz, Boost 5.6GHz
+Bộ nhớ đệm: 76MB Cache
+TDP: 170W
+Bảo hành: 36 Tháng chính hãng', N'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH5LodPDRyqJctn2WTugnImOyqEx5PHVyaFXfE-ctlXr9W38_3CShu8yk&s=10', 1, 18, '2026-04-06 13:46:29', N'AMD'),
+(9, N'Intel Core i7-13700F', 8900000, N'Socket: LGA 1700
+Số nhân/luồng: 16 Nhân / 24 Luồng
+Xung nhịp: Base 2.1GHz, Turbo Boost 5.2GHz
+Bộ nhớ đệm: 30MB Intel Smart Cache
+TDP: 65W (Max Turbo 219W)
+Bảo hành: 36 Tháng chính hãng', N'i7_14700f.jpg', 1, 45, '2026-04-06 13:46:29', N'Intel'),
+(10, N'AMD Ryzen 7 5800X3D', 8500000, N'Socket: AM5 / AM4
+Số nhân/luồng: 8 Nhân / 16 Luồng
+Xung nhịp: Base 4.2GHz, Boost 5.0GHz
+Bộ nhớ đệm: 104MB 3D V-Cache công nghệ mới
+TDP: 120W
+Đặc điểm: CPU chơi game số 1 thế giới
+Bảo hành: 36 Tháng chính hãng', N'https://www.techpowerup.com/review/amd-ryzen-7-5800x3d-10th-anniversary/images/title.jpg', 1, 25, '2026-04-06 13:46:29', N'AMD'),
+(11, N'Intel Core i5-12400F', 3500000, N'Socket: LGA 1700
+Số nhân/luồng: 6 Nhân / 12 Luồng (Golden Cove)
+Xung nhịp: Base 2.5GHz, Turbo Boost 4.4GHz
+Bộ nhớ đệm: 18MB Intel Smart Cache
+TDP: 65W (Max Turbo 117W)
+Bảo hành: 36 Tháng chính hãng', N'https://atcsjo.com/public/uploads/all/PZ7Ofk2PcEE8TNoZi0QSSfpF5x5tI84fcjFIBiLt.jpg', 1, 96, '2026-04-06 13:46:29', N'Intel'),
+(12, N'AMD Ryzen 5 5600G', 3200000, N'Socket: AM4
+Số nhân/luồng: 6 Nhân / 12 Luồng
+Xung nhịp: Base 3.6GHz - 3.9GHz, Boost 4.2GHz - 4.4GHz
+Bộ nhớ đệm: 19MB - 35MB Cache
+TDP: 65W
+Bảo hành: 36 Tháng chính hãng', N'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH5LodPDRyqJctn2WTugnImOyqEx5PHVyaFXfE-ctlXr9W38_3CShu8yk&s=10', 1, 71, '2026-04-06 13:46:29', N'AMD'),
+(13, N'Intel Core i3-14100', 3800000, N'Socket: AM4
+Số nhân/luồng: 6 Nhân / 12 Luồng
+Xung nhịp: Base 3.6GHz - 3.9GHz, Boost 4.2GHz - 4.4GHz
+Bộ nhớ đệm: 19MB - 35MB Cache
+TDP: 65W
+Bảo hành: 36 Tháng chính hãng', N'https://cputronic.com/storage/images/big/intel-core-i3.webp', 1, 37, '2026-04-06 13:46:29', N'Intel'),
+(14, N'AMD Ryzen 3 4100', 1800000, N'Socket: AM4
+Số nhân/luồng: 6 Nhân / 12 Luồng
+Xung nhịp: Base 3.6GHz - 3.9GHz, Boost 4.2GHz - 4.4GHz
+Bộ nhớ đệm: 19MB - 35MB Cache
+TDP: 65W
+Bảo hành: 36 Tháng chính hãng', N'https://images.tcdn.com.br/img/img_prod/591628/processador_amd_ryzen_3_4100_3_8ghz_4_0ghz_boost_zen_2_cache_6mb_am4_sem_video_integrado_34011_1_5b401d307e263fa3ee2586f9b4006a80.jpg', 1, 118, '2026-04-06 13:46:29', N'AMD'),
+(15, N'Intel Core i9-12900K', 9500000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://www.pcworld.com/wp-content/uploads/2021/11/12th_Gen_Core_i9_12900K_Hero_Close_Up-4.jpg?resize=1536%2C1024&quality=50&strip=all', 1, 13, '2026-04-06 13:46:29', N'Intel'),
+(16, N'Vỏ máy tính Xigmatek QUANTUM 4AF', 800000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'http://cdn.hstatic.net/products/200000722513/gearvn-vo-may-tinh-xigmatek-quantum-4af-1_c9db476a42ef48fba6d84a9703a94945_grande.jpg', 12, 100, '2026-06-27 12:22:45', N'Xigmatek'),
+(17, N'Intel Core i5-14400F', 5600000, N'Socket: LGA 1700
+Số nhân/luồng: 10 Nhân (6 P-core + 4 E-core) / 16 Luồng
+Xung nhịp: Base 2.5GHz, Turbo Boost 4.7GHz
+Bộ nhớ đệm: 20MB Intel Smart Cache
+TDP: 65W (Max Turbo 148W)
+Hỗ trợ RAM: DDR5 4800MHz / DDR4 3200MHz
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000320233/product/c12_5f95c60de3a941629bec4c4015d32e49_grande.jpg', 1, 64, '2026-04-06 13:46:29', N'Intel'),
+(18, N'AMD Ryzen 5 8600G', 6200000, N'Socket: AM5
+Số nhân/luồng: 6 - 8 Nhân / 12 - 16 Luồng
+Xung nhịp: Base 4.3GHz, Boost 5.0GHz
+Đồ họa tích hợp: AMD Radeon 760M / 780M + NPU Ryzen AI
+TDP: 65W
+Bảo hành: 36 Tháng chính hãng', N'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH5LodPDRyqJctn2WTugnImOyqEx5PHVyaFXfE-ctlXr9W38_3CShu8yk&s=10', 1, 34, '2026-04-06 13:46:29', N'AMD'),
+(19, N'Intel Core i7-12700K', 7200000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000680839/product/hz__25mb__12_cores_20_threads__0703223b7ae44a9ca2dd97b79516fa6f_master_de0749de4f2f4df687f7940d2cd121d9_1024x1024.jpg', 1, 34, '2026-04-06 13:46:29', N'Intel'),
+(20, N'AMD Ryzen 7 7700', 7800000, N'Socket: AM5
+Số nhân/luồng: 6 - 8 Nhân / 12 - 16 Luồng
+Xung nhịp: Base 3.8GHz, Boost 5.3GHz
+Bộ nhớ đệm: 38MB Cache
+TDP: 65W - 105W
+Bảo hành: 36 Tháng chính hãng', N'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH5LodPDRyqJctn2WTugnImOyqEx5PHVyaFXfE-ctlXr9W38_3CShu8yk&s=10', 1, 28, '2026-04-06 13:46:29', N'AMD'),
+(21, N'Intel Core i5-11400F', 2800000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://www.techpowerup.com/cpu-specs/images/chips/2407-front.jpg', 1, 50, '2026-04-06 13:46:29', N'Intel'),
+(22, N'AMD Ryzen 5 4500', 1950000, N'Socket: AM4
+Số nhân/luồng: 6 Nhân / 12 Luồng
+Xung nhịp: Base 3.6GHz - 3.9GHz, Boost 4.2GHz - 4.4GHz
+Bộ nhớ đệm: 19MB - 35MB Cache
+TDP: 65W
+Bảo hành: 36 Tháng chính hãng', N'https://lanoc.org/images/reviews/2022/amd_ryzen_5_4500/image_2.jpg', 1, 92, '2026-04-06 13:46:29', N'AMD'),
+(23, N'Intel Core i9-11900K', 6500000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://www.notebookcheck.com/fileadmin/Notebooks/Sonstiges/Intel/Rocket_Lake_S/Rocket_Lake_S_6.jpg', 1, 9, '2026-04-06 13:46:29', N'Intel'),
+(24, N'AMD Ryzen 5 3600', 2100000, N'Socket: AM4
+Số nhân/luồng: 6 Nhân / 12 Luồng
+Xung nhịp: Base 3.6GHz - 3.9GHz, Boost 4.2GHz - 4.4GHz
+Bộ nhớ đệm: 19MB - 35MB Cache
+TDP: 65W
+Bảo hành: 36 Tháng chính hãng', N'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH5LodPDRyqJctn2WTugnImOyqEx5PHVyaFXfE-ctlXr9W38_3CShu8yk&s=10', 1, 150, '2026-04-06 13:46:29', N'AMD'),
+(25, N'Intel Core i5-10400F', 2200000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://tpucdn.com/cpu-specs/images/chips/2270-front.jpg', 1, 110, '2026-04-06 13:46:29', N'Intel'),
+(26, N'AMD Ryzen 9 3900X', 7500000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH5LodPDRyqJctn2WTugnImOyqEx5PHVyaFXfE-ctlXr9W38_3CShu8yk&s=10', 1, 8, '2026-04-06 13:46:29', N'AMD'),
+(27, N'Intel Pentium G7400', 1900000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://image.made-in-china.com/2f0j00HPzqpKeCABkW/for-Original-Best-Price-Intel-Pentium-Gold-G7400-Processor-3-70GHz-CPU-Alder-Lake-SRL66-LGA-1700-Processor-for-Desktop.jpg', 1, 200, '2026-04-06 13:46:29', N'Intel'),
+(28, N'AMD Athlon 3000G', 1200000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/51wiBVz7jaL._AC_SL1000_.jpg', 1, 180, '2026-04-06 13:46:29', N'AMD'),
+(29, N'Intel Core i7-10700K', 4800000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.mos.cms.futurecdn.net/2WTyhwkcYo5b43PuCQYkzU.jpg', 1, 20, '2026-04-06 13:46:29', N'Intel'),
+(30, N'AMD Ryzen 7 8700G', 9200000, N'Socket: AM5
+Số nhân/luồng: 6 - 8 Nhân / 12 - 16 Luồng
+Xung nhịp: Base 4.3GHz, Boost 5.0GHz
+Đồ họa tích hợp: AMD Radeon 760M / 780M + NPU Ryzen AI
+TDP: 65W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/61nRX0W6fhL._AC_SL1500_.jpg', 1, 33, '2026-04-06 13:46:29', N'AMD'),
+(31, N'NVIDIA RTX 4090 24GB', 55000000, N'GPU: NVIDIA GeForce RTX 4090 / RTX 5090
+Dung lượng: 24GB GDDR6X 384-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: Ray Tracing Gen 3/4, DLSS 3.5, 4K Ultra Gaming
+Nguồn đề xuất: 850W - 1000W
+Bảo hành: 36 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6522/6522679_sd.jpg', 2, 10, '2026-04-06 13:46:29', N'NVIDIA'),
+(32, N'RTX 4080 Super', 32000000, N'GPU: NVIDIA GeForce RTX 4080 SUPER / RTX 5080
+Dung lượng: 16GB GDDR6X 256-bit
+Cổng xuất hình: 1x HDMI 2.1, 3x DisplayPort 1.4a
+Tính năng: DLSS 3.5 Frame Generation, Ray Tracing, Render 3D
+Nguồn đề xuất: 750W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://www.picclickimg.com/YyIAAeSwtxVqdEgW/NVIDIA-GeForce-RTX-4080-Super-32GB-2SLOT-Turbo.webp', 2, 15, '2026-04-06 13:46:29', N'NVIDIA'),
+(33, N'RTX 4070 Ti Super', 24500000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://hardwarerk.com/img/products/gpu-rtx-4070-ti-super.jpg', 2, 25, '2026-04-06 13:46:29', N'NVIDIA'),
+(34, N'AMD RX 7900 XTX', 28500000, N'GPU: AMD Radeon RX 7900 XTX / XT
+Dung lượng: 24GB GDDR6 384-bit
+Cổng xuất hình: DisplayPort 2.1, HDMI 2.1
+Tính năng: Kiến trúc RDNA 3, AMD FSR 3.0, AV1 Encoding
+Nguồn đề xuất: 800W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81il2WdPPJL._AC_.jpg', 2, 12, '2026-04-06 13:46:29', N'AMD'),
+(35, N'RTX 4060 Ti 8GB', 11500000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://img.terabyteshop.com.br/produto/g/placa-de-video-msi-nvidia-geforce-rtx-4060-ti-gaming-x-8gb-gddr6-dlss-ray-tracing-912-v515-022_170920.jpg', 2, 43, '2026-04-06 13:46:29', N'NVIDIA'),
+(36, N'AMD RX 7800 XT', 15200000, N'GPU: AMD Radeon RX 7800 XT / RX 7700 XT
+Dung lượng: 12GB - 16GB GDDR6 256-bit
+Cổng xuất hình: 3x DP 2.1, 1x HDMI 2.1
+Tính năng: RDNA 3, FSR 3, Chiến game 2K Ultra mượt mà
+Nguồn đề xuất: 700W
+Bảo hành: 36 Tháng chính hãng', N'msi_rtx_5060_ventus.jpg', 2, 30, '2026-04-06 13:46:29', N'AMD'),
+(37, N'RTX 3060 12GB', 7800000, N'GPU: NVIDIA GeForce RTX 3060
+Dung lượng: 12GB GDDR6 192-bit
+Cổng xuất hình: 1x HDMI 2.1, 3x DisplayPort 1.4a
+Tính năng: VRAM 12GB tối ưu làm đồ họa, Render và Chơi game
+Nguồn đề xuất: 550W - 600W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/61XAtpgr1lL._AC_.jpg', 2, 80, '2026-04-06 13:46:29', N'NVIDIA'),
+(38, N'AMD RX 6600', 5500000, N'GPU: AMD Radeon RX 6600 / RX 7600
+Dung lượng: 8GB GDDR6 128-bit
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4
+Tính năng: Card đồ họa quốc dân 1080p Ultra Gaming
+Nguồn đề xuất: 450W - 550W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81Ts3uaZqgL._AC_.jpg', 2, 100, '2026-04-06 13:46:29', N'AMD'),
+(39, N'ASUS ROG RTX 4090', 62000000, N'GPU: NVIDIA GeForce RTX 4090 / RTX 5090
+Dung lượng: 24GB GDDR6X 384-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: Ray Tracing Gen 3/4, DLSS 3.5, 4K Ultra Gaming
+Nguồn đề xuất: 850W - 1000W
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/12/43/LD0006124357.jpg', 2, 5, '2026-04-06 13:46:29', N'ASUS'),
+(40, N'MSI Gaming X RTX 4070', 18500000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6539/6539607cv17d.jpg', 2, 20, '2026-04-06 13:46:29', N'MSI'),
+(41, N'Gigabyte Eagle RTX 4060', 8200000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71g2Lc8urJL._AC_SL1500_.jpg', 2, 60, '2026-04-06 13:46:29', N'GIGABYTE'),
+(42, N'RTX 4070 Super', 17800000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://hardwarerk.com/img/products/gpu-rtx-4070-ti-super.jpg', 2, 35, '2026-04-06 13:46:29', N'NVIDIA'),
+(43, N'AMD RX 7600', 7900000, N'GPU: AMD Radeon RX 6600 / RX 7600
+Dung lượng: 8GB GDDR6 128-bit
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4
+Tính năng: Card đồ họa quốc dân 1080p Ultra Gaming
+Nguồn đề xuất: 450W - 550W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81QItJufypL._AC_.jpg', 2, 50, '2026-04-06 13:46:29', N'AMD'),
+(44, N'RTX 3050 6GB', 5200000, N'GPU: Card đồ họa chuyên dụng VIDIA
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/d2e9569c-e820-41de-9d8b-c3d26b98ac87.jpg', 2, 70, '2026-04-06 13:46:29', N'NVIDIA'),
+(45, N'Zotac RTX 4060', 7800000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81w-5i9+nbL.jpg', 2, 40, '2026-04-06 13:46:29', N'NVIDIA'),
+(46, N'Galax RTX 4070 Pink', 16900000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://www.gaming.gen.tr/cdn-cgi/image/quality=90,gravity=auto,sharpen=1,metadata=none,format=auto,onerror=redirect/wp-content/uploads/2023/10/galax-ex-gamer-pink-1-click-oc-geforce-rtx-4070-12gb-gddr6x-192-bit-ekran-karti-47nom7md7lpk-12.jpg', 2, 15, '2026-04-06 13:46:29', N'NVIDIA'),
+(47, N'ASUS TUF RTX 3070 Ti', 12000000, N'GPU: Card đồ họa chuyên dụng ASUS
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81t7Ga7nyxS._AC_.jpg', 2, 10, '2026-04-06 13:46:29', N'ASUS'),
+(48, N'EVGA RTX 3080', 15000000, N'GPU: Card đồ họa chuyên dụng VIDIA
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81sXFTXt5CS.jpg', 2, 5, '2026-04-06 13:46:29', N'NVIDIA'),
+(49, N'Sapphire RX 7900 GRE', 16500000, N'GPU: AMD Radeon RX 7900 XTX / XT
+Dung lượng: 24GB GDDR6 384-bit
+Cổng xuất hình: DisplayPort 2.1, HDMI 2.1
+Tính năng: Kiến trúc RDNA 3, AMD FSR 3.0, AV1 Encoding
+Nguồn đề xuất: 800W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.wccftech.com/wp-content/uploads/2023/07/AMD-Radeon-RX-7900-GRE-16-GB-GPU-Sapphire-Nitro-_5-g-standard-scale-4_00x-g-standard-scale-4_00x-Custom-1456x772.jpeg', 2, 18, '2026-04-06 13:46:29', N'Sapphire'),
+(50, N'PowerColor RX 7800 XT', 14800000, N'GPU: AMD Radeon RX 7800 XT / RX 7700 XT
+Dung lượng: 12GB - 16GB GDDR6 256-bit
+Cổng xuất hình: 3x DP 2.1, 1x HDMI 2.1
+Tính năng: RDNA 3, FSR 3, Chiến game 2K Ultra mượt mà
+Nguồn đề xuất: 700W
+Bảo hành: 36 Tháng chính hãng', N'https://files.pccasegear.com/images/1693535888-RX7800XT-16G-E-OC-thb.jpg', 2, 22, '2026-04-06 13:46:29', N'PowerColor'),
+(51, N'GTX 1650', 3800000, N'GPU: Card đồ họa chuyên dụng VIDIA
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6347/6347252_sd.jpg', 2, 150, '2026-04-06 13:46:29', N'NVIDIA'),
+(52, N'RX 6700 XT', 9500000, N'GPU: Card đồ họa chuyên dụng AMD
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/05/80/29/LD0005802927_1.jpg', 2, 40, '2026-04-06 13:46:29', N'AMD'),
+(53, N'Colorful RTX 4080', 31000000, N'GPU: NVIDIA GeForce RTX 4080 SUPER / RTX 5080
+Dung lượng: 16GB GDDR6X 256-bit
+Cổng xuất hình: 1x HDMI 2.1, 3x DisplayPort 1.4a
+Tính năng: DLSS 3.5 Frame Generation, Ray Tracing, Render 3D
+Nguồn đề xuất: 750W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://static.tweaktown.com/news/8/8/88259_03_colorful-igame-geforce-rtx-4080-ultra-oc-spotted-oh-man-here-we-go_full.png', 2, 8, '2026-04-06 13:46:29', N'NVIDIA'),
+(54, N'Quadro RTX A4000', 22000000, N'GPU: Card đồ họa chuyên dụng VIDIA
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://images.wiautomation.com/public/images/landing/anticipa/product/27_06_2024_11_39_54_RTX_A4000_Nvidia.jpg', 2, 0, '2026-04-06 13:46:29', N'NVIDIA'),
+(55, N'Radeon Pro W7800', 58000000, N'GPU: AMD Radeon RX 7800 XT / RX 7700 XT
+Dung lượng: 12GB - 16GB GDDR6 256-bit
+Cổng xuất hình: 3x DP 2.1, 1x HDMI 2.1
+Tính năng: RDNA 3, FSR 3, Chiến game 2K Ultra mượt mà
+Nguồn đề xuất: 700W
+Bảo hành: 36 Tháng chính hãng', N'radeon_pro_w7800.jpg', 2, 3, '2026-04-06 13:46:29', N'AMD'),
+(56, N'Intel Arc A770 16GB', 9200000, N'GPU: Card đồ họa chuyên dụng Intel
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'msi_rtx_5060_ventus.jpg', 2, 25, '2026-04-06 13:46:29', N'Intel'),
+(57, N'Intel Arc A750', 6500000, N'GPU: Card đồ họa chuyên dụng Intel
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71sO2CZL1UL.jpg', 2, 40, '2026-04-06 13:46:29', N'Intel'),
+(58, N'ASUS Dual RTX 4070', 17500000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/03/60/LD0006036039.jpg', 2, 15, '2026-04-06 13:46:29', N'ASUS'),
+(59, N'Gigabyte RTX 4090', 59000000, N'GPU: NVIDIA GeForce RTX 4090 / RTX 5090
+Dung lượng: 24GB GDDR6X 384-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: Ray Tracing Gen 3/4, DLSS 3.5, 4K Ultra Gaming
+Nguồn đề xuất: 850W - 1000W
+Bảo hành: 36 Tháng chính hãng', N'https://www.pricerunner.com/product/3013080735/Gigabyte-GeForce-RTX-4090-WINDFORCE-V2-3xDP-HDMI-24GB.jpg', 2, 4, '2026-04-06 13:46:29', N'GIGABYTE'),
+(60, N'PNY RTX 4060', 7500000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://i5.walmartimages.com/asr/7a16bb22-0ab5-4190-b4b4-419ccbbb8de2.7f8f100c1db40b894fbac7d7c38e995b.jpeg', 2, 55, '2026-04-06 13:46:29', N'NVIDIA'),
+(61, N'Corsair Vengeance 32GB', 3500000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'corsair_dominator_64gb.jpg', 3, 50, '2026-04-06 13:46:29', N'Corsair'),
+(62, N'G.Skill Trident Z5 32GB', 4200000, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://cdn.mwave.com.au/images/400/gskill_trident_z5_royal_neo_rgb_32gb_2x_16gb_ddr5_6000mhz_cl28_amd_desktop_memory_silver_ac78818_41026.jpg', 3, 40, '2026-04-06 13:46:29', N'G.Skill'),
+(63, N'Kingston Fury 16GB', 1250000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/71+clMT-q-L._AC_SL1500_.jpg', 3, 120, '2026-04-06 13:46:29', N'Kingston'),
+(64, N'T-Force Delta 32GB', 3200000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/71yyY+Y29WL._AC_.jpg', 3, 45, '2026-04-06 13:46:29', N'TeamGroup'),
+(65, N'ADATA XPG 16GB', 1800000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://hoanglongcomputer.vn/media/product/5612-adadada.webp', 3, 70, '2026-04-06 13:46:29', N'ADATA'),
+(66, N'Crucial 8GB', 650000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/819OdHGCicL.jpg', 3, 200, '2026-04-06 13:46:29', N'Crucial'),
+(67, N'Dominator Titanium 64GB', 9500000, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/61oUyUOzhwL._AC_.jpg', 3, 10, '2026-04-06 13:46:29', N'Corsair'),
+(68, N'Ripjaws V 16GB', 1100000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://c1.neweggimages.com/ProductImageCompressAll1280/20-232-181-02.jpg', 3, 90, '2026-04-06 13:46:29', N'G.Skill'),
+(69, N'Lexar Thor 32GB', 2100000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://down-ph.img.susercontent.com/file/ph-11134207-7ras8-m2lujp7y6sc27f', 3, 55, '2026-04-06 13:46:29', N'Lexar'),
+(70, N'Fury Renegade 32GB', 4800000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/71GJY5+c14L._AC_SL1500_.jpg', 3, 25, '2026-04-06 13:46:29', N'Kingston'),
+(71, N'PNY XLR8 16GB', 1350000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://basitcomputers.com/wp-content/uploads/2024/12/16GB-DDR4-RAM-3200MHz-PNY-XLR8-GAMiNG-RAM-WiTH-HEATSiNK-105.jpg', 3, 60, '2026-04-06 13:46:29', N'PNY'),
+(72, N'Silicon Power 16GB', 950000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://static1.nordic.pictures/890711-thickbox_default/silicon-power-flash-drive-16gb-marvel-m01-usb-30-blue.jpg', 3, 150, '2026-04-06 13:46:29', N'Silicon Power'),
+(73, N'Mushkin Redline 32GB', 3400000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'galax_hof_32gb.jpg', 3, 20, '2026-04-06 13:46:29', N'Mushkin'),
+(74, N'Patriot Viper 16GB', 1450000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/S/aplus-media/sc/1cd89a7c-d360-4b74-aeac-a8d357feb38d.__CR0,0,970,600_PT0_SX970_V1___.jpg', 3, 40, '2026-04-06 13:46:29', N'Razer'),
+(75, N'Samsung 32GB', 2800000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'galax_hof_32gb.jpg', 3, 30, '2026-04-06 13:46:29', N'Samsung'),
+(76, N'Thermaltake 16GB', 2200000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://images-na.ssl-images-amazon.com/images/I/811DUVLPAJL.jpg', 3, 25, '2026-04-06 13:46:29', N'Thermaltake'),
+(77, N'Zadak Spark 32GB', 3900000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://img.terabyteshop.com.br/produto/g/memoria-ddr4-zadak-spark-rgb-32gb-3600mhz-2x16gb-zd4-spr36c25-32g2b2_132087.jpg', 3, 15, '2026-04-06 13:46:29', N'Zadak'),
+(78, N'Apacer Panther 8GB', 750000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://down-th.img.susercontent.com/file/33c93c24fd76aa21db815921559cbf6c', 3, 100, '2026-04-06 13:46:29', N'Acer'),
+(79, N'GeIL Super Luce 16GB', 1300000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'kingmax_horizon_5600.jpg', 3, 50, '2026-04-06 13:46:29', N'GeIL'),
+(80, N'V-Color Prism 32GB', 3100000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'gskill_trident_64gb.jpg', 3, 40, '2026-04-06 13:46:29', N'V-Color'),
+(81, N'Kingston Fury 64GB', 6800000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/717cPftxQgL._AC_.jpg', 3, 20, '2026-04-06 13:46:29', N'Kingston'),
+(82, N'Vengeance LPX 32GB', 2500000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'corsair_dominator_64gb.jpg', 3, 80, '2026-04-06 13:46:29', N'Corsair'),
+(83, N'Trident Z Neo 32GB', 3400000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'gskill_trident_64gb.jpg', 3, 35, '2026-04-06 13:46:29', N'G.Skill'),
+(84, N'Team Elite 16GB', 1600000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://down-ph.img.susercontent.com/file/sg-11134201-22100-yx2ubhg0aaivc5', 3, 60, '2026-04-06 13:46:29', N'TeamGroup'),
+(85, N'Crucial Pro 32GB', 3300000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/61EUuA9HiaL._AC_.jpg', 3, 45, '2026-04-06 13:46:29', N'Crucial'),
+(86, N'Aorus RGB 16GB', 2400000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://smartland-tech.com/wp-content/uploads/2026/06/2cb5d453-1637-4c8a-9cdf-bca6cdc63898.png', 3, 15, '2026-04-06 13:46:29', N'GIGABYTE'),
+(87, N'Lexar Ares 32GB', 3600000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://platincdn.com/3393/pictures/JIYFEDVBRW1182024185730_Lexar-Ares-DT-32GB-RGB-DDR5-LD5EU016G-R6400GDLA-Ra.jpg', 3, 30, '2026-04-06 13:46:29', N'Lexar'),
+(88, N'Netac Shadow 16GB', 1100000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://netacbd.com/wp-content/uploads/2022/07/1080X1080-7-e1677757851813.jpg', 3, 100, '2026-04-06 13:46:29', N'Netac'),
+(89, N'Galax HOF 32GB', 5500000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://file.hstatic.net/200000061442/file/-32gb-hof-oc-lab-xoc-limited-edition1_c0e96b372a054a89be5725eb7d03eb20_1024x1024.jpg', 3, 3, '2026-04-06 13:46:29', N'GALAX'),
+(90, N'Oloy Blade 32GB', 3250000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://i5.walmartimages.com/seo/OLOy-Blade-RGB-OLOY-32GB-2-x-16GB-288-Pin-PC-RAM-DDR5-6000-PC5-48000-Desktop-Memory-Model-ND5U1660306BRKDA_9442b6df-2d87-4ea0-9f7f-78e5e36edc71.e4905b98195ae58f7ed8a2ec4712e02f.jpeg', 3, 25, '2026-04-06 13:46:29', N'OLOy'),
+(91, N'ROG Maximus Z790 Hero', 16500000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/7512B84A-0D14-4798-A585-3439F4B645CB/w1000/h732', 4, 12, '2026-04-06 13:46:29', N'ASUS'),
+(92, N'B760M Mortar WiFi', 4500000, N'Chipset: Intel B760 Express
+Socket: LGA 1700
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR4/DDR5 Dual Channel
+Lưu trữ: 2x M.2 NVMe PCIe 4.0, 4x SATA3
+Kết nối: 2.5GbE LAN, Wi-Fi 6, USB 3.2 Gen 2
+Bảo hành: 36 Tháng chính hãng', N'https://storage-asset.msi.com/global/picture/image/feature/mb/B760M/mag-b760m-mortar-wifi/msi-b760m-mortar-wifi-motherboard.png', 4, 45, '2026-04-06 13:46:29', N'MSI'),
+(93, N'Z790 Aorus Elite', 7800000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'asus_rog_z790.jpg', 4, 30, '2026-04-06 13:46:29', N'GIGABYTE'),
+(94, N'TUF B650-Plus', 5800000, N'Chipset: AMD B650
+Socket: AM5
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR5 Dual Channel EXPO
+Lưu trữ: 2x M.2 PCIe 4.0, 4x SATA 6Gb/s
+Kết nối: Realtek 2.5GbE LAN, Wi-Fi 6
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/files/media/2b278afc-50b2-452f-9fae-ec2825d27632/V1/img/kv-main.png', 4, 40, '2026-04-06 13:46:29', N'ASUS'),
+(95, N'B660M Pro RS', 3200000, N'Chipset: Intel B760 Express
+Socket: LGA 1700
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR4/DDR5 Dual Channel
+Lưu trữ: 2x M.2 NVMe PCIe 4.0, 4x SATA3
+Kết nối: 2.5GbE LAN, Wi-Fi 6, USB 3.2 Gen 2
+Bảo hành: 36 Tháng chính hãng', N'https://nguyencongpc.vn/media/product/22934-main-b660m-pro-rs-ax-4.jpeg', 4, 60, '2026-04-06 13:46:29', N'ASRock'),
+(96, N'X670E Carbon WiFi', 11500000, N'Chipset: AMD X670 / X870
+Socket: AM5 (Ryzen 7000/8000/9000)
+Chuẩn kích thước: ATX
+Hỗ trợ RAM: 4x DDR5 AMD EXPO
+Lưu trữ: PCIe 5.0 M.2, 4x SATA 6Gb/s
+Kết nối: Wi-Fi 6E/7, 2.5G LAN, USB4 40Gbps
+Bảo hành: 36 Tháng chính hãng', N'asus_rog_z790.jpg', 4, 15, '2026-04-06 13:46:29', N'MSI'),
+(97, N'Prime H610M-K', 2100000, N'Chipset: Bo mạch chủ chính hãng ASUS
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/eb6af592-21fd-4592-81f3-d342cf769939/', 4, 100, '2026-04-06 13:46:29', N'ASUS'),
+(98, N'B450M DS3H', 1850000, N'Chipset: Bo mạch chủ chính hãng GIGABYTE
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://rbtechngames.com/wp-content/uploads/2021/08/gigabyte_b450m_ds3h.jpg', 4, 80, '2026-04-06 13:46:29', N'GIGABYTE'),
+(99, N'ROG Strix B760-I', 5900000, N'Chipset: Intel B760 Express
+Socket: LGA 1700
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR4/DDR5 Dual Channel
+Lưu trữ: 2x M.2 NVMe PCIe 4.0, 4x SATA3
+Kết nối: 2.5GbE LAN, Wi-Fi 6, USB 3.2 Gen 2
+Bảo hành: 36 Tháng chính hãng', N'proart_z790.jpg', 4, 20, '2026-04-06 13:46:29', N'ASUS'),
+(100, N'Z790 GODLIKE', 35000000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://storage-asset.msi.com/global/picture/image/feature/mb/Z790/MEG-Z790-GODLIKE/m2-01.png', 4, 3, '2026-04-06 13:46:29', N'MSI'),
+(101, N'Z790 Taichi', 12500000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://preview.redd.it/weekly-bios-update-post-week-21-2024-v0-lnupskh4732d1.png?width=1000&format=png&auto=webp&s=035625ea434f9e87a2f721df80ae2f6929fe4569', 4, 8, '2026-04-06 13:46:29', N'ASRock'),
+(102, N'ProArt Z790-Creator', 13800000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/fe64f38f-9f58-4722-b2b0-723379b316be/', 4, 10, '2026-04-06 13:46:29', N'ASUS'),
+(103, N'B650I Aorus Ultra', 7200000, N'Chipset: AMD B650
+Socket: AM5
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR5 Dual Channel EXPO
+Lưu trữ: 2x M.2 PCIe 4.0, 4x SATA 6Gb/s
+Kết nối: Realtek 2.5GbE LAN, Wi-Fi 6
+Bảo hành: 36 Tháng chính hãng', N'proart_z790.jpg', 4, 12, '2026-04-06 13:46:29', N'GIGABYTE'),
+(104, N'PRO H610M-E', 1950000, N'Chipset: Bo mạch chủ chính hãng MSI
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81MY4UCX8wL._AC_SY450_.jpg', 4, 150, '2026-04-06 13:46:29', N'MSI'),
+(105, N'Crosshair X670E', 28000000, N'Chipset: AMD X670 / X870
+Socket: AM5 (Ryzen 7000/8000/9000)
+Chuẩn kích thước: ATX
+Hỗ trợ RAM: 4x DDR5 AMD EXPO
+Lưu trữ: PCIe 5.0 M.2, 4x SATA 6Gb/s
+Kết nối: Wi-Fi 6E/7, 2.5G LAN, USB4 40Gbps
+Bảo hành: 36 Tháng chính hãng', N'https://files.pccasegear.com/images/ROG-CROSSHAIR-X670E-EXTREME-add5.jpg', 4, 5, '2026-04-06 13:46:29', N'ASUS'),
+(106, N'Biostar B760MZ', 3100000, N'Chipset: Intel B760 Express
+Socket: LGA 1700
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR4/DDR5 Dual Channel
+Lưu trữ: 2x M.2 NVMe PCIe 4.0, 4x SATA3
+Kết nối: 2.5GbE LAN, Wi-Fi 6, USB 3.2 Gen 2
+Bảo hành: 36 Tháng chính hãng', N'gigabyte_h610m.jpg', 4, 40, '2026-04-06 13:46:29', N'Biostar'),
+(107, N'CVN B760M Frozen', 4200000, N'Chipset: Intel B760 Express
+Socket: LGA 1700
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR4/DDR5 Dual Channel
+Lưu trữ: 2x M.2 NVMe PCIe 4.0, 4x SATA3
+Kết nối: 2.5GbE LAN, Wi-Fi 6, USB 3.2 Gen 2
+Bảo hành: 36 Tháng chính hãng', N'https://down-my.img.susercontent.com/file/my-11134207-7r98p-ltdcg42jx1x342', 4, 25, '2026-04-06 13:46:29', N'COLORFUL'),
+(108, N'A520M S2H', 1650000, N'Chipset: Bo mạch chủ chính hãng GIGABYTE
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81o0aL-hQuL._AC_.jpg', 4, 90, '2026-04-06 13:46:29', N'GIGABYTE'),
+(109, N'NZXT N7 Z790', 8500000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71u-dioc8vL._AC_SL1500_.jpg', 4, 18, '2026-04-06 13:46:29', N'NZXT'),
+(110, N'A620M-HDV', 2800000, N'Chipset: Bo mạch chủ chính hãng ASRock
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/03/41/LD0006034167.jpg', 4, 55, '2026-04-06 13:46:29', N'ASRock'),
+(111, N'Z790 Dark Kingpin', 22000000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'z790_dark_kingpin.jpg', 4, 2, '2026-04-06 13:46:29', N'EVGA'),
+(112, N'X570S Tomahawk', 6500000, N'Chipset: Bo mạch chủ chính hãng MSI
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'asus_rog_z790.jpg', 4, 20, '2026-04-06 13:46:29', N'MSI'),
+(113, N'A520M-Plus', 2400000, N'Chipset: Bo mạch chủ chính hãng ASUS
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'asus_rog_z790.jpg', 4, 45, '2026-04-06 13:46:29', N'ASUS'),
+(114, N'Z790 UD', 5500000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71w2Kf+KK+L._AC_.jpg', 4, 35, '2026-04-06 13:46:29', N'GIGABYTE'),
+(115, N'B550M Steel Legend', 3800000, N'Chipset: Bo mạch chủ chính hãng ASRock
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'gigabyte_b760m_gaming.jpg', 4, 40, '2026-04-06 13:46:29', N'ASRock'),
+(116, N'MSI B650 Gaming', 4900000, N'Chipset: AMD B650
+Socket: AM5
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR5 Dual Channel EXPO
+Lưu trữ: 2x M.2 PCIe 4.0, 4x SATA 6Gb/s
+Kết nối: Realtek 2.5GbE LAN, Wi-Fi 6
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/03/76/LD0006037607.jpg', 4, 50, '2026-04-06 13:46:29', N'MSI'),
+(117, N'Prime Z790-P', 6200000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://www.dateks.lv/images/pic/2400/2400/712/1307.jpg', 4, 30, '2026-04-06 13:46:29', N'ASUS'),
+(118, N'H610M S2H', 2250000, N'Chipset: Bo mạch chủ chính hãng GIGABYTE
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81AdQh4+sHL._AC_SL1500_.jpg', 4, 110, '2026-04-06 13:46:29', N'GIGABYTE'),
+(119, N'X670E Steel Legend', 8900000, N'Chipset: AMD X670 / X870
+Socket: AM5 (Ryzen 7000/8000/9000)
+Chuẩn kích thước: ATX
+Hỗ trợ RAM: 4x DDR5 AMD EXPO
+Lưu trữ: PCIe 5.0 M.2, 4x SATA 6Gb/s
+Kết nối: Wi-Fi 6E/7, 2.5G LAN, USB4 40Gbps
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/05/98/02/LD0005980298.jpg', 4, 15, '2026-04-06 13:46:29', N'ASRock'),
+(120, N'Valkyrie Z790', 9500000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://thetechrevolutionist.com/wp-content/uploads/2022/09/z790-valkyrie-4.png?is-pending-load=1', 4, 7, '2026-04-06 13:46:29', N'Valkyrie'),
+(121, N'Samsung 990 Pro 1T', 3200000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://s13emagst.akamaized.net/products/50830/50829483/images/res_a126340b9468e6ebe28dfaef136309be.jpg', 5, 60, '2026-04-06 13:46:29', N'Samsung'),
+(122, N'Samsung 980 Pro 2T', 4500000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://www.ssd1tb.com/wp-content/uploads/Samsung-980-Pro-2tb-ssd.jpg', 5, 40, '2026-04-06 13:46:29', N'Samsung'),
+(123, N'WD SN850X 1TB', 2600000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6512/6512131cv12d.jpg', 5, 55, '2026-04-06 13:46:29', N'WD'),
+(124, N'Crucial P3 Plus 1T', 1850000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6509/6509715cv12d.jpg', 5, 100, '2026-04-06 13:46:29', N'Crucial'),
+(125, N'Kingston NV2 500G', 950000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://images.kabum.com.br/produtos/fotos/sync_mirakl/400945/SSD-Kingston-Nv2-500GB-M-2-2280-NVME-PCIE-4-0-X4-Leitura-3500MB-s-E-Grava-o-2100MB-s-Preto-Snv2s-500g_1732199474_gg.jpg', 5, 150, '2026-04-06 13:46:29', N'Kingston'),
+(126, N'Samsung 870 EVO 1T', 2100000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://www.ssd1tb.com/wp-content/uploads/samsung-870-evo-1tb.jpg', 5, 80, '2026-04-06 13:46:29', N'Samsung'),
+(127, N'P41 Platinum 2T', 5200000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.wccftech.com/wp-content/uploads/2024/03/DSC_0547-Custom.jpg', 5, 20, '2026-04-06 13:46:29', N'SK hynix'),
+(128, N'Lexar NM790 2T', 3800000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://a.allegroimg.com/original/11b9a3/a4d9f6854e66ad6a065f1a9a7151/Dysk-SSD-Lexar-2TB-M-2-PCIe-Gen4-NVMe-NM790', 5, 45, '2026-04-06 13:46:29', N'Lexar'),
+(129, N'Crucial T700 1TB', 5800000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6544/6544913_sd.jpg', 5, 15, '2026-04-06 13:46:29', N'Crucial'),
+(130, N'Aorus Gen5 2TB', 9500000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.mcc-jo.com/media/G6O8nomwymYdYRvEto1xZM1OlAH5n2PoshguCK3s.webp', 5, 10, '2026-04-06 13:46:29', N'GIGABYTE'),
+(131, N'TeamGroup MP33 1T', 1400000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://images.teamgroupinc.com/products/ssd/m2/mp33/1tb_01.jpg', 5, 90, '2026-04-06 13:46:29', N'TeamGroup'),
+(132, N'XPG S70 Blade 1T', 2200000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://webapi3.adata.com/storage/product/s70_blade_pk_1tb.png', 5, 65, '2026-04-06 13:46:29', N'ADATA'),
+(133, N'SN580 1TB', 1700000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://i5.walmartimages.com/seo/WD-Blue-1TB-SN580-NVMe-Internal-SSD-WDBWMY0010BBL-WRWM_28933fdc-65d2-4eef-95f4-474478cfd226.51d02b302ea9785e967da33be118bf8b.jpeg', 5, 75, '2026-04-06 13:46:29', N'WD'),
+(134, N'FireCuda 530 2TB', 5900000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://lagihitech.vn/wp-content/uploads/2022/02/SSD-Seagate-Firecuda-530-2TB-M.2-PCIe-Gen4x4-NVMe-ZP2000GM30013-hinh-1.jpg', 5, 18, '2026-04-06 13:46:29', N'Seagate'),
+(135, N'Sabrent Rocket 4TB', 12500000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71g-S-3aAjL._AC_.jpg', 5, 8, '2026-04-06 13:46:29', N'Sabrent'),
+(136, N'970 EVO Plus 2TB', 3900000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6347/6347286cv11d.jpg', 5, 30, '2026-04-06 13:46:29', N'Samsung'),
+(137, N'PNY CS2241 1TB', 1600000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'5702bdc6-55f8-4d08-8a54-95ad484403f2_137.jpg', 5, 50, '2026-04-06 13:46:29', N'PNY'),
+(138, N'Silicon Power UD90 1650000', 1650000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'kingston_nv3_1tb.jpg', 5, 60, '2026-04-06 13:46:29', N'Silicon Power'),
+(139, N'MP600 Pro 2TB', 4800000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'samsung_990pro.jpg', 5, 22, '2026-04-06 13:46:29', N'Corsair'),
+(140, N'KC3000 1TB', 2450000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://www.dateks.lv/images/pic/1200/1200/849/1083.jpg', 5, 40, '2026-04-06 13:46:29', N'Kingston'),
+(141, N'Crucial MX500 1TB', 1800000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://c1.neweggimages.com/productimage/nb1280/20-156-174-V05.jpg', 5, 85, '2026-04-06 13:46:29', N'Crucial'),
+(142, N'SN350 480GB', 850000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'95215bdb-8ca4-4815-9d8b-6e4f841a1cef_142.jpg', 5, 120, '2026-04-06 13:46:29', N'WD'),
+(143, N'Spatium M480 2TB', 4600000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71KFqIt1KeL._AC_.jpg', 5, 20, '2026-04-06 13:46:29', N'MSI'),
+(144, N'Transcend 250S 1T', 2100000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'kingspec_nvme_512gb.jpg', 5, 35, '2026-04-06 13:46:29', N'Transcend'),
+(145, N'Viper VP4300 2TB', 5400000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://i5.walmartimages.com/seo/Patriot-Viper-VP4300-2TB-Internal-SSD-W-HS-NVMe-PCIe-Gen-4x4-M-2-2280-Solid-State-Drive-VP4300-2TBM28H_2c78e06e-e406-4ac8-a54f-2c5b7fcdbfb6.d9f034f5a760a6dd0a15752b29a0c1c8.jpeg', 5, 12, '2026-04-06 13:46:29', N'Razer'),
+(146, N'Lexar NM620 512G', 900000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://lap.lk/wp-content/uploads/2023/06/Lexar-NM620-512GB.png', 5, 100, '2026-04-06 13:46:29', N'Lexar'),
+(147, N'Netac N7000 2TB', 3600000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.neowin.com/news/images/uploaded/2023/10/1698065089_netac-internal-ssd.jpg', 5, 40, '2026-04-06 13:46:29', N'Netac'),
+(148, N'870 QVO 4TB', 8500000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'crucial_t705_2tb.jpg', 5, 31, '2026-04-06 13:46:29', N'Samsung'),
+(149, N'Adata SU650 240G', 450000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://img.pchome.com.tw/cs/items/DRAH0VA900HX1I5/000001_1727978028.jpg', 5, 200, '2026-04-06 13:46:29', N'ADATA'),
+(150, N'Crucial T705 2TB', 10500000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/61wfug68D+L.jpg', 5, 5, '2026-04-06 13:46:29', N'Crucial'),
+(151, N'LG 27GR95QE', 22500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://files.pccasegear.com/images/27GR95QE-B-thumb.jpg', 6, 12, '2026-04-06 13:46:29', N'LG'),
+(152, N'Dell U2723QE', 14800000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://www.ofzenandcomputing.com/wp-content/uploads/2026/01/B09TQZP9CL_customer_1.jpg', 6, 25, '2026-04-06 13:46:29', N'Dell'),
+(153, N'VG249Q', 4200000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://dlcdnimgs.asus.com/websites/global/products/mpppu3u01ux28nvt/images/section4-img.png', 6, 60, '2026-04-06 13:46:29', N'ASUS'),
+(154, N'Odyssey Neo G8', 28000000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81dDR+bGO3L._AC_.jpg', 6, 8, '2026-04-06 13:46:29', N'Samsung'),
+(155, N'Gigabyte M27Q', 7800000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71d-odH5-8L._AC_SL1500_.jpg', 6, 35, '2026-04-06 13:46:29', N'GIGABYTE'),
+(156, N'AOC 24G2', 3900000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81NEMtk5qPL._AC_SL1500_.jpg', 6, 80, '2026-04-06 13:46:29', N'AOC'),
+(157, N'ViewSonic VX2728', 4500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://wise-tech.com.pk/wp-content/uploads/2024/04/VX2728-Side-View.png', 6, 50, '2026-04-06 13:46:29', N'ViewSonic'),
+(158, N'MAG274QRF-QD', 10500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://asset.msi.com/resize/image/global/product/product_1698825055a998b04cad4f3a7146e1cbbd35fe08d1.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 6, 20, '2026-04-06 13:46:29', N'MSI'),
+(159, N'AW3423DW', 32000000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71ufV5NQ44L._AC_SL1500_.jpg', 6, 5, '2026-04-06 13:46:29', N'Dell'),
+(160, N'BenQ SW271C', 42000000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6486/6486795cv1d.jpg', 6, 3, '2026-04-06 13:46:29', N'BenQ'),
+(161, N'Samsung M7', 8200000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://i5.walmartimages.com/seo/SAMSUNG-32-Smart-Monitor-M7-M70D-4K-UHD-with-Streaming-TV-Speakers-and-USB-C_b8469dad-9f08-4fdf-a685-b499f060f079.a0006f71cc35ee2ea5151413bf93f24b.jpeg?odnHeight=640&odnWidth=640&odnBg=FFFFFF', 6, 30, '2026-04-06 13:46:29', N'Samsung'),
+(162, N'LG 24MP60G', 2900000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71Ud77qJvSL._SL1500_.jpg', 6, 100, '2026-04-06 13:46:29', N'LG'),
+(163, N'Swift PG42UQ', 38000000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://www.gaming.gen.tr/wp-content/uploads/2023/05/asus-rog-swift-pg42uq-41-5-inc-138hz-0-1ms-uhd-adaptive-sync-oled-gaming-monitor-y.jpg', 6, 4, '2026-04-06 13:46:29', N'ASUS'),
+(164, N'Gigabyte G24F 2', 4100000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81xNJON5ysL._AC_SL1500_.jpg', 6, 70, '2026-04-06 13:46:29', N'GIGABYTE'),
+(165, N'HP Z27k G3', 15500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://mitosshoppers.com/wp-content/uploads/2026/01/2-19.jpg', 6, 15, '2026-04-06 13:46:29', N'HP'),
+(166, N'Nitro VG271U', 6500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://i5.walmartimages.com/seo/Acer-Nitro-VG271U-M3bmiipx-27-WQHD-2560-x-1440-IPS-Monitor-with-AMD-FreeSync-Premium-Technology_87dece16-0f5e-4d5f-9579-ae97d9169316.ab486d96a9e5254d8824bc11fb4f19a4.png', 6, 45, '2026-04-06 13:46:29', N'Acer'),
+(167, N'Dell S2721DGF', 9200000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6421/6421624cv17d.jpg', 6, 22, '2026-04-06 13:46:29', N'Dell'),
+(168, N'LG DualUp', 16000000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'monitor_default.png', 6, 10, '2026-04-06 13:46:29', N'LG'),
+(169, N'Odyssey G5', 7200000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81Pm4yGtiYL._AC_SL1500_.jpg', 6, 40, '2026-04-06 13:46:29', N'Samsung'),
+(170, N'Legion Y25-30', 6800000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'monitor_default.png', 6, 25, '2026-04-06 13:46:29', N'Lenovo'),
+(171, N'ProArt PA278QV', 8900000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://dlcdnimgs.asus.com/websites/global/products/gvxnvsvumc3y1lyy/images/pic_true_beauty.png', 6, 18, '2026-04-06 13:46:29', N'ASUS'),
+(172, N'HKC ANT27TQC', 5500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://doc-fd.zol-img.com.cn/t_s640x2000/g6/M00/0A/06/ChMkKmBZkIaIYkKIACPmpm8vrpYAAL71QN3WEcAI-a-654.png', 6, 55, '2026-04-06 13:46:29', N'HKC'),
+(173, N'MSI G2412', 3500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://asset.msi.com/resize/image/global/product/product_16533746428fdd9ede10dbb55365e4d4267b978414.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 6, 90, '2026-04-06 13:46:29', N'MSI'),
+(174, N'Dell E2222H', 2200000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'monitor_default.png', 6, 150, '2026-04-06 13:46:29', N'Dell'),
+(175, N'LG 29WP500', 5200000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://c1.neweggimages.com/ProductImageCompressAll1280/24-026-192-V04.jpg', 6, 35, '2026-04-06 13:46:29', N'LG'),
+(176, N'Philips 242E1', 3100000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/107/MTA-129724838/no-brand_no-brand_full01.jpg', 6, 80, '2026-04-06 13:46:29', N'Philips'),
+(177, N'AOC CU34G2X', 12500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'monitor_default.png', 6, 15, '2026-04-06 13:46:29', N'AOC'),
+(178, N'Xeneon Flex', 45000000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'monitor_default.png', 6, 2, '2026-04-06 13:46:29', N'Corsair'),
+(179, N'Zowie XL2546K', 13500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'monitor_default.png', 6, 20, '2026-04-06 13:46:29', N'BenQ'),
+(180, N'Xiaomi Mi 34', 9500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://ph-test-11.slatic.net/p/8642c1abe8e78d3a3f37b584614461b8.jpg', 6, 40, '2026-04-06 13:46:29', N'Xiaomi'),
+(181, N'Intel Arc A770 Limited Edition GPU', 8356600, N'GPU: Card đồ họa chuyên dụng Intel
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71rzJRZ7lIL._AC_.jpg', 2, 50, '2026-06-05 10:05:55', N'Intel'),
+(182, N'Intel Arc A750 Graphics Card', 6324600, N'GPU: Card đồ họa chuyên dụng Intel
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71sO2CZL1UL._AC_.jpg', 2, 49, '2026-06-05 10:05:55', N'Intel'),
+(183, N'Intel Arc A580 Graphics Card', 4546600, N'GPU: Card đồ họa chuyên dụng Intel
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'msi_rtx_5060_ventus.jpg', 2, 50, '2026-06-05 10:05:55', N'Intel'),
+(184, N'AMD Radeon RX 7900 XT GPU', 22834600, N'GPU: AMD Radeon RX 7900 XTX / XT
+Dung lượng: 24GB GDDR6 384-bit
+Cổng xuất hình: DisplayPort 2.1, HDMI 2.1
+Tính năng: Kiến trúc RDNA 3, AMD FSR 3.0, AV1 Encoding
+Nguồn đề xuất: 800W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81ZBhhO35mL._AC_.jpg', 2, 50, '2026-06-05 10:05:55', N'AMD'),
+(185, N'AMD Radeon RX 7800 XT GPU', 12674600, N'GPU: AMD Radeon RX 7800 XT / RX 7700 XT
+Dung lượng: 12GB - 16GB GDDR6 256-bit
+Cổng xuất hình: 3x DP 2.1, 1x HDMI 2.1
+Tính năng: RDNA 3, FSR 3, Chiến game 2K Ultra mượt mà
+Nguồn đề xuất: 700W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81VpOvD9wJL._AC_.jpg', 2, 50, '2026-06-05 10:05:55', N'AMD'),
+(186, N'AMD Ryzen 5 5600X Desktop Processor', 3784600, N'Socket: AM4
+Số nhân/luồng: 6 Nhân / 12 Luồng
+Xung nhịp: Base 3.6GHz - 3.9GHz, Boost 4.2GHz - 4.4GHz
+Bộ nhớ đệm: 19MB - 35MB Cache
+TDP: 65W
+Bảo hành: 36 Tháng chính hãng', N'https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-5-5600x.jpg', 1, 50, '2026-06-05 10:05:55', N'AMD'),
+(187, N'ASUS ROG Maximus Z790 Dark Hero', 17754600, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/8E88DC59-A399-4385-8BCB-C3877F4EB746/w1000/h732', 4, 50, '2026-06-05 10:05:55', N'ASUS'),
+(188, N'ASUS ROG Strix X670E-E Gaming WiFi', 12674600, N'Chipset: AMD X670 / X870
+Socket: AM5 (Ryzen 7000/8000/9000)
+Chuẩn kích thước: ATX
+Hỗ trợ RAM: 4x DDR5 AMD EXPO
+Lưu trữ: PCIe 5.0 M.2, 4x SATA 6Gb/s
+Kết nối: Wi-Fi 6E/7, 2.5G LAN, USB4 40Gbps
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/BADFA920-702B-451B-9592-8279ACD6857B', 4, 50, '2026-06-05 10:05:55', N'ASUS'),
+(189, N'ASUS ROG Strix GeForce RTX 4090 OC Edition', 50774600, N'GPU: NVIDIA GeForce RTX 4090 / RTX 5090
+Dung lượng: 24GB GDDR6X 384-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: Ray Tracing Gen 3/4, DLSS 3.5, 4K Ultra Gaming
+Nguồn đề xuất: 850W - 1000W
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/00/29/LD0006002969.jpg', 2, 50, '2026-06-05 10:05:55', N'ASUS'),
+(190, N'ASUS ROG Swift OLED PG32UCDM', 32994600, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/91MMzcvOwLL.jpg', 6, 50, '2026-06-05 10:05:55', N'ASUS'),
+(191, N'ASUS ROG Ryujin III 360 ARGB', 8864600, N'Kích thước Rad: 360mm / 240mm Nhôm nguyên khối
+Màn hình: LCD 2.4 - 3.5 inch hiển thị nhiệt độ & GIF tùy biến
+Quạt tản nhiệt: 3x 120mm ARGB PWM tốc độ 2200 RPM
+Độ ồn: Dưới 28 dBA siêu êm
+Tương thích Socket: Intel LGA 1700/1851, AMD AM5/AM4
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/A1D6D78A-00BE-4F89-A360-2790312CDDAD', 13, 50, '2026-06-05 10:05:55', N'ASUS'),
+(192, N'ASUS ROG Thor 1200W Platinum II', 8102600, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'asus_rog_rtx_4090.jpg', 11, 50, '2026-06-05 10:05:55', N'ASUS'),
+(193, N'MSI MEG Z790 GODLIKE MAX', 30454600, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://storage-asset.msi.com/global/picture/image/feature/mb/Z790/meg-z790-godlike-max/images/mb-godlike-max-02.png', 4, 50, '2026-06-05 10:05:55', N'MSI'),
+(194, N'MSI MAG B650 TOMAHAWK WIFI', 5562600, N'Chipset: AMD B650
+Socket: AM5
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR5 Dual Channel EXPO
+Lưu trữ: 2x M.2 PCIe 4.0, 4x SATA 6Gb/s
+Kết nối: Realtek 2.5GbE LAN, Wi-Fi 6
+Bảo hành: 36 Tháng chính hãng', N'https://storage-asset.msi.com/global/picture/image/feature/mb/B650/MAG-B650-TOMAHAWK-WIFI/mag-b650-tomahawk-wifi.png', 4, 50, '2026-06-05 10:05:55', N'MSI'),
+(195, N'MSI GeForce RTX 4080 SUPER 16G GAMING X SLIM', 26644600, N'GPU: NVIDIA GeForce RTX 4080 SUPER / RTX 5080
+Dung lượng: 16GB GDDR6X 256-bit
+Cổng xuất hình: 1x HDMI 2.1, 3x DisplayPort 1.4a
+Tính năng: DLSS 3.5 Frame Generation, Ray Tracing, Render 3D
+Nguồn đề xuất: 750W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71262tPfh-L._AC_SL1500_.jpg', 2, 50, '2026-06-05 10:05:55', N'MSI'),
+(196, N'MSI MPG 271QRX QD-OLED', 20294600, N'GPU: Card đồ họa chuyên dụng MSI
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://images.versus.io/objects/msi-mpg-271qrx-qd-oled-27.front.master2x.1714391809576.webp', 6, 50, '2026-06-05 10:05:55', N'MSI'),
+(197, N'MSI MEG MAESTRO 700L PZ', 10642600, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://storage-asset.msi.com/global/picture/image/feature/PC-Case/MEG-MAESTRO-700L-PZ/meg-maestro-700l-pz-connect-pd.png', 12, 50, '2026-06-05 10:05:55', N'MSI'),
+(198, N'MSI MAG CORELIQUID I360', 3530600, N'Thương hiệu: MSI
+Phân loại: Linh kiện / Phụ kiện PC cao cấp
+Chất lượng: Hàng chính hãng Full VAT nguyên seal 100%
+Bảo hành: 24 - 36 Tháng chính hãng theo tiêu chuẩn nhà sản xuất', N'https://cdn.mwave.com.au/images/400/msi_mag_coreliquid_i360_360mm_argb_aio_liquid_cpu_cooler_black_ac79069_96031.jpg', 13, 50, '2026-06-05 10:05:55', N'MSI'),
+(199, N'MSI SPATIUM M570 PCIe 5.0 NVMe M.2 HS', 7594600, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://asset.msi.com/resize/image/global/product/product_167573935424940aba56cd1dba801846447d621bb2.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 5, 50, '2026-06-05 10:05:55', N'MSI'),
+(200, N'Gigabyte Z790 AORUS XTREME X', 25374600, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://static.gigabyte.com/StaticFile/Image/Global/dee0b0bef844f7dcac99c3569fdf02c8/Product/36669/Png', 4, 50, '2026-06-05 10:05:55', N'GIGABYTE'),
+(201, N'Gigabyte X670E AORUS MASTER', 11404600, N'Chipset: AMD X670 / X870
+Socket: AM5 (Ryzen 7000/8000/9000)
+Chuẩn kích thước: ATX
+Hỗ trợ RAM: 4x DDR5 AMD EXPO
+Lưu trữ: PCIe 5.0 M.2, 4x SATA 6Gb/s
+Kết nối: Wi-Fi 6E/7, 2.5G LAN, USB4 40Gbps
+Bảo hành: 36 Tháng chính hãng', N'https://c1.neweggimages.com/ProductImageCompressAll1280/13-145-405-01.jpg', 4, 50, '2026-06-05 10:05:55', N'GIGABYTE'),
+(202, N'Gigabyte M27Q Gaming Monitor', 7594600, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'monitor_default.png', 6, 50, '2026-06-05 10:05:55', N'GIGABYTE'),
+(203, N'Gigabyte AORUS FO32U2P', 30454600, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71M5qy2eL0L._AC_.jpg', 6, 50, '2026-06-05 10:05:55', N'GIGABYTE'),
+(204, N'Gigabyte AORUS Gen5 12000 SSD 2TB', 8102600, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen5 x4
+Tốc độ đọc: 12.400 MB/s
+Tốc độ ghi: 11.800 MB/s
+Bộ nhớ đệm: DRAM Cache DDR4 chuyên dụng
+Bảo hành: 60 Tháng chính hãng (5 Năm)', N'crucial_t705_2tb.jpg', 5, 50, '2026-06-05 10:05:55', N'GIGABYTE'),
+(205, N'Gigabyte UD1000GM PG5 (Rev 2.0)', 4038600, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.cclonline.com/cdn-cgi/image/width=2000/images/shopblocks/UD1000GM%20PG5-05.png', 11, 50, '2026-06-05 10:05:55', N'GIGABYTE'),
+(206, N'Gigabyte AORUS C500 GLASS', 4546600, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'corsair_3500x_black.jpg', 12, 50, '2026-06-05 10:05:55', N'GIGABYTE'),
+(207, N'Corsair Dominator Titanium RGB DDR5 32GB (2x16GB)6000MHz', 4673600, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/61HhbZrQ4-L._AC_.jpg', 3, 50, '2026-06-05 10:05:55', N'Corsair'),
+(208, N'Corsair Vengeance RGB DDR5 64GB (2x32GB)5600MHz', 5562600, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://img.terabyteshop.com.br/produto/g/memoria-ddr5-corsair-vengeance-rgb-64gb-2x32gb-5600mhz-preto-cmh64gx5m2b5600z40k_236431.jpg', 3, 50, '2026-06-05 10:05:55', N'Corsair'),
+(209, N'Corsair iCUE LINK H150i LCD Liquid CPU Cooler', 7340600, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'corsair_nautilus_360.jpg', 13, 50, '2026-06-05 10:05:55', N'Corsair'),
+(210, N'Corsair 5000D AIRFLOW Tempered Glass Mid-Tower', 4165600, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://cwsmgmt.corsair.com/pdp/5000-series/images/5000d-af-clear-clean-cool.png', 12, 50, '2026-06-05 10:05:55', N'Corsair'),
+(211, N'Corsair iCUE LINK 6500X RGB Mid-Tower DualChamber', 5054600, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Cases/6500/CC-9011269-WW/Gallery/6500X_RGB_BLACK_RENDER_01.webp', 12, 50, '2026-06-05 10:05:55', N'Corsair'),
+(212, N'Corsair RM1000x Shift Fully Modular ATX PSU', 5308600, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81dwGXVwpgL.jpg', 11, 50, '2026-06-05 10:05:55', N'Corsair'),
+(213, N'Corsair AX1600i Digital ATX Power Supply', 15468600, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://www.e-weekly.co.uk/Images/JohnMac/Corsair/CSR-AX160I/Images/AX1600i_03.jpg', 11, 50, '2026-06-05 10:05:55', N'Corsair'),
+(214, N'Corsair K100 RGB Mechanical Gaming Keyboard', 6324600, N'Kích thước: 24 inch - 34 inch
+Độ phân giải: 2K QHD (2560x1440) / 4K UHD (3840x2160)
+Tấm nền: Fast IPS / OLED 10-bit màu 1.07 tỷ màu
+Tần số quét: 165Hz - 240Hz, Tốc độ phản hồi: 0.03ms - 1ms GtG
+Độ phủ màu: 99% sRGB, 95% DCI-P3 chuẩn đồ họa
+Công nghệ: G-Sync Compatible, FreeSync Premium Pro, HDR400
+Cổng kết nối: 2x HDMI 2.1, 2x DisplayPort 1.4, USB Hub
+Bảo hành: 36 Tháng chính hãng', N'keyboard_default.png', 15, 50, '2026-06-05 10:05:55', N'Corsair'),
+(215, N'Corsair Darkstar Wireless MMO Gaming Mouse', 4292600, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Gaming-Mice/CH-931A011/DARKSTAR_WIRELESS_01.webp', 16, 50, '2026-06-05 10:05:55', N'Corsair'),
+(216, N'Corsair Virtuoso RGB Wireless XT Headset', 6832600, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Gaming-Headsets/CA-9011188-NA/Gallery/VIRTUOSO_XT_01.webp', 17, 50, '2026-06-05 10:05:55', N'Corsair'),
+(217, N'Logitech G Pro X Superlight 2 Wireless GamingMouse', 4038600, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://techubme.com/wp-content/uploads/2024/07/logitech_Pro_X_Super_light_2.png', 16, 50, '2026-06-05 10:05:55', N'Logitech'),
+(218, N'Logitech G502 X LIGHTSPEED Wireless GamingMouse', 3530600, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'mouse_default.png', 16, 50, '2026-06-05 10:05:55', N'Logitech'),
+(219, N'Logitech G915 TKL Wireless Mechanical Keyboard', 5816600, N'Kích thước: 24 inch - 34 inch
+Độ phân giải: 2K QHD (2560x1440) / 4K UHD (3840x2160)
+Tấm nền: Fast IPS / OLED 10-bit màu 1.07 tỷ màu
+Tần số quét: 165Hz - 240Hz, Tốc độ phản hồi: 0.03ms - 1ms GtG
+Độ phủ màu: 99% sRGB, 95% DCI-P3 chuẩn đồ họa
+Công nghệ: G-Sync Compatible, FreeSync Premium Pro, HDR400
+Cổng kết nối: 2x HDMI 2.1, 2x DisplayPort 1.4, USB Hub
+Bảo hành: 36 Tháng chính hãng', N'https://resource.logitechg.com/d_transparent.gif/content/dam/gaming/en/products/g915-tkl/g915-tkl-gallery/deu-g915-tkl-carbon-gallery-topdown.png', 15, 50, '2026-06-05 10:05:55', N'Logitech'),
+(220, N'Logitech G Pro X TKL LIGHTSPEED Gaming Keyboard', 5054600, N'Kích thước: 24 inch - 34 inch
+Độ phân giải: 2K QHD (2560x1440) / 4K UHD (3840x2160)
+Tấm nền: Fast IPS / OLED 10-bit màu 1.07 tỷ màu
+Tần số quét: 165Hz - 240Hz, Tốc độ phản hồi: 0.03ms - 1ms GtG
+Độ phủ màu: 99% sRGB, 95% DCI-P3 chuẩn đồ họa
+Công nghệ: G-Sync Compatible, FreeSync Premium Pro, HDR400
+Cổng kết nối: 2x HDMI 2.1, 2x DisplayPort 1.4, USB Hub
+Bảo hành: 36 Tháng chính hãng', N'https://www.enation.sg/wp-content/uploads/2025/06/251.png', 15, 50, '2026-06-05 10:05:55', N'Logitech'),
+(221, N'Logitech G Pro X 2 LIGHTSPEED Wireless Headset', 6324600, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'headset_default.png', 17, 50, '2026-06-05 10:05:55', N'Logitech'),
+(222, N'Logitech MX Master 3S Wireless Mouse', 2514600, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/61+OT7FPABL._AC_SL1500_.jpg', 16, 50, '2026-06-05 10:05:55', N'Logitech'),
+(223, N'Logitech MX Keys S Wireless Keyboard', 2768600, N'Kích thước: 24 inch - 34 inch
+Độ phân giải: 2K QHD (2560x1440) / 4K UHD (3840x2160)
+Tấm nền: Fast IPS / OLED 10-bit màu 1.07 tỷ màu
+Tần số quét: 165Hz - 240Hz, Tốc độ phản hồi: 0.03ms - 1ms GtG
+Độ phủ màu: 99% sRGB, 95% DCI-P3 chuẩn đồ họa
+Công nghệ: G-Sync Compatible, FreeSync Premium Pro, HDR400
+Cổng kết nối: 2x HDMI 2.1, 2x DisplayPort 1.4, USB Hub
+Bảo hành: 36 Tháng chính hãng', N'https://resource.logitech.com/w_1800,h_1800,c_limit,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/product-gallery/graphite/mx-keys-s-keyboard-top-view-graphite-us.png?v=1', 15, 50, '2026-06-05 10:05:55', N'Logitech'),
+(224, N'Razer Viper V3 Pro Wireless Gaming Mouse', 4038600, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/619xpFKAXPL.jpg', 16, 50, '2026-06-05 10:05:55', N'Razer'),
+(225, N'Razer DeathAdder V3 Pro Wireless Gaming Mouse', 3784600, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://wise-tech.com.pk/wp-content/uploads/2023/07/Razer-DeathAdder-V3-Pro-Ergonomic-Gaming-Mouse-White.png', 16, 50, '2026-06-05 10:05:55', N'Razer'),
+(226, N'Razer Huntsman V3 Pro TKL Mechanical Keyboard', 5562600, N'Kích thước: 24 inch - 34 inch
+Độ phân giải: 2K QHD (2560x1440) / 4K UHD (3840x2160)
+Tấm nền: Fast IPS / OLED 10-bit màu 1.07 tỷ màu
+Tần số quét: 165Hz - 240Hz, Tốc độ phản hồi: 0.03ms - 1ms GtG
+Độ phủ màu: 99% sRGB, 95% DCI-P3 chuẩn đồ họa
+Công nghệ: G-Sync Compatible, FreeSync Premium Pro, HDR400
+Cổng kết nối: 2x HDMI 2.1, 2x DisplayPort 1.4, USB Hub
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81qBUNMtcLL._AC_.jpg', 15, 50, '2026-06-05 10:05:55', N'Razer'),
+(227, N'Razer BlackWidow V4 Pro Mechanical GamingKeyboard', 5816600, N'Kích thước: 24 inch - 34 inch
+Độ phân giải: 2K QHD (2560x1440) / 4K UHD (3840x2160)
+Tấm nền: Fast IPS / OLED 10-bit màu 1.07 tỷ màu
+Tần số quét: 165Hz - 240Hz, Tốc độ phản hồi: 0.03ms - 1ms GtG
+Độ phủ màu: 99% sRGB, 95% DCI-P3 chuẩn đồ họa
+Công nghệ: G-Sync Compatible, FreeSync Premium Pro, HDR400
+Cổng kết nối: 2x HDMI 2.1, 2x DisplayPort 1.4, USB Hub
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81L4FpeS3VL._AC_SL1500_.jpg', 15, 50, '2026-06-05 10:05:55', N'Razer'),
+(228, N'Razer BlackShark V2 Pro (2023 Edition) WirelessHeadset', 5054600, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://images-na.ssl-images-amazon.com/images/I/71Z9KK9-zvL.jpg', 17, 50, '2026-06-05 10:05:55', N'Razer'),
+(229, N'Samsung 990 PRO PCIe 4.0 NVMe M.2 SSD 2TB', 4546600, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 7.450 MB/s
+Tốc độ ghi: 6.900 MB/s
+Độ bền (TBW): 1200 TBW
+Bảo hành: 60 Tháng chính hãng (5 Năm)', N'https://images.samsung.com/is/image/samsung/p6pim/ca_fr/mz-v9p2t0b-am/gallery/ca-fr-990pro-nvme-m2-ssd-mz-v9p2t0b-am-534208574?$650_519_PNG$', 5, 50, '2026-06-05 10:05:55', N'Samsung'),
+(230, N'Samsung 990 EVO PCIe 4.0 x4 / 5.0 x2 M.2 SSD 1TB', 2260600, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://images.samsung.com/is/image/samsung/p6pim/ca/mz-v9e1t0b-am/gallery/ca-990-evo-nvme-m2-ssd-mz-v9e1t0b-am-539584186?$650_519_PNG$', 5, 50, '2026-06-05 10:05:55', N'Samsung'),
+(231, N'Samsung T7 Shield Portable SSD 2TB', 4292600, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://down-ph.img.susercontent.com/file/sg-11134275-7rd6w-m7rcerx9s5nrbc', 5, 50, '2026-06-05 10:05:55', N'Samsung'),
+(232, N'Samsung Odyssey OLED G9 (G95SC) Gaming Monitor', 40614600, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/4bc7c582-c2db-4ce3-ab96-6c47e7521993.jpg', 6, 50, '2026-06-05 10:05:55', N'Samsung'),
+(233, N'Samsung Odyssey Ark Gen 2 Mini-LED Monitor', 63474600, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://images-na.ssl-images-amazon.com/images/I/81nwxTmzMRL.jpg', 6, 50, '2026-06-05 10:05:55', N'Samsung'),
+(234, N'Samsung Galaxy Buds3 Pro', 6324600, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/61Mv3cWzZeL._AC_SL1500_.jpg', 17, 50, '2026-06-05 10:05:55', N'Samsung'),
+(235, N'Kingston FURY Renegade DDR5 RGB 32GB (2x16GB) 7200MHz', 4292600, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://img.evetech.co.za/repository/ProductImages/kingston-fury-renegade-rgb-32gb-7200mhz-ddr5-black-memory-1600px-v1-01.webp', 3, 50, '2026-06-05 10:05:55', N'Kingston'),
+(236, N'Kingston FURY Beast DDR5 32GB (2x16GB) 6000MHz', 3022600, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/717cPftxQgL._AC_.jpg', 3, 50, '2026-06-05 10:05:55', N'Kingston'),
+(237, N'Kingston KC3000 PCIe 4.0 NVMe M.2 SSD 2TB', 3911600, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 7.450 MB/s
+Tốc độ ghi: 6.900 MB/s
+Độ bền (TBW): 1200 TBW
+Bảo hành: 60 Tháng chính hãng (5 Năm)', N'https://www.onoff.az/storage/uploads/products/onoff-2026-01-15t231256269-32101.jpg', 5, 50, '2026-06-05 10:05:55', N'Kingston'),
+(238, N'Kingston NV2 PCIe 4.0 NVMe M.2 SSD 1TB', 1625600, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://images.kabum.com.br/produtos/fotos/sync_mirakl/400812/SSD-1TB-Kingston-Nv2-M-2-2280-PCIe-NVMe-Leitura-3500MB-s-Grava-o-2100MB-s-Snv2s-1000g_1730146919_gg.jpg', 5, 50, '2026-06-05 10:05:55', N'Kingston'),
+(239, N'Kingston FURY Impact DDR5 SO-DIMM 32GB (2x16GB) 5600MHz', 3149600, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'http://extra.md/public/products/thumbs/205027_32gb-ddr55600mhz-sodimm-kingston-fury-impact-9857901454477.jpg', 3, 50, '2026-06-05 10:05:55', N'Kingston'),
+(240, N'WD Red Pro NAS Internal Hard Drive 12TB', 7594600, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71X-Co2yQgL._AC_.jpg', 10, 50, '2026-06-05 10:05:55', N'WD'),
+(241, N'Seagate IronWolf Pro 16TB NAS HDD', 8356600, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://i5.walmartimages.com/seo/Seagate-IronWolf-Pro-16TB-NAS-Hard-Drive-7200-RPM-256MB-Cache-CMR-SATA-6-0Gb-s-3-5-Internal-HDD-NE-ST16000NE000_ce14528e-ad18-4af3-aed0-35a74db6ecf3.d2fe1c875b4ae1ab2dfd13fd849edd5a.jpeg', 10, 50, '2026-06-05 10:05:55', N'Seagate'),
+(242, N'Noctua NH-D15 chromax.black Dual-Tower Cooler', 3022600, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://os-jo.com/image/cache/catalog/products/ANOCTUA/NH-D15-BLACK/BLACK-1200x1200.JPEG', 13, 50, '2026-06-05 10:05:55', N'Noctua'),
+(243, N'NZXT H9 Flow Dual-Chamber Mid-Tower', 4038600, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6529/6529623cv11d.jpg', 12, 50, '2026-06-05 10:05:55', N'NZXT'),
+(244, N'NZXT Kraken Elite 360 RGB Liquid Cooler', 7594600, N'Kích thước Rad: 360mm / 240mm Nhôm nguyên khối
+Màn hình: LCD 2.4 - 3.5 inch hiển thị nhiệt độ & GIF tùy biến
+Quạt tản nhiệt: 3x 120mm ARGB PWM tốc độ 2200 RPM
+Độ ồn: Dưới 28 dBA siêu êm
+Tương thích Socket: Intel LGA 1700/1851, AMD AM5/AM4
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://img.terabyteshop.com.br/produto/g/water-cooler-nzxt-kraken-elite-360-rgb-360mm-aio-lcd-display-black-intel-amd-rl-kr36e-b1_191056.jpg', 13, 50, '2026-06-05 10:05:55', N'NZXT'),
+(245, N'SteelSeries Arctis Nova Pro Wireless Headset', 8864600, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://images.hometheaterreview.com/htr-stateless/2025/07/646a3e4a-steelseries-arctis-nova-pro-wireless-gaming-headset-scaled.jpg', 17, 50, '2026-06-05 10:05:55', N'SteelSeries'),
+(246, N'BenQ ZOWIE XL2566K 360Hz Esports Gaming Monitor', 15214600, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6539/6539682_sd.jpg', 6, 50, '2026-06-05 10:05:55', N'BenQ'),
+(247, N'Sony WH-1000XM5 Wireless Noise CancelingHeadphones', 10134600, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://d1ncau8tqf99kp.cloudfront.net/converted/103364_original_local_1200x1050_v3_converted.webp', 17, 50, '2026-06-05 10:05:55', N'Sony'),
+(248, N'Crucial Pro DDR5 48GB (2x24GB) 5600MHz Kit', 3784600, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://a.allegroimg.com/original/116f3d/93c9c04d46c29c03260e9a12823a/SUPER-Pamiec-DDR5-Crucial-Pro-48GB-2x24GB-5600MHz-XMP-3-0-AMD-EXPO', 3, 50, '2026-06-05 10:05:55', N'Crucial'),
+(249, N'Fractal Design North Charcoal Black WoodMid-Tower', 3530600, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71MSloBQcCL._AC_.jpg', 12, 50, '2026-06-05 10:05:55', N'Fractal Design'),
+(250, N'Lian Li O11 Dynamic EVO RGB Black', 4292600, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://gitec.ge/images/thumbs/0073589_g99o11dergbx00.jpeg', 12, 50, '2026-06-05 10:05:55', N'Lian Li'),
+(251, N'Lian Li UNI FAN TL LCD 120 Triple Pack Black', 3784600, N'Kích thước Rad: 360mm / 240mm Nhôm nguyên khối
+Màn hình: LCD 2.4 - 3.5 inch hiển thị nhiệt độ & GIF tùy biến
+Quạt tản nhiệt: 3x 120mm ARGB PWM tốc độ 2200 RPM
+Độ ồn: Dưới 28 dBA siêu êm
+Tương thích Socket: Intel LGA 1700/1851, AMD AM5/AM4
+Bảo hành: 36 - 60 Tháng chính hãng', N'case_fan_default.png', 14, 50, '2026-06-05 10:05:55', N'Lian Li'),
+(252, N'EVGA SuperNOVA 1000 G7 Gold Modular PSU', 4800600, N'GPU: Card đồ họa chuyên dụng EVGA
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'corsair_rm850e.jpg', 11, 50, '2026-06-05 10:05:55', N'EVGA'),
+(253, N'DeepCool AK620 Digital Dual-Tower Air Cooler', 2006600, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://down-my.img.susercontent.com/file/cn-11134207-7qukw-lfqke8nuk8jva1', 13, 50, '2026-06-05 10:05:55', N'DeepCool'),
+(254, N'Thermalright Peerless Assassin 120 SE AirCooler', 990600, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71YEiWsyLlS._AC_.jpg', 13, 50, '2026-06-05 10:05:55', N'Thermalright'),
+(255, N'Be Quiet! Dark Power 13 1000W Titanium ATX 3.0PSU', 7340600, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://hwbusters.com/wp-content/uploads/2023/05/be-quiet-Dark-Power-13-1000W.jpg', 11, 50, '2026-06-05 10:05:55', N'Intel'),
+(256, N'Intel Core Ultra 7 265F (Tray)', 12000000, N'Socket: LGA 1851 (Arrow Lake)
+Số nhân/luồng: 20 Nhân / 20 Luồng
+Xung nhịp: Base 2.4GHz, Turbo Boost 5.3GHz
+Bộ nhớ đệm: 30MB Intel Smart Cache
+TDP: 65W (Max Turbo 159W)
+Tính năng: Tích hợp NPU xử lý AI chuyên dụng
+Bảo hành: 36 Tháng chính hãng', N'ultra7_265f.jpg', 1, 97, '2026-06-27 12:52:49', N'Intel'),
+(257, N'Intel Core i5 12400F / 2.5GHz Turbo 4.4GHz (TRAY) - CHÍNH HÃNG', 2500000, N'Socket: LGA 1700
+Số nhân/luồng: 6 Nhân / 12 Luồng (Golden Cove)
+Xung nhịp: Base 2.5GHz, Turbo Boost 4.4GHz
+Bộ nhớ đệm: 18MB Intel Smart Cache
+TDP: 65W (Max Turbo 117W)
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.hstatic.net/products/200000837185/12400f_tray_e59465bf117e4e778e5f568c39bc32b9_grande.png', 1, 99, '2026-06-27 12:52:50', N'Intel'),
+(258, N'Intel Core i7 14700F (Tray)', 9500000, N'Socket: LGA 1700
+Số nhân/luồng: 20 Nhân (8 P-core + 12 E-core) / 28 Luồng
+Xung nhịp: Base 3.4GHz, Turbo Boost 5.6GHz
+Bộ nhớ đệm: 33MB Intel Smart Cache
+TDP: 125W (Max Turbo 253W)
+Hỗ trợ RAM: DDR5 5600MHz / DDR4 3200MHz
+Bảo hành: 36 Tháng chính hãng', N'https://nguyencongpc.vn/media/product/250-26474-intel-core-i7-14700f-tray-new-010.jpg', 1, 100, '2026-06-27 12:52:50', N'Intel'),
+(259, N'GIGABYTE Z890 EAGLE WIFI7 (DDR5)', 7500000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81G2my+RKeL._AC_.jpg', 4, 97, '2026-06-27 12:52:50', N'GIGABYTE'),
+(260, N'GIGABYTE H610M-H V3 (DDR4)', 1800000, N'Chipset: Bo mạch chủ chính hãng GIGABYTE
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/12/72/LD0006127276.jpg', 4, 99, '2026-06-27 12:52:51', N'GIGABYTE'),
+(261, N'GIGABYTE B760M GAMING PLUS WIFI DDR4', 3500000, N'Chipset: Intel B760 Express
+Socket: LGA 1700
+Chuẩn kích thước: Micro-ATX / ATX
+Hỗ trợ RAM: 4x DDR4/DDR5 Dual Channel
+Lưu trữ: 2x M.2 NVMe PCIe 4.0, 4x SATA3
+Kết nối: 2.5GbE LAN, Wi-Fi 6, USB 3.2 Gen 2
+Bảo hành: 36 Tháng chính hãng', N'gigabyte_b760m_gaming.jpg', 4, 100, '2026-06-27 12:52:51', N'GIGABYTE'),
+(262, N'RAM Kingmax Horizon 16GB DDR5 Bus 5600Mhz', 1200000, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://cdn.hstatic.net/products/1000361104/1_9aef94b8600b4a80a74401e379b2dd4c.jpg', 3, 97, '2026-06-27 12:52:52', N'Kingmax'),
+(263, N'Ram KingSpec Heatsink Red 1x16GB DDR4 Bus 3200Mhz', 750000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://cdn.hstatic.net/products/200000722513/ram-kingspec-heatsink-red-1x16gb-ddr4-bus-3200mhz-1_23edecb668f84ae783d00d77d8a23b83.jpg', 3, 100, '2026-06-27 12:52:52', N'KingSpec'),
+(264, N'MSI GeForce RTX 5070 Ti 16GB Shadow 3X OC', 25000000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://asset.msi.com/resize/image/global/product/product_1738649851f99734cac740c6f5eba83717cf3dfcc1.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 9, 99, '2026-06-27 12:52:53', N'MSI'),
+(265, N'GIGABYTE GeForce RTX 5080 WINDFORCE OC SFF 16G', 35000000, N'GPU: NVIDIA GeForce RTX 4080 SUPER / RTX 5080
+Dung lượng: 16GB GDDR6X 256-bit
+Cổng xuất hình: 1x HDMI 2.1, 3x DisplayPort 1.4a
+Tính năng: DLSS 3.5 Frame Generation, Ray Tracing, Render 3D
+Nguồn đề xuất: 750W - 850W
+Bảo hành: 36 Tháng chính hãng', N'gigabyte_rtx_5080_windforce.jpg', 9, 98, '2026-06-27 12:52:53', N'GIGABYTE'),
+(266, N'MSI GeForce RTX 5060 Ventus 2X OC 8GB', 8500000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://asset.msi.com/resize/image/global/product/product_17452877802adc1ee82075afaeea7d2a2dcf366cb9.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png', 9, 100, '2026-06-27 12:52:54', N'MSI'),
+(267, N'ZOTAC GeForce RTX 5060 Ti 8GB TWIN EDGE GDDR7', 11000000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://www.kccshop.vn/media/product/250-13410-vga-zotac-gaming-geforce-rtx-5060-ti-8gb-twin-edge-oc-white-edition--zt-b50610q-10m-_4_main.jpeg', 9, 100, '2026-06-27 12:52:54', N'NVIDIA'),
+(268, N'Ổ cứng SSD Kingston NV3 1TB M.2 PCIe NVMe Gen4', 1800000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://down-ph.img.susercontent.com/file/sg-11134201-7rdw7-lzr1u0ea362c97', 7, 97, '2026-06-27 12:52:55', N'Kingston'),
+(269, N'Ổ Cứng SSD KingSpec NVMe 512GB (NE-512)', 800000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://hmpcstore.com/admin/uploads/O-cung-SSD-KingSpec-NE-512GB-PCIe-Gen3-x4-NVMe-M2-2280-NE-512/20260225_101548_0_699e696480d03_710__ne-5122-1__1__8d84d40669de4ec497acc541f607579f_grande.jpg', 7, 100, '2026-06-27 12:52:55', N'KingSpec'),
+(270, N'Corsair RM850e ATX 3.1 - 80 Plus Gold - Full Modular (850W)', 3500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://product.hstatic.net/200000722513/product/89689_nguon_may_tinh_corsair_rm850e_atx_006_e59a3ebce3034f23aa2bde43f1d242e5_1024x1024.jpg', 11, 97, '2026-06-27 12:52:56', N'Corsair'),
+(271, N'Cooler Master MWE 650 - 80 Plus Bronze - V3 230V (650W)', 1500000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://os-jo.com/image/cache/catalog/products/power-supply/MPE-6501-ACAAW-3BUK/81TVrRqQJeL._SL1500_-1200x1200.jpg', 11, 100, '2026-06-27 12:52:56', N'Cooler Master'),
+(272, N'Nguồn FSP HV PRO 650W - 80 Plus Bronze', 1400000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134211-820l4-mjf8qo64x91ha6', 11, 100, '2026-06-27 12:52:57', N'FSP'),
+(273, N'Corsair CX650 - 80 Plus Bronze (650W)', 1600000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'corsair_cx650.jpg', 11, 100, '2026-06-27 12:52:57', N'Corsair'),
+(274, N'Corsair 3500X TG Mid Tower Black', 2000000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://philong.com.vn/media/product/33615-vo-case-corsair-3500x-argb-mid-tower-tg-black-cc-9011278-ww-philong--5-.png', 12, 99, '2026-06-27 12:52:58', N'Corsair'),
+(275, N'Corsair FRAME 4500X RS-R ARGB Panoramic Black', 3500000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://www.pcstudio.in/wp-content/uploads/2025/09/Corsair-Frame-4500X-RS-R-ARGB-Panoramic-Glass-Mid-Tower-E-ATX-Cabinet-Black-2-600x600.webp', 12, 98, '2026-06-27 12:52:58', N'Corsair'),
+(276, N'Tản nhiệt AIO Corsair NAUTILUS 360 ARGB Black', 2800000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://phucanhcdn.com/media/product/58804_tan_nhiet_nuoc_aio_corsair_nautilus_360_argb_black_cw_9060093_ww_2.jpg', 8, 97, '2026-06-27 12:52:59', N'Corsair'),
+(277, N'Cooler Master Hyper 212 Spectrum V3 ARGB', 600000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://c1.neweggimages.com/BizIntell/item/ACCS%20-%20PC/CPU%20Cooling/35-103-357/hyper-212-spectrum-v3_01.jpg', 8, 99, '2026-06-27 12:52:59', N'Cooler Master'),
+(278, N'Intel Core i9 14900K (Tray)', 14000000, N'Socket: LGA 1700
+Số nhân/luồng: 24 Nhân (8 P-core + 16 E-core) / 32 Luồng
+Xung nhịp: Base 3.2GHz, Turbo Boost 6.0GHz
+Bộ nhớ đệm: 36MB Intel Smart Cache
+TDP: 125W (Max Turbo 253W)
+Hỗ trợ RAM: DDR5 5600MHz / DDR4 3200MHz
+Đồ họa tích hợp: Intel UHD Graphics 770
+Bảo hành: 36 Tháng chính hãng', N'https://pcngon.vn/wp-content/uploads/2024/11/CPU-Intel-Core-i9-14900K-Tray-2.4GHz-Turbo-5.8GHz-24-nhan-32-luong-1.jpg', 1, 100, '2026-06-27 13:16:14', N'Intel'),
+(279, N'Intel Core Ultra 9 285K', 16500000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://images.versus.io/objects/intel-core-ultra-9-285k.front.variety.1729100341269.jpg', 1, 49, '2026-06-27 13:16:14', N'Intel'),
+(280, N'ASUS ROG MAXIMUS Z790 HERO', 15000000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/A3777166-EF70-4D33-915B-EC65CF77CAE5', 4, 100, '2026-06-27 13:16:16', N'ASUS'),
+(281, N'ProArt Z790-CREATOR WIFI', 12000000, N'Chipset: Intel Z790 / Z890 High-End
+Socket: LGA 1700 / LGA 1851
+Chuẩn kích thước: ATX / E-ATX
+Hỗ trợ RAM: 4x DDR5 (Lên đến 192GB, 7600+ MHz OC)
+Khe mở rộng: PCIe 5.0 x16, 4x M.2 NVMe PCIe 4.0/5.0
+Kết nối: Wi-Fi 6E/7, 2.5G/10G LAN, Type-C Thunderbolt 4
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/fe64f38f-9f58-4722-b2b0-723379b316be/', 4, 100, '2026-06-27 13:16:16', N'ASUS'),
+(282, N'Corsair Dominator Titanium 64GB', 6500000, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/611o1NX2HvL._AC_SL1500_.jpg', 3, 100, '2026-06-27 13:16:18', N'Corsair'),
+(283, N'G.Skill Trident Z5 64GB DDR5', 5500000, N'Chuẩn RAM: DDR5
+Dung lượng: 16GB / 32GB / 64GB (Kit Dual Channel)
+Bus RAM: 5600MHz - 6400MHz
+Đèn LED: RGB Sync Aura/iCUE đa vùng hiệu ứng
+Tính năng: Hỗ trợ Intel XMP 3.0 & AMD EXPO
+Tản nhiệt: Hợp kim nhôm anodized cao cấp
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://c1.neweggimages.com/ProductImageCompressAll1280/20-374-432-07.png', 3, 100, '2026-06-27 13:16:18', N'G.Skill'),
+(284, N'ASUS ROG Strix RTX 5090 24GB', 65000000, N'GPU: NVIDIA GeForce RTX 4090 / RTX 5090
+Dung lượng: 24GB GDDR6X 384-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: Ray Tracing Gen 3/4, DLSS 3.5, 4K Ultra Gaming
+Nguồn đề xuất: 850W - 1000W
+Bảo hành: 36 Tháng chính hãng', N'https://cdn-ru.bitrix24.ru/b11322588/landing/90e/90ed69e925e824a07ca15eb1b5d9bc42/asus_rog_astral_geforce_rtx_5090_32gb_gddr7_oc_edition_16_1x.png', 9, 100, '2026-06-27 13:16:33', N'ASUS'),
+(285, N'Samsung 990 PRO 2TB', 4500000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 7.450 MB/s
+Tốc độ ghi: 6.900 MB/s
+Độ bền (TBW): 1200 TBW
+Bảo hành: 60 Tháng chính hãng (5 Năm)', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6523/6523595cv11d.jpg', 7, 100, '2026-06-27 13:16:34', N'Samsung'),
+(286, N'ROG Ryujin III 360 ARGB', 8500000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/A1D6D78A-00BE-4F89-A360-2790312CDDAD', 8, 108, '2026-06-27 13:16:36', N'Intel'),
+(287, N'Thẻ nhớ SanDisk Extreme Pro 128GB MicroSDXC UHS-I 200MB/s', 650000, N'Chipset: Bo mạch chủ chính hãng SanDisk
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://bizweb.dktcdn.net/100/533/247/products/1658759624-img-1802164.jpg?v=1754561963193', 4, 100, '2026-07-23 10:00:00', N'SanDisk'),
+(288, N'Thẻ nhớ Samsung PRO Plus 256GB MicroSDXC kèm Đầu đọc USB', 950000, N'Chipset: Bo mạch chủ chính hãng Samsung
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://bizweb.dktcdn.net/thumb/grande/100/490/762/products/the-nho-microsdxc-samsung-pro-plus-u3-256gb-05-jpg-v-1715014985150-jpg-v-1715201603263.jpg?v=1716191494470', 4, 80, '2026-07-23 10:00:00', N'Samsung'),
+(289, N'Thẻ nhớ Lexar Professional 1066x 512GB MicroSDXC UHS-I', 1450000, N'Chipset: Bo mạch chủ chính hãng Lexar
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'http://compro.com.vn/uploads/product/23_08_2023/2.png', 4, 50, '2026-07-23 10:00:00', N'Lexar'),
+(290, N'Thẻ nhớ Kingston Canvas Go! Plus 128GB SDXC UHS-I', 580000, N'Chipset: Bo mạch chủ chính hãng Kingston
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m1bljvpi8efwca', 4, 120, '2026-07-23 10:00:00', N'Kingston'),
+(291, N'Thẻ nhớ SanDisk Ultra SDXC 64GB 140MB/s Class 10', 280000, N'Chipset: Bo mạch chủ chính hãng SanDisk
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://bizweb.dktcdn.net/100/513/826/products/web-bia-the-sd-trang-xam-64gb.png?v=1767153744330', 4, 150, '2026-07-23 10:00:00', N'SanDisk'),
+(292, N'Thẻ nhớ Transcend SDXC 330S 128GB High Speed 100MB/s', 520000, N'Chipset: Bo mạch chủ chính hãng Transcend
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'kingston_nv3_1tb.jpg', 4, 90, '2026-07-23 10:00:00', N'Transcend'),
+(293, N'Thẻ nhớ ProGrade Digital SDXC UHS-II V60 256GB', 2800000, N'Chipset: Bo mạch chủ chính hãng ASUS
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://haliti.com.vn/wp-content/uploads/2023/05/the-nho-prograde-digital-SDXC-UHS-II-V60-250R-256gb-haliti-01.jpg', 4, 30, '2026-07-23 10:00:00', N'ASUS'),
+(294, N'Thẻ nhớ Sony TOUGH SF-G Series 128GB SDXC UHS-II 300MB/s', 4200000, N'Chipset: Bo mạch chủ chính hãng Sony
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.vjshop.vn/phu-kien-nhiep-anh/the-nho/the-sd/the-nho-sony-sdxc-128gb-sf-g-series-tough-uhs-ii/sony-sdxc-128gb-sf-g-series-tough-uhs-ii-1.jpg', 4, 25, '2026-07-23 10:00:00', N'Sony'),
+(295, N'Thẻ nhớ Kioxia Exceria High Endurance 128GB MicroSD', 480000, N'Chipset: Bo mạch chủ chính hãng Kioxia
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://tuanphong.vn/pictures/full/2020/08/1598000458-172-the-nho-128gb-microsd-kioxia-exceria-high-endurance-2.jpg', 4, 110, '2026-07-23 10:00:00', N'Kioxia'),
+(296, N'Thẻ nhớ TeamGroup GO Card MicroSDXC 256GB 100MB/s', 720000, N'Chipset: Bo mạch chủ chính hãng TeamGroup
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://images.teamgroupinc.com/products/card/microsd/go-card/msdxc/256gb_adpt_01.jpg', 4, 75, '2026-07-23 10:00:00', N'TeamGroup'),
+(297, N'Ổ cứng di động SSD SanDisk Extreme Portable 1TB USB 3.2 Gen 2', 2650000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://hanoicomputercdn.com/media/product/70740_o_cung_di_dong_sandisk_extreme_pro_portable_ssd_1tb_usb_3__7_.jpg', 8, 60, '2026-07-23 10:00:00', N'SanDisk'),
+(298, N'Ổ cứng di động Samsung T7 Shield 2TB Type-C Chống sốc IP65', 4850000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://media.karousell.com/media/photos/products/2023/10/20/samsung_t7_shield_2tb_beige_co_1697782299_2da3fdf9.jpg', 8, 45, '2026-07-23 10:00:00', N'Samsung'),
+(299, N'Ổ cứng di động HDD WD My Passport 2TB USB 3.0 Black', 1950000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://atechworld.vn/wp-content/uploads/2024/01/wd-my-passport-2tb-1-1.jpg', 8, 80, '2026-07-23 10:00:00', N'WD'),
+(300, N'Ổ cứng di động SSD Crucial X9 Pro 1TB 1050MB/s Vỏ nhôm', 2450000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://tuanphong.vn/pictures/full/2024/06/1717476599-965-crucial-x9pro-d.jpg', 8, 50, '2026-07-23 10:00:00', N'Crucial'),
+(301, N'Ổ cứng gắn ngoài HDD Seagate Expansion Desktop 8TB 3.5 inch', 4900000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://down-id.img.susercontent.com/file/id-11134207-7r992-lz4iwty51s8092', 8, 30, '2026-07-23 10:00:00', N'Seagate'),
+(302, N'Ổ cứng di động HDD Lacie Rugged Mini 2TB USB 3.0 Chống dằn xóc', 2800000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'sabrent_rocket_4tb.jpg', 8, 40, '2026-07-23 10:00:00', N'LaCie'),
+(303, N'Ổ cứng di động SSD Kingston XS2000 1TB Type-C 2000MB/s Siêu nhỏ', 2950000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://lagihitech.vn/wp-content/uploads/2024/04/o-cung-di-dong-SSD-Kingston-XS2000-1TB-SXS20001000G-hinh-1.jpg', 8, 35, '2026-07-23 10:00:00', N'Kingston'),
+(304, N'Ổ cứng di động HDD Transcend StoreJet 25M3 1TB Chống sốc 3 lớp', 1650000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'18400482-db50-4a78-a3b4-d4246331dea0_304.jpg', 8, 70, '2026-07-23 10:00:00', N'Transcend'),
+(305, N'Ổ cứng di động SSD Corsair EX100U 2TB Type-C USB 3.2 Gen2x2', 4200000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'samsung_990pro.jpg', 8, 25, '2026-07-23 10:00:00', N'Corsair'),
+(306, N'Ổ cứng di động SSD ADATA SE880 1TB Type-C 2000MB/s', 2550000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://down-sg.img.susercontent.com/file/sg-11134207-7rdx0-lxxvt9dyai734a', 8, 55, '2026-07-23 10:00:00', N'ADATA'),
+(307, N'Tản nhiệt nước AIO NZXT Kraken Elite 360 RGB White LCD', 7250000, N'GPU: Card đồ họa chuyên dụng ZXT
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://azaudio.vn/wp-content/uploads/2024/12/nzxt-kraken-elite-360-rgb-white-1.jpg', 9, 30, '2026-07-23 10:00:00', N'NZXT'),
+(308, N'Tản nhiệt nước AIO Corsair iCUE LINK H150i LCD White 360mm', 6800000, N'GPU: Card đồ họa chuyên dụng Corsair
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://philong.com.vn/media/product/31944-tan-nhiet-nuoc-cpu-aio-corsair-icue-link-h150i-rgb-360mm-white-cw-9061006-ww-philong--10-.jpg', 9, 25, '2026-07-23 10:00:00', N'Corsair'),
+(309, N'Tản nhiệt nước AIO ASUS ROG Ryujin III 360 ARGB White Edition', 8900000, N'GPU: Card đồ họa chuyên dụng ASUS
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.hstatic.net/products/200000522285/71tqdctsyil._sl1500_3d133254025a4566b8a6b75de0177edc.jpg', 9, 20, '2026-07-23 10:00:00', N'ASUS'),
+(310, N'Tản nhiệt nước AIO MSI MAG CORELIQUID E360 Black', 3450000, N'GPU: Card đồ họa chuyên dụng MSI
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://philong.com.vn/media/product/32659-tan-nhiet-nuoc-aio-cpu-msi-mag-coreliquid-e360-black-philong--3-.png', 9, 50, '2026-07-23 10:00:00', N'MSI'),
+(311, N'Tản nhiệt nước AIO DeepCool LT720 360mm High-Performance', 3650000, N'GPU: Card đồ họa chuyên dụng DeepCool
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/1000333506/product/n-nuoc-aio-deepcool-lt720-7_33b321d32ef447a4b060ea862d2c3c3a_1024x1024_3d97403a18dd4741a07d41ea8b3e458c.jpg', 9, 40, '2026-07-23 10:00:00', N'DeepCool'),
+(312, N'Tản nhiệt nước AIO Lian Li Galahad II Trinity SL-INF 360 White', 4950000, N'GPU: Card đồ họa chuyên dụng Lian Li
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mgvopvat08i6a8', 9, 35, '2026-07-23 10:00:00', N'Lian Li'),
+(313, N'Tản nhiệt nước AIO Cooler Master MasterLiquid 360 Atmos ARGB', 3850000, N'GPU: Card đồ họa chuyên dụng Cooler Master
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.hstatic.net/products/200000921511/tan_nhiet_nuoc_aio_cooler_master_masterliquid_360_atmos_ii_lcd_argb__1b2b1d1b61bb4c83bef81b7188d48fa8_1024x1024.jpg', 9, 45, '2026-07-23 10:00:00', N'Cooler Master'),
+(314, N'Tản nhiệt nước AIO Thermalright Frozen Prism 360 ARGB Black', 1850000, N'GPU: Card đồ họa chuyên dụng Thermalright
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000420363/product/4_fc0894cf23c34545b98c502be9363f3e_master.jpg', 9, 70, '2026-07-23 10:00:00', N'Thermalright'),
+(315, N'Tản nhiệt nước AIO Valkyrie GL360 ARGB Màn hình LCD Black', 4200000, N'GPU: Card đồ họa chuyên dụng Valkyrie
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://gland.vn/media/product/15140_81374_t___n_nhi___t_n_____c_valkyrie_gl360___en__2_.jpg', 9, 30, '2026-07-23 10:00:00', N'Valkyrie'),
+(316, N'Tản nhiệt nước AIO ID-COOLING DASHFLOW 360 Basic Black', 1650000, N'GPU: Card đồ họa chuyên dụng ID-COOLING
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://tanphat.com.vn/media/product/5969_51818_tan_nhiet_nuoc_aio_id_cooling_dashflow_360_basic_black_3.jpg', 9, 80, '2026-07-23 10:00:00', N'ID-COOLING'),
+(317, N'Card màn hình GIGABYTE GeForce RTX 4070 Ti SUPER WINDFORCE OC 16G', 23900000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000722513/product/geforce_rtx__4070_ti_super_gaming_oc_16g-01_948cbd78b02643aeb972232ee5e9cc05.png', 10, 25, '2026-07-23 10:00:00', N'GIGABYTE'),
+(318, N'Card màn hình ASUS TUF Gaming GeForce RTX 4080 SUPER 16GB GDDR6X', 31500000, N'GPU: NVIDIA GeForce RTX 4080 SUPER / RTX 5080
+Dung lượng: 16GB GDDR6X 256-bit
+Cổng xuất hình: 1x HDMI 2.1, 3x DisplayPort 1.4a
+Tính năng: DLSS 3.5 Frame Generation, Ray Tracing, Render 3D
+Nguồn đề xuất: 750W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://www.tnc.com.vn/uploads/product/sp2024/card-man-hinh-asus-tuf-rtx4080s-o16g-gaming.jpg', 10, 20, '2026-07-23 10:00:00', N'ASUS'),
+(319, N'Card màn hình MSI GeForce RTX 4060 Ti GAMING X SLIM 16G', 12800000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000722513/product/rtx_4060_ti_gaming_x_slim_16g_a214d2ab8d5b4c72885ff81cf695918d.png', 10, 40, '2026-07-23 10:00:00', N'MSI'),
+(320, N'Card màn hình ZOTAC GAMING GeForce RTX 4070 SUPER Twin Edge OC 12GB', 16900000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://halinhcomputer.vn/uploads/images/web-halinh-new/linh-kien-le/vga/zotac/rtx-4070-twin-edge-oc-12gb-gddr6x.png', 10, 35, '2026-07-23 10:00:00', N'NVIDIA'),
+(321, N'Card màn hình GALAX GeForce RTX 4070 Ti SUPER EX Gamer White 16GB', 24500000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://khanhlinhpc.vn/hinh-anh/san-pham/4070ti-super-exg-w-02.png', 10, 18, '2026-07-23 10:00:00', N'NVIDIA'),
+(322, N'Card màn hình PowerColor Hellhound AMD Radeon RX 7900 XT 20GB', 21500000, N'GPU: AMD Radeon RX 7900 XTX / XT
+Dung lượng: 24GB GDDR6 384-bit
+Cổng xuất hình: DisplayPort 2.1, HDMI 2.1
+Tính năng: Kiến trúc RDNA 3, AMD FSR 3.0, AV1 Encoding
+Nguồn đề xuất: 800W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/814keJHzlgL._AC_.jpg', 10, 15, '2026-07-23 10:00:00', N'AMD'),
+(323, N'Card màn hình Sapphire NITRO+ AMD Radeon RX 7800 XT 16GB', 15800000, N'GPU: AMD Radeon RX 7800 XT / RX 7700 XT
+Dung lượng: 12GB - 16GB GDDR6 256-bit
+Cổng xuất hình: 3x DP 2.1, 1x HDMI 2.1
+Tính năng: RDNA 3, FSR 3, Chiến game 2K Ultra mượt mà
+Nguồn đề xuất: 700W
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.sicomp.vn/cache/large/product/5552/5552_card-man-hinh-sapphire-nitro-amd-radeon-rx-7800-xt_1.webp', 10, 30, '2026-07-23 10:00:00', N'AMD'),
+(324, N'Card màn hình XFX Speedster MERC 310 AMD Radeon RX 7900 GRE 16GB', 16950000, N'GPU: AMD Radeon RX 7900 XTX / XT
+Dung lượng: 24GB GDDR6 384-bit
+Cổng xuất hình: DisplayPort 2.1, HDMI 2.1
+Tính năng: Kiến trúc RDNA 3, AMD FSR 3.0, AV1 Encoding
+Nguồn đề xuất: 800W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.prod.website-files.com/5d1911406ad3cbdb9924a753/639736d43e89781c8b59f26d_03.jpg', 10, 22, '2026-07-23 10:00:00', N'AMD'),
+(325, N'Card màn hình COLORFUL iGame GeForce RTX 4070 SUPER Ultra W OC 12GB', 17900000, N'GPU: NVIDIA GeForce RTX 4070 SUPER / Ti SUPER
+Dung lượng: 12GB - 16GB GDDR6X
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Chiến mượt game 2K/4K
+Nguồn đề xuất: 650W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://nguyencongpc.vn/media/product/26203-z5083848788059_6fd23c6d5c495549bd8c0c3277d7842e_18_11zon.jpg', 10, 28, '2026-07-23 10:00:00', N'NVIDIA'),
+(326, N'Card màn hình ASRock Phantom Gaming Radeon RX 7700 XT 12GB OC', 12500000, N'GPU: AMD Radeon RX 7800 XT / RX 7700 XT
+Dung lượng: 12GB - 16GB GDDR6 256-bit
+Cổng xuất hình: 3x DP 2.1, 1x HDMI 2.1
+Tính năng: RDNA 3, FSR 3, Chiến game 2K Ultra mượt mà
+Nguồn đề xuất: 700W
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/06/20/LD0006062055.jpg', 10, 30, '2026-07-23 10:00:00', N'AMD'),
+(327, N'Ổ cứng HDD PC Seagate Barracuda 2TB 3.5 inch SATA3 7200rpm', 1550000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/77d9291cc7bf7b9a179cfa099e3e10d8', 11, 100, '2026-07-23 10:00:00', N'Seagate'),
+(328, N'Ổ cứng HDD PC Western Digital Blue 2TB 3.5 inch 7200rpm', 1480000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ra0g-m8x69xif6p36b1', 11, 110, '2026-07-23 10:00:00', N'WD'),
+(329, N'Ổ cứng HDD PC Toshiba P300 2TB 3.5 inch SATA3 7200rpm', 1390000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://hoanghapccdn.com/media/product/5135_hdd_toshiba_p300_2tb_ha2.jpg', 11, 90, '2026-07-23 10:00:00', N'Toshiba'),
+(330, N'Ổ cứng HDD Server Seagate IronWolf 4TB 3.5 inch NAS SATA3', 2950000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://www.kccshop.vn/media/product/250-10927-----c---ng-hdd-seagate-ironwolf-4tb--3-5-inch--5400rpm--sata3--256mb-cache--st4000vn006-_2.jpeg', 11, 60, '2026-07-23 10:00:00', N'Seagate'),
+(331, N'Ổ cứng HDD Server Western Digital Red Plus 4TB 3.5 inch NAS', 3100000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://www.tnc.com.vn/uploads/product/sp2026/o-cung-hdd-gan-trong-western-digital-red-plus-4tb-wd40efzz.webp', 11, 55, '2026-07-23 10:00:00', N'WD'),
+(332, N'Ổ cứng HDD Enterprise Seagate Exos X18 16TB 3.5 inch SATA3', 8500000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://qnapvn.com/o-cung-hdd-seagate-enterprise-exos-35-sata-7e8-16tb-st16000nm000j-2.png', 11, 20, '2026-07-23 10:00:00', N'Seagate'),
+(333, N'Ổ cứng HDD Enterprise Western Digital Gold 8TB 3.5 inch 7200rpm', 5900000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://mygear.io.vn/media/product/6102-wd-gold-3-5.jpg', 11, 30, '2026-07-23 10:00:00', N'WD'),
+(334, N'Ổ cứng HDD PC Toshiba X300 4TB 7200rpm Gaming Internal', 3250000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/93/MTA-9352335/toshiba_toshiba_x300_4tb_sata_3_cache_128mb_7200rpm_-_hdd_internal_pc_full03_mcg4oh8k.jpg', 11, 40, '2026-07-23 10:00:00', N'Toshiba'),
+(335, N'Ổ cứng HDD PC Western Digital Black 1TB 3.5 inch Performance', 1850000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-black-desktop-sata-hdd/gallery/wd-black-desktop-1tb.png', 11, 75, '2026-07-23 10:00:00', N'WD'),
+(336, N'Ổ cứng HDD Camera Seagate SkyHawk 4TB 3.5 inch Surveillance', 2650000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://lapvip.com.vn/upload/anh-san-pham/70221-o-cung-hdd-seagate-skyhawk-4tb-3-2-1920x.jpg', 11, 80, '2026-07-23 10:00:00', N'Seagate'),
+(337, N'Nguồn Corsair RM750e ATX 3.0 80 Plus Gold Full Modular (750W)', 2850000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://cdn.mwave.com.au/images/400/rm750e_ac62522_75331.jpg', 12, 60, '2026-07-23 10:00:00', N'Corsair'),
+(338, N'Nguồn MSI MAG A750GL PCIE5 750W 80 Plus Gold Full Modular', 2650000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://m.media-amazon.com/images/I/716c-SjLwPL.jpg', 12, 70, '2026-07-23 10:00:00', N'MSI'),
+(339, N'Nguồn GIGABYTE UD850GM PG5 850W 80 Plus Gold PCIe 5.0', 3100000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://techarc.pk/wp-content/uploads/2026/01/gigabyte-gp-ud850gm-pg5-850w-80-plus-gold-power-supply-1-techarc.pk_.webp', 12, 50, '2026-07-23 10:00:00', N'GIGABYTE'),
+(340, N'Nguồn ASUS TUF Gaming 750W 80 Plus Bronze', 2150000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://songphuong.vn/Content/uploads/2025/06/TUF-Gaming-750W-Bronze-1.webp', 12, 80, '2026-07-23 10:00:00', N'ASUS'),
+(341, N'Nguồn Cooler Master MWE Gold 850 V2 Full Modular (850W)', 2950000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://songphuong.vn/Content/uploads/2021/08/Nguon-Cooler-Master-MWE-GOLD-850-V2-Full-Modular-850W-songphuong.vn_.jpg', 12, 65, '2026-07-23 10:00:00', N'Cooler Master'),
+(342, N'Nguồn DeepCool PL750D 750W 80 Plus Bronze ATX 3.0 Native', 1750000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://phucanhcdn.com/media/product/61221_nguon_may_tinh_deepcool_pl750d_750w_80_plus_bronze_atx_3_0_pcie_5_5.jpg', 12, 90, '2026-07-23 10:00:00', N'DeepCool'),
+(343, N'Nguồn Super Flower Leadex III Gold 850W ARGB Full Modular', 3450000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://down-my.img.susercontent.com/file/27e5251ee99cf1d947ce9d44aacbb258', 12, 40, '2026-07-23 10:00:00', N'Super Flower'),
+(344, N'Nguồn Seasonic Focus GX-850 850W 80 Plus Gold Full Modular', 3650000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://bgamer.pro/wp-content/uploads/2024/02/850w-seasonic-4.jpg', 12, 45, '2026-07-23 10:00:00', N'Seasonic'),
+(345, N'Nguồn FSP Hydro G PRO 850W PCIe5.0 80 Plus Gold', 3350000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'fsp_hv_pro_650w.png', 12, 50, '2026-07-23 10:00:00', N'Logitech'),
+(346, N'Nguồn Thermaltake Toughpower GF A3 850W Gold ATX 3.0', 2950000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://cdn.mwave.com.au/images/400/thermaltake_toughpower_gf_a3_1050w_80_gold_pcie_gen5_atx_30_fully_modular_psu_ac62361_24452.jpg', 12, 55, '2026-07-23 10:00:00', N'Thermaltake'),
+(347, N'Vỏ case NZXT H6 Flow RGB Dual-Chamber Mid-Tower Black', 3450000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://c1.neweggimages.com/productimage/nb1280/11-146-359-05.jpg', 13, 40, '2026-07-23 10:00:00', N'NZXT'),
+(348, N'Vỏ case Lian Li O11 Vision Tempered Glass Mid-Tower White', 3950000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://i5.walmartimages.com/seo/LIAN-LI-O11-Vision-White-Aluminum-Steel-Tempered-Glass-ATX-Mid-Tower-Computer-Case-O11VW_8a75551b-e1fb-4b80-8cd4-a1db5126b46a.8bf544a2a9b5dedc9213b95788327938.jpeg', 13, 35, '2026-07-23 10:00:00', N'Lian Li'),
+(349, N'Vỏ case Corsair 4000D AIRFLOW Tempered Glass Mid-Tower Black', 2150000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81hL4tPkXZL._AC_SL1500_.jpg', 13, 80, '2026-07-23 10:00:00', N'Corsair'),
+(350, N'Vỏ case Montech KING 95 PRO Panoramic Curved Glass ARGB Black', 3650000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://ascenti.co.th/main/wp-content/uploads/2024/08/MONTECH-KING-95-PRO-Black.jpg', 13, 30, '2026-07-23 10:00:00', N'Montech'),
+(351, N'Vỏ case HYTE Y60 Panoramic Dual Chamber Glass Black/Red', 5450000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://m.media-amazon.com/images/I/71TuyBKv0UL.jpg', 13, 20, '2026-07-23 10:00:00', N'HYTE'),
+(352, N'Vỏ case Antec C8 Dual-Chamber Full Tower Black', 2850000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'http://dynaquestpc.com/cdn/shop/files/146_95625c7a-de2e-4025-8358-3a91733300f2.png?crop=center&height=1200&v=1714810776&width=1200', 13, 45, '2026-07-23 10:00:00', N'Antec'),
+(353, N'Vỏ case Fractal Design Pop Air RGB TG Black', 2450000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://mygear.io.vn/media/product/9794-vo-case-fractal-design-pop-air-rgb-black-tg-clear-4.png', 13, 50, '2026-07-23 10:00:00', N'Fractal Design'),
+(354, N'Vỏ case DeepCool CH560 DIGITAL ARGB Màn hình nhiệt độ Black', 2650000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://www.tncstore.vn/media/product/9099-vo-case-deepcool-ch560-digital-2.jpg', 13, 60, '2026-07-23 10:00:00', N'DeepCool'),
+(355, N'Vỏ case Xigmatek ENDORPHIN ULTRA ARTIC White Panoramic', 1450000, N'Chuẩn RAM: DDR4
+Dung lượng: 8GB / 16GB / 32GB
+Bus RAM: 3200MHz - 3600MHz
+Tính năng: Hỗ trợ Intel XMP 2.0
+Tản nhiệt: Nhôm tản nhiệt cao cấp chống oxy hóa
+Bảo hành: 36 Tháng chính hãng (1 đổi 1)', N'https://nvs.tn-cdn.net/2023/08/vo-case-xigmatek-endorphin-ultra-arctic_01.jpg', 13, 90, '2026-07-23 10:00:00', N'Xigmatek'),
+(356, N'Vỏ case Phanteks NV5 Mid-Tower ARGB Black Glass', 2750000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://images.tokopedia.net/img/cache/900/VqbcmM/2023/11/30/459f4cd1-d894-4066-a304-09372696e580.jpg', 13, 40, '2026-07-23 10:00:00', N'Phanteks'),
+(357, N'Tản nhiệt khí Thermalright Peerless Assassin 120 SE ARGB', 980000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mde35e6fewkcc0', 14, 100, '2026-07-23 10:00:00', N'Thermalright'),
+(358, N'Tản nhiệt khí DeepCool AK400 Digital ARGB Màn hình LED Black', 1150000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://www.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/CPUAirCoolers/AK400_DIGITAL/Gallery/4000X4000/03.png', 14, 80, '2026-07-23 10:00:00', N'DeepCool'),
+(359, N'Tản nhiệt khí Noctua NH-D15 chromax.black Dual-Tower Premium', 2950000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://os-jo.com/image/cache/catalog/products/ANOCTUA/NH-D15-BLACK/BLACK-1200x1200.JPEG', 14, 35, '2026-07-23 10:00:00', N'Noctua'),
+(360, N'Tản nhiệt khí ID-COOLING SE-224-XT ARGB V2 Black', 520000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://product.hstatic.net/1000262653/product/z4299420230640_8445263c7cf679422f5efeef9d30572d_e3ca58a2214f4bcfaf2231ff9a9bf482_master.jpg', 14, 120, '2026-07-23 10:00:00', N'ID-COOLING'),
+(361, N'Tản nhiệt khí Cooler Master Hyper 622 Halo Black ARGB Dual-Tower', 1350000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'http://kccshop.vn/media/product/250-5123-1.jpg', 14, 60, '2026-07-23 10:00:00', N'Cooler Master'),
+(362, N'Tản nhiệt khí Jonsbo CR-1000 EVO ARGB Black', 380000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://nvs.tn-cdn.net/2023/07/tan-nhiet-khi-jonsbo-cr-1000-evo-argb-6.jpg', 14, 150, '2026-07-23 10:00:00', N'Jonsbo'),
+(363, N'Tản nhiệt khí Thermalright Phantom Spirit 120 EVO 7 Heatpipes', 1280000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m0wqvyxlqdkd17', 14, 75, '2026-07-23 10:00:00', N'Thermalright'),
+(364, N'Tản nhiệt khí Be Quiet! Dark Rock Pro 5 Dual Tower', 2450000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://pcper.com/wp-content/uploads/2023/10/dark-rock-elite-and-pro-5.jpg', 14, 40, '2026-07-23 10:00:00', N'Be Quiet!'),
+(365, N'Tản nhiệt khí PCCOOLER K6 Digital Display ARGB Dual Tower', 1050000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'cooler_master_212_spectrum.jpg', 14, 65, '2026-07-23 10:00:00', N'PCCOOLER'),
+(366, N'Tản nhiệt khí Valkyrie SL125 ARGB Màn hiển thị nhiệt độ', 950000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134201-23030-bngm8wm2wjov2c', 14, 70, '2026-07-23 10:00:00', N'Valkyrie'),
+(367, N'Bộ 3 Fan tản nhiệt Lian Li UNI FAN SL-Infinity 120 ARGB Triple Black', 2450000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://product.hstatic.net/200000522285/product/_fan_ghep_noi_khong_day__toc_2100rpm__pwm__fan_case_sl120_tpassionvn_1_76a2eab92dd74027a0eed0c5552a6b4d.jpg', 15, 50, '2026-07-23 10:00:00', N'Lian Li'),
+(368, N'Bộ 3 Fan tản nhiệt Corsair iCUE LINK QX120 RGB Starter Kit White', 3650000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'case_fan_default.png', 15, 40, '2026-07-23 10:00:00', N'Corsair'),
+(369, N'Bộ 3 Fan tản nhiệt NZXT Duo F120 RGB Triple Pack Black', 2150000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://azaudio.vn/wp-content/uploads/2024/01/NZXT-F120-RGB-TRIPLE-black.jpg', 15, 60, '2026-07-23 10:00:00', N'NZXT'),
+(370, N'Bộ 3 Fan tản nhiệt Thermalright TL-C12C-S ARGB Triple Pack Black', 480000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://product.hstatic.net/200000420363/product/5_653cd2cd23164950a50b4c518c8f3a2c_master.jpg', 15, 120, '2026-07-23 10:00:00', N'Thermalright'),
+(371, N'Bộ 3 Fan tản nhiệt DeepCool FC120 3-in-1 ARGB Black', 850000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://cf.shopee.ph/file/4cc04f06991eb09257723ef1526e9fcf', 15, 80, '2026-07-23 10:00:00', N'DeepCool'),
+(372, N'Bộ 3 Fan tản nhiệt Phanteks D30-120 Reverse Airflow Triple Black', 2250000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://www.tncstore.vn/media/product/250-13877-quat-tan-nhiet-phanteks-d30-120mm-reversed-drgb-black-triple-pack-1.jpg', 15, 45, '2026-07-23 10:00:00', N'Phanteks'),
+(373, N'Bộ 3 Fan tản nhiệt ID-COOLING XF-12025 ARGB Trio Pack', 550000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-ltjplsx9zeh679', 15, 100, '2026-07-23 10:00:00', N'ID-COOLING'),
+(374, N'Bộ 3 Fan tản nhiệt Cooler Master MasterFan MF120 Halo2 ARGB White', 1350000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://product.hstatic.net/200000722513/product/63609_halo3in1_white_2fe56efd09ad4358bc9bffe694dc34c0_ae18db62db9a4b17b2544370f1bf7da0_1024x1024.jpg', 15, 70, '2026-07-23 10:00:00', N'Cooler Master'),
+(375, N'Bộ 3 Fan tản nhiệt Antec Fusion 120 ARGB Triple Pack', 780000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/05/97/64/LD0005976472.jpg', 15, 90, '2026-07-23 10:00:00', N'Antec'),
+(376, N'Bộ 3 Fan tản nhiệt Montech AX120 PWM ARGB Pack White', 650000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://www.mixmarket.lv/images/stories/virtuemart/product/01K7PJZV1QFS1FR3VF1FX8P0ZK.jpg', 15, 95, '2026-07-23 10:00:00', N'Montech'),
+(377, N'Bàn phím cơ AKKO 3087 v2 Silent Bluetooth 5.0 / Wireless 2.4G', 1450000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://akko.vn/wp-content/uploads/2021/10/ban-phim-co-akko-3087-v2-steam-engine-03.jpg', 16, 60, '2026-07-23 10:00:00', N'AKKO'),
+(378, N'Bàn phím cơ Keychron V1 Max Wireless Custom Mechanical Keyboard Hotswap', 2250000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.shopify.com/s/files/1/0059/0630/1017/files/V1-Max-1.jpg?v=1699065014', 16, 50, '2026-07-23 10:00:00', N'Keychron'),
+(379, N'Bàn phím cơ Royal Kludge RK84 RGB Wireless 80% Layout Hotswap', 980000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://cf.shopee.vn/file/6e1e4cbe7912a8b7473e94334e280d6d', 16, 90, '2026-07-23 10:00:00', N'Royal Kludge'),
+(380, N'Bàn phím cơ FL-Esports FL980 SAM Tropical Secret Wireless', 2450000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-ltsd0cu67e2y55', 16, 40, '2026-07-23 10:00:00', N'FL-Esports'),
+(381, N'Bàn phím cơ MonsGeek M1W V3 Fully Assembled Aluminum Wireless', 2150000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://down-my.img.susercontent.com/file/sg-11134201-7rd51-lvbxo0vd8e038e', 16, 45, '2026-07-23 10:00:00', N'MonsGeek'),
+(382, N'Bàn phím cơ EPOMAKER RT100 Retro Mechanical Keyboard Màn hình Smart', 2650000, N'Kích thước: 24 inch - 34 inch
+Độ phân giải: 2K QHD (2560x1440) / 4K UHD (3840x2160)
+Tấm nền: Fast IPS / OLED 10-bit màu 1.07 tỷ màu
+Tần số quét: 165Hz - 240Hz, Tốc độ phản hồi: 0.03ms - 1ms GtG
+Độ phủ màu: 99% sRGB, 95% DCI-P3 chuẩn đồ họa
+Công nghệ: G-Sync Compatible, FreeSync Premium Pro, HDR400
+Cổng kết nối: 2x HDMI 2.1, 2x DisplayPort 1.4, USB Hub
+Bảo hành: 36 Tháng chính hãng', N'keyboard_default.png', 16, 35, '2026-07-23 10:00:00', N'EPOMAKER'),
+(383, N'Bàn phím cơ Ducky One 3 Daybreak Hotswap RGB Mech Keyboard', 2850000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://img.lazcdn.com/g/p/55ae1abfed8b5f9068f263c2fdad5fee.png_720x720q80.png', 16, 30, '2026-07-23 10:00:00', N'Ducky'),
+(384, N'Bàn phím cơ Varmilo VEA87 Vintage Mechanical Keyboard Cherry MX', 3150000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://down-sg.img.susercontent.com/file/sg-11134201-23010-9jf38tbmpxlv7d', 16, 25, '2026-07-23 10:00:00', N'Varmilo'),
+(385, N'Bàn phím cơ NuPhy Air75 V2 Low-Profile Wireless Keyboard', 2950000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://down-id.img.susercontent.com/file/id-11134201-7r98w-lt0o38jrvqx9ae', 16, 40, '2026-07-23 10:00:00', N'NuPhy'),
+(386, N'Bàn phím cơ Custom Womier K66 Gateron Switch RGB Acrylic Glass', 1250000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://ae01.alicdn.com/kf/S81196b6be21d49b9b30c4343a17e3808S/Womier-K66-Mechanical-Gaming-Keyboard-RGB-led-Backlit-Hot-Swappable-Gateron-Switch-Tyce-C-Light-transmission.jpg', 16, 70, '2026-07-23 10:00:00', N'Womier'),
+(387, N'Chuột máy tính Razer Basilisk V3 Ergonomic Gaming Mouse 26k DPI', 1450000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/61JKqNxaZkL._AC_SL1500_.jpg', 17, 80, '2026-07-23 10:00:00', N'Razer'),
+(388, N'Chuột máy tính Logitech G304 LIGHTSPEED Wireless Black 12k DPI', 820000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'mouse_default.png', 17, 150, '2026-07-23 10:00:00', N'Logitech'),
+(389, N'Chuột máy tính Pulsar X2 V2 Wireless Gaming Mouse Superlight 53g', 2150000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://down-id.img.susercontent.com/file/id-11134207-7r992-lmzwg5uzu56pc0', 17, 45, '2026-07-23 10:00:00', N'Pulsar'),
+(390, N'Chuột máy tính Ninjutso Sora V2 Ultra Lightweight Wireless 39g', 2450000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://down-sg.img.susercontent.com/file/sg-11134201-7rd69-m6ywp16bi7h0a2', 17, 40, '2026-07-23 10:00:00', N'Ninjutso'),
+(391, N'Chuột máy tính LAMZU Atlantis OG V2 Wireless Gaming Mouse 55g', 2250000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.store-assets.com/s/824673/i/62363351.jpeg?width=1024', 17, 50, '2026-07-23 10:00:00', N'LAMZU'),
+(392, N'Chuột máy tính Endgame Gear OP1WE Wireless Gaming Mouse 58g', 1950000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m5d24fcjbuieb0', 17, 60, '2026-07-23 10:00:00', N'Endgame Gear'),
+(393, N'Chuột máy tính VGN Dragonfly F1 PRO MAX Wireless Nordic MCU', 1150000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://bizweb.dktcdn.net/100/506/630/products/5.png?v=1710093977290', 17, 90, '2026-07-23 10:00:00', N'VGN'),
+(394, N'Chuột máy tính VXE R1 PRO MAX Ultra Light Wireless PAW3395', 980000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://down-br.img.susercontent.com/file/br-11134207-7r98o-m5etuyqhic3628', 17, 110, '2026-07-23 10:00:00', N'VXE'),
+(395, N'Chuột máy tính SteelSeries Rival 3 Wireless Gaming Mouse 18k DPI', 950000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://os-jo.com/image/cache/catalog/products/Accessories/Mouse/RIVAL-3-Wireless/a89f866daa5b7f847d234e3beb4d6582-1200x1200.jpg', 17, 100, '2026-07-23 10:00:00', N'SteelSeries'),
+(396, N'Chuột máy tính ASUS ROG Harpe Ace Aim Lab Edition 54g Wireless', 2850000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://product.hstatic.net/1000262653/product/sp1080884_f0bb5b45cbbc4da1881a87dc14861641_master.png', 17, 35, '2026-07-23 10:00:00', N'ASUS'),
+(397, N'Tai nghe gaming HyperX Cloud II Wireless Red/Black Spatial Audio', 2950000, N'GPU: Card đồ họa chuyên dụng HyperX
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'http://hyperx.com/cdn/shop/files/hyperx_cloud_ii_red_2_main_mixer.jpg?v=1721075774', 18, 60, '2026-07-23 10:00:00', N'HyperX'),
+(398, N'Tai nghe gaming Razer BlackShark V2 X 7.1 Surround Sound Black', 1250000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.hstatic.net/products/1000231532/mua_razer_blackshark_v2_x_b_o_h_nh_24_th_ng_uy_t_n_t_i_nshop_4e5bb68935394ba79b01c641540fa09e_master.jpg', 18, 100, '2026-07-23 10:00:00', N'Razer'),
+(399, N'Tai nghe gaming Corsair HS80 RGB Wireless Spatial Audio White', 3450000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Gaming-Headsets/CA-9011236-EU/Gallery/HS80_RGB_WIRELESS_WHITE_01.webp', 18, 45, '2026-07-23 10:00:00', N'Corsair'),
+(400, N'Tai nghe gaming Logitech G435 LIGHTSPEED Ultra-Light Wireless Blue', 1450000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://resource.logitechg.com/w_1206,c_limit,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/gaming/en/products/g435/g435-gaming-headset-feature-2-blue.png?v=1', 18, 90, '2026-07-23 10:00:00', N'Logitech'),
+(401, N'Tai nghe gaming SteelSeries Arctis Nova 7 Wireless Multi-Platform', 4250000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/719xhYDZj9L._AC_.jpg', 18, 35, '2026-07-23 10:00:00', N'SteelSeries'),
+(402, N'Tai nghe gaming EPOS Sennheiser GSP 300 Closed Acoustic Black/Blue', 1850000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71gcu2BXwCL._AC_SL1500_.jpg', 18, 50, '2026-07-23 10:00:00', N'EPOS'),
+(403, N'Tai nghe gaming Audio-Technica ATH-GDL3 Open-Back Gaming Headset', 3250000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://down-id.img.susercontent.com/file/3333631a77a536b448894e7821767789', 18, 30, '2026-07-23 10:00:00', N'Audio-Technica'),
+(404, N'Tai nghe gaming JBL Quantum 400 USB Wired Gaming Headset QuantumSURROUND', 1950000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71plrtRXJNL._AC_.jpg', 18, 70, '2026-07-23 10:00:00', N'JBL'),
+(405, N'Tai nghe gaming ASUS ROG Delta S Wireless Gaming Headset Type-C', 4650000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://mygear.io.vn/media/product/9420-tai-nghe-gaming-overear-asus-rog-delta-s-wireless-4.jpg', 18, 25, '2026-07-23 10:00:00', N'ASUS'),
+(406, N'Tai nghe gaming EKSA E900 Pro 7.1 Surround Sound Wired Dual Audio', 750000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://electronix.ie/wp-content/uploads/2025/04/EKSA-E900PRO_1-500x500-1.jpg', 18, 120, '2026-07-23 10:00:00', N'EKSA'),
+(407, N'Thẻ nhớ MicroSD Sandisk Ultra 32GB Class 10 120MB/s', 120000, N'Chipset: Bo mạch chủ chính hãng SanDisk
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://maytinhtrangia.com/wp-content/uploads/SD-32G-1.jpg', 4, 150, '2026-07-23 11:35:00', N'SanDisk'),
+(408, N'Thẻ nhớ MicroSD Sandisk High Endurance 64GB Chuyên ghi Dashcam', 290000, N'Chipset: Bo mạch chủ chính hãng SanDisk
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://cdn2.cellphones.com.vn/x/media/catalog/product/t/h/the-nho-microsd-sandisk-high-endurance-chuyen-camera-64gb_1_.png', 4, 100, '2026-07-23 11:35:00', N'SanDisk'),
+(409, N'Thẻ nhớ SDXC SanDisk Extreme PRO 64GB UHS-I 200MB/s', 450000, N'Chipset: Bo mạch chủ chính hãng SanDisk
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://media.foto-erhardt.de/images/product_images/popup_images/893/sandisk-64-gb-sdxc-extremepro-200mbs-v30-uhs-i-u3-class-10-speicherkarte-166124206789380304.jpg', 4, 120, '2026-07-23 11:35:00', N'SanDisk'),
+(410, N'Thẻ nhớ MicroSD Samsung EVO Plus 64GB kèm Adapter', 210000, N'Chipset: Bo mạch chủ chính hãng Samsung
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lfc894uls77909', 4, 180, '2026-07-23 11:35:00', N'Samsung'),
+(411, N'Thẻ nhớ MicroSD Samsung EVO Plus 128GB UHS-I U3', 350000, N'Chipset: Bo mạch chủ chính hãng Samsung
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://www.nhatthuc.com.vn/resize-image/470x/2025/08/the-nho-micro-sd-samsung-evo-plus-128gb-1.jpg', 4, 140, '2026-07-23 11:35:00', N'Samsung'),
+(412, N'Thẻ nhớ MicroSD Kingston Canvas Select Plus 64GB', 150000, N'Chipset: Bo mạch chủ chính hãng Kingston
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://cdn2.cellphones.com.vn/x/media/catalog/product/t/h/the-nho-microsd-kingston-canvas-select-plus-64gb-sdcs3_2_.png', 4, 200, '2026-07-23 11:35:00', N'Kingston'),
+(413, N'Thẻ nhớ MicroSD Kingston Canvas Select Plus 256GB', 520000, N'Chipset: Bo mạch chủ chính hãng Kingston
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://cdn2.cellphones.com.vn/x/media/catalog/product/t/h/the-nho-microsd-kingston-canvas-select-plus-256gb-sdcs3_4_.png', 4, 90, '2026-07-23 11:35:00', N'Kingston'),
+(414, N'Thẻ nhớ SDXC Lexar Professional 1667x 128GB SDXC UHS-II 250MB/s', 1150000, N'Chipset: Bo mạch chủ chính hãng Lexar
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000863343/product/the-nho-sdxc-lexar-128gb-uhs-ii-1667x-250mb-s-17ba7_a2173df497b14812967527ce0cbb21d5.jpg', 4, 60, '2026-07-23 11:35:00', N'Lexar'),
+(415, N'Thẻ nhớ MicroSD Lexar Play 256GB UHS-I cho Nintendo Switch', 680000, N'Chipset: Bo mạch chủ chính hãng Lexar
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.hstatic.net/products/1000231532/ss_256gb_lexar_cho_nintendo_switch_2_chinh_hang_gia_tot_chat_luong_cao_d1dc82953bc747cbac60d5e312b47e76.jpg', 4, 80, '2026-07-23 11:35:00', N'Lexar'),
+(416, N'Thẻ nhớ SDXC Sony SF-E Series 64GB UHS-II 270MB/s', 850000, N'Chipset: Bo mạch chủ chính hãng Sony
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://photoking.vn/upload/images/Ph%E1%BB%A5%20Ki%E1%BB%87n/Th%E1%BA%BB%20Nh%E1%BB%9B/the-nho-sony-sdxc-64gb-270mbs-70-mbs-sf-m64-photoking-vn-02.jpg', 4, 50, '2026-07-23 11:35:00', N'Sony'),
+(417, N'Thẻ nhớ SDXC Sony TOUGH M Series 128GB UHS-II 270MB/s', 2100000, N'Chipset: Bo mạch chủ chính hãng Sony
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://cf.shopee.co.id/file/50fab139ce6eeb1d06a77f9ef2d9577f', 4, 35, '2026-07-23 11:35:00', N'Sony'),
+(418, N'Thẻ nhớ MicroSD Kioxia Exceria G2 256GB NVMe Class', 620000, N'Chipset: Bo mạch chủ chính hãng Kioxia
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://vinacenter.com.vn/wp-content/uploads/2026/04/the7.webp', 4, 75, '2026-07-23 11:35:00', N'Kioxia'),
+(419, N'Thẻ nhớ SDXC Transcend 700S 64GB SDXC UHS-II V90 285MB/s', 1850000, N'Chipset: Bo mạch chủ chính hãng Transcend
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://www.picclickimg.com/hWEAAOSwtj5lw31H/Scheda-di-memoria-SD-Transcend-700S-SDXC-UHS-II.webp', 4, 40, '2026-07-23 11:35:00', N'Transcend'),
+(420, N'Thẻ nhớ MicroSD TeamGroup PRO Endurance 128GB', 390000, N'Chipset: Bo mạch chủ chính hãng TeamGroup
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'https://cdn.hstatic.net/products/200001078011/the-nho-team-group-elite-128g-uhs-i-u3-v30-a1_72e4b2b6836c44dcb2acea7c924762a2_master.jpg', 4, 85, '2026-07-23 11:35:00', N'TeamGroup'),
+(421, N'Thẻ nhớ SDXC ProGrade Digital SDXC UHS-II V90 Cobalt 128GB', 3950000, N'Chipset: Bo mạch chủ chính hãng ASUS
+Socket: Hỗ trợ vi xử lý thế hệ mới
+Chuẩn kích thước: ATX / Micro-ATX tiêu chuẩn
+Lưu trữ: Hỗ trợ M.2 NVMe siêu tốc và SATA3
+Bảo hành: 36 Tháng chính hãng', N'kingston_nv3_1tb.jpg', 4, 20, '2026-07-23 11:35:00', N'ASUS'),
+(422, N'Ổ cứng di động SSD WD My Passport SSD 1TB USB 3.2 Red', 2450000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://minhancomputercdn.com/media/product/11301_wd_my_passport_ssd_1tb_wdbagf0010brd_wesn_2.jpg', 8, 60, '2026-07-23 11:35:00', N'WD'),
+(423, N'Ổ cứng di động SSD WD Black P50 Game Drive 1TB NVMe 2000MB/s', 3850000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://www.legitreviews.com/wp-content/uploads/2020/08/wd-p50-game-drive-1tb-portable-ssd.jpg', 8, 40, '2026-07-23 11:35:00', N'WD'),
+(424, N'Ổ cứng di động HDD WD Elements Portable 1TB 2.5 inch USB 3.0', 1390000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://minhancomputercdn.com/media/product/986_o_cung_di_dong_western_elements_1tb_2_5inch_usb_3_0_1.jpg', 8, 100, '2026-07-23 11:35:00', N'WD'),
+(425, N'Ổ cứng di động HDD WD Elements Portable 4TB 2.5 inch USB 3.0', 3150000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://www.sieuthimaychu.vn/datafiles/setone/16141343642993.jpg', 8, 50, '2026-07-23 11:35:00', N'WD'),
+(426, N'Ổ cứng di động SSD Samsung T7 Portable 1TB USB 3.2 Titan Gray', 2550000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://cdn2.cellphones.com.vn/x/media/catalog/product/o/-/o-cung-di-dong-ssd-samsung-t7-portable_10_.png', 8, 70, '2026-07-23 11:35:00', N'Samsung'),
+(427, N'Ổ cứng di động SSD Samsung T9 Portable 2TB USB 3.2 Gen 2x2 2000MB/s', 5450000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://bizweb.dktcdn.net/thumb/1024x1024/100/329/122/products/o-cung-di-dong-ssd-1tb-samsung-t9-2000mb-5-c3a14677-d68f-44aa-957d-83483159d4f5.jpg?v=1718353885613', 8, 30, '2026-07-23 11:35:00', N'Samsung'),
+(428, N'Ổ cứng di động SSD SanDisk Extreme PRO Portable 2TB USB 3.2 Gen 2x2', 5150000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/sg-11134201-22120-69sq1wzfywkv7d', 8, 35, '2026-07-23 11:35:00', N'SanDisk'),
+(429, N'Ổ cứng di động HDD Seagate One Touch 2TB 2.5 inch USB 3.0 Black', 2050000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://huyhoang.vn/uploads/o-cung-di-dong-hdd-seagate-one-touch-2tb-25-usb-30-den-stky2000400-3.jpg', 8, 80, '2026-07-23 11:35:00', N'Seagate'),
+(430, N'Ổ cứng di động HDD Seagate Basic 1TB 2.5 inch USB 3.0', 1290000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://hoanghapccdn.com/media/product/3630_1tb_touch_1_hdd_1.jpg', 8, 110, '2026-07-23 11:35:00', N'Seagate'),
+(431, N'Ổ cứng di động SSD Crucial X6 Portable SSD 2TB 800MB/s', 3450000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'crucial_t705_2tb.jpg', 8, 45, '2026-07-23 11:35:00', N'Crucial'),
+(432, N'Ổ cứng di động SSD Crucial X10 Pro 2TB USB 3.2 Gen 2x2 2100MB/s', 5850000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://down-th.img.susercontent.com/file/th-11134201-7r98y-lljgx9wk1kn2d8', 8, 25, '2026-07-23 11:35:00', N'Crucial'),
+(433, N'Ổ cứng di động SSD Kingston XS1000 2TB External SSD Type-C Red', 3650000, N'Chuẩn kết nối: Type-C USB 3.2 Gen 2 / Gen 2x2
+Tốc độ đọc/ghi: 800MB/s - 2000MB/s
+Đặc điểm: Vỏ nhôm chống va đập, chống bụi nước IP65
+Tương thích: Windows, macOS, Android, iPhone 15/16, iPad
+Bảo hành: 36 Tháng chính hãng', N'https://goldentechstore.com.ar/wp-content/uploads/DIS207.jpg', 8, 55, '2026-07-23 11:35:00', N'Kingston'),
+(434, N'Tản nhiệt nước AIO Corsair H100i RGB ELITE 240mm', 3250000, N'GPU: Card đồ họa chuyên dụng Corsair
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://philong.com.vn/media/product/31924-tan-nhiet-nuoc-cpu-aio-corsair-icue-h100i-rgb-elite-240mm-white-cw-9060078-ww-philong--2-.jpg', 9, 50, '2026-07-23 11:35:00', N'Corsair'),
+(435, N'Tản nhiệt nước AIO Corsair iCUE LINK H100i RGB White 240mm', 4850000, N'GPU: Card đồ họa chuyên dụng Corsair
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://bizweb.dktcdn.net/thumb/1024x1024/100/329/122/products/tan-nhiet-nuoc-aio-corsair-icue-link-h100i-rgb-white-cw-9061005-ww-1.jpg?v=1743638717187', 9, 35, '2026-07-23 11:35:00', N'Corsair'),
+(436, N'Tản nhiệt nước AIO NZXT Kraken 240 RGB Black LCD', 4250000, N'GPU: Card đồ họa chuyên dụng ZXT
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://www.pcstudio.in/wp-content/uploads/2023/05/Nzxt-Kraken-240-Rgb-240mm-Aio-Liquid-Cooler-Matte-Black-1.jpg', 9, 40, '2026-07-23 11:35:00', N'NZXT'),
+(437, N'Tản nhiệt nước AIO NZXT Kraken 360 RGB Black LCD', 5350000, N'GPU: Card đồ họa chuyên dụng ZXT
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://hoanghapc.vn/media/product/4402_rl_kr360_b1_ha1.jpg', 9, 30, '2026-07-23 11:35:00', N'NZXT'),
+(438, N'Tản nhiệt nước AIO ASUS ROG Strix LC III 360 ARGB', 4950000, N'GPU: Card đồ họa chuyên dụng ASUS
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://mygear.io.vn/media/product/6094-rog-strix-lc-iii-360-argb-03.png', 9, 25, '2026-07-23 11:35:00', N'ASUS'),
+(439, N'Tản nhiệt nước AIO ASUS TUF Gaming LC II 360 ARGB', 2950000, N'GPU: Card đồ họa chuyên dụng ASUS
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://hoanghapccdn.com/media/product/5001_tuf_gaming_lc_ii_360_argb_ha1.jpg', 9, 45, '2026-07-23 11:35:00', N'ASUS'),
+(440, N'Tản nhiệt nước AIO DeepCool LS720 SE 360mm ARGB Black', 2650000, N'GPU: Card đồ họa chuyên dụng DeepCool
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m2whteh6qzuu1d', 9, 60, '2026-07-23 11:35:00', N'DeepCool'),
+(441, N'Tản nhiệt nước AIO DeepCool MYSTIQUE 360 Màn hình LCD 3.4 inch', 4150000, N'GPU: Card đồ họa chuyên dụng DeepCool
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'http://cms2.deepcool.com:8080/public/ProductFile/DEEPCOOL/Cooling/CPULiquidCoolers/MYSTIQUE_360_ARGB/Gallery/4000X4000/01.png', 9, 30, '2026-07-23 11:35:00', N'DeepCool'),
+(442, N'Tản nhiệt nước AIO Thermalright Frozen Warframe 360 ARGB Màn LCD', 2750000, N'GPU: Card đồ họa chuyên dụng Thermalright
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000475459/product/thermalright_frozen_warframe_360_b3_b5044d16fccc47adb7a6ce676ae3e2ad_289933337cb24cb5b65dcaded772689b_master.jpg', 9, 40, '2026-07-23 11:35:00', N'Thermalright'),
+(443, N'Tản nhiệt nước AIO Lian Li Galahad II LCD 360 SL-INF Black', 6450000, N'GPU: Card đồ họa chuyên dụng Lian Li
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://ttgshop.vn/media/product/1054421234_82296_tan_nhiet_nuoc_lian_li_galahad_ii_lcd_sl_inf_360_black__3__f16e36ee72964ce8a37a7384400e9d15.jpg', 9, 20, '2026-07-23 11:35:00', N'Lian Li'),
+(444, N'Tản nhiệt nước AIO MSI MAG CORELIQUID 240R V2', 2250000, N'GPU: Card đồ họa chuyên dụng MSI
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://bizweb.dktcdn.net/thumb/1024x1024/100/329/122/products/tan-nhiet-nuoc-aio-mag-coreliquid-240r-4.jpg?v=1697040027870', 9, 55, '2026-07-23 11:35:00', N'MSI'),
+(445, N'Tản nhiệt nước AIO ID-COOLING FROSTFLOW X 240 Snow Edition White', 1150000, N'GPU: Card đồ họa chuyên dụng ID-COOLING
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134201-23020-tn10ee3ldunv20', 9, 80, '2026-07-23 11:35:00', N'ID-COOLING'),
+(446, N'Card màn hình ASUS ROG Strix GeForce RTX 4090 OC Edition 24GB GDDR6X', 54900000, N'GPU: NVIDIA GeForce RTX 4090 / RTX 5090
+Dung lượng: 24GB GDDR6X 384-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: Ray Tracing Gen 3/4, DLSS 3.5, 4K Ultra Gaming
+Nguồn đề xuất: 850W - 1000W
+Bảo hành: 36 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/2486AE38-B7C7-443A-9615-FD08D5430992/w1000/h732', 10, 10, '2026-07-23 11:35:00', N'ASUS'),
+(447, N'Card màn hình MSI GeForce RTX 4080 SUPER 16G GAMING X TRIO', 33500000, N'GPU: NVIDIA GeForce RTX 4080 SUPER / RTX 5080
+Dung lượng: 16GB GDDR6X 256-bit
+Cổng xuất hình: 1x HDMI 2.1, 3x DisplayPort 1.4a
+Tính năng: DLSS 3.5 Frame Generation, Ray Tracing, Render 3D
+Nguồn đề xuất: 750W - 850W
+Bảo hành: 36 Tháng chính hãng', N'https://hanoicomputercdn.com/media/product/79168_card_man_hinh_msi_rtx_4080_super_16g_gaming_x_trio__2_.jpg', 10, 15, '2026-07-23 11:35:00', N'MSI'),
+(448, N'Card màn hình GIGABYTE GeForce RTX 4060 EAGLE OC 8G', 8450000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000722513/product/z4467044485040_9a09deef236a05de8179abdccd40f035_fd7e141a0a0a4464b78e0adf591b21c2.jpg', 10, 60, '2026-07-23 11:35:00', N'GIGABYTE'),
+(449, N'Card màn hình GIGABYTE GeForce RTX 3050 WINDFORCE OC 6G', 4650000, N'GPU: Card đồ họa chuyên dụng GIGABYTE
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000722513/product/geforce_rtx__3050_windforce_oc_6g-02_8e038f8bf31d4b008bc170b13dd3cff4.png', 10, 80, '2026-07-23 11:35:00', N'GIGABYTE'),
+(450, N'Card màn hình ASUS Dual GeForce RTX 4060 Ti EVO OC Edition 8GB', 11250000, N'GPU: NVIDIA GeForce RTX 4060 / 4060 Ti
+Dung lượng: 8GB - 16GB GDDR6 128-bit
+Cổng xuất hình: 1x HDMI 2.1a, 3x DisplayPort 1.4a
+Tính năng: DLSS 3 Frame Gen, Ray Tracing, Siêu tiết kiệm điện (115W)
+Nguồn đề xuất: 550W - 650W
+Bảo hành: 36 Tháng chính hãng', N'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6545/6545279cv12d.jpg', 10, 45, '2026-07-23 11:35:00', N'ASUS'),
+(451, N'Card màn hình ZOTAC GAMING GeForce RTX 3060 Twin Edge OC 12GB', 7250000, N'GPU: NVIDIA GeForce RTX 3060
+Dung lượng: 12GB GDDR6 192-bit
+Cổng xuất hình: 1x HDMI 2.1, 3x DisplayPort 1.4a
+Tính năng: VRAM 12GB tối ưu làm đồ họa, Render và Chơi game
+Nguồn đề xuất: 550W - 600W
+Bảo hành: 36 Tháng chính hãng', N'zotac_rtx_5060ti_twin.png', 10, 50, '2026-07-23 11:35:00', N'NVIDIA'),
+(452, N'Card màn hình Sapphire PULSE AMD Radeon RX 7600 8GB GDDR6', 7150000, N'GPU: AMD Radeon RX 6600 / RX 7600
+Dung lượng: 8GB GDDR6 128-bit
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4
+Tính năng: Card đồ họa quốc dân 1080p Ultra Gaming
+Nguồn đề xuất: 450W - 550W
+Bảo hành: 36 Tháng chính hãng', N'msi_rtx_5060_ventus.jpg', 10, 40, '2026-07-23 11:35:00', N'AMD'),
+(453, N'Card màn hình PowerColor Fighter AMD Radeon RX 6600 8GB GDDR6', 5250000, N'GPU: AMD Radeon RX 6600 / RX 7600
+Dung lượng: 8GB GDDR6 128-bit
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4
+Tính năng: Card đồ họa quốc dân 1080p Ultra Gaming
+Nguồn đề xuất: 450W - 550W
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81Vtsr0wIVL._AC_.jpg', 10, 55, '2026-07-23 11:35:00', N'AMD'),
+(454, N'Card màn hình ASRock Challenger Radeon RX 7800 XT 16GB OC', 14150000, N'GPU: AMD Radeon RX 7800 XT / RX 7700 XT
+Dung lượng: 12GB - 16GB GDDR6 256-bit
+Cổng xuất hình: 3x DP 2.1, 1x HDMI 2.1
+Tính năng: RDNA 3, FSR 3, Chiến game 2K Ultra mượt mà
+Nguồn đề xuất: 700W
+Bảo hành: 36 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/06/19/LD0006061987.jpg', 10, 30, '2026-07-23 11:35:00', N'AMD'),
+(455, N'Card màn hình COLORFUL GeForce GTX 1650 NB 4GD6-V', 3650000, N'GPU: Card đồ họa chuyên dụng VIDIA
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://tinhungtech.com/watermark/product/1400x1500x2/upload/product/51dmzhei2olsr600315piwhitestripbottomleft035sclzzzzzzzfmpngbg255255255-4585.png', 10, 70, '2026-07-23 11:35:00', N'NVIDIA'),
+(456, N'Ổ cứng HDD PC Western Digital Purple 2TB 3.5 inch Surveillance', 1650000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'sabrent_rocket_4tb.jpg', 11, 90, '2026-07-23 11:35:00', N'WD'),
+(457, N'Ổ cứng HDD PC Western Digital Purple 4TB 3.5 inch Surveillance', 2750000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://m.media-amazon.com/images/I/61Np0SuI9rL.jpg', 11, 70, '2026-07-23 11:35:00', N'WD'),
+(458, N'Ổ cứng HDD PC Western Digital Purple 6TB 3.5 inch Surveillance', 4350000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://m.media-amazon.com/images/I/61oyy18RjsL._AC_SL1500_.jpg', 11, 45, '2026-07-23 11:35:00', N'WD'),
+(459, N'Ổ cứng HDD PC Seagate SkyHawk 2TB 3.5 inch Surveillance', 1550000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://hanoicomputercdn.com/media/product/35130_hdd_seagate_skyhawk_surveillance_2tb5900_sata_3_64mb_cache_st2000vx008_011.jpg', 11, 85, '2026-07-23 11:35:00', N'Seagate'),
+(460, N'Ổ cứng HDD PC Seagate SkyHawk 6TB 3.5 inch Surveillance', 4150000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://maytinhtrungbac.com/wp-content/uploads/2023/12/HDD9.jpg', 11, 50, '2026-07-23 11:35:00', N'Seagate'),
+(461, N'Ổ cứng HDD Server Seagate IronWolf Pro 8TB 3.5 inch NAS', 6150000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://philong.com.vn/media/product/29504-phi-long-o-cung-hdd-seagate-ironwolf-pro-8tb-st8000ne001.jpg', 11, 30, '2026-07-23 11:35:00', N'Seagate'),
+(462, N'Ổ cứng HDD Server Seagate IronWolf Pro 12TB 3.5 inch NAS', 8950000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mmqy7t6kpb0l57', 11, 20, '2026-07-23 11:35:00', N'Seagate'),
+(463, N'Ổ cứng HDD Server Western Digital Red Pro 8TB 3.5 inch NAS', 6450000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://www.tnc.com.vn/uploads/product/sp2025/o-cung-hdd-western-digital-red-pro-nas-8tb-wd8005ffbx.jpg', 11, 25, '2026-07-23 11:35:00', N'WD'),
+(464, N'Ổ cứng HDD Enterprise Seagate Exos X16 14TB 3.5 inch SATA3', 7250000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://media.loveitopcdn.com/30716/o-cung-hdd-seagate-enterprise-exos-35-sata-x16-14tb-st14000nm001g-13.png', 11, 25, '2026-07-23 11:35:00', N'Seagate'),
+(465, N'Ổ cứng HDD Enterprise Western Digital Ultrastar DC HC550 18TB', 9450000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://m.media-amazon.com/images/I/710JaskXbqL._AC_.jpg', 11, 15, '2026-07-23 11:35:00', N'WD'),
+(466, N'Ổ cứng HDD PC Toshiba Canvio Basics 1TB 2.5 inch', 1250000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mb3gsn7g9uwx71', 11, 110, '2026-07-23 11:35:00', N'Toshiba'),
+(467, N'Ổ cứng HDD PC Toshiba Surveillance S300 4TB 3.5 inch', 2550000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://alfathtechnology.com/wp-content/uploads/2025/07/https___static.arvutitark.ee_public_media-hub-olev_2021_10_123986_media-nkeail.jpg', 11, 60, '2026-07-23 11:35:00', N'Toshiba'),
+(468, N'Ổ cứng HDD Laptop Western Digital Blue 1TB 2.5 inch SATA3', 1150000, N'Chuẩn giao tiếp: M.2 NVMe PCIe Gen4 x4
+Tốc độ đọc: 3.500 MB/s - 5.000 MB/s
+Tốc độ ghi: 2.800 MB/s - 4.500 MB/s
+Form Factor: M.2 2280 tiêu chuẩn
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://product.hstatic.net/200000837185/product/ptop-western-digital-blue-1tb-2-5_-5400-rpm-128mb-cache-wd10spzx-f0x6i_e28dfeaf8b5844fbaa0a6c4b9ebda4e8_master.jpg', 11, 95, '2026-07-23 11:35:00', N'WD'),
+(469, N'Nguồn Corsair RM850e ATX 3.0 80 Plus Gold Full Modular (850W)', 3450000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://product.hstatic.net/200000722513/product/89689_nguon_may_tinh_corsair_rm850e_atx_006_e59a3ebce3034f23aa2bde43f1d242e5_1024x1024.jpg', 12, 50, '2026-07-23 11:35:00', N'Corsair'),
+(470, N'Nguồn Corsair RM1000x Shift 80 Plus Gold Full Modular (1000W)', 4950000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://product.hstatic.net/1000037809/product/thegioigear_corsair_rm1000x_1_1c478e5ea1ae485b91e607ee2b71eca7_master.jpg', 12, 30, '2026-07-23 11:35:00', N'Corsair'),
+(471, N'Nguồn Corsair CV650 650W 80 Plus Bronze', 1450000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://maytinhdalat.vn/Images/Product/maytinhdalat_nguon-may-tinh-corsair-cv650-650w-80-plus-bronzenguon-may-tinh-corsair-cv650-650w-80-plus-bronze-avt2725337_full_26002022_030016.jpg', 12, 90, '2026-07-23 11:35:00', N'Corsair'),
+(472, N'Nguồn MSI MAG A650BN 650W 80 Plus Bronze', 1250000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://halinhcomputer.vn/uploads/images/web-halinh-new/linh-kien-le/psu/mag-a650bn.png', 12, 110, '2026-07-23 11:35:00', N'MSI'),
+(473, N'Nguồn MSI MEG Ai1300P PCIE5 1300W 80 Plus Platinum', 8950000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://down-sg.img.susercontent.com/file/sg-11134201-22100-ms6oh974ckivaa', 12, 15, '2026-07-23 11:35:00', N'MSI'),
+(474, N'Nguồn ASUS ROG Thor 1000W Platinum II OLED', 8450000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://image.citycenter.jo/cache/catalog/22022/1000P-1200x1200.jpg', 12, 20, '2026-07-23 11:35:00', N'ASUS'),
+(475, N'Nguồn ASUS TUF Gaming 650B 650W 80 Plus Bronze', 1650000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://ddtech.mx/assets/uploads/6f275abb29f47415663708443680a8c5.jpg', 12, 80, '2026-07-23 11:35:00', N'ASUS'),
+(476, N'Nguồn Cooler Master Elite V3 600W 230V', 1050000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://huyhoang.vn/uploads/pc600-box.jpg', 12, 100, '2026-07-23 11:35:00', N'Cooler Master'),
+(477, N'Nguồn DeepCool PK650D 650W 80 Plus Bronze', 1350000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://hoanghapccdn.com/media/product/3687_deepcool_pk650_3.jpg', 12, 85, '2026-07-23 11:35:00', N'DeepCool'),
+(478, N'Nguồn ASRock Phantom Gaming PG-850G 850W 80 Plus Gold', 2950000, N'Công suất thực: 650W - 1000W Real Power
+Chứng nhận: 80 Plus Gold / Platinum (Hiệu suất > 90%)
+Chuẩn nguồn: ATX 3.0, PCIe 5.0 (Cáp 12VHPWR 600W)
+Kiểu cáp: Full Modular cáp rời bọc lưới tiện lợi
+Quạt tản nhiệt: 120mm/135mm FDB Fan siêu êm
+Bảo vệ: OVP, OCP, OPP, OTP, SCP, UVP
+Bảo hành: 60 - 120 Tháng chính hãng', N'https://cdn.cclonline.com/cdn-cgi/image/width=2000/images/avante/02-PG-850G_3A.jpg', 12, 40, '2026-07-23 11:35:00', N'ASRock'),
+(479, N'Vỏ case NZXT H9 Flow Dual-Chamber ATX Mid-Tower Black', 4450000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'corsair_frame_4500x.jpg', 13, 30, '2026-07-23 11:35:00', N'NZXT'),
+(480, N'Vỏ case NZXT H5 Flow RGB Compact Mid-Tower White', 2650000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://www.topmarket.co.il/images/detailed/257/OtYnNeyks2.jpg', 13, 50, '2026-07-23 11:35:00', N'NZXT'),
+(481, N'Vỏ case Lian Li O11 Dynamic EVO XL Full Tower Black', 5850000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/06/06/93/LD0006069352.jpg', 13, 20, '2026-07-23 11:35:00', N'Lian Li'),
+(482, N'Vỏ case Lian Li Lancool 216 ARGB Mid-Tower Black', 2350000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://os-jo.com/image/cache/catalog/products/cases/LANCOOL-216/My-project-1200x1200.jpg', 13, 60, '2026-07-23 11:35:00', N'Lian Li'),
+(483, N'Vỏ case Corsair 3500X ARGB Mid-Tower Glass Black', 2450000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://kccshop.vn/media/product/250-9689-v----case-corsair-3500x-rgb-tempered-glass-mid-tower-black--cc-9011278-ww--01.jpg', 13, 70, '2026-07-23 11:35:00', N'Corsair'),
+(484, N'Vỏ case Corsair 5000D AIRFLOW Tempered Glass Mid-Tower White', 3850000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://cwsmgmt.corsair.com/pdp/5000-series/images/5000d-af-clear-clean-cool.png', 13, 35, '2026-07-23 11:35:00', N'Corsair'),
+(485, N'Vỏ case MSI MAG FORGE 100M Mid-Tower Black', 1150000, N'Chuẩn Case: Mid-Tower / Dual-Chamber Bể Cá Không Cột
+Chất liệu: Thép SPCC 0.8mm + Kính cường lực 4mm Panoramic
+Hỗ trợ Mainboard: E-ATX, ATX, Micro-ATX, Mini-ITX
+Hỗ trợ Tản nhiệt nước: Lên tới Rad 360mm nóc và đáy
+Hỗ trợ VGA: Dài tối đa 410mm, lắp đứng VGA
+Cổng I/O: 1x Type-C 3.2, 2x USB 3.0, Audio HD
+Bảo hành: 24 Tháng chính hãng', N'https://gitec.ge/images/thumbs/0063677_msi-mag-forge-100m.jpeg', 13, 90, '2026-07-23 11:35:00', N'MSI'),
+(486, N'Vỏ case Xigmatek Gaming X 3FX 3 Fan ARGB Black', 850000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://phucngoc.vn/Data/images/vo-case-xigmatek-master-x-3fx.jpg', 13, 120, '2026-07-23 11:35:00', N'Xigmatek'),
+(487, N'Vỏ case Mik Aios Black Kèm 3 Fan ARGB', 950000, N'Kích thước Rad: 360mm / 240mm Nhôm nguyên khối
+Màn hình: LCD 2.4 - 3.5 inch hiển thị nhiệt độ & GIF tùy biến
+Quạt tản nhiệt: 3x 120mm ARGB PWM tốc độ 2200 RPM
+Độ ồn: Dưới 28 dBA siêu êm
+Tương thích Socket: Intel LGA 1700/1851, AMD AM5/AM4
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lu9j1tie6gwh88', 13, 100, '2026-07-23 11:35:00', N'Mik'),
+(488, N'Vỏ case SAMA 3509 Black Kèm 3 Fan RGB', 750000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81EZRt3KIOL._AC_SL1500_.jpg', 13, 110, '2026-07-23 11:35:00', N'SAMA'),
+(489, N'Tản nhiệt khí Thermalright Peerless Assassin 120 White ARGB', 1050000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://hanoicomputercdn.com/media/product/72071_peerless_assasin_120_se_white_argb__4_.jpg', 14, 80, '2026-07-23 11:35:00', N'Thermalright'),
+(490, N'Tản nhiệt khí Thermalright Frost Tower 120 Dual Tower Black', 950000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://hoanghapccdn.com/media/product/4157_thermalright_frost_tower_120_ha8.jpg', 14, 70, '2026-07-23 11:35:00', N'Thermalright'),
+(491, N'Tản nhiệt khí DeepCool AK620 Digital ARGB Black Dual Tower', 1850000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://hoanghapccdn.com/media/product/4420_ak620_digital_ha9.jpg', 14, 50, '2026-07-23 11:35:00', N'DeepCool'),
+(492, N'Tản nhiệt khí DeepCool AG400 ARGB Single Tower', 450000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://ecommerce.datablitz.com.ph/cdn/shop/files/zdfhbsrtg_800x.jpg?v=1739759913', 14, 130, '2026-07-23 11:35:00', N'DeepCool'),
+(493, N'Tản nhiệt khí Noctua NH-U12S chromax.black Single Tower', 2150000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81Qu6DEtTlL._SL1500_.jpg', 14, 40, '2026-07-23 11:35:00', N'Noctua'),
+(494, N'Tản nhiệt khí Noctua NH-L9i-17xx Low-Profile CPU Cooler', 1350000, N'Socket: Intel LGA 1700 / AMD AM5
+Số nhân/luồng: Đa nhân thế hệ mới
+TDP: 65W - 125W
+Hỗ trợ RAM: DDR4 / DDR5
+Bảo hành: 36 Tháng chính hãng', N'https://m.media-amazon.com/images/I/81XLADINZiL.jpg', 14, 60, '2026-07-23 11:35:00', N'Noctua'),
+(495, N'Tản nhiệt khí ID-COOLING SE-207-XT Black Dual Tower', 950000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lxdjem7mcdspfe', 14, 75, '2026-07-23 11:35:00', N'ID-COOLING'),
+(496, N'Tản nhiệt khí ID-COOLING FROZN A620 Black Dual Tower', 1150000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://kccshop.vn/media/product/250-10672-t---n-nhi---t-kh---id-cooling-frozn-a620-black_3_main.jpeg', 14, 65, '2026-07-23 11:35:00', N'ID-COOLING'),
+(497, N'Tản nhiệt khí Cooler Master MasterAir MA612 Stealth Black', 1750000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://hoanghapccdn.com/media/product/2166_masterair_ma612_stealth_4_optimized.jpg', 14, 45, '2026-07-23 11:35:00', N'Cooler Master'),
+(498, N'Tản nhiệt khí Jonsbo CR-1400 ARGB Black', 280000, N'Loại tản nhiệt: Tản nhiệt khí tháp đôi Dual Tower
+Ống đồng dẫn nhiệt: 6 ống đồng Direct Touch tiếp xúc trực tiếp
+Quạt đi kèm: 2x 120mm ARGB PWM điều tốc tự động
+Màn hình hiển thị: Đồng hồ Digital hiển thị nhiệt độ CPU Realtime
+Tương thích Socket: Intel LGA 1700/1200, AMD AM5/AM4
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.ben.com.vn/Content/Images/Products/3ce81aed-a15e-4202-a095-273b931c928a.jpg', 14, 160, '2026-07-23 11:35:00', N'Jonsbo'),
+(499, N'Bộ 3 Fan tản nhiệt Lian Li UNI FAN TL LCD 120 Reverse Black', 3450000, N'Kích thước Rad: 360mm / 240mm Nhôm nguyên khối
+Màn hình: LCD 2.4 - 3.5 inch hiển thị nhiệt độ & GIF tùy biến
+Quạt tản nhiệt: 3x 120mm ARGB PWM tốc độ 2200 RPM
+Độ ồn: Dưới 28 dBA siêu êm
+Tương thích Socket: Intel LGA 1700/1851, AMD AM5/AM4
+Bảo hành: 36 - 60 Tháng chính hãng', N'https://product.hstatic.net/200000522285/product/f96af51f816fcd8a4bc30e591f13ed61_f2475336158448a796dbe2760f5675b4.jpg', 15, 30, '2026-07-23 11:35:00', N'Lian Li'),
+(500, N'Bộ 3 Fan tản nhiệt Lian Li UNI FAN AL120 V2 ARGB Black', 2150000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://images.tcdn.com.br/img/img_prod/1362985/kit_cooler_fan_lian_li_uni_fan_al120_v2_120mm_3_un_preto_argb_2000_rpm_modular_uf_al120v2_3b_1747_2_cd18221530e72d4d8e615bcff1e491dc.jpg', 15, 50, '2026-07-23 11:35:00', N'Lian Li'),
+(501, N'Bộ 3 Fan tản nhiệt Corsair LL120 RGB 120mm Dual Light Loop White', 2650000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://minhancomputercdn.com/media/product/8348_qu___t_t___n_nhi___t_case_corsair_ll120_rgb_white.jpg', 15, 45, '2026-07-23 11:35:00', N'Corsair'),
+(502, N'Bộ 3 Fan tản nhiệt Corsair SP120 RGB ELITE 120mm PWM Triple Pack', 1650000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://cellphones.com.vn/media/catalog/product/t/e/text_ng_n_16__1_10.png', 15, 60, '2026-07-23 11:35:00', N'Corsair'),
+(503, N'Bộ 3 Fan tản nhiệt NZXT F120 RGB Core Triple Pack White', 1850000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://product.hstatic.net/200000420363/product/20-rgb-core-triple-pack-with-rgb-controller-left-side-angle-view-white_fadd4054388446b9b8fe182a6ea3fa5d_master.png', 15, 55, '2026-07-23 11:35:00', N'NZXT'),
+(504, N'Bộ 3 Fan tản nhiệt DeepCool FC120 White 3-in-1 ARGB', 890000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://nguyenvu-store-medias.tn-cdn.net/2023/07/quat-tan-nhiet-deepcool-fc120-3-in-1-trang-8.jpg', 15, 80, '2026-07-23 11:35:00', N'DeepCool'),
+(505, N'Bộ 3 Fan tản nhiệt Thermalright TL-C12C-S X3 White ARGB', 490000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://product.hstatic.net/200000680123/product/thermalright-tl-c12cw-s-x3-fan-h4-600x600.jpg_14298f234eb24344bc5e46938f38fdb6_1024x1024.png', 15, 110, '2026-07-23 11:35:00', N'Thermalright'),
+(506, N'Bộ 3 Fan tản nhiệt Thermalright TL-K12 ARGB High-Performance', 650000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'56e94511-8bf1-4d32-8669-cde51fa1dda6_506.jpg', 15, 90, '2026-07-23 11:35:00', N'Thermalright'),
+(507, N'Bộ 3 Fan tản nhiệt Montech RX120 PWM Reverse ARGB Pack', 690000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://cdn0.centrecom.com.au/images/upload/0196456_0.jpeg', 15, 85, '2026-07-23 11:35:00', N'Montech'),
+(508, N'Bộ 3 Fan tản nhiệt Xigmatek Galaxy II Pro ARGB 3 Fan Pack', 450000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://alfrensia.com/wp-content/uploads/2022/02/EN42128.jpg', 15, 120, '2026-07-23 11:35:00', N'Xigmatek'),
+(509, N'Bộ 3 Fan tản nhiệt Mik Halo ARGB 3 Fan Pack Black', 380000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/e9fdd00372700ad2f4ba6850323cb2cd', 15, 130, '2026-07-23 11:35:00', N'Mik'),
+(510, N'Bộ 3 Fan tản nhiệt SAMA Halo ARGB Kit 3 Fan kèm Hub Remote', 350000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://down-br.img.susercontent.com/file/br-11134207-7r98o-lq1zxlij2scj37', 15, 140, '2026-07-23 11:35:00', N'SAMA'),
+(511, N'Fan tản nhiệt lẻ Noctua NF-A12x25 PWM chromax.black', 850000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mf6vvwttiww967', 15, 90, '2026-07-23 11:35:00', N'Noctua'),
+(512, N'Fan tản nhiệt lẻ Arctic P12 PWM PST Black 120mm', 220000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://pcngon.vn/wp-content/uploads/2024/09/Quat-tan-nhiet-Arctic-P12-PWM-PST-Black-4.png', 15, 200, '2026-07-23 11:35:00', N'Arctic'),
+(513, N'Bàn phím cơ AKKO 5075B Plus Dragon Ball Z Wireless RGB', 2350000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://salt.tikicdn.com/ts/product/ab/f7/88/56e8132ad98041714b1041cb6feaee08.jpg', 16, 40, '2026-07-23 11:35:00', N'AKKO'),
+(514, N'Bàn phím cơ AKKO MonsGeek M1 V2 Kit Nhôm CNC Hotswap', 1850000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://cf.shopee.vn/file/sg-11134201-22110-noy506z680jvf2', 16, 50, '2026-07-23 11:35:00', N'AKKO'),
+(515, N'Bàn phím cơ Keychron K2 Pro Wireless Bluetooth QMK/VIA Gateron', 2150000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://product.hstatic.net/1000187560/product/ban-phim-co-keychron-k2-pro-qmkvia-album-svf-thinkpro.vn_a9824fcb4b79456fa624cc6cf1c834cc_large.jpg', 16, 60, '2026-07-23 11:35:00', N'Keychron'),
+(516, N'Bàn phím cơ Keychron Q1 Max Full Aluminum Wireless Custom', 4650000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://cdn.shopify.com/s/files/1/0059/0630/1017/files/Q1-Max-2.jpg?v=1701051646', 16, 25, '2026-07-23 11:35:00', N'Keychron'),
+(517, N'Bàn phím cơ Logitech G Pro X TKL LIGHTSPEED Wireless Black', 4150000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://www.tncstore.vn/media/product/13847-ban-phim-co-logitech-g-pro-x-tkl-lightspeed-tactile-switch-black.jpg', 16, 35, '2026-07-23 11:35:00', N'Logitech'),
+(518, N'Bàn phím cơ Razer BlackWidow V4 Pro Mechanical Gaming Keyboard', 5450000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://media.currys.biz/i/currysprod/10251854', 16, 20, '2026-07-23 11:35:00', N'Razer'),
+(519, N'Bàn phím cơ Corsair K70 RGB PRO Mechanical Gaming Keyboard', 3650000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Gaming-Keyboards/CH-910941A-NA/Gallery/K70_PRO_OPX_PBT_01.webp', 16, 45, '2026-07-23 11:35:00', N'Corsair'),
+(520, N'Bàn phím cơ SteelSeries Apex Pro TKL Wireless', 5950000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://owlgaming.vn/wp-content/uploads/2024/10/ban-phim-steelseries-apex-pro-tkl-wireless-gen-3.jpg', 16, 20, '2026-07-23 11:35:00', N'SteelSeries'),
+(521, N'Bàn phím cơ ASUS ROG Azoth Wireless Custom Gaming Keyboard', 6850000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://pcmarket.vn/media/product/10986_ban_phim_co_gaming_asus_rog_azoth_white_pcm_6.jpg', 16, 15, '2026-07-23 11:35:00', N'ASUS'),
+(522, N'Bàn phím cơ Dareu EK87 V2 Multi-LED Tenkeyless Black', 450000, N'Layout: 75% / 80% / Fullsize 108 phím
+Switch: Mechanical Switch Hotswap 5-pin (Pre-lubed mượt mà)
+Keycap: PBT Dye-sub / Double-shot Profile OEM/Cherry
+Kết nối: 3 Chế độ (Bluetooth 5.1, Wireless 2.4Ghz, Type-C rời)
+Đèn LED: RGB từng phím với 20 hiệu ứng sống động
+Dung lượng Pin: 3000mAh - 4000mAh dùng 2-4 tuần
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lnf8bm6zuy258f', 16, 120, '2026-07-23 11:35:00', N'Dareu'),
+(523, N'Chuột máy tính Logitech G Pro X Superlight 2 Wireless Black', 3450000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://www.tncstore.vn/media/product/250-9061-chuot-logitech-g-pro-x-superlight-2-wireless-12.jpg', 17, 50, '2026-07-23 11:35:00', N'Logitech'),
+(524, N'Chuột máy tính Logitech G502 X PLUS LIGHTSPEED Wireless RGB', 3650000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'mouse_default.png', 17, 40, '2026-07-23 11:35:00', N'Logitech'),
+(525, N'Chuột máy tính Razer DeathAdder V3 Pro Wireless Ultra-Lightweight', 3250000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m0nqss9a7bf390', 17, 45, '2026-07-23 11:35:00', N'Razer'),
+(526, N'Chuột máy tính Razer Viper V3 Pro Ultra-Lightweight Wireless', 3850000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-820l4-mjnkr1p25hxcb7', 17, 35, '2026-07-23 11:35:00', N'Razer'),
+(527, N'Chuột máy tính SteelSeries Aerox 3 Wireless Onyx Superlight', 1850000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://minhancomputercdn.com/media/product/10229_steelseries_aerox_3_wireless_black_4.jpg', 17, 60, '2026-07-23 11:35:00', N'SteelSeries'),
+(528, N'Chuột máy tính Corsair M65 RGB ULTRA Wireless Gaming Mouse', 2450000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://media.ldlc.com/r1600/ld/products/00/05/98/52/LD0005985249.jpg', 17, 50, '2026-07-23 11:35:00', N'Corsair'),
+(529, N'Chuột máy tính ASUS ROG Keris II Ace Ultra-Lightweight Wireless', 3150000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://dlcdnwebimgs.asus.com/gain/E9A5CF8D-2795-45DB-ABA7-D515962D8826/w1000/h732', 17, 40, '2026-07-23 11:35:00', N'ASUS'),
+(530, N'Chuột máy tính Dareu EM901X RGB Wireless kèm Đế sạc', 590000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://hugotech.vn/wp-content/uploads/EM901X-a.jpg', 17, 100, '2026-07-23 11:35:00', N'Dareu'),
+(531, N'Chuột máy tính Rapoo VT9 PRO Dual-Mode Wireless Gaming Mouse', 790000, N'Cảm biến: Cảm biến quang học cao cấp Focus Pro / PAW3395 26K - 30K DPI
+Trọng lượng: Siêu nhẹ 39g - 58g tối ưu cho game FPS
+Kết nối: Không dây HyperSpeed / 2.4GHz không độ trễ (Polling Rate 1000Hz - 4000Hz)
+Switch: Optical Gen 3 độ bền 90 triệu lần bấm
+Thời lượng pin: Lên đến 80 - 100 giờ chơi liên tục
+Bảo hành: 24 Tháng chính hãng', N'https://rapoostore.vn/wp-content/uploads/2024/05/Chuot-gaming-rapoo-vt9prodm.jpg', 17, 90, '2026-07-23 11:35:00', N'Samsung'),
+(532, N'Chuột máy tính Fantech Helios II Pro XD3 V3 Wireless', 1250000, N'Kích thước quạt: 120 x 120 x 25 mm
+Tốc độ quay: 800 - 2000 RPM (PWM Control)
+Lưu lượng gió: 68 CFM, Áp suất tĩnh 2.5 mmH2O
+Đèn LED: ARGB 16.8 triệu màu đồng bộ bo mạch chủ
+Độ ồn: Tối đa 25 dBA
+Bảo hành: 24 Tháng chính hãng', N'https://down-id.img.susercontent.com/file/id-11134208-7r98x-lxuwkmyu8eq237', 17, 70, '2026-07-23 11:35:00', N'Antec'),
+(533, N'Tai nghe gaming HyperX Cloud III Wireless Black/Red 120-Hour Battery', 3850000, N'GPU: Card đồ họa chuyên dụng HyperX
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mdodsk4dl57wd1', 18, 40, '2026-07-23 11:35:00', N'HyperX'),
+(534, N'Tai nghe gaming HyperX Cloud Stinger 2 Core Gaming Headset', 850000, N'GPU: Card đồ họa chuyên dụng HyperX
+Dung lượng: Bộ nhớ GDDR6 tốc độ cao
+Cổng xuất hình: HDMI 2.1, DisplayPort 1.4a
+Nguồn đề xuất: 500W - 750W
+Bảo hành: 36 Tháng chính hãng', N'https://product.hstatic.net/200000722513/product/thumbtainghe_499f42bf16fe47d28ab00bffb7bd5748_47730811ddaf40a0a969f4e4d49c7b27_1024x1024.png', 18, 90, '2026-07-23 11:35:00', N'HyperX'),
+(535, N'Tai nghe gaming Razer BlackShark V2 Pro Wireless 2023 Edition', 4450000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://m.media-amazon.com/images/I/71ZTXGr2g0L._AC_SL1500_.jpg', 18, 35, '2026-07-23 11:35:00', N'Razer'),
+(536, N'Tai nghe gaming Razer Kraken Kitty V2 Pro RGB Quartz Pink', 4250000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://laptopworld.vn/media/product/16639_76012_tai_nghe_gaming_co_day_razer_kraken_kitty_v2_pro_2023_edition_rgb_pink___rz04_04510200_r3m1_1.jpg', 18, 30, '2026-07-23 11:35:00', N'NZXT'),
+(537, N'Tai nghe gaming Logitech G PRO X 2 LIGHTSPEED Wireless Graphene', 5650000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://resource.logitechg.com/w_544,h_466,ar_7:6,c_pad,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/gaming/en/products/pro-x-2-lightspeed/gallery/gallery-3-pro-x-2-lightspeed-gaming-headset-black.png', 18, 25, '2026-07-23 11:35:00', N'Logitech'),
+(538, N'Tai nghe gaming Logitech G733 LIGHTSPEED Wireless RGB White', 2950000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://gangaelectronica.es/694377-large_default/logitech-g733-lightspeed-wireless-rgb-gaming-headset-white.jpg', 18, 50, '2026-07-23 11:35:00', N'Logitech'),
+(539, N'Tai nghe gaming SteelSeries Arctis Nova Pro Wireless PC/PlayStation', 8950000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://media.steelseriescdn.com/thumbs/filer_public/d7/b7/d7b782e8-2b82-4abd-8be1-790619ba6543/arctis_nova_pro_wl_black_img_buy_1.png__1920x1080_crop-fit_optimize_subsampling-2.png', 18, 15, '2026-07-23 11:35:00', N'SteelSeries'),
+(540, N'Tai nghe gaming Corsair VIRTUOSO RGB WIRELESS High-Fidelity', 4850000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://res.cloudinary.com/corsair-pwa/image/upload/v1665096094/akamai/landing/virtuoso/assets/images/VIRTUOSO-White.png', 18, 30, '2026-07-23 11:35:00', N'Corsair'),
+(541, N'Tai nghe gaming ASUS ROG Pugi III Delta S Animate Display', 5250000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mbacj96f7nivf2', 18, 20, '2026-07-23 11:35:00', N'ASUS'),
+(542, N'Tai nghe gaming Dareu EH722X 7.1 Surround Sound Pink', 490000, N'Củ loa: Driver 50mm Neodymium cao cấp
+Âm thanh: Âm thanh vòm 7.1 Surround & Spatial Audio chân thực
+Microphone: Micro khử ồn tháo rời đạt chuẩn Discord Certified
+Kết nối: Không dây 2.4GHz + Bluetooth + Jack 3.5mm đa nền tảng
+Thời lượng pin: 30 - 80 giờ liên tục
+Đệm tai: Đệm mút hoạt tính bọc da thoáng khí không đau tai
+Bảo hành: 24 Tháng chính hãng', N'https://songphuong.vn/Content/uploads/2021/08/Tai-nghe-DareU-EH722X-7.1-PINK-3.jpg', 18, 110, '2026-07-23 11:35:00', N'Dareu');
 SET IDENTITY_INSERT products OFF;
 DBCC CHECKIDENT ('products', RESEED, 542);
 GO
@@ -2941,62 +5727,135 @@ GO
 -- 6.4 BASE FLASH SALES & ITEMS (30 SẢN PHẨM KHUYẾN MÃI)
 -- ----------------------------------------------------------------------------
 SET IDENTITY_INSERT flash_sales ON;
-INSERT INTO flash_sales (id, active, created_at, end_time, name, start_time, description) VALUES
-(1, 0, '2026-06-22 08:58:57.04', '2026-07-08 12:00:00', N'SALE7/7 (Đã kết thúc)', '2026-07-07 12:00:00', N'Chương trình Flash Sale 7/7'),
-(2, 1, '2026-06-22 08:58:57.075', '2030-12-31 23:59:59', N'FLASH SALE SIÊU KHUYẾN MÃI LUXURY PC', '2026-01-01 00:00:00', N'Giảm giá cực sốc lên tới 40% cho linh kiện và phụ kiện PC chính hãng');
+INSERT INTO flash_sales (id, active, created_at, end_time, name, start_time, description, max_per_user, banner_image) VALUES
+(1, 1, '2026-09-01 00:00:00', '2026-09-30 23:59:59', N'⚡ GIỜ VÀNG CÔNG NGHỆ - DEAL SỐC MỖI NGÀY', '2026-09-01 00:00:00', N'Chương trình Flash Sale giờ vàng giảm tới 35% cho 20 linh kiện và phụ kiện PC tuyển chọn', 2, N'flashsalered.png'),
+(2, 1, '2026-09-09 00:00:00', '2026-09-09 23:59:59', N'🔥 ĐẠI TIỆC SIÊU SALE 9.9 - BÙNG NỔ CÔNG NGHỆ', '2026-09-09 00:00:00', N'Duy nhất ngày 9.9: Giảm giá sập sàn VGA, CPU, SSD và Gaming Gear cao cấp', 1, N'6260d2eb-7b51-4bac-a212-051626fd2ed1_Flashsale9.9.png'),
+(3, 1, '2026-09-05 00:00:00', '2026-09-05 02:00:00', N'🌙 MIDNIGHT SALE - CÚ ĐÊM SĂN DEAL KHỦNG 00H-02H', '2026-09-05 00:00:00', N'Khung giờ đêm vàng 00:00 - 02:00: Giảm giá cực mạnh cho RAM RGB, SSD và Phụ kiện', 3, N'flashsaleblue.png'),
+(4, 1, '2026-09-05 08:00:00', '2026-09-06 22:00:00', N'🎮 WEEKEND GAMING FESTIVAL - CUỐI TUẦN BỨT PHÁ', '2026-09-05 08:00:00', N'Cuối tuần bùng nổ cùng Gaming Gear, Tai nghe 7.1, Chuột không dây và Màn hình eSports', 2, N'5eeca3b4-d512-4420-9ec8-d0c8a0410c77_flash_sale.png'),
+(5, 1, '2026-10-10 00:00:00', '2026-10-10 23:59:59', N'🍁 SIÊU HỘI KHUYẾN MÃI 10.10 - RINH PC ĐỈNH CAO', '2026-10-10 00:00:00', N'Đón đầu siêu hội 10.10: Giảm giá sâu cho CPU Intel Core Ultra, AMD Ryzen 7000 và RTX Series', 2, N'3ba56fc6-d98f-413d-8730-98ec81887dc8_Flashsale10.10.png');
 SET IDENTITY_INSERT flash_sales OFF;
 DBCC CHECKIDENT ('flash_sales', RESEED, 5);
 GO
 
 SET IDENTITY_INSERT flash_sale_items ON;
 INSERT INTO flash_sale_items (id, sale_price, sale_quantity, sold_count, flash_sale_id, product_id) VALUES
-(1, 13175000, 20, 2, 2, 1),
-(2, 13760000, 30, 5, 2, 2),
-(3, 41250000, 50, 8, 2, 31),
-(4, 22400000, 60, 10, 2, 32),
-(5, 2275000, 80, 15, 2, 61),
-(6, 2520000, 100, 22, 2, 62),
-(7, 14025000, 20, 2, 2, 91),
-(8, 3600000, 30, 5, 2, 92),
-(9, 2400000, 50, 8, 2, 121),
-(10, 3150000, 60, 10, 2, 122),
-(11, 14625000, 80, 15, 2, 151),
-(12, 8880000, 100, 22, 2, 152),
-(13, 1530000, 20, 2, 2, 268),
-(14, 640000, 30, 5, 2, 269),
-(15, 2100000, 50, 8, 2, 276),
-(16, 420000, 60, 10, 2, 277),
-(17, 16250000, 80, 15, 2, 264),
-(18, 21000000, 100, 22, 2, 265),
-(19, 6455000, 20, 2, 2, 240),
-(20, 6685000, 30, 5, 2, 241),
-(21, 6077000, 50, 8, 2, 192),
-(22, 2827000, 60, 10, 2, 205),
-(23, 520000, 80, 15, 2, 16),
-(24, 6386000, 100, 22, 2, 197),
-(25, 7535000, 20, 2, 2, 191),
-(26, 2824000, 30, 5, 2, 198),
-(27, 2838000, 50, 8, 2, 251),
-(28, 686000, 60, 10, 2, 357),
-(29, 4111000, 80, 15, 2, 214),
-(30, 3490000, 100, 22, 2, 219);
+(1, 4550000, 26, 11, 1, 112),
+(2, 1360000, 34, 8, 1, 97),
+(3, 2710000, 15, 6, 1, 210),
+(4, 5700000, 28, 8, 1, 202),
+(5, 1590000, 35, 9, 1, 367),
+(6, 1580000, 43, 12, 1, 378),
+(7, 12170000, 47, 9, 1, 246),
+(8, 2280000, 20, 6, 1, 337),
+(9, 5070000, 36, 3, 1, 155),
+(10, 2480000, 34, 5, 1, 106),
+(11, 760000, 24, 2, 1, 366),
+(12, 890000, 30, 9, 1, 476),
+(13, 1100000, 19, 9, 1, 133),
+(14, 460000, 27, 8, 1, 506),
+(15, 2940000, 40, 5, 1, 315),
+(16, 1720000, 15, 3, 1, 389),
+(17, 2280000, 29, 4, 1, 334),
+(18, 1590000, 44, 2, 1, 390),
+(19, 620000, 30, 3, 1, 495),
+(20, 2170000, 23, 9, 1, 331),
+(21, 2510000, 35, 9, 2, 478),
+(22, 1300000, 39, 12, 2, 335),
+(23, 1110000, 46, 2, 2, 329),
+(24, 3360000, 47, 11, 2, 315),
+(25, 2590000, 21, 9, 2, 523),
+(26, 14620000, 48, 9, 2, 2),
+(27, 9180000, 24, 8, 2, 3),
+(28, 10000000, 19, 9, 2, 101),
+(29, 7880000, 36, 11, 2, 158),
+(30, 3360000, 20, 7, 2, 29),
+(31, 3220000, 39, 7, 2, 312),
+(32, 660000, 49, 2, 2, 72),
+(33, 810000, 19, 5, 2, 466),
+(34, 4240000, 29, 3, 2, 537),
+(35, 1300000, 21, 12, 2, 314),
+(36, 15090000, 43, 4, 2, 187),
+(37, 3220000, 16, 2, 2, 235),
+(38, 13880000, 18, 6, 2, 40),
+(39, 1690000, 38, 8, 2, 391),
+(40, 780000, 30, 10, 2, 379),
+(41, 38250000, 18, 7, 3, 178),
+(42, 8620000, 19, 12, 3, 4),
+(43, 21250000, 47, 8, 3, 264),
+(44, 480000, 50, 2, 3, 415),
+(45, 5530000, 27, 7, 3, 43),
+(46, 1270000, 45, 10, 3, 299),
+(47, 440000, 18, 9, 3, 373),
+(48, 29750000, 36, 3, 3, 100),
+(49, 290000, 26, 2, 3, 409),
+(50, 3360000, 43, 9, 3, 153),
+(51, 7480000, 48, 11, 3, 35),
+(52, 4160000, 38, 7, 3, 44),
+(53, 6150000, 39, 8, 3, 161),
+(54, 3900000, 18, 12, 3, 127),
+(55, 3030000, 19, 7, 3, 205),
+(56, 20320000, 50, 12, 3, 317),
+(57, 1580000, 33, 6, 3, 372),
+(58, 4680000, 24, 7, 3, 19),
+(59, 320000, 24, 7, 3, 362),
+(60, 3110000, 40, 4, 3, 517),
+(61, 380000, 39, 10, 4, 508),
+(62, 5950000, 50, 6, 4, 286),
+(63, 810000, 22, 4, 4, 398),
+(64, 2930000, 40, 7, 4, 469),
+(65, 1580000, 50, 7, 4, 24),
+(66, 2120000, 27, 11, 4, 440),
+(67, 490000, 40, 10, 4, 488),
+(68, 7220000, 17, 2, 4, 109),
+(69, 2010000, 36, 9, 4, 222),
+(70, 1140000, 44, 4, 4, 342),
+(71, 2760000, 47, 4, 4, 401),
+(72, 2210000, 35, 4, 4, 439),
+(73, 4430000, 34, 11, 4, 234),
+(74, 6150000, 47, 10, 4, 5),
+(75, 190000, 46, 11, 4, 408),
+(76, 710000, 45, 2, 4, 395),
+(77, 1840000, 36, 12, 4, 367),
+(78, 1060000, 41, 11, 4, 532),
+(79, 1690000, 16, 11, 4, 118),
+(80, 3270000, 31, 12, 4, 207),
+(81, 18700000, 15, 10, 5, 111),
+(82, 3290000, 41, 2, 5, 220),
+(83, 2080000, 48, 6, 5, 367),
+(84, 3220000, 33, 2, 5, 470),
+(85, 2240000, 42, 4, 5, 431),
+(86, 4550000, 21, 10, 5, 437),
+(87, 10140000, 30, 5, 5, 188),
+(88, 230000, 48, 6, 5, 411),
+(89, 3490000, 32, 8, 5, 405),
+(90, 6460000, 38, 8, 5, 199),
+(91, 1500000, 30, 5, 5, 340),
+(92, 2590000, 20, 12, 5, 310),
+(93, 4420000, 20, 8, 5, 44),
+(94, 2560000, 39, 10, 5, 433),
+(95, 1010000, 18, 12, 5, 387),
+(96, 320000, 25, 3, 5, 362),
+(97, 17150000, 42, 12, 5, 321),
+(98, 1350000, 21, 10, 5, 14),
+(99, 940000, 29, 5, 5, 88),
+(100, 14620000, 45, 6, 5, 151);
 SET IDENTITY_INSERT flash_sale_items OFF;
-DBCC CHECKIDENT ('flash_sale_items', RESEED, 30);
+DBCC CHECKIDENT ('flash_sale_items', RESEED, 100);
 GO
 -- ----------------------------------------------------------------------------
 -- 6.5 BASE PC COMBOS & DETAILS
 -- ----------------------------------------------------------------------------
 SET IDENTITY_INSERT pc_combos ON;
 INSERT INTO pc_combos (id, badge, badge_color, description, image, name, price) VALUES
-(1, 'HOT', '#ef4444', NULL, '/images/combo1.jpg', 'Combo 1: LXR Core Ultra 7 / RTX 5070Ti', 67000000),
-(2, 'PREMIUM', '#eab308', NULL, '/images/combo2.jpg', 'Combo 2: LXR Core Ultra 7 / RTX 5080', 67000000),
-(3, 'SALE', '#22c55e', NULL, '/images/combo3.jpg', 'Combo 3: LXR Intel i5-12400F / RTX 5060', 47000000),
-(4, 'VALUE', '#3b82f6', NULL, '/images/combo4.jpg', 'Combo 4: LXR Intel i5-12400F / RTX 5060 Ti', 22000000),
-(5, 'PERFORMANCE', '#f97316', NULL, '/images/combo5.jpg', 'Combo 5: LXR Intel i7-14700F / RTX 5060', 25000000),
-(6, 'ULTIMATE', 'var(--gold)', NULL, '/images/combo2.jpg', 'Combo 6: LXR AMD Ryzen 9 / RTX 5090', 120000000),
-(7, 'CREATOR', '#a855f7', NULL, '/images/combo1.jpg', 'Combo 7: LXR Studio / RTX 5080', 85000000);
+(1, 'HOT', '#ef4444', N'Cấu hình Core Ultra 7 265F kết hợp RTX 5070Ti chuyên game 4K & Đồ họa đỉnh cao', '/images/combo1.jpg', N'Combo 1: LXR Core Ultra 7 / RTX 5070Ti', 67000000),
+(2, 'PREMIUM', '#eab308', N'Cỗ máy chiến game Extreme Core Ultra 7 và RTX 5080 16GB cân mọi tựa game AAA', '/images/combo2.jpg', N'Combo 2: LXR Core Ultra 7 / RTX 5080', 67000000),
+(3, 'SALE', '#22c55e', N'Dàn PC Quốc dân i5-12400F + RTX 5060 hiệu năng vượt trội trong tầm giá', '/images/combo3.jpg', N'Combo 3: LXR Intel i5-12400F / RTX 5060', 47000000),
+(4, 'VALUE', '#3b82f6', N'Cấu hình tối ưu ngân sách eSports i5-12400F + RTX 5060 Ti mượt mà mọi tác vụ', '/images/combo4.jpg', N'Combo 4: LXR Intel i5-12400F / RTX 5060 Ti', 22000000),
+(5, 'PERFORMANCE', '#f97316', N'Bộ máy đa năng i7-14700F + RTX 5060 dựng phim 4K, Render 3D và Livestream', '/images/combo5.jpg', N'Combo 5: LXR Intel i7-14700F / RTX 5060', 25000000),
+(6, 'ULTIMATE', 'var(--gold)', N'Siêu phẩm Flagship tối thượng i9-14900K + RTX 5090 24GB sức mạnh vô song', '/images/combo2.jpg', N'Combo 6: LXR AMD Ryzen 9 / RTX 5090', 120000000),
+(7, 'CREATOR', '#a855f7', N'Cỗ máy sáng tạo nội dung chuyên nghiệp Ryzen 9 + RTX 5080 dành cho Creator', '/images/combo1.jpg', N'Combo 7: LXR Studio / RTX 5080', 85000000);
 SET IDENTITY_INSERT pc_combos OFF;
-DBCC CHECKIDENT ('pc_combos', RESEED, 10);
+DBCC CHECKIDENT ('pc_combos', RESEED, 7);
 GO
 
 SET IDENTITY_INSERT pc_combo_details ON;
@@ -3070,6 +5929,574 @@ DBCC CHECKIDENT ('pc_combo_details', RESEED, 100);
 GO
 
 
+-- ----------------------------------------------------------------------------
+-- 6.6 KHO HÀNG & BIẾN ĐỘNG KHO (INVENTORY & STOCK_MOVEMENTS)
+-- ----------------------------------------------------------------------------
+SET IDENTITY_INSERT inventory ON;
+INSERT INTO inventory (id, product_id, quantity, last_update) VALUES
+(1, 1, 48, '2026-04-23 12:54:40.683'),
+(2, 2, 15, '2026-04-06 20:51:03.317'),
+(3, 3, 40, '2026-04-06 20:51:03.617'),
+(4, 4, 27, '2026-06-12 17:18:38.169'),
+(5, 5, 54, '2026-06-12 17:21:06.49'),
+(6, 6, 60, '2026-04-06 20:51:04.539'),
+(7, 7, 10, '2026-04-06 20:51:04.847'),
+(8, 8, 20, '2026-04-06 20:51:05.193'),
+(9, 9, 45, '2026-04-06 20:51:05.635'),
+(10, 10, 25, '2026-04-06 20:51:05.963'),
+(11, 11, 100, '2026-04-06 20:51:06.291'),
+(12, 12, 80, '2026-04-06 20:51:06.607'),
+(13, 13, 70, '2026-04-06 20:51:06.913'),
+(14, 14, 120, '2026-04-06 20:51:07.22'),
+(15, 15, 15, '2026-04-06 20:51:07.522'),
+(16, 17, 65, '2026-04-06 20:51:08.129'),
+(17, 18, 40, '2026-04-06 20:51:08.43'),
+(18, 19, 35, '2026-04-06 20:51:08.732'),
+(19, 20, 28, '2026-04-06 20:51:09.051'),
+(20, 21, 50, '2026-04-06 20:51:09.403'),
+(21, 22, 95, '2026-04-06 20:51:09.712'),
+(22, 23, 10, '2026-04-06 20:51:10.029'),
+(23, 24, 150, '2026-04-06 20:51:10.335'),
+(24, 25, 110, '2026-04-06 20:51:10.649'),
+(25, 26, 8, '2026-04-06 20:51:10.955'),
+(26, 27, 200, '2026-04-06 20:51:11.268'),
+(27, 28, 180, '2026-04-06 20:51:11.577'),
+(28, 29, 20, '2026-04-06 20:51:11.877'),
+(29, 30, 33, '2026-04-06 20:51:12.182'),
+(30, 31, 10, '2026-04-06 20:51:12.493'),
+(31, 32, 15, '2026-04-06 20:51:12.796'),
+(32, 33, 25, '2026-04-06 20:51:13.125'),
+(33, 34, 12, '2026-04-06 20:51:13.43'),
+(34, 35, 43, '2026-06-12 14:53:10.583'),
+(35, 36, 30, '2026-04-06 20:51:14.041'),
+(36, 37, 80, '2026-04-06 20:51:14.385'),
+(37, 38, 100, '2026-04-06 20:51:14.684'),
+(38, 160, 3, '2026-04-06 20:51:14.986'),
+(39, 39, 5, '2026-04-06 20:51:15.32'),
+(40, 40, 20, '2026-04-06 20:51:15.634'),
+(41, 41, 60, '2026-04-06 20:51:15.933'),
+(42, 42, 35, '2026-04-06 20:51:16.249'),
+(43, 43, 50, '2026-04-06 20:51:16.549'),
+(44, 44, 70, '2026-04-06 20:51:16.88'),
+(45, 45, 40, '2026-04-06 20:51:17.233'),
+(46, 46, 15, '2026-04-06 20:51:17.538'),
+(47, 47, 10, '2026-04-06 20:51:17.836'),
+(48, 48, 5, '2026-04-06 20:51:18.143'),
+(49, 49, 18, '2026-04-06 20:51:18.454'),
+(50, 50, 22, '2026-04-06 20:51:18.761'),
+(51, 51, 150, '2026-04-06 20:51:19.075'),
+(52, 52, 40, '2026-04-06 20:51:19.427'),
+(53, 53, 8, '2026-04-06 20:51:19.744'),
+(54, 54, 10, '2026-04-06 20:51:20.055'),
+(55, 55, 3, '2026-04-06 20:51:20.362'),
+(56, 56, 25, '2026-04-06 20:51:20.666'),
+(57, 57, 40, '2026-04-06 20:51:20.965'),
+(58, 58, 15, '2026-04-06 20:51:21.265'),
+(59, 59, 4, '2026-04-06 20:51:21.562'),
+(60, 60, 55, '2026-04-06 20:51:21.862'),
+(61, 61, 50, '2026-04-06 20:51:22.163'),
+(62, 62, 40, '2026-04-06 20:51:22.465'),
+(63, 63, 120, '2026-04-06 20:51:22.765'),
+(64, 64, 45, '2026-04-06 20:51:23.069'),
+(65, 65, 70, '2026-04-06 20:51:23.373'),
+(66, 66, 200, '2026-04-06 20:51:23.699'),
+(67, 67, 10, '2026-04-06 20:51:23.997'),
+(68, 68, 90, '2026-04-06 20:51:24.304'),
+(69, 69, 55, '2026-04-06 20:51:24.616'),
+(70, 70, 25, '2026-04-06 20:51:24.917'),
+(71, 71, 60, '2026-04-06 20:51:25.221'),
+(72, 72, 150, '2026-04-06 20:51:25.52'),
+(73, 73, 20, '2026-04-06 20:51:25.819'),
+(74, 74, 40, '2026-04-06 20:51:26.122'),
+(75, 75, 30, '2026-04-06 20:51:26.434'),
+(76, 76, 25, '2026-04-06 20:51:26.745'),
+(77, 77, 15, '2026-04-06 20:51:27.046'),
+(78, 78, 100, '2026-04-06 20:51:27.35'),
+(79, 79, 50, '2026-04-06 20:51:27.651'),
+(80, 80, 40, '2026-04-06 20:51:27.977'),
+(81, 81, 20, '2026-04-06 20:51:28.28'),
+(82, 82, 80, '2026-04-06 20:51:28.584'),
+(83, 83, 35, '2026-04-06 20:51:28.884'),
+(84, 84, 60, '2026-04-06 20:51:29.233'),
+(85, 85, 45, '2026-04-06 20:51:29.531'),
+(86, 86, 15, '2026-04-06 20:51:29.829'),
+(87, 87, 30, '2026-04-06 20:51:30.153'),
+(88, 88, 100, '2026-04-06 20:51:30.483'),
+(89, 89, 5, '2026-04-06 20:51:30.834'),
+(90, 90, 25, '2026-04-06 20:51:31.156'),
+(91, 91, 12, '2026-04-06 20:51:31.477'),
+(92, 92, 45, '2026-04-06 20:51:31.788'),
+(93, 93, 30, '2026-04-06 20:51:32.085'),
+(94, 94, 40, '2026-04-06 20:51:32.39'),
+(95, 95, 60, '2026-04-06 20:51:32.691'),
+(96, 96, 15, '2026-04-06 20:51:33.02'),
+(97, 97, 100, '2026-04-06 20:51:33.318'),
+(98, 98, 80, '2026-04-06 20:51:33.624'),
+(99, 99, 20, '2026-04-06 20:51:33.926'),
+(100, 100, 3, '2026-04-06 20:51:34.266'),
+(101, 101, 8, '2026-04-06 20:51:34.613'),
+(102, 102, 10, '2026-04-06 20:51:34.925'),
+(103, 103, 12, '2026-04-06 20:51:35.226'),
+(104, 104, 150, '2026-04-06 20:51:35.555'),
+(105, 105, 5, '2026-04-06 20:51:35.856'),
+(106, 106, 40, '2026-04-06 20:51:36.151'),
+(107, 107, 25, '2026-04-06 20:51:36.464'),
+(108, 108, 90, '2026-04-06 20:51:36.774'),
+(109, 109, 18, '2026-04-06 20:51:37.078'),
+(110, 110, 55, '2026-04-06 20:51:37.395'),
+(111, 111, 2, '2026-04-06 20:51:37.71'),
+(112, 112, 20, '2026-04-06 20:51:38.015'),
+(113, 113, 45, '2026-04-06 20:51:38.344'),
+(114, 114, 35, '2026-04-06 20:51:38.643'),
+(115, 115, 40, '2026-04-06 20:51:38.977'),
+(116, 116, 50, '2026-04-06 20:51:39.294'),
+(117, 117, 30, '2026-04-06 20:51:39.594'),
+(118, 118, 110, '2026-04-06 20:51:39.89'),
+(119, 119, 15, '2026-04-06 20:51:40.208'),
+(120, 120, 7, '2026-04-06 20:51:40.516'),
+(121, 121, 60, '2026-04-06 20:51:41.214'),
+(122, 122, 40, '2026-04-06 20:51:41.513'),
+(123, 123, 55, '2026-04-06 20:51:41.817'),
+(124, 124, 100, '2026-04-06 20:51:42.117'),
+(125, 125, 150, '2026-04-06 20:51:42.414'),
+(126, 126, 80, '2026-04-06 20:51:42.727'),
+(127, 127, 20, '2026-04-06 20:51:43.034'),
+(128, 128, 45, '2026-04-06 20:51:43.332'),
+(129, 129, 15, '2026-04-06 20:51:43.637'),
+(130, 130, 10, '2026-04-06 20:51:43.937'),
+(131, 131, 90, '2026-04-06 20:51:44.258'),
+(132, 132, 65, '2026-04-06 20:51:44.562'),
+(133, 133, 75, '2026-04-06 20:51:44.865'),
+(134, 134, 18, '2026-04-06 20:51:45.169'),
+(135, 135, 8, '2026-04-06 20:51:45.481'),
+(136, 136, 30, '2026-04-06 20:51:45.777'),
+(137, 137, 50, '2026-04-06 20:51:46.077'),
+(138, 138, 60, '2026-04-06 20:51:46.394'),
+(139, 139, 22, '2026-04-06 20:51:46.695'),
+(140, 140, 40, '2026-04-06 20:51:47.001'),
+(141, 141, 85, '2026-04-06 20:51:47.295'),
+(142, 142, 120, '2026-04-06 20:51:47.661'),
+(143, 143, 20, '2026-04-06 20:51:47.957'),
+(144, 144, 35, '2026-04-06 20:51:48.257'),
+(145, 145, 12, '2026-04-06 20:51:48.556'),
+(146, 146, 100, '2026-04-06 20:51:48.859'),
+(147, 147, 40, '2026-04-06 20:51:49.165'),
+(148, 148, 31, '2026-07-14 13:54:16.7'),
+(149, 149, 200, '2026-04-06 20:51:49.769'),
+(150, 150, 5, '2026-04-06 20:51:50.066'),
+(151, 151, 12, '2026-04-06 20:51:50.361'),
+(152, 152, 25, '2026-04-06 20:51:50.658'),
+(153, 153, 60, '2026-04-06 20:51:50.959'),
+(154, 154, 8, '2026-04-06 20:51:51.259'),
+(155, 155, 35, '2026-04-06 20:51:51.556'),
+(156, 156, 80, '2026-04-06 20:51:51.856'),
+(157, 157, 50, '2026-04-06 20:51:52.151'),
+(158, 158, 20, '2026-04-06 20:51:52.451'),
+(159, 159, 5, '2026-04-06 20:51:52.75'),
+(160, 161, 30, '2026-04-06 20:51:53.047'),
+(161, 162, 100, '2026-04-06 20:51:53.342'),
+(162, 163, 4, '2026-04-06 20:51:53.654'),
+(163, 164, 70, '2026-04-06 20:51:53.964'),
+(164, 165, 15, '2026-04-06 20:51:54.269'),
+(165, 166, 45, '2026-04-06 20:51:54.594'),
+(166, 167, 22, '2026-04-06 20:51:54.935'),
+(167, 168, 10, '2026-04-06 20:51:55.234'),
+(168, 169, 40, '2026-04-06 20:51:55.649'),
+(169, 170, 25, '2026-04-06 20:51:56.017'),
+(170, 171, 18, '2026-04-06 20:51:56.334'),
+(171, 172, 55, '2026-04-06 20:51:56.65'),
+(172, 173, 90, '2026-04-06 20:51:56.964'),
+(173, 174, 150, '2026-04-06 20:51:57.268'),
+(174, 175, 35, '2026-04-06 20:51:57.569'),
+(175, 176, 80, '2026-04-06 20:51:57.866'),
+(176, 177, 15, '2026-04-06 20:51:58.176'),
+(177, 178, 2, '2026-04-06 20:51:58.474'),
+(178, 179, 20, '2026-04-06 20:51:58.779'),
+(179, 180, 40, '2026-04-06 20:51:59.082'),
+(180, 205, 50, '2026-06-06 09:48:11.978'),
+(181, 206, 50, '2026-06-06 09:48:27.877'),
+(182, 181, 50, '2026-06-06 09:48:50.163'),
+(183, 182, 50, '2026-06-06 09:48:50.697'),
+(184, 183, 50, '2026-06-06 09:48:51.225'),
+(185, 184, 50, '2026-06-06 09:48:51.777'),
+(186, 185, 50, '2026-06-06 09:48:52.308'),
+(187, 186, 50, '2026-06-06 09:48:52.806'),
+(188, 187, 50, '2026-06-06 09:48:53.413'),
+(189, 188, 50, '2026-06-06 09:48:53.977'),
+(190, 189, 50, '2026-06-06 09:48:54.537'),
+(191, 190, 50, '2026-06-06 09:48:55.069'),
+(192, 191, 50, '2026-06-06 09:48:55.578'),
+(193, 192, 50, '2026-06-06 09:48:56.149'),
+(194, 193, 50, '2026-06-06 09:48:56.66'),
+(195, 194, 50, '2026-06-06 09:48:57.166'),
+(196, 195, 50, '2026-06-06 09:48:57.674'),
+(197, 196, 50, '2026-06-06 09:48:58.173'),
+(198, 197, 50, '2026-06-06 09:48:58.701'),
+(199, 198, 50, '2026-06-06 09:48:59.215'),
+(200, 199, 50, '2026-06-06 09:48:59.734'),
+(201, 200, 50, '2026-06-06 09:49:00.275'),
+(202, 201, 50, '2026-06-06 09:49:00.835'),
+(203, 202, 50, '2026-06-06 09:49:01.425'),
+(204, 203, 50, '2026-06-06 09:49:01.936'),
+(205, 204, 50, '2026-06-06 09:49:02.596'),
+(206, 207, 50, '2026-06-06 09:49:03.158'),
+(207, 208, 50, '2026-06-06 09:49:03.7'),
+(208, 209, 50, '2026-06-06 09:49:04.209'),
+(209, 210, 50, '2026-06-06 09:49:04.713'),
+(210, 211, 50, '2026-06-06 09:49:05.249'),
+(211, 212, 50, '2026-06-06 09:49:05.778'),
+(212, 213, 50, '2026-06-06 09:49:06.316'),
+(213, 214, 50, '2026-06-06 09:49:06.831'),
+(214, 215, 50, '2026-06-06 09:49:07.385'),
+(215, 216, 50, '2026-06-06 09:49:07.917'),
+(216, 217, 50, '2026-06-06 09:49:08.514'),
+(217, 218, 50, '2026-06-06 09:49:09.101'),
+(218, 219, 50, '2026-06-06 09:49:09.647'),
+(219, 220, 50, '2026-06-06 09:49:10.163'),
+(220, 221, 50, '2026-06-06 09:49:10.664'),
+(221, 222, 50, '2026-06-06 09:49:11.176'),
+(222, 223, 50, '2026-06-06 09:49:11.705'),
+(223, 224, 50, '2026-06-06 09:49:12.215'),
+(224, 225, 50, '2026-06-06 09:49:13.047'),
+(225, 226, 50, '2026-06-06 09:49:13.615'),
+(226, 227, 50, '2026-06-06 09:49:14.194'),
+(227, 228, 50, '2026-06-06 09:49:14.733'),
+(228, 229, 50, '2026-06-06 09:49:15.275'),
+(229, 230, 50, '2026-06-06 09:49:15.799'),
+(230, 231, 50, '2026-06-06 09:49:16.357'),
+(231, 232, 50, '2026-06-06 09:49:16.912'),
+(232, 233, 50, '2026-06-06 09:49:17.453'),
+(233, 234, 50, '2026-06-06 09:49:17.987'),
+(234, 235, 50, '2026-06-06 09:49:18.561'),
+(235, 236, 50, '2026-06-06 09:49:19.064'),
+(236, 237, 50, '2026-06-06 09:49:19.576'),
+(237, 238, 50, '2026-06-06 09:49:20.081'),
+(238, 239, 50, '2026-06-06 09:49:20.626'),
+(239, 240, 50, '2026-06-06 09:49:21.145'),
+(240, 241, 50, '2026-06-06 09:49:21.737'),
+(241, 242, 50, '2026-06-06 09:49:22.352'),
+(242, 243, 50, '2026-06-06 09:49:22.887'),
+(243, 244, 50, '2026-06-06 09:49:23.407'),
+(244, 245, 50, '2026-06-06 09:49:24.077'),
+(245, 246, 50, '2026-06-06 09:49:24.652'),
+(246, 247, 50, '2026-06-06 09:49:25.187'),
+(247, 248, 50, '2026-06-06 09:49:25.717'),
+(248, 249, 50, '2026-06-06 09:49:26.238'),
+(249, 250, 50, '2026-06-06 09:49:26.773'),
+(250, 251, 50, '2026-06-06 09:49:27.358'),
+(251, 252, 50, '2026-06-06 09:49:27.892'),
+(252, 253, 50, '2026-06-06 09:49:28.403'),
+(253, 254, 50, '2026-06-06 09:49:28.927'),
+(254, 255, 50, '2026-06-06 09:49:29.435'),
+(255, 256, 100, '2026-06-27 12:54:28.148'),
+(256, 257, 100, '2026-06-27 12:54:28.446'),
+(257, 258, 100, '2026-06-27 12:54:28.735'),
+(258, 259, 100, '2026-06-27 12:54:35.988'),
+(259, 260, 100, '2026-06-27 12:54:36.271'),
+(260, 261, 100, '2026-06-27 12:54:49.887'),
+(261, 262, 100, '2026-06-27 12:54:51.815'),
+(262, 263, 100, '2026-06-27 12:55:05.917'),
+(263, 264, 100, '2026-06-27 12:55:13.318'),
+(264, 265, 100, '2026-06-27 12:55:24.726'),
+(265, 266, 100, '2026-06-27 12:55:25.041'),
+(266, 267, 100, '2026-06-27 12:55:25.329'),
+(267, 268, 100, '2026-06-27 12:55:25.63'),
+(268, 269, 100, '2026-06-27 12:55:25.921'),
+(269, 270, 100, '2026-06-27 12:55:26.603'),
+(270, 271, 100, '2026-06-27 12:55:27.068'),
+(271, 272, 100, '2026-06-27 12:55:27.369'),
+(272, 273, 100, '2026-06-27 12:55:27.66'),
+(273, 274, 100, '2026-06-27 12:55:27.944'),
+(274, 275, 100, '2026-06-27 12:55:28.237'),
+(275, 276, 100, '2026-06-27 12:55:28.533'),
+(276, 277, 100, '2026-06-27 12:55:28.822'),
+(277, 16, 100, '2026-06-27 12:55:29.106'),
+(278, 278, 100, '2026-06-27 13:17:32.011'),
+(279, 279, 100, '2026-06-27 13:17:32.333'),
+(280, 280, 100, '2026-06-27 13:17:32.629'),
+(281, 281, 100, '2026-06-27 13:17:32.912'),
+(282, 282, 100, '2026-06-27 13:17:33.213'),
+(283, 283, 100, '2026-06-27 13:17:33.517'),
+(284, 284, 100, '2026-06-27 13:17:33.814'),
+(285, 285, 100, '2026-06-27 13:17:34.303'),
+(286, 286, 100, '2026-06-27 13:17:34.596'),
+(287, 287, 100, '2026-07-23 11:35:00.000'),
+(288, 288, 80, '2026-07-23 11:35:00.000'),
+(289, 289, 50, '2026-07-23 11:35:00.000'),
+(290, 290, 120, '2026-07-23 11:35:00.000'),
+(291, 291, 150, '2026-07-23 11:35:00.000'),
+(292, 292, 90, '2026-07-23 11:35:00.000'),
+(293, 293, 30, '2026-07-23 11:35:00.000'),
+(294, 294, 25, '2026-07-23 11:35:00.000'),
+(295, 295, 110, '2026-07-23 11:35:00.000'),
+(296, 296, 75, '2026-07-23 11:35:00.000'),
+(297, 297, 60, '2026-07-23 11:35:00.000'),
+(298, 298, 45, '2026-07-23 11:35:00.000'),
+(299, 299, 80, '2026-07-23 11:35:00.000'),
+(300, 300, 50, '2026-07-23 11:35:00.000'),
+(301, 301, 30, '2026-07-23 11:35:00.000'),
+(302, 302, 40, '2026-07-23 11:35:00.000'),
+(303, 303, 35, '2026-07-23 11:35:00.000'),
+(304, 304, 70, '2026-07-23 11:35:00.000'),
+(305, 305, 25, '2026-07-23 11:35:00.000'),
+(306, 306, 55, '2026-07-23 11:35:00.000'),
+(307, 307, 30, '2026-07-23 11:35:00.000'),
+(308, 308, 25, '2026-07-23 11:35:00.000'),
+(309, 309, 20, '2026-07-23 11:35:00.000'),
+(310, 310, 50, '2026-07-23 11:35:00.000'),
+(311, 311, 40, '2026-07-23 11:35:00.000'),
+(312, 312, 35, '2026-07-23 11:35:00.000'),
+(313, 313, 45, '2026-07-23 11:35:00.000'),
+(314, 314, 70, '2026-07-23 11:35:00.000'),
+(315, 315, 30, '2026-07-23 11:35:00.000'),
+(316, 316, 80, '2026-07-23 11:35:00.000'),
+(317, 317, 25, '2026-07-23 11:35:00.000'),
+(318, 318, 20, '2026-07-23 11:35:00.000'),
+(319, 319, 40, '2026-07-23 11:35:00.000'),
+(320, 320, 35, '2026-07-23 11:35:00.000'),
+(321, 321, 18, '2026-07-23 11:35:00.000'),
+(322, 322, 15, '2026-07-23 11:35:00.000'),
+(323, 323, 30, '2026-07-23 11:35:00.000'),
+(324, 324, 22, '2026-07-23 11:35:00.000'),
+(325, 325, 28, '2026-07-23 11:35:00.000'),
+(326, 326, 30, '2026-07-23 11:35:00.000'),
+(327, 327, 100, '2026-07-23 11:35:00.000'),
+(328, 328, 110, '2026-07-23 11:35:00.000'),
+(329, 329, 90, '2026-07-23 11:35:00.000'),
+(330, 330, 60, '2026-07-23 11:35:00.000'),
+(331, 331, 55, '2026-07-23 11:35:00.000'),
+(332, 332, 20, '2026-07-23 11:35:00.000'),
+(333, 333, 30, '2026-07-23 11:35:00.000'),
+(334, 334, 40, '2026-07-23 11:35:00.000'),
+(335, 335, 75, '2026-07-23 11:35:00.000'),
+(336, 336, 80, '2026-07-23 11:35:00.000'),
+(337, 337, 60, '2026-07-23 11:35:00.000'),
+(338, 338, 70, '2026-07-23 11:35:00.000'),
+(339, 339, 50, '2026-07-23 11:35:00.000'),
+(340, 340, 80, '2026-07-23 11:35:00.000'),
+(341, 341, 65, '2026-07-23 11:35:00.000'),
+(342, 342, 90, '2026-07-23 11:35:00.000'),
+(343, 343, 40, '2026-07-23 11:35:00.000'),
+(344, 344, 45, '2026-07-23 11:35:00.000'),
+(345, 345, 50, '2026-07-23 11:35:00.000'),
+(346, 346, 55, '2026-07-23 11:35:00.000'),
+(347, 347, 40, '2026-07-23 11:35:00.000'),
+(348, 348, 35, '2026-07-23 11:35:00.000'),
+(349, 349, 80, '2026-07-23 11:35:00.000'),
+(350, 350, 30, '2026-07-23 11:35:00.000'),
+(351, 351, 20, '2026-07-23 11:35:00.000'),
+(352, 352, 45, '2026-07-23 11:35:00.000'),
+(353, 353, 50, '2026-07-23 11:35:00.000'),
+(354, 354, 60, '2026-07-23 11:35:00.000'),
+(355, 355, 90, '2026-07-23 11:35:00.000'),
+(356, 356, 40, '2026-07-23 11:35:00.000'),
+(357, 357, 100, '2026-07-23 11:35:00.000'),
+(358, 358, 80, '2026-07-23 11:35:00.000'),
+(359, 359, 35, '2026-07-23 11:35:00.000'),
+(360, 360, 120, '2026-07-23 11:35:00.000'),
+(361, 361, 60, '2026-07-23 11:35:00.000'),
+(362, 362, 150, '2026-07-23 11:35:00.000'),
+(363, 363, 75, '2026-07-23 11:35:00.000'),
+(364, 364, 40, '2026-07-23 11:35:00.000'),
+(365, 365, 65, '2026-07-23 11:35:00.000'),
+(366, 366, 70, '2026-07-23 11:35:00.000'),
+(367, 367, 50, '2026-07-23 11:35:00.000'),
+(368, 368, 40, '2026-07-23 11:35:00.000'),
+(369, 369, 60, '2026-07-23 11:35:00.000'),
+(370, 370, 120, '2026-07-23 11:35:00.000'),
+(371, 371, 80, '2026-07-23 11:35:00.000'),
+(372, 372, 45, '2026-07-23 11:35:00.000'),
+(373, 373, 100, '2026-07-23 11:35:00.000'),
+(374, 374, 70, '2026-07-23 11:35:00.000'),
+(375, 375, 90, '2026-07-23 11:35:00.000'),
+(376, 376, 95, '2026-07-23 11:35:00.000'),
+(377, 377, 60, '2026-07-23 11:35:00.000'),
+(378, 378, 50, '2026-07-23 11:35:00.000'),
+(379, 379, 90, '2026-07-23 11:35:00.000'),
+(380, 380, 40, '2026-07-23 11:35:00.000'),
+(381, 381, 45, '2026-07-23 11:35:00.000'),
+(382, 382, 35, '2026-07-23 11:35:00.000'),
+(383, 383, 30, '2026-07-23 11:35:00.000'),
+(384, 384, 25, '2026-07-23 11:35:00.000'),
+(385, 385, 40, '2026-07-23 11:35:00.000'),
+(386, 386, 70, '2026-07-23 11:35:00.000'),
+(387, 387, 80, '2026-07-23 11:35:00.000'),
+(388, 388, 150, '2026-07-23 11:35:00.000'),
+(389, 389, 45, '2026-07-23 11:35:00.000'),
+(390, 390, 40, '2026-07-23 11:35:00.000'),
+(391, 391, 50, '2026-07-23 11:35:00.000'),
+(392, 392, 60, '2026-07-23 11:35:00.000'),
+(393, 393, 90, '2026-07-23 11:35:00.000'),
+(394, 394, 110, '2026-07-23 11:35:00.000'),
+(395, 395, 100, '2026-07-23 11:35:00.000'),
+(396, 396, 35, '2026-07-23 11:35:00.000'),
+(397, 397, 60, '2026-07-23 11:35:00.000'),
+(398, 398, 100, '2026-07-23 11:35:00.000'),
+(399, 399, 45, '2026-07-23 11:35:00.000'),
+(400, 400, 90, '2026-07-23 11:35:00.000'),
+(401, 401, 35, '2026-07-23 11:35:00.000'),
+(402, 402, 50, '2026-07-23 11:35:00.000'),
+(403, 403, 30, '2026-07-23 11:35:00.000'),
+(404, 404, 70, '2026-07-23 11:35:00.000'),
+(405, 405, 25, '2026-07-23 11:35:00.000'),
+(406, 406, 120, '2026-07-23 11:35:00.000'),
+(407, 407, 150, '2026-07-23 11:35:00.000'),
+(408, 408, 100, '2026-07-23 11:35:00.000'),
+(409, 409, 120, '2026-07-23 11:35:00.000'),
+(410, 410, 180, '2026-07-23 11:35:00.000'),
+(411, 411, 140, '2026-07-23 11:35:00.000'),
+(412, 412, 200, '2026-07-23 11:35:00.000'),
+(413, 413, 90, '2026-07-23 11:35:00.000'),
+(414, 414, 60, '2026-07-23 11:35:00.000'),
+(415, 415, 80, '2026-07-23 11:35:00.000'),
+(416, 416, 50, '2026-07-23 11:35:00.000'),
+(417, 417, 35, '2026-07-23 11:35:00.000'),
+(418, 418, 75, '2026-07-23 11:35:00.000'),
+(419, 419, 40, '2026-07-23 11:35:00.000'),
+(420, 420, 85, '2026-07-23 11:35:00.000'),
+(421, 421, 20, '2026-07-23 11:35:00.000'),
+(422, 422, 60, '2026-07-23 11:35:00.000'),
+(423, 423, 40, '2026-07-23 11:35:00.000'),
+(424, 424, 100, '2026-07-23 11:35:00.000'),
+(425, 425, 50, '2026-07-23 11:35:00.000'),
+(426, 426, 70, '2026-07-23 11:35:00.000'),
+(427, 427, 30, '2026-07-23 11:35:00.000'),
+(428, 428, 35, '2026-07-23 11:35:00.000'),
+(429, 429, 80, '2026-07-23 11:35:00.000'),
+(430, 430, 110, '2026-07-23 11:35:00.000'),
+(431, 431, 45, '2026-07-23 11:35:00.000'),
+(432, 432, 25, '2026-07-23 11:35:00.000'),
+(433, 433, 55, '2026-07-23 11:35:00.000'),
+(434, 434, 50, '2026-07-23 11:35:00.000'),
+(435, 435, 35, '2026-07-23 11:35:00.000'),
+(436, 436, 40, '2026-07-23 11:35:00.000'),
+(437, 437, 30, '2026-07-23 11:35:00.000'),
+(438, 438, 25, '2026-07-23 11:35:00.000'),
+(439, 439, 45, '2026-07-23 11:35:00.000'),
+(440, 440, 60, '2026-07-23 11:35:00.000'),
+(441, 441, 30, '2026-07-23 11:35:00.000'),
+(442, 442, 40, '2026-07-23 11:35:00.000'),
+(443, 443, 20, '2026-07-23 11:35:00.000'),
+(444, 444, 55, '2026-07-23 11:35:00.000'),
+(445, 445, 80, '2026-07-23 11:35:00.000'),
+(446, 446, 10, '2026-07-23 11:35:00.000'),
+(447, 447, 15, '2026-07-23 11:35:00.000'),
+(448, 448, 60, '2026-07-23 11:35:00.000'),
+(449, 449, 80, '2026-07-23 11:35:00.000'),
+(450, 450, 45, '2026-07-23 11:35:00.000'),
+(451, 451, 50, '2026-07-23 11:35:00.000'),
+(452, 452, 40, '2026-07-23 11:35:00.000'),
+(453, 453, 55, '2026-07-23 11:35:00.000'),
+(454, 454, 30, '2026-07-23 11:35:00.000'),
+(455, 455, 70, '2026-07-23 11:35:00.000'),
+(456, 456, 90, '2026-07-23 11:35:00.000'),
+(457, 457, 70, '2026-07-23 11:35:00.000'),
+(458, 458, 45, '2026-07-23 11:35:00.000'),
+(459, 459, 85, '2026-07-23 11:35:00.000'),
+(460, 460, 50, '2026-07-23 11:35:00.000'),
+(461, 461, 30, '2026-07-23 11:35:00.000'),
+(462, 462, 20, '2026-07-23 11:35:00.000'),
+(463, 463, 25, '2026-07-23 11:35:00.000'),
+(464, 464, 25, '2026-07-23 11:35:00.000'),
+(465, 465, 15, '2026-07-23 11:35:00.000'),
+(466, 466, 110, '2026-07-23 11:35:00.000'),
+(467, 467, 60, '2026-07-23 11:35:00.000'),
+(468, 468, 95, '2026-07-23 11:35:00.000'),
+(469, 469, 50, '2026-07-23 11:35:00.000'),
+(470, 470, 30, '2026-07-23 11:35:00.000'),
+(471, 471, 90, '2026-07-23 11:35:00.000'),
+(472, 472, 110, '2026-07-23 11:35:00.000'),
+(473, 473, 15, '2026-07-23 11:35:00.000'),
+(474, 474, 20, '2026-07-23 11:35:00.000'),
+(475, 475, 80, '2026-07-23 11:35:00.000'),
+(476, 476, 100, '2026-07-23 11:35:00.000'),
+(477, 477, 85, '2026-07-23 11:35:00.000'),
+(478, 478, 40, '2026-07-23 11:35:00.000'),
+(479, 479, 30, '2026-07-23 11:35:00.000'),
+(480, 480, 50, '2026-07-23 11:35:00.000'),
+(481, 481, 20, '2026-07-23 11:35:00.000'),
+(482, 482, 60, '2026-07-23 11:35:00.000'),
+(483, 483, 70, '2026-07-23 11:35:00.000'),
+(484, 484, 35, '2026-07-23 11:35:00.000'),
+(485, 485, 90, '2026-07-23 11:35:00.000'),
+(486, 486, 120, '2026-07-23 11:35:00.000'),
+(487, 487, 100, '2026-07-23 11:35:00.000'),
+(488, 488, 110, '2026-07-23 11:35:00.000'),
+(489, 489, 80, '2026-07-23 11:35:00.000'),
+(490, 490, 70, '2026-07-23 11:35:00.000'),
+(491, 491, 50, '2026-07-23 11:35:00.000'),
+(492, 492, 130, '2026-07-23 11:35:00.000'),
+(493, 493, 40, '2026-07-23 11:35:00.000'),
+(494, 494, 60, '2026-07-23 11:35:00.000'),
+(495, 495, 75, '2026-07-23 11:35:00.000'),
+(496, 496, 65, '2026-07-23 11:35:00.000'),
+(497, 497, 45, '2026-07-23 11:35:00.000'),
+(498, 498, 160, '2026-07-23 11:35:00.000'),
+(499, 499, 30, '2026-07-23 11:35:00.000'),
+(500, 500, 50, '2026-07-23 11:35:00.000'),
+(501, 501, 45, '2026-07-23 11:35:00.000'),
+(502, 502, 60, '2026-07-23 11:35:00.000'),
+(503, 503, 55, '2026-07-23 11:35:00.000'),
+(504, 504, 80, '2026-07-23 11:35:00.000'),
+(505, 505, 110, '2026-07-23 11:35:00.000'),
+(506, 506, 90, '2026-07-23 11:35:00.000'),
+(507, 507, 85, '2026-07-23 11:35:00.000'),
+(508, 508, 120, '2026-07-23 11:35:00.000'),
+(509, 509, 130, '2026-07-23 11:35:00.000'),
+(510, 510, 140, '2026-07-23 11:35:00.000'),
+(511, 511, 90, '2026-07-23 11:35:00.000'),
+(512, 512, 200, '2026-07-23 11:35:00.000'),
+(513, 513, 40, '2026-07-23 11:35:00.000'),
+(514, 514, 50, '2026-07-23 11:35:00.000'),
+(515, 515, 60, '2026-07-23 11:35:00.000'),
+(516, 516, 25, '2026-07-23 11:35:00.000'),
+(517, 517, 35, '2026-07-23 11:35:00.000'),
+(518, 518, 20, '2026-07-23 11:35:00.000'),
+(519, 519, 45, '2026-07-23 11:35:00.000'),
+(520, 520, 20, '2026-07-23 11:35:00.000'),
+(521, 521, 15, '2026-07-23 11:35:00.000'),
+(522, 522, 120, '2026-07-23 11:35:00.000'),
+(523, 523, 50, '2026-07-23 11:35:00.000'),
+(524, 524, 40, '2026-07-23 11:35:00.000'),
+(525, 525, 45, '2026-07-23 11:35:00.000'),
+(526, 526, 35, '2026-07-23 11:35:00.000'),
+(527, 527, 60, '2026-07-23 11:35:00.000'),
+(528, 528, 50, '2026-07-23 11:35:00.000'),
+(529, 529, 40, '2026-07-23 11:35:00.000'),
+(530, 530, 100, '2026-07-23 11:35:00.000'),
+(531, 531, 90, '2026-07-23 11:35:00.000'),
+(532, 532, 70, '2026-07-23 11:35:00.000'),
+(533, 533, 40, '2026-07-23 11:35:00.000'),
+(534, 534, 90, '2026-07-23 11:35:00.000'),
+(535, 535, 35, '2026-07-23 11:35:00.000'),
+(536, 536, 30, '2026-07-23 11:35:00.000'),
+(537, 537, 25, '2026-07-23 11:35:00.000'),
+(538, 538, 50, '2026-07-23 11:35:00.000'),
+(539, 539, 15, '2026-07-23 11:35:00.000'),
+(540, 540, 30, '2026-07-23 11:35:00.000'),
+(541, 541, 20, '2026-07-23 11:35:00.000'),
+(542, 542, 110, '2026-07-23 11:35:00.000');
+SET IDENTITY_INSERT inventory OFF;
+DBCC CHECKIDENT ('inventory', RESEED, 542);
+GO
+
+
+SET IDENTITY_INSERT stock_movements ON;
+INSERT INTO stock_movements (id, product_id, change_quantity, movement_type, note, created_at) VALUES
+(1, 1, 23, 'IMPORT', '', '2026-04-23 12:54:40.508'),
+(2, 148, 2, 'EXPORT', 'ok', '2026-06-12 10:45:03.715'),
+(3, 148, 17, 'IMPORT', '', '2026-06-12 10:45:14.706'),
+(4, 35, 2, 'EXPORT', 'Tru kho cho don DH71', '2026-06-12 14:53:10.375'),
+(5, 4, 3, 'EXPORT', 'Tru kho cho don DH74', '2026-06-12 17:18:37.969'),
+(6, 5, 1, 'EXPORT', 'Tru kho cho don DH75', '2026-06-12 17:21:06.3'),
+(7, 148, 1, 'IMPORT', '', '2026-07-14 13:48:58.514'),
+(8, 148, 1, 'EXPORT', '', '2026-07-14 13:49:22.926'),
+(9, 148, 1, 'IMPORT', '', '2026-07-14 13:54:16.531');
+SET IDENTITY_INSERT stock_movements OFF;
+DBCC CHECKIDENT ('stock_movements', RESEED, 9);
+GO
+
+
 -- ============================================================================
 -- 7. INSERT USERS & ROLES SEED DATA (CHIA RÕ TỪNG ROLE THEO THỨ TỰ)
 -- ============================================================================
@@ -3080,7 +6507,7 @@ GO
 SET IDENTITY_INSERT users ON;
 
 INSERT INTO users (id, username, email, password, full_name, phone, address, enabled, auth_provider, google_id, facebook_id, avatar, birthday, gender, status, notify_flash_sale, notify_new_products, notify_order_updates, notify_weekly_newsletter, two_factor_enabled, force_change_password, created_at) VALUES
-(1, 'leecookcu@gmail.com', 'leecookcu@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Bá Bá', '0936629311', NULL, 1, 'LOCAL', NULL, NULL, '/uploads/avatars/user_2_1785405662243.webp', '2006-12-12 00:00:00.000', 1, 1, 1, 1, 1, 1, 0, 0, '2026-06-12 18:47:49.406');
+(1, 'leecookcu@gmail.com', 'leecookcu@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Bá Bá', '0936629311', NULL, 1, 'LOCAL', NULL, NULL, '/uploads/avatars/user_2_1785405662243.webp', '2006-12-12 00:00:00.000', 1, 1, 1, 1, 1, 1, 0, 0, '2026-06-12 18:47:49.406N');
 
 -- ----------------------------------------------------------------------------
 -- 7.2. 20 TÀI KHOẢN NHÂN VIÊN (STAFF) - PHÂN CHIA THEO CHI NHÁNH / KHU VỰC
@@ -3096,7 +6523,7 @@ INSERT INTO users (id, username, email, password, full_name, phone, address, ava
 (5, 'staff.ngocmai', 'ngocmai.luxurypc@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Phạm Ngọc Mai', '0934567890', N'Số 165 Xuân Thủy, Phường Dịch Vọng Hậu, Quận Cầu Giấy, Hà Nội', '/uploads/avatars/user_4.webp', '2000-03-14', 0, 1, 'LOCAL', 1, 0, '2026-02-10 14:20:00'),
 (6, 'staff.tuankiet', 'tuankiet.pc@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Đặng Tuấn Kiệt', '0903456781', N'Số 88 Phố Huế, Phường Hàng Bài, Quận Hoàn Kiếm, Hà Nội', '/uploads/avatars/user_5.webp', '1994-07-28', 1, 1, 'LOCAL', 1, 0, '2026-02-15 11:45:00'),
 (7, 'staff.phuongthao', 'phuongthao.sales@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Bùi Phương Thảo', '0945678902', N'Số 210 Xã Đàn, Phường Nam Đồng, Quận Đống Đa, Hà Nội', '/uploads/avatars/user_6.webp', '1999-12-08', 0, 1, 'LOCAL', 1, 0, '2026-02-20 08:00:00'),
-(8, 'staff.quanghuy', 'quanghuy.buildpc@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Nguyễn Quang Huy', '0967890123', N'Số 32 Hoàng Cầu, Phường Ô Chợ Dừa, Quận Đống Đa, Hà Nội', '/uploads/avatars/user_7.webp', '1997-05-19', 1, 1, 'LOCAL', 1, 0, '2026-03-01 13:30:00');
+(8, 'staff.quanghuy', 'quanghuy.buildpc@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Nguyễn Quang Huy', '0967890123', N'Số 32 Hoàng Cầu, Phường Ô Chợ Dừa, Quận Đống Đa, Hà Nội', '/uploads/avatars/user_7.webp', '1997-05-19', 1, 1, 'LOCAL', 1, 0, '2026-03-01 13:30:00N');
 
 -- Khu vực TP. Hồ Chí Minh (Showroom Quận 1, Quận 3, Quận 10, TP. Thủ Đức)
 INSERT INTO users (id, username, email, password, full_name, phone, address, avatar, birthday, gender, enabled, auth_provider, status, force_change_password, created_at) VALUES
@@ -3107,7 +6534,7 @@ INSERT INTO users (id, username, email, password, full_name, phone, address, ava
 (13, 'staff.quocbao', 'quocbao.pcbuilder@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Lê Quốc Bảo', '0918765432', N'Số 120 Thành Thái, Phường 12, Quận 10, TP. Hồ Chí Minh', '/uploads/avatars/user_17.webp', '1996-03-31', 1, 1, 'LOCAL', 1, 0, '2026-05-02 08:20:00'),
 (14, 'staff.thuytien', 'thuytien.sales@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Vũ Thủy Tiên', '0932109876', N'Số 89 Sư Vạn Hạnh, Phường 12, Quận 10, TP. Hồ Chí Minh', '/uploads/avatars/user_18.webp', '1999-07-15', 0, 1, 'LOCAL', 1, 0, '2026-05-08 10:40:00'),
 (15, 'staff.minhtri', 'minhtri.support@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Nguyễn Minh Trí', '0901234567', N'Số 175 Phan Xích Long, Phường 2, Quận Phú Nhuận, TP. Hồ Chí Minh', '/uploads/avatars/user_19.webp', '1995-10-04', 1, 1, 'LOCAL', 1, 0, '2026-05-15 13:50:00'),
-(16, 'staff.kimngan', 'kimngan.hcm@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Trần Kim Ngân', '0945678123', N'Số 420 Nguyễn Oanh, Phường 6, Quận Gò Vấp, TP. Hồ Chí Minh', '/uploads/avatars/user_20.webp', '2002-01-18', 0, 1, 'LOCAL', 1, 0, '2026-05-22 09:15:00');
+(16, 'staff.kimngan', 'kimngan.hcm@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Trần Kim Ngân', '0945678123', N'Số 420 Nguyễn Oanh, Phường 6, Quận Gò Vấp, TP. Hồ Chí Minh', '/uploads/avatars/user_20.webp', '2002-01-18', 0, 1, 'LOCAL', 1, 0, '2026-05-22 09:15:00N');
 
 -- Khu vực Đà Nẵng & Miền Trung (Showroom Hải Châu, Thanh Khê)
 INSERT INTO users (id, username, email, password, full_name, phone, address, avatar, birthday, gender, enabled, auth_provider, status, force_change_password, created_at) VALUES
@@ -3115,7 +6542,7 @@ INSERT INTO users (id, username, email, password, full_name, phone, address, ava
 (18, 'staff.myhanh', 'myhanh.luxury@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Trần Mỹ Hạnh', '0973456789', N'Số 156 Hùng Vương, Phường Hải Châu 1, Quận Hải Châu, Đà Nẵng', '/uploads/avatars/user_6.webp', '1999-08-25', 0, 1, 'LOCAL', 1, 0, '2026-06-25 14:15:00'),
 (19, 'staff.quangvinh', 'quangvinh.tech@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Phan Quang Vinh', '0914567890', N'Số 89 Lê Duẩn, Phường Hải Châu 2, Quận Hải Châu, Đà Nẵng', '/uploads/avatars/user_7.webp', '1993-12-30', 1, 1, 'LOCAL', 1, 0, '2026-07-01 10:30:00'),
 (20, 'staff.thanhngan', 'thanhngan.pc@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Lê Thanh Ngân', '0935678901', N'Số 45 Điện Biên Phủ, Phường Chính Gián, Quận Thanh Khê, Đà Nẵng', '/uploads/avatars/user_8.webp', '2001-04-18', 0, 1, 'LOCAL', 1, 0, '2026-07-08 16:45:00'),
-(21, 'staff.vietanh', 'vietanh.custom@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Hoàng Việt Anh', '0906789012', N'Số 78 Bạch Đằng, Phường Thạch Thang, Quận Hải Châu, Đà Nẵng', '/uploads/avatars/user_9.webp', '1996-09-05', 1, 1, 'LOCAL', 1, 0, '2026-07-15 08:20:00');
+(21, 'staff.vietanh', 'vietanh.custom@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Hoàng Việt Anh', '0906789012', N'Số 78 Bạch Đằng, Phường Thạch Thang, Quận Hải Châu, Đà Nẵng', '/uploads/avatars/user_9.webp', '1996-09-05', 1, 1, 'LOCAL', 1, 0, '2026-07-15 08:20:00N');
 
 -- ----------------------------------------------------------------------------
 -- 7.3. 100 TÀI KHOẢN KHÁCH HÀNG (USER) - HỌ TÊN TIẾNG VIỆT CÓ DẤU CHUẨN XÁC
@@ -3162,7 +6589,7 @@ INSERT INTO users (id, username, email, password, full_name, phone, address, bir
 (58, 'user_037', 'khachhang037@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Võ Quỳnh Hằng', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', '1989-11-22', 0, 1, 'LOCAL', 1, 0, '2025-01-21 14:22:00'),
 (59, 'user_038', 'khachhang038@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Đặng Trúc Hà', '0761979308', N'Số 311, Đường Võ Văn Kiệt, Long Biên, Hà Nội', '1986-07-06', 0, 1, 'LOCAL', 1, 0, '2026-05-25 19:25:00'),
 (60, 'user_039', 'khachhang039@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Võ Diệu Mai', '0902454947', N'Số 68, Đường Nguyễn Văn Cừ, Yên Phong, Bắc Ninh', '2002-02-08', 0, 1, 'LOCAL', 1, 0, '2026-06-14 15:51:00'),
-(61, 'user_040', 'khachhang040@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Nguyễn Thu Hà', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', '2001-03-21', 0, 1, 'LOCAL', 1, 0, '2025-07-17 09:50:00');
+(61, 'user_040', 'khachhang040@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Nguyễn Thu Hà', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', '2001-03-21', 0, 1, 'LOCAL', 1, 0, '2025-07-17 09:50:00N');
 
 -- Khách hàng Khu vực Miền Nam (TP. Hồ Chí Minh, Bình Dương, Đồng Nai, Cần Thơ, Vũng Tàu)
 INSERT INTO users (id, username, email, password, full_name, phone, address, birthday, gender, enabled, auth_provider, status, force_change_password, created_at) VALUES
@@ -3205,7 +6632,7 @@ INSERT INTO users (id, username, email, password, full_name, phone, address, bir
 (98, 'user_077', 'khachhang077@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Phạm Ánh Hà', '0767110104', N'Số 95, Đường Lê Lợi, Long Thành, Đồng Nai', '1989-11-17', 0, 1, 'LOCAL', 1, 0, '2026-03-17 16:57:00'),
 (99, 'user_078', 'khachhang078@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Lý Thu Yến', '0896567924', N'Số 201, Đường Nam Kỳ Khởi Nghĩa, Phú Nhuận, TP. Hồ Chí Minh', '2004-12-28', 0, 1, 'LOCAL', 1, 0, '2026-04-27 21:55:00'),
 (100, 'user_079', 'khachhang079@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Trần Thị Tâm', '0394698813', N'Số 342, Đường Điện Biên Phủ, Quận 7, TP. Hồ Chí Minh', '2003-09-23', 0, 1, 'LOCAL', 1, 0, '2024-04-27 10:11:00'),
-(101, 'user_080', 'khachhang080@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Nguyễn Khánh Hiền', '0893177987', N'Số 37, Đường Nam Kỳ Khởi Nghĩa, Biên Hòa, Đồng Nai', '1992-10-25', 0, 1, 'LOCAL', 1, 0, '2024-04-09 21:13:00');
+(101, 'user_080', 'khachhang080@gmail.com', '$2a$10$OEwvbrxnyov9V2sOqq9CvOkvJ5QQqPehUz.w5r4r24eatIAJIRGn2', N'Nguyễn Khánh Hiền', '0893177987', N'Số 37, Đường Nam Kỳ Khởi Nghĩa, Biên Hòa, Đồng Nai', '1992-10-25', 0, 1, 'LOCAL', 1, 0, '2024-04-09 21:13:00N');
 
 -- Khách hàng Khu vực Miền Trung & Tây Nguyên (Đà Nẵng, Huế, Nha Trang, Quảng Nam, Bình Định)
 INSERT INTO users (id, username, email, password, full_name, phone, address, birthday, gender, enabled, auth_provider, status, force_change_password, created_at) VALUES
@@ -3430,7 +6857,7 @@ INSERT INTO shipping_addresses (user_id, recipient_name, phone, address, city, d
 (78, N'Đỗ Mỹ Duyên', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', N'Bến Cát', 1),
 (79, N'Đặng Thu Hằng', '0910176628', N'Số 260, Đường Phan Chu Trinh, Quận 8, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', N'Quận 8', 1),
 (80, N'Dương Thu Hương', '0788444505', N'Số 5, Đường Điện Biên Phủ, Dĩ An, Bình Dương', N'Bình Dương', N'Dĩ An', 1),
-(81, N'Ngô Quỳnh Nhi', '0914027898', N'Số 164, Đường Nguyễn Trãi, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', N'TP. Vũng Tàu', 1);
+(81, N'Ngô Quỳnh Nhi', '0914027898', N'Số 164, Đường Nguyễn Trãi, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', N'TP. Vũng TàuN', 1);
 GO
 
 -- ============================================================================
@@ -3440,206 +6867,206 @@ GO
 SET IDENTITY_INSERT orders ON;
 
 INSERT INTO orders (id, user_id, order_code, full_name, email, phone, address, city, total_price, discount_amount, voucher_code, status, payment_method, stock_deducted, stock_restored, created_at) VALUES
-(1, 87, 'LXR2410270001', N'Lê Bảo Khang', 'khachhang066@gmail.com', '0331904313', N'Số 179, Đường Nam Kỳ Khởi Nghĩa, Bến Cát, Bình Dương', N'Bình Dương', 750000.00, 0.00, NULL, 'DELIVERED', 'INSTALLMENT', 1, 0, '2024-10-27 04:43:43'),
-(2, 59, 'LXR2608230002', N'Đặng Trúc Hà', 'khachhang038@gmail.com', '0761979308', N'Số 311, Đường Võ Văn Kiệt, Long Biên, Hà Nội', N'Hà Nội', 1785000.00, 315000.00, 'LXR36', 'SHIPPING', 'COD', 1, 0, '2026-08-23 02:07:10'),
-(3, 81, 'LXR2405020003', N'Ngô Quỳnh Nhi', 'khachhang060@gmail.com', '0914027898', N'Số 164, Đường Nguyễn Trãi, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 13600000.00, 0.00, NULL, 'DELIVERED', 'VNPAY', 1, 0, '2024-05-02 05:55:04'),
-(4, 102, 'LXR2501140004', N'Dương Minh Sơn', 'khachhang081@gmail.com', '0977810640', N'Số 236, Đường Lý Thường Kiệt, Hội An, Quảng Nam', N'Quảng Nam', 16300000.00, 2000000.00, 'LUX30', 'PAID', 'VNPAY', 1, 0, '2025-01-14 11:21:31'),
-(5, 81, 'LXR2504270005', N'Ngô Quỳnh Nhi', 'khachhang060@gmail.com', '0914027898', N'Số 164, Đường Nguyễn Trãi, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 32400000.00, 2000000.00, 'LUX30', 'PAID', 'COD', 1, 0, '2025-04-27 12:15:50'),
-(6, 61, 'LXR2605290006', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 1890000.00, 210000.00, 'LUX10', 'CONFIRMED', 'MOMO', 0, 0, '2026-05-29 06:03:43'),
-(7, 71, 'LXR2405270007', N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Số 239, Đường Phan Chu Trinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 3360000.00, 1440000.00, 'LUX30', 'CONFIRMED', 'INSTALLMENT', 0, 0, '2024-05-27 10:18:18'),
-(8, 41, 'LXR2405270008', N'Võ Hải Châu', 'khachhang020@gmail.com', '0378480742', N'Số 315, Đường Kim Mã, Cầu Giấy, Hà Nội', N'Hà Nội', 1050000.00, 1050000.00, 'LUX50', 'SHIPPING', 'BANK_TRANSFER', 1, 0, '2024-05-27 22:05:39'),
-(9, 55, 'LXR2504070009', N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Số 330, Đường Võ Thị Sáu, Uông Bí, Quảng Ninh', N'Quảng Ninh', 47100000.00, 0.00, NULL, 'SHIPPING', 'BANK_TRANSFER', 1, 0, '2025-04-07 14:22:55'),
-(10, 111, 'LXR2406290010', N'Phạm Tiến Long', 'khachhang090@gmail.com', '0904368325', N'Số 110, Đường Kim Mã, TP. Huế, Huế', N'Huế', 1450000.00, 0.00, NULL, 'DELIVERED', 'VNPAY', 1, 0, '2024-06-29 00:02:37'),
-(11, 72, 'LXR2411060011', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 2600000.00, 0.00, NULL, 'PAID', 'VNPAY', 1, 0, '2024-11-06 15:34:48'),
-(12, 102, 'LXR2602030012', N'Dương Minh Sơn', 'khachhang081@gmail.com', '0977810640', N'Số 236, Đường Lý Thường Kiệt, Hội An, Quảng Nam', N'Quảng Nam', 31400000.00, 2000000.00, 'LUX10', 'SHIPPING', 'MOMO', 1, 0, '2026-02-03 18:46:40'),
-(13, 110, 'LXR2607040013', N'Ngô Bảo Hải', 'khachhang089@gmail.com', '0894063447', N'Số 219, Đường Võ Văn Kiệt, Cam Ranh, Nha Trang', N'Nha Trang', 8800000.00, 2000000.00, 'LUX50', 'PAID', 'COD', 1, 0, '2026-07-04 13:45:21'),
-(14, 82, 'LXR2404300014', N'Trần Ngọc Nhi', 'khachhang061@gmail.com', '0980124165', N'Số 286, Đường Lý Thường Kiệt, Ninh Kiều, Cần Thơ', N'Cần Thơ', 68000000.00, 2000000.00, 'LXR36', 'SHIPPING', 'VNPAY', 1, 0, '2024-04-30 18:20:06'),
-(15, 76, 'LXR2603250015', N'Vũ Tuấn Tuấn', 'khachhang055@gmail.com', '0702646000', N'Số 114, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 1700000.00, 1700000.00, 'LUX50', 'PENDING', 'INSTALLMENT', 0, 0, '2026-03-25 05:50:42'),
-(16, 104, 'LXR2511110016', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 50500000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2025-11-11 03:04:02'),
-(17, 39, 'LXR2503210017', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 81300000.00, 2000000.00, 'LUX10', 'PAID', 'INSTALLMENT', 1, 0, '2025-03-21 03:01:06'),
-(18, 85, 'LXR2508260018', N'Dương Thành Phong', 'khachhang064@gmail.com', '0325167896', N'Số 79, Đường Lê Lợi, Bình Tân, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 52750000.00, 0.00, NULL, 'SHIPPING', 'MOMO', 1, 0, '2025-08-26 13:05:11'),
-(19, 53, 'LXR2512200019', N'Hồ Thị Trâm', 'khachhang032@gmail.com', '0349014260', N'Số 341, Đường Lý Thường Kiệt, Hải An, Hải Phòng', N'Hải Phòng', 43800000.00, 2000000.00, 'LUX10', 'PAID', 'VNPAY', 1, 0, '2025-12-20 08:28:57'),
-(20, 104, 'LXR2403240020', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 5900000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2024-03-24 05:33:09'),
-(21, 115, 'LXR2607030021', N'Lý Thị Tâm', 'khachhang094@gmail.com', '0399233423', N'Số 70, Đường Võ Văn Kiệt, TP. Nha Trang, Nha Trang', N'Nha Trang', 8200000.00, 0.00, NULL, 'PENDING', 'VNPAY', 0, 0, '2026-07-03 00:46:40'),
-(22, 78, 'LXR2603130022', N'Đỗ Mỹ Duyên', 'khachhang057@gmail.com', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', 63500000.00, 0.00, NULL, 'PENDING', 'BANK_TRANSFER', 0, 0, '2026-03-13 10:12:40'),
-(23, 46, 'LXR2409170023', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 21600000.00, 0.00, NULL, 'CONFIRMED', 'COD', 0, 0, '2024-09-17 07:47:45'),
-(24, 61, 'LXR2512160024', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 4550000.00, 0.00, NULL, 'CONFIRMED', 'VNPAY', 0, 0, '2025-12-16 14:26:01'),
-(25, 110, 'LXR2407030025', N'Ngô Bảo Hải', 'khachhang089@gmail.com', '0894063447', N'Số 219, Đường Võ Văn Kiệt, Cam Ranh, Nha Trang', N'Nha Trang', 38950000.00, 0.00, NULL, 'PAID', 'INSTALLMENT', 1, 0, '2024-07-03 22:21:27'),
-(26, 104, 'LXR2502050026', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 10400000.00, 2000000.00, 'LUX30', 'SHIPPING', 'BANK_TRANSFER', 1, 0, '2025-02-05 05:37:28'),
-(27, 104, 'LXR2510140027', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 9800000.00, 0.00, NULL, 'PROCESSING', 'INSTALLMENT', 1, 0, '2025-10-14 17:06:08'),
-(28, 98, 'LXR2510290028', N'Phạm Ánh Hà', 'khachhang077@gmail.com', '0767110104', N'Số 95, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 59600000.00, 0.00, NULL, 'DELIVERED', 'MOMO', 1, 0, '2025-10-29 11:56:29'),
-(29, 103, 'LXR2412280029', N'Lê Bảo Đạt', 'khachhang082@gmail.com', '0918069328', N'Số 1, Đường Cầu Giấy, Hội An, Quảng Nam', N'Quảng Nam', 7650000.00, 850000.00, 'LUX10', 'PROCESSING', 'MOMO', 1, 0, '2024-12-28 11:52:00'),
-(30, 37, 'LXR2602250030', N'Ngô Thu Huyền', 'khachhang016@gmail.com', '0884346645', N'Số 124, Đường Điện Biên Phủ, Hoàng Mai, Hà Nội', N'Hà Nội', 4340000.00, 1860000.00, 'LUX30', 'PAID', 'SEPAY_QR', 1, 0, '2026-02-25 09:15:46'),
-(31, 64, 'LXR2502250031', N'Hoàng Thị Duyên', 'khachhang043@gmail.com', '0784797534', N'Số 76, Đường Điện Biên Phủ, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 2800000.00, 2000000.00, 'LUX50', 'SHIPPING', 'COD', 1, 0, '2025-02-25 07:45:35'),
-(32, 63, 'LXR2412190032', N'Ngô Thành Hải', 'khachhang042@gmail.com', '0371536772', N'Số 279, Đường Nam Kỳ Khởi Nghĩa, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 2500000.00, 2000000.00, 'LUX50', 'SHIPPING', 'VNPAY', 1, 0, '2024-12-19 20:20:46'),
-(33, 82, 'LXR2508300033', N'Trần Ngọc Nhi', 'khachhang061@gmail.com', '0980124165', N'Số 286, Đường Lý Thường Kiệt, Ninh Kiều, Cần Thơ', N'Cần Thơ', 14400000.00, 2000000.00, 'LUX50', 'PROCESSING', 'COD', 1, 0, '2025-08-30 05:09:07'),
-(34, 114, 'LXR2606010034', N'Phan Đức Khoa', 'khachhang093@gmail.com', '0783142280', N'Số 337, Đường Hoàng Hoa Thám, TP. Huế, Huế', N'Huế', 15500000.00, 0.00, NULL, 'SHIPPING', 'BANK_TRANSFER', 1, 0, '2026-06-01 06:18:31'),
-(35, 40, 'LXR2411020035', N'Lý Hữu Tùng', 'khachhang019@gmail.com', '0350947551', N'Số 192, Đường Lý Thường Kiệt, Chí Linh, Hải Dương', N'Hải Dương', 2100000.00, 0.00, NULL, 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2024-11-02 23:49:10'),
-(36, 62, 'LXR2411270036', N'Phan Mai Châu', 'khachhang041@gmail.com', '0971563352', N'Số 323, Đường Võ Văn Kiệt, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 18900000.00, 0.00, NULL, 'PROCESSING', 'COD', 1, 0, '2024-11-27 20:01:43'),
-(37, 76, 'LXR2412110037', N'Vũ Tuấn Tuấn', 'khachhang055@gmail.com', '0702646000', N'Số 114, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 11500000.00, 0.00, NULL, 'DELIVERED', 'INSTALLMENT', 1, 0, '2024-12-11 21:45:38'),
-(38, 112, 'LXR2404060038', N'Phạm Tuấn Cường', 'khachhang091@gmail.com', '0867685982', N'Số 248, Đường Cách Mạng Tháng 8, Hội An, Quảng Nam', N'Quảng Nam', 12600000.00, 2000000.00, 'LUX30', 'DELIVERED', 'INSTALLMENT', 1, 0, '2024-04-06 16:07:44'),
-(39, 78, 'LXR2603070039', N'Đỗ Mỹ Duyên', 'khachhang057@gmail.com', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', 7950000.00, 2000000.00, 'LUX30', 'PAID', 'COD', 1, 0, '2026-03-07 23:24:20'),
-(40, 53, 'LXR2409260040', N'Hồ Thị Trâm', 'khachhang032@gmail.com', '0349014260', N'Số 341, Đường Lý Thường Kiệt, Hải An, Hải Phòng', N'Hải Phòng', 72300000.00, 2000000.00, 'LUX30', 'PROCESSING', 'COD', 1, 0, '2024-09-26 19:43:56'),
-(41, 87, 'LXR2504180041', N'Lê Bảo Khang', 'khachhang066@gmail.com', '0331904313', N'Số 179, Đường Nam Kỳ Khởi Nghĩa, Bến Cát, Bình Dương', N'Bình Dương', 7225000.00, 1275000.00, 'LXR36', 'PROCESSING', 'SEPAY_QR', 1, 0, '2025-04-18 13:54:06'),
-(42, 96, 'LXR2601230042', N'Phan Minh Huy', 'khachhang075@gmail.com', '0935324714', N'Số 329, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 11500000.00, 0.00, NULL, 'PAID', 'INSTALLMENT', 1, 0, '2026-01-23 01:13:16'),
-(43, 61, 'LXR2405180043', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 4750000.00, 0.00, NULL, 'CANCELLED', 'VNPAY', 0, 1, '2024-05-18 19:04:40'),
-(44, 56, 'LXR2507050044', N'Đỗ Mỹ Linh', 'khachhang035@gmail.com', '0898730533', N'Số 236, Đường Nguyễn Trãi, TP. Bắc Ninh, Bắc Ninh', N'Bắc Ninh', 8800000.00, 2000000.00, 'LUX50', 'PAID', 'BANK_TRANSFER', 1, 0, '2025-07-05 19:20:47'),
-(45, 54, 'LXR2403220045', N'Bùi Quỳnh Thảo', 'khachhang033@gmail.com', '0709493169', N'Số 206, Đường Nguyễn Văn Cừ, Hạ Long, Quảng Ninh', N'Quảng Ninh', 57500000.00, 0.00, NULL, 'PAID', 'INSTALLMENT', 1, 0, '2024-03-22 17:39:49'),
-(46, 107, 'LXR2503140046', N'Phan Ánh Trang', 'khachhang086@gmail.com', '0964472757', N'Số 134, Đường Điện Biên Phủ, Quy Nhơn, Bình Định', N'Bình Định', 2600000.00, 0.00, NULL, 'CONFIRMED', 'SEPAY_QR', 0, 0, '2025-03-14 11:50:13'),
-(47, 40, 'LXR2510150047', N'Lý Hữu Tùng', 'khachhang019@gmail.com', '0350947551', N'Số 192, Đường Lý Thường Kiệt, Chí Linh, Hải Dương', N'Hải Dương', 2100000.00, 0.00, NULL, 'PAID', 'INSTALLMENT', 1, 0, '2025-10-15 18:39:11'),
-(48, 41, 'LXR2607250048', N'Võ Hải Châu', 'khachhang020@gmail.com', '0378480742', N'Số 315, Đường Kim Mã, Cầu Giấy, Hà Nội', N'Hà Nội', 6950000.00, 2000000.00, 'LUX50', 'PAID', 'BANK_TRANSFER', 1, 0, '2026-07-25 17:39:46'),
-(49, 90, 'LXR2408070049', N'Trần Xuân Linh', 'khachhang069@gmail.com', '0385123967', N'Số 63, Đường Hoàng Hoa Thám, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 11400000.00, 0.00, NULL, 'DELIVERED', 'MOMO', 1, 0, '2024-08-07 04:29:54'),
-(50, 120, 'LXR2405230050', N'Ngô Bảo Hải', 'khachhang099@gmail.com', '0983077196', N'Số 23, Đường Điện Biên Phủ, Hội An, Quảng Nam', N'Quảng Nam', 7400000.00, 0.00, NULL, 'PAID', 'MOMO', 1, 0, '2024-05-23 20:13:02'),
-(51, 28, 'LXR2502160051', N'Lý Tuấn Tùng', 'khachhang007@gmail.com', '0797839946', N'Số 40, Đường Giải Phóng, Ngô Quyền, Hải Phòng', N'Hải Phòng', 11500000.00, 0.00, NULL, 'CONFIRMED', 'INSTALLMENT', 0, 0, '2025-02-16 09:08:15'),
-(52, 72, 'LXR2406120052', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 60200000.00, 2000000.00, 'LUX50', 'CONFIRMED', 'MOMO', 0, 0, '2024-06-12 11:39:54'),
-(53, 83, 'LXR2509060053', N'Lý Tuyết Hằng', 'khachhang062@gmail.com', '0324694166', N'Số 153, Đường Nguyễn Trãi, Biên Hòa, Đồng Nai', N'Đồng Nai', 38800000.00, 0.00, NULL, 'CANCELLED', 'SEPAY_QR', 0, 1, '2025-09-06 05:39:17'),
-(54, 55, 'LXR2604120054', N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Số 330, Đường Võ Thị Sáu, Uông Bí, Quảng Ninh', N'Quảng Ninh', 62300000.00, 0.00, NULL, 'CANCELLED', 'SEPAY_QR', 0, 1, '2026-04-12 16:59:55'),
-(55, 110, 'LXR2606130055', N'Ngô Bảo Hải', 'khachhang089@gmail.com', '0894063447', N'Số 219, Đường Võ Văn Kiệt, Cam Ranh, Nha Trang', N'Nha Trang', 17700000.00, 0.00, NULL, 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2026-06-13 08:20:40'),
-(56, 46, 'LXR2411230056', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 2100000.00, 0.00, NULL, 'CANCELLED', 'COD', 0, 1, '2024-11-23 11:48:12'),
-(57, 117, 'LXR2602220057', N'Dương Gia Tùng', 'khachhang096@gmail.com', '0365684010', N'Số 192, Đường Võ Văn Kiệt, Thanh Khê, Đà Nẵng', N'Đà Nẵng', 15200000.00, 2000000.00, 'LUX30', 'CONFIRMED', 'VNPAY', 0, 0, '2026-02-22 03:46:05'),
-(58, 47, 'LXR2501130058', N'Phan Xuân Tài', 'khachhang026@gmail.com', '0323948945', N'Số 53, Đường Điện Biên Phủ, Cẩm Phả, Quảng Ninh', N'Quảng Ninh', 3700000.00, 2000000.00, 'LUX50', 'SHIPPING', 'SEPAY_QR', 1, 0, '2025-01-13 13:48:50'),
-(59, 39, 'LXR2512270059', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 55500000.00, 2000000.00, 'LUX30', 'PROCESSING', 'SEPAY_QR', 1, 0, '2025-12-27 10:29:15'),
-(60, 77, 'LXR2501130060', N'Vũ Thị Hiền', 'khachhang056@gmail.com', '0794999113', N'Số 254, Đường Trường Chinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 9500000.00, 2000000.00, 'LUX50', 'PAID', 'INSTALLMENT', 1, 0, '2025-01-13 08:21:07'),
-(61, 38, 'LXR2410050061', N'Huỳnh Quỳnh Lam', 'khachhang017@gmail.com', '0375383607', N'Số 256, Đường Điện Biên Phủ, Hạ Long, Quảng Ninh', N'Quảng Ninh', 2800000.00, 2000000.00, 'LUX50', 'PROCESSING', 'MOMO', 1, 0, '2024-10-05 07:46:59'),
-(62, 108, 'LXR2406170062', N'Dương Ánh Hằng', 'khachhang087@gmail.com', '0945397620', N'Số 65, Đường Lê Lợi, TP. Huế, Huế', N'Huế', 3825000.00, 675000.00, 'LXR36', 'PAID', 'INSTALLMENT', 1, 0, '2024-06-17 09:25:42'),
-(63, 58, 'LXR2602080063', N'Võ Quỳnh Hằng', 'khachhang037@gmail.com', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', N'Hà Nội', 8700000.00, 0.00, NULL, 'SHIPPING', 'MOMO', 1, 0, '2026-02-08 09:55:48'),
-(64, 44, 'LXR2411280064', N'Lý Đức Khoa', 'khachhang023@gmail.com', '0702080086', N'Số 11, Đường Hoàng Hoa Thám, Từ Sơn, Bắc Ninh', N'Bắc Ninh', 15480000.00, 1720000.00, 'LUX10', 'DELIVERED', 'MOMO', 1, 0, '2024-11-28 07:38:38'),
-(65, 69, 'LXR2505210065', N'Hoàng Đức Long', 'khachhang048@gmail.com', '0385765838', N'Số 338, Đường Giải Phóng, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 10800000.00, 0.00, NULL, 'PENDING', 'SEPAY_QR', 0, 0, '2025-05-21 08:38:26'),
-(66, 113, 'LXR2606120066', N'Phan Trọng Quân', 'khachhang092@gmail.com', '0323358475', N'Số 139, Đường Lý Thường Kiệt, Hải Châu, Đà Nẵng', N'Đà Nẵng', 16400000.00, 0.00, NULL, 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2026-06-12 16:16:03'),
-(67, 69, 'LXR2505280067', N'Hoàng Đức Long', 'khachhang048@gmail.com', '0385765838', N'Số 338, Đường Giải Phóng, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 1305000.00, 145000.00, 'LUX10', 'PAID', 'COD', 1, 0, '2025-05-28 17:38:34'),
-(68, 52, 'LXR2507260068', N'Nguyễn Bảo Tùng', 'khachhang031@gmail.com', '0907206088', N'Số 48, Đường Kim Mã, Cẩm Phả, Quảng Ninh', N'Quảng Ninh', 1200000.00, 0.00, NULL, 'SHIPPING', 'INSTALLMENT', 1, 0, '2025-07-26 13:10:30'),
-(69, 44, 'LXR2512130069', N'Lý Đức Khoa', 'khachhang023@gmail.com', '0702080086', N'Số 11, Đường Hoàng Hoa Thám, Từ Sơn, Bắc Ninh', N'Bắc Ninh', 20000000.00, 0.00, NULL, 'CONFIRMED', 'MOMO', 0, 0, '2025-12-13 17:20:44'),
-(70, 55, 'LXR2505230070', N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Số 330, Đường Võ Thị Sáu, Uông Bí, Quảng Ninh', N'Quảng Ninh', 2100000.00, 0.00, NULL, 'CONFIRMED', 'MOMO', 0, 0, '2025-05-23 04:17:58'),
-(71, 46, 'LXR2601250071', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 41800000.00, 0.00, NULL, 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2026-01-25 05:27:34'),
-(72, 121, 'LXR2511050072', N'Đặng Hải Anh', 'khachhang100@gmail.com', '0934773116', N'Số 16, Đường Hai Bà Trưng, Cẩm Lệ, Đà Nẵng', N'Đà Nẵng', 37500000.00, 0.00, NULL, 'DELIVERED', 'SEPAY_QR', 1, 0, '2025-11-05 19:17:18'),
-(73, 71, 'LXR2408140073', N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Số 239, Đường Phan Chu Trinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 9775000.00, 1725000.00, 'LXR36', 'DELIVERED', 'SEPAY_QR', 1, 0, '2024-08-14 12:41:49'),
-(74, 112, 'LXR2411020074', N'Phạm Tuấn Cường', 'khachhang091@gmail.com', '0867685982', N'Số 248, Đường Cách Mạng Tháng 8, Hội An, Quảng Nam', N'Quảng Nam', 17300000.00, 2000000.00, 'LUX50', 'PROCESSING', 'COD', 1, 0, '2024-11-02 06:08:26'),
-(75, 30, 'LXR2511130075', N'Bùi Gia Quân', 'khachhang009@gmail.com', '0912109582', N'Số 164, Đường Trần Hưng Đạo, Hồng Bàng, Hải Phòng', N'Hải Phòng', 1900000.00, 1900000.00, 'LUX50', 'DELIVERED', 'MOMO', 1, 0, '2025-11-13 21:08:09'),
-(76, 39, 'LXR2411170076', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 7600000.00, 2000000.00, 'LUX30', 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2024-11-17 13:30:29'),
-(77, 103, 'LXR2601230077', N'Lê Bảo Đạt', 'khachhang082@gmail.com', '0918069328', N'Số 1, Đường Cầu Giấy, Hội An, Quảng Nam', N'Quảng Nam', 6480000.00, 720000.00, 'LUX10', 'SHIPPING', 'COD', 1, 0, '2026-01-23 02:57:12'),
-(78, 76, 'LXR2604260078', N'Vũ Tuấn Tuấn', 'khachhang055@gmail.com', '0702646000', N'Số 114, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 4200000.00, 2000000.00, 'LUX50', 'PROCESSING', 'VNPAY', 1, 0, '2026-04-26 19:33:47'),
-(79, 46, 'LXR2509110079', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 3060000.00, 340000.00, 'LUX10', 'CANCELLED', 'SEPAY_QR', 0, 1, '2025-09-11 16:05:38'),
-(80, 92, 'LXR2508150080', N'Phạm Thanh Châu', 'khachhang071@gmail.com', '0399506476', N'Số 100, Đường Nguyễn Trãi, Dĩ An, Bình Dương', N'Bình Dương', 32400000.00, 2000000.00, 'LUX10', 'CONFIRMED', 'COD', 0, 0, '2025-08-15 05:30:01'),
-(81, 71, 'LXR2510230081', N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Số 239, Đường Phan Chu Trinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 50000000.00, 2000000.00, 'LUX10', 'DELIVERED', 'INSTALLMENT', 1, 0, '2025-10-23 09:08:21'),
-(82, 108, 'LXR2608050082', N'Dương Ánh Hằng', 'khachhang087@gmail.com', '0945397620', N'Số 65, Đường Lê Lợi, TP. Huế, Huế', N'Huế', 24450000.00, 0.00, NULL, 'SHIPPING', 'VNPAY', 1, 0, '2026-08-05 23:51:25'),
-(83, 53, 'LXR2408310083', N'Hồ Thị Trâm', 'khachhang032@gmail.com', '0349014260', N'Số 341, Đường Lý Thường Kiệt, Hải An, Hải Phòng', N'Hải Phòng', 17600000.00, 0.00, NULL, 'PAID', 'SEPAY_QR', 1, 0, '2024-08-31 04:47:03'),
-(84, 67, 'LXR2509240084', N'Huỳnh Gia Quân', 'khachhang046@gmail.com', '0379342131', N'Số 88, Đường Cách Mạng Tháng 8, Thuận An, Bình Dương', N'Bình Dương', 2720000.00, 480000.00, 'LXR36', 'DELIVERED', 'SEPAY_QR', 1, 0, '2025-09-24 16:40:13'),
-(85, 51, 'LXR2505220085', N'Hoàng Ngọc Linh', 'khachhang030@gmail.com', '0369150908', N'Số 51, Đường Võ Thị Sáu, TP. Hải Dương, Hải Dương', N'Hải Dương', 29900000.00, 0.00, NULL, 'PENDING', 'MOMO', 0, 0, '2025-05-22 05:14:49'),
-(86, 72, 'LXR2510030086', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 29650000.00, 0.00, NULL, 'DELIVERED', 'MOMO', 1, 0, '2025-10-03 23:40:44'),
-(87, 77, 'LXR2603060087', N'Vũ Thị Hiền', 'khachhang056@gmail.com', '0794999113', N'Số 254, Đường Trường Chinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 13455000.00, 1495000.00, 'LUX10', 'PROCESSING', 'COD', 1, 0, '2026-03-06 19:12:04'),
-(88, 37, 'LXR2507190088', N'Ngô Thu Huyền', 'khachhang016@gmail.com', '0884346645', N'Số 124, Đường Điện Biên Phủ, Hoàng Mai, Hà Nội', N'Hà Nội', 750000.00, 0.00, NULL, 'DELIVERED', 'INSTALLMENT', 1, 0, '2025-07-19 14:37:28'),
-(89, 58, 'LXR2405090089', N'Võ Quỳnh Hằng', 'khachhang037@gmail.com', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', N'Hà Nội', 4335000.00, 765000.00, 'LXR36', 'PROCESSING', 'MOMO', 1, 0, '2024-05-09 22:37:37'),
-(90, 39, 'LXR2602150090', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 13500000.00, 2000000.00, 'LUX30', 'CONFIRMED', 'VNPAY', 0, 0, '2026-02-15 22:23:22'),
-(91, 81, 'LXR2404090091', N'Ngô Quỳnh Nhi', 'khachhang060@gmail.com', '0914027898', N'Số 164, Đường Nguyễn Trãi, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 6030000.00, 670000.00, 'LUX10', 'PAID', 'INSTALLMENT', 1, 0, '2024-04-09 18:09:55'),
-(92, 44, 'LXR2504140092', N'Lý Đức Khoa', 'khachhang023@gmail.com', '0702080086', N'Số 11, Đường Hoàng Hoa Thám, Từ Sơn, Bắc Ninh', N'Bắc Ninh', 20300000.00, 2000000.00, 'LUX30', 'PAID', 'VNPAY', 1, 0, '2025-04-14 14:29:09'),
-(93, 72, 'LXR2503160093', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 2940000.00, 1260000.00, 'LUX30', 'PAID', 'VNPAY', 1, 0, '2025-03-16 22:01:21'),
-(94, 40, 'LXR2503290094', N'Lý Hữu Tùng', 'khachhang019@gmail.com', '0350947551', N'Số 192, Đường Lý Thường Kiệt, Chí Linh, Hải Dương', N'Hải Dương', 19500000.00, 2000000.00, 'LUX10', 'PENDING', 'BANK_TRANSFER', 0, 0, '2025-03-29 00:41:15'),
-(95, 57, 'LXR2410270095', N'Lý Bảo Nhân', 'khachhang036@gmail.com', '0887145631', N'Số 267, Đường Nguyễn Huệ, TP. Hải Dương, Hải Dương', N'Hải Dương', 13800000.00, 0.00, NULL, 'DELIVERED', 'INSTALLMENT', 1, 0, '2024-10-27 09:28:49'),
-(96, 53, 'LXR2510060096', N'Hồ Thị Trâm', 'khachhang032@gmail.com', '0349014260', N'Số 341, Đường Lý Thường Kiệt, Hải An, Hải Phòng', N'Hải Phòng', 20700000.00, 0.00, NULL, 'SHIPPING', 'VNPAY', 1, 0, '2025-10-06 21:11:12'),
-(97, 34, 'LXR2506120097', N'Lý Phương Hiền', 'khachhang013@gmail.com', '0373708940', N'Số 21, Đường Lý Thường Kiệt, TP. Hải Dương, Hải Dương', N'Hải Dương', 6200000.00, 0.00, NULL, 'DELIVERED', 'VNPAY', 1, 0, '2025-06-12 18:52:54'),
-(98, 58, 'LXR2404300098', N'Võ Quỳnh Hằng', 'khachhang037@gmail.com', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', N'Hà Nội', 26600000.00, 2000000.00, 'LUX50', 'PAID', 'INSTALLMENT', 1, 0, '2024-04-30 08:35:33'),
-(99, 121, 'LXR2508110099', N'Đặng Hải Anh', 'khachhang100@gmail.com', '0934773116', N'Số 16, Đường Hai Bà Trưng, Cẩm Lệ, Đà Nẵng', N'Đà Nẵng', 14100000.00, 0.00, NULL, 'DELIVERED', 'INSTALLMENT', 1, 0, '2025-08-11 17:07:18'),
-(100, 68, 'LXR2604100100', N'Lý Diệu Trang', 'khachhang047@gmail.com', '0898391307', N'Số 243, Đường Cầu Giấy, Quận 1, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 1800000.00, 1800000.00, 'LUX50', 'CONFIRMED', 'SEPAY_QR', 0, 0, '2026-04-10 02:46:13'),
-(101, 104, 'LXR2507280101', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 900000.00, 900000.00, 'LUX50', 'DELIVERED', 'SEPAY_QR', 1, 0, '2025-07-28 10:40:35'),
-(102, 43, 'LXR2607050102', N'Lý Thu Huyền', 'khachhang022@gmail.com', '0774600619', N'Số 243, Đường Hoàng Hoa Thám, Ngô Quyền, Hải Phòng', N'Hải Phòng', 12300000.00, 2000000.00, 'LXR36', 'DELIVERED', 'INSTALLMENT', 1, 0, '2026-07-05 04:14:36'),
-(103, 118, 'LXR2510150103', N'Vũ Xuân Long', 'khachhang097@gmail.com', '0974394074', N'Số 69, Đường Điện Biên Phủ, Sơn Trà, Đà Nẵng', N'Đà Nẵng', 39600000.00, 2000000.00, 'LUX50', 'PAID', 'VNPAY', 1, 0, '2025-10-15 04:27:59'),
-(104, 65, 'LXR2604110104', N'Hoàng Đức Cường', 'khachhang044@gmail.com', '0397241440', N'Số 342, Đường Nam Kỳ Khởi Nghĩa, Thủ Dầu Một, Bình Dương', N'Bình Dương', 3800000.00, 0.00, NULL, 'SHIPPING', 'BANK_TRANSFER', 1, 0, '2026-04-11 13:33:24'),
-(105, 61, 'LXR2405170105', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 3800000.00, 2000000.00, 'LUX50', 'PAID', 'INSTALLMENT', 1, 0, '2024-05-17 10:29:05'),
-(106, 84, 'LXR2604120106', N'Phan Gia Nhân', 'khachhang063@gmail.com', '0897611949', N'Số 214, Đường Giải Phóng, Quận 7, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 42600000.00, 0.00, NULL, 'CANCELLED', 'INSTALLMENT', 0, 1, '2026-04-12 02:31:20'),
-(107, 115, 'LXR2403190107', N'Lý Thị Tâm', 'khachhang094@gmail.com', '0399233423', N'Số 70, Đường Võ Văn Kiệt, TP. Nha Trang, Nha Trang', N'Nha Trang', 5300000.00, 0.00, NULL, 'PAID', 'MOMO', 1, 0, '2024-03-19 19:58:15'),
-(108, 45, 'LXR2607130108', N'Lý Ánh Trâm', 'khachhang024@gmail.com', '0335564163', N'Số 278, Đường Cách Mạng Tháng 8, TP. Bắc Ninh, Bắc Ninh', N'Bắc Ninh', 23300000.00, 0.00, NULL, 'PAID', 'SEPAY_QR', 1, 0, '2026-07-13 18:09:05'),
-(109, 108, 'LXR2507090109', N'Dương Ánh Hằng', 'khachhang087@gmail.com', '0945397620', N'Số 65, Đường Lê Lợi, TP. Huế, Huế', N'Huế', 11600000.00, 2000000.00, 'LUX50', 'PROCESSING', 'MOMO', 1, 0, '2025-07-09 00:35:15'),
-(110, 83, 'LXR2504140110', N'Lý Tuyết Hằng', 'khachhang062@gmail.com', '0324694166', N'Số 153, Đường Nguyễn Trãi, Biên Hòa, Đồng Nai', N'Đồng Nai', 21400000.00, 2000000.00, 'LUX50', 'PROCESSING', 'INSTALLMENT', 1, 0, '2025-04-14 00:42:17'),
-(111, 109, 'LXR2511220111', N'Vũ Hữu Khải', 'khachhang088@gmail.com', '0866958749', N'Số 295, Đường Nguyễn Văn Cừ, Ngũ Hành Sơn, Đà Nẵng', N'Đà Nẵng', 43500000.00, 0.00, NULL, 'SHIPPING', 'BANK_TRANSFER', 1, 0, '2025-11-22 17:52:32'),
-(112, 97, 'LXR2604050112', N'Bùi Văn Long', 'khachhang076@gmail.com', '0392282195', N'Số 84, Đường Lê Lợi, Gò Vấp, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 43750000.00, 2000000.00, 'LUX50', 'PAID', 'BANK_TRANSFER', 1, 0, '2026-04-05 22:23:41'),
-(113, 37, 'LXR2604240113', N'Ngô Thu Huyền', 'khachhang016@gmail.com', '0884346645', N'Số 124, Đường Điện Biên Phủ, Hoàng Mai, Hà Nội', N'Hà Nội', 2100000.00, 0.00, NULL, 'SHIPPING', 'SEPAY_QR', 1, 0, '2026-04-24 16:08:03'),
-(114, 78, 'LXR2604260114', N'Đỗ Mỹ Duyên', 'khachhang057@gmail.com', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', 1900000.00, 1900000.00, 'LUX50', 'PAID', 'MOMO', 1, 0, '2026-04-26 02:28:51'),
-(115, 24, 'LXR2502050115', N'Vũ Khánh Ngọc', 'khachhang003@gmail.com', '0969809398', N'Số 271, Đường Võ Văn Kiệt, Uông Bí, Quảng Ninh', N'Quảng Ninh', 10900000.00, 0.00, NULL, 'PAID', 'VNPAY', 1, 0, '2025-02-05 04:55:18'),
-(116, 34, 'LXR2409080116', N'Lý Phương Hiền', 'khachhang013@gmail.com', '0373708940', N'Số 21, Đường Lý Thường Kiệt, TP. Hải Dương, Hải Dương', N'Hải Dương', 16650000.00, 2000000.00, 'LUX30', 'SHIPPING', 'COD', 1, 0, '2024-09-08 03:27:15'),
-(117, 95, 'LXR2510270117', N'Võ Ánh Tú', 'khachhang074@gmail.com', '0944495641', N'Số 316, Đường Cách Mạng Tháng 8, Bình Thủy, Cần Thơ', N'Cần Thơ', 9180000.00, 1620000.00, 'LXR36', 'PAID', 'BANK_TRANSFER', 1, 0, '2025-10-27 23:29:09'),
-(118, 99, 'LXR2411040118', N'Lý Thu Yến', 'khachhang078@gmail.com', '0896567924', N'Số 201, Đường Nam Kỳ Khởi Nghĩa, Phú Nhuận, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 39900000.00, 0.00, NULL, 'SHIPPING', 'MOMO', 1, 0, '2024-11-04 19:55:35'),
-(119, 24, 'LXR2410100119', N'Vũ Khánh Ngọc', 'khachhang003@gmail.com', '0969809398', N'Số 271, Đường Võ Văn Kiệt, Uông Bí, Quảng Ninh', N'Quảng Ninh', 7862500.00, 1387500.00, 'LXR36', 'CONFIRMED', 'INSTALLMENT', 0, 0, '2024-10-10 11:29:19'),
-(120, 25, 'LXR2407240120', N'Đặng Hải Châu', 'khachhang004@gmail.com', '0883687942', N'Số 85, Đường Võ Văn Kiệt, Tây Hồ, Hà Nội', N'Hà Nội', 12200000.00, 0.00, NULL, 'PROCESSING', 'BANK_TRANSFER', 1, 0, '2024-07-24 14:11:07'),
-(121, 99, 'LXR2605290121', N'Lý Thu Yến', 'khachhang078@gmail.com', '0896567924', N'Số 201, Đường Nam Kỳ Khởi Nghĩa, Phú Nhuận, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 38000000.00, 2000000.00, 'LXR36', 'SHIPPING', 'VNPAY', 1, 0, '2026-05-29 13:36:54'),
-(122, 121, 'LXR2605180122', N'Đặng Hải Anh', 'khachhang100@gmail.com', '0934773116', N'Số 16, Đường Hai Bà Trưng, Cẩm Lệ, Đà Nẵng', N'Đà Nẵng', 17600000.00, 0.00, NULL, 'PAID', 'VNPAY', 1, 0, '2026-05-18 22:49:25'),
-(123, 91, 'LXR2501240123', N'Phạm Trọng Tùng', 'khachhang070@gmail.com', '0773858790', N'Số 149, Đường Trần Hưng Đạo, Long Thành, Đồng Nai', N'Đồng Nai', 28900000.00, 2000000.00, 'LUX10', 'PAID', 'COD', 1, 0, '2025-01-24 02:11:56'),
-(124, 57, 'LXR2404170124', N'Lý Bảo Nhân', 'khachhang036@gmail.com', '0887145631', N'Số 267, Đường Nguyễn Huệ, TP. Hải Dương, Hải Dương', N'Hải Dương', 80700000.00, 2000000.00, 'LUX30', 'SHIPPING', 'INSTALLMENT', 1, 0, '2024-04-17 14:54:19'),
-(125, 104, 'LXR2602070125', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 9720000.00, 1080000.00, 'LUX10', 'SHIPPING', 'MOMO', 1, 0, '2026-02-07 10:25:01'),
-(126, 58, 'LXR2603270126', N'Võ Quỳnh Hằng', 'khachhang037@gmail.com', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', N'Hà Nội', 52000000.00, 0.00, NULL, 'CONFIRMED', 'SEPAY_QR', 0, 0, '2026-03-27 21:36:54'),
-(127, 25, 'LXR2502200127', N'Đặng Hải Châu', 'khachhang004@gmail.com', '0883687942', N'Số 85, Đường Võ Văn Kiệt, Tây Hồ, Hà Nội', N'Hà Nội', 750000.00, 0.00, NULL, 'SHIPPING', 'INSTALLMENT', 1, 0, '2025-02-20 06:36:10'),
-(128, 31, 'LXR2505310128', N'Huỳnh Ánh Tú', 'khachhang010@gmail.com', '0394172699', N'Số 65, Đường Cách Mạng Tháng 8, TP. Hải Dương, Hải Dương', N'Hải Dương', 37000000.00, 0.00, NULL, 'DELIVERED', 'VNPAY', 1, 0, '2025-05-31 19:03:45'),
-(129, 83, 'LXR2405290129', N'Lý Tuyết Hằng', 'khachhang062@gmail.com', '0324694166', N'Số 153, Đường Nguyễn Trãi, Biên Hòa, Đồng Nai', N'Đồng Nai', 1900000.00, 1900000.00, 'LUX50', 'PAID', 'COD', 1, 0, '2024-05-29 22:04:52'),
-(130, 69, 'LXR2503260130', N'Hoàng Đức Long', 'khachhang048@gmail.com', '0385765838', N'Số 338, Đường Giải Phóng, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 65300000.00, 2000000.00, 'LUX30', 'PAID', 'VNPAY', 1, 0, '2025-03-26 09:44:43'),
-(131, 73, 'LXR2606010131', N'Hoàng Tuyết Yến', 'khachhang052@gmail.com', '0946636303', N'Số 163, Đường Nguyễn Trãi, Biên Hòa, Đồng Nai', N'Đồng Nai', 34200000.00, 2000000.00, 'LUX30', 'PAID', 'BANK_TRANSFER', 1, 0, '2026-06-01 02:32:07'),
-(132, 32, 'LXR2601090132', N'Đỗ Xuân Nam', 'khachhang011@gmail.com', '0930760927', N'Số 151, Đường Nguyễn Huệ, Hoàng Mai, Hà Nội', N'Hà Nội', 10200000.00, 2000000.00, 'LUX30', 'PAID', 'MOMO', 1, 0, '2026-01-09 01:19:37'),
-(133, 46, 'LXR2509120133', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 6200000.00, 2000000.00, 'LUX50', 'PENDING', 'BANK_TRANSFER', 0, 0, '2025-09-12 13:38:13'),
-(134, 29, 'LXR2501040134', N'Hồ Mai Linh', 'khachhang008@gmail.com', '0884008436', N'Số 113, Đường Nguyễn Huệ, Tây Hồ, Hà Nội', N'Hà Nội', 13200000.00, 2000000.00, 'LUX50', 'DELIVERED', 'INSTALLMENT', 1, 0, '2025-01-04 00:40:18'),
-(135, 29, 'LXR2410180135', N'Hồ Mai Linh', 'khachhang008@gmail.com', '0884008436', N'Số 113, Đường Nguyễn Huệ, Tây Hồ, Hà Nội', N'Hà Nội', 15480000.00, 1720000.00, 'LUX10', 'DELIVERED', 'SEPAY_QR', 1, 0, '2024-10-18 20:34:18'),
-(136, 91, 'LXR2403180136', N'Phạm Trọng Tùng', 'khachhang070@gmail.com', '0773858790', N'Số 149, Đường Trần Hưng Đạo, Long Thành, Đồng Nai', N'Đồng Nai', 4800000.00, 0.00, NULL, 'PROCESSING', 'INSTALLMENT', 1, 0, '2024-03-18 07:47:58'),
-(137, 29, 'LXR2607100137', N'Hồ Mai Linh', 'khachhang008@gmail.com', '0884008436', N'Số 113, Đường Nguyễn Huệ, Tây Hồ, Hà Nội', N'Hà Nội', 10300000.00, 0.00, NULL, 'PAID', 'MOMO', 1, 0, '2026-07-10 02:24:14'),
-(138, 50, 'LXR2405080138', N'Lê Khánh Hà', 'khachhang029@gmail.com', '0982088779', N'Số 51, Đường Trường Chinh, Hạ Long, Quảng Ninh', N'Quảng Ninh', 3825000.00, 675000.00, 'LXR36', 'PAID', 'BANK_TRANSFER', 1, 0, '2024-05-08 04:40:47'),
-(139, 32, 'LXR2602210139', N'Đỗ Xuân Nam', 'khachhang011@gmail.com', '0930760927', N'Số 151, Đường Nguyễn Huệ, Hoàng Mai, Hà Nội', N'Hà Nội', 31300000.00, 2000000.00, 'LUX50', 'CANCELLED', 'BANK_TRANSFER', 0, 1, '2026-02-21 12:03:30'),
-(140, 85, 'LXR2604270140', N'Dương Thành Phong', 'khachhang064@gmail.com', '0325167896', N'Số 79, Đường Lê Lợi, Bình Tân, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 1785000.00, 315000.00, 'LXR36', 'DELIVERED', 'MOMO', 1, 0, '2026-04-27 02:40:26'),
-(141, 90, 'LXR2408020141', N'Trần Xuân Linh', 'khachhang069@gmail.com', '0385123967', N'Số 63, Đường Hoàng Hoa Thám, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 12500000.00, 0.00, NULL, 'PAID', 'INSTALLMENT', 1, 0, '2024-08-02 02:38:33'),
-(142, 80, 'LXR2410090142', N'Dương Thu Hương', 'khachhang059@gmail.com', '0788444505', N'Số 5, Đường Điện Biên Phủ, Dĩ An, Bình Dương', N'Bình Dương', 3200000.00, 0.00, NULL, 'SHIPPING', 'MOMO', 1, 0, '2024-10-09 07:04:36'),
-(143, 37, 'LXR2510080143', N'Ngô Thu Huyền', 'khachhang016@gmail.com', '0884346645', N'Số 124, Đường Điện Biên Phủ, Hoàng Mai, Hà Nội', N'Hà Nội', 17010000.00, 1890000.00, 'LUX10', 'PAID', 'MOMO', 1, 0, '2025-10-08 07:30:19'),
-(144, 54, 'LXR2408120144', N'Bùi Quỳnh Thảo', 'khachhang033@gmail.com', '0709493169', N'Số 206, Đường Nguyễn Văn Cừ, Hạ Long, Quảng Ninh', N'Quảng Ninh', 1050000.00, 1050000.00, 'LUX50', 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2024-08-12 01:52:50'),
-(145, 117, 'LXR2508280145', N'Dương Gia Tùng', 'khachhang096@gmail.com', '0365684010', N'Số 192, Đường Võ Văn Kiệt, Thanh Khê, Đà Nẵng', N'Đà Nẵng', 35000000.00, 0.00, NULL, 'DELIVERED', 'SEPAY_QR', 1, 0, '2025-08-28 06:54:13'),
-(146, 49, 'LXR2410020146', N'Hồ Tiến Thắng', 'khachhang028@gmail.com', '0374860862', N'Số 179, Đường Điện Biên Phủ, Uông Bí, Quảng Ninh', N'Quảng Ninh', 52000000.00, 0.00, NULL, 'SHIPPING', 'MOMO', 1, 0, '2024-10-02 22:45:08'),
-(147, 111, 'LXR2508170147', N'Phạm Tiến Long', 'khachhang090@gmail.com', '0904368325', N'Số 110, Đường Kim Mã, TP. Huế, Huế', N'Huế', 22800000.00, 2000000.00, 'LUX10', 'CONFIRMED', 'SEPAY_QR', 0, 0, '2025-08-17 02:50:12'),
-(148, 77, 'LXR2507160148', N'Vũ Thị Hiền', 'khachhang056@gmail.com', '0794999113', N'Số 254, Đường Trường Chinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 1800000.00, 1800000.00, 'LUX50', 'CONFIRMED', 'BANK_TRANSFER', 0, 0, '2025-07-16 22:48:30'),
-(149, 31, 'LXR2509150149', N'Huỳnh Ánh Tú', 'khachhang010@gmail.com', '0394172699', N'Số 65, Đường Cách Mạng Tháng 8, TP. Hải Dương, Hải Dương', N'Hải Dương', 7600000.00, 0.00, NULL, 'PROCESSING', 'MOMO', 1, 0, '2025-09-15 16:22:04'),
-(150, 47, 'LXR2412300150', N'Phan Xuân Tài', 'khachhang026@gmail.com', '0323948945', N'Số 53, Đường Điện Biên Phủ, Cẩm Phả, Quảng Ninh', N'Quảng Ninh', 17010000.00, 1890000.00, 'LUX10', 'SHIPPING', 'MOMO', 1, 0, '2024-12-30 21:25:56'),
-(151, 38, 'LXR2608150151', N'Huỳnh Quỳnh Lam', 'khachhang017@gmail.com', '0375383607', N'Số 256, Đường Điện Biên Phủ, Hạ Long, Quảng Ninh', N'Quảng Ninh', 1530000.00, 270000.00, 'LXR36', 'PAID', 'VNPAY', 1, 0, '2026-08-15 09:05:51'),
-(152, 78, 'LXR2411220152', N'Đỗ Mỹ Duyên', 'khachhang057@gmail.com', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', 16600000.00, 2000000.00, 'LXR36', 'DELIVERED', 'INSTALLMENT', 1, 0, '2024-11-22 20:13:48'),
-(153, 59, 'LXR2502170153', N'Đặng Trúc Hà', 'khachhang038@gmail.com', '0761979308', N'Số 311, Đường Võ Văn Kiệt, Long Biên, Hà Nội', N'Hà Nội', 21750000.00, 2000000.00, 'LUX10', 'SHIPPING', 'SEPAY_QR', 1, 0, '2025-02-17 15:38:19'),
-(154, 95, 'LXR2403190154', N'Võ Ánh Tú', 'khachhang074@gmail.com', '0944495641', N'Số 316, Đường Cách Mạng Tháng 8, Bình Thủy, Cần Thơ', N'Cần Thơ', 15500000.00, 0.00, NULL, 'DELIVERED', 'MOMO', 1, 0, '2024-03-19 23:48:40'),
-(155, 87, 'LXR2511250155', N'Lê Bảo Khang', 'khachhang066@gmail.com', '0331904313', N'Số 179, Đường Nam Kỳ Khởi Nghĩa, Bến Cát, Bình Dương', N'Bình Dương', 10370000.00, 1830000.00, 'LXR36', 'DELIVERED', 'VNPAY', 1, 0, '2025-11-25 15:06:06'),
-(156, 104, 'LXR2511240156', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 17000000.00, 2000000.00, 'LUX30', 'PAID', 'SEPAY_QR', 1, 0, '2025-11-24 06:38:35'),
-(157, 49, 'LXR2602080157', N'Hồ Tiến Thắng', 'khachhang028@gmail.com', '0374860862', N'Số 179, Đường Điện Biên Phủ, Uông Bí, Quảng Ninh', N'Quảng Ninh', 30300000.00, 2000000.00, 'LXR36', 'PENDING', 'INSTALLMENT', 0, 0, '2026-02-08 20:17:27'),
-(158, 60, 'LXR2502180158', N'Võ Diệu Mai', 'khachhang039@gmail.com', '0902454947', N'Số 68, Đường Nguyễn Văn Cừ, Yên Phong, Bắc Ninh', N'Bắc Ninh', 1350000.00, 150000.00, 'LUX10', 'PAID', 'COD', 1, 0, '2025-02-18 22:47:10'),
-(159, 90, 'LXR2408160159', N'Trần Xuân Linh', 'khachhang069@gmail.com', '0385123967', N'Số 63, Đường Hoàng Hoa Thám, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 4725000.00, 525000.00, 'LUX10', 'CONFIRMED', 'VNPAY', 0, 0, '2024-08-16 13:07:13'),
-(160, 49, 'LXR2405030160', N'Hồ Tiến Thắng', 'khachhang028@gmail.com', '0374860862', N'Số 179, Đường Điện Biên Phủ, Uông Bí, Quảng Ninh', N'Quảng Ninh', 10900000.00, 0.00, NULL, 'PAID', 'INSTALLMENT', 1, 0, '2024-05-03 05:46:47'),
-(161, 45, 'LXR2505020161', N'Lý Ánh Trâm', 'khachhang024@gmail.com', '0335564163', N'Số 278, Đường Cách Mạng Tháng 8, TP. Bắc Ninh, Bắc Ninh', N'Bắc Ninh', 10200000.00, 2000000.00, 'LUX50', 'PROCESSING', 'MOMO', 1, 0, '2025-05-02 20:49:40'),
-(162, 119, 'LXR2404030162', N'Dương Gia Đạt', 'khachhang098@gmail.com', '0780761573', N'Số 200, Đường Võ Thị Sáu, Quy Nhơn, Bình Định', N'Bình Định', 17370000.00, 1930000.00, 'LUX10', 'SHIPPING', 'SEPAY_QR', 1, 0, '2024-04-03 09:33:05'),
-(163, 92, 'LXR2411050163', N'Phạm Thanh Châu', 'khachhang071@gmail.com', '0399506476', N'Số 100, Đường Nguyễn Trãi, Dĩ An, Bình Dương', N'Bình Dương', 4150000.00, 0.00, NULL, 'CONFIRMED', 'MOMO', 0, 0, '2024-11-05 23:45:53'),
-(164, 75, 'LXR2411240164', N'Đặng Tuyết Tú', 'khachhang054@gmail.com', '0397942675', N'Số 329, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 21300000.00, 0.00, NULL, 'PENDING', 'BANK_TRANSFER', 0, 0, '2024-11-24 08:11:31'),
-(165, 94, 'LXR2606220165', N'Phan Thu Vy', 'khachhang073@gmail.com', '0353024846', N'Số 341, Đường Võ Văn Kiệt, Tân Bình, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 3780000.00, 420000.00, 'LUX10', 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2026-06-22 01:54:29'),
-(166, 111, 'LXR2405050166', N'Phạm Tiến Long', 'khachhang090@gmail.com', '0904368325', N'Số 110, Đường Kim Mã, TP. Huế, Huế', N'Huế', 13500000.00, 2000000.00, 'LXR36', 'DELIVERED', 'VNPAY', 1, 0, '2024-05-05 18:52:12'),
-(167, 87, 'LXR2412170167', N'Lê Bảo Khang', 'khachhang066@gmail.com', '0331904313', N'Số 179, Đường Nam Kỳ Khởi Nghĩa, Bến Cát, Bình Dương', N'Bình Dương', 9950000.00, 0.00, NULL, 'CONFIRMED', 'MOMO', 0, 0, '2024-12-17 23:02:15'),
-(168, 43, 'LXR2403190168', N'Lý Thu Huyền', 'khachhang022@gmail.com', '0774600619', N'Số 243, Đường Hoàng Hoa Thám, Ngô Quyền, Hải Phòng', N'Hải Phòng', 15480000.00, 1720000.00, 'LUX10', 'PAID', 'SEPAY_QR', 1, 0, '2024-03-19 21:12:05'),
-(169, 82, 'LXR2510230169', N'Trần Ngọc Nhi', 'khachhang061@gmail.com', '0980124165', N'Số 286, Đường Lý Thường Kiệt, Ninh Kiều, Cần Thơ', N'Cần Thơ', 79200000.00, 2000000.00, 'LUX30', 'PAID', 'BANK_TRANSFER', 1, 0, '2025-10-23 12:14:57'),
-(170, 98, 'LXR2509130170', N'Phạm Ánh Hà', 'khachhang077@gmail.com', '0767110104', N'Số 95, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 6000000.00, 0.00, NULL, 'CONFIRMED', 'INSTALLMENT', 0, 0, '2025-09-13 05:20:52'),
-(171, 68, 'LXR2604120171', N'Lý Diệu Trang', 'khachhang047@gmail.com', '0898391307', N'Số 243, Đường Cầu Giấy, Quận 1, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 14800000.00, 2000000.00, 'LXR36', 'CONFIRMED', 'BANK_TRANSFER', 0, 0, '2026-04-12 13:52:55'),
-(172, 104, 'LXR2505250172', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 74300000.00, 0.00, NULL, 'CONFIRMED', 'VNPAY', 0, 0, '2025-05-25 12:28:35'),
-(173, 47, 'LXR2408180173', N'Phan Xuân Tài', 'khachhang026@gmail.com', '0323948945', N'Số 53, Đường Điện Biên Phủ, Cẩm Phả, Quảng Ninh', N'Quảng Ninh', 12200000.00, 0.00, NULL, 'PAID', 'SEPAY_QR', 1, 0, '2024-08-18 11:46:06'),
-(174, 72, 'LXR2506230174', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 15500000.00, 0.00, NULL, 'PAID', 'MOMO', 1, 0, '2025-06-23 01:20:05'),
-(175, 29, 'LXR2603130175', N'Hồ Mai Linh', 'khachhang008@gmail.com', '0884008436', N'Số 113, Đường Nguyễn Huệ, Tây Hồ, Hà Nội', N'Hà Nội', 8200000.00, 0.00, NULL, 'PAID', 'BANK_TRANSFER', 1, 0, '2026-03-13 00:07:13'),
-(176, 74, 'LXR2506220176', N'Võ Mai Trâm', 'khachhang053@gmail.com', '0891413000', N'Số 144, Đường Trường Chinh, Biên Hòa, Đồng Nai', N'Đồng Nai', 1050000.00, 1050000.00, 'LUX50', 'PAID', 'COD', 1, 0, '2025-06-22 11:58:35'),
-(177, 69, 'LXR2602170177', N'Hoàng Đức Long', 'khachhang048@gmail.com', '0385765838', N'Số 338, Đường Giải Phóng, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 111600000.00, 0.00, NULL, 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2026-02-17 09:56:54'),
-(178, 43, 'LXR2508200178', N'Lý Thu Huyền', 'khachhang022@gmail.com', '0774600619', N'Số 243, Đường Hoàng Hoa Thám, Ngô Quyền, Hải Phòng', N'Hải Phòng', 10800000.00, 0.00, NULL, 'PAID', 'INSTALLMENT', 1, 0, '2025-08-20 21:52:36'),
-(179, 93, 'LXR2503250179', N'Phan Văn Tuấn', 'khachhang072@gmail.com', '0346610055', N'Số 204, Đường Nguyễn Văn Cừ, TP. Thủ Đức, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 4770000.00, 530000.00, 'LUX10', 'SHIPPING', 'COD', 1, 0, '2025-03-25 17:35:05'),
-(180, 114, 'LXR2512050180', N'Phan Đức Khoa', 'khachhang093@gmail.com', '0783142280', N'Số 337, Đường Hoàng Hoa Thám, TP. Huế, Huế', N'Huế', 24600000.00, 0.00, NULL, 'SHIPPING', 'SEPAY_QR', 1, 0, '2025-12-05 06:36:28'),
-(181, 112, 'LXR2411200181', N'Phạm Tuấn Cường', 'khachhang091@gmail.com', '0867685982', N'Số 248, Đường Cách Mạng Tháng 8, Hội An, Quảng Nam', N'Quảng Nam', 8670000.00, 1530000.00, 'LXR36', 'CONFIRMED', 'VNPAY', 0, 0, '2024-11-20 05:06:14'),
-(182, 95, 'LXR2405190182', N'Võ Ánh Tú', 'khachhang074@gmail.com', '0944495641', N'Số 316, Đường Cách Mạng Tháng 8, Bình Thủy, Cần Thơ', N'Cần Thơ', 13100000.00, 2000000.00, 'LXR36', 'PAID', 'SEPAY_QR', 1, 0, '2024-05-19 18:40:28'),
-(183, 34, 'LXR2605030183', N'Lý Phương Hiền', 'khachhang013@gmail.com', '0373708940', N'Số 21, Đường Lý Thường Kiệt, TP. Hải Dương, Hải Dương', N'Hải Dương', 11500000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2026-05-03 23:55:40'),
-(184, 82, 'LXR2510230184', N'Trần Ngọc Nhi', 'khachhang061@gmail.com', '0980124165', N'Số 286, Đường Lý Thường Kiệt, Ninh Kiều, Cần Thơ', N'Cần Thơ', 29800000.00, 0.00, NULL, 'DELIVERED', 'VNPAY', 1, 0, '2025-10-23 16:21:12'),
-(185, 42, 'LXR2510130185', N'Hồ Phương Châu', 'khachhang021@gmail.com', '0979639175', N'Số 5, Đường Giải Phóng, Hoàn Kiếm, Hà Nội', N'Hà Nội', 59800000.00, 2000000.00, 'LXR36', 'PAID', 'COD', 1, 0, '2025-10-13 19:11:48'),
-(186, 61, 'LXR2503190186', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 8500000.00, 0.00, NULL, 'SHIPPING', 'INSTALLMENT', 1, 0, '2025-03-19 12:01:20'),
-(187, 55, 'LXR2607040187', N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Số 330, Đường Võ Thị Sáu, Uông Bí, Quảng Ninh', N'Quảng Ninh', 30500000.00, 2000000.00, 'LUX50', 'PENDING', 'BANK_TRANSFER', 0, 0, '2026-07-04 15:36:58'),
-(188, 105, 'LXR2506110188', N'Bùi Tuấn Khải', 'khachhang084@gmail.com', '0340297323', N'Số 325, Đường Nam Kỳ Khởi Nghĩa, TP. Huế, Huế', N'Huế', 2240000.00, 960000.00, 'LUX30', 'SHIPPING', 'SEPAY_QR', 1, 0, '2025-06-11 05:11:56'),
-(189, 70, 'LXR2406010189', N'Huỳnh Hữu Khải', 'khachhang049@gmail.com', '0980016432', N'Số 139, Đường Võ Thị Sáu, Quận 8, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 17450000.00, 0.00, NULL, 'CANCELLED', 'INSTALLMENT', 0, 1, '2024-06-01 22:54:52'),
-(190, 94, 'LXR2412250190', N'Phan Thu Vy', 'khachhang073@gmail.com', '0353024846', N'Số 341, Đường Võ Văn Kiệt, Tân Bình, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 41200000.00, 2000000.00, 'LUX10', 'PROCESSING', 'SEPAY_QR', 1, 0, '2024-12-25 19:52:08'),
-(191, 108, 'LXR2406090191', N'Dương Ánh Hằng', 'khachhang087@gmail.com', '0945397620', N'Số 65, Đường Lê Lợi, TP. Huế, Huế', N'Huế', 4100000.00, 0.00, NULL, 'PAID', 'VNPAY', 1, 0, '2024-06-09 12:44:47'),
-(192, 103, 'LXR2508270192', N'Lê Bảo Đạt', 'khachhang082@gmail.com', '0918069328', N'Số 1, Đường Cầu Giấy, Hội An, Quảng Nam', N'Quảng Nam', 28500000.00, 2000000.00, 'LUX30', 'PAID', 'COD', 1, 0, '2025-08-27 16:43:09'),
-(193, 121, 'LXR2412050193', N'Đặng Hải Anh', 'khachhang100@gmail.com', '0934773116', N'Số 16, Đường Hai Bà Trưng, Cẩm Lệ, Đà Nẵng', N'Đà Nẵng', 56200000.00, 2000000.00, 'LUX50', 'PAID', 'MOMO', 1, 0, '2024-12-05 12:20:11'),
-(194, 26, 'LXR2403230194', N'Đặng Mỹ Lam', 'khachhang005@gmail.com', '0989557017', N'Số 23, Đường Hai Bà Trưng, Hồng Bàng, Hải Phòng', N'Hải Phòng', 1530000.00, 270000.00, 'LXR36', 'DELIVERED', 'INSTALLMENT', 1, 0, '2024-03-23 12:17:04'),
-(195, 39, 'LXR2405150195', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 1700000.00, 1700000.00, 'LUX50', 'PROCESSING', 'MOMO', 1, 0, '2024-05-15 05:50:16'),
-(196, 90, 'LXR2603010196', N'Trần Xuân Linh', 'khachhang069@gmail.com', '0385123967', N'Số 63, Đường Hoàng Hoa Thám, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 102000000.00, 2000000.00, 'LUX10', 'DELIVERED', 'BANK_TRANSFER', 1, 0, '2026-03-01 20:21:11'),
-(197, 110, 'LXR2608280197', N'Ngô Bảo Hải', 'khachhang089@gmail.com', '0894063447', N'Số 219, Đường Võ Văn Kiệt, Cam Ranh, Nha Trang', N'Nha Trang', 7830000.00, 870000.00, 'LUX10', 'SHIPPING', 'MOMO', 1, 0, '2026-08-28 17:44:31'),
-(198, 102, 'LXR2605240198', N'Dương Minh Sơn', 'khachhang081@gmail.com', '0977810640', N'Số 236, Đường Lý Thường Kiệt, Hội An, Quảng Nam', N'Quảng Nam', 2720000.00, 480000.00, 'LXR36', 'CONFIRMED', 'SEPAY_QR', 0, 0, '2026-05-24 09:08:57'),
-(199, 116, 'LXR2502190199', N'Lý Gia Khang', 'khachhang095@gmail.com', '0709254254', N'Số 73, Đường Trần Hưng Đạo, Sơn Trà, Đà Nẵng', N'Đà Nẵng', 50000000.00, 2000000.00, 'LXR36', 'PENDING', 'COD', 0, 0, '2025-02-19 08:17:18'),
-(200, 42, 'LXR2605230200', N'Hồ Phương Châu', 'khachhang021@gmail.com', '0979639175', N'Số 5, Đường Giải Phóng, Hoàn Kiếm, Hà Nội', N'Hà Nội', 18750000.00, 2000000.00, 'LUX50', 'PENDING', 'MOMO', 0, 0, '2026-05-23 05:59:17');
+(1, 87, 'DH1961', N'Lê Bảo Khang', 'khachhang066@gmail.com', '0331904313', N'Số 179, Đường Nam Kỳ Khởi Nghĩa, Bến Cát, Bình Dương', N'Bình Dương', 750000.00, 0.00, NULL, 'DELIVERED', 'COD', 1, 0, '2024-10-27 04:43:43'),
+(2, 59, 'DH5244', N'Đặng Trúc Hà', 'khachhang038@gmail.com', '0761979308', N'Số 311, Đường Võ Văn Kiệt, Long Biên, Hà Nội', N'Hà Nội', 1785000.00, 315000.00, 'LXR36', 'SHIPPING', 'COD', 1, 0, '2026-08-23 02:07:10'),
+(3, 81, 'DH8243', N'Ngô Quỳnh Nhi', 'khachhang060@gmail.com', '0914027898', N'Số 164, Đường Nguyễn Trãi, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 13600000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2024-05-02 05:55:04'),
+(4, 102, 'DH8395', N'Dương Minh Sơn', 'khachhang081@gmail.com', '0977810640', N'Số 236, Đường Lý Thường Kiệt, Hội An, Quảng Nam', N'Quảng Nam', 16300000.00, 2000000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2025-01-14 11:21:31'),
+(5, 81, 'DH1691', N'Ngô Quỳnh Nhi', 'khachhang060@gmail.com', '0914027898', N'Số 164, Đường Nguyễn Trãi, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 32400000.00, 2000000.00, 'LUX30', 'PAID', 'COD', 1, 0, '2025-04-27 12:15:50'),
+(6, 61, 'DH3668', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 1890000.00, 210000.00, 'LUX10', 'CONFIRMED', 'VIETQR', 0, 0, '2026-05-29 06:03:43'),
+(7, 71, 'DH9857', N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Số 239, Đường Phan Chu Trinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 3360000.00, 1440000.00, 'LUX30', 'CONFIRMED', 'VIETQR', 0, 0, '2024-05-27 10:18:18'),
+(8, 41, 'DH9128', N'Võ Hải Châu', 'khachhang020@gmail.com', '0378480742', N'Số 315, Đường Kim Mã, Cầu Giấy, Hà Nội', N'Hà Nội', 1050000.00, 1050000.00, 'LUX50', 'SHIPPING', 'VIETQR', 1, 0, '2024-05-27 22:05:39'),
+(9, 55, 'DH6901', N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Số 330, Đường Võ Thị Sáu, Uông Bí, Quảng Ninh', N'Quảng Ninh', 47100000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2025-04-07 14:22:55'),
+(10, 111, 'DH9390', N'Phạm Tiến Long', 'khachhang090@gmail.com', '0904368325', N'Số 110, Đường Kim Mã, TP. Huế, Huế', N'Huế', 1450000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2024-06-29 00:02:37'),
+(11, 72, 'DH8985', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 2600000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2024-11-06 15:34:48'),
+(12, 102, 'DH8052', N'Dương Minh Sơn', 'khachhang081@gmail.com', '0977810640', N'Số 236, Đường Lý Thường Kiệt, Hội An, Quảng Nam', N'Quảng Nam', 31400000.00, 2000000.00, 'LUX10', 'SHIPPING', 'VIETQR', 1, 0, '2026-02-03 18:46:40'),
+(13, 110, 'DH9619', N'Ngô Bảo Hải', 'khachhang089@gmail.com', '0894063447', N'Số 219, Đường Võ Văn Kiệt, Cam Ranh, Nha Trang', N'Nha Trang', 8800000.00, 2000000.00, 'LUX50', 'PAID', 'COD', 1, 0, '2026-07-04 13:45:21'),
+(14, 82, 'DH7236', N'Trần Ngọc Nhi', 'khachhang061@gmail.com', '0980124165', N'Số 286, Đường Lý Thường Kiệt, Ninh Kiều, Cần Thơ', N'Cần Thơ', 68000000.00, 2000000.00, 'LXR36', 'SHIPPING', 'VIETQR', 1, 0, '2024-04-30 18:20:06'),
+(15, 76, 'DH3941', N'Vũ Tuấn Tuấn', 'khachhang055@gmail.com', '0702646000', N'Số 114, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 1700000.00, 1700000.00, 'LUX50', 'PENDING', 'COD', 0, 0, '2026-03-25 05:50:42'),
+(16, 104, 'DH51', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 50500000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2025-11-11 03:04:02'),
+(17, 39, 'DH1332', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 81300000.00, 2000000.00, 'LUX10', 'PAID', 'VIETQR', 1, 0, '2025-03-21 03:01:06'),
+(18, 85, 'DH1824', N'Dương Thành Phong', 'khachhang064@gmail.com', '0325167896', N'Số 79, Đường Lê Lợi, Bình Tân, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 52750000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2025-08-26 13:05:11'),
+(19, 53, 'DH4716', N'Hồ Thị Trâm', 'khachhang032@gmail.com', '0349014260', N'Số 341, Đường Lý Thường Kiệt, Hải An, Hải Phòng', N'Hải Phòng', 43800000.00, 2000000.00, 'LUX10', 'PAID', 'VIETQR', 1, 0, '2025-12-20 08:28:57'),
+(20, 104, 'DH1616', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 5900000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2024-03-24 05:33:09'),
+(21, 115, 'DH7377', N'Lý Thị Tâm', 'khachhang094@gmail.com', '0399233423', N'Số 70, Đường Võ Văn Kiệt, TP. Nha Trang, Nha Trang', N'Nha Trang', 8200000.00, 0.00, NULL, 'PENDING', 'VIETQR', 0, 0, '2026-07-03 00:46:40'),
+(22, 78, 'DH198', N'Đỗ Mỹ Duyên', 'khachhang057@gmail.com', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', 63500000.00, 0.00, NULL, 'PENDING', 'VIETQR', 0, 0, '2026-03-13 10:12:40'),
+(23, 46, 'DH8042', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 21600000.00, 0.00, NULL, 'CONFIRMED', 'COD', 0, 0, '2024-09-17 07:47:45'),
+(24, 61, 'DH5158', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 4550000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2025-12-16 14:26:01'),
+(25, 110, 'DH3454', N'Ngô Bảo Hải', 'khachhang089@gmail.com', '0894063447', N'Số 219, Đường Võ Văn Kiệt, Cam Ranh, Nha Trang', N'Nha Trang', 38950000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2024-07-03 22:21:27'),
+(26, 104, 'DH6518', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 10400000.00, 2000000.00, 'LUX30', 'SHIPPING', 'VIETQR', 1, 0, '2025-02-05 05:37:28'),
+(27, 104, 'DH4130', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 9800000.00, 0.00, NULL, 'PROCESSING', 'VIETQR', 1, 0, '2025-10-14 17:06:08'),
+(28, 98, 'DH5706', N'Phạm Ánh Hà', 'khachhang077@gmail.com', '0767110104', N'Số 95, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 59600000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2025-10-29 11:56:29'),
+(29, 103, 'DH5853', N'Lê Bảo Đạt', 'khachhang082@gmail.com', '0918069328', N'Số 1, Đường Cầu Giấy, Hội An, Quảng Nam', N'Quảng Nam', 7650000.00, 850000.00, 'LUX10', 'PROCESSING', 'VIETQR', 1, 0, '2024-12-28 11:52:00'),
+(30, 37, 'DH6176', N'Ngô Thu Huyền', 'khachhang016@gmail.com', '0884346645', N'Số 124, Đường Điện Biên Phủ, Hoàng Mai, Hà Nội', N'Hà Nội', 4340000.00, 1860000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2026-02-25 09:15:46'),
+(31, 64, 'DH8424', N'Hoàng Thị Duyên', 'khachhang043@gmail.com', '0784797534', N'Số 76, Đường Điện Biên Phủ, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 2800000.00, 2000000.00, 'LUX50', 'SHIPPING', 'COD', 1, 0, '2025-02-25 07:45:35'),
+(32, 63, 'DH1260', N'Ngô Thành Hải', 'khachhang042@gmail.com', '0371536772', N'Số 279, Đường Nam Kỳ Khởi Nghĩa, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 2500000.00, 2000000.00, 'LUX50', 'SHIPPING', 'VIETQR', 1, 0, '2024-12-19 20:20:46'),
+(33, 82, 'DH5587', N'Trần Ngọc Nhi', 'khachhang061@gmail.com', '0980124165', N'Số 286, Đường Lý Thường Kiệt, Ninh Kiều, Cần Thơ', N'Cần Thơ', 14400000.00, 2000000.00, 'LUX50', 'PROCESSING', 'COD', 1, 0, '2025-08-30 05:09:07'),
+(34, 114, 'DH1479', N'Phan Đức Khoa', 'khachhang093@gmail.com', '0783142280', N'Số 337, Đường Hoàng Hoa Thám, TP. Huế, Huế', N'Huế', 15500000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2026-06-01 06:18:31'),
+(35, 40, 'DH9143', N'Lý Hữu Tùng', 'khachhang019@gmail.com', '0350947551', N'Số 192, Đường Lý Thường Kiệt, Chí Linh, Hải Dương', N'Hải Dương', 2100000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2024-11-02 23:49:10'),
+(36, 62, 'DH8825', N'Phan Mai Châu', 'khachhang041@gmail.com', '0971563352', N'Số 323, Đường Võ Văn Kiệt, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 18900000.00, 0.00, NULL, 'PROCESSING', 'COD', 1, 0, '2024-11-27 20:01:43'),
+(37, 76, 'DH4796', N'Vũ Tuấn Tuấn', 'khachhang055@gmail.com', '0702646000', N'Số 114, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 11500000.00, 0.00, NULL, 'DELIVERED', 'COD', 1, 0, '2024-12-11 21:45:38'),
+(38, 112, 'DH4722', N'Phạm Tuấn Cường', 'khachhang091@gmail.com', '0867685982', N'Số 248, Đường Cách Mạng Tháng 8, Hội An, Quảng Nam', N'Quảng Nam', 12600000.00, 2000000.00, 'LUX30', 'DELIVERED', 'VIETQR', 1, 0, '2024-04-06 16:07:44'),
+(39, 78, 'DH7504', N'Đỗ Mỹ Duyên', 'khachhang057@gmail.com', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', 7950000.00, 2000000.00, 'LUX30', 'PAID', 'COD', 1, 0, '2026-03-07 23:24:20'),
+(40, 53, 'DH2318', N'Hồ Thị Trâm', 'khachhang032@gmail.com', '0349014260', N'Số 341, Đường Lý Thường Kiệt, Hải An, Hải Phòng', N'Hải Phòng', 72300000.00, 2000000.00, 'LUX30', 'PROCESSING', 'COD', 1, 0, '2024-09-26 19:43:56'),
+(41, 87, 'DH9470', N'Lê Bảo Khang', 'khachhang066@gmail.com', '0331904313', N'Số 179, Đường Nam Kỳ Khởi Nghĩa, Bến Cát, Bình Dương', N'Bình Dương', 7225000.00, 1275000.00, 'LXR36', 'PROCESSING', 'VIETQR', 1, 0, '2025-04-18 13:54:06'),
+(42, 96, 'DH5072', N'Phan Minh Huy', 'khachhang075@gmail.com', '0935324714', N'Số 329, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 11500000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2026-01-23 01:13:16'),
+(43, 61, 'DH415', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 4750000.00, 0.00, NULL, 'CANCELLED', 'VIETQR', 0, 1, '2024-05-18 19:04:40'),
+(44, 56, 'DH6053', N'Đỗ Mỹ Linh', 'khachhang035@gmail.com', '0898730533', N'Số 236, Đường Nguyễn Trãi, TP. Bắc Ninh, Bắc Ninh', N'Bắc Ninh', 8800000.00, 2000000.00, 'LUX50', 'PAID', 'VIETQR', 1, 0, '2025-07-05 19:20:47'),
+(45, 54, 'DH5966', N'Bùi Quỳnh Thảo', 'khachhang033@gmail.com', '0709493169', N'Số 206, Đường Nguyễn Văn Cừ, Hạ Long, Quảng Ninh', N'Quảng Ninh', 57500000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2024-03-22 17:39:49'),
+(46, 107, 'DH7564', N'Phan Ánh Trang', 'khachhang086@gmail.com', '0964472757', N'Số 134, Đường Điện Biên Phủ, Quy Nhơn, Bình Định', N'Bình Định', 2600000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2025-03-14 11:50:13'),
+(47, 40, 'DH6927', N'Lý Hữu Tùng', 'khachhang019@gmail.com', '0350947551', N'Số 192, Đường Lý Thường Kiệt, Chí Linh, Hải Dương', N'Hải Dương', 2100000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2025-10-15 18:39:11'),
+(48, 41, 'DH1495', N'Võ Hải Châu', 'khachhang020@gmail.com', '0378480742', N'Số 315, Đường Kim Mã, Cầu Giấy, Hà Nội', N'Hà Nội', 6950000.00, 2000000.00, 'LUX50', 'PAID', 'VIETQR', 1, 0, '2026-07-25 17:39:46'),
+(49, 90, 'DH6543', N'Trần Xuân Linh', 'khachhang069@gmail.com', '0385123967', N'Số 63, Đường Hoàng Hoa Thám, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 11400000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2024-08-07 04:29:54'),
+(50, 120, 'DH9606', N'Ngô Bảo Hải', 'khachhang099@gmail.com', '0983077196', N'Số 23, Đường Điện Biên Phủ, Hội An, Quảng Nam', N'Quảng Nam', 7400000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2024-05-23 20:13:02'),
+(51, 28, 'DH9094', N'Lý Tuấn Tùng', 'khachhang007@gmail.com', '0797839946', N'Số 40, Đường Giải Phóng, Ngô Quyền, Hải Phòng', N'Hải Phòng', 11500000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2025-02-16 09:08:15'),
+(52, 72, 'DH8176', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 60200000.00, 2000000.00, 'LUX50', 'CONFIRMED', 'VIETQR', 0, 0, '2024-06-12 11:39:54'),
+(53, 83, 'DH1917', N'Lý Tuyết Hằng', 'khachhang062@gmail.com', '0324694166', N'Số 153, Đường Nguyễn Trãi, Biên Hòa, Đồng Nai', N'Đồng Nai', 38800000.00, 0.00, NULL, 'CANCELLED', 'VIETQR', 0, 1, '2025-09-06 05:39:17'),
+(54, 55, 'DH6980', N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Số 330, Đường Võ Thị Sáu, Uông Bí, Quảng Ninh', N'Quảng Ninh', 62300000.00, 0.00, NULL, 'CANCELLED', 'VIETQR', 0, 1, '2026-04-12 16:59:55'),
+(55, 110, 'DH8306', N'Ngô Bảo Hải', 'khachhang089@gmail.com', '0894063447', N'Số 219, Đường Võ Văn Kiệt, Cam Ranh, Nha Trang', N'Nha Trang', 17700000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2026-06-13 08:20:40'),
+(56, 46, 'DH9843', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 2100000.00, 0.00, NULL, 'CANCELLED', 'COD', 0, 1, '2024-11-23 11:48:12'),
+(57, 117, 'DH8055', N'Dương Gia Tùng', 'khachhang096@gmail.com', '0365684010', N'Số 192, Đường Võ Văn Kiệt, Thanh Khê, Đà Nẵng', N'Đà Nẵng', 15200000.00, 2000000.00, 'LUX30', 'CONFIRMED', 'VIETQR', 0, 0, '2026-02-22 03:46:05'),
+(58, 47, 'DH6533', N'Phan Xuân Tài', 'khachhang026@gmail.com', '0323948945', N'Số 53, Đường Điện Biên Phủ, Cẩm Phả, Quảng Ninh', N'Quảng Ninh', 3700000.00, 2000000.00, 'LUX50', 'SHIPPING', 'VIETQR', 1, 0, '2025-01-13 13:48:50'),
+(59, 39, 'DH8605', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 55500000.00, 2000000.00, 'LUX30', 'PROCESSING', 'VIETQR', 1, 0, '2025-12-27 10:29:15'),
+(60, 77, 'DH4247', N'Vũ Thị Hiền', 'khachhang056@gmail.com', '0794999113', N'Số 254, Đường Trường Chinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 9500000.00, 2000000.00, 'LUX50', 'PAID', 'COD', 1, 0, '2025-01-13 08:21:07'),
+(61, 38, 'DH6890', N'Huỳnh Quỳnh Lam', 'khachhang017@gmail.com', '0375383607', N'Số 256, Đường Điện Biên Phủ, Hạ Long, Quảng Ninh', N'Quảng Ninh', 2800000.00, 2000000.00, 'LUX50', 'PROCESSING', 'VIETQR', 1, 0, '2024-10-05 07:46:59'),
+(62, 108, 'DH9250', N'Dương Ánh Hằng', 'khachhang087@gmail.com', '0945397620', N'Số 65, Đường Lê Lợi, TP. Huế, Huế', N'Huế', 3825000.00, 675000.00, 'LXR36', 'PAID', 'VIETQR', 1, 0, '2024-06-17 09:25:42'),
+(63, 58, 'DH7861', N'Võ Quỳnh Hằng', 'khachhang037@gmail.com', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', N'Hà Nội', 8700000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2026-02-08 09:55:48'),
+(64, 44, 'DH8414', N'Lý Đức Khoa', 'khachhang023@gmail.com', '0702080086', N'Số 11, Đường Hoàng Hoa Thám, Từ Sơn, Bắc Ninh', N'Bắc Ninh', 15480000.00, 1720000.00, 'LUX10', 'DELIVERED', 'VIETQR', 1, 0, '2024-11-28 07:38:38'),
+(65, 69, 'DH8496', N'Hoàng Đức Long', 'khachhang048@gmail.com', '0385765838', N'Số 338, Đường Giải Phóng, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 10800000.00, 0.00, NULL, 'PENDING', 'VIETQR', 0, 0, '2025-05-21 08:38:26'),
+(66, 113, 'DH425', N'Phan Trọng Quân', 'khachhang092@gmail.com', '0323358475', N'Số 139, Đường Lý Thường Kiệt, Hải Châu, Đà Nẵng', N'Đà Nẵng', 16400000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2026-06-12 16:16:03'),
+(67, 69, 'DH9439', N'Hoàng Đức Long', 'khachhang048@gmail.com', '0385765838', N'Số 338, Đường Giải Phóng, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 1305000.00, 145000.00, 'LUX10', 'PAID', 'COD', 1, 0, '2025-05-28 17:38:34'),
+(68, 52, 'DH3688', N'Nguyễn Bảo Tùng', 'khachhang031@gmail.com', '0907206088', N'Số 48, Đường Kim Mã, Cẩm Phả, Quảng Ninh', N'Quảng Ninh', 1200000.00, 0.00, NULL, 'SHIPPING', 'COD', 1, 0, '2025-07-26 13:10:30'),
+(69, 44, 'DH2123', N'Lý Đức Khoa', 'khachhang023@gmail.com', '0702080086', N'Số 11, Đường Hoàng Hoa Thám, Từ Sơn, Bắc Ninh', N'Bắc Ninh', 20000000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2025-12-13 17:20:44'),
+(70, 55, 'DH810', N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Số 330, Đường Võ Thị Sáu, Uông Bí, Quảng Ninh', N'Quảng Ninh', 2100000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2025-05-23 04:17:58'),
+(71, 46, 'DH8582', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 41800000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2026-01-25 05:27:34'),
+(72, 121, 'DH1690', N'Đặng Hải Anh', 'khachhang100@gmail.com', '0934773116', N'Số 16, Đường Hai Bà Trưng, Cẩm Lệ, Đà Nẵng', N'Đà Nẵng', 37500000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2025-11-05 19:17:18'),
+(73, 71, 'DH7045', N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Số 239, Đường Phan Chu Trinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 9775000.00, 1725000.00, 'LXR36', 'DELIVERED', 'VIETQR', 1, 0, '2024-08-14 12:41:49'),
+(74, 112, 'DH7711', N'Phạm Tuấn Cường', 'khachhang091@gmail.com', '0867685982', N'Số 248, Đường Cách Mạng Tháng 8, Hội An, Quảng Nam', N'Quảng Nam', 17300000.00, 2000000.00, 'LUX50', 'PROCESSING', 'COD', 1, 0, '2024-11-02 06:08:26'),
+(75, 30, 'DH2343', N'Bùi Gia Quân', 'khachhang009@gmail.com', '0912109582', N'Số 164, Đường Trần Hưng Đạo, Hồng Bàng, Hải Phòng', N'Hải Phòng', 1900000.00, 1900000.00, 'LUX50', 'DELIVERED', 'VIETQR', 1, 0, '2025-11-13 21:08:09'),
+(76, 39, 'DH7908', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 7600000.00, 2000000.00, 'LUX30', 'DELIVERED', 'VIETQR', 1, 0, '2024-11-17 13:30:29'),
+(77, 103, 'DH3760', N'Lê Bảo Đạt', 'khachhang082@gmail.com', '0918069328', N'Số 1, Đường Cầu Giấy, Hội An, Quảng Nam', N'Quảng Nam', 6480000.00, 720000.00, 'LUX10', 'SHIPPING', 'COD', 1, 0, '2026-01-23 02:57:12'),
+(78, 76, 'DH2009', N'Vũ Tuấn Tuấn', 'khachhang055@gmail.com', '0702646000', N'Số 114, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 4200000.00, 2000000.00, 'LUX50', 'PROCESSING', 'VIETQR', 1, 0, '2026-04-26 19:33:47'),
+(79, 46, 'DH7494', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 3060000.00, 340000.00, 'LUX10', 'CANCELLED', 'VIETQR', 0, 1, '2025-09-11 16:05:38'),
+(80, 92, 'DH7700', N'Phạm Thanh Châu', 'khachhang071@gmail.com', '0399506476', N'Số 100, Đường Nguyễn Trãi, Dĩ An, Bình Dương', N'Bình Dương', 32400000.00, 2000000.00, 'LUX10', 'CONFIRMED', 'COD', 0, 0, '2025-08-15 05:30:01'),
+(81, 71, 'DH8949', N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Số 239, Đường Phan Chu Trinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 50000000.00, 2000000.00, 'LUX10', 'DELIVERED', 'VIETQR', 1, 0, '2025-10-23 09:08:21'),
+(82, 108, 'DH4122', N'Dương Ánh Hằng', 'khachhang087@gmail.com', '0945397620', N'Số 65, Đường Lê Lợi, TP. Huế, Huế', N'Huế', 24450000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2026-08-05 23:51:25'),
+(83, 53, 'DH9181', N'Hồ Thị Trâm', 'khachhang032@gmail.com', '0349014260', N'Số 341, Đường Lý Thường Kiệt, Hải An, Hải Phòng', N'Hải Phòng', 17600000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2024-08-31 04:47:03'),
+(84, 67, 'DH6597', N'Huỳnh Gia Quân', 'khachhang046@gmail.com', '0379342131', N'Số 88, Đường Cách Mạng Tháng 8, Thuận An, Bình Dương', N'Bình Dương', 2720000.00, 480000.00, 'LXR36', 'DELIVERED', 'VIETQR', 1, 0, '2025-09-24 16:40:13'),
+(85, 51, 'DH5050', N'Hoàng Ngọc Linh', 'khachhang030@gmail.com', '0369150908', N'Số 51, Đường Võ Thị Sáu, TP. Hải Dương, Hải Dương', N'Hải Dương', 29900000.00, 0.00, NULL, 'PENDING', 'VIETQR', 0, 0, '2025-05-22 05:14:49'),
+(86, 72, 'DH8990', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 29650000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2025-10-03 23:40:44'),
+(87, 77, 'DH8233', N'Vũ Thị Hiền', 'khachhang056@gmail.com', '0794999113', N'Số 254, Đường Trường Chinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 13455000.00, 1495000.00, 'LUX10', 'PROCESSING', 'COD', 1, 0, '2026-03-06 19:12:04'),
+(88, 37, 'DH7856', N'Ngô Thu Huyền', 'khachhang016@gmail.com', '0884346645', N'Số 124, Đường Điện Biên Phủ, Hoàng Mai, Hà Nội', N'Hà Nội', 750000.00, 0.00, NULL, 'DELIVERED', 'COD', 1, 0, '2025-07-19 14:37:28'),
+(89, 58, 'DH6595', N'Võ Quỳnh Hằng', 'khachhang037@gmail.com', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', N'Hà Nội', 4335000.00, 765000.00, 'LXR36', 'PROCESSING', 'VIETQR', 1, 0, '2024-05-09 22:37:37'),
+(90, 39, 'DH7105', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 13500000.00, 2000000.00, 'LUX30', 'CONFIRMED', 'VIETQR', 0, 0, '2026-02-15 22:23:22'),
+(91, 81, 'DH3328', N'Ngô Quỳnh Nhi', 'khachhang060@gmail.com', '0914027898', N'Số 164, Đường Nguyễn Trãi, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 6030000.00, 670000.00, 'LUX10', 'PAID', 'VIETQR', 1, 0, '2024-04-09 18:09:55'),
+(92, 44, 'DH4833', N'Lý Đức Khoa', 'khachhang023@gmail.com', '0702080086', N'Số 11, Đường Hoàng Hoa Thám, Từ Sơn, Bắc Ninh', N'Bắc Ninh', 20300000.00, 2000000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2025-04-14 14:29:09'),
+(93, 72, 'DH4417', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 2940000.00, 1260000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2025-03-16 22:01:21'),
+(94, 40, 'DH161', N'Lý Hữu Tùng', 'khachhang019@gmail.com', '0350947551', N'Số 192, Đường Lý Thường Kiệt, Chí Linh, Hải Dương', N'Hải Dương', 19500000.00, 2000000.00, 'LUX10', 'PENDING', 'VIETQR', 0, 0, '2025-03-29 00:41:15'),
+(95, 57, 'DH552', N'Lý Bảo Nhân', 'khachhang036@gmail.com', '0887145631', N'Số 267, Đường Nguyễn Huệ, TP. Hải Dương, Hải Dương', N'Hải Dương', 13800000.00, 0.00, NULL, 'DELIVERED', 'COD', 1, 0, '2024-10-27 09:28:49'),
+(96, 53, 'DH2465', N'Hồ Thị Trâm', 'khachhang032@gmail.com', '0349014260', N'Số 341, Đường Lý Thường Kiệt, Hải An, Hải Phòng', N'Hải Phòng', 20700000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2025-10-06 21:11:12'),
+(97, 34, 'DH9795', N'Lý Phương Hiền', 'khachhang013@gmail.com', '0373708940', N'Số 21, Đường Lý Thường Kiệt, TP. Hải Dương, Hải Dương', N'Hải Dương', 6200000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2025-06-12 18:52:54'),
+(98, 58, 'DH7517', N'Võ Quỳnh Hằng', 'khachhang037@gmail.com', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', N'Hà Nội', 26600000.00, 2000000.00, 'LUX50', 'PAID', 'VIETQR', 1, 0, '2024-04-30 08:35:33'),
+(99, 121, 'DH8577', N'Đặng Hải Anh', 'khachhang100@gmail.com', '0934773116', N'Số 16, Đường Hai Bà Trưng, Cẩm Lệ, Đà Nẵng', N'Đà Nẵng', 14100000.00, 0.00, NULL, 'DELIVERED', 'COD', 1, 0, '2025-08-11 17:07:18'),
+(100, 68, 'DH8030', N'Lý Diệu Trang', 'khachhang047@gmail.com', '0898391307', N'Số 243, Đường Cầu Giấy, Quận 1, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 1800000.00, 1800000.00, 'LUX50', 'CONFIRMED', 'VIETQR', 0, 0, '2026-04-10 02:46:13'),
+(101, 104, 'DH5907', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 900000.00, 900000.00, 'LUX50', 'DELIVERED', 'VIETQR', 1, 0, '2025-07-28 10:40:35'),
+(102, 43, 'DH3284', N'Lý Thu Huyền', 'khachhang022@gmail.com', '0774600619', N'Số 243, Đường Hoàng Hoa Thám, Ngô Quyền, Hải Phòng', N'Hải Phòng', 12300000.00, 2000000.00, 'LXR36', 'DELIVERED', 'VIETQR', 1, 0, '2026-07-05 04:14:36'),
+(103, 118, 'DH4271', N'Vũ Xuân Long', 'khachhang097@gmail.com', '0974394074', N'Số 69, Đường Điện Biên Phủ, Sơn Trà, Đà Nẵng', N'Đà Nẵng', 39600000.00, 2000000.00, 'LUX50', 'PAID', 'VIETQR', 1, 0, '2025-10-15 04:27:59'),
+(104, 65, 'DH7965', N'Hoàng Đức Cường', 'khachhang044@gmail.com', '0397241440', N'Số 342, Đường Nam Kỳ Khởi Nghĩa, Thủ Dầu Một, Bình Dương', N'Bình Dương', 3800000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2026-04-11 13:33:24'),
+(105, 61, 'DH7655', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 3800000.00, 2000000.00, 'LUX50', 'PAID', 'COD', 1, 0, '2024-05-17 10:29:05'),
+(106, 84, 'DH8386', N'Phan Gia Nhân', 'khachhang063@gmail.com', '0897611949', N'Số 214, Đường Giải Phóng, Quận 7, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 42600000.00, 0.00, NULL, 'CANCELLED', 'VIETQR', 0, 1, '2026-04-12 02:31:20'),
+(107, 115, 'DH8155', N'Lý Thị Tâm', 'khachhang094@gmail.com', '0399233423', N'Số 70, Đường Võ Văn Kiệt, TP. Nha Trang, Nha Trang', N'Nha Trang', 5300000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2024-03-19 19:58:15'),
+(108, 45, 'DH7124', N'Lý Ánh Trâm', 'khachhang024@gmail.com', '0335564163', N'Số 278, Đường Cách Mạng Tháng 8, TP. Bắc Ninh, Bắc Ninh', N'Bắc Ninh', 23300000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2026-07-13 18:09:05'),
+(109, 108, 'DH9149', N'Dương Ánh Hằng', 'khachhang087@gmail.com', '0945397620', N'Số 65, Đường Lê Lợi, TP. Huế, Huế', N'Huế', 11600000.00, 2000000.00, 'LUX50', 'PROCESSING', 'VIETQR', 1, 0, '2025-07-09 00:35:15'),
+(110, 83, 'DH560', N'Lý Tuyết Hằng', 'khachhang062@gmail.com', '0324694166', N'Số 153, Đường Nguyễn Trãi, Biên Hòa, Đồng Nai', N'Đồng Nai', 21400000.00, 2000000.00, 'LUX50', 'PROCESSING', 'COD', 1, 0, '2025-04-14 00:42:17'),
+(111, 109, 'DH4762', N'Vũ Hữu Khải', 'khachhang088@gmail.com', '0866958749', N'Số 295, Đường Nguyễn Văn Cừ, Ngũ Hành Sơn, Đà Nẵng', N'Đà Nẵng', 43500000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2025-11-22 17:52:32'),
+(112, 97, 'DH5198', N'Bùi Văn Long', 'khachhang076@gmail.com', '0392282195', N'Số 84, Đường Lê Lợi, Gò Vấp, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 43750000.00, 2000000.00, 'LUX50', 'PAID', 'VIETQR', 1, 0, '2026-04-05 22:23:41'),
+(113, 37, 'DH7508', N'Ngô Thu Huyền', 'khachhang016@gmail.com', '0884346645', N'Số 124, Đường Điện Biên Phủ, Hoàng Mai, Hà Nội', N'Hà Nội', 2100000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2026-04-24 16:08:03'),
+(114, 78, 'DH1621', N'Đỗ Mỹ Duyên', 'khachhang057@gmail.com', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', 1900000.00, 1900000.00, 'LUX50', 'PAID', 'VIETQR', 1, 0, '2026-04-26 02:28:51'),
+(115, 24, 'DH7193', N'Vũ Khánh Ngọc', 'khachhang003@gmail.com', '0969809398', N'Số 271, Đường Võ Văn Kiệt, Uông Bí, Quảng Ninh', N'Quảng Ninh', 10900000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2025-02-05 04:55:18'),
+(116, 34, 'DH8450', N'Lý Phương Hiền', 'khachhang013@gmail.com', '0373708940', N'Số 21, Đường Lý Thường Kiệt, TP. Hải Dương, Hải Dương', N'Hải Dương', 16650000.00, 2000000.00, 'LUX30', 'SHIPPING', 'COD', 1, 0, '2024-09-08 03:27:15'),
+(117, 95, 'DH4250', N'Võ Ánh Tú', 'khachhang074@gmail.com', '0944495641', N'Số 316, Đường Cách Mạng Tháng 8, Bình Thủy, Cần Thơ', N'Cần Thơ', 9180000.00, 1620000.00, 'LXR36', 'PAID', 'VIETQR', 1, 0, '2025-10-27 23:29:09'),
+(118, 99, 'DH7430', N'Lý Thu Yến', 'khachhang078@gmail.com', '0896567924', N'Số 201, Đường Nam Kỳ Khởi Nghĩa, Phú Nhuận, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 39900000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2024-11-04 19:55:35'),
+(119, 24, 'DH3009', N'Vũ Khánh Ngọc', 'khachhang003@gmail.com', '0969809398', N'Số 271, Đường Võ Văn Kiệt, Uông Bí, Quảng Ninh', N'Quảng Ninh', 7862500.00, 1387500.00, 'LXR36', 'CONFIRMED', 'VIETQR', 0, 0, '2024-10-10 11:29:19'),
+(120, 25, 'DH6985', N'Đặng Hải Châu', 'khachhang004@gmail.com', '0883687942', N'Số 85, Đường Võ Văn Kiệt, Tây Hồ, Hà Nội', N'Hà Nội', 12200000.00, 0.00, NULL, 'PROCESSING', 'VIETQR', 1, 0, '2024-07-24 14:11:07'),
+(121, 99, 'DH7860', N'Lý Thu Yến', 'khachhang078@gmail.com', '0896567924', N'Số 201, Đường Nam Kỳ Khởi Nghĩa, Phú Nhuận, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 38000000.00, 2000000.00, 'LXR36', 'SHIPPING', 'VIETQR', 1, 0, '2026-05-29 13:36:54'),
+(122, 121, 'DH1063', N'Đặng Hải Anh', 'khachhang100@gmail.com', '0934773116', N'Số 16, Đường Hai Bà Trưng, Cẩm Lệ, Đà Nẵng', N'Đà Nẵng', 17600000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2026-05-18 22:49:25'),
+(123, 91, 'DH4375', N'Phạm Trọng Tùng', 'khachhang070@gmail.com', '0773858790', N'Số 149, Đường Trần Hưng Đạo, Long Thành, Đồng Nai', N'Đồng Nai', 28900000.00, 2000000.00, 'LUX10', 'PAID', 'COD', 1, 0, '2025-01-24 02:11:56'),
+(124, 57, 'DH6074', N'Lý Bảo Nhân', 'khachhang036@gmail.com', '0887145631', N'Số 267, Đường Nguyễn Huệ, TP. Hải Dương, Hải Dương', N'Hải Dương', 80700000.00, 2000000.00, 'LUX30', 'SHIPPING', 'COD', 1, 0, '2024-04-17 14:54:19'),
+(125, 104, 'DH1593', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 9720000.00, 1080000.00, 'LUX10', 'SHIPPING', 'VIETQR', 1, 0, '2026-02-07 10:25:01'),
+(126, 58, 'DH3198', N'Võ Quỳnh Hằng', 'khachhang037@gmail.com', '0705110527', N'Số 143, Đường Kim Mã, Long Biên, Hà Nội', N'Hà Nội', 52000000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2026-03-27 21:36:54'),
+(127, 25, 'DH6748', N'Đặng Hải Châu', 'khachhang004@gmail.com', '0883687942', N'Số 85, Đường Võ Văn Kiệt, Tây Hồ, Hà Nội', N'Hà Nội', 750000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2025-02-20 06:36:10'),
+(128, 31, 'DH2407', N'Huỳnh Ánh Tú', 'khachhang010@gmail.com', '0394172699', N'Số 65, Đường Cách Mạng Tháng 8, TP. Hải Dương, Hải Dương', N'Hải Dương', 37000000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2025-05-31 19:03:45'),
+(129, 83, 'DH7372', N'Lý Tuyết Hằng', 'khachhang062@gmail.com', '0324694166', N'Số 153, Đường Nguyễn Trãi, Biên Hòa, Đồng Nai', N'Đồng Nai', 1900000.00, 1900000.00, 'LUX50', 'PAID', 'COD', 1, 0, '2024-05-29 22:04:52'),
+(130, 69, 'DH239', N'Hoàng Đức Long', 'khachhang048@gmail.com', '0385765838', N'Số 338, Đường Giải Phóng, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 65300000.00, 2000000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2025-03-26 09:44:43'),
+(131, 73, 'DH1520', N'Hoàng Tuyết Yến', 'khachhang052@gmail.com', '0946636303', N'Số 163, Đường Nguyễn Trãi, Biên Hòa, Đồng Nai', N'Đồng Nai', 34200000.00, 2000000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2026-06-01 02:32:07'),
+(132, 32, 'DH13', N'Đỗ Xuân Nam', 'khachhang011@gmail.com', '0930760927', N'Số 151, Đường Nguyễn Huệ, Hoàng Mai, Hà Nội', N'Hà Nội', 10200000.00, 2000000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2026-01-09 01:19:37'),
+(133, 46, 'DH7402', N'Lý Ánh Lam', 'khachhang025@gmail.com', '0334016186', N'Số 26, Đường Điện Biên Phủ, Ngô Quyền, Hải Phòng', N'Hải Phòng', 6200000.00, 2000000.00, 'LUX50', 'PENDING', 'VIETQR', 0, 0, '2025-09-12 13:38:13'),
+(134, 29, 'DH9523', N'Hồ Mai Linh', 'khachhang008@gmail.com', '0884008436', N'Số 113, Đường Nguyễn Huệ, Tây Hồ, Hà Nội', N'Hà Nội', 13200000.00, 2000000.00, 'LUX50', 'DELIVERED', 'COD', 1, 0, '2025-01-04 00:40:18'),
+(135, 29, 'DH8965', N'Hồ Mai Linh', 'khachhang008@gmail.com', '0884008436', N'Số 113, Đường Nguyễn Huệ, Tây Hồ, Hà Nội', N'Hà Nội', 15480000.00, 1720000.00, 'LUX10', 'DELIVERED', 'VIETQR', 1, 0, '2024-10-18 20:34:18'),
+(136, 91, 'DH1370', N'Phạm Trọng Tùng', 'khachhang070@gmail.com', '0773858790', N'Số 149, Đường Trần Hưng Đạo, Long Thành, Đồng Nai', N'Đồng Nai', 4800000.00, 0.00, NULL, 'PROCESSING', 'VIETQR', 1, 0, '2024-03-18 07:47:58'),
+(137, 29, 'DH3267', N'Hồ Mai Linh', 'khachhang008@gmail.com', '0884008436', N'Số 113, Đường Nguyễn Huệ, Tây Hồ, Hà Nội', N'Hà Nội', 10300000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2026-07-10 02:24:14'),
+(138, 50, 'DH4070', N'Lê Khánh Hà', 'khachhang029@gmail.com', '0982088779', N'Số 51, Đường Trường Chinh, Hạ Long, Quảng Ninh', N'Quảng Ninh', 3825000.00, 675000.00, 'LXR36', 'PAID', 'VIETQR', 1, 0, '2024-05-08 04:40:47'),
+(139, 32, 'DH1989', N'Đỗ Xuân Nam', 'khachhang011@gmail.com', '0930760927', N'Số 151, Đường Nguyễn Huệ, Hoàng Mai, Hà Nội', N'Hà Nội', 31300000.00, 2000000.00, 'LUX50', 'CANCELLED', 'VIETQR', 0, 1, '2026-02-21 12:03:30'),
+(140, 85, 'DH741', N'Dương Thành Phong', 'khachhang064@gmail.com', '0325167896', N'Số 79, Đường Lê Lợi, Bình Tân, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 1785000.00, 315000.00, 'LXR36', 'DELIVERED', 'VIETQR', 1, 0, '2026-04-27 02:40:26'),
+(141, 90, 'DH8963', N'Trần Xuân Linh', 'khachhang069@gmail.com', '0385123967', N'Số 63, Đường Hoàng Hoa Thám, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 12500000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2024-08-02 02:38:33'),
+(142, 80, 'DH4409', N'Dương Thu Hương', 'khachhang059@gmail.com', '0788444505', N'Số 5, Đường Điện Biên Phủ, Dĩ An, Bình Dương', N'Bình Dương', 3200000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2024-10-09 07:04:36'),
+(143, 37, 'DH5863', N'Ngô Thu Huyền', 'khachhang016@gmail.com', '0884346645', N'Số 124, Đường Điện Biên Phủ, Hoàng Mai, Hà Nội', N'Hà Nội', 17010000.00, 1890000.00, 'LUX10', 'PAID', 'VIETQR', 1, 0, '2025-10-08 07:30:19'),
+(144, 54, 'DH2545', N'Bùi Quỳnh Thảo', 'khachhang033@gmail.com', '0709493169', N'Số 206, Đường Nguyễn Văn Cừ, Hạ Long, Quảng Ninh', N'Quảng Ninh', 1050000.00, 1050000.00, 'LUX50', 'DELIVERED', 'VIETQR', 1, 0, '2024-08-12 01:52:50'),
+(145, 117, 'DH94', N'Dương Gia Tùng', 'khachhang096@gmail.com', '0365684010', N'Số 192, Đường Võ Văn Kiệt, Thanh Khê, Đà Nẵng', N'Đà Nẵng', 35000000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2025-08-28 06:54:13'),
+(146, 49, 'DH5145', N'Hồ Tiến Thắng', 'khachhang028@gmail.com', '0374860862', N'Số 179, Đường Điện Biên Phủ, Uông Bí, Quảng Ninh', N'Quảng Ninh', 52000000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2024-10-02 22:45:08'),
+(147, 111, 'DH9562', N'Phạm Tiến Long', 'khachhang090@gmail.com', '0904368325', N'Số 110, Đường Kim Mã, TP. Huế, Huế', N'Huế', 22800000.00, 2000000.00, 'LUX10', 'CONFIRMED', 'VIETQR', 0, 0, '2025-08-17 02:50:12'),
+(148, 77, 'DH9419', N'Vũ Thị Hiền', 'khachhang056@gmail.com', '0794999113', N'Số 254, Đường Trường Chinh, Bình Thủy, Cần Thơ', N'Cần Thơ', 1800000.00, 1800000.00, 'LUX50', 'CONFIRMED', 'VIETQR', 0, 0, '2025-07-16 22:48:30'),
+(149, 31, 'DH8070', N'Huỳnh Ánh Tú', 'khachhang010@gmail.com', '0394172699', N'Số 65, Đường Cách Mạng Tháng 8, TP. Hải Dương, Hải Dương', N'Hải Dương', 7600000.00, 0.00, NULL, 'PROCESSING', 'VIETQR', 1, 0, '2025-09-15 16:22:04'),
+(150, 47, 'DH2219', N'Phan Xuân Tài', 'khachhang026@gmail.com', '0323948945', N'Số 53, Đường Điện Biên Phủ, Cẩm Phả, Quảng Ninh', N'Quảng Ninh', 17010000.00, 1890000.00, 'LUX10', 'SHIPPING', 'VIETQR', 1, 0, '2024-12-30 21:25:56'),
+(151, 38, 'DH8952', N'Huỳnh Quỳnh Lam', 'khachhang017@gmail.com', '0375383607', N'Số 256, Đường Điện Biên Phủ, Hạ Long, Quảng Ninh', N'Quảng Ninh', 1530000.00, 270000.00, 'LXR36', 'PAID', 'VIETQR', 1, 0, '2026-08-15 09:05:51'),
+(152, 78, 'DH3662', N'Đỗ Mỹ Duyên', 'khachhang057@gmail.com', '0917675559', N'Số 332, Đường Hai Bà Trưng, Bến Cát, Bình Dương', N'Bình Dương', 16600000.00, 2000000.00, 'LXR36', 'DELIVERED', 'VIETQR', 1, 0, '2024-11-22 20:13:48'),
+(153, 59, 'DH7759', N'Đặng Trúc Hà', 'khachhang038@gmail.com', '0761979308', N'Số 311, Đường Võ Văn Kiệt, Long Biên, Hà Nội', N'Hà Nội', 21750000.00, 2000000.00, 'LUX10', 'SHIPPING', 'VIETQR', 1, 0, '2025-02-17 15:38:19'),
+(154, 95, 'DH9642', N'Võ Ánh Tú', 'khachhang074@gmail.com', '0944495641', N'Số 316, Đường Cách Mạng Tháng 8, Bình Thủy, Cần Thơ', N'Cần Thơ', 15500000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2024-03-19 23:48:40'),
+(155, 87, 'DH2159', N'Lê Bảo Khang', 'khachhang066@gmail.com', '0331904313', N'Số 179, Đường Nam Kỳ Khởi Nghĩa, Bến Cát, Bình Dương', N'Bình Dương', 10370000.00, 1830000.00, 'LXR36', 'DELIVERED', 'VIETQR', 1, 0, '2025-11-25 15:06:06'),
+(156, 104, 'DH9809', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 17000000.00, 2000000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2025-11-24 06:38:35'),
+(157, 49, 'DH8279', N'Hồ Tiến Thắng', 'khachhang028@gmail.com', '0374860862', N'Số 179, Đường Điện Biên Phủ, Uông Bí, Quảng Ninh', N'Quảng Ninh', 30300000.00, 2000000.00, 'LXR36', 'PENDING', 'COD', 0, 0, '2026-02-08 20:17:27'),
+(158, 60, 'DH4772', N'Võ Diệu Mai', 'khachhang039@gmail.com', '0902454947', N'Số 68, Đường Nguyễn Văn Cừ, Yên Phong, Bắc Ninh', N'Bắc Ninh', 1350000.00, 150000.00, 'LUX10', 'PAID', 'COD', 1, 0, '2025-02-18 22:47:10'),
+(159, 90, 'DH1393', N'Trần Xuân Linh', 'khachhang069@gmail.com', '0385123967', N'Số 63, Đường Hoàng Hoa Thám, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 4725000.00, 525000.00, 'LUX10', 'CONFIRMED', 'VIETQR', 0, 0, '2024-08-16 13:07:13'),
+(160, 49, 'DH6854', N'Hồ Tiến Thắng', 'khachhang028@gmail.com', '0374860862', N'Số 179, Đường Điện Biên Phủ, Uông Bí, Quảng Ninh', N'Quảng Ninh', 10900000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2024-05-03 05:46:47'),
+(161, 45, 'DH2633', N'Lý Ánh Trâm', 'khachhang024@gmail.com', '0335564163', N'Số 278, Đường Cách Mạng Tháng 8, TP. Bắc Ninh, Bắc Ninh', N'Bắc Ninh', 10200000.00, 2000000.00, 'LUX50', 'PROCESSING', 'VIETQR', 1, 0, '2025-05-02 20:49:40'),
+(162, 119, 'DH2227', N'Dương Gia Đạt', 'khachhang098@gmail.com', '0780761573', N'Số 200, Đường Võ Thị Sáu, Quy Nhơn, Bình Định', N'Bình Định', 17370000.00, 1930000.00, 'LUX10', 'SHIPPING', 'VIETQR', 1, 0, '2024-04-03 09:33:05'),
+(163, 92, 'DH9611', N'Phạm Thanh Châu', 'khachhang071@gmail.com', '0399506476', N'Số 100, Đường Nguyễn Trãi, Dĩ An, Bình Dương', N'Bình Dương', 4150000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2024-11-05 23:45:53'),
+(164, 75, 'DH5023', N'Đặng Tuyết Tú', 'khachhang054@gmail.com', '0397942675', N'Số 329, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 21300000.00, 0.00, NULL, 'PENDING', 'VIETQR', 0, 0, '2024-11-24 08:11:31'),
+(165, 94, 'DH8328', N'Phan Thu Vy', 'khachhang073@gmail.com', '0353024846', N'Số 341, Đường Võ Văn Kiệt, Tân Bình, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 3780000.00, 420000.00, 'LUX10', 'DELIVERED', 'VIETQR', 1, 0, '2026-06-22 01:54:29'),
+(166, 111, 'DH6760', N'Phạm Tiến Long', 'khachhang090@gmail.com', '0904368325', N'Số 110, Đường Kim Mã, TP. Huế, Huế', N'Huế', 13500000.00, 2000000.00, 'LXR36', 'DELIVERED', 'VIETQR', 1, 0, '2024-05-05 18:52:12'),
+(167, 87, 'DH6406', N'Lê Bảo Khang', 'khachhang066@gmail.com', '0331904313', N'Số 179, Đường Nam Kỳ Khởi Nghĩa, Bến Cát, Bình Dương', N'Bình Dương', 9950000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2024-12-17 23:02:15'),
+(168, 43, 'DH2443', N'Lý Thu Huyền', 'khachhang022@gmail.com', '0774600619', N'Số 243, Đường Hoàng Hoa Thám, Ngô Quyền, Hải Phòng', N'Hải Phòng', 15480000.00, 1720000.00, 'LUX10', 'PAID', 'VIETQR', 1, 0, '2024-03-19 21:12:05'),
+(169, 82, 'DH8530', N'Trần Ngọc Nhi', 'khachhang061@gmail.com', '0980124165', N'Số 286, Đường Lý Thường Kiệt, Ninh Kiều, Cần Thơ', N'Cần Thơ', 79200000.00, 2000000.00, 'LUX30', 'PAID', 'VIETQR', 1, 0, '2025-10-23 12:14:57'),
+(170, 98, 'DH3232', N'Phạm Ánh Hà', 'khachhang077@gmail.com', '0767110104', N'Số 95, Đường Lê Lợi, Long Thành, Đồng Nai', N'Đồng Nai', 6000000.00, 0.00, NULL, 'CONFIRMED', 'COD', 0, 0, '2025-09-13 05:20:52'),
+(171, 68, 'DH6170', N'Lý Diệu Trang', 'khachhang047@gmail.com', '0898391307', N'Số 243, Đường Cầu Giấy, Quận 1, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 14800000.00, 2000000.00, 'LXR36', 'CONFIRMED', 'VIETQR', 0, 0, '2026-04-12 13:52:55'),
+(172, 104, 'DH241', N'Trần Diệu Hương', 'khachhang083@gmail.com', '0325891709', N'Số 137, Đường Kim Mã, Hội An, Quảng Nam', N'Quảng Nam', 74300000.00, 0.00, NULL, 'CONFIRMED', 'VIETQR', 0, 0, '2025-05-25 12:28:35'),
+(173, 47, 'DH1748', N'Phan Xuân Tài', 'khachhang026@gmail.com', '0323948945', N'Số 53, Đường Điện Biên Phủ, Cẩm Phả, Quảng Ninh', N'Quảng Ninh', 12200000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2024-08-18 11:46:06'),
+(174, 72, 'DH6389', N'Đặng Anh Tài', 'khachhang051@gmail.com', '0387027574', N'Số 74, Đường Nguyễn Trãi, Bến Cát, Bình Dương', N'Bình Dương', 15500000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2025-06-23 01:20:05'),
+(175, 29, 'DH1213', N'Hồ Mai Linh', 'khachhang008@gmail.com', '0884008436', N'Số 113, Đường Nguyễn Huệ, Tây Hồ, Hà Nội', N'Hà Nội', 8200000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2026-03-13 00:07:13'),
+(176, 74, 'DH851', N'Võ Mai Trâm', 'khachhang053@gmail.com', '0891413000', N'Số 144, Đường Trường Chinh, Biên Hòa, Đồng Nai', N'Đồng Nai', 1050000.00, 1050000.00, 'LUX50', 'PAID', 'COD', 1, 0, '2025-06-22 11:58:35'),
+(177, 69, 'DH5695', N'Hoàng Đức Long', 'khachhang048@gmail.com', '0385765838', N'Số 338, Đường Giải Phóng, TP. Vũng Tàu, Vũng Tàu', N'Vũng Tàu', 111600000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2026-02-17 09:56:54'),
+(178, 43, 'DH5800', N'Lý Thu Huyền', 'khachhang022@gmail.com', '0774600619', N'Số 243, Đường Hoàng Hoa Thám, Ngô Quyền, Hải Phòng', N'Hải Phòng', 10800000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2025-08-20 21:52:36'),
+(179, 93, 'DH432', N'Phan Văn Tuấn', 'khachhang072@gmail.com', '0346610055', N'Số 204, Đường Nguyễn Văn Cừ, TP. Thủ Đức, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 4770000.00, 530000.00, 'LUX10', 'SHIPPING', 'COD', 1, 0, '2025-03-25 17:35:05'),
+(180, 114, 'DH429', N'Phan Đức Khoa', 'khachhang093@gmail.com', '0783142280', N'Số 337, Đường Hoàng Hoa Thám, TP. Huế, Huế', N'Huế', 24600000.00, 0.00, NULL, 'SHIPPING', 'VIETQR', 1, 0, '2025-12-05 06:36:28'),
+(181, 112, 'DH8372', N'Phạm Tuấn Cường', 'khachhang091@gmail.com', '0867685982', N'Số 248, Đường Cách Mạng Tháng 8, Hội An, Quảng Nam', N'Quảng Nam', 8670000.00, 1530000.00, 'LXR36', 'CONFIRMED', 'VIETQR', 0, 0, '2024-11-20 05:06:14'),
+(182, 95, 'DH7809', N'Võ Ánh Tú', 'khachhang074@gmail.com', '0944495641', N'Số 316, Đường Cách Mạng Tháng 8, Bình Thủy, Cần Thơ', N'Cần Thơ', 13100000.00, 2000000.00, 'LXR36', 'PAID', 'VIETQR', 1, 0, '2024-05-19 18:40:28'),
+(183, 34, 'DH5380', N'Lý Phương Hiền', 'khachhang013@gmail.com', '0373708940', N'Số 21, Đường Lý Thường Kiệt, TP. Hải Dương, Hải Dương', N'Hải Dương', 11500000.00, 0.00, NULL, 'PAID', 'COD', 1, 0, '2026-05-03 23:55:40'),
+(184, 82, 'DH4985', N'Trần Ngọc Nhi', 'khachhang061@gmail.com', '0980124165', N'Số 286, Đường Lý Thường Kiệt, Ninh Kiều, Cần Thơ', N'Cần Thơ', 29800000.00, 0.00, NULL, 'DELIVERED', 'VIETQR', 1, 0, '2025-10-23 16:21:12'),
+(185, 42, 'DH7385', N'Hồ Phương Châu', 'khachhang021@gmail.com', '0979639175', N'Số 5, Đường Giải Phóng, Hoàn Kiếm, Hà Nội', N'Hà Nội', 59800000.00, 2000000.00, 'LXR36', 'PAID', 'COD', 1, 0, '2025-10-13 19:11:48'),
+(186, 61, 'DH5351', N'Nguyễn Thu Hà', 'khachhang040@gmail.com', '0392103196', N'Số 145, Đường Nam Kỳ Khởi Nghĩa, Chí Linh, Hải Dương', N'Hải Dương', 8500000.00, 0.00, NULL, 'SHIPPING', 'COD', 1, 0, '2025-03-19 12:01:20'),
+(187, 55, 'DH1998', N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Số 330, Đường Võ Thị Sáu, Uông Bí, Quảng Ninh', N'Quảng Ninh', 30500000.00, 2000000.00, 'LUX50', 'PENDING', 'VIETQR', 0, 0, '2026-07-04 15:36:58'),
+(188, 105, 'DH8162', N'Bùi Tuấn Khải', 'khachhang084@gmail.com', '0340297323', N'Số 325, Đường Nam Kỳ Khởi Nghĩa, TP. Huế, Huế', N'Huế', 2240000.00, 960000.00, 'LUX30', 'SHIPPING', 'VIETQR', 1, 0, '2025-06-11 05:11:56'),
+(189, 70, 'DH7654', N'Huỳnh Hữu Khải', 'khachhang049@gmail.com', '0980016432', N'Số 139, Đường Võ Thị Sáu, Quận 8, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 17450000.00, 0.00, NULL, 'CANCELLED', 'VIETQR', 0, 1, '2024-06-01 22:54:52'),
+(190, 94, 'DH9375', N'Phan Thu Vy', 'khachhang073@gmail.com', '0353024846', N'Số 341, Đường Võ Văn Kiệt, Tân Bình, TP. Hồ Chí Minh', N'TP. Hồ Chí Minh', 41200000.00, 2000000.00, 'LUX10', 'PROCESSING', 'VIETQR', 1, 0, '2024-12-25 19:52:08'),
+(191, 108, 'DH2807', N'Dương Ánh Hằng', 'khachhang087@gmail.com', '0945397620', N'Số 65, Đường Lê Lợi, TP. Huế, Huế', N'Huế', 4100000.00, 0.00, NULL, 'PAID', 'VIETQR', 1, 0, '2024-06-09 12:44:47'),
+(192, 103, 'DH2531', N'Lê Bảo Đạt', 'khachhang082@gmail.com', '0918069328', N'Số 1, Đường Cầu Giấy, Hội An, Quảng Nam', N'Quảng Nam', 28500000.00, 2000000.00, 'LUX30', 'PAID', 'COD', 1, 0, '2025-08-27 16:43:09'),
+(193, 121, 'DH9697', N'Đặng Hải Anh', 'khachhang100@gmail.com', '0934773116', N'Số 16, Đường Hai Bà Trưng, Cẩm Lệ, Đà Nẵng', N'Đà Nẵng', 56200000.00, 2000000.00, 'LUX50', 'PAID', 'VIETQR', 1, 0, '2024-12-05 12:20:11'),
+(194, 26, 'DH8523', N'Đặng Mỹ Lam', 'khachhang005@gmail.com', '0989557017', N'Số 23, Đường Hai Bà Trưng, Hồng Bàng, Hải Phòng', N'Hải Phòng', 1530000.00, 270000.00, 'LXR36', 'DELIVERED', 'COD', 1, 0, '2024-03-23 12:17:04'),
+(195, 39, 'DH3401', N'Đặng Tiến Linh', 'khachhang018@gmail.com', '0335222576', N'Số 256, Đường Hoàng Hoa Thám, Chí Linh, Hải Dương', N'Hải Dương', 1700000.00, 1700000.00, 'LUX50', 'PROCESSING', 'VIETQR', 1, 0, '2024-05-15 05:50:16'),
+(196, 90, 'DH7114', N'Trần Xuân Linh', 'khachhang069@gmail.com', '0385123967', N'Số 63, Đường Hoàng Hoa Thám, Bà Rịa, Vũng Tàu', N'Vũng Tàu', 102000000.00, 2000000.00, 'LUX10', 'DELIVERED', 'VIETQR', 1, 0, '2026-03-01 20:21:11'),
+(197, 110, 'DH5521', N'Ngô Bảo Hải', 'khachhang089@gmail.com', '0894063447', N'Số 219, Đường Võ Văn Kiệt, Cam Ranh, Nha Trang', N'Nha Trang', 7830000.00, 870000.00, 'LUX10', 'SHIPPING', 'VIETQR', 1, 0, '2026-08-28 17:44:31'),
+(198, 102, 'DH7527', N'Dương Minh Sơn', 'khachhang081@gmail.com', '0977810640', N'Số 236, Đường Lý Thường Kiệt, Hội An, Quảng Nam', N'Quảng Nam', 2720000.00, 480000.00, 'LXR36', 'CONFIRMED', 'VIETQR', 0, 0, '2026-05-24 09:08:57'),
+(199, 116, 'DH9811', N'Lý Gia Khang', 'khachhang095@gmail.com', '0709254254', N'Số 73, Đường Trần Hưng Đạo, Sơn Trà, Đà Nẵng', N'Đà Nẵng', 50000000.00, 2000000.00, 'LXR36', 'PENDING', 'COD', 0, 0, '2025-02-19 08:17:18'),
+(200, 42, 'DH3832', N'Hồ Phương Châu', 'khachhang021@gmail.com', '0979639175', N'Số 5, Đường Giải Phóng, Hoàn Kiếm, Hà Nội', N'Hà Nội', 18750000.00, 2000000.00, 'LUX50', 'PENDING', 'VIETQR', 0, 0, '2026-05-23 05:59:17');
 
 SET IDENTITY_INSERT orders OFF;
 DBCC CHECKIDENT ('orders', RESEED, 200);
@@ -4277,15 +7704,15 @@ GO
 SET IDENTITY_INSERT tickets ON;
 INSERT INTO tickets (id, customer_name, customer_email, customer_phone, subject, category, message, assigned_admin, status, created_at) VALUES
 
-(1, N'Nguyễn Tuấn Anh', 'tuananh.gamer@gmail.com', '0988112233', N'Tư vấn cấu hình PC Gaming 35 triệu chơi Black Myth: Wukong và GTA 6 ở độ phân giải 2K', 'BUILD_PC', N'Chào shop, mình có ngân sách khoảng 35 triệu, muốn build 1 case PC chuyên chơi game nặng như Black Myth Wukong, Cyberpunk và chuẩn bị cho GTA 6 ở màn hình 2K 165Hz. Nhờ shop tư vấn combo tối ưu nhất trong tầm giá giúp mình với ạ.', 'staff.hoanglong', 'IN_PROGRESS', '2026-08-20 09:30:00'),
-(2, N'Trần Hoàng Nam', 'namth.dev@gmail.com', '0912345679', N'Nhờ hướng dẫn bật XMP và tối ưu bus RAM Corsair Dominator Titanium 6000MHz trên main ASUS Z890', 'TECHNICAL', N'Hôm qua mình vừa nhận máy bên shop gửi, kiểm tra Task Manager thấy RAM đang hiển thị 4800MHz trong khi kit mình mua là 6000MHz. Shop hướng dẫn mình cách bật lên với ạ.', 'staff.minhduc', 'RESOLVED', '2026-08-22 14:10:00'),
-(3, N'Đặng Trúc Hà', 'khachhang038@gmail.com', '0761979308', N'Kiểm tra tiến độ vận chuyển đơn hàng #LXR2608230002 giao về Cầu Giấy Hà Nội', 'ORDER', N'Shop ơi mình vừa đặt mua đơn hàng LXR2608230002 hôm qua, không biết hôm nay đã đóng gói và bàn giao cho đơn vị vận chuyển chưa ạ? Khoảng mấy giờ mình nhận được máy?', 'staff.thutrang', 'IN_PROGRESS', '2026-08-24 08:45:00'),
-(4, N'Lê Quốc Bảo', 'quocbao.tech@gmail.com', '0918765432', N'Card màn hình ASUS ROG RTX 4080 Super quạt không quay khi bật máy có phải lỗi không?', 'TECHNICAL', N'Shop cho mình hỏi xíu, mình đang dùng card RTX 4080 Super mới mua bên bạn, lúc bật máy lướt web xem Youtube thì thấy 3 quạt của card hoàn toàn không quay. Lúc chơi game thì quạt mới quay. Như vậy có phải card bị lỗi cảm biến nhiệt không shop?', 'staff.quanghuy', 'RESOLVED', '2026-08-25 11:20:00'),
-(5, N'Phan Trường Giang', 'giang.ai@gmail.com', '0987654321', N'Tư vấn cấu hình máy trạm chạy mô hình DeepSeek LLM và render 3D Blender ngân sách 70 triệu', 'BUILD_PC', N'Xin chào Luxury PC, mình là kỹ sư AI đang cần build 1 bộ máy workstation chuyên dụng để chạy fine-tune các model LLM local (DeepSeek, Llama 3) và render mô hình 3D Blender. Ngân sách tầm 70-80 triệu, ưu tiên VRAM GPU lớn từ 24GB trở lên và RAM hệ thống tối thiểu 64GB. Nhờ shop lên cấu hình giúp.', 'staff.giahuynh', 'OPEN', '2026-08-27 15:30:00'),
-(6, N'Võ Tấn Phát', 'tanphat.danang@gmail.com', '0982345678', N'Vỏ case Corsair 3500X có lắp vừa tản nhiệt nước AIO 360mm ở mặt nóc không?', 'TECHNICAL', N'Shop cho mình hỏi case Corsair 3500X TG kính cường lực mình muốn lắp tản nước AIO 360mm ở nóc case và cắm card RTX 4080 dài 34cm thì có bị cấn không shop?', 'staff.vietanh', 'RESOLVED', '2026-08-28 10:15:00'),
-(7, N'Ngô Bích Ngọc', 'bichngoc.arc@gmail.com', '0965432109', N'Yêu cầu báo giá 10 bộ PC văn phòng kết hợp thiết kế đồ họa 2D Photoshop cho công ty kiến trúc', 'PRICE', N'Kính gửi bộ phận kinh doanh Luxury PC, công ty kiến trúc bên mình đang cần mua mới 10 dàn máy tính cho nhân viên thiết kế 2D AutoCad, Photoshop và Sketchup. Ngân sách khoảng 18-20 triệu/bộ (đã bao gồm màn hình 27 inch IPS). Nhờ công ty gửi bảng báo giá chính thức có hóa đơn VAT và chính sách bảo hành doanh nghiệp qua email bichngoc.arc@gmail.com giúp mình nhé.', 'staff.thuytien', 'OPEN', '2026-08-29 09:00:00'),
-(8, N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Hướng dẫn thủ tục trả góp 0% qua thẻ tín dụng và SePay chuyển khoản QR', 'ORDER', N'Mình muốn mua bộ PC 25 triệu và thanh toán trả góp 0% qua thẻ tín dụng Visa Techcombank kỳ hạn 12 tháng thì thủ tục như thế nào vậy shop?', 'staff.phuongthao', 'RESOLVED', '2026-08-30 14:00:00'),
-(9, N'Đỗ Minh Đức', 'minhduc.tech@gmail.com', '0912345678', N'Xin link tải phần mềm chỉnh LED RGB cho linh kiện ROG Strix và Corsair iCUE', 'TECHNICAL', N'Shop cho mình xin link chuẩn để tải phần mềm đồng bộ đèn LED cho main ASUS và RAM Corsair với ạ.', 'staff.tuankiet', 'CLOSED', '2026-08-31 16:20:00'),
+(1, N'Nguyễn Tuấn Anh', 'tuananh.gamer@gmail.com', '0988112233', N'Tư vấn cấu hình PC Gaming 35 triệu chơi Black Myth: Wukong và GTA 6 ở độ phân giải 2K', 'GENERAL', N'Chào shop, mình có ngân sách khoảng 35 triệu, muốn build 1 case PC chuyên chơi game nặng như Black Myth Wukong, Cyberpunk và chuẩn bị cho GTA 6 ở màn hình 2K 165Hz. Nhờ shop tư vấn combo tối ưu nhất trong tầm giá giúp mình với ạ.', 'staff.hoanglong', 'IN_PROGRESS', '2026-08-20 09:30:00'),
+(2, N'Trần Hoàng Nam', 'namth.dev@gmail.com', '0912345679', N'Nhờ hướng dẫn bật XMP và tối ưu bus RAM Corsair Dominator Titanium 6000MHz trên main ASUS Z890', 'GENERAL', N'Hôm qua mình vừa nhận máy bên shop gửi, kiểm tra Task Manager thấy RAM đang hiển thị 4800MHz trong khi kit mình mua là 6000MHz. Shop hướng dẫn mình cách bật lên với ạ.', 'staff.minhduc', 'RESOLVED', '2026-08-22 14:10:00'),
+(3, N'Đặng Trúc Hà', 'khachhang038@gmail.com', '0761979308', N'Kiểm tra tiến độ vận chuyển đơn hàng #LXR2608230002 giao về Cầu Giấy Hà Nội', 'GENERAL', N'Shop ơi mình vừa đặt mua đơn hàng LXR2608230002 hôm qua, không biết hôm nay đã đóng gói và bàn giao cho đơn vị vận chuyển chưa ạ? Khoảng mấy giờ mình nhận được máy?', 'staff.thutrang', 'IN_PROGRESS', '2026-08-24 08:45:00'),
+(4, N'Lê Quốc Bảo', 'quocbao.tech@gmail.com', '0918765432', N'Card màn hình ASUS ROG RTX 4080 Super quạt không quay khi bật máy có phải lỗi không?', 'GENERAL', N'Shop cho mình hỏi xíu, mình đang dùng card RTX 4080 Super mới mua bên bạn, lúc bật máy lướt web xem Youtube thì thấy 3 quạt của card hoàn toàn không quay. Lúc chơi game thì quạt mới quay. Như vậy có phải card bị lỗi cảm biến nhiệt không shop?', 'staff.quanghuy', 'RESOLVED', '2026-08-25 11:20:00'),
+(5, N'Phan Trường Giang', 'giang.ai@gmail.com', '0987654321', N'Tư vấn cấu hình máy trạm chạy mô hình DeepSeek LLM và render 3D Blender ngân sách 70 triệu', 'GENERAL', N'Xin chào Luxury PC, mình là kỹ sư AI đang cần build 1 bộ máy workstation chuyên dụng để chạy fine-tune các model LLM local (DeepSeek, Llama 3) và render mô hình 3D Blender. Ngân sách tầm 70-80 triệu, ưu tiên VRAM GPU lớn từ 24GB trở lên và RAM hệ thống tối thiểu 64GB. Nhờ shop lên cấu hình giúp.', 'staff.giahuynh', 'OPEN', '2026-08-27 15:30:00'),
+(6, N'Võ Tấn Phát', 'tanphat.danang@gmail.com', '0982345678', N'Vỏ case Corsair 3500X có lắp vừa tản nhiệt nước AIO 360mm ở mặt nóc không?', 'GENERAL', N'Shop cho mình hỏi case Corsair 3500X TG kính cường lực mình muốn lắp tản nước AIO 360mm ở nóc case và cắm card RTX 4080 dài 34cm thì có bị cấn không shop?', 'staff.vietanh', 'RESOLVED', '2026-08-28 10:15:00'),
+(7, N'Ngô Bích Ngọc', 'bichngoc.arc@gmail.com', '0965432109', N'Yêu cầu báo giá 10 bộ PC văn phòng kết hợp thiết kế đồ họa 2D Photoshop cho công ty kiến trúc', 'GENERAL', N'Kính gửi bộ phận kinh doanh Luxury PC, công ty kiến trúc bên mình đang cần mua mới 10 dàn máy tính cho nhân viên thiết kế 2D AutoCad, Photoshop và Sketchup. Ngân sách khoảng 18-20 triệu/bộ (đã bao gồm màn hình 27 inch IPS). Nhờ công ty gửi bảng báo giá chính thức có hóa đơn VAT và chính sách bảo hành doanh nghiệp qua email bichngoc.arc@gmail.com giúp mình nhé.', 'staff.thuytien', 'OPEN', '2026-08-29 09:00:00'),
+(8, N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Hướng dẫn thủ tục trả góp 0% qua thẻ tín dụng và SePay chuyển khoản QR', 'GENERAL', N'Mình muốn mua bộ PC 25 triệu và thanh toán trả góp 0% qua thẻ tín dụng Visa Techcombank kỳ hạn 12 tháng thì thủ tục như thế nào vậy shop?', 'staff.phuongthao', 'RESOLVED', '2026-08-30 14:00:00'),
+(9, N'Đỗ Minh Đức', 'minhduc.tech@gmail.com', '0912345678', N'Xin link tải phần mềm chỉnh LED RGB cho linh kiện ROG Strix và Corsair iCUE', 'GENERAL', N'Shop cho mình xin link chuẩn để tải phần mềm đồng bộ đèn LED cho main ASUS và RAM Corsair với ạ.', 'staff.tuankiet', 'CLOSED', '2026-08-31 16:20:00'),
 (10, N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Khen ngợi bạn nhân viên kỹ thuật hỗ trợ lắp máy tại nhà rất nhiệt tình và chu đáo', 'GENERAL', N'Mình gửi ticket này để gửi lời cảm ơn đến Luxury PC và đặc biệt là bạn kỹ thuật viên Long sáng nay đã mang dàn PC đến tận nhà mình lắp đặt. Bạn làm việc rất cẩn thận, đi dây siêu đẹp và còn nhiệt tình hướng dẫn mình cách bảo quản vệ sinh máy. Dịch vụ bên bạn rất chuyên nghiệp 10/10 điểm!', 'staff.hoanglong', 'CLOSED', '2026-09-01 11:00:00');
 SET IDENTITY_INSERT tickets OFF;
 DBCC CHECKIDENT ('tickets', RESEED, 10);
@@ -4294,14 +7721,14 @@ GO
 SET IDENTITY_INSERT support_tickets ON;
 INSERT INTO support_tickets (id, user_id, customer_name, customer_email, customer_phone, subject, category, message, admin_reply, assigned_admin, status, created_at, updated_at) VALUES
 
-(1, 22, N'Nguyễn Tuấn Anh', 'tuananh.gamer@gmail.com', '0988112233', N'Tư vấn cấu hình PC Gaming 35 triệu chơi Black Myth: Wukong và GTA 6 ở độ phân giải 2K', 'BUILD_PC', N'Chào shop, mình có ngân sách khoảng 35 triệu, muốn build 1 case PC chuyên chơi game nặng như Black Myth Wukong, Cyberpunk và chuẩn bị cho GTA 6 ở màn hình 2K 165Hz. Nhờ shop tư vấn combo tối ưu nhất trong tầm giá giúp mình với ạ.', N'Chào anh Tuấn Anh! Với ngân sách 35 triệu để chiến mượt 2K Ultra Settings, Luxury PC xin tư vấn anh cấu hình tối ưu nhất: CPU Intel Core i5-14600KF (14 nhân 20 luồng) + Card đồ họa RTX 4070 Super 12GB GDDR6X + 32GB RAM DDR5 Corsair 6000MHz + Nguồn 750W 80 Plus Gold + Tản nhiệt nước AIO 360mm. Cấu hình này test thực tế Wukong 2K đạt 90-110 FPS rất mượt mà anh nhé!', 'staff.hoanglong', 'IN_PROGRESS', '2026-08-20 09:30:00', '2026-08-20 09:30:00'),
-(2, 23, N'Trần Hoàng Nam', 'namth.dev@gmail.com', '0912345679', N'Nhờ hướng dẫn bật XMP và tối ưu bus RAM Corsair Dominator Titanium 6000MHz trên main ASUS Z890', 'TECHNICAL', N'Hôm qua mình vừa nhận máy bên shop gửi, kiểm tra Task Manager thấy RAM đang hiển thị 4800MHz trong khi kit mình mua là 6000MHz. Shop hướng dẫn mình cách bật lên với ạ.', N'Dạ chào anh Nam, mặc định chuẩn DDR5 khi mới cắm sẽ nhận bus gốc 4800MHz để đảm bảo tương thích boot máy. Anh làm theo các bước sau giúp em nhé:
+(1, 22, N'Nguyễn Tuấn Anh', 'tuananh.gamer@gmail.com', '0988112233', N'Tư vấn cấu hình PC Gaming 35 triệu chơi Black Myth: Wukong và GTA 6 ở độ phân giải 2K', 'GENERAL', N'Chào shop, mình có ngân sách khoảng 35 triệu, muốn build 1 case PC chuyên chơi game nặng như Black Myth Wukong, Cyberpunk và chuẩn bị cho GTA 6 ở màn hình 2K 165Hz. Nhờ shop tư vấn combo tối ưu nhất trong tầm giá giúp mình với ạ.', N'Chào anh Tuấn Anh! Với ngân sách 35 triệu để chiến mượt 2K Ultra Settings, Luxury PC xin tư vấn anh cấu hình tối ưu nhất: CPU Intel Core i5-14600KF (14 nhân 20 luồng) + Card đồ họa RTX 4070 Super 12GB GDDR6X + 32GB RAM DDR5 Corsair 6000MHz + Nguồn 750W 80 Plus Gold + Tản nhiệt nước AIO 360mm. Cấu hình này test thực tế Wukong 2K đạt 90-110 FPS rất mượt mà anh nhé!', 'staff.hoanglong', 'IN_PROGRESS', '2026-08-20 09:30:00', '2026-08-20 09:30:00'),
+(2, 23, N'Trần Hoàng Nam', 'namth.dev@gmail.com', '0912345679', N'Nhờ hướng dẫn bật XMP và tối ưu bus RAM Corsair Dominator Titanium 6000MHz trên main ASUS Z890', 'GENERAL', N'Hôm qua mình vừa nhận máy bên shop gửi, kiểm tra Task Manager thấy RAM đang hiển thị 4800MHz trong khi kit mình mua là 6000MHz. Shop hướng dẫn mình cách bật lên với ạ.', N'Dạ chào anh Nam, mặc định chuẩn DDR5 khi mới cắm sẽ nhận bus gốc 4800MHz để đảm bảo tương thích boot máy. Anh làm theo các bước sau giúp em nhé:
 1. Khởi động lại máy, bấm liên tục phím DEL để vào BIOS.
 2. Ở trang EzMode góc trái, anh tìm mục ''X.M.P'' chuyển từ Disabled sang ''XMP I'' hoặc ''Profile 1''.
 3. Bấm phím F10 chọn ''Save & Exit'' là xong ạ!', 'staff.minhduc', 'RESOLVED', '2026-08-22 14:10:00', '2026-08-22 14:10:00'),
-(3, 59, N'Đặng Trúc Hà', 'khachhang038@gmail.com', '0761979308', N'Kiểm tra tiến độ vận chuyển đơn hàng #LXR2608230002 giao về Cầu Giấy Hà Nội', 'ORDER', N'Shop ơi mình vừa đặt mua đơn hàng LXR2608230002 hôm qua, không biết hôm nay đã đóng gói và bàn giao cho đơn vị vận chuyển chưa ạ? Khoảng mấy giờ mình nhận được máy?', N'Chào chị Trúc Hà! Em kiểm tra hệ thống thấy đơn hàng của chị đã được đội ngũ kỹ thuật lắp ráp hoàn tất và bàn giao cho shipper chuyên biệt của Luxury PC lúc 8h30 sáng nay. Dự kiến khoảng 14h - 15h chiều nay shipper sẽ liên hệ trước khi giao tới địa chỉ số 311 Võ Văn Kiệt của chị ạ.', 'staff.thutrang', 'IN_PROGRESS', '2026-08-24 08:45:00', '2026-08-24 08:45:00'),
-(4, 24, N'Lê Quốc Bảo', 'quocbao.tech@gmail.com', '0918765432', N'Card màn hình ASUS ROG RTX 4080 Super quạt không quay khi bật máy có phải lỗi không?', 'TECHNICAL', N'Shop cho mình hỏi xíu, mình đang dùng card RTX 4080 Super mới mua bên bạn, lúc bật máy lướt web xem Youtube thì thấy 3 quạt của card hoàn toàn không quay. Lúc chơi game thì quạt mới quay. Như vậy có phải card bị lỗi cảm biến nhiệt không shop?', N'Dạ chào anh Bảo, anh hoàn toàn yên tâm nhé! Các dòng card cao cấp hiện nay của ASUS đều có công nghệ ''0dB Fan Tech''. Khi nhiệt độ GPU dưới 50-55 độ C (khi lướt web, làm việc nhẹ), quạt sẽ tự động dừng hoàn toàn để giữ im lặng tuyệt đối và tăng tuổi thọ trục bi. Khi anh vào game nặng nhiệt độ tăng lên quạt sẽ tự động quay làm mát ạ!', 'staff.quanghuy', 'RESOLVED', '2026-08-25 11:20:00', '2026-08-25 11:20:00'),
-(5, 25, N'Phan Trường Giang', 'giang.ai@gmail.com', '0987654321', N'Tư vấn cấu hình máy trạm chạy mô hình DeepSeek LLM và render 3D Blender ngân sách 70 triệu', 'BUILD_PC', N'Xin chào Luxury PC, mình là kỹ sư AI đang cần build 1 bộ máy workstation chuyên dụng để chạy fine-tune các model LLM local (DeepSeek, Llama 3) và render mô hình 3D Blender. Ngân sách tầm 70-80 triệu, ưu tiên VRAM GPU lớn từ 24GB trở lên và RAM hệ thống tối thiểu 64GB. Nhờ shop lên cấu hình giúp.', N'Chào anh Giang! Đối với nhu cầu train/inference LLM và Render 3D nặng, cấu hình đề xuất chuẩn trạm cho anh gồm:
+(3, 59, N'Đặng Trúc Hà', 'khachhang038@gmail.com', '0761979308', N'Kiểm tra tiến độ vận chuyển đơn hàng #LXR2608230002 giao về Cầu Giấy Hà Nội', 'GENERAL', N'Shop ơi mình vừa đặt mua đơn hàng LXR2608230002 hôm qua, không biết hôm nay đã đóng gói và bàn giao cho đơn vị vận chuyển chưa ạ? Khoảng mấy giờ mình nhận được máy?', N'Chào chị Trúc Hà! Em kiểm tra hệ thống thấy đơn hàng của chị đã được đội ngũ kỹ thuật lắp ráp hoàn tất và bàn giao cho shipper chuyên biệt của Luxury PC lúc 8h30 sáng nay. Dự kiến khoảng 14h - 15h chiều nay shipper sẽ liên hệ trước khi giao tới địa chỉ số 311 Võ Văn Kiệt của chị ạ.', 'staff.thutrang', 'IN_PROGRESS', '2026-08-24 08:45:00', '2026-08-24 08:45:00'),
+(4, 24, N'Lê Quốc Bảo', 'quocbao.tech@gmail.com', '0918765432', N'Card màn hình ASUS ROG RTX 4080 Super quạt không quay khi bật máy có phải lỗi không?', 'GENERAL', N'Shop cho mình hỏi xíu, mình đang dùng card RTX 4080 Super mới mua bên bạn, lúc bật máy lướt web xem Youtube thì thấy 3 quạt của card hoàn toàn không quay. Lúc chơi game thì quạt mới quay. Như vậy có phải card bị lỗi cảm biến nhiệt không shop?', N'Dạ chào anh Bảo, anh hoàn toàn yên tâm nhé! Các dòng card cao cấp hiện nay của ASUS đều có công nghệ ''0dB Fan Tech''. Khi nhiệt độ GPU dưới 50-55 độ C (khi lướt web, làm việc nhẹ), quạt sẽ tự động dừng hoàn toàn để giữ im lặng tuyệt đối và tăng tuổi thọ trục bi. Khi anh vào game nặng nhiệt độ tăng lên quạt sẽ tự động quay làm mát ạ!', 'staff.quanghuy', 'RESOLVED', '2026-08-25 11:20:00', '2026-08-25 11:20:00'),
+(5, 25, N'Phan Trường Giang', 'giang.ai@gmail.com', '0987654321', N'Tư vấn cấu hình máy trạm chạy mô hình DeepSeek LLM và render 3D Blender ngân sách 70 triệu', 'GENERAL', N'Xin chào Luxury PC, mình là kỹ sư AI đang cần build 1 bộ máy workstation chuyên dụng để chạy fine-tune các model LLM local (DeepSeek, Llama 3) và render mô hình 3D Blender. Ngân sách tầm 70-80 triệu, ưu tiên VRAM GPU lớn từ 24GB trở lên và RAM hệ thống tối thiểu 64GB. Nhờ shop lên cấu hình giúp.', N'Chào anh Giang! Đối với nhu cầu train/inference LLM và Render 3D nặng, cấu hình đề xuất chuẩn trạm cho anh gồm:
 - CPU: Intel Core Ultra 9 285K (24 nhân 24 luồng, đơn nhân cực mạnh)
 - Mainboard: ASUS ROG STRIX Z890-F GAMING WIFI
 - RAM: 64GB (2x32GB) DDR5 Corsair Dominator Titanium 6400MHz
@@ -4310,10 +7737,10 @@ INSERT INTO support_tickets (id, user_id, customer_name, customer_email, custome
 - Nguồn: Corsair RM1000e 1000W 80 Plus Gold ATX 3.0
 - Tản nhiệt nước: Corsair Nautilus 360 RS ARGB.
 Tổng cấu hình khoảng 78.5 triệu, bên em có sẵn hàng để lắp ráp ngay cho anh ạ!', 'staff.giahuynh', 'OPEN', '2026-08-27 15:30:00', '2026-08-27 15:30:00'),
-(6, 26, N'Võ Tấn Phát', 'tanphat.danang@gmail.com', '0982345678', N'Vỏ case Corsair 3500X có lắp vừa tản nhiệt nước AIO 360mm ở mặt nóc không?', 'TECHNICAL', N'Shop cho mình hỏi case Corsair 3500X TG kính cường lực mình muốn lắp tản nước AIO 360mm ở nóc case và cắm card RTX 4080 dài 34cm thì có bị cấn không shop?', N'Dạ chào anh Phát! Case Corsair 3500X được thiết kế khoang nóc rất thoáng, hỗ trợ hoàn hảo tản nước Rad 360mm dày tới 65mm (cả quạt) mà không hề cấn vào tản nhôm VRM mainboard. Chiều dài card VGA case hỗ trợ lên tới 410mm nên card RTX 4080 34cm lắp vào cực kỳ rộng rãi và đẹp mắt anh nhé!', 'staff.vietanh', 'RESOLVED', '2026-08-28 10:15:00', '2026-08-28 10:15:00'),
-(7, 27, N'Ngô Bích Ngọc', 'bichngoc.arc@gmail.com', '0965432109', N'Yêu cầu báo giá 10 bộ PC văn phòng kết hợp thiết kế đồ họa 2D Photoshop cho công ty kiến trúc', 'PRICE', N'Kính gửi bộ phận kinh doanh Luxury PC, công ty kiến trúc bên mình đang cần mua mới 10 dàn máy tính cho nhân viên thiết kế 2D AutoCad, Photoshop và Sketchup. Ngân sách khoảng 18-20 triệu/bộ (đã bao gồm màn hình 27 inch IPS). Nhờ công ty gửi bảng báo giá chính thức có hóa đơn VAT và chính sách bảo hành doanh nghiệp qua email bichngoc.arc@gmail.com giúp mình nhé.', N'Kính chào chị Bích Ngọc! Em đã nhận được yêu cầu của công ty mình. Luxury PC có chính sách chiết khấu 8% cho đơn hàng doanh nghiệp từ 10 bộ, hỗ trợ xuất hóa đơn VAT điện tử đầy đủ và gói bảo hành tận nơi 24/7 trong 24 tháng. Em sẽ hoàn thiện file báo giá chi tiết và gửi vào email của chị trong vòng 30 phút tới ạ!', 'staff.thuytien', 'OPEN', '2026-08-29 09:00:00', '2026-08-29 09:00:00'),
-(8, 71, N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Hướng dẫn thủ tục trả góp 0% qua thẻ tín dụng và SePay chuyển khoản QR', 'ORDER', N'Mình muốn mua bộ PC 25 triệu và thanh toán trả góp 0% qua thẻ tín dụng Visa Techcombank kỳ hạn 12 tháng thì thủ tục như thế nào vậy shop?', N'Dạ chào chị Lam! Thủ tục trả góp qua thẻ tín dụng tại Luxury PC hoàn toàn online và duyệt tự động 100% không cần giấy tờ ạ. Tại bước thanh toán (Checkout), chị chọn phương thức ''Trả góp qua thẻ tín dụng'', chọn ngân hàng Techcombank và kỳ hạn 12 tháng, sau đó nhập thông tin thẻ là hoàn tất đơn hàng trong 1 phút thôi ạ!', 'staff.phuongthao', 'RESOLVED', '2026-08-30 14:00:00', '2026-08-30 14:00:00'),
-(9, 28, N'Đỗ Minh Đức', 'minhduc.tech@gmail.com', '0912345678', N'Xin link tải phần mềm chỉnh LED RGB cho linh kiện ROG Strix và Corsair iCUE', 'TECHNICAL', N'Shop cho mình xin link chuẩn để tải phần mềm đồng bộ đèn LED cho main ASUS và RAM Corsair với ạ.', N'Dạ chào anh Đức! Để chỉnh LED cho Mainboard/VGA ASUS anh tải phần mềm ''ASUS Armoury Crate'' tại trang chủ asus.com. Còn đối với RAM/Fan Corsair anh tải phần mềm ''Corsair iCUE v5''. Hai phần mềm này có thể đồng bộ với nhau qua plugin Corsair ASUS Sync anh nhé!', 'staff.tuankiet', 'CLOSED', '2026-08-31 16:20:00', '2026-08-31 16:20:00'),
+(6, 26, N'Võ Tấn Phát', 'tanphat.danang@gmail.com', '0982345678', N'Vỏ case Corsair 3500X có lắp vừa tản nhiệt nước AIO 360mm ở mặt nóc không?', 'GENERAL', N'Shop cho mình hỏi case Corsair 3500X TG kính cường lực mình muốn lắp tản nước AIO 360mm ở nóc case và cắm card RTX 4080 dài 34cm thì có bị cấn không shop?', N'Dạ chào anh Phát! Case Corsair 3500X được thiết kế khoang nóc rất thoáng, hỗ trợ hoàn hảo tản nước Rad 360mm dày tới 65mm (cả quạt) mà không hề cấn vào tản nhôm VRM mainboard. Chiều dài card VGA case hỗ trợ lên tới 410mm nên card RTX 4080 34cm lắp vào cực kỳ rộng rãi và đẹp mắt anh nhé!', 'staff.vietanh', 'RESOLVED', '2026-08-28 10:15:00', '2026-08-28 10:15:00'),
+(7, 27, N'Ngô Bích Ngọc', 'bichngoc.arc@gmail.com', '0965432109', N'Yêu cầu báo giá 10 bộ PC văn phòng kết hợp thiết kế đồ họa 2D Photoshop cho công ty kiến trúc', 'GENERAL', N'Kính gửi bộ phận kinh doanh Luxury PC, công ty kiến trúc bên mình đang cần mua mới 10 dàn máy tính cho nhân viên thiết kế 2D AutoCad, Photoshop và Sketchup. Ngân sách khoảng 18-20 triệu/bộ (đã bao gồm màn hình 27 inch IPS). Nhờ công ty gửi bảng báo giá chính thức có hóa đơn VAT và chính sách bảo hành doanh nghiệp qua email bichngoc.arc@gmail.com giúp mình nhé.', N'Kính chào chị Bích Ngọc! Em đã nhận được yêu cầu của công ty mình. Luxury PC có chính sách chiết khấu 8% cho đơn hàng doanh nghiệp từ 10 bộ, hỗ trợ xuất hóa đơn VAT điện tử đầy đủ và gói bảo hành tận nơi 24/7 trong 24 tháng. Em sẽ hoàn thiện file báo giá chi tiết và gửi vào email của chị trong vòng 30 phút tới ạ!', 'staff.thuytien', 'OPEN', '2026-08-29 09:00:00', '2026-08-29 09:00:00'),
+(8, 71, N'Dương Thị Lam', 'khachhang050@gmail.com', '0347084450', N'Hướng dẫn thủ tục trả góp 0% qua thẻ tín dụng và SePay chuyển khoản QR', 'GENERAL', N'Mình muốn mua bộ PC 25 triệu và thanh toán trả góp 0% qua thẻ tín dụng Visa Techcombank kỳ hạn 12 tháng thì thủ tục như thế nào vậy shop?', N'Dạ chào chị Lam! Thủ tục trả góp qua thẻ tín dụng tại Luxury PC hoàn toàn online và duyệt tự động 100% không cần giấy tờ ạ. Tại bước thanh toán (Checkout), chị chọn phương thức ''Trả góp qua thẻ tín dụng'', chọn ngân hàng Techcombank và kỳ hạn 12 tháng, sau đó nhập thông tin thẻ là hoàn tất đơn hàng trong 1 phút thôi ạ!', 'staff.phuongthao', 'RESOLVED', '2026-08-30 14:00:00', '2026-08-30 14:00:00'),
+(9, 28, N'Đỗ Minh Đức', 'minhduc.tech@gmail.com', '0912345678', N'Xin link tải phần mềm chỉnh LED RGB cho linh kiện ROG Strix và Corsair iCUE', 'GENERAL', N'Shop cho mình xin link chuẩn để tải phần mềm đồng bộ đèn LED cho main ASUS và RAM Corsair với ạ.', N'Dạ chào anh Đức! Để chỉnh LED cho Mainboard/VGA ASUS anh tải phần mềm ''ASUS Armoury Crate'' tại trang chủ asus.com. Còn đối với RAM/Fan Corsair anh tải phần mềm ''Corsair iCUE v5''. Hai phần mềm này có thể đồng bộ với nhau qua plugin Corsair ASUS Sync anh nhé!', 'staff.tuankiet', 'CLOSED', '2026-08-31 16:20:00', '2026-08-31 16:20:00'),
 (10, 55, N'Huỳnh Đức Khoa', 'khachhang034@gmail.com', '0777610058', N'Khen ngợi bạn nhân viên kỹ thuật hỗ trợ lắp máy tại nhà rất nhiệt tình và chu đáo', 'GENERAL', N'Mình gửi ticket này để gửi lời cảm ơn đến Luxury PC và đặc biệt là bạn kỹ thuật viên Long sáng nay đã mang dàn PC đến tận nhà mình lắp đặt. Bạn làm việc rất cẩn thận, đi dây siêu đẹp và còn nhiệt tình hướng dẫn mình cách bảo quản vệ sinh máy. Dịch vụ bên bạn rất chuyên nghiệp 10/10 điểm!', N'Dạ em Long đây ạ! Em thay mặt toàn thể đội ngũ Luxury PC chân thành cảm ơn anh Khoa đã tin tưởng và dành những lời khen ngợi quý báu cho em. Chúc anh có những phút giây giải trí và làm việc thật tuyệt vời bên cỗ máy mới. Luxury PC xin gửi tặng anh 1 Voucher tri ân giảm 500.000đ cho lần mua sắm tiếp theo ạ!', 'staff.hoanglong', 'CLOSED', '2026-09-01 11:00:00', '2026-09-01 11:00:00');
 SET IDENTITY_INSERT support_tickets OFF;
 DBCC CHECKIDENT ('support_tickets', RESEED, 10);
@@ -4363,4 +7790,29 @@ Tổng cấu hình khoảng 78.5 triệu, bên em có sẵn hàng để lắp r�
 (28, 10, 'ADMIN', N'Lê Hoàng Long (Kỹ thuật viên)', N'Dạ em Long đây ạ! Em thay mặt toàn thể đội ngũ Luxury PC chân thành cảm ơn anh Khoa đã tin tưởng và dành những lời khen ngợi quý báu cho em. Chúc anh có những phút giây giải trí và làm việc thật tuyệt vời bên cỗ máy mới. Luxury PC xin gửi tặng anh 1 Voucher tri ân giảm 500.000đ cho lần mua sắm tiếp theo ạ!', '2026-09-01 11:20:00');
 SET IDENTITY_INSERT ticket_messages OFF;
 DBCC CHECKIDENT ('ticket_messages', RESEED, 28);
+GO
+
+-- ----------------------------------------------------------------------------
+-- 6.7 ĐÁNH GIÁ SẢN PHẨM & VIDEO REVIEWS (REVIEWS)
+-- ----------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'reviews') AND type IN ('UN'))
+BEGIN
+    SET IDENTITY_INSERT reviews ON;
+    INSERT INTO reviews (id, product_id, user_id, stars, title, content, image, video, reply_content, replied_by, replied_at, created_at) VALUES
+    (1, 2, 2, 5, N'Hiệu năng cực đỉnh, nhiệt độ ổn định', N'CPU i9-13900K/Ryzen 9 chạy render và đa nhiệm cực kỳ mượt mà, kèm video test thực tế lúc render và chơi game 4K.', NULL, N'/uploads/reviews/review_sp2.mp4', N'Cảm ơn bạn đã tin tưởng và ủng hộ Luxury PC! Chúc bạn có trải nghiệm tuyệt vời cùng dàn máy.', N'Luxury PC Support', '2026-08-15 14:30:00', '2026-08-15 14:30:00'),
+    (2, 3, 3, 5, N'Sản phẩm chính hãng, đóng gói cẩn thận', N'Chip i7-14700K hiệu năng quá khỏe trong tầm giá, mình quay video unbox và gắn vào mainboard chạy ngon lành.', NULL, N'/uploads/reviews/review_sp3.mp4', N'Dạ cảm ơn anh! Dòng chip Core i7 14th cân game và làm việc rất đỉnh ạ.', N'Luxury PC Support', '2026-08-16 09:15:00', '2026-08-16 09:15:00'),
+    (3, 7, 4, 5, N'Chiến game mượt, mát mẻ', N'Dàn máy quốc dân i5-13400F kết hợp tản nhiệt mát rượi, video test thực tế cho anh em tham khảo.', NULL, N'/uploads/reviews/review_sp7.mp4', N'Cảm ơn bạn đã feedback chi tiết cùng video! Chúc bạn leo rank vui vẻ nha.', N'Luxury PC Support', '2026-08-18 11:20:00', '2026-08-18 11:20:00'),
+    (4, 8, 5, 5, N'Sức mạnh tuyệt vời cho đồ họa và code', N'Ryzen 9 7900X 12 nhân 24 luồng mở chục máy ảo vẫn mượt mà, có đính kèm video trải nghiệm thực tế.', NULL, N'/uploads/reviews/review_sp8.mp4', N'Cảm ơn quý khách đã đồng hành cùng Luxury PC!', N'Luxury PC Support', '2026-08-20 16:45:00', '2026-08-20 16:45:00'),
+    (5, 12, 6, 5, N'APU ngon bổ rẻ', N'Card onboard Vega 7 chơi mượt CS2 và Valorant không cần VGA rời, video test chi tiết.', NULL, N'/uploads/reviews/review_sp12.mp4', N'Dòng APU 5600G là sự lựa chọn tối ưu chi phí rất tốt. Cảm ơn bạn nhiều!', N'Luxury PC Support', '2026-08-21 10:10:00', '2026-08-21 10:10:00'),
+    (6, 13, 7, 5, N'Quá ưng ý với Luxury PC', N'Giao hàng nhanh trong ngày, sản phẩm nguyên seal 100%, video unbox kiểm tra tem mác.', NULL, N'/uploads/reviews/review_sp13.mp4', N'Luxury PC luôn cam kết hàng chính hãng 100% Full VAT. Cảm ơn bạn!', N'Luxury PC Support', '2026-08-22 15:30:00', '2026-08-22 15:30:00'),
+    (7, 17, 2, 5, N'Cấu hình hoàn hảo cho phân khúc tầm trung', N'Chip thế hệ 14 chạy rất mát và ổn định, video test chạy Cinebench R23 cực ngon.', NULL, N'/uploads/reviews/review_sp17.mp4', N'Cảm ơn bạn Tuấn đã tin tưởng và review chi tiết!', N'Luxury PC Support', '2026-08-23 18:00:00', '2026-08-23 18:00:00'),
+    (8, 18, 8, 5, N'AI Engine thế hệ mới rất ấn tượng', N'Radeon 760M kèm NPU chạy tác vụ AI rất nhanh, video trải nghiệm game thực tế.', NULL, N'/uploads/reviews/review_sp18.mp4', N'Cảm ơn quý khách đã lựa chọn sản phẩm công nghệ AI mới nhất tại Luxury PC!', N'Luxury PC Support', '2026-08-24 13:40:00', '2026-08-24 13:40:00'),
+    (9, 22, 9, 5, N'Giá siêu rẻ cho CPU 6 nhân 12 luồng', N'Ráp dàn PC giá rẻ cho em trai học tập và chơi game nhẹ nhàng, video test máy.', NULL, N'/uploads/reviews/review_sp22.mp4', N'Chúc em trai học tập tốt và chơi game vui vẻ nhé!', N'Luxury PC Support', '2026-08-25 09:50:00', '2026-08-25 09:50:00'),
+    (10, 277, 2, 5, N'Tản nhiệt LED ARGB rất đẹp, quạt êm', N'Lắp đặt dễ dàng, nhiệt độ CPU giảm hẳn 15 độ lúc full load, video cận cảnh hệ thống LED.', NULL, N'/uploads/reviews/review_277_2_1785826032390.mp4', N'Cảm ơn bạn đã chia sẻ video LED ARGB lung linh!', N'Luxury PC Support', '2026-08-26 20:10:00', '2026-08-26 20:10:00'),
+    (11, 286, 1, 5, N'Màn hình LCD trên pump cực chất', N'Tản nước ROG Ryujin III đẳng cấp nhất hiện nay, video show màn hình LCD hiển thị gif động.', NULL, N'/uploads/reviews/review_286_1_1786078829491.mp4', N'Sản phẩm Flagship đỉnh cao của ASUS ROG. Cảm ơn bạn rất nhiều!', N'Luxury PC Support', '2026-08-27 16:20:00', '2026-08-27 16:20:00'),
+    (12, 525, 2, 5, N'VGA tone trắng tuyệt đẹp', N'Thiết kế holographic đổi màu theo góc nhìn, video test benchmark Cyberpunk 2077 Ultra Ray Tracing.', NULL, N'/uploads/reviews/review_525_2_1786076746041.mp4', N'Tone trắng Holographic cực kỳ sang trọng. Cảm ơn bạn đã ủng hộ!', N'Luxury PC Support', '2026-08-28 11:30:00', '2026-08-28 11:30:00'),
+    (13, 542, 2, 5, N'Âm thanh vòm DTS spatial chân thực', N'Đeo êm tai không bị đau, pin trâu dùng cả tuần chưa hết, video unbox và mic test.', NULL, N'/uploads/reviews/review_542_2_1786093646986.mp4', N'Tai nghe HyperX Cloud III đỉnh cao cho game FPS. Cảm ơn bạn!', N'Luxury PC Support', '2026-08-29 17:00:00', '2026-08-29 17:00:00');
+    SET IDENTITY_INSERT reviews OFF;
+    DBCC CHECKIDENT ('reviews', RESEED, 13);
+END
 GO
